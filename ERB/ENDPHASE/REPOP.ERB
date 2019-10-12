@@ -1,0 +1,270 @@
+﻿;敵の再沸き処理
+@REPOP
+;LOCAL
+;1	バイオプラントの数
+
+
+;主人公拘束中は敵の湧きフラグをリセットする
+IF CFLAG:1:10 > 0
+	FLAG:655 = 0
+	FLAG:657 = 0
+	FLAG:659 = 0
+	FLAG:661 = 0
+	FLAG:663 = 0
+	FLAG:665 = 0
+ENDIF
+
+;バイオプラントの数
+CALL COUNT_ENEMY(4)
+LOCAL:1 = RESULT
+;ナイトメアケージの数
+CALL COUNT_ENEMY(43)
+LOCAL:1 = RESULT * 3 + LOCAL:1
+
+;敵の数最大値リミット ノーマルで30匹前後
+IF FLAG:1 > (FLAG:4 * 5) + (FLAG:525 * 20) + LOCAL:1 + 25
+	RETURN
+ENDIF
+
+;湧き速度を日にちと難易度で補正　最終状態になるのにイージー64日・ノーマル49日・ハード36日・ルナティック25日
+LOCAL:4 = SQRT(DAY) + FLAG:4
+
+;EXTRA系　敵が強いぶん発生スピードも遅い
+IF FLAG:999
+	IF DAY < 10
+		FLAG:655 += 3
+		FLAG:657 += 2
+		FLAG:659 += 2
+		FLAG:661 += 1
+		FLAG:663 += 1
+		FLAG:665 += 1
+	ELSEIF DAY < 20
+		FLAG:655 += 4
+		FLAG:657 += 3
+		FLAG:659 += 2
+		FLAG:661 += 1
+		FLAG:663 += 1
+		FLAG:665 += 1
+	ELSE
+		FLAG:655 += 6
+		FLAG:657 += 4
+		FLAG:659 += 3
+		FLAG:661 += 2
+		FLAG:663 += 2
+		FLAG:665 += 1
+	ENDIF
+;特殊モードなので湧かない
+ELSEIF FLAG:998 || FLAG:997
+
+
+;初期配置分を1日目の湧きに全振り　敵が多いのと種類調節があるので一括したほうがマシ　一日目の終わりで部屋半分ほど埋まるよう調整
+;FLAG:655とかはランク1～6の敵の増える早さに対応
+;フラグが100増えるごとに一匹出てくる
+ELSEIF DAY < 2
+	FLAG:655 += 270
+	FLAG:657 += 80
+	FLAG:659 += 35
+	FLAG:661 += 15
+	FLAG:663 += 15
+	FLAG:665 += 1
+ELSEIF LOCAL:4 < 4
+	FLAG:655 += 25
+	FLAG:657 += 7
+	FLAG:659 += 3
+	FLAG:661 += 2
+	FLAG:663 += 1
+	FLAG:665 += 1
+ELSEIF LOCAL:4 < 5
+	FLAG:655 += 40
+	FLAG:657 += 10
+	FLAG:659 += 4
+	FLAG:661 += 3
+	FLAG:663 += 2
+	FLAG:665 += 1
+ELSEIF LOCAL:4 < 8
+	FLAG:655 += 20 + (LOCAL:1 * 5)
+	FLAG:657 += 10 + (LOCAL:1 * 3)
+	FLAG:659 += 4 + (LOCAL:1 * 1)
+	FLAG:661 += 2 + (LOCAL:1 * 2)
+	FLAG:663 += 2 + (LOCAL:1 * 1)
+	FLAG:665 += 2 + (LOCAL:1 * 1)
+ELSE
+	FLAG:655 += 20 + (LOCAL:1 * 5)
+	FLAG:657 += 10 + (LOCAL:1 * 2)
+	FLAG:659 += 13 + (LOCAL:1 * 2)
+	FLAG:661 += 10 + (LOCAL:1 * 4)
+	FLAG:663 += 8 + (LOCAL:1 * 3)
+	FLAG:665 += 6 + (LOCAL:1 * 2)
+ENDIF
+
+IF FLAG:655 >= 100 || FLAG:657 >= 100 || FLAG:659 >= 100 || FLAG:661 >= 100 || FLAG:663 >= 100 || FLAG:665 >= 100
+	CALL REPOP_SELECT(1)
+ENDIF
+
+
+@REPOP_SELECT(ARG:0)
+;ARG:0	湧き方選別　0：通常　1：ターン終了時　2：ランク4以下
+;LOCAL
+;0	LOOP
+;2	わく敵の種類
+;3	ランクに対応するフラグ指定
+;4	湧き速度
+;5	ループその2
+
+;7	わき制限
+;8	フィルターで弾いた回数
+;10	LOOP
+
+;敵のわき調節　敵の数が50種類超えるとフラグが足りなくなるので
+;敵の強さとか元々のわき速度で7グループに分ける　ひとつはボスなのでフラグ6つで現在の敵をすべて管理
+;敵の種類で湧きを偏らせるため再抽選　FLAG:527が1.女性系、2.植物系、4.動物系、8.丸呑系、16.海産系、32.その他
+
+;LOCALリセット
+LOCAL:7 = 0
+LOCAL:8 = 0
+
+;LOCAL:2がモンスター番号
+;100回ループ　まあ色々実験した結果……
+FOR LOCAL:10, 0, 100
+	;通常沸きする敵の番号が5～95なのでそこをランダムに指定し敵データ呼び込み　データがなければ戻る
+	LOCAL:2 = 5 + RAND:91
+	;娘とドッペルは処理が特殊なのでパスする
+	SIF LOCAL:2 == 18 || LOCAL:2 == 19
+		CONTINUE
+	TRYCCALLFORM SET_ENEMY_DATA_{LOCAL:2}(FLAG:1)
+	CATCH
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	ENDCATCH
+
+	;湧かないランク7は弾く
+	IF DA:(FLAG:1):86 == 7
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	;コンフィグ設定している場合は敵の系統で湧き制御
+	ELSEIF FLAG:527 > 0 && (DA:(FLAG:1):85 & FLAG:527) == 0
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	;コンフィグ設定している場合は敵の狙う部位で湧き制御
+	ELSEIF FLAG:542 > 0 && (DA:(FLAG:1):89 & FLAG:542) == 0
+		LOCAL:8 += 1
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	;敵の種類でフィルターを掛けたものを弾く
+	ELSEIF FLAG:536 > 0 && (DA:(FLAG:1):85 & FLAG:536) && FLAG:536 != 63
+		LOCAL:8 += 1
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	;狙う部位でフィルターを掛けたものを弾く
+	ELSEIF FLAG:543 > 0 && (DA:(FLAG:1):89 & FLAG:543)
+		LOCAL:8 += 1
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	;男もONでなければ弾く
+	ELSEIF (FLAG:512 & 1) == 0 && (DA:(FLAG:1):85 & 128)
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	;個別フィルターを掛けたものを弾く
+	ELSEIF FLAG:(LOCAL:2 + 700) < 0
+		LOCAL:8 += 1
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	;不意打ちイベント等はランク4以下のみ
+	ELSEIF ARG:1 == 2 && DA:(FLAG:1):86 > 4
+		;湧かなかった時用にフラグリセット
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+		CONTINUE
+	ENDIF
+	
+	;LOCAL:3にランクと対応する湧き用フラグを入れる
+	LOCAL:3 = DA:(FLAG:1):86 * 2 + 653
+
+	;湧きフラグを下げておく　イベントによってはマイナスになりしばらく出てこないもありうる
+	FLAG:(LOCAL:3) -= 100
+	
+	;ターン終了時は4隅以外の何処かにランダム
+	IF ARG:0 == 1 && LOCAL:2
+		CALL CREATE_ENEMY(LOCAL:2, GET_CENTER_ROOM(), FLAG:5)
+	ELSEIF LOCAL:2
+		CALL CREATE_ENEMY(LOCAL:2, FLAG:5, 0)
+	ENDIF
+	LOCAL:7 += 1
+	
+	;通常は一匹で終了
+	IF ARG:1 == 0 && LOCAL:7
+		BREAK
+	;最大3匹湧いたら終了
+	ELSEIF LOCAL:7 == 3
+		BREAK
+	ENDIF
+
+
+NEXT
+
+;何もわかなければバイオプラント
+IF LOCAL:7 == 0
+	IF ARG:0 == 1
+		CALL CREATE_ENEMY(4, GET_CENTER_ROOM(), FLAG:5)
+	ELSE
+		CALL CREATE_ENEMY(4, FLAG:5, 0)
+	ENDIF
+ENDIF
+
+;フィルターで弾いたらその分わきフラグを増やす　減らし過ぎた場合の対策　強い奴もわくが気にしない
+IF LOCAL:8
+	FLAG:655 += LOCAL:8
+	FLAG:657 += LOCAL:8 / 2
+	FLAG:659 += LOCAL:8 / 2
+	FLAG:661 += LOCAL:8 / 2
+	FLAG:663 += LOCAL:8 / 2
+ENDIF
+
+
+;!!!テスト用
+;WHILE FLAG:670 >= 100
+;	CALL CREATE_ENEMY(99, 0, FLAG:5)
+;	FLAG:670 -= 100
+;WEND
+
+
+;敵の数取得
+@COUNT_ENEMY(ARG:0)
+;LOCAL
+;0	LOOP
+;1	バイオプラントの数
+
+LOCAL:1 = 0
+
+FOR LOCAL:0, 1, FLAG:1
+	SIF DA:(LOCAL:0):0 == ARG:0
+		LOCAL:1 += 1
+NEXT
+
+RETURN LOCAL:1
+

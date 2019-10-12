@@ -1,0 +1,345 @@
+﻿;味方のコマンド発動
+@SYSTEM_MESSAGE_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+SETCOLOR 0x10EEEE
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_1)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+	CASE 1
+		IF ARG:2 == 0
+			PRINTFORML %ARGS:0%は身を守っている！
+		ENDIF
+		IF ARG:2 == 1
+			SELECTCASE ARG:3
+				;装備品によってメッセージ変えようかと思ったけど、思いつかなかったので投げる。
+				CASE 1
+					PRINTFORML %ARGS:0%は弾の尽きた%ARGS:1%を投げ捨て、新しい%ARGS:1%を取り出した！
+				CASE 2
+					PRINTFORML %ARGS:0%は弾の尽きた%ARGS:1%を投げ捨て、新しい%ARGS:1%を取り出した！
+				CASE 3
+					PRINTFORML %ARGS:0%は弾の尽きた%ARGS:1%を投げ捨て、新しい%ARGS:1%を取り出した！
+				CASE 4
+					PRINTFORML %ARGS:0%は弾の尽きた%ARGS:1%を投げ捨て、新しい%ARGS:1%を取り出した！
+				CASE 5
+					PRINTFORML %ARGS:0%は弾の尽きた%ARGS:1%を投げ捨て、新しい%ARGS:1%を取り出した！
+				CASE 6
+					PRINTFORML %ARGS:0%は弾の尽きた%ARGS:1%を投げ捨て、新しい%ARGS:1%を取り出した！
+				CASE 7
+					PRINTFORML %ARGS:0%は弾の尽きた%ARGS:1%を投げ捨て、新しい%ARGS:1%を取り出した！
+			ENDSELECT
+		ENDIF
+	CASE 2
+		PRINTFORML %ARGS:0%は%ARGS:1%を使った！
+	CASE 3
+		PRINTFORML %ARGS:0%は敵との距離を縮めた！
+	CASE 4
+		PRINTFORML %ARGS:0%は敵から離れた！
+	CASE 5
+		PRINTFORML %ARGS:0%%TACHI()%は逃げ出した！
+		RESETCOLOR
+		IF ARG:2 == 0
+			PRINTFORML しかし逃げ道を塞がれてしまった！
+		ENDIF
+	CASE 8
+		IF FLAG:6 >= 50
+			PRINTFORML %ARGS:0%は応急的に浄化を行った！
+		ELSE
+			PRINTFORML %ARGS:0%は部屋を浄化しようとしたが、浄化力が足りない！
+		ENDIF
+	CASE 10
+		PRINTFORML %ARGS:0%は命中を重視した攻撃を放った！
+	CASE 11
+		PRINTFORML %ARGS:0%は通常の攻撃を放った！
+	CASE 12
+		PRINTFORML %ARGS:0%は威力を重視した攻撃を放った！
+	CASE 13
+		IF ARG:2 == 0
+			PRINTFORML %ARGS:0%は攻撃を放つための力を溜めている！
+		ELSE
+			PRINTFORML %ARGS:0%は溜めた力を使い、強烈な攻撃を放った！
+		ENDIF
+	CASE 14
+		PRINTFORML %ARGS:0%は敵の行動を制限するための罠をばら撒いた！
+	CASE 15
+		PRINTFORML %ARGS:0%は貫通力の高い攻撃を放った！
+	CASE 20
+		PRINTFORML %ARGS:0%は命中を重視した攻撃を放った！
+	CASE 21
+		PRINTFORML %ARGS:0%は通常の攻撃を放った！
+	CASE 22
+		PRINTFORML %ARGS:0%は威力を重視した攻撃を放った！
+	CASE 23
+		PRINTFORML %ARGS:0%は効率の良い攻撃を放った！
+	CASE 24
+		PRINTFORML %ARGS:0%は敵全体に攻撃を乱れ撃った！
+	CASE 25
+		PRINTFORML %ARGS:0%は敵の弱点に集中して攻撃を放った！
+	CASE 30
+		PRINTFORML %ARGS:0%は命中を重視して攻撃した！
+	CASE 31
+		PRINTFORML %ARGS:0%はバランスの取れた攻撃をした！
+	CASE 32
+		PRINTFORML %ARGS:0%は威力を重視して攻撃した！
+	CASE 33
+		PRINTFORML %ARGS:0%は相手の足元を狙って攻撃した！
+	CASE 34
+		PRINTFORML %ARGS:0%は相手の急所を狙って攻撃した！
+	CASE 35
+		;カウンター中（ARG:0が50）の方で記述
+	CASE 42
+		IF ARG:3 == 0
+			IF ARG:2
+				PRINTFORML %ARGS:0%は%ARGS:1%の中から逃れようとした！
+			ELSE
+				PRINTFORML %ARGS:0%は%ARGS:1%の拘束から逃れようとした！
+			ENDIF
+		ELSEIF ARG:3 == 1
+			RESETCOLOR
+			PRINTFORML しかし絶頂によって力が抜けてしまい、上手くいかなかった！
+		ELSEIF ARG:3 == 2
+			RESETCOLOR
+			IF ARG:2
+				PRINTFORML %ARGS:0%は何とか%ARGS:1%の中から抜け出した！
+			ELSE
+				PRINTFORML %ARGS:0%は何とか%ARGS:1%を振り払った！
+			ENDIF
+		ELSEIF ARG:3 == 3
+			RESETCOLOR
+			IF ARG:2
+				PRINTFORML %ARGS:0%は少しだけ%ARGS:1%の中から這い出した！
+			ELSE
+				PRINTFORML %ARGS:0%はどうにか数本の触手を振り払うことができた！
+			ENDIF
+		ELSEIF ARG:3 == 4
+			RESETCOLOR
+			IF ARG:2
+				PRINTFORML しかし%ARGS:0%は再び%ARGS:1%に呑み込まれた…
+			ELSE
+				PRINTFORML しかし絡みつく触手が%ARGS:0%を逃すことは無かった…
+			ENDIF
+		ENDIF
+	CASE 43
+		IF ARG:2 == 0
+			PRINTFORML %ARGS:0%は%ARGS:1%から逃れるための力を溜めている！
+		ELSEIF ARG:2 == 1
+			RESETCOLOR
+			PRINTFORML しかし絶頂によって力が抜けてしまい、上手くいかなかった！
+		ENDIF
+	CASE 44
+		IF ARG:2 == 0
+			CALL SYSTEM_MESSAGE_44(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ELSEIF ARG:2 == 1
+			PRINTFORML %ARGS:0%は全てを諦め、敵に身を委ねている…
+		ENDIF
+	CASE 45
+		PRINTFORML %ARGS:0%は動けずにジッとしている…
+	CASE 46
+		PRINTFORML %ARGS:0%は自慰の事しか考えられなくなっている！
+	CASE 47
+		PRINTFORML %ARGS:0%は自慰をしながら攻撃を放った！
+	CASE 50
+		PRINTFORML %ARGS:0%は必死で尻を隠している！
+	CASE 51
+		PRINTFORML %ARGS:0%は必死で胸を隠している！
+	CASE 52
+		IF GET_PENIS(TARGET)
+			PRINTFORMW %ARGS:0%は必死で股間を隠している！
+		ELSE
+			PRINTFORMW %ARGS:0%は必死でクリトリスを隠している！
+		ENDIF
+	CASE 53
+		IF TALENT:0
+			PRINTFORML %ARGS:0%は必死で処女を守ろうとしている！
+		ELSE
+			PRINTFORML %ARGS:0%は必死で性交を防ごうとしている！
+		ENDIF
+	CASE 54
+		PRINTFORML %ARGS:0%はおねだりをした！
+	CASE 55
+		PRINTFORML %ARGS:0%はおねだりをした！
+	CASE 56
+		PRINTFORML %ARGS:0%はおねだりをした！
+	CASE 57
+		PRINTFORML %ARGS:0%はおねだりをした！
+	CASE 58
+		PRINTFORML %ARGS:0%はおねだりをした！
+	CASE 60
+		IF ARG:3 == 1
+			SELECTCASE ARG:2
+				CASE 20 TO 23
+					PRINTFORML %ARGS:1%の力を使い%ARGS:0%は、強力な攻撃を放った！
+				CASE 24
+					PRINTFORML %ARGS:1%から巻き起こる風が%ARGS:0%%TACHI()%を安全なところに運ぶ！
+				CASE 25
+					PRINTFORML %ARGS:0%は%ARGS:1%をかざした！
+					PRINTFORML 強烈な風が巻き起こる！
+				CASE 26
+					PRINTFORML %ARGS:0%は%ARGS:1%を懐から取り出した！
+					PRINTFORML ザ・ワールド！
+					PRINTFORML しかしなにも起きなかった！
+				CASE 27
+					PRINTFORML %ARGS:0%は%ARGS:1%を抱きしめた！
+					PRINTFORML しかしなにも起きなかった！
+				CASE 28
+					PRINTFORML %ARGS:0%は%ARGS:1%を開放した！
+					PRINTFORML 周囲の触手が桜の花びらとなり虚空に消えた！
+				CASE 32, 36
+					PRINTFORML %ARGS:0%は%ARGS:1%を握り締めた！
+					PRINTFORML しかしなにも起きなかった！
+				CASE 40
+					PRINTFORML ヒュプノの魔眼が怪しく光った！
+				CASEELSE
+					PRINTFORML %ARGS:0%は%ARGS:1%を使った！
+					PRINTFORML しかしなにも起きなかった！
+			ENDSELECT
+		ELSEIF ARG:3 == 2
+			SELECTCASE ARG:2
+				CASE 20, 23
+					PRINTFORML %ARGS:1%は粉々に砕け散った！
+				CASE 21
+					PRINTFORML %ARGS:1%が輝きを失っていく…
+				CASE 22
+					PRINTFORML %ARGS:1%の姿が薄れていく…
+				CASE 24
+					PRINTFORML %ARGS:1%はただの靴に戻った！
+				CASE 25
+					PRINTFORML 煙幕が吹き飛ばされていく！
+				CASE 28
+					PRINTFORML %ARGS:1%は光を失った…
+				CASE 40
+					PRINTFORML %ARGS:0%%TACHI()%の目が虚ろになった…
+				CASEELSE
+			ENDSELECT
+		ENDIF
+	CASE 71
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は目の前の敵にキスをしてイチャイチャし始めた！
+		ELSE
+			PRINTFORML %ARGS:0%はうつろな目で体に馴染んでいる日常的な行動をとりはじめた！
+		ENDIF
+	CASE 73
+		IF CFLAG:(ARG:2):10 || CFLAG:(ARG:2):20
+			IF ARG:3
+				PRINTFORMW 我慢出来なくなった%ARGS:0%は、拘束されたままの%ARGS:1%に覆い被さると、股間から生えたペニスを無理矢理挿入した！
+			ELSE
+				PRINTFORMW 我慢出来なくなった%ARGS:0%は、拘束されたままの%ARGS:1%に覆い被さると、お互いの性器を擦り合わせた！
+			ENDIF
+		ELSE
+			IF ARG:3
+				PRINTFORMW %ARGS:0%は我慢できなくなり、%ARGS:1%を背後から押し倒し、股間から生えたペニスを無理矢理挿入した！
+			ELSE
+				PRINTFORMW %ARGS:0%は我慢できなくなり、%ARGS:1%を背後から押し倒し、お互いの性器を擦り合わせた！
+			ENDIF
+		ENDIF
+			
+	CASE 74
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は目の前の敵に見せつけるように着替え始めた！
+		ELSE
+			PRINTFORML %ARGS:0%は自分の服装が気になり着替え始めた！
+		ENDIF
+	CASE 75
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は目の前の敵の近くで安堵した表情を浮かべている！
+		ELSE
+			PRINTFORML %ARGS:0%は逃げようとしてなぜか敵の方へ走った！
+		ENDIF
+	CASE 76
+		PRINTFORML %ARGS:0%はその場に横たわるとすやすやと眠りはじめた
+	CASE 80
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は触手へのおしおきにグリグリと触手を踏みつけている！
+		ELSE
+			PRINTFORML %ARGS:0%は自分が触手に絡まれているのに気が付かないまま
+			PRINTFORML 女性への扱いが未熟な触手へのおしおきにグリグリと踏みつけている！
+		ENDIF
+	CASE 81
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は自分の体に好き勝手なことをする触手へのおしおきに何度も何度もビンタしている！
+		ELSE
+			PRINTFORML %ARGS:0%は手近に生えている触手の一本を捕まえるとストレス解消にビンタし始めた！
+		ENDIF
+	CASE 82
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は触手に新たな扉を開かせるため足でゆっくりと触手を愛撫している！
+			PRINTFORML しかし触手が我慢できずに触手を自分の方に這わせたのを見て愛撫してそそり立っていた触手を思いっきり踏みつぶした！
+		ELSE
+			PRINTFORML %ARGS:0%は触手を無表情に踏み潰している！
+		ENDIF
+	CASE 83
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は両手で優しく触手を包むとそっと口をつけた！
+		ELSE
+			PRINTFORML %ARGS:0%はやわらかな唇に触手を押し付けられている！
+		ENDIF
+	CASE 84
+		IF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は表情をとろけさせながら手で触手に奉仕している！
+		ELSE
+			PRINTFORML %ARGS:0%は事務的な表情で触手を手でこすっている！
+		ENDIF
+	CASE 85
+		IF ABL:11 > 2 && ABL:14 > 2
+			PRINTFORML %ARGS:0%は自分から触手に吸い付き音を立てながら白濁液を舐めとっている！
+		ELSEIF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は嬉しそうに触手に吸い付き顔をどろどろにしながら白濁液を舐めとっている！
+		ELSEIF FLAG:526 == 2
+			PRINTFORML %ARGS:0%は口の中にねじ込まれた触手に無表情に吸い付いている！
+		ELSE
+			PRINTFORML %ARGS:0%は自分から触手に吸い付き顔をどろどろにしながら白濁液を舐めとっている！
+		ENDIF
+	CASE 86
+		IF ABL:11 > 2 && ABL:14 > 2
+			IF GET_BUST(TARGET) >= 3 && BASE:3 > MAXBASE:3 / 2
+				PRINTFORML %ARGS:0%は触手を服の中に導くと巨大な乳房で挟み込んだ！
+			ELSEIF GET_BUST(TARGET) >= 3
+				PRINTFORML %ARGS:0%は触手を巨大な乳房で挟み込み身体が体液で汚れるのも気にせず奉仕している！
+			ELSEIF GET_BUST(TARGET) >= 1 && BASE:3 > MAXBASE:3 / 2
+				PRINTFORML %ARGS:0%は触手を服の中に導くと豊満な胸で挟み込んだ！
+			ELSEIF GET_BUST(TARGET) >= 1
+				PRINTFORML %ARGS:0%は触手を豊満な胸で挟み込み身体が体液で汚れるのも気にせず奉仕している！
+			ELSE
+				PRINTFORML %ARGS:0%は熱っぽい表情で触手に胸を擦りつけている！
+			ENDIF
+		ELSEIF FLAG:526 == 1
+			IF GET_BUST(TARGET) >= 3
+				PRINTFORML %ARGS:0%は触手を巨大な乳房で挟み込み身体が体液で汚れるのも気にせず奉仕している！
+			ELSEIF GET_BUST(TARGET) >= 1
+				PRINTFORML %ARGS:0%は触手を豊満な胸で挟み込み身体が体液で汚れるのも気にせず奉仕している！
+			ELSE
+				PRINTFORML %ARGS:0%は笑顔を浮かべながら触手に胸を擦りつけている！
+			ENDIF
+		ELSE
+			IF GET_BUST(TARGET) >= 3
+				PRINTFORML %ARGS:0%は無表情なまま触手を巨大な乳房で挟み込み身体が体液で汚れながら奉仕している！
+			ELSEIF GET_BUST(TARGET) >= 1
+				PRINTFORML %ARGS:0%は無表情なまま触手を豊満な胸で挟み込み身体が体液で汚れながら奉仕している！
+			ELSE
+				PRINTFORML %ARGS:0%は触手を念じられるまま胸に擦りつけている！
+			ENDIF
+		ENDIF
+	CASE 95
+		IF ARG:3 == 2
+			PRINTFORMW %ARGS:0%は%ARGS:1%から解放された…
+		ELSEIF ARG:3 == 1
+			PRINTFORMW %ARGS:0%は%ARGS:1%から抜け出した！
+		ELSE
+			PRINTFORMW %ARGS:0%は%ARGS:1%のされるままになっている…
+		ENDIF
+	CASE 96
+		IF ARG:3 == 3
+			PRINTFORMW %ARGS:0%は我慢できなくなり、%ARGS:1%を背後から押し倒し、股間から生えたペニスを無理矢理挿入した！
+		ELSEIF ARG:3 == 2
+			PRINTFORMW %ARGS:0%は我慢できなくなり、%ARGS:1%を背後から押し倒し、お互いの性器を擦り合わせた！
+		ELSEIF ARG:3 == 1
+			PRINTFORMW %ARGS:0%は欲望に染まった表情を浮かべながら%ARGS:1%を背後から犯し続けている…
+		ELSE
+			PRINTFORMW %ARGS:0%は欲望に染まった表情を浮かべながら%ARGS:1%とお互いの性器を擦り合わせ続けている…
+		ENDIF
+	CASEELSE
+		PRINTFORMW (SYSTEM_MESSAGE_1)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+ENDSELECT
+
+RESETCOLOR
+

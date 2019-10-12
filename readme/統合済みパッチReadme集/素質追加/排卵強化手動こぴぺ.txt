@@ -1,0 +1,167 @@
+﻿■排卵強化パッチ手動導入
+
+[CSVフォルダ]
+★Talent.csv	118行目に追記
+137,排卵異常,;危険日と排卵日を延長し、妊娠しやすくなる
+
+[ERBフォルダ]
+★ESTRUS_CYCLE.ERB	1行目～35行目を書き換え
+;発情周期チェック
+;ARG:0	対象キャラ
+@ESTRUS_CYCLE(ARG:0)
+;LOCAL
+;0	LOOP
+;1	月経周期何日目か
+;月経周期は面倒なので30日計算　12～14が排卵直前なので一番危ない
+;妊娠率は返す数値%なので射精量以下の確率に確定
+
+;周期の30で割ったあまりから月経日を引くと最後の月経から何日目かが出る
+;負の数値の場合は30を足してやって0～30で判別
+LOCAL:1 = (DAY % 30) - CFLAG:(ARG:0):150
+SIF LOCAL:1 < 0
+	LOCAL:1 += 30
+
+	IF TALENT:(ARG:0):137 == -1
+		SELECTCASE LOCAL:1
+			CASE 0 TO 29
+				RETURN 3
+		ENDSELECT
+	ELSEIF TALENT:(ARG:0):137 == 1
+		SELECTCASE LOCAL:1
+			CASE 0 TO 2
+				RETURN 15
+			CASE 3 TO 6
+				RETURN 50
+			CASE 7 TO 10
+				RETURN 70
+			CASE 11 TO 14
+				RETURN 150
+			CASE 15 TO 17
+				RETURN 100
+			CASE 18 TO 21
+				RETURN 60
+			CASE 22 TO 24
+				RETURN 60
+			CASE 25 TO 27
+				RETURN 40
+			CASE 28 TO 29
+				RETURN 15
+		ENDSELECT
+	ELSEIF TALENT:(ARG:0):137 == 2
+		SELECTCASE LOCAL:1
+			CASE 0 TO 2
+				RETURN 15
+			CASE 3 TO 5
+				RETURN 50
+			CASE 6 TO 9
+				RETURN 70
+			CASE 10 TO 14
+				RETURN 150
+			CASE 15 TO 18
+				RETURN 100
+			CASE 19 TO 22
+				RETURN 60
+			CASE 23 TO 26
+				RETURN 60
+			CASE 27 TO 29
+				RETURN 40
+		ENDSELECT
+	ELSEIF TALENT:(ARG:0):137 == 3
+		SELECTCASE LOCAL:1
+			CASE 0 TO 29
+				RETURN 150
+		ENDSELECT
+	ELSE
+		SELECTCASE LOCAL:1
+			CASE 0 TO 3
+				RETURN 15
+			CASE 4 TO 7
+				RETURN 50
+			CASE 8 TO 11
+				RETURN 70
+			CASE 12 TO 14
+				RETURN 150
+			CASE 15 TO 17
+				RETURN 100
+			CASE 18 TO 20
+				RETURN 60
+			CASE 21 TO 23
+				RETURN 60
+			CASE 24 TO 26
+				RETURN 40
+			CASE 27 TO 29
+				RETURN 15
+		ENDSELECT
+ENDIF
+
+★PRINT_VALUE_STR.ERB	189行目～204行目を書き換え
+;=======================
+;寄生・妊娠・排卵・抱卵
+;=======================
+@PRINT_CONDITION_4(ARG:0)
+;LOCAL:1	月経周期何日目か
+LOCAL:1 = (DAY % 30) - CFLAG:(ARG:0):150
+SIF LOCAL:1 < 0
+	LOCAL:1 += 30
+
+IF CFLAG:(ARG:0):22 && CFLAG:(ARG:0):36 == 0
+	RESULTS = 寄生
+ELSEIF CFLAG:(ARG:0):36 >= 3
+	RESULTS = 妊娠
+ELSEIF LOCAL:1 >= 0
+	IF TALENT:137 == 1
+		IF LOCAL:1 >= 11 && LOCAL:1 <= 14
+			RESULTS = 危険日
+			RETURN 0xEE0066
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 17
+			RESULTS = 排卵
+			RETURN 0xEE60EE
+		ENDIF
+	ELSEIF TALENT:137 == 2
+		IF LOCAL:1 >= 10 && LOCAL:1 <= 14
+			RESULTS = 危険日
+			RETURN 0xEE0066
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 18
+			RESULTS = 排卵
+			RETURN 0xEE60EE
+		ENDIF
+	ELSEIF TALENT:137 == 3
+		RESULTS = 排卵
+		RETURN 0xEE0066
+	ELSEIF TALENT:137 == 0
+		IF LOCAL:1 >= 12 && LOCAL:1 <= 14
+			RESULTS = 危険日
+			RETURN 0xEE0066
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 17
+			RESULTS = 排卵
+			RETURN 0xEE60EE
+		ENDIF
+	ENDIF
+ENDIF
+
+★SHOW_TALENT_LIST.ERB
+・57行目、ELSEIF LOCAL:0 == 160の前に追記
+		ELSEIF LOCAL:0 == 137
+			IF TALENT:(ARG:0):(LOCAL:0) == -1
+				LOCALS:0 = 未熟
+			ELSEIF TALENT:(ARG:0):(LOCAL:0) == 1
+				LOCALS:0 = 異常排
+			ELSEIF TALENT:(ARG:0):(LOCAL:0) == 2
+				LOCALS:0 = 肥大化
+			ELSEIF TALENT:(ARG:0):(LOCAL:0) == 3
+				LOCALS:0 = 苗床
+			ENDIF
+			LOCALS:0 += "卵巣"
+			LOCALS:0 = [%LOCALS:0%]
+
+・258行目、CASE 139の前に追記
+	CASE 137
+		IF ARG:1 == -1
+			PRINTFORM 少女の幼い卵巣は排卵しないため妊娠しません、しかし迷宮にはオトナの経験がいっぱいです
+		ELSEIF ARG:1 == 1
+			PRINTFORM いじられ続けて排卵間隔が短くなった卵巣は迷宮では格好の標的です
+		ELSEIF ARG:1 == 2
+			PRINTFORM ぶっくりと肥大化した卵巣は種付けの快楽を待っています
+		ELSEIF ARG:1 >= 3
+			PRINTFORM 醜く肥大化して受精快楽を覚えた卵巣は常に排卵し、受精を待っています
+		ENDIF

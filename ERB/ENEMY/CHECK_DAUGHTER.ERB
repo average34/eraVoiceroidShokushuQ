@@ -1,0 +1,82 @@
+﻿;娘の人数制限チェック
+;RETURN	0:娘追加不可能（人数上限＋削除できる娘も居ない）
+;		1:娘追加OK
+;追加OK＋削除が必要な場合、削除もこちらで済ませる
+@CHECK_DAUGHTER
+;LOCAL
+;0	LOOP
+;1	娘の人数
+
+;人数制限が無ければ無視
+IF FLAG:510 == 0
+	RETURN 1
+ENDIF
+
+;娘の人数を取得（リタイアしたキャラは除く）
+LOCAL:1 = GET_DAUGHTER_NUMBER()
+
+;上限に達していなければ1を返す
+IF LOCAL:1 < FLAG:510
+	RETURN 1
+ENDIF
+
+;上限に達している場合、削除可能かどうかチェック
+CALL DELETE_OLD_DAUGHTER
+
+IF RESULT
+	;削除できたので1を返す
+	RETURN 1
+ELSE
+	;削除できないので0を返す
+	RETURN 0
+ENDIF
+
+
+
+;(リタイアしていない)娘の人数を返す
+@GET_DAUGHTER_NUMBER
+#FUNCTION
+;LOCAL
+;0	LOOP
+;1	RETURN
+
+LOCAL:1 = 0
+
+FOR LOCAL:0, 1, CHARANUM
+	IF CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):104
+		LOCAL:1 += 1
+	ENDIF
+NEXT
+
+RETURNF LOCAL:1
+
+
+;娘を削除
+;RETURN	0:削除不可
+;		1:削除成功
+@DELETE_OLD_DAUGHTER
+;LOCAL
+;0	LOOP
+;1	削除候補
+
+LOCAL:1 = 0
+FOR LOCAL:0, 2, CHARANUM
+	;リタイアしていない＋PTメンバーでない娘を先頭(古い方)から順に検索
+	IF CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):104 && LOCAL:0 != FLAG:10 && LOCAL:0 != FLAG:11
+		LOCAL:1 = LOCAL:0
+		BREAK
+	ENDIF
+NEXT
+
+IF LOCAL:1
+	;見つかったら、そのキャラを消す
+	;完全に消してキャラIDをずらすとまたバグが増えそうなので、強制リタイア扱いにする(つまり、デフォルトの人数制限なしとデータ量は変わらない)
+	CALL STATUS_RENEW_RELEASE(LOCAL:1)
+	CFLAG:(LOCAL:1):2 = 1
+	FLAG:0 -= 1
+	RETURN 1
+ELSE
+	;見つからない場合、削除不可能
+	RETURN 0
+ENDIF
+

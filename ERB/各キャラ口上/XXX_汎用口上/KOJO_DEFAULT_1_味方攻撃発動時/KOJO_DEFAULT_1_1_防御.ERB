@@ -1,0 +1,72 @@
+﻿
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1    1    コマンドID(防御)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"（身体を休めるのも作戦のうちよ）"
+	CALL ADD_RAND_MESSAGE, @"（身を守りながら隙をうかがいましょ）"
+		
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"（ちょっとでも隙見せたらぶっとばしてやる！）"
+		CALL ADD_RAND_MESSAGE, @"（じっとしてるのはつまらない～～～～～！）"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"（呼吸を整えて……クールにいこう……）"
+		CALL ADD_RAND_MESSAGE, @"（後の先だ……機会を逃すな……）"
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"（どこかに隙はないか――？）"
+		CALL ADD_RAND_MESSAGE, @"「身を屈めて縮こまってるとか、性に合わないな……」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"（こうしてる間にどこか行ってくれないかな……）"
+		CALL ADD_RAND_MESSAGE, @"（あ、足がすくんでうまく動けない……）"
+	ENDSELECT
+			
+	; 現MPが最大MPの1/4以下時 追加口上
+	IF BASE:1 <= (MAXBASE:1 / 4)
+		CALL ADD_RAND_MESSAGE, @"「少しでも回復に専念しないと……」"
+		CALL ADD_RAND_MESSAGE, @"「ちょ、ちょっとまずいかも……」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「ピンチはチャンス……！」"
+			CALL ADD_RAND_MESSAGE, @"（絶対ぶっとばしてやる……！）"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"（こういう時こそ冷静に……）"
+			CALL ADD_RAND_MESSAGE, @"「死中に活あり……！」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「攻撃は最大の防御……　とはいかないな」"
+			CALL ADD_RAND_MESSAGE, @"「本調子なら守りなんか……」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「いや……　来ないで……」"
+			CALL ADD_RAND_MESSAGE, @"（誰か……　助けて……）"
+		ENDSELECT
+	ENDIF
+	; 仲間がいる時の追加口上
+	IF FLAG:10
+		CALL ADD_RAND_MESSAGE, @"「少しでも回復に専念しないと……」"
+		CALL ADD_RAND_MESSAGE, @"「ねぇ、ちょっとまずいんじゃない……？」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「こっちに来なさい」"
+			CALL ADD_RAND_MESSAGE, @"（見切れるか？）"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「私の代わりに倒してよ……」"
+			CALL ADD_RAND_MESSAGE, @"（戦いは任せられないかな……）"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+
+
+
+
+
+
+

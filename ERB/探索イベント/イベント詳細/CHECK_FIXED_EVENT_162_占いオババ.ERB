@@ -1,0 +1,183 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_162
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	被害者あり
+;5	TEMP
+;6	TEMP
+;7	TEMP
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 0
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	PRINTFORML 迷宮内を探索していた%CALLNAME:1%%TACHI()%の前に、占いオババが現れた
+	PRINTFORMW 「ほう、こんな所で人に会うとは、珍しいこともあるもんじゃな」
+	PRINTFORMW 「ここで会ったのも何かの縁じゃ。オババの占いを受けてみんか？」
+	PRINTFORML 　
+	PRINTFORML 占ってもらいますか？
+	PRINTFORML 　
+	$INPUT_LOOP_OBABA
+	PRINTL [0] はい
+	PRINTL [1] いいえ
+	INPUT
+	
+	IF RESULT == 0
+		PRINTFORML 「当たるも八卦。当たらぬも八卦。悪い結果が出たところで、あまり気にせんことじゃな」
+		PRINTFORMW そういうとオババは懐から水晶玉を取り出し、念を込め始めた…
+		PRINTFORMW 　
+		PRINTFORMW …
+		PRINTFORMW ……
+		LOCAL:7 = RAND:6
+		
+		IF LOCAL:7 == 0
+			PRINTFORMW 「『今日は外出を控え、家の中で過ごしましょう』じゃな」
+			PRINTFORMW むしろ外に出たい……
+		
+		ELSEIF LOCAL:7 == 1
+			PRINTFORMW 「『出会いのチャンス！　素敵な彼氏が見つかるかも！？』じゃな。よかったの」
+			PRINTFORMW 何故だろう。嫌な予感しかしない…
+			
+		ELSEIF LOCAL:7 == 2
+			PRINTFORMW 「『角を目指せ』か……何処かに鬼でも居るのかの？」
+			PRINTFORMW …………“ツノ”？
+			
+		ELSEIF LOCAL:7 == 3
+			PRINTFORMW 「『明日の天気は雨』じゃな。ムードアップが上がるし、気力も減りにくくなる。デートにはいいかもしれんの」
+			PRINTFORMW それは別のバリアントだ
+			
+		ELSEIF LOCAL:7 == 4
+			PRINTFORMW 「…………」
+			PRINTFORML 「………………ぐぅ」
+			PRINTFORMW 占いオババは眠ってしまったようだ
+			PRINTFORMW …………無駄な時間を費やしてしまった
+			PRINTFORMW 鼻ちょうちんを膨らませ始めたオババを放置して、%CALLNAME:1%%TACHI()%は探索を再開した
+			
+		ELSE
+			PRINTFORMW 「『2秒後、お主らは触手の海に投げ出されるだろう』か、やけに具体的な結果が出たの」
+			PRINTFORMW 「…………って、2秒ぉ！？」
+			PRINTFORMW 占いオババが驚きの声を上げると同時に、突然地面に穴が開いた！
+			PRINTFORML 　
+			LOCAL:4 = 0
+			IF 50 > RAND:(100 + ABL:1:5 * 50)
+				CALL ADD_ABL_EXP(5, 1, 1000 + RAND:(ABL:1:5 * 500 + 1))
+				CALL PRINT_MESSAGE(1, 200, 138, CALLNAME:1, "", 1)
+				LOCAL:5 = 5 + RAND:4 + RAND:4
+				FOR LOCAL:0, 0, LOCAL:5
+					LOCAL:6 = RAND:4
+					IF LOCAL:6 == 3
+						CALL LOST_VIRGIN(1, 1, 4)
+					ENDIF
+					CALL EXTASY(1, LOCAL:6, RAND:50, 150)
+				NEXT
+				;妊娠はしない
+					LOCAL:4 = 1
+				WAIT
+			ELSE
+				CALL ADD_ABL_EXP(5, 1, 500 + RAND:(ABL:1:5 * 200 + 1))
+				CALL PRINT_MESSAGE(1, 200, 138, CALLNAME:1, "", 2)
+			ENDIF
+			IF FLAG:10
+				IF 50 > RAND:(100 + ABL:(FLAG:10):5 * 50)
+					CALL ADD_ABL_EXP(5, FLAG:10, 1000 + RAND:(ABL:(FLAG:10):5 * 500 + 1))
+					CALL PRINT_MESSAGE(FLAG:10, 200, 138, CALLNAME:1, "", 1)
+					LOCAL:5 = 5 + RAND:4 + RAND:4
+					FOR LOCAL:0, 0, LOCAL:5
+						LOCAL:6 = RAND:4
+						IF LOCAL:6 == 3
+							CALL LOST_VIRGIN(FLAG:10, 1, 4)
+						ENDIF
+						CALL EXTASY(FLAG:10, LOCAL:6, RAND:50, 150)
+					NEXT
+					LOCAL:4 = 1
+					WAIT
+				ELSE
+					CALL ADD_ABL_EXP(5, FLAG:10, 500 + RAND:(ABL:(FLAG:10):5 * 200 + 1))
+					CALL PRINT_MESSAGE(FLAG:10, 200, 138, CALLNAME:1, "", 2)
+				ENDIF
+			ENDIF
+			IF FLAG:11
+				IF 50 > RAND:(100 + ABL:(FLAG:11):5 * 50)
+					CALL ADD_ABL_EXP(5, FLAG:11, 1000 + RAND:(ABL:(FLAG:11):5 * 500 + 1))
+					CALL PRINT_MESSAGE(FLAG:11, 200, 138, CALLNAME:1, "", 1)
+					LOCAL:5 = 5 + RAND:4 + RAND:4
+					FOR LOCAL:0, 0, LOCAL:5
+						LOCAL:6 = RAND:4
+						IF LOCAL:6 == 3
+							CALL LOST_VIRGIN(FLAG:11, 1, 4)
+						ENDIF
+						CALL EXTASY(FLAG:11, LOCAL:6, RAND:50, 150)
+					NEXT
+					LOCAL:4 = 1
+					WAIT
+				ELSE
+					CALL ADD_ABL_EXP(5, FLAG:11, 500 + RAND:(ABL:(FLAG:10):5 * 200 + 1))
+					CALL PRINT_MESSAGE(FLAG:11, 200, 138, CALLNAME:1, "", 2)
+				ENDIF
+			ENDIF
+			
+			IF LOCAL:4
+				PRINTFORML 落とし穴に落ちてしまった占いオババに、中で待ち構えていた触手が殺到する！
+				
+				FOR LCOUNT,0, (RAND:5 + 5)
+					LOCAL:12 = 30 + (RAND:30 * 20) + RAND:30
+					PRINTFORM 占いオババはイッてしまった！ (MP 
+					SETCOLOR 0x70FF70
+					PRINTFORM -{LOCAL:12}
+					RESETCOLOR
+					PRINTFORML )
+				NEXT
+				
+				PRINTFORML 　
+				PRINTFORMW 触手の体液でベトベトに濡れながらも、何とか%CALLNAME:1%%TACHI()%は落とし穴から這い上がった…
+				PRINTFORML 　
+				PRINTFORML 触手の体液でベトベトに濡れながらも、何とか占いオババは落とし穴から這い上がった…
+				PRINTFORMW 「ふう、ひどい目にあったわい」
+			ELSE
+				PRINTFORML 
+				PRINTFORML 落とし穴の中には無数の触手が見える…
+				PRINTFORMW 幸運にもその脅威を回避することができた%CALLNAME:1%%TACHI()%は、急いでその場から離れた…
+				PRINTFORML 　
+				PRINTFORMW 幸運にもその脅威を回避することができた占いオババは、急いでその場から離れた…
+				PRINTFORML 「やれやれ、危ないところじゃったのう…」
+			ENDIF
+			
+			WAIT
+			
+		ENDIF
+			IF LOCAL:7 != 4
+				PRINTFORML 「それじゃあ、ワシはもう行くよ。達者でな」
+				PRINTFORMW そう言うと、占いオババは立ち去っていった…
+			ENDIF
+			
+	ELSEIF RESULT == 1
+		PRINTFORMW 「ふむ、まあ無理にとは言わんからの」
+		PRINTFORMW そう言うと、占いオババは立ち去っていった…
+	
+	ELSE
+		GOTO INPUT_LOOP_OBABA
+		
+	ENDIF
+	
+	;別の場所に再配置
+	FLAG:162 = RAND:30 + 1
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

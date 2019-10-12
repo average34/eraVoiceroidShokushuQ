@@ -1,0 +1,115 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_51(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 100
+DA:(ARG:0):2 = 100
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 30
+DA:(ARG:0):9 = 30
+
+DA:(ARG:0):15 = 10
+DA:(ARG:0):16 = 20
+DA:(ARG:0):17 = 70
+DA:(ARG:0):18 = 100
+DA:(ARG:0):19 = 20
+
+DA:(ARG:0):40 = 2
+DA:(ARG:0):41 = 2
+DA:(ARG:0):42 = 2
+DA:(ARG:0):43 = 2
+DA:(ARG:0):44 = 2
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 20
+DA:(ARG:0):86 = 3
+
+;EXモードでは消えてもらう
+SIF FLAG:999
+	DA:(ARG:0):86 = 7
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(51)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_51(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 != 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1 && CFLAG:(ARG:1):29 && RAND:100 < 40
+		LOCAL:2 = 1
+	ELSE
+		LOCAL:3 = RAND:12
+		SELECTCASE LOCAL:3
+		CASE 0 TO 1
+			LOCAL:2 = 154
+		CASE 2 TO 3
+			LOCAL:2 = 155
+		CASE 4 TO 5
+			LOCAL:2 = 244
+		CASE 6 TO 7
+			LOCAL:2 = 27
+		CASE 8
+			LOCAL:2 = 28
+		CASEELSE
+			LOCAL:2 = 29
+		ENDSELECT
+	ENDIF
+ELSE
+	LOCAL:3 = RAND:14
+	SELECTCASE LOCAL:3
+		CASE 0 TO 1
+			LOCAL:2 = 154
+		CASE 2 TO 3
+			LOCAL:2 = 155
+		CASE 4 TO 5
+			LOCAL:2 = 244
+		CASE 6 TO 7
+			LOCAL:2 = 27
+		CASE 8
+			LOCAL:2 = 28
+		CASE 9 TO 10
+			LOCAL:2 = 29
+		CASEELSE
+			LOCAL:2 = 30
+	ENDSELECT
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

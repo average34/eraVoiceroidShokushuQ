@@ -1,0 +1,233 @@
+﻿
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1         アイテムID
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; ストック上限、もう持てない
+	IF ITEM:(ARG:1) == GET_ITEM_MAX(ARG:1)
+		CALL ADD_RAND_MESSAGE, @"「もうコレはいいかな、沢山持ってるし」"
+		CALL ADD_RAND_MESSAGE, @"「同じ物ばかり大量に持っててもねえ」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「いくら使えそうでも、同じ物ばかり大量には持てないな」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「きっと同じ物ばかり落とす奴がいるのね」"
+			CALL ADD_RAND_MESSAGE, @"「落ちてる物にも少しはバリエーションが欲しいものだわ」"
+		ENDSELECT
+		
+	; まだ持てる
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「あら、何か落ちてるわ」"
+		CALL ADD_RAND_MESSAGE, @"「誰が落としたのかしら」"
+		CALL ADD_RAND_MESSAGE, @"「何でこんなものが落ちてるのかしら」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「酷い散らかりようね　あら、これは使えるかも」"
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「いいもの拾ったー♪」"
+			CALL ADD_RAND_MESSAGE, @"「やった！　いいもんめーっけ！」"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「使えそうね」"
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「落ちてる物の周りに罠とかないでしょうね……」"
+		CASE 性格_しあわせもの
+			CALL ADD_RAND_MESSAGE, @"「使えそうな物が落ちてる、普段の行いの賜物ね」"
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「物陰に隠れるように何か落ちて……」"
+			CALL ADD_RAND_MESSAGE, @"「これは何かの役に立つかな」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「こんな場所で大事な道具を、よくもまあ落とせるもんだ」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「大事に使うから……　落とした人、ごめんね……」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1   10    アイテムID 10:こんぼう
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「あんまり役に立ちそうにないけど……」"
+	CALL ADD_RAND_MESSAGE, @"「ま、手ぶらよりはマシかな」"
+		
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「おー、いいじゃんこれー！　てりゃてりゃー！」"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「ないよりマシ……って所ね」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1   26    アイテムID 26:咲夜の時計
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113_26(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; important属性付与
+	; 一度しか拾えない固定イベントアイテムなので必ず専用口上を呼び出す
+	CALL SET_IMPORTANT_FLAG
+	
+	CALL ADD_RAND_MESSAGE, @"「不思議な時計ね、少しだけ周りの時間が止まるみたい」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1   39    アイテムID 39:媚薬
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113_39(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「こ、この薬……　もしかして……」"
+	CALL ADD_RAND_MESSAGE, @"「これは……えっちなやつ……？」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「なんだこれ？　飲み物……じゃあないか」"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「この薬は……　ここの生き物の体液を濃縮したものみたいね……」"
+	CASE 性格_くろうにん
+		CALL ADD_RAND_MESSAGE, @"「なんでこんなのばっかり見つかるかな……」"
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「あらあらあら♪　こんなモノが♪」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1   52    アイテムID 52:日本酒
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「お酒が落ちてるとか、怪しいわ……」"
+	CALL ADD_RAND_MESSAGE, @"「こんなところにお酒って……大丈夫なのこれ？」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「落ちてるお酒とか飲んでくれって言ってるようなもんだよね、うん」"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「何か変な物でも混ざってる可能性があるわね、飲む前にはちゃんと調べないと」"
+	CASE 性格_しあわせもの
+		CALL ADD_RAND_MESSAGE, @"「あ、ラッキー。おいしいといいな」"
+	CASE 性格_ぬけめがない
+		CALL ADD_RAND_MESSAGE, @"「ちょっと味見、っと。……うん、おいしい」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「お酒が落ちてるとか気前が良いわね」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「こんな所にお酒とか、誰が置いたのかしら」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1   54    アイテムID 54:着替えセット
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113_54(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 着替えのストック十分、もう持てない
+	IF ITEM:(73) == GET_ITEM_MAX(73)
+		CALL ADD_RAND_MESSAGE, @"「流石に服はもういいかな、旅行に行くわけじゃないし」"
+		CALL ADD_RAND_MESSAGE, @"「ん～こんな場所でお洒落してる余裕もないし……」"
+		
+	
+	; まだ持てる
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「服か、ここじゃ貴重品ね……」"
+		CALL ADD_RAND_MESSAGE, @"「着替えは大事にしないとね」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_しあわせもの
+			CALL ADD_RAND_MESSAGE, @"「あ、この服可愛いー」"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「あ、この下着……ふふふ」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「よかったぁ……　予備の服があるのは心強いわ」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1   60    アイテムID 60:大人の玩具
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113_60(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; important属性付与
+	; 一度しか拾えない固定イベントアイテムなので必ず専用口上を呼び出す
+	CALL SET_IMPORTANT_FLAG
+	
+	CALL ADD_RAND_MESSAGE, @"「な、何でこんなものが……！？」"
+	CALL ADD_RAND_MESSAGE, @"「ちょっと……！　なんでこんなのが落ちてるのよ……」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「うわっ、何これ？　変な形しててブルブル震える」"
+	CASE 性格_くろうにん
+		CALL ADD_RAND_MESSAGE, @"（犯されるより自分でした方がマシかもね……）"
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「犯されるくらいなら自分でしろって事かな？」"
+	ENDSELECT
+	
+		; 自慰中毒LVで分岐
+	SELECTCASE ABL:10
+	
+	; 自慰中毒LV1
+	CASE 1
+		CALL ADD_RAND_MESSAGE, @"（う、うそ……これって♥）"
+		CALL ADD_RAND_MESSAGE, @"（使って……いいんだよね……♥）"
+
+		
+	; 自慰中毒LV2
+	CASE 2
+		CALL ADD_RAND_MESSAGE, @"（や、やだ……♥　使ってるとこ想像しちゃった……♥）"
+		CALL ADD_RAND_MESSAGE, @"（こんなの……♥　今すぐ使いたくなっちゃう……♥）"		
+
+	; 自慰中毒LV3
+	CASE 3
+		CALL ADD_RAND_MESSAGE, @"（あ♥　うそ♥　想像した♥　だけでイキそうにっ♥　いぃ♥♥）"
+		CALL ADD_RAND_MESSAGE, @"（早く……♥♥　早く使いたい♥　どこか……どこか……人目につかない場所……♥♥）"
+	ENDSELECT
+	
+	; 発情中 追加口上
+	IF CFLAG:28
+	CALL ADD_RAND_MESSAGE, @"「つ、使えって事……よね♥」"
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"（これを使えば疼きがおさまるかも……　しかし……）"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"（どう使うか分かる自分が恨めしい……）"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「身体が火照ってる時にこんな物が落ちてるなんて、都合良すぎじゃありませんか♥」"
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「発情させられた上、こんな物が見つかるなんて……　悪意しか感じない……」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  113    探索でアイテムを見つけた
+; / ARG:1   65    アイテムID 65:胡蝶夢丸ナイトメア
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_113_65(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; important属性付与
+	; 一度しか拾えない固定イベントアイテムなので必ず専用口上を呼び出す
+	CALL SET_IMPORTANT_FLAG
+	
+	CALL ADD_RAND_MESSAGE, @"「ただの睡眠薬……にしては嫌な感じがする……」"
+	CALL ADD_RAND_MESSAGE, @"「これ……使って大丈夫なの……？」"
+RETURN 1
+

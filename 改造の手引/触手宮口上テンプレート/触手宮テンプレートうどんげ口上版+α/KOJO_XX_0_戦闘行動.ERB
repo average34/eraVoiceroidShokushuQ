@@ -1,0 +1,261 @@
+﻿;使う方の戦闘行動ファイルのXXをキャラのNoに置き換え、使わない戦闘行動ファイルを削除する
+;ARG:0 == 1の管理
+@BATTLE_MIKATA_KOUDOU_HATUDOU_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	IF ARG:1 < 10
+		CALL BATTLE_MIKATA_KOUDOU_SONOTA_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 16
+		CALL BATTLE_MIKATA_KOUDOU_DANMAKU_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 26
+		CALL BATTLE_MIKATA_KOUDOU_SYOUMOUBUKI_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 35
+		CALL BATTLE_MIKATA_KOUDOU_NO_SYOUMOUBUKI_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 54
+		CALL BATTLE_MIKATA_KOUDOU_KOUSOKU_NOW_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 59
+		CALL BATTLE_MIKATA_KOUDOU_ONEDARI_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 62
+		CALL BATTLE_MIKATA_KOUDOU_SOUBI_USE_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 90
+		CALL BATTLE_MIKATA_KOUDOU_SAIMIN_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 100
+		CALL BATTLE_MIKATA_KOUDOU_RAPE_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ENDIF
+RETURN
+
+@BATTLE_MIKATA_KOUDOU_SONOTA_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+	SELECTCASE ARG:1
+		;防御
+		CASE 1
+			;身を守る
+			IF ARG:2 == 0
+
+				;リロードフラグ洗浄
+				SIF CFLAG:805 == 5
+					CFLAG:805 = 0
+			;リロード
+			ELSEIF ARG:2 == 1
+				;リロード二刀流
+				IF CFLAG:805 == 5
+					CFLAG:805 = 0
+				;一回目
+				ELSE
+					CFLAG:805 = 5
+				ENDIF
+
+			ENDIF
+		;アイテム
+		CASE 2
+		;前進
+		CASE 3
+		;後退
+		CASE 4
+		;逃走
+		CASE 5
+	ENDSELECT
+RETURN
+@BATTLE_MIKATA_KOUDOU_DANMAKU_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE ARG:1
+			;弾幕攻撃
+			;弱弾幕
+			CASE 10
+			;中弾幕
+			CASE 11
+			;強弾幕
+			CASE 12
+			;溜め攻撃
+			CASE 13
+				;溜め
+				IF CFLAG:31 == 2
+				;発射
+				ELSE
+				ENDIF
+			;ばら撒き弾
+			CASE 14
+			;貫通弾
+			CASE 15
+			ENDSELECT
+RETURN
+
+@BATTLE_MIKATA_KOUDOU_SYOUMOUBUKI_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	;消耗武器
+	SELECTCASE ARG:1
+
+		;弱攻撃
+		CASE 20
+		;中攻撃
+		CASE 21
+		;強攻撃
+		CASE 22
+		;節約攻撃
+		CASE 23
+		;みだれうち
+		CASE 24
+		;一点集中
+		CASE 25
+	ENDSELECT
+RETURN
+
+@BATTLE_MIKATA_KOUDOU_NO_SYOUMOUBUKI_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	;非消耗武器
+	SELECTCASE ARG:1
+		;弱攻撃
+		CASE 30
+		;中攻撃
+		CASE 31
+		;強攻撃
+		CASE 32
+		;下段狙い
+		CASE 33
+		;急所狙い
+		CASE 34
+	ENDSELECT
+RETURN
+@BATTLE_MIKATA_KOUDOU_KOUSOKU_NOW_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE ARG:1
+
+		;拘束離脱
+		CASE 42
+			;コマンド使用時
+			IF ARG:3 == 0
+
+			ENDIF
+		;力溜め
+		CASE 43
+			;コマンド使用時
+			IF ARG:2 == 0
+
+			ENDIF
+		;諦め
+		CASE 44
+			;コマンド使用時
+			IF ARG:2 == 0
+
+			ENDIF
+		;何もしない
+		CASE 45
+		;強制自慰
+		CASE 46
+		;お尻ガード
+		CASE 50
+		;胸ガード
+		CASE 51
+		;Cガード
+		CASE 52
+		;挿入ガード
+		CASE 53
+	ENDSELECT
+RETURN
+
+
+@BATTLE_MIKATA_KOUDOU_ONEDARI_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE ARG:1
+		;Aおねだり
+		CASE 54
+		;Bおねだり
+		CASE 55
+		;Cおねだり
+		CASE 56
+		;Vおねだり
+		CASE 57
+		;その他おねだり
+		CASE 58
+	ENDSELECT
+RETURN
+
+
+;装備品使用。一応区分しているが恐らく現状ぶっちぎりの死に口上
+@BATTLE_MIKATA_KOUDOU_SOUBI_USE_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		;ARG:2はアイテムIDに対応する
+		SELECTCASE ARG:2
+			;ボム
+			CASE 20 TO 23
+
+			;風
+			CASE 25
+
+			;以下、現状では何も起きない
+			CASE 26
+
+			CASE 27
+
+			CASE 32, 36
+
+			CASEELSE
+		ENDSELECT
+RETURN
+
+;催眠系行動。キス以降は特定条件で平常でも使用可能。
+@BATTLE_MIKATA_KOUDOU_SAIMIN_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE ARG:1
+		;平常行動
+		CASE 71
+		;72　催眠自慰は46　強制自慰と共用
+		;仲間を襲う
+		CASE 73
+		;着替える
+		CASE 74
+		;催眠逃げる
+		CASE 75
+		;安眠
+		CASE 76
+		;踏む
+		CASE 80
+		;ビンタ
+		CASE 81
+		;折る
+		CASE 82
+		;キス
+		CASE 83
+		;手淫
+		CASE 84
+		;フェラ
+		CASE 85
+		;パイズリ
+		CASE 86
+
+	ENDSELECT
+RETURN
+
+;戦闘時発情して味方を襲うor発情した仲間に襲われる
+;NO:(ARG:2)で対象キャラ確認可能
+@BATTLE_MIKATA_KOUDOU_RAPE_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE ARG:1
+		;襲われる　この口上を言うキャラが捕まっている時は口上なしで解除
+		CASE 95
+			SELECTCASE ARG:3
+				;自力脱出
+				CASE 1
+				;襲っている奴が拘束・丸呑み・戦意喪失・発情したことによる解除
+				CASE 2
+
+				;襲われる
+				CASEELSE
+				
+			ENDSELECT
+		;襲う
+		CASE 96
+			SELECTCASE ARG:3
+				;ふたなり襲撃開始
+				CASE 3
+
+				;レズ襲撃開始
+				CASE 2
+
+				;なんか継続系ってぜんぜん出ないんだよな……
+				;襲撃継続（ふたなり）
+				CASE 1
+
+				;襲撃継続
+				CASEELSE
+
+			ENDSELECT
+
+	ENDSELECT
+
+RETURN

@@ -1,0 +1,14 @@
+﻿;キス魔取得
+;ARG:0	対象キャラ
+@GET_KISSER(ARG:0)
+
+SIF ARG:0 == 0
+	RETURN
+
+;キス魔取得処理
+IF TALENT:(ARG:0):79 == 0
+	IF 100 < EXP:(ARG:0):24 + ABL:(ARG:0):13 * 3 + ABL:(ARG:0):15 * 3
+		TALENT:(ARG:0):79 = 1
+		PRINTFORML %CALLNAME:(ARG:0)%は【キス魔】を取得しました！
+	ENDIF
+ENDIF

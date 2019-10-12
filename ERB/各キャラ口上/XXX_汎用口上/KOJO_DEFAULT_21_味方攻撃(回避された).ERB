@@ -1,0 +1,150 @@
+﻿
+
+; ////////////////////////////
+; / ARG:0   21    味方の攻撃(回避)
+; / ARG:1         コマンドID
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_21(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;絶頂、煙幕、砂煙中の攻撃は、よけられて当然だろうから、リターンで。
+IF CFLAG:35 || CFLAG:26 || CFLAG:27
+
+	RETURN 0
+
+ENDIF
+
+;だんだんと喋らなくなる
+IF BASE:1 < 300 && RAND:3 > 0
+	RETURN 0
+ENDIF
+
+;余裕がない時
+IF BASE:1 < 500
+	CALL ADD_RAND_MESSAGE, @"「くっ、こんな時に！」"
+ENDIF
+
+
+	CALL ADD_RAND_MESSAGE, @"「むっ、物陰に……」"
+	CALL ADD_RAND_MESSAGE, @"「地形が邪魔を……」"
+	CALL ADD_RAND_MESSAGE, @"「まさか相殺してくるなんて！」"
+	CALL ADD_RAND_MESSAGE, @"「いつの間に射程外に！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「結構素早い……」"
+
+	CALL ADD_RAND_MESSAGE, @"「惜しいっ！」"
+	CALL ADD_RAND_MESSAGE, @"「これで油断してくれるといいけど……」"
+
+;だんだんと喋らなくなる
+IF BASE:1 < 300
+	RETURN 1
+ENDIF
+
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おせっかい
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「くっ、これじゃ余計な手間が！」"
+		CALL ADD_RAND_MESSAGE, @"「ならば、次に活かすまで！」"
+		CALL ADD_RAND_MESSAGE, @"「この迷宮、やはり何かがおかしい……」"
+		CALL ADD_RAND_MESSAGE, @"「避けたら当たらないでしょ！」"
+		CALL ADD_RAND_MESSAGE, @"「これも、この迷宮の力が……」"
+		CALL ADD_RAND_MESSAGE, @"「……いい気にならないで！」"
+		CALL ADD_RAND_MESSAGE, @"「……瘴気の衣だとでも！？」"
+
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「逃げなくてもいいじゃない、ちょっと痛いだけよ」"
+		CALL ADD_RAND_MESSAGE, @"「避けたら当たらないでしょ！」"
+		CALL ADD_RAND_MESSAGE, @"「……あれっ？」"
+		CALL ADD_RAND_MESSAGE, @"「……なんで！？」"
+		CALL ADD_RAND_MESSAGE, @"「……どうして！？」"
+		CALL ADD_RAND_MESSAGE, @"「……いい気にならないで！」"
+		CALL ADD_RAND_MESSAGE, @"「ああ～、もうッ、じれったい！」"
+		CALL ADD_RAND_MESSAGE, @"「もうっ、頭にきちゃう！」"
+	CASE 性格_がんこもの
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「ならば、次に活かすまで！」"
+		CALL ADD_RAND_MESSAGE, @"「この迷宮、やはり何かがおかしい……」"
+		CALL ADD_RAND_MESSAGE, @"「これも、この迷宮の力が……」"
+		CALL ADD_RAND_MESSAGE, @"「私もまだまだね……」"
+		CALL ADD_RAND_MESSAGE, @"「くっ！鍛錬が足りませんか……」"
+	CASE 性格_がんばりや
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「ならば、次に活かすまで！」"
+		CALL ADD_RAND_MESSAGE, @"「この迷宮、やはり何かがおかしい……」"
+		CALL ADD_RAND_MESSAGE, @"「これも、この迷宮の力が……」"
+		CALL ADD_RAND_MESSAGE, @"「やっぱり手強い……」"
+		CALL ADD_RAND_MESSAGE, @"「……いい気にならないで！」"
+		CALL ADD_RAND_MESSAGE, @"「くっ！もっと鍛錬しないと……」"
+
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「もう少し冷静に攻撃した方が良さそうね……」"
+		CALL ADD_RAND_MESSAGE, @"「この迷宮、やはり何かがおかしい……」"
+		CALL ADD_RAND_MESSAGE, @"「これも、この迷宮の力が……」"
+		CALL ADD_RAND_MESSAGE, @"「……瘴気の衣だとでも！？」"
+	CASE 性格_くろうにん
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「次はどうしよう……」"
+		CALL ADD_RAND_MESSAGE, @"「そんな！？　どうして！？」"
+		CALL ADD_RAND_MESSAGE, @"「これも、この迷宮の力が……」"
+		CALL ADD_RAND_MESSAGE, @"「やっぱり手強い……」"
+
+	CASE 性格_しあわせもの
+		CALL ADD_RAND_MESSAGE, @"「避けたら当たらないでしょ！」"
+		CALL ADD_RAND_MESSAGE, @"「……あれっ？」"
+		CALL ADD_RAND_MESSAGE, @"「……なんで！？」"
+		CALL ADD_RAND_MESSAGE, @"「……どうして！？」"
+		CALL ADD_RAND_MESSAGE, @"「私もまだまだね……」"
+		CALL ADD_RAND_MESSAGE, @"「やるっ！……でも、ピンチの後には、きっと！」"
+
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「逃げないでくださいよー」"
+	CASE 性格_ぬけめがない
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「ならば、次に活かすまで！」"
+		CALL ADD_RAND_MESSAGE, @"「この迷宮、やはり何かがおかしい……」"
+		CALL ADD_RAND_MESSAGE, @"「これも、この迷宮の力が……」"
+		CALL ADD_RAND_MESSAGE, @"「……瘴気の衣だとでも！？」"
+
+	CASE 性格_ねっけつかん
+
+		CALL ADD_RAND_MESSAGE, @"「ならば、次に活かすまで！」"
+		CALL ADD_RAND_MESSAGE, @"「くっ、外した……！！」"
+		CALL ADD_RAND_MESSAGE, @"「やるっ！……でも、ピンチの後には、きっと！」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「もう、ちゃんと当たってよ！！」"
+		CALL ADD_RAND_MESSAGE, @"「くっ、これじゃ余計な手間が！」"
+		CALL ADD_RAND_MESSAGE, @"「避けたら当たらないでしょ！」"
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「私もまだまだね……」"
+		CALL ADD_RAND_MESSAGE, @"「ああっ、なんてデタラメな動きを……」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「次はどうしよう……」"
+		CALL ADD_RAND_MESSAGE, @"「そんな！？　どうして！？」"
+		CALL ADD_RAND_MESSAGE, @"「やっぱり手強い……」"
+
+	CASE 性格_やさしいひと
+
+		CALL ADD_RAND_MESSAGE, @"「やっぱり手強い……」"
+		CALL ADD_RAND_MESSAGE, @"「はずれた！？　……ううん、外されたのね」"
+		CALL ADD_RAND_MESSAGE, @"「次はどうしよう……」"
+		CALL ADD_RAND_MESSAGE, @"「そんな！？　どうして！？」"
+	CASE 性格_わがまま
+		CALL ADD_RAND_MESSAGE, @"「避けたら当たらないでしょ！」"
+		CALL ADD_RAND_MESSAGE, @"「くっ、これじゃ余計な手間が！」"
+		CALL ADD_RAND_MESSAGE, @"「次は必ず……！」"
+		CALL ADD_RAND_MESSAGE, @"「……いい気にならないで！」"
+		CALL ADD_RAND_MESSAGE, @"「ああん、もうッ、じれったいわね！」"
+		CALL ADD_RAND_MESSAGE, @"「もうっ、頭にきちゃうわね！」"
+		CALL ADD_RAND_MESSAGE, @"「こんな所でモタついてらんないのに！」"
+	ENDSELECT
+
+
+
+
+RETURN 1
+

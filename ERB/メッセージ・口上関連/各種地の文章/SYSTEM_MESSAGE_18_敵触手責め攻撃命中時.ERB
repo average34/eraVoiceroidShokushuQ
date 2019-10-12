@@ -1,0 +1,52 @@
+﻿;性攻撃命中時の描写
+@SYSTEM_MESSAGE_18(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;敵のコマンドごとに命中時の描写したり
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_18)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+
+	CASE 414
+		PRINTFORML %ARGS:1%の花弁が%ARGS:0%の唇を包み込み、くちゅくちゅと水音を立てながら口の蜜を啜っている…
+	CASE 415
+		PRINTFORML %ARGS:0%の唇を包み込んだ%ARGS:1%の花から何本もの細い触手が伸び、口内を舐めるように犯し始める
+		PRINTFORML 触手と%ARGS:0%の舌が絡み合い、絶え間ない水音と共に口から蜜と魔力を吸い上げてゆく…
+	CASE 953
+		PRINTFORML 触手が口の中に入り込み好き勝手に体液を撒き散らし始めた！
+		PRINTFORML あまりの量にむせるがなおも触手は白い体液を流しこんでくる！%ARGS:0%の口元も口内もどろどろになった！
+	CASE 982
+		;IF RAND:3 == 0
+			PRINTFORML %ARGS:1%は触手で%ARGS:0%の口内を舐めまわしている！
+		;ELSE
+		;	PRINTFORML %ARGS:1%は%ARGS:0%の唇をおいしそうに撫でている！
+		;ENDIF
+	CASE 983
+		;IF RAND:3 == 0
+		;	PRINTFORML %ARGS:1%は清涼感のある液体で%ARGS:0%の口内を敏感にした！
+		;ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%の舌と触手を絡み合わせている！
+		;ENDIF
+
+	CASE 984
+		IF FLAG:507 > 0
+			PRINTFORML %ARGS:1%は%ARGS:0%の喉で触手をピストン運動させている！
+		ELSE
+			PRINTFORML %ARGS:0%の舌が激しく触手と絡む音がグチュグチュと響いている！
+		ENDIF
+	CASE 1016
+		PRINTFORM %ARGS:0%は%ARGS:1%の
+		IF FLAG:520 == 1 || FLAG:520 == 3
+			PRINTFORM 剛直を
+		ELSE
+			PRINTFORM 触手を
+		ENDIF
+		PRINTFORML 仕方なく口でしゃぶっている……
+
+		
+		
+	CASEELSE
+		;何もなし
+ENDSELECT
+
+

@@ -1,0 +1,119 @@
+﻿@INITIALIZE_SET_ROOT_ORIGINAL
+
+;通れる通路を設定
+;固定で有効化されている部分以外は、1/3で通行可能になる
+FLAG:300 = 1
+FLAG:301 = 1
+FLAG:302 = 1
+FLAG:303 = 1
+FLAG:304 = RAND:3 / 2
+FLAG:305 = 1
+FLAG:306 = RAND:3 / 2
+FLAG:307 = 1
+FLAG:308 = RAND:3 / 2
+FLAG:309 = RAND:3 / 2
+FLAG:310 = 1
+FLAG:311 = 1
+FLAG:312 = 1
+FLAG:313 = 1
+FLAG:314 = 1
+FLAG:315 = 1
+FLAG:316 = RAND:3 / 2
+FLAG:317 = 1
+FLAG:318 = 1
+FLAG:319 = RAND:3 / 2
+FLAG:320 = 1
+FLAG:321 = 1
+FLAG:322 = RAND:3 / 2
+FLAG:323 = 1
+FLAG:324 = RAND:3 / 2
+FLAG:325 = 1
+FLAG:326 = 1
+FLAG:327 = 1
+FLAG:328 = 1
+FLAG:329 = 1
+FLAG:330 = 1
+FLAG:331 = 1
+FLAG:332 = 1
+FLAG:333 = RAND:3 / 2
+FLAG:334 = 1
+FLAG:335 = RAND:3 / 2
+FLAG:336 = RAND:3 / 2
+FLAG:337 = 1
+FLAG:338 = 1
+FLAG:339 = 1
+FLAG:340 = 1
+FLAG:341 = 1
+FLAG:342 = RAND:3 / 2
+FLAG:343 = 1
+FLAG:344 = 1
+FLAG:345 = 1
+FLAG:346 = 1
+FLAG:347 = 1
+FLAG:348 = RAND:3 / 2
+
+
+
+
+
+
+
+;マップランダム化パッチ　by喚く狂人
+;要するに棒倒し法
+@INITIALIZE_SET_ROOT_RANDOM
+#DIM LCOUNT
+;とりあえず全部の道をONに
+VARSET FLAG, 1, 300, 400
+
+;棒倒し
+FOR LCOUNT, 1, 21
+	CALLFORM SUKIMA(LCOUNT)
+NEXT
+
+;消したものの中からいくつか復帰（一本道だらけのマップ防止）
+FOR LCOUNT, 0, 8
+	LOCAL = RAND:49 + 300
+	IF FLAG:LOCAL
+		LCOUNT -= 1
+		CONTINUE
+	ELSE
+		FLAG:LOCAL = 1
+	ENDIF
+NEXT
+
+
+;棒倒しアルゴリズム
+;壁（四本の通路で囲まれた空間）を基準に、「最上列のみ上下左右」「それ以外は左下右」の通路の中からどれか一本を削除します。
+;上方向を消せるのを最上列のみとすることで、行くことができない部屋が発生しなくなります。
+;というのをやってるのが下のこれです。どの方向の通路が消えるかはランダムです。
+;ARG	基準となる空間（6*5部屋なので、通路と部屋に囲まれた空間は5*4の20）
+;LOCAL	消す通路
+@SUKIMA(ARG)
+WHILE 1
+SELECTCASE ARG
+	CASE 1 TO 4
+		SELECTCASE RAND:100
+			CASE 0 TO 24
+				LOCAL = -1
+			CASE 25 TO 49
+				LOCAL = 3
+			CASE 50 TO 74
+				LOCAL = 4
+			CASEELSE
+				LOCAL = 8
+		ENDSELECT
+	CASEELSE
+		SELECTCASE RAND:30
+			CASE 0 TO 9
+				LOCAL = 3
+			CASE 10 TO 19
+				LOCAL = 4
+			CASEELSE
+				LOCAL = 8
+		ENDSELECT
+ENDSELECT
+SIF FLAG:(300 + ((ARG - 1) / 4 * 5) + ARG + LOCAL) == 1
+	BREAK
+WEND
+FLAG:(300 + ((ARG - 1) / 4 * 5) + ARG + LOCAL) = 0
+

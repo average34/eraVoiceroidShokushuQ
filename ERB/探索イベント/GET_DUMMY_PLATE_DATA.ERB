@@ -1,0 +1,38 @@
+﻿;誤った石版の組み合わせをランダムに作成
+@GET_DUMMY_PLATE_DATA
+#FUNCTIONS
+
+;LOCAL
+;0	LOOP
+;1	TEMP
+;2～6	誤った組み合わせ
+
+
+LOCAL:1 = 0
+FOR LOCAL:0, 0, 6
+	IF FLAG:40 != LOCAL:0
+		LOCAL:(LOCAL:1 + 2) = LOCAL:0
+		LOCAL:1 += 1
+	ENDIF
+NEXT
+
+LOCAL:1 = LOCAL:(RAND:5 + 2)
+
+SELECTCASE LOCAL:1
+	CASE 0
+		LOCALS:0 = 最初に赤、次に青、最後に黄
+	CASE 1
+		LOCALS:0 = 最初に赤、次に黄、最後に青
+	CASE 2
+		LOCALS:0 = 最初に青、次に赤、最後に黄
+	CASE 3
+		LOCALS:0 = 最初に青、次に黄、最後に赤
+	CASE 4
+		LOCALS:0 = 最初に黄、次に赤、最後に青
+	CASEELSE
+		LOCALS:0 = 最初に黄、次に青、最後に赤
+ENDSELECT
+
+RETURNF LOCALS:0
+
+

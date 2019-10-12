@@ -1,0 +1,514 @@
+﻿;ランダムイベントチェック
+;ARG:0	固定イベント発生済みフラグ
+@CHECK_RANDOM_EVENT(ARG:0)
+;LOCAL
+;0	LOOP
+;1	イベント難易度
+;2	目標値
+;3	イベントの種類
+;4	達成値
+;5	TEMP
+;6	成功フラグ(0:失敗　1:成功　2:大成功)
+;7	見つけたアイテム
+;8	RAND用
+;9	見つけた個数
+;10	何か発見した
+;11	連続判定残り
+;12 パーティの人数
+
+CALL GET_SEARCH_RATE_2
+LOCAL:4 = RESULT
+IF LOCAL:4 < 30
+	;危機回避判定失敗でランダムトラップ
+	CALL RANDOM_TRAP
+	IF RESULT
+		RETURN
+	ELSE
+		GOTO NO_EVENT
+	ENDIF
+ENDIF
+
+;使い魔が罠を見つける
+LOCAL:12 = GET_MEMBER_SUM()
+FOR LOCAL:0, 0, LOCAL:12
+	;使い魔に十分犯されてるかを調べる
+	IF CFLAG:GET_MEMBER(LOCAL:0):503 >= 2
+		;十分に犯されている場合その力でトラップを勝手に作動させることがある
+		IF RAND:5 == 0
+			CALL PRINT_MESSAGE(1, 503, 7, CALLNAME:1, "")
+			CALL RANDOM_TRAP_2
+			IF RESULT
+				RETURN
+			ELSE
+				GOTO NO_EVENT
+			ENDIF
+		ENDIF
+		BREAK
+	ELSE
+	;全員の使い魔を一応調べる
+	ENDIF
+NEXT
+
+LOCAL:10 = 0
+LOCAL:11 = GET_PT_MAX_ABL(0) - 1
+IF LOCAL:11 < 0
+	LOCAL:11 = 0
+ENDIF
+
+$RANDOM_START
+
+;イベントの難易度決定
+IF RAND:5 < 3
+	LOCAL:1 = 0
+ELSE
+	LOCAL:1 = 1
+ENDIF
+
+
+;イベントの種類・目標値決定
+SELECTCASE RAND:100
+	CASE 0 TO 19
+		IF LOCAL:1 == 0
+			LOCAL:2 = 50
+		ELSE
+			LOCAL:2 = 150
+		ENDIF
+		LOCAL:3 = 0
+	CASE 20 TO 29
+		IF LOCAL:1 == 0
+			LOCAL:2 = 80
+		ELSE
+			LOCAL:2 = 180
+		ENDIF
+		LOCAL:3 = 1
+	CASE 30 TO 59
+		IF LOCAL:1 == 0
+			LOCAL:2 = 60
+		ELSE
+			LOCAL:2 = 170
+		ENDIF
+		LOCAL:3 = 2
+	CASE 60 TO 99
+		IF LOCAL:1 == 0
+			LOCAL:2 = 30
+		ELSE
+			LOCAL:2 = 120
+		ENDIF
+		LOCAL:3 = 3
+ENDSELECT
+
+
+;達成値
+CALL GET_SEARCH_RATE
+LOCAL:4 = RESULT
+
+IF LOCAL:4 >= (LOCAL:2 + 80)
+	LOCAL:6 = 2
+ELSEIF LOCAL:4 >= LOCAL:2
+	LOCAL:6 = 1
+ELSE
+	;失敗時、調合知識を持っているなら効果すり替え（判定は重複）
+	IF TALENT:1:55 && RAND:5 == 0
+		LOCAL:1 = 0
+		LOCAL:3 = 3
+		LOCAL:6 = 1
+	ELSEIF FLAG:10 && TALENT:(FLAG:10):55 && RAND:5 == 0
+		LOCAL:1 = 0
+		LOCAL:3 = 3
+		LOCAL:6 = 1
+	ELSEIF FLAG:11 && TALENT:(FLAG:11):55 && RAND:5 == 0
+		LOCAL:1 = 0
+		LOCAL:3 = 3
+		LOCAL:6 = 1
+	ELSE
+		LOCAL:6 = 0
+	ENDIF
+ENDIF
+
+
+LOCAL:7 = 0
+LOCAL:9 = 1
+
+IF LOCAL:6 == 2
+	;大成功
+	LOCAL:5 = 400 + RAND:(LOCAL:2 * 6 + 300)
+	SELECTCASE LOCAL:3
+		CASE 0
+			IF LOCAL:1 == 0
+				IF RAND:3 == 0
+					LOCAL:7 = 4
+				ELSE
+					LOCAL:7 = 3
+				ENDIF
+			ELSE
+				IF RAND:5 == 0
+					LOCAL:7 = 6
+				ELSEIF RAND:5 == 0
+					LOCAL:7 = 7
+				ELSE
+					LOCAL:7 = 8
+				ENDIF
+			ENDIF
+		CASE 1
+			IF LOCAL:1 == 0
+				IF RAND:3 == 0
+					LOCAL:7 = 13
+				ELSE
+					LOCAL:7 = 12
+				ENDIF
+			ELSE
+				IF RAND:4 == 0
+					LOCAL:7 = 15
+				ELSE
+					LOCAL:7 = 16
+				ENDIF
+			ENDIF
+		CASE 2
+			IF LOCAL:1 == 0
+				LOCAL:8 = RAND:10
+				IF LOCAL:8 <= 1
+					IF RAND:10 == 0
+						LOCAL:7 = 22
+					ELSE
+						LOCAL:7 = 21
+					ENDIF
+				ELSEIF LOCAL:8 <= 2
+					LOCAL:7 = 24
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 27
+				ELSEIF LOCAL:8 <= 4
+					LOCAL:7 = 28
+				ELSEIF LOCAL:8 <= 5
+					LOCAL:7 = 29
+				ELSEIF LOCAL:8 <= 6
+					LOCAL:7 = 30
+				ELSEIF LOCAL:8 <= 7
+					LOCAL:7 = 31
+				ELSEIF LOCAL:8 <= 8
+					LOCAL:7 = 36
+				ELSE
+					LOCAL:7 = 39
+				ENDIF
+			ELSE
+				LOCAL:8 = RAND:10
+				IF LOCAL:8 <= 1
+					IF RAND:3 == 0
+						LOCAL:7 = 22
+					ELSE
+						LOCAL:7 = 23
+					ENDIF
+				ELSEIF LOCAL:8 <= 2
+					LOCAL:7 = 25
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 32
+				ELSEIF LOCAL:8 <= 4
+					LOCAL:7 = 33
+				ELSEIF LOCAL:8 <= 5
+					LOCAL:7 = 34
+				ELSEIF LOCAL:8 <= 6
+					LOCAL:7 = 35
+				ELSEIF LOCAL:8 <= 7
+					LOCAL:7 = 37
+				ELSEIF LOCAL:8 <= 8
+					LOCAL:7 = 38
+				ELSE
+					LOCAL:7 = 39
+				ENDIF
+			ENDIF
+		CASE 3
+			IF LOCAL:1 == 0
+				LOCAL:8 = RAND:18
+				IF LOCAL:8 <= 0
+					LOCAL:7 = 50
+				ELSEIF LOCAL:8 <= 1
+					LOCAL:7 = 52
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 54
+				ELSEIF LOCAL:8 <= 4
+					LOCAL:7 = 55
+				ELSEIF LOCAL:8 <= 5
+					LOCAL:7 = 56
+				ELSEIF LOCAL:8 <= 6
+					LOCAL:7 = 57
+				ELSEIF LOCAL:8 <= 7
+					LOCAL:7 = 58
+				ELSEIF LOCAL:8 <= 10
+					LOCAL:7 = 67
+				ELSEIF LOCAL:8 <= 11
+					LOCAL:7 = 70
+				ELSEIF LOCAL:8 <= 12
+					LOCAL:7 = 71
+				ELSEIF LOCAL:8 <= 13
+					LOCAL:7 = 72
+				ELSEIF LOCAL:8 <= 14
+					LOCAL:7 = 74
+				ELSEIF LOCAL:8 <= 15
+					LOCAL:7 = 75
+				ELSEIF LOCAL:8 <= 16
+					LOCAL:7 = 76
+				ELSE
+					LOCAL:7 = 59
+				ENDIF
+			ELSE
+				LOCAL:8 = RAND:27
+				IF LOCAL:8 <= 0
+					LOCAL:7 = 51
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 1
+					LOCAL:7 = 53
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 2
+					LOCAL:7 = 54
+					LOCAL:9 = 3
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 55
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 4
+					LOCAL:7 = 56
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 5
+					LOCAL:7 = 57
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 6
+					LOCAL:7 = 58
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 7
+					LOCAL:7 = 59
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 10
+					LOCAL:7 = 61
+				ELSEIF LOCAL:8 <= 13
+					LOCAL:7 = 62
+				ELSEIF LOCAL:8 <= 16
+					LOCAL:7 = 67
+					LOCAL:9 = 3
+				ELSEIF LOCAL:8 <= 19
+					LOCAL:7 = 70
+				ELSEIF LOCAL:8 <= 21
+					LOCAL:7 = 71
+				ELSEIF LOCAL:8 <= 22
+					LOCAL:7 = 72
+				ELSEIF LOCAL:8 <= 23
+					LOCAL:7 = 74
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 24
+					LOCAL:7 = 75
+					LOCAL:9 = 2
+				ELSEIF LOCAL:8 <= 25
+					LOCAL:7 = 76
+					LOCAL:9 = 2
+				ELSE
+					LOCAL:7 = 63
+				ENDIF
+			ENDIF
+	ENDSELECT
+ELSEIF LOCAL:6 == 1
+	;成功
+	LOCAL:5 = 200 + RAND:(LOCAL:2 * 2 + 200)
+	SELECTCASE LOCAL:3
+		CASE 0
+			IF LOCAL:1 == 0
+				LOCAL:8 = RAND:6
+				IF LOCAL:8 <= 0
+					LOCAL:7 = 3
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 2
+				ELSE
+					LOCAL:7 = 1
+				ENDIF
+			ELSE
+				LOCAL:8 = RAND:8
+				IF LOCAL:8 <= 0
+					LOCAL:7 = 6
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 5
+				ELSEIF LOCAL:8 <= 5
+					LOCAL:7 = 8
+				ELSE
+					LOCAL:7 = 4
+				ENDIF
+			ENDIF
+		CASE 1
+			IF LOCAL:1 == 0
+				LOCAL:8 = RAND:6
+				IF LOCAL:8 <= 0
+					LOCAL:7 = 12
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 11
+				ELSE
+					LOCAL:7 = 10
+				ENDIF
+			ELSE
+				LOCAL:8 = RAND:6
+				IF LOCAL:8 <= 0
+					LOCAL:7 = 15
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 14
+				ELSE
+					LOCAL:7 = 13
+				ENDIF
+			ENDIF
+		CASE 2
+			IF LOCAL:1 == 0
+				LOCAL:8 = RAND:20
+				IF LOCAL:8 <= 7
+					IF RAND:4 == 0
+						LOCAL:7 = 21
+					ELSE
+						LOCAL:7 = 20
+					ENDIF
+				ELSEIF LOCAL:8 <= 11
+					LOCAL:7 = 24
+				ELSEIF LOCAL:8 <= 15
+					LOCAL:7 = 27
+				ELSEIF LOCAL:8 <= 16
+					LOCAL:7 = 28
+				ELSEIF LOCAL:8 <= 17
+					LOCAL:7 = 29
+				ELSEIF LOCAL:8 <= 18
+					LOCAL:7 = 30
+				ELSE
+					LOCAL:7 = 31
+				ENDIF
+			ELSE
+				LOCAL:8 = RAND:11
+				IF LOCAL:8 <= 2
+					IF RAND:3 == 0
+						LOCAL:7 = 22
+					ELSE
+						LOCAL:7 = 21
+					ENDIF
+				ELSEIF LOCAL:8 <= 3
+					LOCAL:7 = 25 - RAND:2
+				ELSEIF LOCAL:8 <= 4
+					LOCAL:7 = 32 - (4 * RAND:2)
+				ELSEIF LOCAL:8 <= 5
+					LOCAL:7 = 33 - (4 * RAND:2)
+				ELSEIF LOCAL:8 <= 6
+					LOCAL:7 = 34 - (4 * RAND:2)
+				ELSEIF LOCAL:8 <= 7
+					LOCAL:7 = 35 - (4 * RAND:2)
+				ELSEIF LOCAL:8 <= 8
+					LOCAL:7 = 37
+				ELSEIF LOCAL:8 <= 9
+					LOCAL:7 = 38
+				ELSE
+					LOCAL:7 = 39
+				ENDIF
+			ENDIF
+		CASE 3
+			IF LOCAL:1 == 0
+				LOCAL:8 = RAND:15
+				IF LOCAL:8 <= 4
+					LOCAL:7 = 50 + (2 * RAND:4)
+				ELSEIF LOCAL:8 <= 5
+					LOCAL:7 = 55
+				ELSEIF LOCAL:8 <= 6
+					LOCAL:7 = 57 - (7 * RAND:2)
+				ELSEIF LOCAL:8 <= 7
+					LOCAL:7 = 58 - (6 * RAND:2)
+				ELSEIF LOCAL:8 <= 8
+					LOCAL:7 = 59 - (5 * RAND:2)
+				ELSEIF LOCAL:8 <= 10
+					LOCAL:7 = 71
+				ELSEIF LOCAL:8 <= 11
+					LOCAL:7 = 72
+				ELSEIF LOCAL:8 <= 12
+					LOCAL:7 = 74 + RAND:3
+				ELSEIF LOCAL:8 <= 12
+					LOCAL:7 = 77 + RAND:2
+				ELSE
+					LOCAL:7 = 69
+				ENDIF
+			ELSE
+				LOCAL:8 = RAND:23
+				IF LOCAL:8 <= 8
+					LOCAL:7 = 51 + (2 * RAND:7)
+				ELSEIF LOCAL:8 <= 9
+					LOCAL:7 = 54
+				ELSEIF LOCAL:8 <= 10
+					LOCAL:7 = 56
+				ELSEIF LOCAL:8 <= 11
+					LOCAL:7 = 58
+				ELSEIF LOCAL:8 <= 12
+					LOCAL:7 = 62
+				ELSEIF LOCAL:8 <= 13
+					LOCAL:7 = 66
+				ELSEIF LOCAL:8 <= 15
+					LOCAL:7 = 67
+					LOCAL:9 = 3
+				ELSEIF LOCAL:8 <= 17
+					LOCAL:7 = 70
+				ELSEIF LOCAL:8 <= 18
+					LOCAL:7 = 71
+				ELSEIF LOCAL:8 <= 19
+					LOCAL:7 = 72
+				ELSEIF LOCAL:8 <= 20
+					LOCAL:7 = 74 + RAND:3
+				ELSEIF LOCAL:8 <= 21
+					LOCAL:7 = 77 + RAND:2
+				ELSE
+					LOCAL:7 = 69
+				ENDIF
+			ENDIF
+	ENDSELECT
+ELSE
+	;失敗
+	LOCAL:5 = 500 + RAND:(LOCAL:2 * 3 + 100)
+ENDIF
+
+;経験値獲得
+CALL ADD_ABL_EXP_PT(0, LOCAL:5)
+
+
+IF LOCAL:7
+	CALL PRINT_MESSAGE(1, 113, LOCAL:7, CALLNAME:1, ITEMNAME:(LOCAL:7))
+	CALL PRINT_MESSAGE(FLAG:10, 113, LOCAL:7, CALLNAME:1, ITEMNAME:(LOCAL:7))
+	CALL PRINT_MESSAGE(FLAG:11, 113, LOCAL:7, CALLNAME:1, ITEMNAME:(LOCAL:7))
+	CALL ADD_ITEM(LOCAL:7, LOCAL:9, 1)
+	LOCAL:10 = 1
+	WAIT
+ENDIF
+
+IF LOCAL:11
+	LOCAL:11 -= 1
+	GOTO RANDOM_START
+ENDIF
+
+;使い魔もアイテムを見つける
+IF CFLAG:1:503 >= 1 ||  (FLAG:10 && CFLAG:(FLAG:10):503 >= 1) || (FLAG:11 && CFLAG:(FLAG:11):503 >= 1)
+			LOCAL:8 = RAND:15
+			IF LOCAL:8 <= 0
+				LOCAL:7 = 50
+			ELSEIF LOCAL:8 <= 1
+				LOCAL:7 = 52
+			ELSEIF LOCAL:8 <= 3
+				LOCAL:7 = 54
+			ELSEIF LOCAL:8 <= 5
+				LOCAL:7 = 57
+			ELSEIF LOCAL:8 <= 7
+				LOCAL:7 = 59
+			ELSEIF LOCAL:8 <= 9
+				LOCAL:7 = 66
+			ELSEIF LOCAL:8 <= 11
+				LOCAL:7 = 67
+			ELSEIF LOCAL:8 <= 13
+				LOCAL:7 = 74 + RAND:3
+			ELSE
+				LOCAL:7 = 58
+			ENDIF
+	CALL PRINT_MESSAGE(ARG:0, 503, 8, CALLNAME:(ARG:0), "")
+	CALL ADD_ITEM(LOCAL:7, LOCAL:9, 1)
+	LOCAL:10 = 1
+ENDIF
+
+IF LOCAL:10 == 0
+	$NO_EVENT
+	IF ARG:0
+		;固定イベントが何か起きている場合
+		PRINTFORMW 更に周囲を調べてみたが、他には何も見つからなかった…
+	ELSE
+		PRINTFORMW 周囲を調べてみたが、特に何も見つからなかった…
+	ENDIF
+ENDIF
+

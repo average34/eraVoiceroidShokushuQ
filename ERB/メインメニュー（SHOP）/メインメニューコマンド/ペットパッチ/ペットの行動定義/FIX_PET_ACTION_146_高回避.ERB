@@ -1,0 +1,26 @@
+﻿;高回避低下
+@FIX_PET_ACTION_146
+
+;威力
+PET:90 = 40
+;命中率
+PET:91 = 75
+;種別 0攻撃　1回復HP 2回復MP　3回復TP
+PET:92 = 0
+;対象全体フラグ
+PET:93 = 0
+;行動の回数　0なら1
+PET:94 = 1
+;特殊フラグ　コレに応じたEXTRA_PET_ACTIONが呼ばれるます
+PET:98 = 146
+;メイン処理回避フラグ　これ立てる場合は全部関数内で処理つくること。
+PET:99 = 0
+CALL PRINT_MESSAGE(-1, 400)
+
+
+@PET_EXTRA_ACTION_146
+PRINTFORML %SAVESTR:(PET:51)%の回避率が一時的に少し下がった！
+DA:(PET:51):81 += 8 + RAND:7 + RAND:7
+IF DA:(PET:51):81 > 50
+	DA:(PET:51):81 = 50
+ENDIF

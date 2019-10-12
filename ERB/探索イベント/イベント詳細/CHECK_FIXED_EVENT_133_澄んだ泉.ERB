@@ -1,0 +1,186 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_133
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 60
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1 || FLAG:133 >= 100
+	;経験値が入るのは最初だけ
+	IF FLAG:133 < 100
+		CALL ADD_ABL_EXP_PT(0, 1000)
+		FLAG:133 += 100
+	ENDIF
+	PRINTFORML 澄んだ水を湛えた泉を発見した！　どうしますか？
+	PRINTFORML [1] 水を飲んでみる
+	PRINTFORML [2] 泉に入ってみる
+	SIF FLAG:6 >= 300 && (CFLAG:1:29 == 1 || CFLAG:(FLAG:10):29 == 1 || CFLAG:(FLAG:11):29 == 1)
+		PRINTFORML [3] 浄化力を使って仲間を癒す (必要浄化力:300)
+	;妊娠と母乳治療
+	SIF FLAG:6 >= 300 && ((CFLAG:1:36 == 3 || (CFLAG:1:36 == 0 && CFLAG:1:22)) || (CFLAG:(FLAG:10):36 == 3 || (CFLAG:(FLAG:10):36 == 0 && CFLAG:(FLAG:10):22)) || (CFLAG:(FLAG:11):36 == 3 || (CFLAG:(FLAG:11):36 == 0 && CFLAG:(FLAG:11):22)))
+		PRINTFORML [4] 浄化力と体力を使って寄生・妊娠を治療する (必要浄化力:300)
+	SIF FLAG:6 >= 300 && (TALENT:1:130 == 1 || TALENT:(FLAG:10):130 == 1 || TALENT:(FLAG:11):130 == 1)
+		PRINTFORML [5] 浄化力を使って母乳体質を治療する (必要浄化力:300)
+	PRINTFORML [0] その場を離れる
+	INPUT
+	IF RESULT == 1
+		PRINTFORML %CALLNAME:1%%TACHI()%は泉の水を飲んでみた…
+		PRINTFORML ひと時の休息を取ることで、パーティーのMPが少し回復した！
+		CALL PRINT_MESSAGE(1, 200, 133, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 133, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 133, CALLNAME:1, "", 0)
+		BASE:1:1 += MAXBASE:1:1 / 4
+		IF BASE:1:1 > MAXBASE:1:1
+			BASE:1:1 = MAXBASE:1:1
+		ENDIF
+		;尿意追加
+		CALL ADD_BASE_NP(1,3)
+		IF FLAG:10
+			BASE:(FLAG:10):1 += MAXBASE:(FLAG:10):1 / 4
+			IF BASE:(FLAG:10):1 > MAXBASE:(FLAG:10):1
+				BASE:(FLAG:10):1 = MAXBASE:(FLAG:10):1
+			ENDIF
+			;尿意追加
+			CALL ADD_BASE_NP(FLAG:10,3)
+		ENDIF
+		IF FLAG:11
+			BASE:(FLAG:11):1 += MAXBASE:(FLAG:11):1 / 4
+			IF BASE:(FLAG:11):1 > MAXBASE:(FLAG:11):1
+				BASE:(FLAG:11):1 = MAXBASE:(FLAG:11):1
+			ENDIF
+			;尿意追加
+			CALL ADD_BASE_NP(FLAG:11,3)
+		ENDIF
+	ELSEIF RESULT == 2
+		PRINTFORML %CALLNAME:1%%TACHI()%は裸になり、泉の中に入ってみた…
+		PRINTFORML 汚れを洗い流し火照った心身を鎮め、パーティーのEPが少し回復した！
+		CALL PRINT_MESSAGE(1, 200, 133, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 133, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 133, CALLNAME:1, "", 1)
+		BASE:1:2 += MAXBASE:1:2 / 2
+		IF BASE:1:2 > MAXBASE:1:2
+			BASE:1:2 = MAXBASE:1:2
+		ENDIF
+		BASE:1:5 = 0
+		IF FLAG:10
+			BASE:(FLAG:10):2 += MAXBASE:(FLAG:10):2 / 2
+			IF BASE:(FLAG:10):2 > MAXBASE:(FLAG:10):2
+				BASE:(FLAG:10):2 = MAXBASE:(FLAG:10):2
+			ENDIF
+			BASE:(FLAG:10):5 = 0
+		ENDIF
+		IF FLAG:11
+			BASE:(FLAG:11):2 += MAXBASE:(FLAG:11):2 / 2
+			IF BASE:(FLAG:11):2 > MAXBASE:(FLAG:11):2
+				BASE:(FLAG:11):2 = MAXBASE:(FLAG:11):2
+			ENDIF
+			BASE:(FLAG:11):5 = 0
+		ENDIF
+	ELSEIF RESULT == 3
+		PRINTFORML 泉の澄んだ水と浄化の力が、%CALLNAME:1%%TACHI()%の体を癒す！
+		SIF CFLAG:1:29 == 0
+			CALL PRINT_MESSAGE(1, 200, 133, CALLNAME:1, "", 3)
+		SIF CFLAG:(FLAG:10):29 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 200, 133, CALLNAME:(FLAG:10), "", 3)
+		SIF CFLAG:(FLAG:10):29 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 200, 133, CALLNAME:(FLAG:11), "", 3)
+		FLAG:6 -= 300
+		IF CFLAG:1:29 == 1
+			PRINTFORML %CALLNAME:1%の瞳に光が戻った！
+			CALL PRINT_MESSAGE(1, 200, 133, CALLNAME:1, "", 4)
+			BASE:1:1 = MAXBASE:1:1 / 4
+			CFLAG:1:29 = 0
+		ENDIF
+		IF CFLAG:(FLAG:10):29 == 1
+			PRINTFORML %CALLNAME:(FLAG:10)%の瞳に光が戻った！
+			CALL PRINT_MESSAGE(FLAG:10, 200, 133, CALLNAME:(FLAG:10), "", 4)
+			BASE:(FLAG:10):1 = MAXBASE:(FLAG:10):1 / 4
+			CFLAG:(FLAG:10):29 = 0
+		ENDIF
+		IF CFLAG:(FLAG:11):29 == 1
+			PRINTFORML %CALLNAME:(FLAG:11)%の瞳に光が戻った！
+			CALL PRINT_MESSAGE(FLAG:11, 200, 133, CALLNAME:(FLAG:11), "", 4)
+			BASE:(FLAG:11):1 = MAXBASE:(FLAG:11):1 / 4
+			CFLAG:(FLAG:11):29 = 0
+		ENDIF
+	;泉パワーアップ追加***************************************************************
+	ELSEIF RESULT == 4
+		PRINTFORML 泉の澄んだ水と浄化の力が、%CALLNAME:1%%TACHI()%の胎内の異形を消滅させる！
+		PRINTFORML だが、強すぎる浄化の力は宿主である%CALLNAME:1%%TACHI()%の体力も同時に奪っていった……
+		FLAG:6 -= 300
+		IF CFLAG:1:36 == 3 || (CFLAG:1:36 == 0 && CFLAG:1:22)
+			PRINTFORML %CALLNAME:1%の胎内に巣食う異形は消滅した！
+			BASE:1:0 = 0
+			CFLAG:1:22 = 0
+			CFLAG:1:23 = 0
+			CFLAG:1:36 = 0
+		ENDIF
+		IF CFLAG:(FLAG:10):36 == 3 || (CFLAG:(FLAG:10):36 == 0 && CFLAG:(FLAG:10):22)
+			PRINTFORML %CALLNAME:(FLAG:10)%の胎内に巣食う異形は消滅した！
+			BASE:(FLAG:10):0 = 0
+			CFLAG:(FLAG:10):22 = 0
+			CFLAG:(FLAG:10):23 = 0
+			CFLAG:(FLAG:10):36 = 0
+		ENDIF
+		IF CFLAG:(FLAG:11):36 == 3 || (CFLAG:(FLAG:11):36 == 0 && CFLAG:(FLAG:11):22)
+			PRINTFORML %CALLNAME:(FLAG:11)%の胎内に巣食う異形は消滅した！
+			BASE:(FLAG:11):0 = 0
+			CFLAG:(FLAG:11):22 = 0
+			CFLAG:(FLAG:11):23 = 0
+			CFLAG:(FLAG:11):36 = 0
+		ENDIF
+	ELSEIF RESULT == 5
+		PRINTFORML 泉の澄んだ水と浄化の力が、%CALLNAME:1%%TACHI()%の胸をあるべき状態へと戻した！
+		FLAG:6 -= 300
+		IF TALENT:1:130 == 1
+			PRINTFORML %CALLNAME:1%の母乳が止まった！
+			TALENT:1:130 = 0
+		ENDIF
+		IF TALENT:(FLAG:10):130 == 1
+			PRINTFORML %CALLNAME:(FLAG:10)%の母乳が止まった！
+			TALENT:(FLAG:10):130 = 0
+		ENDIF
+		IF TALENT:(FLAG:11):130 == 1
+			PRINTFORML %CALLNAME:(FLAG:11)%の母乳が止まった！
+			TALENT:(FLAG:11):130 = 0
+		ENDIF
+	;***********************************************************************************
+	
+	
+	ELSE
+		PRINTFORML %CALLNAME:1%%TACHI()%は泉から立ち去った…
+		CALL PRINT_MESSAGE(1, 200, 133, CALLNAME:1, "", 2)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 133, CALLNAME:1, "", 2)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 133, CALLNAME:1, "", 2)
+	ENDIF
+
+	IF FLAG:(FLAG:5 + 50) < 10 && ITEM:73 < 3
+		PRINTFORML 澄んだ空気の中、他にはない清涼な草花がいくつか生えている……
+		CALL ADD_ITEM(73, 3, 1)
+		CALL PRINT_MESSAGE(1, 200, 133, CALLNAME:1, "", 5)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 133, CALLNAME:1, "", 5)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 133, CALLNAME:1, "", 5)
+	ENDIF
+
+	;どの場合でもイベントをその場に残す
+	LOCAL:3 = 1
+	WAIT
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

@@ -1,0 +1,33 @@
+﻿;フェイズごとの触手服暴走チェック
+;ARG:0	対象キャラ
+@CHECK_SYOKUSYUHOUTAI(ARG:0)
+;LOCAL
+;0	LOOP
+;1	メッセージ表示フラグ
+
+
+SIF CFLAG:(ARG:0):46 == 0
+	RETURN
+;リタイアしてるなら黙る
+SIF CFLAG:(ARG:0):2
+	RETURN
+
+IF BASE:(ARG:0):3 <= 0
+	CFLAG:(ARG:0):46 = 0
+	RETURN
+ENDIF
+
+;主人公と場所が違うかチェック
+IF CFLAG:(ARG:0):4 != CFLAG:1:4
+	LOCAL:1 = 0
+ELSE
+	LOCAL:1 = 1
+ENDIF
+
+IF LOCAL:1
+	CALL PRINT_MESSAGE(ARG:0, 508,1, CALLNAME:(ARG:0), "")
+	TFLAG:63 = 1
+	CALL DAMAGE_COMMON(ARG:0, 2, 300 + RAND:201, 400)
+ENDIF
+
+

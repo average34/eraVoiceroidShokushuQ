@@ -1,0 +1,170 @@
+﻿
+
+; ////////////////////////////
+; / ARG:0   13    敵の衣服攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2         部位
+; / ARG:3         CPダメージ
+; / ARG:4         EPダメージ
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_13(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+;喪失時
+IF CFLAG:29 > 0
+
+	CALL COMMON_KOJO_DEFAULT_RYONA_TEST(0)
+
+	CALL ADD_RAND_MESSAGE, @"「み……見ないで……」"
+
+	RETURN 1
+ENDIF
+
+
+;●衣服がない時
+IF BASE:3 < 1
+
+	CALL ADD_RAND_MESSAGE, @"「や、やめっ！？」"
+	CALL ADD_RAND_MESSAGE, @"「あっ、ああっ！？」"
+	CALL ADD_RAND_MESSAGE, @"「なっ、なにをっ！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「そ、そこはっ！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「服がないからって、そんな！？」"
+
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_おてんば
+
+			CALL ADD_RAND_MESSAGE, @"「こ、このぉっ！よくも！」"
+
+			CALL ADD_RAND_MESSAGE, @"「くっ、こんな手を！」"
+		CASE 性格_がんばりや
+
+			CALL ADD_RAND_MESSAGE, @"「そ、そんなっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「だっ、だめぇっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「や、やめなさい」"
+		CASE 性格_きれもの
+
+			CALL ADD_RAND_MESSAGE, @"「そ、そんなっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「や、やめなさい」"
+		CASE 性格_ぬけめがない
+
+			CALL ADD_RAND_MESSAGE, @"「そ、そんなっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「や、やめなさい」"
+		CASE 性格_ねっけつかん
+
+			CALL ADD_RAND_MESSAGE, @"「くっ、こんな手を！」"
+			CALL ADD_RAND_MESSAGE, @"「こ、このぉっ！よくも！」"
+
+		CASE 性格_ひっこみじあん
+
+
+			CALL ADD_RAND_MESSAGE, @"「へ、へんなことしないでぇ……」"
+			CALL ADD_RAND_MESSAGE, @"「い、いやぁっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「だっ、だめぇっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「ひっ、ひゃあぁっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「や、やめてください！」"
+		CASE 性格_やさしいひと
+
+			CALL ADD_RAND_MESSAGE, @"「へ、へんなことしないでぇ……」"
+			CALL ADD_RAND_MESSAGE, @"「い、いやぁっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「だっ、だめぇっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「ひっ、ひゃあぁっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「や、やめてください！」"
+		CASE 性格_わがまま
+
+			CALL ADD_RAND_MESSAGE, @"「そ、そんなっ！？」"
+			CALL ADD_RAND_MESSAGE, @"「こ、このぉっ！よくも！」"
+
+			CALL ADD_RAND_MESSAGE, @"「ふ、ふざけた真似を！？」"
+			CALL ADD_RAND_MESSAGE, @"「くっ、こんな手を！」"
+			CALL ADD_RAND_MESSAGE, @"「や、やめなさい」"
+		ENDSELECT
+
+
+	RETURN 1
+
+ENDIF
+
+
+
+
+;触手服
+IF CFLAG:40
+
+	CALL ADD_RAND_MESSAGE, @"「こ、こんな服じゃ……！」"
+	CALL ADD_RAND_MESSAGE, @"「ふ、服の中の触手にまで！」"
+	CALL ADD_RAND_MESSAGE, @"「ふ、服の触手が蠢いて！」"
+
+	CALL ADD_RAND_MESSAGE, @"「この服もなんとかしないとぉ……！」"
+
+
+	RETURN 1
+ENDIF
+
+
+
+
+	CALL ADD_RAND_MESSAGE, @"「何で服なんか狙うのよ！？」"
+	CALL ADD_RAND_MESSAGE, @"「ふ、服がっ！？」"
+	CALL ADD_RAND_MESSAGE, @"「わ、わざと服を……！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「み、見えちゃうっ！？」"
+	CALL ADD_RAND_MESSAGE, @"「これじゃ肌がっ！？」"
+	CALL ADD_RAND_MESSAGE, @"「い、今ので衣服が！？」"
+	CALL ADD_RAND_MESSAGE, @"「このままじゃ、衣服がもたない！？」"
+
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「あああっ、気をつけなくちゃ……」"
+			CALL ADD_RAND_MESSAGE, @"「か、隠さなきゃ……」"
+			CALL ADD_RAND_MESSAGE, @"「これじゃ、すぐに戦えなく……」"
+			CALL ADD_RAND_MESSAGE, @"「動いたら見えちゃう……」"
+
+		CASE 性格_しあわせもの
+			CALL ADD_RAND_MESSAGE, @"「厚着してない時に限って……」"
+		CASE 性格_ぬけめがない
+		CASE 性格_ねっけつかん
+		CASE 性格_のんきもの
+			CALL ADD_RAND_MESSAGE, @"「厚着してない時に限って……」"
+
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「わざわざ破らなくてもいいじゃないですかあ」"
+			CALL ADD_RAND_MESSAGE, @"「そんなに見たいんですかぁ？」"
+			CALL ADD_RAND_MESSAGE, @"「二度と着れなくなる脱がし方はどうかと……」"
+			CALL ADD_RAND_MESSAGE, @"「こうやっていつも好きな娘に意地悪を？」"
+
+
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「だめぇ！！　破れちゃうっ！！」"
+			CALL ADD_RAND_MESSAGE, @"「だめぇ！！　見えちゃうっ！！」"
+			CALL ADD_RAND_MESSAGE, @"「あああっ、気をつけなくちゃ……」"
+			CALL ADD_RAND_MESSAGE, @"「か、隠さなきゃ……」"
+			CALL ADD_RAND_MESSAGE, @"「これじゃ、すぐに戦えなく……」"
+			CALL ADD_RAND_MESSAGE, @"「な、なにもしてこないでぇ！」"
+
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「あああっ、気をつけなくちゃ……」"
+			CALL ADD_RAND_MESSAGE, @"「か、隠さなきゃ……」"
+			CALL ADD_RAND_MESSAGE, @"「これじゃ、すぐに戦えなく……」"
+			CALL ADD_RAND_MESSAGE, @"「動いたら見えちゃう……」"
+			CALL ADD_RAND_MESSAGE, @"「な、なにもしてこないでぇ！」"
+	ENDSELECT
+RETURN 1
+

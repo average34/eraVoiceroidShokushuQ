@@ -1,0 +1,47 @@
+﻿;敵の性攻撃発動
+@SYSTEM_MESSAGE_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+SETCOLOR 0xEE1010
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_4)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+
+	CASE 414
+		PRINTFORML %ARGS:1%のツタの先端が四つに割れ、中に隠された色鮮やかな花弁をあらわにして%ARGS:0%の上半身にせまる！
+	CASE 415
+		PRINTFORML %ARGS:1%のツタの先端が四つに割れ、中に隠された色鮮やかな花弁をあらわにして%ARGS:0%の上半身にせまる！
+		
+	CASE 953
+		PRINTFORML %ARGS:1%は粘液をしたたらせた触手の先端を、%ARGS:0%の口元めがけて伸ばしてくる！
+	CASE 982
+		PRINTFORML %ARGS:1%は%ARGS:0%の顔に触手を這わせた！
+	CASE 983
+		PRINTFORML %ARGS:1%は%ARGS:0%の口に粘液まみれの触手をねじ込んだ！
+
+	CASE 984
+		PRINTFORML %ARGS:1%は%ARGS:0%の口に触手を挿入した！
+	CASE 1016
+		PRINTFORM %ARGS:1%は
+		IF FLAG:520 == 1 || FLAG:520 == 3
+			PRINTFORM 剛直の
+		ELSE
+			PRINTFORM 触手の
+		ENDIF
+		PRINTFORML 奉仕を強要するかのように%ARGS:0%の口に差し出した……
+	CASE 1017
+		PRINTFORML %ARGS:1%は剛直を%ARGS:0%の口に無理やりねじ込んだ！
+
+
+		
+		
+	CASEELSE
+
+		PRINTFORML %ARGS:1%は%ARGS:0%の口に触手を突き入れようとした！
+
+ENDSELECT
+
+RESETCOLOR
+
+
+

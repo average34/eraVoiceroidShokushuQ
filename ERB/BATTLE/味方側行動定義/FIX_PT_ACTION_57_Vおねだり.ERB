@@ -1,0 +1,15 @@
+﻿;おねだり
+;CHARA_ID	実行キャラ
+@FIX_PT_ACTION_57(CHARA_ID)
+#DIM CHARA_ID
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+
+CALL PRINT_MESSAGE(CHARA_ID,1,57,CALLNAME:CHARA_ID,"")
+
+;Vおねだり
+PRINTFORM %CALLNAME:CHARA_ID%は
+SIF TALENT:CHARA_ID:0 == 1
+	PRINTFORM 処女でありながら
+PRINTFORML 自ら秘部を開き、触手の挿入を待ち望んでいる…

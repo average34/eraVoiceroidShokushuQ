@@ -1,0 +1,124 @@
+﻿; AI戦闘コマンド アイテム 着替えセット
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_2_54(CHARA_ID, TARGET_ID)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+#DIM TARGET_CP
+#DIM POLLUTION
+
+	VARSET RATE
+	
+	; 想定CPを取得
+	CALL CHECK_RECOVERED_CP(TARGET_ID)
+	TARGET_CP = RESULT
+	
+	; 部屋の想定汚染度を取得
+	CALL CHECK_CLEANED_POLLUTION()
+	POLLUTION = RESULT
+	
+	; 使えるアイテムストックがない
+	SIF CHECK_STOCK_ITEM(54) == 0
+		RETURN 0
+	
+	; 対象キャラが存在しない
+	SIF !TARGET_ID
+		RETURN 0
+	
+	; 拘束中のキャラはすぐ服が破れるので解放後に
+	SIF CFLAG:TARGET_ID:10 || CFLAG:TARGET_ID:20
+		RETURN 0
+		
+	; 丸呑み中のキャラにアイテムは届かない
+	SIF CFLAG:TARGET_ID:21
+		RETURN 0
+		
+	; 喪失中のキャラの回復は無意味
+	SIF CFLAG:TARGET_ID:29
+		RETURN 0
+		
+	; 残CP 10%以上なら回復不要
+	SIF TARGET_CP >= (MAXBASE:TARGET_ID:CP / 100 * 10)
+		RETURN 0
+		
+	; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+	;                超弱気    弱気    普通    強気  超強気
+	DATA_TABLE:10:0 =  3100,   3500,   3900,   3500,   3100  ; 10:ねっけつかん
+	DATA_TABLE:2:0  =  3200,   3600,   4000,   3600,   3200  ; 02:おてんば
+	DATA_TABLE:14:0 =  3300,   3700,   4100,   3700,   3300  ; 14:わがまま
+	DATA_TABLE:3:0  =  3400,   3800,   4200,   3800,   3400  ; 03:がんこもの
+	DATA_TABLE:6:0  =  3500,   3900,   4300,   3900,   3500  ; 06:くろうにん
+	DATA_TABLE:4:0  =  3600,   4000,   4400,   4000,   3600  ; 04:がんばりや
+	DATA_TABLE:5:0  =  3700,   4100,   4500,   4100,   3700  ; 05:きれもの
+	DATA_TABLE:1:0  =  3800,   4200,   4600,   4200,   3800  ; 01:おせっかい
+	DATA_TABLE:0:0  =  3900,   4300,   4700,   4300,   3900  ; 00:ふつう
+	DATA_TABLE:9:0  =  4000,   4400,   4800,   4400,   4000  ; 09:ぬけめがない
+	DATA_TABLE:8:0  =  4100,   4500,   4900,   4500,   4100  ; 08:セクシーギャル
+	DATA_TABLE:7:0  =  4200,   4600,   5000,   4600,   4200  ; 07:しあわせもの
+	DATA_TABLE:11:0 =  4100,   4500,   4900,   4500,   4100  ; 11:のんきもの
+	DATA_TABLE:13:0 =  4000,   4400,   4800,   4400,   4000  ; 13:やさしいひと
+	DATA_TABLE:12:0 =  3900,   4300,   4700,   4300,   3900  ; 12:ひっこみじあん
+	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+	
+	; 自分に対しての回復行動率を少し高めに
+	SIF CHARA_ID == TARGET_ID
+		RATE += 500
+	
+	; 部屋汚染度による補正
+	SELECTCASE POLLUTION
+	CASE IS <= 9
+		TIMES RATE, 1.5
+	CASE IS <= 19
+		TIMES RATE, 1.2
+	CASE IS <= 39
+		TIMES RATE, 1.0
+	CASE IS <= 59
+		TIMES RATE, 0.8
+	CASEELSE
+		TIMES RATE, 0.5
+	ENDSELECT
+	
+	; 全裸なら補正大
+	SIF BASE:CHARA_ID:CP == 0
+		TIMES RATE, 2.0
+	
+	; TPによる補正
+	; 冷静な程まわりが見える
+	SELECTCASE BASE:CHARA_ID:TP
+	CASE IS >= 160
+		TIMES RATE, 0.4
+	CASE IS >= 120
+		TIMES RATE, 0.7
+	CASE IS >= 80
+		TIMES RATE, 1.0
+	CASE IS >= 40
+		TIMES RATE, 1.3
+	CASEELSE
+		TIMES RATE, 1.6
+	ENDSELECT
+	
+	; 戦闘素質による補正
+	SELECTCASE ABL:CHARA_ID:98
+	CASE IS <= 10
+		TIMES RATE, 2.0
+	CASE IS <= 20
+		TIMES RATE, 1.8
+	CASE IS <= 30
+		TIMES RATE, 1.6	
+	CASE IS <= 40
+		TIMES RATE, 1.4
+	CASE IS <= 50
+		TIMES RATE, 1.2
+	CASE IS <= 60
+		TIMES RATE, 1.0
+	CASE IS <= 70
+		TIMES RATE, 0.9
+	CASE IS <= 80
+		TIMES RATE, 0.8
+	CASEELSE
+		TIMES RATE, 0.6
+	ENDSELECT
+	
+RETURN LIMIT(RATE, 0, 10000)

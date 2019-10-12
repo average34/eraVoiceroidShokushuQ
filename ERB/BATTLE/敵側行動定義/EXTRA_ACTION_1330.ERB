@@ -1,0 +1,156 @@
+﻿@EXTRA_ACTION_1330(ARG:0, ARG:1)
+;LOCAL
+;1	命中率　侵入者有利のときは、技も強化される。
+
+
+LOCAL:11 = 0
+
+LOCAL:1 = 50
+LOCAL:10 = 50
+
+IF FLAG:10 > 0
+	LOCAL:1 = 70
+	LOCAL:10 = 70
+ENDIF
+
+IF FLAG:11 > 0
+
+	LOCAL:1 = 90
+	LOCAL:10 = 90
+
+ENDIF
+
+;汚れの効果
+IF BASE:(ARG:1):5 > 50
+	LOCAL:1 += 15
+
+	LOCAL:11 = 15
+
+	IF LOCAL:1 > 90
+		LOCAL:1 = 90
+	ENDIF
+ENDIF
+
+
+
+;性攻撃系なので、必中系
+LOCAL:1 = 150
+
+
+
+
+PRINTFORML 発動率：{LOCAL:1}％
+
+IF RAND:100 < LOCAL:1
+
+
+
+
+
+	CALL PRINT_MESSAGE(ARG:1, 17, TFLAG:99, CALLNAME:(ARG:1), SAVESTR:(ARG:0), ARG:1)
+
+	LOCAL:0 = ARG:1
+	LOCAL:1 = ARG:0
+
+	CALL GENKAKU_1330(LOCAL:0, LOCAL:1)
+
+
+
+ELSE
+	CALL PRINT_MESSAGE(ARG:1, 27, TFLAG:99, CALLNAME:(ARG:1), SAVESTR:(ARG:0), ARG:1)
+
+
+ENDIF
+
+
+
+PRINTL 
+
+
+
+
+@GENKAKU_1330(ARG:0, ARG:1)
+
+
+
+
+
+LOCAL:2 = ARG:0
+
+;121 ふたなり
+LOCAL:20 = 0
+LOCAL:20 = TALENT:(ARG:0):121
+
+TALENT:(ARG:0):121 = 1
+
+
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 因果の流れさえも無視し、%CALLNAME:(ARG:0)%は触手ペニスを生やされた！
+				CASE 1
+					PRINTFORML 因果の流れさえも無視し、%CALLNAME:(ARG:0)%は疑似陰茎を生やされた！
+				CASEELSE
+	
+			ENDSELECT
+
+
+
+PRINTL 
+PRINTFORML 煙の効果を確認した%SAVESTR:(ARG:1)%が、%CALLNAME:(ARG:0)%を責め始める。
+PRINTL 
+
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORML %SAVESTR:(ARG:1)%は白魚のように綺麗な手で%CALLNAME:(ARG:0)%のペニスをもて遊び始めた……
+					PRINTFORML 押し寄せる快楽の波に、%CALLNAME:(ARG:0)%の理性が、脆い砂のように流されていく……
+				CASE 1
+					PRINTFORML %SAVESTR:(ARG:1)%は、多足の触手で%CALLNAME:(ARG:0)%の体の自由を奪い宙吊りにすると、
+					PRINTFORML 敏感になっている%CALLNAME:(ARG:0)%のペニスを口に含んで刺激し始めた……
+				CASE 2
+					PRINTFORML 吸盤のついた触手による射精管理が始まった……
+					PRINTFORML 緩急をつけた絞めあげの連続に追い詰められた%CALLNAME:(ARG:0)%に、
+					PRINTFORML 先端が４つにわかれた搾精口膣触手による吸い上げが追加される……
+				CASE 3
+					PRINTFORML %SAVESTR:(ARG:1)%の手にしたイソギンチャクが、%CALLNAME:(ARG:0)%のペニスを優しく包み込む……
+					PRINTFORML 柔らかい大量の触手に敏感な個所を刺激され、%CALLNAME:(ARG:0)%はたちまち昇りつめていく……
+				CASE 4
+					PRINTFORML %SAVESTR:(ARG:1)%は手にしたイソギンチャク状の生物を%CALLNAME:(ARG:0)%に対して見せつけた。
+					PRINTFORML 意図を察した%CALLNAME:(ARG:0)%は激しく首を振るが、%SAVESTR:(ARG:1)%の手は無情にも彼女の秘部に伸びていく……
+				CASE 5
+					PRINTFORML %SAVESTR:(ARG:1)%は、多足の触手で%CALLNAME:(ARG:0)%の体の自由を奪い宙吊りにすると、
+					PRINTFORML 無様に晒された%CALLNAME:(ARG:0)%のペニスをあらゆる手段で嬲り始めた……
+					PRINTFORML 口で。手で。触手で。%CALLNAME:(ARG:0)%のペニスは枯れ果てるまで精を搾り取られていく……
+
+				CASEELSE
+
+			ENDSELECT
+
+	TFLAG:63 = 2
+
+	LOCAL:5 = CALC_SENSITIVITY(LOCAL:2, TFLAG:63, 4500 + RAND:301)
+
+;ダミー用
+	CALL PRINT_MESSAGE(ARG:0, 14, 9999, CALLNAME:(ARG:0), SAVESTR:(ARG:1), TFLAG:63, LOCAL:5)
+
+	CALL DAMAGE_COMMON(LOCAL:2, 2, LOCAL:5, 0)
+
+
+
+	CALL ADD_ABL_EXP(12, ARG:0, 4 + RAND:3)
+
+IF LOCAL:20 == 0
+
+	PRINTL 
+	PRINTFORML 竜宮の煙の効果はすぐに切れ、%CALLNAME:(ARG:0)%のクリトリスは元に戻っていく……
+
+ENDIF
+
+
+
+TALENT:(ARG:0):121 = LOCAL:20
+
+
+
+
+
+

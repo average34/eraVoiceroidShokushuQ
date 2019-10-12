@@ -1,0 +1,329 @@
+﻿;フェイズごとの触手服暴走チェック
+;ARG:0	対象キャラ
+@CHECK_SYOKUSYUSUIT(ARG:0)
+;LOCAL
+;0	LOOP
+;1	メッセージ表示フラグ
+;2	対象部位
+;3	ダメージ乱数
+;4	ふたなり確認
+;5	貞操帯分岐用
+;6	NFダメージ計算
+
+SIF CFLAG:(ARG:0):40 == 0
+	RETURN
+;リタイアしてるなら黙る
+SIF CFLAG:(ARG:0):2
+	RETURN
+
+IF BASE:(ARG:0):3 <= 0
+	CFLAG:(ARG:0):40 = 0
+	RETURN
+ENDIF
+
+;主人公と場所が違うかチェック
+IF CFLAG:(ARG:0):4 != CFLAG:1:4
+	LOCAL:1 = 0
+ELSE
+	LOCAL:1 = 1
+ENDIF
+
+IF LOCAL:1
+	IF CFLAG:(ARG:0):29
+		CALL PRINT_MESSAGE(ARG:0, 441, 10, CALLNAME:(ARG:0), "")
+		RETURN
+	ENDIF
+	IF FLAG:8 >= 1
+		CALL PRINT_MESSAGE(ARG:0, 441, 0, CALLNAME:(ARG:0), "")
+		LOCAL:2 = RAND:4
+		;貞操帯と男の娘はV→Aに書き換え
+		SIF (CFLAG:(ARG:0):47 == 1 || TALENT:(ARG:0):122) && LOCAL:2 == 3
+			LOCAL:2 = 0
+		LOCAL:3 = 300 + RAND:401
+		TFLAG:63 = LOCAL:2
+		CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:3, 300, 1)
+		CALL ADD_ABL_EXP(11, ARG:0, 10)
+		
+		;◆触手スーツ自己再生(10％)
+		CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,10)
+		;◆◆
+		
+		RETURN
+	ENDIF
+
+	;貞操帯か男の娘があるとVor全身を引くか20%の確率でAに書き換え　合計1/3でA狙い
+	LOCAL:5 = RAND:15
+	SIF (CFLAG:(ARG:0):47 == 1 || TALENT:(ARG:0):122) && (LOCAL:5 == 3 || LOCAL:5 == 5 || RAND:5 == 0)
+		LOCAL:5 = 0
+	SELECTCASE LOCAL:5
+		;A
+		CASE 0
+			CALL PRINT_MESSAGE(ARG:0, 441, 1, CALLNAME:(ARG:0), "")
+			FOR LOCAL:0, 0, 7
+				TFLAG:63 = 0
+				LOCAL:1 = RAND:3
+				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+			NEXT
+			LOCAL:2 = 0
+			CALL ADD_ABL_EXP(11, ARG:0, 20)
+			IF ABL:(ARG:0):6 >= 3 && RAND:3 == 0
+				;◆IF-ENDIFを上に統合。
+					CALL PRINT_MESSAGE(ARG:0, 441, 13, CALLNAME:(ARG:0), "")
+						FOR LOCAL:0, 0, 7
+							TFLAG:63 = 0
+							LOCAL:1 = RAND:3
+							CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+						NEXT
+						LOCAL:2 = 0
+					SIF FLAG:507 > 0
+						CALL PRINT_MESSAGE(ARG:0, 441, 14, CALLNAME:(ARG:0), "")
+					CALL ADD_ABL_EXP(11, ARG:0, 20)
+					BASE:(ARG:0):5 += 3
+					
+					;◆触手スーツ自己再生(25％)
+					CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,4)
+					;◆◆
+					
+				
+			ELSE
+				CALL PRINT_MESSAGE(ARG:0, 441, 2, CALLNAME:(ARG:0), "")
+				
+				;◆触手スーツ自己再生(25％)
+				CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,4)
+				;◆◆
+		
+			ENDIF
+		;胸
+		CASE 1
+			;NF判定
+			TRYCALL CALC_NIPPLE_FUCK(ARG:0, 0)
+			;NF
+			IF RESULT:0 == 1
+				CALL PRINT_MESSAGE(ARG:0, 441, 19, CALLNAME:(ARG:0), "")
+				CFLAG:(ARG:0):512 += 1
+				;素質LVまたは乳姦回数によるダメージ補正
+				LOCAL:6 = 30 + CALC_NF_DAMAGE(ARG:0, 2)
+				FOR LOCAL:0, 0, 7
+					TFLAG:63 = 1
+					LOCAL:1 = RAND:3
+					CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:6 * (LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+				NEXT
+				LOCAL:2 = 0
+				
+				CALL PRINT_MESSAGE(ARG:0, 441, 20, CALLNAME:(ARG:0), "")
+				CALL ADD_ABL_EXP(11, ARG:0, 20)
+				CALL PRINT_MESSAGE(ARG:0, 441, 21, CALLNAME:(ARG:0), "")
+				
+				;母乳体質+
+				IF GET_BUST(ARG:0) >= 2
+					CALL MILK_COME(ARG:0, 1, 2)
+					CALL PRINT_MESSAGE(ARG:0, 441, 26, CALLNAME:(ARG:0), "")
+					CALL MILK_ADJUST(ARG:0, 0)
+				ENDIF
+				
+				CALL PRINT_MESSAGE(ARG:0, 441, 22, CALLNAME:(ARG:0), "")
+				TFLAG:63 = 1
+				LOCAL:1 = RAND:6
+				;todo:ここだけ倍率が怪しい ほかの数字も小さすぎるという意味ではあやしい
+				CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:6 * (LOCAL:1+25) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 100)
+				CALL ADD_ABL_EXP(11, ARG:0, 30)
+				;B寄生(拡張+以上)
+				IF FLAG:516 > 0 && TALENT:(ARG:0):162 > 1 && CFLAG:(ARG:0):161 == 0 && RAND:4 == 0
+					CALL PARASITE_TYPE(ARG:0, 3, 5 + RAND:12, 4 + RAND:4 + RAND:3, 0)
+					PRINTFORML %CALLNAME:(ARG:0)%は何かに【寄生】されてしまった！
+				ENDIF
+				
+				;事後密閉の有無
+				IF RAND:2
+					CALL PRINT_MESSAGE(ARG:0, 441, 23, CALLNAME:(ARG:0), "")
+					SIF TALENT:(ARG:0):130 >= 3
+						CFLAG:(ARG:0):506 += TALENT:(ARG:0):130 * 10 + 20
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 441, 24, CALLNAME:(ARG:0), "")
+					SIF TALENT:(ARG:0):130 >= 3
+						CFLAG:(ARG:0):506 += TALENT:(ARG:0):130 * 5
+				ENDIF
+				
+				CALL PRINT_MESSAGE(ARG:0, 441, 25, CALLNAME:(ARG:0), "")
+				
+				TRYCALL CHECK_NIPPLE_EXTEND(ARG:0)
+			;通常
+			ELSE
+				CALL PRINT_MESSAGE(ARG:0, 441, 3, CALLNAME:(ARG:0), "")
+				FOR LOCAL:0, 0, 7
+					TFLAG:63 = 1
+					LOCAL:1 = RAND:3
+					CALL DAMAGE_COMMON(ARG:0, 2, 30 * (LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+				NEXT
+				LOCAL:2 = 0
+				
+				CALL ADD_ABL_EXP(11, ARG:0, 20)
+				CALL PRINT_MESSAGE(ARG:0, 441, 4, CALLNAME:(ARG:0), "")
+			ENDIF
+			
+			
+			;◆触手スーツ自己再生(75％)
+			CALL SYOKUSYUSUIT_REGENERATE(ARG:0,3,4)
+			;◆◆
+		;C
+		CASE 2
+			CALL PRINT_MESSAGE(ARG:0, 441, 5, CALLNAME:(ARG:0), "")
+			FOR LOCAL:0, 0, 7
+				TFLAG:63 = 2
+				LOCAL:1 = RAND:3
+				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+			NEXT
+			LOCAL:2 = 0
+			CALL ADD_ABL_EXP(11, ARG:0, 20)
+			IF GET_PENIS(ARG:0) > 0
+				IF CFLAG:(ARG:0):22 == 0 && RAND:2
+					IF RAND:2 == 0
+						CALL RANDOM_PARASITE((ARG:0), 1, 1)
+						CALL PRINT_MESSAGE(ARG:0, 441, 12, CALLNAME:(ARG:0), "")
+					ENDIF
+					CALL PRINT_MESSAGE(ARG:0, 441, 11, CALLNAME:(ARG:0), "")
+				ELSEIF CFLAG:(ARG:0):171 == 0 && FLAG:518 == 1 && GET_PENIS(ARG:0) > 1
+					IF RAND:3 == 0
+						TFLAG:93 = 1
+						CALL PARASITE_TYPE(ARG:0, 5, 4, 10+RAND:8, 0)
+						CALL PRINT_MESSAGE(ARG:0, 441, 27, CALLNAME:(ARG:0), "")
+						TFLAG:93 = 0
+					ENDIF
+				ENDIF
+			ELSE
+				CALL PRINT_MESSAGE(ARG:0, 441, 6, CALLNAME:(ARG:0), "")
+			ENDIF
+			
+			;◆触手スーツ自己再生(25％)
+			CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,4)
+			;◆◆
+		;V
+		CASE 3
+			CALL PRINT_MESSAGE(ARG:0, 441, 7, CALLNAME:(ARG:0), "")
+			FOR LOCAL:0, 0, 7
+				TFLAG:63 = 3
+				LOCAL:1 = RAND:3
+				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+			NEXT
+			LOCAL:2 = 0
+			CALL ADD_ABL_EXP(11, ARG:0, 20)
+			CALL PRINT_MESSAGE(ARG:0, 441, 8, CALLNAME:(ARG:0), "")
+				IF CFLAG:(ARG:0):22 == 0
+					IF RAND:4 == 0
+						CALL RANDOM_PARASITE((ARG:0), 0, 1)
+						PRINTFORML %CALLNAME:(ARG:0)%は何かに【寄生】されてしまった！
+					ENDIF
+				ENDIF
+			
+			;◆触手スーツ自己再生(25％)
+			CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,4)
+			;◆◆
+		
+		CASE 4
+			IF RAND:4 <= FLAG:4
+				CALL PRINT_MESSAGE(ARG:0, 441, 15, CALLNAME:(ARG:0), "")
+				FOR LOCAL:0, 0, 7
+					LOCAL:3 = LIMIT(RAND:30,10,25)
+					;todo:この辺ここ以外と数字の大きさが違う
+					CALL DAMAGE_COMMON((ARG:0), 0, LOCAL:3 * 10, 100)
+				NEXT
+				;todo:意図したものならいいけど
+				SIF ABL:(ARG:0):11 >= 3 || ABL:(ARG:0):8 >= 3
+					CALL EXTASY((ARG:0), 2, 100, 100)
+				CALL PRINT_MESSAGE(ARG:0, 441, 16, CALLNAME:(ARG:0), "")
+				
+				;◆触手スーツ自己再生(25％)
+				CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,4)
+				;◆◆
+				
+			ELSE
+				CALL PRINT_MESSAGE(ARG:0, 441, 9, CALLNAME:(ARG:0), "")
+				
+				;◆通常時でも微ダメージ+触手スーツ自己再生
+				LOCAL:1 = RAND:4
+				LOCAL:2 = 100 + RAND:201
+				CALL ADD_ABL_EXP(LOCAL:1 + 6, ARG:0, 100 + RAND:100)
+				TFLAG:63 = LOCAL:1
+				;todo:それにしても大きさちがわない？
+				CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:2, 300, 1)
+				
+				;◆触手スーツ自己再生(10％)
+				CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,10)
+				;◆◆
+			ENDIF
+		CASE 5
+			IF RAND:2 <= FLAG:4
+				CALL PRINT_MESSAGE(ARG:0, 441, 17, CALLNAME:(ARG:0), "")
+				SIF GET_PENIS(ARG:0)
+					LOCAL:4 = 1
+				FOR LOCAL:0, 0, 12
+					TFLAG:63 = RAND:4
+					LOCAL:1 = RAND:3
+					CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+				NEXT
+				LOCAL:2 = 0
+				CALL ADD_ABL_EXP(11, ARG:0, 40)
+				IF CFLAG:(ARG:0):22 == 0
+					IF LOCAL:4 == 1
+						CALL RANDOM_PARASITE((ARG:0), 1, 1)
+					ELSE
+						CALL RANDOM_PARASITE((ARG:0), 0, 1)
+						IF CFLAG:(ARG:0):22
+							PRINTFORML %CALLNAME:(ARG:0)%は何かに【寄生】されてしまった！
+						ENDIF
+					ENDIF
+				ENDIF
+				CALL PRINT_MESSAGE(ARG:0, 441, 18, CALLNAME:(ARG:0), "")
+				
+				;◆触手スーツ自己再生(100％)
+				BASE:(ARG:0):3 = MAXBASE:(ARG:0):3
+			ELSE
+				CALL PRINT_MESSAGE(ARG:0, 441, 9, CALLNAME:(ARG:0), "")
+				
+				;◆通常時でも微ダメージ+触手スーツ自己再生
+				LOCAL:1 = RAND:4
+				LOCAL:2 = 100 + RAND:201
+				CALL ADD_ABL_EXP(LOCAL:1 + 6, ARG:0, 100 + RAND:100)
+				TFLAG:63 = LOCAL:1
+				;todo:処理ちゃんと読んだわけじゃないから
+				CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:2, 300, 1)
+				
+				;◆触手スーツ自己再生(10％)
+				CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,10)
+			ENDIF
+		CASEELSE
+			CALL PRINT_MESSAGE(ARG:0, 441, 9, CALLNAME:(ARG:0), "")
+			
+			;◆通常時でも微ダメージ+触手スーツ自己再生
+			LOCAL:1 = RAND:4
+			LOCAL:2 = 100 + RAND:201
+			CALL ADD_ABL_EXP(LOCAL:1 + 6, ARG:0, 100 + RAND:100)
+			TFLAG:63 = LOCAL:1
+			;todo:どっちが正しいかわからない
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:2, 300, 1)
+			
+			;◆触手スーツ自己再生(10％)
+			CALL SYOKUSYUSUIT_REGENERATE(ARG:0,1,10)
+	ENDSELECT
+	PRINTL
+ENDIF
+
+
+@SYOKUSYUSUIT_REGENERATE(ARG:0,ARG:1 = 1,ARG:2 = 1)
+;ARG
+;0	対象キャラ
+;1	自己再生値(乗算) 引数が無い場合は1
+;2	自己再生値(除算) 引数が無い場合は1
+
+;ゼロ除算防止
+SIF ARG:2 == 0
+	ARG:2 = 1
+
+IF BASE:(ARG:0):3 < MAXBASE:(ARG:0):3
+	PRINTFORML %CALLNAME:(ARG:0)%の垂れ流す汗と体液を啜り、触手の擬態した生地がよりきつく吸い付き、身体を括り出していく…
+	BASE:(ARG:0):3 += MAXBASE:(ARG:0):3 * ARG:1 / ARG:2
+	SIF BASE:(ARG:0):3 > MAXBASE:(ARG:0):3
+		BASE:(ARG:0):3 = MAXBASE:(ARG:0):3
+ENDIF
+
+

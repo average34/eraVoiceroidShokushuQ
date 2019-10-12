@@ -1,0 +1,832 @@
+﻿
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;現在の素質を表示
+;ARG:0	対象キャラID
+;ARG:1	素質のみ表示
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@SHOW_TALENT_LIST(ARG:0, ARG:1 = 0)
+#DIM LCOUNT,3	;ループ用
+
+;LOCAL
+;0	表示素質数
+
+
+LOCAL = 0
+FOR LCOUNT, 0, 300
+
+	RESULTS = 
+	CALL PERSONAL_TALENT(ARG, LCOUNT)
+	LOCALS = %RESULTS%
+	
+	;表示できる素質があれば表示
+	IF LOCALS != ""
+		IF ARG:1 == 0
+			PRINTFORM %LOCALS:0,16,LEFT% 
+			CALL SHOW_TALENT_EXPLAIN(LCOUNT, TALENT:(ARG):(LCOUNT))
+			PRINTL  
+		ELSE
+			;図鑑のキャラ説明などでは改行と説明を抜く
+			PRINTFORM %LOCALS:0% 
+			SIF (LOCAL % 6) == 5
+				PRINTL  
+		ENDIF
+		LOCAL++
+	ENDIF
+NEXT
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;素質名＿キャラの状態等を考慮する場合
+;ARG:0	キャラID
+;ARG:1	素質ID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@PERSONAL_TALENT(ARG:0, ARG:1)
+;特殊な条件はこっちで
+;表示されない場合の条件を入れる
+
+RESULTS = 
+
+
+;超乳の表示にはコンフィグの許可が必要
+SIF ARG:1 == 158 && FLAG:521 >= 1
+	RETURN
+;超々乳の表示にはコンフィグの許可が必要
+SIF ARG:1 == 222 && FLAG:521 >= 1
+	RETURN
+;接地乳房の表示にはコンフィグの許可が必要
+SIF ARG:1 == 223 && FLAG:521 >= 1
+	RETURN
+
+
+;排卵異常を表示するにはコンフィグの許可が必要
+SIF ARG:1 == 137 && FLAG:535 == 0
+	RETURN
+
+;拡張乳腺を表示するにはコンフィグの許可が必要
+SIF ARG:1 == 162 && FLAG:507 < 1
+	RETURN
+
+;ふたなり系素質の表示には[ふたなり]が必要
+SIF ARG:1 >= 170 && ARG:1 <= 188 && GET_PENIS(ARG:0) < 1
+	RETURN
+
+CALL TALENT_NAME(ARG:1, TALENT:(ARG):(ARG:1))
+RETURN
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;素質名＿値によって名前が変わるタイプの素質に対応する場合
+;ARG:0	素質ID
+;ARG:1	素質値（値によって名前が変わる物があるので）
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@TALENT_NAME(ARG:0, ARG:1)
+;※ここでは引数以外の値（特殊な条件）等は参照しない
+
+IF ARG:1 == 0
+	RESULTS = 
+	RETURN
+ENDIF
+
+LOCALS = 
+SELECTCASE ARG
+
+	;体型
+	CASE 100
+		IF ARG:1 == 2
+			LOCALS = [小人体型]
+		ELSEIF ARG:1 == 1
+			LOCALS = [小柄体型]
+		ENDIF
+		
+	;各部位感度
+	CASE 101 TO 106
+		;部位
+		IF ARG == 101
+			LOCALS = [Ａ
+		ELSEIF ARG == 102
+			LOCALS = [Ｂ
+		ELSEIF ARG == 103
+			LOCALS = [Ｃ
+		ELSEIF ARG == 104
+			LOCALS = [Ｖ
+		ELSEIF ARG == 105
+			LOCALS = [肌
+		ELSEIF ARG == 106
+			LOCALS = [Ｍ
+		ENDIF
+		;感度
+		IF ARG:1 <= -1
+			LOCALS += "鈍感]"
+		ELSEIF ARG:1 == 1
+			LOCALS += "敏感]"
+		ELSEIF ARG:1 == 2
+			LOCALS += "過敏]"
+		ELSEIF ARG:1 >= 3
+			LOCALS += "異常過敏]"
+		ENDIF
+		
+	;動物耳
+	CASE 124
+		LOCALS = [動物耳
+		IF ARG:1 >= 2
+			LOCALS += "★]"
+		ELSE
+			LOCALS += "]"
+		ENDIF
+	;母乳体質
+	CASE 130
+		LOCALS = [母乳
+		IF ARG:1 == 1
+			LOCALS += "体質]"
+		ELSEIF ARG:1 == 2
+			LOCALS += "分泌過多]"
+		ELSEIF ARG:1 == 3
+			LOCALS += "異常分泌]"
+		ELSEIF ARG:1 == 4
+			LOCALS += "製造装置]"
+		ELSEIF ARG:1 == 5
+			LOCALS += "間欠泉]"
+		ELSEIF ARG:1 >= 6
+			LOCALS += "活火山]"
+		ENDIF
+		
+		
+	;排卵異常
+	CASE 137
+		IF ARG:1 == -1
+			LOCALS = [未熟卵巣]
+		ELSEIF ARG:1 == 1
+			LOCALS = [異常排卵巣]
+		ELSEIF ARG:1 == 2
+			LOCALS = [肥大化卵巣]
+		ELSEIF ARG:1 == 3
+			LOCALS = [苗床卵巣]
+		ENDIF
+		
+	;ペット
+	CASE 140
+		IF ARG:1 == 1
+			LOCALS = [ペット]
+		ELSEIF ARG:1 == 2
+			LOCALS = [花嫁]
+		ELSEIF ARG:1 == 3
+			LOCALS = [しもべ]
+		ENDIF
+		
+	;超乳
+	CASE 158
+		LOCALS = [超乳
+		IF ARG:1 == 1
+			LOCALS += "]"
+		ELSEIF ARG:1 >= 2
+			LOCALS += "+" + TOSTR(ARG:1-1) + "]"
+		ENDIF
+		
+		
+	;浄化知識
+	CASE 160
+		IF ARG:1 == 1
+			LOCALS = [浄化
+		ELSEIF ARG:1 == 2
+			LOCALS = [結界
+		ENDIF
+		LOCALS += "知識]"
+		
+		
+	;体術習熟
+	CASE 161
+		IF ARG:1 == 1
+			LOCALS = [体術
+		ELSEIF ARG:1 == 2
+			LOCALS = [剣術
+		ENDIF
+		LOCALS += "習熟]"
+		
+		
+	;拡張乳腺
+	CASE 162
+		LOCALS = [拡張乳腺
+		IF ARG:1 == 1
+			LOCALS += "]"
+		ELSEIF ARG:1 >= 2
+			LOCALS += "+" + TOSTR(ARG:1-1) + "]"
+		ENDIF
+		
+		
+	;術式知識
+	CASE 164
+		IF ARG:1 == 1
+			LOCALS = [波動感知]
+		ELSEIF ARG:1 == 2
+			LOCALS = [術式知識]
+		ENDIF
+		
+		
+	;神気
+	CASE 168
+		IF ARG:1 == 1
+			LOCALS = [神気]
+		ELSEIF ARG:1 == 2
+			LOCALS = [神の血]
+		ENDIF
+		
+		
+	;------ここから、ふたなり系素質※[ふたなり]時のみ有効-----
+	;竿の長さ
+	CASE 170
+		IF ARG:1 == -1
+			LOCALS = [短小]
+		ELSEIF ARG:1 == 1
+			LOCALS = [巨根]
+		ELSEIF ARG:1 == 2
+			LOCALS = [爆根]
+		ELSEIF ARG:1 == 3
+			LOCALS = [超巨根]
+		ENDIF
+		
+		
+	;精力
+	CASE 172
+		IF ARG:1 == -1
+			LOCALS = [精力薄弱]
+		ELSEIF ARG:1 == 1
+			LOCALS = [絶倫]
+		ELSEIF ARG:1 == 2
+			LOCALS = [超絶倫]
+		ENDIF
+		
+		
+	;包茎
+	CASE 173
+		IF ARG:1 == 1
+			LOCALS = [剥けかけ]
+		ELSEIF ARG:1 == 2
+			LOCALS = [仮性包茎]
+		ELSEIF ARG:1 == 3
+			LOCALS = [真性包茎]
+		ENDIF
+		
+		
+	;先天的
+	CASE 176
+		IF ARG:1 == 1
+			LOCALS = [先天的ふたなり]
+		ELSEIF ARG:1 == 2
+			LOCALS = [後天的ふたなり]
+		ENDIF
+	;早漏
+	CASE 178
+		IF ARG:1 == -1
+			LOCALS = [遅漏]
+		ELSEIF ARG:1 == 1
+			LOCALS = [早漏]
+		ENDIF
+		
+	;玉
+	CASE 180
+		IF ARG:1 == 1
+			LOCALS = [玉あり]
+		ELSEIF ARG:1 == 2
+			LOCALS = [巨玉]
+		ELSEIF ARG:1 == 3
+			LOCALS = [爆玉]
+		ELSEIF ARG:1 == 4
+			LOCALS = [超巨玉]
+		ELSEIF ARG:1 == 11
+			LOCALS = [片玉]
+		ELSEIF ARG:1 == 12
+			LOCALS = [片巨玉]
+		ELSEIF ARG:1 == 13
+			LOCALS = [片爆玉]
+		ELSEIF ARG:1 == 14
+			LOCALS = [超片巨玉]
+		ENDIF
+		
+	;毛
+	CASE 181
+		IF ARG:1 == 1
+			LOCALS = [毛玉]
+		ELSEIF ARG:1 == 2
+			LOCALS = [剛毛玉]
+		ENDIF
+		
+		
+	;液量
+	CASE 185
+		IF ARG:1 == -1
+			LOCALS = [少量射精]
+		ELSEIF ARG:1 == 1
+			LOCALS = [大量射精]
+		ELSEIF ARG:1 == 2
+			LOCALS = [超大量射精]
+		ENDIF
+		
+	;濃度
+	CASE 186
+		IF ARG:1 == -1
+			LOCALS = [精液薄め]
+		ELSEIF ARG:1 == 1
+			LOCALS = [精液濃厚]
+		ELSEIF ARG:1 == 2
+			LOCALS = [精液特濃]
+		ENDIF
+	;-----ここまで、ふたなり系素質-----
+	;羽
+	CASE 213
+		IF ARG:1 == 1
+			LOCALS = [羽]
+		ELSEIF ARG:1 == 2
+			LOCALS = [翼]
+		ENDIF
+	;尻尾
+	CASE 215
+		IF (ARG:1 % 10) == 1
+			LOCALS = [尻尾
+		ELSEIF (ARG:1 % 10) == 2
+			LOCALS = [もふ尻尾
+		ENDIF
+		IF ARG:1 >= 10
+			LOCALS += "★]"
+		ELSE
+			LOCALS += "]"
+		ENDIF
+	;母乳粘度
+	CASE 220
+		IF ARG:1 == 1
+			LOCALS = [さらさら母乳]
+		ELSEIF ARG:1 == 2
+			LOCALS = [とろとろ母乳]
+		ELSEIF ARG:1 == 3
+			LOCALS = [ねっとり母乳]
+		ELSEIF ARG:1 == 4
+			LOCALS = [こくまろ母乳]
+		ELSEIF ARG:1 == 5
+			LOCALS = [特濃母乳]
+		ELSEIF ARG:1 >= 6
+			LOCALS = [超特濃母乳]
+		ENDIF
+	;超々乳
+	CASE 222
+		LOCALS = [超々乳
+		IF ARG:1 == 1
+			LOCALS += "]"
+		ELSEIF ARG:1 >= 2
+			LOCALS += "+" + TOSTR(ARG:1-1) + "]"
+		ENDIF
+	;接地乳房
+	CASE 223
+		LOCALS = [接地乳房
+		IF ARG:1 == 1
+			LOCALS += "]"
+		ELSEIF ARG:1 >= 2
+			LOCALS += "+" + TOSTR(ARG:1-1) + "]"
+		ENDIF
+		
+	CASEELSE
+		LOCALS = [%TALENTNAME:(ARG)%]
+		
+ENDSELECT
+
+RESULTS = %LOCALS%
+RETURN
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;素質の詳細を表示
+;ARG:0	素質ID
+;ARG:1	素質の強さ（感度で利用）
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@SHOW_TALENT_EXPLAIN(ARG:0, ARG:1)
+
+;一部の説明はわざと省略
+SELECTCASE ARG:0
+	CASE 0
+		PRINTFORM V属性の攻撃を受けた際に処女喪失し、MPに大ダメージを受けます
+	CASE 10
+		PRINTFORM 敵の攻撃を受けた際に、TPが下がりやすくなります
+	CASE 11
+		PRINTFORM 敵の攻撃を受けた際に、TPが上がりやすくなります　仲間に誘いづらくなります
+	CASE 12
+		PRINTFORM 寄生攻撃を受けた際のMPダメージを軽減します
+	CASE 13
+		PRINTFORM 仲間に誘いやすくなります
+	CASE 14
+		PRINTFORM 戦闘開始時のTPがやや低くなります
+	CASE 15
+		PRINTFORM 性攻撃を受けた際に、TPが上がりやすくなります　仲間に誘いづらくなります
+	CASE 16
+		PRINTFORM 回避率が高くなります　仲間に誘いづらくなります
+	CASE 17
+		PRINTFORM 性攻撃を受けた際のMPダメージを軽減します
+	CASE 18
+		PRINTFORM 仲間に誘う際に友好度が大きく影響します
+	CASE 20
+		PRINTFORM 自慰が発生しづらくなります
+	CASE 21
+		PRINTFORM 仲間が戦意喪失した際に、TPが変化しません
+	CASE 22
+		PRINTFORM 様々な場面でのTP変化量が小さくなります
+	CASE 23
+		PRINTFORM 探索の成功率が上がります
+	CASE 24
+		PRINTFORM 弱攻撃・弱攻撃の命中率が上がります
+	CASE 25
+		PRINTFORM HPが0になった際に、TPが下がらなくなります
+	CASE 26
+		PRINTFORM 自分が拘束された際と、仲間が戦意喪失した際に、TPが0になります
+	CASE 27
+		PRINTFORM 各種感覚・中毒の能力が上がりづらくなります
+	CASE 28
+		PRINTFORM 戦闘開始時に前に出た状態になります
+	CASE 30
+		PRINTFORM V属性の攻撃を受けた際に、TPが下がりやすくなります
+	CASE 31
+		PRINTFORM V属性の攻撃を受けた際に、TPが変化しなくなります
+	CASE 32
+		PRINTFORM 自分が絶頂した際にTPが変化しません　また、絶頂ダメージを軽減します
+	CASE 33
+		PRINTFORM 衣服攻撃を受けた際に、TPが下がらなくなります　全裸時にTPが上がります
+	CASE 34
+		PRINTFORM 敵の拘束から抜け出しやすくなります　また、拘束中にTPが上がりやすくなります
+	CASE 35
+		PRINTFORM 全裸になっている間、命中率が上がり、MPの自然減少量が2倍になります
+	CASE 36
+		PRINTFORM 全裸になっている間、MPが自然減少しなくなります
+	CASE 40
+		PRINTFORM HPダメージが1割増加し、TPも変化しやすくなります
+	CASE 41
+		PRINTFORM HPダメージを1割軽減します
+	CASE 42
+		PRINTFORM A・V属性の攻撃を受けた際のEPダメージが増加し、MPダメージを軽減します
+	CASE 43
+		PRINTFORM A・V属性の攻撃を受けた際のEPダメージを軽減します
+	CASE 50
+		PRINTFORM 攻撃戦闘・道具戦闘が上がりやすくなります
+	CASE 51
+		PRINTFORM 気配察知・危機回避が上がりやすくなり、攻撃戦闘・道具戦闘が上がりづらくなります
+	CASE 52
+		PRINTFORM 話術が上がりやすくなります
+	CASE 53
+		PRINTFORM 消耗武器による攻撃力が上がります
+	CASE 54
+		PRINTFORM M属性の攻撃を受けた際お互いに追加ダメージを受けます
+	CASE 55
+		PRINTFORM 探索時に回復アイテムなどを手に入れる確率が上がります
+	CASE 56
+		PRINTFORM 睡眠・発情になる確率が下がります
+	CASE 57
+		IF FLAG:521 == 0
+			PRINTFORM NPが溜まりやすくなり、愛液が出やすくなります。
+		ELSE
+			PRINTFORM NPが溜まりやすくなり、おもらしもしやすくなります。
+		ENDIF
+	CASE 60
+		PRINTFORM 自慰が発生しやすくなります
+	CASE 61
+		PRINTFORM 丸呑み拘束中にTPが下がらなくなります
+	CASE 62
+		PRINTFORM 丸呑み拘束中にTPが変化しやすくなります
+	CASE 63
+		PRINTFORM 前に出ても友好度が下がらず、回避率も下がらなくなります
+	CASE 70
+		PRINTFORM 性攻撃を受けた際に、TPが上がりやすくなります
+	CASE 71
+		PRINTFORM 各種感覚の能力が上がりづらくなります
+	CASE 72
+		PRINTFORM 各種中毒の能力が上がりやすくなります
+	;悪堕ち　種族が値として入っている
+	CASE 73
+		PRINTFORM 悪堕ちした経験があります
+	;◆淫乱系素質
+	CASE 74
+		PRINTFORM 快楽に負け、牝へと堕ちた烙印です。
+	CASE 75
+		PRINTFORM 排泄するだけでイきそうになる、出口兼入口です
+	CASE 76
+		IF FLAG:507 > 0
+			PRINTFORM 乳暈は下品に肥大し、乳首は太く長く成長しきっています
+		ELSE
+			PRINTFORM 乳暈は張り出す様に肥大し、乳首も太く長く肥大しています
+		ENDIF
+	CASE 77
+		PRINTFORM 成長しすぎた醜い程の淫核は剥き出しの弱点そのものです
+	CASE 78
+		PRINTFORM どれだけ精を注がれても満たされることのない哀れな肉穴です
+	CASE 79
+		PRINTFORM キスするだけで体が震えるはしたない口です
+	;◆◆
+	;両刀追加
+	CASE 81
+		PRINTFORM レズ中毒が上がりやすくなり、女性型触手との相性が上がります
+	;覚追加
+	CASE 94
+		PRINTFORM 出会った相手の真偽を判別できますが、汚染率が高い部屋にいると消耗します
+
+	CASE 100
+		PRINTFORM 回避率が上がります　A・V属性の攻撃を受けた際のMPダメージが増加します
+	CASE 101 TO 106
+		IF ARG:1 <= -1
+			PRINTFORM 対応する属性の攻撃を受けた際のダメージを軽減します
+		ELSEIF ARG:1 == 1
+			PRINTFORM 対応する属性の攻撃を受けた際のダメージが増加します
+		ELSEIF ARG:1 == 2
+			PRINTFORM 対応する属性の攻撃を受けた際のダメージが大きく増加します
+		;◆異常過敏
+		ELSEIF ARG:1 >= 3
+			PRINTFORM 対応する属性の攻撃を受けた際のダメージが非常に大きく増加します
+		;◆◆
+		ENDIF
+	;◆絶壁・爆乳実装
+	CASE 107
+		PRINTFORM 乳がありません。なのに何故か、B属性の攻撃が無効にならないのでしょうか？
+	CASE 108
+		IF FLAG:507 > 0
+			PRINTFORM 身体の限界まで成長した胸　巨乳暈と極太乳首で垂れ気味の巨大すぎる乳房
+		ELSE
+			PRINTFORM 衣服に収まる限界までに卑猥に成長した胸です
+		ENDIF
+	;◆◆
+	CASE 109
+		PRINTFORM B属性の攻撃を受けた際のダメージが増加し、TPが上がりやすくなります
+	CASE 110
+		PRINTFORM 片手では隠しきれない胸です　B属性の攻撃を受けた際のダメージを軽減します
+	CASE 111
+		PRINTFORM 時間経過による自然回復量が上がります
+	CASE 112
+		PRINTFORM 時間経過による自然回復量が下がります　寝こみを襲われた際に最初から起きています
+	CASE 114
+		PRINTFORM 時間経過による自然回復量が、昼は大きく下がり、夜は非常に大きく上がります
+	CASE 115
+		PRINTFORM 時間経過による自然回復量が、朝と昼のみ大きく上がります
+	CASE 116
+		PRINTFORM 時間経過による自然回復量が、夕と夜のみ大きく上がります
+	CASE 117
+		PRINTFORM 戦闘終了時にPT全体のHPを少し回復します　健康だと一部のアイテムが強化されます
+	CASE 118
+		PRINTFORM 戦闘終了時にPT全体のMPを少し回復します　健康だと一部のアイテムが強化されます
+	;不思議な根追加
+	CASE 120
+		PRINTFORM 射精中毒が上がりやすくふたなりが治りにくいかわりに、射精に耐性があります
+	CASE 121
+		PRINTFORM あなたはふたなりであり女性同士でも子をなすことができます
+	CASE 122
+		PRINTFORM 男です。V系無効、男性器あり、レズ中毒あがらず
+	;狂気追加
+	CASE 123
+		PRINTFORM 迷宮の空気に完全に馴染みきっています
+	CASE 124
+		PRINTFORM 気配察知と危機回避のレベルに応じて戦闘を回避出来ますが、肌ダメージが増加します
+	;◆禁断の知識追加
+	CASE 125
+		PRINTFORM アヤシイ知識を持っています……が、持ってるだけです。これ単体では役に立ちません
+	;◆◆
+	CASE 127
+		PRINTFORM 射精にやや耐性があります　射精時のペナルティ軽減
+	CASE 128
+		PRINTFORM 一部の敵が相手の場合を除き、捕食されてもその場で復活します
+	CASE 130
+		IF ARG:1 == 1
+			PRINTFORM 胸で絶頂した際のMPダメージが増加し、相手のHPを回復させてしまいます
+		ELSEIF ARG:1 == 2
+			PRINTFORM 胸で絶頂した際のMPダメージが大きく増加し、相手のHPを回復させてしまいます
+		ELSEIF ARG:1 == 3
+			PRINTFORM 胸で絶頂した際のMPダメージが非常に大きく増加し、相手のHPを回復させてしまいます
+		ELSEIF ARG:1 == 4
+			PRINTFORM 常に母乳を作り出すミルクサーバーになってしまいました
+		ELSEIF ARG:1 == 5
+			PRINTFORM 高熱を持つ母乳が湧き出る様子は、まるで間欠泉のようです
+		ELSEIF ARG:1 >= 6
+			PRINTFORM 灼熱の母乳が噴出す様子は、正に火山爆発です
+		ENDIF
+	CASE 132
+		PRINTFORM 寄生攻撃を受けた際に、寄生される確率が下がります
+	CASE 135
+		PRINTFORM 卵を生む体質です　産卵時のペナルティ軽減
+	CASE 136
+		PRINTFORM 産卵に慣れてしまった肉体です　産卵時のペナルティ軽減の代わりに産卵攻撃の成功率が増加します
+	CASE 137
+		IF ARG:1 == -1
+			PRINTFORM 少女の幼い卵巣は排卵しないため妊娠しません、しかし迷宮にはオトナの経験がいっぱいです
+		ELSEIF ARG:1 == 1
+			PRINTFORM いじられ続けて排卵間隔が短くなった卵巣は迷宮では格好の標的です
+		ELSEIF ARG:1 == 2
+			PRINTFORM ぶっくりと肥大化した卵巣は種付けの快楽を待っています
+		ELSEIF ARG:1 >= 3
+			PRINTFORM 醜く肥大化して受精快楽を覚えた卵巣は常に排卵し、受精を待っています
+		ENDIF
+	CASE 139
+		PRINTFORM 自身の胸の大きさや体型を変更できます
+	CASE 140
+		PRINTFORM 肉体が主人に忠誠を捧げています
+		IF ARG:1 == 2
+			PRINTFORM  一生をそい遂げる誓いを立てています
+		ELSEIF ARG:1 == 3
+			PRINTFORM  さらに自由意志すらなく精神も屈服しています
+		ENDIF
+	CASE 149
+		PRINTFORM ペット関連で様々な優遇を受けます
+	CASE 150
+		PRINTFORM 一部の敵が相手の場合を除き、捕食されても暫く経ってから復活します
+	CASE 151
+		PRINTFORM 通常攻撃の際に、炎属性の攻撃も撃てるようになります
+	CASE 152
+		PRINTFORM 寄生攻撃を受けた際に、TPが下がりやすくなります
+	CASE 153
+		PRINTFORM 全裸以外の状態で戦闘を終了した場合、CPが少し回復します
+	CASE 154
+		PRINTFORM 寝こみを襲われた際に敵に気付きやすくなります
+	CASE 155
+		PRINTFORM 性攻撃・寄生攻撃を受けた際に、TPが下がらなくなります
+	;◆淫魔追加
+	;従来の説明は悪堕ちへ移行
+	CASE 156
+		PRINTFORM 性行為に対して嫌悪することなくむしろ快楽を求めます
+	;◆◆
+	CASE 157
+		PRINTFORM あなたの心と体に惚れ込んだ触手の証です
+	;超乳を細分化
+	CASE 158
+		IF FLAG:507 < 1
+			IF ARG:1 <= 1
+				PRINTFORM 限界を超えて成長した乳房です　乳暈も肥大し初めました
+			ELSEIF ARG:1 <= 2
+				PRINTFORM 限界を超えて成長した乳房です　乳暈がさらに肥大しています
+			ELSEIF ARG:1 <= 3
+				PRINTFORM 限界は疾うに超えて熟れきった乳房です　乳暈も限界までに張り詰めています
+			ELSE
+				PRINTFORM もはや歩くのが辛い程までに育ちきった乳房です
+			ENDIF
+		ELSE
+			IF ARG:1 <= 1
+				PRINTFORM 母乳が溜まりすぎて人の限界をとうに超えてしまった醜い乳房です
+			ELSEIF ARG:1 <= 2
+				PRINTFORM 両手で抱え切れないほど醜く肥大した乳房。母乳をたっぷり蓄えています。おっぱいオバケ
+			ELSEIF ARG:1 <= 3
+				PRINTFORM ミルクタンクと化した双乳からは間欠泉の如く白い蜜が迸り続けるでしょう。
+			ELSE
+				PRINTFORM 乳タンクから滾々と湧き出る母乳は触手へと捧げられ、新たな苗床を育てる事でしょう。
+			ENDIF
+		ENDIF
+	CASE 159
+		PRINTFORM 絶頂するまで母乳とBダメージを減らします
+	;浄化知識、結界知識追加
+	CASE 160
+		IF ARG:1 == 1
+			PRINTFORM 浄化を行なった際、触手暴走を回避する条件が緩和されます　体調が悪いと機能しません
+		ELSEIF ARG:1 == 2
+			PRINTFORM 浄化時の触手暴走回避及び結界使用の条件が緩和されます　体調が悪いと機能しません
+		ENDIF
+	;体術、剣術
+	CASE 161
+		IF ARG:1 == 1
+			PRINTFORM 非消耗武器による攻撃時、戦闘素質に合わせた補正が掛かります
+		ELSEIF ARG:1 == 2
+			PRINTFORM 剣による攻撃時、戦闘素質に合わせた補正が掛かります
+		ENDIF
+	;拡張乳腺
+	CASE 162
+		IF ARG:1 == 1
+			PRINTFORM ゴムの様に靭やかに伸びる卑猥な乳首と乳腺です　乳姦発生率↑　乳姦時のダメージ↑
+		ELSEIF ARG:1 == 2
+			PRINTFORM ゴムの様に靭やかに伸びる卑猥な乳首と乳腺です　乳姦発生率↑↑　乳姦時のダメージ↑↑
+		ELSEIF ARG:1 >= 3
+			PRINTFORM 乳膣穴と呼べるほど発達した巨乳首と乳腺は触手たちの出入りする淫猥な肉壷となりました
+		ENDIF
+	;鷲の目
+	CASE 163
+		PRINTFORM 飛び道具による戦闘に特に精通しています。
+	;術式知識
+	CASE 164
+		PRINTFORM 魔法陣の罠の回避率が上がります。
+	CASE 165
+		IF ARG:1 == 1
+			PRINTFORM 元男の娘でしたが、身体だけ女にされてしまいました。
+		ELSEIF ARG:1 == 2
+			PRINTFORM 元女でしたが、男の娘にされてしまいました。
+		ENDIF
+	CASE 166
+		PRINTFORM 能力値が上下し、初期素質や能力がランダム取得になります。
+	CASE 167
+		PRINTFORM 全裸だとMPが回復するようになります。
+	CASE 168
+		PRINTFORM EPCPダメージが減少しますが、ABCVM感覚が増加するほど効果が減ります
+	CASE 170
+		IF ARG:1 <= -1
+			PRINTFORM 子供のように小さな「おちんちん」。可愛らしくもあり情けなくもあり
+		ELSEIF ARG:1 == 1
+			PRINTFORM 成人男性より大きい男根も触手たちにとってはいいおもちゃです
+		ELSEIF ARG:1 == 2
+			PRINTFORM 勃起すれば臍を隠すほどに大きく反りかえる男性器は嫌でも目立ち少女を辱しめます
+		ELSEIF ARG:1 >= 3
+			PRINTFORM 抱きかかえられるほどの大きさのペニスはもはや快楽だけを得るためだけの器官です
+		ENDIF
+	CASE 171
+		PRINTFORM 大きさに見合わぬ太さを有しています
+	CASE 172
+		IF ARG:1 <= -1
+			PRINTFORM すぐに力尽きてしまうおちんちんです。最も、迷宮ではすぐに元気にしてもらえるでしょう
+		ELSEIF ARG:1 == 1
+			PRINTFORM すぐに復活する男性器はそれだけ辱しめを受けるということでもあります
+		ELSEIF ARG:1 >= 2
+			PRINTFORM 萎えません。いつでも気持ちいいコトを待っている精力旺盛な肉棒です
+		ENDIF
+	CASE 173
+		IF ARG:1 == 1
+			PRINTFORM 亀頭は露出していますが残りの部分が皮に覆われています
+		ELSEIF ARG:1 == 2
+			PRINTFORM 柔らかな包皮をつるりと剥けば敏感な亀頭が無防備に顔を出してしまいます
+		ELSEIF ARG:1 >= 3
+			PRINTFORM 固く閉じた包皮の中をたっぷり可愛がる手段を持つ者はこの迷宮に山ほどいます
+		ENDIF
+	CASE 174
+		PRINTFORM ペニスの新陳代謝が良すぎるみたいです。洗ってもいつの間にか汚れています
+	CASE 175
+		PRINTFORM きつい臭いが常に漂っています
+	CASE 176
+		IF ARG:1 == 1
+			PRINTFORM 体質。生まれた時から身体の一部
+		ELSEIF ARG:1 == 2
+			PRINTFORM 寄生・魔法・薬品・森のキノコなど。本来はあるはずがなかったのに
+		ENDIF
+	CASE 177
+		PRINTFORM 色黒の力強さを感じさせる竿です
+	CASE 178
+		IF ARG:1 <= -1
+			PRINTFORM 射精するまでが遅いペニスです。しかし、感度が低いかは別の話。
+		ELSEIF ARG:1 == 1
+			PRINTFORM すぐにカウパーがしみだすような白濁液を出しやすい竿です。
+		ENDIF
+	CASE 180
+		IF ARG:1 == 1
+			PRINTFORM ペニスの下に睾丸がぶら下がっています
+		ELSEIF ARG:1 == 2
+			PRINTFORM 大きな金の玉。鶏の卵くらいの大きさにずっしりとした質感
+		ELSEIF ARG:1 == 3
+			PRINTFORM 巨大な睾丸。片手には余る大きさのその中には精液がふんづまっています
+		ELSEIF ARG:1 >= 4
+			PRINTFORM 特大の睾丸。両手で抱えるほどの肉玉の中では性欲が塊となって煮えたぎっています
+		ENDIF
+	CASE 181
+		IF ARG:1 == 1
+			PRINTFORM 睾丸にうっすらと毛が生えています
+		ELSEIF ARG:1 == 2
+			PRINTFORM 睾丸がびっしりと毛まみれです。気持ち悪い
+		ENDIF
+	CASE 185
+		IF ARG:1 <= -1
+			PRINTFORM ほんのちょっとの精液を必死に搾り出します。応援したり嗤ったりしてあげましょう
+		ELSEIF ARG:1 == 1
+			PRINTFORM たっぷりと出る精液が尿道を通り抜ける感覚は少女にとって毒でしかありません
+		ELSEIF ARG:1 >= 2
+			PRINTFORM 辺り一面にザーメンの水溜りがでるほどの射精。腰が抜けるほど心地いいでしょう
+		ENDIF
+	CASE 186
+		IF ARG:1 <= -1
+			PRINTFORM 水のようにシャバシャバの薄い精液
+		ELSEIF ARG:1 == 1
+			PRINTFORM プリプリのゼリーのような濃厚な精液の中には元気な精虫がうようよしています
+		ELSEIF ARG:1 >= 2
+			PRINTFORM つきたてのお餅のように濃く重い精の塊は少女に潜む繁殖欲の強さを物語っています
+		ENDIF
+	CASE 187
+		PRINTFORM 火傷しそうなくらいに熱いほかほか湯気立つ精液
+	CASE 188
+		PRINTFORM ちょっと黄ばんでいます。なぜか不潔な印象
+	CASE 200
+		PRINTFORM このゲームもこの人に支配されています
+	CASE 213
+		IF ARG:1 == 1
+			PRINTFORM 肌感度に応じて回避に補正、敏感だとマイナス
+		ELSEIF ARG:1 == 2
+			PRINTFORM 肌感度に応じて回避と拘束脱出率に補正、敏感だとマイナス
+		ENDIF
+	CASE 214
+		PRINTFORM 人外の証です
+	CASE 215
+		IF ARG:1 == 1 || ARG:1 == 11
+			PRINTFORM 肌感度に応じてA・V属性の攻撃のEPダメージに補正、敏感だとマイナス
+		ELSEIF ARG:1 == 2 || ARG:1 == 12
+			PRINTFORM 肌感度に応じてA・V属性の攻撃のEPダメージに補正、敏感だとマイナス PTの睡眠効率アップ
+		ENDIF
+		;母乳の粘り気
+	CASE 220
+		IF ARG:1 == 1
+			PRINTFORM 普通のサラサラとした母乳です
+		ELSEIF ARG:1 == 2
+			PRINTFORM とろみがある濃いめの母乳です
+		ELSEIF ARG:1 == 3
+			PRINTFORM 粘り気のある濃い母乳です
+		ELSEIF ARG:1 == 4
+			PRINTFORM 練乳状態のとても濃い母乳です
+		ELSEIF ARG:1 == 5
+			PRINTFORM 半固形物が混じるかなり濃い母乳です
+		ELSEIF ARG:1 >= 6
+			PRINTFORM 全てヨーグルト状の濃過ぎる母乳です
+		ENDIF
+	
+	;超々乳
+	CASE 222
+		PRINTFORM もはや歩行に障害が出る程に肥大したひどい胸です。乳暈も限界まで前に張り出ています
+	;接地乳房
+	CASE 223
+		PRINTFORM 既に乳房が地面に当たるまで肥大しました。今や乳暈だけで胸のように見えます
+	CASEELSE
+		PRINTFORM この素質の説明は未実装です
+ENDSELECT
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡

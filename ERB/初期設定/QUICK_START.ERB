@@ -1,0 +1,319 @@
+﻿;=================================================
+;ニューゲーム時の処理 クイックスタート
+;オート処理
+;=================================================
+@QUICK_START
+;LOCAL:0	ループ用
+;LOCAL:1	キャラ番号
+
+	;チュートリアル
+	IF FLAG:500 == 0
+		PRINTFORMW チュートリアルを無効にしました
+		FOR LOCAL:0, 400, 500
+			FLAG:(LOCAL:0) |= 2
+		NEXT
+	ELSE
+		PRINTFORMW チュートリアルを有効にしました
+		CALL SHOW_TUTORIAL(0)
+	ENDIF
+
+
+	;キャラ決定
+
+	;主人公
+	;ランダム選択は口上の有無と確認するかどうかで4分岐 詳しくはCHARA_SELECT参照
+	IF FLAG:560 == 1
+		$RANDOM_START
+		LOCAL:1 = SELECT_RANDOM_CHARA()
+		PRINTFORML %CSVNAME(LOCAL:1, 0),14,LEFT% (戦闘素質 {CSVABL(LOCAL:1, 98, 0), 3} / 速度 {CSVABL(LOCAL:1, 97, 0), 3}) で良いですか？
+		CALL ASK_YN
+		IF RESULT == 0
+			
+		ELSE
+			GOTO RANDOM_START
+		ENDIF
+	ELSEIF FLAG:560 == 2
+		LOCAL:1 = SELECT_RANDOM_CHARA()
+	ELSEIF FLAG:560 == 3
+		$RANDOM_START_KOJO
+		LOCAL:1 = SELECT_RANDOM_CHARA()
+		TARGET = 0
+			TRYCCALLFORM KOJO_{LOCAL:1}_0(0, 0)
+				;口上本体がある場合、決定
+			CATCH
+				;口上本体が無い場合、再抽選
+				GOTO RANDOM_START_KOJO
+			ENDCATCH
+		PRINTFORML %CSVNAME(LOCAL:1, 0),14,LEFT% (戦闘素質 {CSVABL(LOCAL:1, 98, 0), 3} / 速度 {CSVABL(LOCAL:1, 97, 0), 3}) で良いですか？
+		CALL ASK_YN
+		IF RESULT == 0
+			
+		ELSE
+			GOTO RANDOM_START_KOJO
+		ENDIF
+	ELSEIF FLAG:560 == 4
+		$RANDOM_START_UNKNOUN
+		LOCAL:1 = SELECT_RANDOM_CHARA()
+		TARGET = 0
+			TRYCCALLFORM KOJO_{LOCAL:1}_0(0, 0)
+				;口上本体がある場合、決定
+			CATCH
+				;口上本体が無い場合、再抽選
+				GOTO RANDOM_START_UNKNOUN
+			ENDCATCH
+	;固定キャラ
+	ELSE
+		
+		LOCAL:1 = FLAG:567
+	ENDIF
+	FLAG:0 = 1
+	;モブに対応しつつキャラ追加
+	IF FLAG:2 >= LOCAL:1
+		ADDCHARA LOCAL:1
+	ELSE
+		ADDVOIDCHARA
+		CALL MOB_TYPE(FLAG:0, LOCAL:1 - FLAG:2)
+		CALL MOB_BASE(FLAG:0, LOCAL:1 - FLAG:2)
+	ENDIF
+	
+
+	CALL SHOW_TUTORIAL(1)
+
+	;主人公以外
+	;FLAG:561で人数チェック
+	FOR LOCAL:0, 1, FLAG:561
+		;確定されているかと主人公で無いかチェック
+		IF FLAG:(LOCAL:0 + 550) && ( FLAG:(LOCAL:0 + 550) != LOCAL:1 || TALENT:1:166)
+			FLAG:(LOCAL:0 + 20) = FLAG:(LOCAL:0 + 550)
+		;確定していなければランダム
+		ELSEIF FLAG:(LOCAL:0 + 550) == 0
+			;口上ありランダム選択
+			IF FLAG:562 == 0
+				SIF FLAG:(LOCAL:0 + 20) == 0
+					FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
+			;口上不問ランダム選択
+			ELSEIF FLAG:562 == 1
+				$RANDOM_PARTNER_START
+				FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
+				TARGET = 0
+				TRYCCALLFORM KOJO_{FLAG:(LOCAL:0 + 20)}_0(0, 0)
+					;口上本体がある場合、決定
+				CATCH
+					;口上本体が無い場合、再抽選
+					GOTO RANDOM_PARTNER_START
+				ENDCATCH
+			ENDIF
+		ENDIF
+		
+		FLAG:0 += 1
+		;選択されたキャラで決定、キャラデータ追加
+		IF FLAG:2 >= FLAG:(LOCAL:0 + 20)
+			ADDCHARA FLAG:(LOCAL:0 + 20)
+		ELSE
+			ADDVOIDCHARA
+			CALL MOB_TYPE(FLAG:0, FLAG:(LOCAL:0 + 20) - FLAG:2)
+			CALL MOB_BASE(FLAG:0, FLAG:(LOCAL:0 + 20) - FLAG:2)
+		ENDIF
+	NEXT
+
+
+	;主人公の能力ボーナス
+	;★EXモードではボーナスがない
+	IF FLAG:999
+		
+	ELSE
+		PRINTFORML 主人公に初期ボーナスとして、好きな能力レベルを+1するか、アイテムを貰う事ができます
+		PRINTFORML ※元々レベル１の能力をレベル２にすることはできません
+		PRINTFORML  
+		PRINTFORML 初期ボーナスを選択してください
+		FOR LOCAL:0, 0, 16
+			IF ABL:1:(LOCAL:0)
+				SETCOLOR 0x333333
+				PRINTFORML [{LOCAL:0, 2}] %ABLNAME:(LOCAL:0)% はこれ以上上げられません
+				RESETCOLOR
+			ELSE
+				IF LOCAL:0 == 12
+					IF FLAG:520
+						PRINTFORML [{LOCAL:0, 2}] %ABLNAME:(LOCAL:0)% を上げる（ふたなりが付与されます)
+						CONTINUE
+					ELSE
+						CONTINUE
+					ENDIF
+				ENDIF
+				PRINTFORML [{LOCAL:0, 2}] %ABLNAME:(LOCAL:0)% を上げる
+			ENDIF
+		NEXT
+		PRINTFORML [16] アイテムを貰う（回復アイテムなどがいくつか貰えます）
+		PRINTFORML [17] ペットを貰う（きちんと世話してあげましょうね）
+		$INPUT_BONUS
+		INPUT
+		IF (RESULT >= 0) && (RESULT <= 15) && RESULT != 12 && (ABL:1:(RESULT) == 0)
+			PRINTFORMW %ABLNAME:(RESULT)% のレベルが上がった！
+			ABL:1:RESULT += 1
+		ELSEIF RESULT == 12
+			ABL:1:12 += 1
+			CFLAG:1:42 = 10
+		ELSEIF RESULT == 16
+			PRINTFORMW 緑茶×１、日本酒×１、着替えセット×１、煙玉×１を手に入れた！
+			CALL ADD_ITEM(50, 1, 0)
+			CALL ADD_ITEM(52, 1, 0)
+			CALL ADD_ITEM(54, 1, 0)
+			CALL ADD_ITEM(59, 1, 0)
+		ELSEIF RESULT == 17
+			CALL DEBUG_COMMAND_ペット追加
+		ELSE
+			REUSELASTLINE 入力値が不正です。再入力してください
+			GOTO INPUT_BONUS
+		ENDIF
+
+		;どのボーナスを選択していても、最初から緑茶と着替えだけは持っている
+		CALL ADD_ITEM(50, 1, 0)
+		CALL ADD_ITEM(54, 1, 0)
+	ENDIF
+
+	;難易度EASYなら更に初期アイテム追加
+	IF FLAG:4 <= 0
+		CALL ADD_ITEM(3, 1, 0)
+		CALL ADD_ITEM(12, 1, 0)
+		CALL ADD_ITEM(21, 1, 0)
+		CALL ADD_ITEM(51, 1, 0)
+		CALL ADD_ITEM(53, 1, 0)
+		CALL ADD_ITEM(54, 1, 0)
+		CALL ADD_ITEM(57, 1, 0)
+		CALL ADD_ITEM(58, 1, 0)
+		CALL ADD_ITEM(59, 3, 0)
+		CALL ADD_ITEM(61, 1, 0)
+		CALL ADD_ITEM(62, 1, 0)
+		CALL ADD_ITEM(63, 1, 0)
+	ENDIF
+	
+	;Extraモードなら更に初期アイテム追加
+	IF FLAG:999
+		CALL ADD_ITEM(59, 2, 0)
+	ENDIF
+	
+	CALL SHOW_TUTORIAL(3)
+	
+	;キャラが固定なら性格も固定 ランダムなら性格を決める
+	IF FLAG:560 == 0
+		;性格決定
+		IF FLAG:563 == 1
+			CFLAG:1:12 = -40
+		ELSEIF FLAG:563 == 2
+			CFLAG:1:12 = -20
+		ELSEIF FLAG:563 == 3
+			CFLAG:1:12 = 0
+		ELSEIF FLAG:563 == 4
+			CFLAG:1:12 = 20
+		ELSEIF FLAG:563 == 5
+			CFLAG:1:12 = 40
+		ELSEIF FLAG:563 == 0
+			;何もしない
+		ENDIF
+		IF FLAG:564 >= 1 && FLAG:564 <= 14
+			CFLAG:1:100 = FLAG:564
+		ELSEIF FLAG:564 == 15
+			CFLAG:1:100 = 0
+		ELSEIF FLAG:564 == 0
+			;何もしない
+		ENDIF
+		PRINTFORM %CALLNAME:1%の性格
+		CALL SHOW_PERSONALITY(1)
+	ELSE
+		CALL CHANGE_PERSONALITY(1)
+	ENDIF
+
+	;各種初期化処理　敵の初期化は順番の関係で移動
+	CALL CHARA_INITIALIZE
+	CALL MAP_INITIALIZE
+
+	IF NO:1 == 0
+		PRINTFORML 主人公のみ、素質の変更ができます。
+		PRINTFORML %CALLNAME:1%の素質を変更しますか？
+		
+		
+		PRINTFORML [0] デフォルト
+		PRINTFORML [1] 変更する
+		INPUT
+		IF RESULT == 1
+			CALL TALENT_SET(1)
+		ENDIF
+	ENDIF
+	
+	;＝＝＝ 口上 ＝＝＝
+	;ここでどの口上を使うかのデフォルト設定もされる
+	CALL INIT_KOJO_DEFAULT_COLOR
+	
+	IF FLAG:565 == 1
+		CALL KOJO_SELECT
+		PRINTL 
+		DRAWLINE
+		PRINTL 
+	ELSEIF FLAG:565 == 2
+		FOR LOCAL:0, 1, CHARANUM
+			CFLAG:(LOCAL:0):701 = -1
+		NEXT
+		PRINTFORML 口上をすべてOFFに設定しました
+	ELSE
+		PRINTFORML 口上をすべてONに設定しました
+	ENDIF
+	PRINTFORML 
+	
+
+	;★難易度追加パッチ・追加難易度だとここは出ない
+	IF FLAG:999 == 0
+		;＝＝＝ 処女モード ＝＝＝
+		IF FLAG:566 == 1 || FLAG:566 == 2
+			FOR LOCAL:0, 1, CHARANUM
+				;こっそり「あなた」にも処女を付加しておくことで、処女モードかどうかを判断できるようにしておく
+				TALENT:(LOCAL:0):0 = 1
+				
+				;貞操帯モードは貞操帯+感度上昇
+				IF FLAG:566 == 2
+					CFLAG:(LOCAL:0):47 = 1
+					IF TALENT:(LOCAL:0):101 > 0
+						TALENT:(LOCAL:0):101 += 1
+					ENDIF
+				ENDIF
+			NEXT
+			PRINTFORMW 登場キャラ全員に素質【処女】を付加しました
+			PRINTFORML 
+		ELSEIF FLAG:566 == 3
+			TALENT:0:0 = 1
+			$INPUT_LOOP_VIRGIN
+			LOCAL:5 = 0
+			DRAWLINE
+			FOR LOCAL:0, 0, CHARANUM - 1
+				PRINTFORML [{LOCAL:0}] %CALLNAME:(LOCAL:0 + 1),15, LEFT%:\@ TALENT:(LOCAL:0 + 1):処女 ? ○ # × \@
+				LOCAL:5 ++
+			NEXT
+			DRAWLINE
+			PRINTFORML [1000] 設定完了
+			INPUT
+			LOCAL:5 += 4
+			IF RESULT >= 0 && RESULT <= CHARANUM - 1
+				 INVERTBIT TALENT:(RESULT + 1):処女, 0
+				 CLEARLINE LOCAL:5
+				 GOTO INPUT_LOOP_VIRGIN
+			ELSEIF RESULT == 1000
+			ELSE
+				CLEARLINE LOCAL:5
+				GOTO INPUT_LOOP_VIRGIN
+			ENDIF
+		ELSEIF FLAG:566 == 99
+			FOR LOCAL:0, 1, CHARANUM
+				IF TALENT:(LOCAL:0):0 == 0 && RAND:5 && (FLAG:512 & 2) == 2
+					TALENT:(LOCAL:0):122 = 1
+					;男の娘ついたらふたなりは外す
+					TALENT:(LOCAL:1):121 = 0
+				ELSEIF TALENT:(LOCAL:0):122 == 0 && RAND:2 == 0
+					TALENT:(LOCAL:0):0 = 1
+				ENDIF
+			NEXT
+		ELSE
+			PRINTFORMW 【処女】に関する処理をプレイヤーのイメージに委ねます
+			PRINTFORML 
+		ENDIF
+	ENDIF
+	
+

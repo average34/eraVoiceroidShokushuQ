@@ -1,0 +1,80 @@
+﻿
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   50    コマンドID(Ａ責めを防ぐ)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_50(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"（こっちを狙うはず……）"
+	CALL ADD_RAND_MESSAGE, @"（好きにはさせない……！）"
+	CALL ADD_RAND_MESSAGE, @"（少しでも抵抗しないと……）"
+	CALL ADD_RAND_MESSAGE, @"（あの動き。まさかとは思うけど……）"
+
+RETURN 1
+
+
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   51    コマンドID(Ｂ責めを防ぐ)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_51(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"（胸を狙うはず……）"
+	CALL ADD_RAND_MESSAGE, @"（好きにはさせない……！）"
+	CALL ADD_RAND_MESSAGE, @"（少しでも抵抗しないと……）"
+	CALL ADD_RAND_MESSAGE, @"（今、胸を弄られるわけには……）"
+
+RETURN 1
+
+
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   52    コマンドID(Ｃ責めを防ぐ)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"（ここを狙うはず……）"
+	CALL ADD_RAND_MESSAGE, @"（好きにはさせない……！）"
+	CALL ADD_RAND_MESSAGE, @"（少しでも抵抗しないと……）"
+	CALL ADD_RAND_MESSAGE, @"（意識さえ集中していれば……）"
+
+RETURN 1
+
+
+
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   53    コマンドID(性交を防ぐ)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_53(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"（犯されないように身を守って……）"
+	CALL ADD_RAND_MESSAGE, @"（絶対……絶対まもらないと……！）"
+	
+	; [処女](初めて)所持時 追加口上
+	IF TALENT:0 == 1
+		CALL ADD_RAND_MESSAGE, @"（こんな奴等に、はじめてを奪われてたまるもんか！）"
+		CALL ADD_RAND_MESSAGE, @"（はじめてだけはわたさないから……！）"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"（ちゃ、ちゃんと守らないと犯されちゃう……！）"
+			CALL ADD_RAND_MESSAGE, @"（こんな所で処女なくすのは嫌ぁ……）"
+			CALL ADD_RAND_MESSAGE, @"「こ、ここだけはダメぇ……」"
+		ENDSELECT
+	ENDIF
+	
+	; [処女](再生)所持時 追加口上
+	IF TALENT:0 == 2
+		CALL ADD_RAND_MESSAGE, @"「何度も処女喪失なんてゴメンだわ！」"
+	ENDIF
+RETURN 1
+
+

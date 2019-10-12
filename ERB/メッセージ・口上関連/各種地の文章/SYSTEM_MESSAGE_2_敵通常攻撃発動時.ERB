@@ -1,0 +1,385 @@
+﻿;敵の通常攻撃発動
+@SYSTEM_MESSAGE_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+SETCOLOR 0xEE1010
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_2)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+	CASE 100
+		PRINTFORML %ARGS:1%は触手で殴り掛かってきた！
+	CASE 101
+		PRINTFORML %ARGS:1%は%ARGS:0%へ向け、注射器のような形をした触手を伸ばした！
+	CASE 102
+		PRINTFORML %ARGS:1%は紫色の触手の先端を%ARGS:0%へ向け、そこから毒々しい色を持つ液体を吐き出した！
+	CASE 103
+		PRINTFORML %ARGS:1%は%ARGS:0%%TACHI()%へ向け、茨状のトゲを持つ触手を振り回した！
+	CASE 104
+		PRINTFORML %ARGS:1%は極太の触手を長々と伸ばし、%ARGS:0%を横殴りにした！
+	CASE 105
+		PRINTFORML %ARGS:1%は無数の触手を%ARGS:0%に向かって伸ばすと、ひと塊にして叩きつけた！
+	CASE 106
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は様々な色の粘液が滴る触手を振りまわした！
+		ELSE
+			PRINTFORML %ARGS:1%は様々な色の粘液が滴る触手を振りまわした！
+		ENDIF
+	CASE 107
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は様々な色の粘液が滴る触手を次々と振りまわしてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は様々な色の粘液が滴る触手を次々と振りまわしてきた！
+		ENDIF
+	CASE 108
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は様々な色の粘液が滴る触手を大きく振りまわした！
+		ELSE
+			PRINTFORML %ARGS:1%は様々な色の粘液が滴る触手を大きく振りまわした！
+		ENDIF
+	CASE 109
+		IF (CFLAG:(ARG:2):10 || CFLAG:(ARG:2):20) && CFLAG:(ARG:2):21 == 0
+			PRINTFORML 身動きの取れない%ARGS:0%の首に%ARGS:1%の触手が絡みついた！
+		ELSE
+			PRINTFORML %ARGS:1%から細い触手が複数伸び、%ARGS:0%を襲った！
+		ENDIF
+	CASE 110
+		IF (CFLAG:(ARG:2):10 || CFLAG:(ARG:2):20) && CFLAG:(ARG:2):21 == 0
+			PRINTFORML 身動きの取れない%ARGS:0%の首に%ARGS:1%の触手が絡みついた！
+		ELSE
+			PRINTFORML %ARGS:1%は触手を自在に操り%ARGS:0%を翻弄した！
+		ENDIF
+	CASE 111
+		IF CFLAG:(ARG:2):20 && CFLAG:(ARG:2):21 == 0
+			PRINTFORML %ARGS:1%は身動きの取れない%ARGS:0%を嬲るようにツタの鞭を振るった！
+		ELSEIF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は鞭のようなツタで%ARGS:0%の肌を激しく打った！
+		ELSE
+			PRINTFORML %ARGS:1%は鞭のようなツタを%ARGS:0%の服にたたき付けた！
+		ENDIF
+	CASE 113
+		IF CFLAG:(ARG:2):20 && CFLAG:(ARG:2):21 == 0
+			PRINTFORML %ARGS:1%は身動きの取れない%ARGS:0%を嬲るようにツタの鞭を振るった！
+		ELSEIF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は鞭のようなツタで%ARGS:0%の肌を激しく打った！
+		ELSE
+			PRINTFORML %ARGS:1%は鞭のようなツタを%ARGS:0%の服にたたき付けた！
+		ENDIF
+	CASE 114
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は鞭のようなツタを%ARGS:0%の肌に何度も打ちつけた！
+		ELSE
+			PRINTFORML %ARGS:1%は鞭のようなツタを%ARGS:0%の服に何度もたたき付けた！
+		ENDIF
+	CASE 115
+		PRINTFORML %ARGS:1%は%ARGS:0%に跳びかかった！
+	CASE 116
+		PRINTFORML %ARGS:1%は身体を縮めた反動を利用し、勢いよく%ARGS:0%に跳びかかった！
+	CASE 117
+		PRINTFORML %ARGS:1%はその巨体を下から振りあげるようにぶつけてきた！
+	CASE 118
+		PRINTFORML %ARGS:1%はその巨体を大きく振りかぶると薙ぎ払うようにぶつけてきた！
+	CASE 119
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は粘液に濡れる触手を大量に延ばしてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は粘液に濡れる触手を振り回し、%ARGS:0%の身体に打ち付けた！
+		ENDIF
+	CASE 120
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は裸にされてしまった%ARGS:0%に吸いついてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は吸盤のついた触手で%ARGS:0%を締め付けようとした！
+		ENDIF
+	CASE 121
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は粘液に濡れる触手を大量に延ばしてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は粘液に濡れる触手を振り回し、%ARGS:0%の身体に打ち付けた！
+		ENDIF
+	CASE 122
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は裸にされてしまった%ARGS:0%に噛みついてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は吸盤のついた触手で%ARGS:0%を締め付けようとした！
+		ENDIF
+	CASE 123
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は細い触手の先から%ARGS:0%めがけて紫色の体液を吐き出した！
+		ELSE
+			PRINTFORML %ARGS:1%は細い触手の先から%ARGS:0%めがけて溶解液を発射した！
+		ENDIF
+	CASE 124
+		PRINTFORML %ARGS:1%は力を溜めていたかと思うと、突然体当たりを仕掛けてきた！
+	CASE 125
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は細い触手の先から%ARGS:0%めがけて紫色の体液を吐き出した！
+		ELSE
+			PRINTFORML %ARGS:1%は細い触手の先から%ARGS:0%めがけて溶解液を発射した！
+		ENDIF
+	CASE 126
+		IF FLAG:507 == 0
+			PRINTFORML %ARGS:1%は%ARGS:0%に触手を巻きつけ、引き寄せようとしてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は注射針のような触手を伸ばすと、%ARGS:0%の身体に突き刺した！
+		ENDIF
+	CASE 127
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%の身体が大きく収縮かと思うと、突然床を跳ね、%ARGS:0%に勢いよく体当たりした！
+		ELSE
+			PRINTFORML %ARGS:1%から突然槍状の触手が飛び出し、%CALLNAME:(TFLAG:54)%めがけて飛びかかった！
+		ENDIF
+	CASE 128
+		PRINTFORML %ARGS:1%は体を大きく広げ、%ARGS:0%%TACHI()%に体当たりを仕掛けてきた！
+	CASE 129
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%の身体が大きく収縮かと思うと、突然床を跳ね、%ARGS:0%に勢いよく体当たりした！
+		ELSE
+			PRINTFORML %ARGS:1%から突然槍状の触手が飛び出し、%CALLNAME:(TFLAG:54)%めがけて飛びかかった！
+		ENDIF
+	CASE 130
+		PRINTFORML %ARGS:1%は無数の触手を展開すると、%ARGS:0%%TACHI()%に叩きつけてきた！
+	CASE 131
+		IF CFLAG:(ARG:2):20 && CFLAG:(ARG:2):21 == 0
+			PRINTFORML %ARGS:1%は手を大きく振り上げ平手で%ARGS:0%の身体を叩き始めた！
+		ELSEIF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は嗜虐的な笑みを浮かべながら、%ARGS:0%の身体を打ちのめした！
+		ELSE
+			PRINTFORML %ARGS:1%は甲高い声と共に自らのツルで作られた鞭を振るった！
+		ENDIF
+	CASE 132
+		PRINTFORML %ARGS:1%は全ての触手を一斉に%ARGS:0%へ打ちつけた！
+	CASE 133
+		IF CFLAG:(ARG:2):20 && CFLAG:(ARG:2):21 == 0
+			PRINTFORML %ARGS:1%は手を大きく振り上げ平手で%ARGS:0%の身体を叩き始めた！
+		ELSEIF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は嗜虐的な笑みを浮かべながら、%ARGS:0%の身体を打ちのめした！
+		ELSE
+			PRINTFORML %ARGS:1%は甲高い声と共に自らのツルで作られた鞭を振るった！
+		ENDIF
+	CASE 134
+		PRINTFORML %ARGS:1%は全ての触手を一斉に%ARGS:0%へ打ちつけた！
+	CASE 135
+		PRINTFORML %ARGS:1%は触手を大きく振り上げ、殴り掛かってきた！
+	CASE 136
+		PRINTFORML %ARGS:1%は素早い動きで%ARGS:0%を何度も攻撃した！
+	CASE 137
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:1%は自分の腕を鞭のように変化させ、%ARGS:0%へ向け振り下ろした！
+		ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%に向けて攻撃を放った！
+		ENDIF
+	CASE 138
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:0%を押し倒した%ARGS:1%は、両腕を背中に回し強く%ARGS:0%を抱きしめた！
+		ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%に向けて連続で攻撃を浴びせた！
+		ENDIF
+	CASE 139
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:1%は自分の腕を鞭のように変化させ、%ARGS:0%%TACHI()%へ向け振り下ろした！
+		ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%%TACHI()%に向けて無数の攻撃を行った！
+		ENDIF
+	CASE 140
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:0%の肌に%ARGS:1%のツタについた花が咬みつくように吸い付いた！
+		ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%の体にツタを這わせた！
+		ENDIF
+	CASE 141
+		PRINTFORML %ARGS:1%は大きく翼を広げると、邪魔をするなと言わんばかりに羽根を%ARGS:0%に向けて飛ばしてきた！
+	CASE 142
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:1%は大きく翼を広げると、粘液と鮮血が染み込んだドス黒い羽根を%ARGS:0%に向けて飛ばしてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は大きく翼を広げると、粘液が染み込んだドス黒い羽根で%ARGS:0%に攻撃してきた！
+		ENDIF
+	CASE 143
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:1%は鮮血が噴き出している男根状の触手を%ARGS:0%に向け、精液を巨大な砲弾として撃ち出した！
+		ELSE
+			PRINTFORML %ARGS:1%は粘液が噴き出している男根状の触手を%ARGS:0%に向けると、卵を巨大な砲弾として撃ち出した！
+		ENDIF
+	CASE 144
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:1%は鮮血が滴る全身の触手を一つに纏め、巨大な鞭と化したそれで%ARGS:0%%TACHI()%を薙ぎ払った！
+		ELSE
+			PRINTFORML %ARGS:1%は粘液が滴る全身の触手を一つに纏め、巨大な鞭と化したそれで%ARGS:0%%TACHI()%を薙ぎ払った！
+		ENDIF
+	CASE 145
+		IF FLAG:507 > 0
+			PRINTFORML %ARGS:1%の背中が鋭角に盛り上がり始めた！
+		ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%を拘束したまま暴れ始めた！
+		ENDIF
+	CASE 146
+		PRINTFORML %ARGS:1%は一瞬で距離をつめて%ARGS:0%の腹に角を押し当てた！
+	CASE 147
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML %ARGS:1%は長い尾を鞭のように使い%ARGS:0%を叩きのめそうとした！
+			CASE 1
+				PRINTFORML %ARGS:1%は長い尾を%ARGS:0%に向かって振り回した！
+			CASE 2
+				PRINTFORML %ARGS:1%は長い尾で%ARGS:0%をなぎ払った！
+			CASE 3
+				PRINTFORML %ARGS:1%はしなやかな尾で%ARGS:0%を横殴りにした！
+		ENDSELECT
+
+	CASE 148
+		IF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%の口から伸びた濡れた触手が%ARGS:0%目掛けて乱暴に振り回される！
+		ELSE
+			PRINTFORML %ARGS:1%の口から触手が何本も槍のように鋭く伸び、%ARGS:0%に迫っていく！
+		ENDIF
+	CASE 149
+		IF RAND:3 > 0
+			PRINTFORML %ARGS:1%の口から何本もの触手が%ARGS:0%目掛けて乱暴に振り回される！
+		ELSE
+			PRINTFORML %ARGS:1%の舌が%ARGS:0%に振り下ろされた！
+		ENDIF
+	CASE 150
+		PRINTFORML %ARGS:1%は身をかがめると、%ARGS:0%に向かって突進してきた！
+	CASE 151
+		PRINTFORML %ARGS:1%は%ARGS:0%に飛びかかりつつ宙返りし、9本の尻尾を踵落としの如く叩きつけた！
+	CASE 152
+		PRINTFORML %ARGS:1%は筋骨隆々の大男に変化すると右腕をL字に構え、%ARGS:0%目掛けて突進してきた！
+	CASE 153
+		PRINTFORML %ARGS:1%は汚らしいおっさんに変化すると、%ARGS:0%%TACHI()%の前でボリボリと股間を掻いた！
+	CASE 154
+		PRINTFORML %ARGS:1%はプカプカと空中を漂い、ゆっくりと%ARGS:0%のいる方へと流されてきた！
+	CASE 155
+		PRINTFORML %ARGS:1%は口をパクパクさせると、%ARGS:0%目掛けて勢い良く泡を吹き出した！
+	CASE 156
+		PRINTFORML %ARGS:1%のうち数匹が擬態を解くと床に飛び込んだ！
+	CASE 157
+		IF RAND:2 == 0
+			PRINTFORML %ARGS:1%達は体から生やした触手で%ARGS:0%%TACHI()%の足を狙ってきた！
+		ELSE
+			PRINTFORML %ARGS:1%達は突撃役と触手による遠距離攻撃役に分かれて%ARGS:0%%TACHI()%に襲いかかる！
+		ENDIF
+	CASE 158
+		PRINTFORM %ARGS:1%は触手で増強された筋力を活かし、%ARGS:0%に
+		IF RAND:2 == 0
+			PRINTL 殴りかかった！
+		ELSE
+			PRINTL 蹴りかかった！
+		ENDIF
+	CASE 159
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:1%は%ARGS:0%の関節を極め、そのまま破壊しにかかった！
+		ELSE
+			PRINTFORML %ARGS:1%は猛然と突進し、その筋肉質な身体を%ARGS:0%にぶつけた！
+		ENDIF
+	CASE 160
+		IF FLAG:507 >= 1
+			PRINTFORML %ARGS:1%は触手を%ARGS:0%の身体に突き刺すと、血を吸収し始めた！
+		ELSE
+			PRINTFORML %ARGS:1%は触手を使い、%ARGS:0%の力を吸収し始めた！
+		ENDIF
+	CASE 161
+		PRINTFORML %ARGS:1%は巨体を活かして%ARGS:0%に殴りかかった！
+	CASE 162
+		PRINTFORML %ARGS:1%はふらりと倒れかかり、%ARGS:0%%TACHI()%を押しつぶそうとした！
+	CASE 163
+		PRINTFORML %ARGS:1%は尾で%ARGS:0%%TACHI()%の足を薙ぎ払いにかかる！
+	CASE 164
+		PRINTFORML %ARGS:1%は鞭を大きく振り上げ思いっきり振り下ろすと、%ARGS:0%%TACHI()%の肌に真っ赤な筋が幾本も刻まれていった……！
+	CASE 165
+		PRINTFORML %ARGS:1%は%ARGS:0%の腹に、強烈な一撃を見舞った！
+	CASE 166
+		PRINTFORML %ARGS:1%は手近な触手をもぎ取ると、%ARGS:0%に殴りかかってきた！
+		PRINTFORML 触手使役術！（物理）
+	CASE 167
+		PRINTFORML %ARGS:1%は%ARGS:0%の体に散弾のようなスライムを打ち込んできた！
+	CASE 168
+		PRINTFORML %ARGS:1%はツタで床を蹴って猛然と転がり、%ARGS:0%に飛びかかってきた！
+	CASE 169
+		PRINTFORML %ARGS:1%の表面に生えた触手が%ARGS:0%の体に殺到する！
+	CASE 170
+		PRINTFORML %ARGS:1%のアームが%ARGS:0%に狙いを定めた！
+	CASE 171
+		PRINTFORML %ARGS:1%のアームが大量に展開され、%ARGS:0%に襲い掛かる！
+	CASE 172
+		PRINTFORML %ARGS:1%の多数のアームが展開され、%ARGS:0%%TACHI()%に襲い掛かる！
+	CASE 173
+		PRINTFORML %ARGS:1%は%ARGS:0%に向けて攻撃を放った！
+	CASE 174
+		PRINTFORML %ARGS:1%は%ARGS:0%に向けて連続攻撃を浴びせた！
+	CASE 175
+		PRINTFORML %ARGS:1%は%ARGS:0%%TACHI()%に向けて無数の連続攻撃を放った！
+	CASE 180
+		PRINTFORML %ARGS:1%は塒を撒いて拘束している%ARGS:0%をねじり潰そうと、力任せに触手を締め上げた！
+	CASE 181
+		PRINTFORML %ARGS:1%の乳首やクリトリスが触手と化して伸び蠢き、%ARGS:0%をイタぶろうと唸りをあげる！
+	CASE 182
+		PRINTFORML %ARGS:1%の触手が%ARGS:0%にまとわりついた……
+	CASE 183
+		PRINTFORML %ARGS:1%は巨大な亀頭を鎌首のようにもたげると、%ARGS:0%に狙いを定め、脈動と共に大量射精を放った！
+	CASE 184
+		PRINTFORML %ARGS:1%は猫パンチを繰り出した！
+	CASE 185
+		IF FLAG:507
+			PRINTFORML %ARGS:1%はおとなしくしない%ARGS:0%を殴った！
+		ELSE
+			PRINTFORML %ARGS:1%はおとなしくしない%ARGS:0%をぶった！
+		ENDIF
+	CASE 974
+		PRINTFORML %ARGS:1%の触手が口のように開くと%ARGS:0%の乳首をくわえ込んだ！
+	CASE 975
+		IF GET_PENIS(TARGET)
+			PRINTFORML %ARGS:1%の触手が口のように開くと%ARGS:0%のペニスを挟み込んだ！
+		ELSE
+			PRINTFORML %ARGS:1%の触手が口のように開くと%ARGS:0%のクリトリスを挟み込んだ！
+		ENDIF
+	CASE 976
+		PRINTFORML %ARGS:1%は触手をムチのようにしならせた！
+
+	CASE 999
+		PRINTFORML %ARGS:1%は%ARGS:0%に向けて触手を伸ばしてきた！
+	
+	CASE 1867
+		PRINTFORML %ARGS:1%は圧縮された洗浄用スチームを吹き付けてきた！
+
+
+	CASE 1877
+		IF CFLAG:(ARG:2):20 && CFLAG:(ARG:2):21 == 0
+			PRINTFORML %ARGS:1%は手を大きく振り上げ平手で%ARGS:0%の身体を叩き始めた！
+		ELSEIF BASE:(ARG:2):3 <= 0
+			PRINTFORML %ARGS:1%は嗜虐的な笑みを浮かべながら、%ARGS:0%の身体を打ちのめした！
+		ELSE
+			PRINTFORML %ARGS:1%は素早い動きで%ARGS:0%を翻弄しながら攻撃した！
+		ENDIF
+
+
+
+
+	CASE 1906
+		IF RAND:2 == 0
+			PRINTFORML %ARGS:1%は、%ARGS:0%%TACHI()%に向けて高圧電流を放った！
+		ELSE
+			PRINTFORML %ARGS:1%がつくりだした雷球から、%ARGS:0%%TACHI()%へ向けての放電が始まった！
+		ENDIF
+	CASE 2103
+		PRINTFORML %ARGS:1%から一本の触手が素早く伸びる！
+
+	CASE 2113
+		PRINTFORML %ARGS:1%は%ARGS:0%の背後に回り込もうとした！
+
+	CASE 2114
+		PRINTFORML %ARGS:1%は%ARGS:0%めがけて触手を伸ばした！
+
+	CASE 2115
+		PRINTFORML %ARGS:1%は瞬時に%ARGS:0%との距離を詰めた！
+
+	CASE 2116
+		PRINTFORML %ARGS:1%は%ARGS:0%めがけて剃刀ヒトデを次々に投げつけた！
+
+	CASE 2117
+		PRINTFORML %ARGS:1%の長い髪の毛がざわめきだすと、%ARGS:0%に向かってさらに伸びていく！
+	CASEELSE
+		PRINTFORML %ARGS:1%の攻撃！
+ENDSELECT
+
+RESETCOLOR
+

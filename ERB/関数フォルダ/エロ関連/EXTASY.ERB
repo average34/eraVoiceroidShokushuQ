@@ -1,0 +1,629 @@
+﻿;=================================================
+;絶頂時の共通処理
+;※敵攻撃によるMPやTPの変化は別途処理　ここではあくまで「絶頂」に関する部分のみ
+;ARG:0	対象ARG:0
+;ARG:1	部位属性　(0:A　1:B　2:C　3:V　5:肌属性　9:M)
+;ARG:2	絶頂強度（経験基準値）
+;ARG:3	絶頂寸止め(0:寸止めなし 1:自慰以外 2:自慰)
+;=================================================
+@EXTASY(ARG:0, 部位属性, ARG:2, MP減少倍率 = 100, ARG:3)
+#DIM LCOUNT,3	;ループ用
+#DIM 部位属性
+
+#DIM MP減少量
+#DIM HP減少量
+
+#DIM MP減少倍率
+
+#DIM 踏ん張り確率
+
+;FLAG:20
+;0:同じ部屋 1:違う部屋 違う部屋だとメッセージ表示しない、他の関数でもチェックするのでローカル変数代用不可
+
+;処理不可
+IF ARG:0 <= 0
+	RETURN -1
+ENDIF
+;男にVはない
+IF TALENT:(ARG:0):122 && 部位属性 == 3
+	RETURN 
+ENDIF
+;主人公と場所が違うかチェック 同じ部屋ならメッセージ
+IF CFLAG:(ARG:0):4 != CFLAG:1:4
+	FLAG:20 = 1
+ELSE
+	FLAG:20 = 0
+ENDIF
+
+IF ARG:3 == 0
+
+	;≡≡≡≡≡ MP減少量算出 ≡≡≡≡≡
+	;部位感覚によるMP減少量の基礎値
+	IF ABL:(ARG:0):(部位属性 + 6) <= 0
+		MP減少量 = 20
+	ELSEIF ABL:(ARG:0):(部位属性 + 6) == 1
+		MP減少量 = 18
+	ELSEIF ABL:(ARG:0):(部位属性 + 6) == 2
+		MP減少量 = 15
+	ELSE
+		MP減少量 = 10
+	ENDIF
+
+
+	;母乳体質による補正
+	IF 部位属性 == 1 && TALENT:(ARG:0):130
+		;母乳体質のレベルに応じて消耗が倍化
+		SELECTCASE TALENT:(ARG:0):130
+		CASE 1
+			LOCAL:0 = 15
+		CASE 2
+			LOCAL:0 = 16
+		CASE 3
+			LOCAL:0 = 17
+		CASE 4
+			LOCAL:0 = 18
+		CASE 5
+			LOCAL:0 = 19
+		CASE IS >= 6
+			LOCAL:0 = 20
+		CASEELSE
+			LOCAL:0 = 10
+		ENDSELECT
+		SIF LOCAL:0 > 10
+			MP減少量 = MP減少量 * LOCAL:0 / 10
+		SIF TALENT:(ARG:0):130 >= 3 && CFLAG:(ARG:0):506 > 0
+			CFLAG:(ARG:0):506 -= RAND:10
+	ENDIF
+	
+	
+	;噴乳中毒による補正
+	;MPダメージを軽減するため中毒レベルが伸びにくいほど不利になる
+	;EPダメージを増加させて相殺するので軽減率自体は高め 母乳体質の補正をギリギリ軽減しきらない
+	IF 部位属性 == 1 && ABL:(ARG:0):16
+		IF ABL:(ARG:0):16 == 3
+			MP減少量 = MP減少量 * 10 / 19
+		ELSEIF ABL:(ARG:0):16 == 2
+			MP減少量 = MP減少量 * 10 / 15
+		ELSEIF ABL:(ARG:0):16 == 1
+			MP減少量 = MP減少量 * 10 / 13
+		ENDIF
+	ENDIF
+	
+	
+	;乳首勃起による補正
+	IF 部位属性 == 1 && GET_ERECTION_LEVEL_B(ARG:0)
+		;陥没乳首による補正
+		IF TALENT:(ARG:0):159 && GET_ERECTION_STATE_B(ARG:0)
+			;陥没乳首が起っている時が胸でイくと消耗1.5倍
+			MP減少量 = MP減少量 * 15 / 10
+		ELSEIF TALENT:(ARG:0):159
+			;陥没乳首が胸でイくと消耗0.8倍
+			MP減少量 = MP減少量 * 8 / 10
+		ELSEIF GET_ERECTION_STATE_B(ARG:0)
+			MP減少量 = MP減少量 * 12 / 10
+		ENDIF
+	ENDIF
+
+	;抑圧による補正
+	IF TALENT:(ARG:0):32 
+		IF TALENT:(ARG:0):74 && ((部位属性 < 4 && TALENT:(ARG:0):(75 + 部位属性)) || (部位属性 == 9 && TALENT:(ARG:0):79))
+			;抑圧は淫乱+淫乱系素質なら消耗1.1倍
+			MP減少量 = MP減少量 * 11 / 10
+		ELSE
+			;通常時は消耗0.9倍
+			MP減少量 = MP減少量 * 9 / 10
+		ENDIF
+	ENDIF
+
+	;淫乱+淫乱系素質なら、確率でダメージ吸収
+	IF 部位属性 < 4
+		IF TALENT:(ARG:0):74 && TALENT:(ARG:0):(75 + 部位属性)
+			CALL EXTASY_淫乱系素質補正(ARG:0, MP減少量, 部位属性)
+			MP減少量 = RESULT
+		ENDIF
+	;口は追加されたため分け
+	ELSEIF 部位属性 == 9
+		IF TALENT:(ARG:0):74 && TALENT:(ARG:0):79
+			CALL EXTASY_淫乱系素質補正(ARG:0, MP減少量, 部位属性)
+			MP減少量 = RESULT
+		ENDIF
+	ENDIF
+
+	;MPダメージ倍率が指定されているなら、それを適用
+	SIF MP減少倍率
+		MP減少量 = MP減少量 * MP減少倍率 / 100
+
+	;EASY はMPダメージ半減
+	SIF FLAG:4 == 0
+		MP減少量 /= 2
+
+	;≡≡≡≡≡ MP減少量決定 ≡≡≡≡≡
+
+
+	;絶頂時メッセージ
+	;SIF FLAG:20 == 0
+		CALL PRINT_MESSAGE(ARG:0, 120, 部位属性, CALLNAME:(ARG:0), "", MP減少量, CFLAG:(ARG:0):35)
+
+	;刻印パッチここから
+	;CALL SET_MARK("屈服",(ARG:0),1,-1)
+	;刻印パッチここまで
+
+	;ステータス異常:絶頂ON
+	SELECTCASE 部位属性
+	CASE 0
+		SETBIT CFLAG:(ARG:0):35, 1
+	CASE 1
+		SETBIT CFLAG:(ARG:0):35, 2
+	CASE 2
+		SETBIT CFLAG:(ARG:0):35, 3
+	CASE 3
+		SETBIT CFLAG:(ARG:0):35, 4
+	CASE 5
+		SETBIT CFLAG:(ARG:0):35, 5
+	CASE 9
+		SETBIT CFLAG:(ARG:0):35, 6
+	ENDSELECT
+	
+	;こっそり絶頂回数カウント
+	EXP:(ARG:0):20 += 1
+
+	;悪堕ちポイント
+	SIF TALENT:(ARG:0):156 && FLAG:538
+		CFLAG:(ARG:0):160 += 1
+	
+	;連続絶頂カウント
+	IF CFLAG:(ARG:0):99 < 10
+		CFLAG:(ARG:0):99 += 10
+	ELSEIF CFLAG:(ARG:0):99 >= 10
+		CFLAG:(ARG:0):99 += 1
+	ENDIF
+	
+	;露出癖入手抽選
+	IF TALENT:(ARG:0):167 == 0 && BASE:(ARG:0):3 <= 0 && BASE:(ARG:0):4 >= 100
+		CALL GET_EXHIBITIONIST(ARG:0)
+	ENDIF
+	
+	;部位感覚経験
+	LOCAL:0 = ARG:2 * 5 + 500
+	SIF 部位属性 == 5
+		LOCAL:0 /= 100
+	;母乳粘度による感覚経験の増加
+	IF 部位属性 == 1 && TALENT:(ARG:0):220
+		SELECTCASE TALENT:(ARG:0):220
+		CASE 1
+		CASE 2
+			LOCAL:0 = LOCAL:0 * 11 / 10
+		CASE 3
+			LOCAL:0 = LOCAL:0 * 12 / 10
+		CASE 4
+			LOCAL:0 = LOCAL:0 * 13 / 10
+		CASE 5
+			LOCAL:0 = LOCAL:0 * 14 / 10
+		CASE IS >= 6
+			LOCAL:0 = LOCAL:0 * 15 / 10
+		CASEELSE
+		ENDSELECT
+	ENDIF
+	CALL ADD_ABL_EXP((部位属性 + 6), ARG:0, LOCAL:0)
+	
+	;噴乳中毒増加
+	IF 部位属性 == 1 && TALENT:(ARG:0):130
+		SELECTCASE TALENT:(ARG:0):130
+		CASE 1
+			CALL ADD_ABL_EXP(16, ARG:0, LOCAL:0 / 15)
+		CASE 2
+			CALL ADD_ABL_EXP(16, ARG:0, LOCAL:0 / 10)
+		CASE 3
+			CALL ADD_ABL_EXP(16, ARG:0, LOCAL:0 / 8)
+		CASE 4
+			CALL ADD_ABL_EXP(16, ARG:0, LOCAL:0 / 6)
+		CASE 5
+			CALL ADD_ABL_EXP(16, ARG:0, LOCAL:0 / 5)
+		CASE IS >= 6
+			CALL ADD_ABL_EXP(16, ARG:0, LOCAL:0 / 4)
+		CASEELSE
+		ENDSELECT
+	ENDIF
+	
+	;戦闘中のみTPが変化
+	SIF TFLAG:13
+		CALL CHANGE_TP(ARG:0, 18)
+
+	;発情レベル低下。通常、発情レベルは一気に２下がることも
+	CALL GET_EQUIP_BONUS(ARG:0, 39)
+	IF (CFLAG:(ARG:0):28 <= 1 && RESULT == 1) || CFLAG:(ARG:0):156
+		IF CFLAG:(ARG:0):156
+			CFLAG:(ARG:0):156 = 0
+		ENDIF
+		;媚薬装備で発情レベル１以下、または強制自慰の場合は発情レベルが低下しない
+	ELSEIF CFLAG:(ARG:0):28 > 0 && RAND:10 < (4 + CFLAG:(ARG:0):28)
+		CFLAG:(ARG:0):28 -= RAND:2 + 1
+		
+		;発情レベル下限。媚薬装備時は1まで。それ以外は-1まで（賢者タイム）。
+		IF CFLAG:(ARG:0):28 < 1 && RESULT == 1
+			CFLAG:(ARG:0):28 = 1
+		ELSEIF CFLAG:(ARG:0):28 < -1 && RESULT == 0
+			CFLAG:(ARG:0):28 = -1
+		ENDIF
+		
+		IF FLAG:20 == 0
+			CALL PRINT_MESSAGE(ARG:0, 121, 部位属性, CALLNAME:(ARG:0), "")
+		ENDIF
+	ENDIF
+
+
+
+	;≡≡≡≡≡ MP低下処理 ≡≡≡≡≡
+	IF CFLAG:(ARG:0):29
+		SIF FLAG:20 == 0
+			CALL PRINT_MESSAGE(ARG:0, 122, 部位属性, CALLNAME:(ARG:0), "")
+		
+		SIF CHECK_MEMBER_FROM_ID(ARG:0)
+			CFLAG:(ARG:0):5 -= 1
+		BASE:(ARG:0):1 = 0
+	ELSE
+		BASE:(ARG:0):1 -= MP減少量
+		
+		;MPが尽きたら喪失
+		IF BASE:(ARG:0):1 <= 0
+
+			;HP用途拡張パッチ
+			;残りHP量の割合確率で踏ん張る。
+				踏ん張り確率 = BASE:(ARG:0):0 * 100 / MAXBASE:(ARG:0):0
+			;高難易度は最大生存確率が落ちる（ルナ10％以下、それ以外は50％以下）
+			SIF 踏ん張り確率 > 50
+				踏ん張り確率 = 50
+			SIF FLAG:4 >= 3 && 踏ん張り確率 > 10
+				踏ん張り確率 = 10
+				IF 踏ん張り確率 > RAND:100
+					;踏ん張りに成功してもMPダメージが最大MPの5倍以上だと潰される。
+					IF MP減少量 > MAXBASE:(ARG:0):1 * 5
+						BASE:(ARG:0):1 = 0
+						CALL HEART_OVER_BREAK(ARG:0)
+							;刻印が無かったらプレゼントされる
+							SIF MARK:(ARG:0):21 == 0
+								CALL GET_MARK(ARG:0, 21, 0)
+					ELSE
+						BASE:(ARG:0):1 = 1
+						CALL IRON_HEART(ARG:0)
+					ENDIF
+				ELSE
+					BASE:(ARG:0):1 = 0
+					CALL HEART_BREAK(ARG:0)
+				ENDIF
+		;MPが上限を超えている場合は超えた分をHP回復にまわす
+		ELSEIF BASE:(ARG:0):1 > MAXBASE:(ARG:0):1
+			LOCAL:0 = (BASE:(ARG:0):1 - MAXBASE:(ARG:0):1)
+			;MPを限界突破させてみる オーバーの1/5が突破量 喪失状態だと無理、MP99999超えても無理
+			IF CFLAG:(ARG:0):29 == 0 && MAXBASE:(ARG:0):1 < 100000
+				MAXBASE:(ARG:0):1 += (BASE:(ARG:0):1 - MAXBASE:(ARG:0):1) / 5
+				BASE:(ARG:0):1 = MAXBASE:(ARG:0):1
+				IF MAXBASE:(ARG:0):1 > 100000
+					MAXBASE:(ARG:0):1 = 99999
+				ENDIF
+			ELSEIF BASE:(ARG:0):1 > MAXBASE:(ARG:0):1
+				BASE:(ARG:0):1 = MAXBASE:(ARG:0):1
+			ENDIF
+			
+			
+			BASE:(ARG:0):0 += LOCAL
+			IF BASE:(ARG:0):0 >= MAXBASE:(ARG:0):0
+				BASE:(ARG:0):0 = MAXBASE:(ARG:0):0
+				SIF FLAG:20 == 0
+					PRINTFORML %CALLNAME:(ARG:0)%の体力が全快した！
+			ELSE
+				SIF FLAG:20 == 0
+					PRINTFORML %CALLNAME:(ARG:0)%の体力が{LOCAL:0}回復した！
+			ENDIF
+		ENDIF
+	ENDIF
+	;ところてん射精 精力を減らさず射精
+	IF 部位属性 == 3 && GET_PENIS(ARG:0) > 0 && RAND:3 == 0
+		PRINTFORML %CALLNAME:(ARG:0)%の陰茎から白濁液が漏れている……
+		CALL ADD_ABL_EXP(12, ARG:0, 1)
+	ENDIF
+
+
+
+	;≡≡≡≡≡ ふたなりの処理（C絶頂時） ≡≡≡≡≡
+	IF 部位属性 == 2 && GET_PENIS(ARG:0) > 0 && CFLAG:(ARG:0):171
+		CALL PRINT_MESSAGE(ARG:0, 549, TFLAG:52, CALLNAME:(ARG:0), SAVESTR:(TFLAG:52))
+	ELSEIF 部位属性 == 2 && GET_PENIS(ARG:0) > 0
+		CALL EXTASY_ふたなり射精(ARG:0, FLAG:20)
+	ENDIF
+
+	;≡≡≡≡≡ 絶頂によるおもらし ≡≡≡≡≡
+	CALL CHECK_OMORASHI(ARG:0, MP減少倍率, 2) 
+	CALL CHECK_UNK_OMORASHI(ARG:0, MP減少倍率, "絶頂") 
+
+	;≡≡≡≡≡ 絶頂後の処理 ≡≡≡≡≡
+	BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
+	
+	;勃起処理
+	;ここより後ろにMP減少量を使う行はないので変更
+	MP減少量 = ABS(MP減少量)
+	MP減少量 = MAX(50, MP減少量)
+	
+	IF 部位属性 == 1
+		CALL ERECTION_B(ARG:0, RAND:(MP減少量 / 20))
+		CALL ERECTION_C(ARG:0, RAND:(MP減少量 / 50))
+	ELSEIF 部位属性 != 2
+		CALL ERECTION_B(ARG:0, RAND:(MP減少量 / 50))
+		CALL ERECTION_C(ARG:0, RAND:(MP減少量 / 50))
+	ELSEIF 部位属性 == 2 && GET_PENIS(ARG:0) < 1
+		CALL ERECTION_B(ARG:0, RAND:(MP減少量 / 50))
+		CALL ERECTION_C(ARG:0, RAND:(MP減少量 / 20))
+	ENDIF
+	
+	
+	;戦闘中に母乳体質が敵から胸でイかされてると相手が回復 陥没乳首なら勃つまで平気
+	IF TFLAG:13 && TALENT:(ARG:0):130 && 部位属性 == 1 && TFLAG:52 && (TALENT:(ARG:0):159 == 0 || GET_ERECTION_STATE_B(ARG:0))
+		IF CFLAG:(ARG:0):155 >= 3
+			CFLAG:(ARG:0):155 -= 3
+			PRINTFORML 母乳止めの札のおかげで母乳は吸われなかったようだ
+		ELSE
+			IF CFLAG:(ARG:0):20 == TFLAG:52
+				IF DA:(TFLAG:52):2 / 10 < DA:(TFLAG:52):5 * 10
+					LOCAL:1 = DA:(TFLAG:52):2 / 10
+				ELSE
+					LOCAL:1 = DA:(TFLAG:52):5 * 10
+				ENDIF
+			ELSE
+				IF DA:(TFLAG:52):2 / 10 < 1500
+					LOCAL:1 = DA:(TFLAG:52):2 / 10
+				ELSE
+					LOCAL:1 = 1500
+				ENDIF
+			ENDIF
+			CALL PRINT_MESSAGE(ARG:0, 123, TFLAG:52, CALLNAME:(ARG:0), SAVESTR:(TFLAG:52), LOCAL:1)
+			DA:(TFLAG:52):1 += LOCAL:1
+			;この回復でHPが120％を超えると敵の戦闘力が上がる　HPは通常に戻る
+			IF DA:(TFLAG:52):2 < DA:(TFLAG:52):1
+				DA:(TFLAG:52):5 += DA:(TFLAG:52):5 * 2 / 10
+				DA:(TFLAG:52):1 = DA:(TFLAG:52):2
+				PRINTFORML %SAVESTR:(TFLAG:52)%の触手が太く大きくなり脈動している
+			ENDIF
+		ENDIF
+	ENDIF
+
+	;汚れ+3
+	BASE:(ARG:0):5 += 3
+
+	SIF CHECK_MEMBER_FROM_ID(ARG:0)
+		CALL ADD_FEELING(ARG:0, -1)
+
+	
+
+;自慰以外の寸止め
+ELSEIF ARG:3 == 1
+	SELECTCASE RAND:4
+		CASE 0
+			PRINTFORMW 絶頂寸前で焦らされている%CALLNAME:(ARG:0)%をあざ笑うかのように、触手は性感帯以外の部分を撫で回している…
+		CASE 1
+			PRINTFORMW しかし%CALLNAME:(ARG:0)%が絶頂に達する瞬間、触手はぴたりと愛撫をやめてしまった…
+		CASE 2
+			PRINTFORMW 触手は%CALLNAME:(ARG:0)%が絶頂に達しない程度の強さで責め続けている…
+		CASE 3
+			PRINTFORMW 触手は%CALLNAME:(ARG:0)%の全身を焦らすように舐め回している…
+	ENDSELECT
+	BASE:(ARG:0):2 = 1
+;触手服による自慰妨害
+ELSEIF ARG:3 == 2
+	IF GET_PENIS(ARG:0) && RAND:2 < 1
+		PRINTFORML しかし、%CALLNAME:(ARG:0)%が絶頂に達しようとした瞬間、触手がペニスの根元をきつく縛り上げた！
+		PRINTFORMW 射精を阻まれた%CALLNAME:(ARG:0)%は一心不乱にペニスをしごき続けている…
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML しかし、%CALLNAME:(ARG:0)%が絶頂に達する瞬間、性感帯を覆う触手が鱗のように変化し%CALLNAME:(ARG:0)%の指を阻んだ！
+				PRINTFORML %CALLNAME:(ARG:0)%は体をくねらせ服の隙間から敏感な部分に触れようとしたがどうしても触れることができない…
+			CASE 1
+				PRINTFORML しかし、%CALLNAME:(ARG:0)%が絶頂に達しようとした瞬間、触手が%CALLNAME:(ARG:0)%の腕を締め上げ無理矢理性感帯から引き離した！
+				PRINTFORM 自慰を中断させられた%CALLNAME:(ARG:0)%
+				SELECTCASE 部位属性
+					CASE 0
+						PRINTFORMW は肛門の疼きを堪えてもじもじと股を擦り合わせている…
+					CASE 1
+						PRINTFORMW はつんと屹立した乳首をうらめしそうに見つめている…
+					CASE 2
+						IF GET_PENIS(ARG:0)
+							IF RAND:2 == 1 
+								PRINTFORMW はカチカチに勃起して先端から我慢汁を垂れ流すペニスをうらめしそうに見つめている…
+							ELSE
+								PRINTFORMW のペニスは快感を求めてビクビクと脈打っている…
+							ENDIF
+						ELSE
+							PRINTFORMW は充血して腫れ上がったクリトリスをうらめしそうに見つめている…
+						ENDIF
+					CASE 3
+						PRINTFORMW の秘所から愛液がとめどなく溢れ内股を塗らしている…
+				ENDSELECT
+		ENDSELECT
+	ENDIF
+	BASE:(ARG:0):2 = 1
+ENDIF
+
+;変数リセット
+FLAG:20 = 0
+
+;=================================================
+;淫乱系素質による絶頂時MP減少量の補正
+;RESULT 補正後のMP減少量
+;=================================================
+@EXTASY_淫乱系素質補正(ARG:0, MP減少量, 部位属性)
+;ARG:0	キャラID
+#DIM MP減少量
+#DIM 部位属性
+;-MEMO-
+;処理が長いので分けました
+
+;LOCAL
+;0	判定値
+;1	回復禁止フラグ
+
+	;淫乱+淫乱系素質なら、確率でダメージ吸収
+	;とりあえず、【発情】とTP、触手中毒、自慰中毒とか影響させてみたけども、快楽刻印とかも影響させたい。
+
+	;ベース+TP
+	LOCAL:0 = (BASE:(ARG:0):4) + 50
+	
+	;【発情】レベル補正
+	SIF CFLAG:(ARG:0):28
+		LOCAL:0 += (CFLAG:(ARG:0):28) * 30
+	
+	;戦闘中なら触手中毒+自慰中毒、通常時は自慰中毒のみで補正入れる。
+	IF  TFLAG:13
+		LOCAL:0 += ((ABL:(ARG:0):11) * 15) + ((ABL:(ARG:0):10) * 15)
+	ELSE
+		LOCAL:0 += (ABL:(ARG:0):10) * 30
+	ENDIF
+	
+	;【淫魔】なら確率増
+	SIF TALENT:(ARG:0):156 && FLAG:538
+		LOCAL:0 += 90
+
+	;HP用途拡張パッチ
+	;残りHPが0だと回復不可（下の回復禁止条件判定はPT全体が分岐条件なのでこちらで処理）
+	SIF BASE:(ARG:0):0 <= 0
+		LOCAL:0 = 0
+
+	;≡≡≡ MP回復禁止条件判定 ≡≡≡
+	;戦闘が無駄に長引くのを防ぐため勝つ見込みがない時はMP回復を禁止にする
+	
+	LOCAL:1 = 1 ;回復禁止フラグ
+	
+	;味方に非喪失かつHP有か拘束されていない（まだ戦えそうな）キャラがいたらフラグを折る
+	SIF (CFLAG:1:29 == 0) && (BASE:1:0 > 0 || CFLAG:1:20 == 0)
+		LOCAL:1 = 0
+	SIF FLAG:10 > 0 && (CFLAG:(FLAG:10):29 == 0) && (BASE:(FLAG:10):0 > 0 || CFLAG:(FLAG:10):20 == 0)
+		LOCAL:1 = 0
+	SIF FLAG:11 > 0 && (CFLAG:(FLAG:11):29 == 0) && (BASE:(FLAG:11):0 > 0 || CFLAG:(FLAG:11):20 == 0)
+		LOCAL:1 = 0
+		
+	;諦めてたら無条件で禁止
+	SIF TFLAG:16 == 2
+		LOCAL:1 = 1
+	
+		
+	;戦闘が長引いてると、問答無用で回復禁止(30ターン以上)
+	SIF TFLAG:11 >= 30
+		LOCAL:1 = 1
+	
+	;≡≡≡ 結果 ≡≡≡
+	IF LOCAL:1 == 0 && LOCAL:0 >= RAND:450
+		MP減少量 = MP減少量 * -5
+	ELSE
+		MP減少量 = MP減少量 * 1
+	ENDIF
+
+
+RETURN MP減少量
+;=================================================
+;C絶頂時のふたなり射精処理
+;=================================================
+@EXTASY_ふたなり射精(ARG:0, FLAG:20)
+;ARG:0	キャラID
+
+;-MEMO-
+;処理が長いので分けました
+
+
+;LOCAL
+;0	HP減少量
+
+	;部位感覚によるHP減少量
+	IF ABL:(ARG:0):Ｃ感覚 == 0
+		LOCAL:0 = 100
+	ELSEIF ABL:(ARG:0):Ｃ感覚 == 1
+		LOCAL:0 = 200
+	ELSEIF ABL:(ARG:0):Ｃ感覚 == 2
+		LOCAL:0 = 400
+	ELSE
+		LOCAL:0 = 800
+	ENDIF
+
+	;C感度による補正
+	IF TALENT:(ARG:0):Ｃ感度 == 2
+		LOCAL:0 *= 3
+	ELSEIF TALENT:(ARG:0):Ｃ感度 == 1
+		LOCAL:0 *= 2
+	ELSEIF TALENT:(ARG:0):Ｃ感度 == -1
+		LOCAL:0 /= 2
+	ENDIF
+	LOCAL:0 *= (ABL:(ARG:0):射精中毒 + 1)
+
+	;不思議な根・具現による耐性
+	IF TALENT:(ARG:0):不思議な根 == 1 || TALENT:(ARG:0):具現 == 1
+		;必ず1200以下にまで抑えられるのは不思議な根のみ
+		IF LOCAL:0 > 2400 && TALENT:(ARG:0):不思議な根 == 1
+			LOCAL:0 = 1200
+		ELSE
+			LOCAL:0 /= 2
+		ENDIF
+	ENDIF
+	
+	;勃起度合いによる補正
+	IF GET_ERECTION_LEVEL_C(ARG:0) <= 40
+		LOCAL:0 /= 3
+	ELSEIF GET_ERECTION_LEVEL_C(ARG:0) <= 60
+		LOCAL:0 /= 2
+	ELSEIF GET_ERECTION_LEVEL_C(ARG:0) <= 100
+		
+	ELSEIF GET_ERECTION_LEVEL_C(ARG:0) > 100
+		LOCAL:0 = LOCAL:0 * GET_ERECTION_LEVEL_C(ARG:0) / 100
+	ENDIF
+
+	;射精した
+	SIF FLAG:20 == 0
+		CALL PRINT_MESSAGE(ARG:0, 451, LOCAL:0, CALLNAME:(ARG:0), "")
+
+	;HPが残っていて絶倫でなければHPダメージ
+	IF BASE:(ARG:0):HP > 0 && TALENT:(ARG:0):172 < 1
+		BASE:(ARG:0):HP -= LOCAL
+		IF BASE:(ARG:0):HP <= 0
+			BASE:(ARG:0):HP = 0
+			;体力が尽きた
+			SIF FLAG:20 == 0
+				CALL PRINT_MESSAGE(ARG:0, 32, 1, CALLNAME:(ARG:0), "")
+		ENDIF
+	ENDIF
+
+	;射精経験
+	CALL ADD_ABL_EXP(12, ARG:0, 1)
+
+	;射精中毒が3になったら、「ふたなり」が素質になる
+	IF ABL:(ARG:0):射精中毒 >= 3 && GET_PENIS(ARG:0) == 1
+		;ふたなりを受け入れた
+		SIF FLAG:20 == 0
+			CALL PRINT_MESSAGE(ARG:0, 454, 0, CALLNAME:(ARG:0), "")
+		CFLAG:(ARG:0):42 = 0
+		TALENT:(ARG:0):121 = 1
+	;「不思議な根」持ちは33%の確率で回数が減らない
+	ELSEIF TALENT:(ARG:0):121 == 0 && (TALENT:(ARG:0):不思議な根 == 0 || RAND:3)
+		CFLAG:(ARG:0):42 -= 1
+	ENDIF
+
+	;萎び落ちた
+	IF CFLAG:(ARG:0):42 == 0 && GET_PENIS(ARG:0) < 1
+		;絶倫でなければしなびる
+		IF TALENT:(ARG:0):172 < 1
+			SIF FLAG:20 == 0
+				CALL PRINT_MESSAGE(ARG:0, 452, 0, CALLNAME:(ARG:0), "")
+			
+			;勃起度リセット
+			;取れたことを見せるためカラーバー表示も
+			CALL SET_ERECTION_LEVEL_C(ARG:0, 0)
+			CALL SHOW_ERECTION_COLORBAR_C(ARG:0)
+		ELSE
+			CFLAG:(ARG:0):42 += 10
+		ENDIF
+	ENDIF
+	
+	;勃起度合い
+	IF GET_PENIS(ARG:0)
+		CALL ERECTION_C(ARG:0, - RAND:(LOCAL:0 / 120 + 1))
+	ENDIF
+
+
+RETURN
+;=================================================

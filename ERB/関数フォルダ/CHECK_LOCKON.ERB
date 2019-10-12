@@ -1,0 +1,36 @@
+﻿;敵のロックオン確認
+;ARG:0	対象敵ID
+@CHECK_LOCKON(ARG:0)
+
+FOR LOCAL:0, 1, CHARANUM
+	IF CHECK_FINE(LOCAL:0) == 0
+		;行動不能のキャラは無視
+		CONTINUE
+	ENDIF
+	IF CHECK_NEXT(DA:(ARG:0):4, CFLAG:(LOCAL:0):4) == 0
+		;隣より離れている部屋のキャラは無視（通路は無くても気にしない）
+		CONTINUE
+	ENDIF
+	IF BASE:(LOCAL:0):5 < 30
+		;汚れ30未満のキャラには気づかない
+	ELSEIF BASE:(LOCAL:0):5 < 60
+		;汚れ60未満のキャラには15％で気づく＋2ターン追いかける
+		IF RAND:100 < 15
+			DA:(ARG:0):7 = LOCAL:0
+			DA:(ARG:0):82 = 2
+		ENDIF
+	ELSEIF BASE:(LOCAL:0):5 < 100
+		;汚れ100未満のキャラには25％で気づく＋2ターン追いかける
+		IF RAND:100 < 25
+			DA:(ARG:0):7 = LOCAL:0
+			DA:(ARG:0):82 = 2
+		ENDIF
+	ELSE
+		;汚れ100以上のキャラには40％で気づく＋3ターン追いかける
+		IF RAND:100 < 40
+			DA:(ARG:0):7 = LOCAL:0
+			DA:(ARG:0):82 = 3
+		ENDIF
+	ENDIF
+NEXT
+

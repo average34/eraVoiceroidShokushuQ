@@ -1,0 +1,300 @@
+﻿;■■■■■■■■■■■■■■■■■■■■■■■■■
+;
+;バストサイズに関する処理
+;
+;■■■■■■■■■■■■■■■■■■■■■■■■■
+;
+;@ADD_BUST(ARG:0,ARG:1,ARG:2,ARG:3)			バストサイズ変更
+;@SET_BUST(ARG:0,ARG:1,ARG:2,ARG:3,ARG:4)	胸の素質変更
+;@GET_BUST(ARG:0)							現在のバストサイズを返す式中関数
+;@GET_RAWBUST(ARG:0)						現在のRAWバストサイズ(超乳以上の+数を含めた値)を返す式中関数
+;@GET_RAW_PLUSBUST(ARG:0)					引数のRAWバストサイズから通常バストサイズと+数を返す
+
+;=================================================
+;バストサイズ変更
+;ARG:0 対象キャラID
+;ARG:1 何段階変化させるか(正数:バストアップ　負数:バストダウン)
+;ARG:2 理由（0:その他 1:アイテムを使った 2:出産時豊乳化 3:自販機 4:膨乳病 5:デバッグ）
+;ARG:3 理由の補足
+;	ARG:2 == 1 の時(アイテムID)
+;RESULT:0 変更後のバストサイズ（-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳　3:超乳　4:超々乳　5:接地乳房）
+;LOCAL:0 バスト変更前のサイズ
+;=================================================
+@ADD_BUST(ARG:0,ARG:1,ARG:2,ARG:3)
+
+	;エラー予防
+	SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+		RETURN 0
+
+	;爆乳までのコンフィグなら爆乳が成長せずに戻る
+	IF FLAG:521 == 2 && TALENT:(ARG:0):108 == 1 && ARG:1 > 0
+		RETURN
+	ENDIF
+	;男の娘は成長しないコンフィグだと戻る
+	IF FLAG:521 == 3 && TALENT:(ARG:0):122 > 0 && ARG:1 > 0
+		RETURN
+	ENDIF
+
+	LOCAL:0 = GET_BUST(ARG:0)
+
+	CALL SET_BUST(ARG:0,LOCAL:0,ARG:1,ARG:2,ARG:3)
+
+RETURN RESULT
+;=================================================
+;バストサイズ設定
+;ARG:0 対象キャラID
+;ARG:1 変更前のバストサイズ(-2:絶壁　-1:貧乳　0:貧乳　1:巨乳　2:爆乳　3:超乳　4:超々乳　5:接地乳房)
+;ARG:2 何段階変化させるか(正数:バストアップ　負数:バストダウン)
+;ARG:3 理由（0:その他 1:アイテムを使った 2:出産時豊乳化 3:自販機 4:膨乳病 5:デバッグ）
+;ARG:4 理由の補足
+;	ARG:3 == 1 の時(アイテムID)
+;RESULT:0 変更後のバストサイズ（-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳　3:超乳　4:超々乳　5:接地乳房）
+;=================================================
+@SET_BUST(ARG:0,ARG:1,ARG:2,ARG:3,ARG:4)
+#DIM 超乳フラグ
+#DIM RAW変更前
+#DIM RAW変更後
+#DIM ＋数
+
+	;エラー予防
+	SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+		RETURN 0
+
+	超乳フラグ = 0
+
+	;変更後
+	LOCAL:1 = LIMIT(ARG:1 + ARG:2, -2, 5)
+
+	;バストサイズの変更前または変更後が超乳以上
+	IF ARG:1 >= 3 || LOCAL:1 >= 3
+		超乳フラグ = 1
+		;変更前のRAWバストサイズを取得
+		RAW変更前 = GET_RAWBUST(ARG:0)
+		RAW変更後 = LIMIT(RAW変更前 + ARG:2,-2, 2 + PLUS_HB_MAX)
+		;変更後のバストサイズと＋数を取得
+		CALL GET_RAW_PLUSBUST(RAW変更後)
+		LOCAL:1 = RESULT:0
+		＋数 = RESULT:1
+	ENDIF
+
+;爆乳までの変更で変更前後に差がある or 変更前後のどちらかが超乳以上で、RAWバストサイズが変動している
+IF (ARG:1 != LOCAL:1 && 超乳フラグ == 0) || (超乳フラグ == 1 && RAW変更前 != RAW変更後)
+	SELECTCASE LOCAL:1
+		CASE IS <= -2
+			;絶壁
+			TALENT:(ARG:0):絶壁 = 1
+			TALENT:(ARG:0):貧乳 = 0
+			TALENT:(ARG:0):巨乳 = 0
+			TALENT:(ARG:0):爆乳 = 0
+			TALENT:(ARG:0):超乳 = 0
+			TALENT:(ARG:0):超々乳 = 0
+			TALENT:(ARG:0):接地乳房 = 0
+		CASE -1
+			;貧乳
+			TALENT:(ARG:0):絶壁 = 0
+			TALENT:(ARG:0):貧乳 = 1
+			TALENT:(ARG:0):巨乳 = 0
+			TALENT:(ARG:0):爆乳 = 0
+			TALENT:(ARG:0):超乳 = 0
+			TALENT:(ARG:0):超々乳 = 0
+			TALENT:(ARG:0):接地乳房 = 0
+		CASE 0
+			;普乳
+			TALENT:(ARG:0):絶壁 = 0
+			TALENT:(ARG:0):貧乳 = 0
+			TALENT:(ARG:0):巨乳 = 0
+			TALENT:(ARG:0):爆乳 = 0
+			TALENT:(ARG:0):超乳 = 0
+			TALENT:(ARG:0):超々乳 = 0
+			TALENT:(ARG:0):接地乳房 = 0
+		CASE 1
+			;巨乳
+			TALENT:(ARG:0):絶壁 = 0
+			TALENT:(ARG:0):貧乳 = 0
+			TALENT:(ARG:0):巨乳 = 1
+			TALENT:(ARG:0):爆乳 = 0
+			TALENT:(ARG:0):超乳 = 0
+			TALENT:(ARG:0):超々乳 = 0
+			TALENT:(ARG:0):接地乳房 = 0
+		CASE 2
+			;爆乳
+			TALENT:(ARG:0):絶壁 = 0
+			TALENT:(ARG:0):貧乳 = 0
+			TALENT:(ARG:0):巨乳 = 0
+			TALENT:(ARG:0):爆乳 = 1
+			TALENT:(ARG:0):超乳 = 0
+			TALENT:(ARG:0):超々乳 = 0
+			TALENT:(ARG:0):接地乳房 = 0
+		CASE 3
+			;超乳
+			TALENT:(ARG:0):絶壁 = 0
+			TALENT:(ARG:0):貧乳 = 0
+			TALENT:(ARG:0):巨乳 = 0
+			TALENT:(ARG:0):爆乳 = 0
+			TALENT:(ARG:0):超乳 = ＋数
+			TALENT:(ARG:0):超々乳 = 0
+			TALENT:(ARG:0):接地乳房 = 0
+		CASE 4
+			;超々乳
+			TALENT:(ARG:0):絶壁 = 0
+			TALENT:(ARG:0):貧乳 = 0
+			TALENT:(ARG:0):巨乳 = 0
+			TALENT:(ARG:0):爆乳 = 0
+			TALENT:(ARG:0):超乳 = 0
+			TALENT:(ARG:0):超々乳 = ＋数
+			TALENT:(ARG:0):接地乳房 = 0
+		CASE 5
+			;接地乳房
+			TALENT:(ARG:0):絶壁 = 0
+			TALENT:(ARG:0):貧乳 = 0
+			TALENT:(ARG:0):巨乳 = 0
+			TALENT:(ARG:0):爆乳 = 0
+			TALENT:(ARG:0):超乳 = 0
+			TALENT:(ARG:0):超々乳 = 0
+			TALENT:(ARG:0):接地乳房 = ＋数
+	ENDSELECT
+
+	;メッセージ非表示フラグ
+	IF FLAG:20 == 0 && CFLAG:(ARG:0):4 == CFLAG:1:4 || ARG:3 == 5
+		CALL PRINT_MESSAGE(ARG:0, 510, ARG:0, CALLNAME:(ARG:0),"", LOCAL:0, LOCAL:1, ARG:3, ARG:4 )
+	ENDIF
+	
+	; バストサイズ変更時、母乳値を初期化
+	; 超乳化処理中にバストサイズが変化した場合、メッセージ表示がおかしくなるのを防ぐ為
+	CFLAG:(ARG:0):506 = 0
+ENDIF
+
+RETURN LOCAL:1
+;=================================================
+;バストサイズ取得　※式中関数
+;ARG:0 対象キャラID
+;RESULT:0 バストサイズ（-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳　3:超乳　4:超々乳　5:接地乳房）
+;=================================================
+@GET_BUST(ARG:0)
+#FUNCTION
+
+	;エラー予防
+	SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+		RETURNF 0
+
+	IF TALENT:(ARG:0):絶壁
+		;変な値がセットされていた場合を想定
+		TALENT:(ARG:0):絶壁 = 1
+		TALENT:(ARG:0):貧乳 = 0
+		TALENT:(ARG:0):巨乳 = 0
+		TALENT:(ARG:0):爆乳 = 0
+		TALENT:(ARG:0):超乳 = 0
+		TALENT:(ARG:0):超々乳 = 0
+		TALENT:(ARG:0):接地乳房 = 0
+		RETURNF -2
+	ELSEIF TALENT:(ARG:0):貧乳
+		TALENT:(ARG:0):貧乳 = 1
+		TALENT:(ARG:0):巨乳 = 0
+		TALENT:(ARG:0):爆乳 = 0
+		TALENT:(ARG:0):超乳 = 0
+		TALENT:(ARG:0):超々乳 = 0
+		TALENT:(ARG:0):接地乳房 = 0
+		RETURNF -1
+	ELSEIF TALENT:(ARG:0):巨乳
+		TALENT:(ARG:0):巨乳 = 1
+		TALENT:(ARG:0):爆乳 = 0
+		TALENT:(ARG:0):超乳 = 0
+		TALENT:(ARG:0):超々乳 = 0
+		TALENT:(ARG:0):接地乳房 = 0
+		RETURNF 1
+	ELSEIF TALENT:(ARG:0):爆乳
+		TALENT:(ARG:0):爆乳 = 1
+		TALENT:(ARG:0):超乳 = 0
+		TALENT:(ARG:0):超々乳 = 0
+		TALENT:(ARG:0):接地乳房 = 0
+		RETURNF 2
+	ELSEIF TALENT:(ARG:0):超乳
+		TALENT:(ARG:0):超々乳 = 0
+		TALENT:(ARG:0):接地乳房 = 0
+		RETURNF 3
+	ELSEIF TALENT:(ARG:0):超々乳
+		TALENT:(ARG:0):接地乳房 = 0
+		RETURNF 4
+	ELSEIF TALENT:(ARG:0):接地乳房
+		RETURNF 5
+	ELSE
+		RETURNF 0
+	ENDIF
+
+
+
+
+;=================================================
+;RAWバストサイズ取得(超乳以降の+数を含めた値を返す)　※式中関数
+;ARG:0 対象キャラID
+;RESULT:0 バストサイズ（-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳　3～:超乳以上）
+;	※3以上の値はBUST_RANGE.ERHで定義した値により変動する
+;LOCAL:1 段階数(超乳)
+;LOCAL:2 段階数(超乳+超々乳)
+;LOCAL:3 段階数(超乳+超々乳+接地乳房)
+;=================================================
+@GET_RAWBUST(ARG:0)
+#FUNCTION
+LOCAL:1 = PLUS_HB1
+LOCAL:2 = LOCAL:1 + PLUS_HB2
+LOCAL:3 = LOCAL:2 + PLUS_HB3
+
+	;エラー予防
+	SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+		RETURNF 0
+
+	IF TALENT:(ARG:0):絶壁
+		RETURNF -2
+	ELSEIF TALENT:(ARG:0):貧乳
+		RETURNF -1
+	ELSEIF TALENT:(ARG:0):巨乳
+		RETURNF 1
+	ELSEIF TALENT:(ARG:0):爆乳
+		RETURNF 2
+	ELSEIF TALENT:(ARG:0):超乳
+		RETURNF 2 + TALENT:(ARG:0):超乳
+	ELSEIF TALENT:(ARG:0):超々乳
+		RETURNF 2 + LOCAL:1 + TALENT:(ARG:0):超々乳
+	ELSEIF TALENT:(ARG:0):接地乳房
+		RETURNF 2 + LOCAL:2 + TALENT:(ARG:0):接地乳房
+	ELSE
+		RETURNF 0
+	ENDIF
+
+
+;=================================================
+;RAW_PLUSバストサイズ取得　超乳以降の通常バストサイズと余りを返す
+;ARG:0 バストサイズ(+数を含めた値)
+;RESULT:0 バストサイズ（-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳　3:超乳　4:超々乳　5:接地乳房）
+;RESULT:1 超乳以降の+数
+;LOCAL:0 RAWバストサイズ(爆乳を0として数えたもの)
+;LOCAL:1 段階数(超乳)
+;LOCAL:2 段階数(超乳+超々乳)
+;LOCAL:3 段階数(超乳+超々乳+接地乳房)
+;=================================================
+@GET_RAW_PLUSBUST(ARG:0)
+;爆乳を0として数える
+LOCAL:0 = ARG:0 - 2
+LOCAL:1 = PLUS_HB1
+LOCAL:2 = LOCAL:1 + PLUS_HB2
+LOCAL:3 = LOCAL:2 + PLUS_HB3
+
+SELECTCASE LOCAL:0
+;爆乳以下
+CASE IS <= 0
+	RETURN ARG:0
+;超乳
+CASE 1 to LOCAL:1
+	RETURN 3, (LOCAL:0) % (PLUS_HB1 + 1)
+;超々乳
+CASE LOCAL:1 + 1 to LOCAL:2
+	RETURN 4, (LOCAL:0 - PLUS_HB1) % (PLUS_HB2 + 1)
+;接地乳房
+CASE LOCAL:2 + 1 to PLUS_HB_MAX
+	RETURN 5, (LOCAL:0 - PLUS_HB1 - PLUS_HB2) % (PLUS_HB3 + 1)
+CASEELSE
+	RETURN 0
+ENDSELECT
+
+;=================================================
+

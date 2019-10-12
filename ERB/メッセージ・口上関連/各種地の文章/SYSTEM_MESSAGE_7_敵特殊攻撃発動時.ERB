@@ -1,0 +1,179 @@
+﻿;敵のその他行動
+@SYSTEM_MESSAGE_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+SETCOLOR 0xEE1010
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORML %ARGS:1%は動けずにジッとしている…
+	CASE 1
+		PRINTFORML %ARGS:1%は%ARGS:0%を打ち捨てた！
+	CASE 4
+		PRINTFORML %ARGS:1%は、巨大な睾丸の中で嬲り尽くした%CALLNAME:(TFLAG:97)%を、大量のザーメンと共に%ARGS:0%に向かって射出した！
+	CASE 10
+		PRINTFORML %ARGS:1%は突如体を震わせ始めた！
+	CASE 11
+		PRINTFORML %ARGS:1%は口から黒い煙幕を吹きだし、身を隠そうとした！
+	CASE 12
+		PRINTFORML %ARGS:1%の身体から青色に光る花粉が吹き出し、%ARGS:0%を包み込んだ！
+	CASE 13
+		PRINTFORML %ARGS:1%の身体から赤色に光る花粉が吹き出し、%ARGS:0%を包み込んだ！
+	CASE 14
+		PRINTFORML %ARGS:1%の身体から青色に光る花粉が大量に吹き出し、%ARGS:0%%TACHI()%を包み込んだ！
+	CASE 15
+		PRINTFORML %ARGS:1%の身体から赤色に光る花粉が大量に吹き出し、%ARGS:0%%TACHI()%を包み込んだ！
+	CASE 16
+		PRINTFORML %ARGS:1%は膨大な魔力を込めた視線で%ARGS:0%を射抜いた！
+	CASE 17
+		PRINTFORML %ARGS:0%を見つめる%ARGS:1%の瞳が怪しく光った！
+	CASE 21
+		PRINTFORML %ARGS:1%は焦らすようにして%ARGS:0%の全身を優しく愛撫している！
+	CASE 22
+		;全員が催眠中だった場合文章が変化
+		IF CFLAG:1:43 && (!FLAG:10 || (FLAG:10 && CFLAG:(FLAG:10):43)) && (!FLAG:11 || (FLAG:11 && CFLAG:(FLAG:11):43))
+			PRINTFORML %ARGS:1%は催眠術に翻弄される%ARGS:0%%TACHI()%を瞳に映すと更に膨大な魔力で支配を強めた！
+		ELSE
+			PRINTFORML %ARGS:1%は触手から甘い匂いのする煙を出すと中心にある瞳から膨大な魔力を込めて%ARGS:0%%TACHI()%を射抜いた！
+		ENDIF
+	CASE 23
+		PRINTFORML %ARGS:1%の角状の触手から不思議な光が溢れだした！
+	CASE 24
+		PRINTFORML %ARGS:1%は過去に起きた触手責めの映像を部屋中に写し出した！
+	CASE 25
+		;対象が催眠中だった場合文章が変化
+		IF CFLAG:TARGET:43
+			PRINTFORML %ARGS:1%は催眠術に翻弄される%ARGS:0%を瞳に映すと更に膨大な魔力で支配を強めた！
+		ELSE
+			PRINTFORML %ARGS:1%は触手から甘い匂いのする煙を出すと中心にある瞳から膨大な魔力を込めて%ARGS:0%を射抜いた！
+		ENDIF
+	CASE 26
+		PRINTFORML %ARGS:1%はボーイッシュな少女に変化すると、尻尾をフルに生かして激しく自分を慰め始めた！
+	CASE 27
+		PRINTFORML %ARGS:1%は全身を震わせると産卵を始めた！
+	CASE 28
+		PRINTFORML %ARGS:1%はプカプカと浮かんだまま何もしてこない…
+	CASE 29
+		PRINTFORML %ARGS:1%は体を横たえると、触手干しのためにひなたぼっこを始めた…
+	CASE 30
+		PRINTFORML %ARGS:1%はプカプカと浮かんだまま、海流に乗ったかのように何処かへと流されてゆく…
+	CASE 31
+		PRINTFORML %ARGS:1%は%ARGS:0%を囲んでいく！
+	CASE 32,33
+		PRINTFORML %ARGS:1%は%ARGS:0%の脳に電流を流し、さらには行動を書き換えにかかった！
+	CASE 34
+		PRINTFORML %ARGS:1%は自己増殖を始めた！
+	CASE 35
+		PRINTFORML %ARGS:1%の体積がモリモリと元通りになっていく……！
+	CASE 36
+		PRINTFORML %ARGS:1%は毒性のある酷い臭いの息を%ARGS:0%へと吐きかけた！
+	CASE 37
+		PRINTFORML %ARGS:1%は%ARGS:0%%TACHI()%に見せ付けるように目の前で自慰を行った！
+		PRINTFORML 自慰行為で盛り上がる%ARGS:1%を、苦々しく見ている%ARGS:0%%TACHI()%であったが、
+		PRINTL その身体が激しく欲情していることは隠しようがなかった…！
+	CASE 38
+		PRINTFORMW %ARGS:1%は自分で料理を作った！
+		PRINTL さて……折角の料理だ。
+		PRINTW 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		PRINTL （どうする？）
+		DRAWLINE
+		PRINTL [0] - 折角だから自分で食べる
+		PRINTFORML [1] - とりあえず%ARGS:0%%TACHI()%に食べさせる
+		PRINTL [2] - 料理を売る
+		DRAWLINE
+		PRINTL 0
+		PRINTFORMW %ARGS:1%の体力が回復した！
+	CASE 39
+		PRINTFORML %ARGS:1%の全身に巻きついた包帯が一斉に襲いかかってきた！
+	CASE 40
+		PRINTFORML %ARGS:1%は手にした水晶球から魔力の籠った虹色の光を放ち、%ARGS:0%を幻惑する！
+	CASE 41
+		PRINTFORML %ARGS:1%は手にした水晶球から澄んだ青色の光を放ち、%ARGS:0%を包み込んだ！
+	CASE 42
+		PRINTFORML %ARGS:1%は既に戦意を喪失し、身動きの取れない%ARGS:0%の身体を背中から抱き上げると
+		PRINTFORML 残った仲間達に見せ付けるように顎を上げさせ、挑発的な表情を浮かべて、その首筋に舌を這わせた！
+	CASE 43
+		PRINTFORML %ARGS:1%の体の損傷部が、見る見るうちに復元されていく！
+	CASE 44
+		PRINTFORML %ARGS:1%の角状の触手から不思議な光が溢れだした！
+		PRINTFORML %ARGS:1%は、背に乗せた%ARGS:0%の処女膜を無理やり再生させると、そのまま飛び上がった！
+	CASE 45
+		PRINTFORML %ARGS:1%は怪しげな胞子をまき散らした！
+	CASE 46
+		PRINTFORML %ARGS:1%は怪しげな胞子をまき散らした！
+	CASE 47
+		PRINTFORML %ARGS:1%は怪しげな胞子をまき散らした！
+	CASE 950
+		PRINTFORML %ARGS:1%は触手を膨張させると、%ARGS:0%に向かって大量の粘液を吐き出した！
+	CASE 951
+		PRINTFORML %ARGS:1%は触手の先端をのけぞらせて、%ARGS:0%に降りかかるように大量の粘液を吐き出した！
+	CASE 952
+		PRINTFORML %ARGS:1%は%ARGS:0%の体勢を揺らいだところを狙って顔に大量の粘液を吐き出した！
+	CASE 955
+		PRINTFORML %ARGS:1%は全身から汚染されたガスをまき散らした！
+	CASE 957
+		PRINTFORML %ARGS:1%の触手の先端からさらに細い触手が伸び%ARGS:0%の乳首に接近していく！
+	CASE 965
+		PRINTFORML %ARGS:1%は腕の触手を%ARGS:0%に巻き付かせた！
+	CASE 968
+		PRINTFORML %ARGS:1%は%ARGS:0%の全身を触手の先端で撫で回している！
+	CASE 1004
+		PRINTFORML %ARGS:1%は%ARGS:0%の膣内に入り込み始めた！
+	
+	CASE 1020
+		PRINTFORML %ARGS:1%の男根が%ARGS:0%の膣内で膨張していく！
+	
+	CASE 1314
+		PRINTFORML %ARGS:1%から多数の触手が%ARGS:0%に向かって伸びだした！
+	CASE 1315
+		PRINTFORML %ARGS:1%から多数の触手が%ARGS:0%に向かって伸びだした！
+	CASE 1900
+		PRINTFORML %ARGS:1%は粘つく糸のようなものを発生させ、%ARGS:0%%TACHI()%の脚部を狙った！
+	CASE 1901
+		PRINTFORML %ARGS:1%は暗闇を発生させ、%ARGS:0%%TACHI()%を包み込んだ！
+	CASE 1902
+		PRINTFORML %ARGS:1%は幻術を使い、%ARGS:0%%TACHI()%のトラウマを想起！
+	CASE 1903
+		PRINTFORML %ARGS:1%は凍えるような吹雪を引き起こし、%ARGS:0%%TACHI()%の動きを制限しようとした！
+	CASE 1904
+		PRINTFORML %ARGS:1%はまぶしい光を発生させ、%ARGS:0%%TACHI()%を包み込んだ！
+	CASE 1905
+		PRINTFORML %ARGS:0%%TACHI()%を見つめる%ARGS:1%の瞳が怪しく光った！
+	CASE 1912
+		PRINTFORML %ARGS:1%は激しく大地を揺らし、%ARGS:0%%TACHI()%の動きを制限しようとした！
+	CASE 1913
+		PRINTFORML %ARGS:1%は%ARGS:0%%TACHI()%を優しく包み込んだ！
+	CASE 1914
+		PRINTFORML %ARGS:1%は悲鳴を上げている……
+	CASE 1915
+		PRINTFORML %ARGS:1%は心が安らぐような声で歌い始めた……
+	CASE 1916
+		SELECTCASE DA:(TFLAG:52):87
+			CASE 0
+				PRINTFORML %ARGS:1%達は%ARGS:0%の口にペニスをねじ込み、奉仕させる！
+			CASE 1
+				PRINTFORML %ARGS:1%達は%ARGS:0%の尻肉を叩き始めた！
+			CASE 2
+				PRINTFORML %ARGS:1%達は%ARGS:0%に尻穴を舐めろと命令した！
+			CASE 3
+				PRINTFORML %ARGS:1%達は%ARGS:0%におびただしい量の精液を飲ませ始める……！
+		ENDSELECT
+		
+	CASE 1917
+		PRINTFORML %ARGS:1%は、甘い香りを漂わせながら、幻覚作用のある粉をまき散らした！
+	CASE 1918
+		PRINTFORML %ARGS:1%は、甘い香りを漂わせながら、あまりにも厭らしい嬌声を上げた！
+	CASE 1919
+		PRINTFORML %ARGS:1%は、多数の噴射口から、あたり一帯に大量の液体を撒き散らし始めた！
+	CASE 1920
+		PRINTFORML %ARGS:1%との激しい戦闘が繰り広げられている……！
+	CASE 2959
+		PRINTFORML %ARGS:1%は竜宮の煙で%ARGS:0%を包み込もうとした！
+	CASE 2961
+		PRINTFORML %ARGS:1%の操る糸が、%ARGS:0%に向けて放射された！
+	CASEELSE
+		PRINTFORMW (SYSTEM_MESSAGE_7)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+ENDSELECT
+
+RESETCOLOR
+
+

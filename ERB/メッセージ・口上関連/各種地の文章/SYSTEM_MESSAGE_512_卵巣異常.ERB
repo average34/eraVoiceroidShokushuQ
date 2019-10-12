@@ -1,0 +1,21 @@
+﻿;卵巣異常
+@SYSTEM_MESSAGE_512(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;基本的に卵巣は成長したら不可逆のはずなので未熟卵巣への成長口上が出ることはないはずです
+
+	SELECTCASE ARG:1
+		CASE -1
+			PRINTFORML まだ初潮が来ていないようだ……
+			PRINTFORMW %ARGS:0%の卵巣は【未熟卵巣】になった！
+		CASE 0
+			PRINTFORML オトナの快楽によって初潮が来てしまったようだ、これからは妊娠してしまうかもしれない……
+			PRINTFORMW %ARGS:0%の卵巣は【正常卵巣】になった！
+		CASE 1
+			PRINTFORML 肉体は迷宮の快楽を受け入れ始めたようだ、種付けに忌避感がなくなり始めてしまった……
+			PRINTFORMW %ARGS:0%の卵巣は【異常排卵巣】になった！
+		CASE 2
+			PRINTFORML 肉体は迷宮の快楽を受け入れ、卵巣は種付けを期待してぶっくりと肥大化してしまったようだ……
+			PRINTFORMW %ARGS:0%の卵巣は【肥大化卵巣】になった！
+		CASE 3
+			PRINTFORML 醜いほどに肥大化した卵巣は限りあるはずの卵子を追加生成して排卵し、いつでも種付けを受け入れる迷宮のお嫁さんにされてしまったようだ……
+			PRINTFORMW %ARGS:0%の卵巣は【苗床卵巣】になった！
+	ENDSELECT

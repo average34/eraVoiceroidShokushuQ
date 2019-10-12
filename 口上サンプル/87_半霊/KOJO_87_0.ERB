@@ -1,0 +1,329 @@
+﻿;口上の書き方サンプル
+;地の文制御など、細かい処理をしたい場合のサンプルです
+;
+;
+;口上応用知識
+;　「自分が主人公かどうか」は IF TARGET == 1 で判断できます
+;　「味方に特定のキャラが居るかどうか」はちょっと面倒ですが
+;　FLAG:10 と FLAG:11 に仲間のIDが入っているので、例えば「ルーミア(キャラ番号3)が仲間に居る時」なら
+;　IF (NO:1 == 3 || NO:(FLAG:10) == 3 || NO:(FLAG:11) == 3)   などで判断できます
+;
+;　ID0のキャラ(NO:0 とか CFLAG:0:XX で参照できるキャラ)はダミーデータ(あなた)です
+;　こっそりシステム用のデータを持たせたりしているので、
+;　参照するのは構いませんが(基本的に 0 が返ってくるはずですが)
+;　値を書き換えたりするのは止めてください
+;
+;
+;口上のパターン
+;　地の文を流用しつつ、台詞は自分で書く　→　CALL SYSTEM_MESSAGE してから文章を書いて、RETURN 1
+;　地の文だけ書き換える　　　　　　　　　→　文章を書いてから CALL KOJO_DEFAULT して、RETURN 1
+;　全部自分で書く　　　　　　　　　　　　→　全部自分で書いて、RETURN 1
+;　自分では何も書かない　　　　　　　　　→　何もせずに RETURN 0
+;　自分では書かないけど、汎用口上は嫌　　→　CALL SYSTEM_MESSAGE だけやっておいて、RETURN 1
+;　※現時点では「汎用口上」を作るかどうかは不明です
+
+;使用CFLAG
+;800	連続絶頂識別用
+;801	連続絶頂識別用その２
+;802	連続自慰識別用
+
+;口上選択時のタイトル
+@KOJO_TITLE_87_0
+RESULTS = 半霊サンプル口上
+
+
+;口上選択時の詳細説明
+;フリーフォーマットです。ご自由にどうぞ
+@KOJO_DETAIL_87_0
+PRINTFORML 半霊のサンプル用口上です
+PRINTFORML 内容自体はネタでしかないので、普通の口上として利用するのには向いていません
+
+
+
+;デフォルトの文字色設定が面倒な場合、関数自体を消せばOKです
+;@KOJO_DEFAULT_COLOR_87_0
+
+
+
+;口上本体
+@KOJO_87_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;連続自慰識別用処理
+;都合上フラグの解除は先頭で
+CALL GET_EQUIP_BONUS(TARGET, 39)
+IF (RESULT == 1 || CFLAG:28 == 0) && ARG:0 == 118
+	;媚薬装備か、発情していない状態で自慰口上呼び出しが来たらフラグを下げる
+	;手動で連続自慰した場合があるので、このチェックは口上の先頭に無いと正しく動かない
+	CFLAG:802 = 0
+ELSEIF  ARG:0 != 34 && ARG:0 != 118 && ARG:0 != 119 && ARG:0 != 120 && ARG:0 != 121 && ARG:0 != 122 && ARG:0 != 136
+	;関係ない口上が来てもフラグを下げる
+	;このチェックは別に最後の方でやっても構わないけど、↑と一緒にここでやっておく
+	CFLAG:802 = 0
+ENDIF
+
+
+;口上側で地の文の制御もするつもりなら、地の文制御と口上本体は分けた方が無難です
+CALL KOJO_87_0_SYSTEM(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;そのキャラの口上の文字色を反映します
+SETCOLOR CFLAG:700
+
+
+
+;↓↓↓　　ここから口上のメイン処理　　↓↓↓
+
+;ARG:0 や ARG:1 の内容で分岐をかけます
+;それぞれの値の意味は「資料とか\PRINT_MESSAGE(口上)フラグ一覧.txt」を参照してください
+SELECTCASE ARG:0
+	CASE 33
+		;MPが0（戦意喪失）になった
+		PRINTFORML （気付け薬を振りまいてくれれば復活します……）
+		RESETCOLOR
+		PRINTFORML そんな声がどこからか聞こえた気がした
+	CASE 55
+		;敵から逃げた
+		;v0.05.3から種類を分けました
+		PRINTFORML （普通に逃げたよ…）
+	CASE 62
+		;仲間を見捨てて逃げた
+		IF NO:(ARG:2) == 19 || NO:(ARG:3) == 19
+			;妖夢を見捨てた場合
+			PRINTFORML （人間の方を置いてきちゃった…）
+		ELSE
+			PRINTFORML （味方を犠牲にして逃げたよ…）
+		ENDIF
+	CASE 63
+		;仲間に見捨てられた
+		IF NO:(ARG:2) == 19 || NO:(ARG:3) == 19
+			;妖夢に見捨てられた場合
+			PRINTFORML （人間の方に置いていかれた…）
+		ELSE
+			PRINTFORML （自分を犠牲にして味方を逃がしたよ…）
+		ENDIF
+	CASE 59
+		;戦闘中に敵に捕食されている
+		IF NO:1 == 20 || NO:(FLAG:10) == 20 || NO:(FLAG:11) == 20
+			;PTにゆゆ様が居る
+			PRINTFORML （幽々子様が自分も食べたそうな目でこっちを見てるなぁ…）
+		ELSE
+			PRINTFORML （私を食べても美味しくないんだけどなぁ…）
+		ENDIF
+	CASE 61
+		;敵と初遭遇
+		IF ARG:1 == 1
+			PRINTFORML （これがラスボスですか…）
+		ELSEIF ARG:1 == 18 && SAVESTR:(TFLAG:1) == CALLNAME:(GET_ID_FROM_NO(19))
+			;初遭遇ドッペルゲンガーが妖夢に化けていた
+			;
+			;ドッペルゲンガーが必ず先頭(TFLAG:1)に入ることを利用した無理やりな処理ですが、一応これで動きます
+			;厳密に言うとドッペルが「あなた」に化けていると正常動作しないことがありますが、殆ど気にならないでしょう
+			;CALLNAME:(GET_ID_FROM_NO(19))　を "妖夢" などにする手もありますが、こうすると
+			;妖夢の愛称を変更されていた場合に動かなくなります
+			PRINTFORML （自分かどうかも分からなかった…）
+		ELSE
+			PRINTFORML （初めて見る敵です…）
+		ENDIF
+	CASE 110
+		;PTメンバーと別れる
+		IF TARGET == 1
+			;主人公として表示する場合、ARG:1のキャラを見送る
+			PRINTFORML （%CALLNAME:(ARG:1)%さんはこの先ついてこれそうにないので置いていきましょう…）
+		ELSE
+			;それ以外の場合、自分が抜ける
+			PRINTFORML （今までお世話になりました…）
+		ENDIF
+	CASE 118
+		;自慰開始
+		IF CFLAG:802
+			PRINTFORML （自慰が止まらないです）
+		ELSE
+			PRINTFORML （ちょっとムラムラ）
+		ENDIF
+	CASE 120
+		;絶頂
+		IF TFLAG:13
+			;戦闘中の場合
+			IF CFLAG:35
+				;既に絶頂中＝連続絶頂
+				PRINTFORML （何度も絶頂させられてます）
+			ELSEIF FLAG:97
+				PRINTFORML （戦闘中なのに自慰してます）
+			ELSE
+				PRINTFORML （絶頂させられました）
+			ENDIF
+		ELSE
+			;非戦闘中の場合
+			IF CFLAG:800
+				;フラグが立った状態で発生した＝連続絶頂
+				;CFLAG:801のように毎回+1するような形にすれば何回目の連続絶頂か？なども見れます
+				;「連続絶頂の最後」は残念ながら識別できません
+				;最後だけ思いっきり叫ばせたいなどの需要があるならご連絡ください
+				PRINTFORML （罠で何度もイってます　今は{CFLAG:801+1}回目です）
+			ELSEIF FLAG:97
+				PRINTFORML （自慰でイきました）
+			ELSE
+				PRINTFORML （罠でイきました）
+			ENDIF
+		ENDIF
+	CASE 132
+		;部屋を移動（突撃）
+		IF TARGET == 1
+			;半霊が主人公の時だけメッセージを表示
+			PRINTFORML （ふよふよ！）
+		ENDIF
+	CASE 133
+		;部屋を移動（慎重）
+		IF TARGET == 1
+			;半霊が主人公の時だけメッセージを表示
+			PRINTFORML （ふよふよ…）
+		ENDIF
+	CASE 134
+		;部屋を移動（待ち伏せ）
+		IF TARGET == 1
+			;半霊が主人公の時だけメッセージを表示
+			PRINTFORML （ふよん）
+		ENDIF
+	CASE 135
+		;部屋を移動（探索）
+		IF TARGET == 1
+			;半霊が主人公の時だけメッセージを表示
+			PRINTFORML （ふよりん）
+		ENDIF
+	CASE 136
+		IF ARG:3 == 1
+			PRINTFORML （ぷにぷにの敗北）
+		ELSEIF ARG:3 == 2
+			PRINTFORML （ぷにぷにの勝利）
+		ELSE
+			PRINTFORML （%CALLNAME:TARGET%の処女喪失って謎ですよね…）
+		ENDIF
+	CASE 159
+		;ゲーム開始時
+		;他のバリアントで言う処女モードの設定など、お好きにどうぞ
+		PRINTFORML スーパー半霊モードになりますか？（全能力が強化されます）
+		CALL ASK_YN
+		IF RESULT == 0
+			FOR LOCAL:0, 0, 4
+				MAXBASE:(LOCAL:0) *= 3
+				BASE:(LOCAL:0) = MAXBASE:(LOCAL:0)
+			NEXT
+			FOR LOCAL:0, 0, 6
+				ABL:(LOCAL:0) = 3
+			NEXT
+		ENDIF
+	CASE 202
+		;遺品（アイテム的には着替えセット）を見つけた
+		IF NO:(ARG:1) == 19
+			;妖夢の遺品
+			PRINTFORML （人間部分の服が落ちてる…）
+		ELSE
+			PRINTFORML （誰かの服が落ちてる…　ボロボロだけど、まだ着られそうかな…）
+		ENDIF
+	CASEELSE
+		;ここでは別に何もしなくてもOKです
+ENDSELECT
+
+;↑↑↑　　ここまで口上のメイン処理　　↑↑↑
+
+;連続絶頂識別用処理
+IF ARG:0 == 120 && TFLAG:13 == 0
+	;非戦闘中に絶頂口上が来たら、フラグを立てておく
+	CFLAG:800 = 1
+	
+	;こんな感じで毎回+1するようにしておけば、何回目かも分かります
+	CFLAG:801 += 1
+ELSEIF ARG:0 != 34 && ARG:0 != 120 && ARG:0 != 121 && ARG:0 != 122 && ARG:0 != 136
+	;連続絶頂中に関係ない口上呼び出しが来たら、フラグを下げておく
+	CFLAG:800 = 0
+	CFLAG:801 = 0
+ENDIF
+
+;連続自慰識別用処理
+CALL GET_EQUIP_BONUS(TARGET, 39)
+IF RESULT == 0 && ARG:0 == 118 && CFLAG:28
+	;媚薬装備無しで発情中の場合、連続自慰フラグを立てておく
+	CFLAG:802 = 1
+ENDIF
+
+RESETCOLOR
+
+;今の所汎用口上の概念が無いので、RETURN 0 が必要になる事は無いと思います
+RETURN 1
+
+
+
+;地の文制御(関数の名前は適当です　他のキャラと被らなければ何でも良いでしょう)
+@KOJO_87_0_SYSTEM(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+SELECTCASE ARG:0
+	CASE 4
+		;例：半霊を狙った性攻撃は全部地の文を書き換える
+		;敵のコマンドなので一旦赤文字に
+		SETCOLOR 0xEE1010
+		PRINTFORML %ARGS:1%は%ARGS:0%の表面を触手で磨き始めた！
+		RESETCOLOR
+	CASE 6
+		;例：処女の状態で、処女を守れるような寄生攻撃を受けた場合、文章を書き換える
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			;敵のコマンドなので一旦赤文字に
+			SETCOLOR 0xEE1010
+			PRINTFORML %ARGS:1%は%ARGS:0%に挿入し、子種を注ぎ込もうとした！
+			RESETCOLOR
+		ELSE
+			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ENDIF
+	CASE 14
+		;例：半霊を狙った性攻撃（命中時）は全部地の文を書き換える
+		;性攻撃命中の場合、EPダメージで絶頂→処女喪失の可能性があるので、引数にEPダメージも渡しておく
+		IF ARG:2 == 3 && TALENT:0 && LOST_VIRGIN_CHECK(TARGET, ARG:3)
+			;この攻撃で処女喪失する場合
+			PRINTFORML %ARGS:1%の触手は勢い余って%ARGS:0%のナカに入り込んでしまった！
+		ELSE
+			PRINTFORML %ARGS:0%は気持ち良さそうにしている！
+		ENDIF
+	CASE 15
+		;例：半霊を狙った拘束攻撃（命中時）は丸呑みだけ書き換えて、通常拘束はデフォルトの文章を使う
+		IF ARG:2
+			PRINTFORML %ARGS:0%は綿アメと間違えられて%ARGS:1%に食べられてしまった！
+		ELSE
+			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ENDIF
+	CASE 16
+		;例：処女の状態で、処女を守れるような寄生攻撃を受けた場合、文章を書き換える
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:0%のどこに挿入すれば良いのか分からなかった%ARGS:1%は、仕方なく体表に精を放った！
+		ELSE
+			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ENDIF
+	CASE 24
+		;例：半霊を狙った性攻撃（回避時）は全部地の文を書き換える
+		PRINTFORML %ARGS:0%は嫌がって%ARGS:1%から離れた！
+	CASE 33
+		;例：半霊は戦意喪失時の文章を変えてみる
+		PRINTFORML %ARGS:0%の姿が次第に薄れてゆき、やがて消えてしまった…
+	CASE 36
+		;例：半霊は戦意喪失からの回復時（気付け薬を使われた時）の文章も変えてみる
+		IF ARG:1 == 58
+			PRINTFORML 消えていた%ARGS:0%の姿が元に戻った！
+		ELSE
+			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ENDIF
+	CASE 136
+		IF ARG:3 == 1
+			;例：処女喪失の様子を書き換えてみる
+			PRINTFORML ぷにぷにとした%ARGS:0%の身体に、深々と触手が突き刺さった！
+		ELSEIF ARG:3 == 2
+			;何とか防いだ場合
+			PRINTFORML %ARGS:0%の身体に突き立てられようとした触手は、%ARGS:0%の弾力に押し戻された！
+		ELSE
+			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ENDIF
+	CASE 158
+		;例：半霊は戦意喪失からの回復時（主人公時の自力回復）の文章も変えてみる
+		PRINTFORML %ARGS:0%は気合で復活した！
+	CASEELSE
+		;通常はデフォルトの地の文を表示
+		CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+ENDSELECT
+
+

@@ -1,0 +1,16 @@
+﻿; 全体コンフィグ用のFLAG:526で指定された催眠の種類とは別に
+; CFLAG側で現在指定されたキャラ別催眠の種類を保持する
+; 催眠の種類をランダム選出にした場合に利用
+
+@SET_HYPNO_TYPE(CHARA_ID)
+#DIM CHARA_ID
+	
+	; 一応非ランダム選出時でも対応出来るように、FLAG側と一致した値を保持しておく
+	SELECTCASE FLAG:526
+	CASE 0 TO 2
+		CFLAG:CHARA_ID:526 = FLAG:526
+	CASE 3
+		CFLAG:CHARA_ID:526 = RAND:3
+	ENDSELECT
+
+RETURN 1

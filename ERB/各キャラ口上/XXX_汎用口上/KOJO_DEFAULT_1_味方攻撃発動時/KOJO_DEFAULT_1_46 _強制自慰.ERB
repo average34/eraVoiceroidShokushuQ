@@ -1,0 +1,154 @@
+﻿
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   46    コマンドID(強制自慰)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_46(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF CFLAG:43
+		SELECTCASE CFLAG:43
+		; 催眠強度1
+		CASE 1
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"「頭の中まで操るなんて……　卑怯……よ……」"
+				CALL ADD_RAND_MESSAGE, @"「だっ、駄目！　指が止まらない！？」"
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"（そうだ……　気持ちよくなるのは悪い事じゃないんだ……）"
+				CALL ADD_RAND_MESSAGE, @"（なんか……体ぽかぽかしてきた……）"
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"（あれ？　何でオナニー止まらなくなってるんだろ？）"
+				CALL ADD_RAND_MESSAGE, @"（女の子が気持ちよくなるのは当たり前の事で義務だから……もっともっと……気持ちよくならないと……）"
+			ENDSELECT
+			
+		; 催眠強度2
+		CASE 2
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"「やめて！　こんな事したくないのに身体が勝手にっ！」"
+				CALL ADD_RAND_MESSAGE, @"「嫌ぁ！　自分でさせられて感じるなんてっ！」"
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"（見てっ♥　自分で気持ちよくなってるところ見てぇ♥）"
+				CALL ADD_RAND_MESSAGE, @"「あっ♥　これすご♥　いつもよりずっときもちい♥　イっ♥　」"
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"「興奮したら、いつでも犯してくださいね」"
+				CALL ADD_RAND_MESSAGE, @"（もっと♥　もっと気持ちよく♥　それが当たり前っ♥　義務っだから♥　もっと♥　もっとぉ♥♥）"
+			ENDSELECT
+			
+		; 催眠強度最大、又はレッサーヒュプノの減衰あり催眠
+		CASEELSE
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"（そんな見せつけるみたいにっ！？　恥ずかしい！　恥ずかしいよぉ！）"
+				CALL ADD_RAND_MESSAGE, @"（身体が♥　勝手に動いてるだけ♥だから♥　違うから♥　私じゃないから大丈夫♥　違うから♥違うから♥違うから♥）"
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"「いいっ♥　気持ちいいっ♥♥　見られながらのオナニー最高っ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「はあっはぁっ♥♥　んあっ♥　きもちいっ♥　あっんっ♥♥　あぁ♥　はふ♥　あぅ♥　ここきもちい♥　いいっ♥♥♥」"
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"「哀れな肉便器のオナニーショーをごらんください……」"
+			ENDSELECT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 自慰中毒LVで分岐
+	SELECTCASE ABL:10
+	; 自慰中毒LV0
+	CASE 0
+		CALL ADD_RAND_MESSAGE, @"（ちょっとだけ……　ちょっと気持ちよくなるだけ……）"
+		CALL ADD_RAND_MESSAGE, @"「こんな事してる場合じゃ……　ないのに……」"
+		
+		; 戦闘中なら追加口上
+		IF TFLAG:13
+			CALL ADD_RAND_MESSAGE, @"「戦いに……集中……しなきゃ……いけないのに……っ」"
+			CALL ADD_RAND_MESSAGE, @"「くっ……ふぅっ……戦わないと……戦わないと……わかってるのにぃ！」"
+		ENDIF
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「く……そっ……　身体が……おかし……くっ……」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「卑怯です……よっ……　無理矢理こんな事……させて……っ……」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「(こんなこと……しちゃダメなのに……)"
+		ENDSELECT
+	
+	; 自慰中毒LV1
+	CASE 1
+		CALL ADD_RAND_MESSAGE, @"「気が散って仕方ない……から……　少しだけ……」"
+		CALL ADD_RAND_MESSAGE, @"「ああ……ぁ……っ……　身体の疼きが酷くなって……っ……」"
+		CALL ADD_RAND_MESSAGE, @"（一回だけ……一回イケば収まるから……あっ♥）"
+		
+		; 戦闘中なら追加口上
+		IF TFLAG:13
+			CALL ADD_RAND_MESSAGE, @"（相手の隙をついて、短い時間で終わらせれば――）"
+			CALL ADD_RAND_MESSAGE, @"（まだ大丈夫……まだ大丈夫だから早く……今の内に早くイッてぇ♥）"
+		ENDIF
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「ダメだ……っ　そんな淫らな事考え……ちゃ……」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「自分で慰め……　違う……　オナニーなんてしたくない……　オナニーなんて……」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"(こんなのダメだよぉ……)"
+			CALL ADD_RAND_MESSAGE, @"(わたしえっちな子になっちゃったの……)"
+
+		ENDSELECT
+		
+	; 自慰中毒LV2
+	CASE 2
+		CALL ADD_RAND_MESSAGE, @"「駄目……っ　手が、止まらない……っ♥」"
+		CALL ADD_RAND_MESSAGE, @"「身体が火照って……　熱いっ……」"
+		CALL ADD_RAND_MESSAGE, @"「とりあえず一回だけ……一回だけなら……♥」"
+		
+		; 戦闘中なら追加口上
+		IF TFLAG:13
+			CALL ADD_RAND_MESSAGE, @"（襲われるっ♥　敵の目の前でオナニーなんて絶対に襲われるっ♥♥）"
+			CALL ADD_RAND_MESSAGE, @"（もうちょっと♥　あっ♥　もうちょっとだけ♥　んんっ♥）"
+		ENDIF
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"（一度はじめたら止まらなくなるのに……っ♥　したい……っ、オナニーしたい……っ♥）"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"（はしたない事……っ♥　したいっ♥　思いっきり、オナニーっ♥♥）"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"(あ……♥　えっちな声でちゃってる……♥)"
+		ENDSELECT
+			
+	; 自慰中毒LV3
+	CASE 3
+		CALL ADD_RAND_MESSAGE, @"「もう駄目、ガマンできないっ♥　オナニーする……ぅっ♥♥」"
+		CALL ADD_RAND_MESSAGE, @"「ああ……っ♥　オナニーし始めると、何も考えられなくなる……っ♥♥♥」"
+		CALL ADD_RAND_MESSAGE, @"（オナニーする♥♥　オナニーする♥♥　オナニーする♥♥）"
+		
+		; 戦闘中なら追加口上
+		IF TFLAG:13
+			CALL ADD_RAND_MESSAGE, @"（こんな状況でオナニー♥　見せつけオナニー……っ♥　ゾクゾクする……っ♥）"
+			CALL ADD_RAND_MESSAGE, @"（とまらない♥　やめられない♥　やめたくない♥♥　このまま襲われてぐちょぐちょにされながらオナニーしたら……♥♥　あぁ♥♥♥♥）"
+			CALL ADD_RAND_MESSAGE, @"（むり♥　むりぃ♥♥　とめられないっ♥♥　とめないでぇ♥♥）"
+		ENDIF
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"（えっちな子でごめんなさい♥　えっちな子でごめんなさい♥　えっちな子でごめんなさい♥）"
+			CALL ADD_RAND_MESSAGE, @"（あっ♥　あっ♥　あっ♥　えっちな声とまらない♥♥）"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+

@@ -1,0 +1,87 @@
+﻿@RANDOM_MASTERBATION(ARG:0,ARGS:0)
+;ARG:0	自慰するキャラ
+;LOCAL	
+;1	同じ部屋にいるか
+;2	自慰確率
+
+
+	;主人公と場所が違うかチェック
+	IF CFLAG:(ARG:0):4 != CFLAG:1:4
+		LOCAL:1 = 0
+	ELSE
+		LOCAL:1 = 1
+	ENDIF
+
+	;自慰するパターン
+	;基礎確率
+	;現在ターン - 最後に発情したターン - 8
+	LOCAL:2 = DAY * 4 - 3 + TIME - CFLAG:(ARG:0):600 - 8
+	;EP分岐
+	IF BASE:(ARG:0):2 <= MAXBASE:(ARG:0):2 / 4
+		LOCAL:2 += 3
+	ELSEIF BASE:(ARG:0):2 <= MAXBASE:(ARG:0):2 / 2
+		LOCAL:2 += 2
+	ENDIF
+	;自慰中毒分岐
+	SELECTCASE ABL:(ARG:0):自慰中毒
+		CASE 3
+			LOCAL:2 += 2
+		CASE 2
+			LOCAL:2 += 1
+	ENDSELECT
+	;射精中毒分岐
+	SELECTCASE ABL:(ARG:0):射精中毒
+		CASE 3
+			LOCAL:2 += 2
+		CASE 2
+			LOCAL:2 += 1
+	ENDSELECT
+	;現在の発情具合により分岐 発情するほど自慰率高い
+	SELECTCASE CFLAG:(ARG:0):28
+		CASE 5
+			LOCAL:2 = 20
+		CASE 4
+			MIN LOCAL:2 + 5 , 15
+		CASE 3
+			MIN LOCAL:2 + 3 , 10
+		CASE 2
+			MIN LOCAL:2 + 1 , 7
+		CASEELSE
+			MIN LOCAL:2 , 5
+	ENDSELECT
+	;自慰しやすいで＋
+	IF TALENT:(ARG:0):60
+		LOCAL:2 += 15
+	ENDIF
+
+	;快感に素直で＋
+	IF TALENT:(ARG:0):70
+		LOCAL:2 += 5
+	ENDIF
+
+	;自制心で－
+	IF TALENT:(ARG:0):20 && LOCAL:1
+		LOCAL:2 -= 15
+	ENDIF
+
+	;恥じらいで－
+	IF TALENT:(ARG:0):35 && LOCAL:1
+		LOCAL:2 -= 15
+	ENDIF
+IF RAND:100 < LOCAL:2
+	IF !CFLAG:(ARG:0):29
+		IF LOCAL:1
+			IF ABL:(ARG:0):自慰中毒 >= 2 && !RAND:3
+				PRINTFORML すっかり自慰の快楽を知ってしまった%ARGS:0%は、我慢できなくなり、自らの身体を慰め始めた……
+			ELSEIF CFLAG:(ARG:0):28 >= 3
+				PRINTFORML すっかり発情し、雌の表情をしている%ARGS:0%は、我慢できなくなり、自らの身体を慰め始めた……
+			ELSEIF CFLAG:(ARG:0):28 > 0
+				PRINTFORML 身体の疼きを覚えている%ARGS:0%は、鎮めるために自らの身体を慰め始めた……
+			ELSE
+				PRINTFORML この迷宮の淫靡な雰囲気に呑まれた%ARGS:0%は、我慢できなくなり、自らの身体を慰め始めた……
+			ENDIF
+		ENDIF
+		CALL MASTURBATION(ARG:0, 0, 100)
+	ENDIF
+	CALL RANDOM_ESTRUS_INITIALIZE(ARG:0)
+ENDIF

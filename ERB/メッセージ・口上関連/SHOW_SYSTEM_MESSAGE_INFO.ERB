@@ -1,0 +1,3035 @@
+﻿; ■ フラグ情報表示パッチ
+; このパッチでは以下の変数を使用しています
+; FLAG  550 フラグ情報表示 システムメッセージを表示する（0：表示しない　1：表示する）
+; CFLAG 750 フラグ情報表示 システムメッセージを表示する（0：表示しない　1：表示する）
+
+; ■ フラグ情報一覧を表示
+; 口上を書く→仕様書を見る→ソースコードを見る　のループがよく発生するので防止に
+@SHOW_PRINT_MESSAGE_INFO (ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM  TEMP_REDRAW
+
+	; 初期値であれば何もせずに戻る
+	SIF ARG:0 == 0
+		RETURN
+	
+	CURRENTREDRAW
+	TEMP_REDRAW = RESULT
+	REDRAW 0
+	SETCOLOR 0x555555
+	DRAWLINEFORM =
+	PRINTFORM PRINT_MESSAGEフラグ情報表示　対象：
+	; キャラ口上の表示
+	IF TARGET != -1
+		SETCOLOR CFLAG:700
+		PRINTFORM %CALLNAME:TARGET%　
+		SETCOLOR 0x555555
+		
+		PRINTFORM 性格：
+		
+		IF CFLAG:12 <= -40
+			PRINTFORM 超弱気
+		ELSEIF CFLAG:12 <= -20
+			PRINTFORM 弱気
+		ELSEIF CFLAG:12 <= 19
+			PRINTFORM 普通
+		ELSEIF CFLAG:12 <= 39
+			PRINTFORM 強気
+		ELSE
+			PRINTFORM 超強気
+		ENDIF
+		
+		PRINTFORM ({CFLAG:12}), 
+		
+		SELECTCASE CFLAG:100
+		CASE 1
+			PRINTFORM おせっかい
+		CASE 2
+			PRINTFORM おてんば
+		CASE 3
+			PRINTFORM がんこもの
+		CASE 4
+			PRINTFORM がんばりや
+		CASE 5
+			PRINTFORM きれもの
+		CASE 6
+			PRINTFORM くろうにん
+		CASE 7
+			PRINTFORM しあわせもの
+		CASE 8
+			PRINTFORM セクシーギャル
+		CASE 9
+			PRINTFORM ぬけめがない
+		CASE 10
+			PRINTFORM ねっけつかん
+		CASE 11
+			PRINTFORM のんきもの
+		CASE 12
+			PRINTFORM ひっこみじあん
+		CASE 13
+			PRINTFORM やさしいひと
+		CASE 14
+			PRINTFORM わがまま
+		CASEELSE
+			PRINTFORM ふつう
+		ENDSELECT
+		
+		PRINTFORML ({CFLAG:100})
+		
+		
+	; システムメッセージのみの表示
+	ELSE
+		PRINTFORML システムメッセージ
+	ENDIF
+	PRINTFORML ARG:0={ARG:0}　ARG:1={ARG:1}　ARGS:0=%ARGS:0%　ARGS:1=%ARGS:1%　ARG:2={ARG:2}　ARG:3={ARG:3}　ARG:4={ARG:4}　ARG:5={ARG:5}　ARG:6={ARG:6}
+	DRAWLINEFORM -
+	
+	; 状況ID分岐
+	SELECTCASE ARG:0
+	CASE 1
+		PRINTFORML ARG:0={ARG:0, 5}　味方の攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_ADD_SKILLNAME(ARG:1)%%SKILLNAME(ARG:1, TARGET)%)
+		; 行動内容によって引数が変化するので分岐
+		SELECTCASE ARG:1
+		; 防御
+		CASE 1
+			PRINTFORML ARG:2={ARG:2, 5}　0：通常の防御　1：装備品の残弾リロード
+			IF ARG:2
+				PRINTFORML ARG:3={ARG:3, 5}　残弾リロードしたアイテムのアイテムID (ID.{ARG:3}=%ITEMNAME:(ARG:3)%)
+			ELSE
+				PRINTFORML ARG:3={ARG:3, 5}　残弾リロードしたアイテムのアイテムID (通常の防御時は0)
+			ENDIF
+			PRINTFORML 補足       　残弾リロードが発生する条件は以下の通り
+			PRINTFORML            　装備した消耗武器の残弾が0、別途アイテムで弾を所持、道具戦闘LV2以上、非拘束時に防御
+			PRINTFORML            　装備品1・装備品2の残弾が共に0で、道具戦闘LV3以上の場合は同時にリロードを行う
+		; アイテム使用
+		CASE 2
+			PRINTFORML ARG:2={ARG:2, 5}　アイテムID (ID.{ARG:2}=%ITEMNAME:(ARG:2)%)
+			PRINTFORML ARG:3={ARG:3, 5}　使用対象キャラのID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		; 逃走
+		CASE 5
+			PRINTFORML ARG:2={ARG:2, 5}　逃走成功フラグ　0：失敗　1：成功
+		; 強攻撃
+		CASE 12
+			PRINTFORML 補足       　コマンドID.19 霊撃からも強攻撃口上が呼び出されます　判別にはCFLAG:50を参照
+		; 溜め攻撃
+		CASE 13
+			PRINTFORML ARG:2={ARG:2, 5}　0：溜め　1：撃ち
+		; 拘束からの離脱
+		CASE 42
+			PRINTFORML ARG:2={ARG:2, 5}　丸呑みフラグ　0：拘束　1：丸呑み
+			PRINTFORML ARG:3={ARG:3, 5}　状況　0：脱出開始　1：絶頂による失敗　2：脱出成功　3：少しだけ脱出　4：脱出失敗
+			PRINTFORML ARG:4={ARG:4, 5}　拘束している敵のID (ID.{ARG:4}=%SAVESTR:(ARG:4)%)
+			PRINTFORML 補足       　戦闘行動による自力脱出
+		; 力溜め
+		CASE 43
+			PRINTFORML ARG:2={ARG:2, 5}　状況　0：通常　1：絶頂で脱力
+		; 諦め
+		CASE 44
+			PRINTFORML ARG:2={ARG:2, 5}　状況　0：諦めた瞬間　1：諦め済み
+			PRINTFORML ARG:3={ARG:3, 5}　敵の種類 (%ENEMY_NAME(ARG:3)%)
+		; 装備アイテムを使う (61は呼び出されないハズだけれど一応)
+		CASE 60, 61
+			PRINTFORML ARG:2={ARG:2, 5}　アイテムID (ID.{ARG:2}=%ITEMNAME:(ARG:2)%)
+			PRINTFORML ARG:3={ARG:3, 5}　状況　1：アイテムを使用　2：アイテム効果発動済
+		; 仲間を襲う
+		CASE 73
+			PRINTFORML ARG:2={ARG:2, 5}　襲われるキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+			PRINTFORML ARG:3={ARG:3, 5}　状況　0：通常時　2：ふたなり時
+		; 抱きつかれた
+		CASE 95
+			PRINTFORML ARG:2={ARG:2, 5}　抱きついたキャラのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+			PRINTFORML ARG:3={ARG:3, 5}　状況　0：抱きつかれたまま　1：抜け出した　2：解放された
+		; 抱きついた
+		CASE 96
+			PRINTFORML ARG:2={ARG:2, 5}　抱きつかれたキャラのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+			PRINTFORML ARG:3={ARG:3, 5}　状況　0：抱きついたまま　1：抱きついたまま(ふたなり)
+			PRINTFORML                  　2：抱きついた　3：抱きついた(ふたなり)
+		ENDSELECT
+	CASE 2
+		PRINTFORML ARG:0={ARG:0, 5}　敵の通常攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		SELECTCASE ARG:1
+		CASE 126, 137, 138, 139, 140, 145
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 3
+		PRINTFORML ARG:0={ARG:0, 5}　敵の衣服攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		SELECTCASE ARG:1
+		CASE 237, 238
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 4
+		PRINTFORML ARG:0={ARG:0, 5}　敵の性攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+	CASE 5
+		PRINTFORML ARG:0={ARG:0, 5}　敵の拘束攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　0：拘束　1：丸呑み
+	CASE 6
+		PRINTFORML ARG:0={ARG:0, 5}　敵のその他寄生攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　0：通常の寄生攻撃　1～：妊娠攻撃(射精量)
+		PRINTFORML ARG:4={ARG:4, 5}　メイン性属性 (0：A　1：B　2：C　3：V)
+		PRINTFORML 補足       　特殊寄生・特殊妊娠の場合、産まれる敵は寄生主とは別の種族になる
+		PRINTFORML            　※クイーンによる寄生→リビングバインを出産　等
+	CASE 7
+		PRINTFORML ARG:0={ARG:0, 5}　敵のその他攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 8
+		PRINTFORML ARG:0={ARG:0, 5}　敵の触手責め攻撃 (発動時)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+	CASE 11
+		PRINTFORML ARG:0={ARG:0, 5}　味方の攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_ADD_SKILLNAME(ARG:1)%%SKILLNAME(ARG:1, TARGET)%)
+		PRINTFORML ARG:2={ARG:2, 5}　与ダメージ
+	CASE 12
+		PRINTFORML ARG:0={ARG:0, 5}　敵の通常攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　HPダメージ
+		PRINTFORML ARG:3={ARG:3, 5}　CPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		SELECTCASE ARG:1
+		CASE 126, 137, 138, 139, 140, 145
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 13
+		PRINTFORML ARG:0={ARG:0, 5}　敵の衣服攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:3={ARG:3, 5}　CPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　EPダメージ
+		PRINTFORML ARG:5={ARG:5, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		SELECTCASE ARG:1
+		CASE 237, 238
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 14
+		PRINTFORML ARG:0={ARG:0, 5}　敵の性攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:3={ARG:3, 5}　EPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		SELECTCASE ARG:1
+		CASE 685, 692
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 15
+		PRINTFORML ARG:0={ARG:0, 5}　敵の拘束攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：拘束　1：丸呑み
+		PRINTFORML ARG:3={ARG:3, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+	CASE 16
+		PRINTFORML ARG:0={ARG:0, 5}　敵の寄生攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：通常の寄生攻撃　1～：妊娠攻撃(射精量)
+		PRINTFORML ARG:3={ARG:3, 5}　MPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		PRINTFORML 補足       　特殊寄生・特殊妊娠の場合、産まれる敵は寄生主とは別の種族になる
+		PRINTFORML            　※クイーンによる寄生→リビングバインを出産　等
+	CASE 17
+		PRINTFORML ARG:0={ARG:0, 5}　敵のその他攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		SELECTCASE ARG:1
+		CASE 24
+			PRINTFORML ARG:3={ARG:3, 5}　状況　0：通常　1：PTの誰かが拘束中
+		ENDSELECT
+	CASE 18
+		PRINTFORML ARG:0={ARG:0, 5}　敵の触手責め攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:3={ARG:3, 5}　MPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+	CASE 21
+		PRINTFORML ARG:0={ARG:0, 5}　味方の攻撃 (回避)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_ADD_SKILLNAME(ARG:1)%%SKILLNAME(ARG:1, TARGET)%)
+	CASE 22
+		PRINTFORML ARG:0={ARG:0, 5}　敵の通常攻撃 (回避)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+	CASE 23
+		PRINTFORML ARG:0={ARG:0, 5}　敵の衣服攻撃 (回避)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+	CASE 24
+		PRINTFORML ARG:0={ARG:0, 5}　敵の性攻撃 (回避)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+	CASE 25
+		PRINTFORML ARG:0={ARG:0, 5}　敵の拘束攻撃 (回避)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+	CASE 26
+		PRINTFORML ARG:0={ARG:0, 5}　敵の寄生攻撃 (回避)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+	CASE 27
+		PRINTFORML ARG:0={ARG:0, 5}　敵のその他攻撃 (回避)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		SELECTCASE ARG:1
+		CASE 10 TO 17
+			PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		CASE 950 TO 953
+			PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		CASE 1300 TO 1306
+			PRINTFORML ARG:2={ARG:2, 5}　対象キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		ENDSELECT
+	CASE 31
+		PRINTFORML ARG:0={ARG:0, 5}　敵を撃破
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+	CASE 32
+		PRINTFORML ARG:0={ARG:0, 5}　HPが0になった
+	CASE 33
+		PRINTFORML ARG:0={ARG:0, 5}　MPが0になった
+	CASE 34
+		PRINTFORML ARG:0={ARG:0, 5}　EPが0になった (絶頂の瞬間より前に呼び出される 絶頂の瞬間はARG:0=120)
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:2={ARG:2, 5}　状況分岐に使用予定 (現状では分岐が無いので常に0)
+	CASE 35
+		PRINTFORML ARG:0={ARG:0, 5}　CPが減少した
+		PRINTFORML ARG:1={ARG:1, 5}　破れ強度　0：全裸になった　1：半裸になった　2：破れ始めた
+	CASE 36
+		PRINTFORML ARG:0={ARG:0, 5}　アイテムを使った・使って貰った
+		PRINTFORML ARG:1={ARG:1, 5}　アイテムID (ID.{ARG:1}=%ITEMNAME:(ARG:1)%)
+		IF ARG:2 != 0
+			PRINTFORML ARG:2={ARG:2, 5}　アイテムを使用したキャラのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		ELSE
+			PRINTFORML ARG:2={ARG:2, 5}　アイテムを使用したキャラのID (ID==0の場合、アイテムを自分で使用)
+		ENDIF
+	CASE 37
+		PRINTFORML ARG:0={ARG:0, 5}　丸呑みされていて行動が届かない (呑まれている側)
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+	CASE 38
+		PRINTFORML ARG:0={ARG:0, 5}　丸呑みされていて行動が届かない (行動した側)
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+	CASE 39
+		PRINTFORML ARG:0={ARG:0, 5}　通常攻撃を受けてひるんだ
+	CASE 40
+		PRINTFORML ARG:0={ARG:0, 5}　寄生された
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+	CASE 41
+		PRINTFORML ARG:0={ARG:0, 5}　攻撃されて起きた
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　攻撃の種類　0：味方の攻撃　1：通常　2：衣服　3：性　4：拘束　5：寄生　6：その他
+		PRINTFORML                        　9：霊撃　10：フェアリーイーター丸呑み
+		PRINTFORML ARG:3={ARG:3, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+	CASE 42
+		PRINTFORML ARG:0={ARG:0, 5}　敵から解放された
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　解放の状況　1:触手による自然解放　2:味方の攻撃による解放　3:霊撃　4:自力脱出
+		PRINTFORML 補足       　自力or他力による脱出成功 戦闘行動による自力脱出との混同注意
+	CASE 43
+		PRINTFORML ARG:0={ARG:0, 5}　時間経過で起きた
+	CASE 44
+		PRINTFORML ARG:0={ARG:0, 5}　煙幕が晴れた
+	CASE 45
+		PRINTFORML ARG:0={ARG:0, 5}　砂煙が晴れた
+	CASE 46
+		PRINTFORML ARG:0={ARG:0, 5}　裸で時間経過
+		PRINTFORML ARG:1={ARG:1, 5}　羞恥フラグ 0：恥薄い　1：通常　2：恥じらい
+		PRINTFORML            　　　　　　 3：恥薄い(戦闘中記録)　4：通常(戦闘中記録)　5：恥じらい(戦闘中記録)
+		PRINTFORML            　　　　　　 6：恥薄い(入浴を記録)　7：通常(入浴を記録)　8：恥じらい(入浴を記録)
+		PRINTFORML ARG:2={ARG:2, 5}　MPダメージ
+		PRINTFORML 補足       　CPが0超の場合、全裸ではなく濡れ透けとなる
+		PRINTFORML            　入浴時も同様にCPで判定が行われるが、濡れ透けではなく個別口上が発生するので注意
+	CASE 47
+		PRINTFORML ARG:0={ARG:0, 5}　重度汚染部屋で時間経過
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:2={ARG:2, 5}　EPダメージ
+	CASE 48
+		PRINTFORML ARG:0={ARG:0, 5}　ターン終了時自慰発生
+	CASE 49
+		PRINTFORML ARG:0={ARG:0, 5}　眠り継続
+	CASE 50
+		PRINTFORML ARG:0={ARG:0, 5}　カウンター中
+	CASE 51
+		PRINTFORML ARG:0={ARG:0, 5}　カウンター発動
+	CASE 52
+		PRINTFORML ARG:0={ARG:0, 5}　拘束レベルアップ
+		PRINTFORML ARG:1={ARG:1, 5}　拘束レベル
+		PRINTFORML ARG:2={ARG:2, 5}　0：拘束　1：丸呑み
+		PRINTFORML ARG:3={ARG:3, 5}　敵ID (ID.{ARG:3}=%SAVESTR:(ARG:3)%)
+	CASE 53
+		PRINTFORML ARG:0={ARG:0, 5}　拘束レベルMAX継続
+		PRINTFORML ARG:1={ARG:1, 5}　拘束レベル
+		PRINTFORML ARG:2={ARG:2, 5}　0：拘束　1：丸呑み
+		PRINTFORML ARG:3={ARG:3, 5}　敵ID (ID.{ARG:3}=%SAVESTR:(ARG:3)%)
+	CASE 54
+		PRINTFORML ARG:0={ARG:0, 5}　戦闘開始時
+		PRINTFORML ARG:1={ARG:1, 5}　0：通常戦闘　1：クイーン戦　2：ガーディアン戦
+		PRINTFORML ARG:2={ARG:2, 5}　0：悪堕ちキャラ・娘は存在しない　1：敵に悪堕ちキャラが存在　2：敵に娘が存在
+		IF ARG:3 != 0
+			PRINTFORML ARG:3={ARG:3, 5}　母親・悪堕ち前キャラのID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		ELSE
+			PRINTFORML ARG:3={ARG:3, 5}　母親・悪堕ち前キャラのID (敵が誰かの娘か、悪堕ちキャラでない場合は0)
+		ENDIF
+	CASE 55
+		PRINTFORML ARG:0={ARG:0, 5}　戦闘から普通に逃げた
+		PRINTFORML ARG:1={ARG:1, 5}　0：通常戦闘　1：クイーン戦　2：ガーディアン戦
+	CASE 56
+		PRINTFORML ARG:0={ARG:0, 5}　戦闘で敗北
+		PRINTFORML ARG:1={ARG:1, 5}　0：通常戦闘　1：クイーン戦　2：ガーディアン戦
+	CASE 57
+		PRINTFORML ARG:0={ARG:0, 5}　戦闘で勝利
+		PRINTFORML ARG:1={ARG:1, 5}　0：通常戦闘　1：クイーン戦　2：ガーディアン戦
+		PRINTFORML ARG:2={ARG:2, 5}　0：悪堕ちキャラ・娘は存在しない　1：敵に悪堕ちキャラが存在　2：敵に娘が存在
+		IF ARG:3 != 0
+			PRINTFORML ARG:3={ARG:3, 5}　母親・悪堕ち前キャラのID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		ELSE
+			PRINTFORML ARG:3={ARG:3, 5}　母親・悪堕ち前キャラのID (敵が誰かの娘か、悪堕ちキャラでない場合は0)
+		ENDIF
+	CASE 58
+		PRINTFORML ARG:0={ARG:0, 5}　拘束攻撃が当たったが、先客が居たので何とかなった
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+	CASE 59
+		PRINTFORML ARG:0={ARG:0, 5}　戦闘中に捕食されている
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+	CASE 60
+		PRINTFORML ARG:0={ARG:0, 5}　先制攻撃・不意打ち発生
+		PRINTFORML ARG:2={ARG:2, 5}　1：先制攻撃　2：敵の不意打ち　3：敵に寝こみを襲われた
+	CASE 61
+		PRINTFORML ARG:0={ARG:0, 5}　ARG:1 の種族と初遭遇
+		PRINTFORML ARG:1={ARG:1, 5}　敵種族ID (ID.{ARG:1}=%ENEMY_NAME(ARG:1)%)
+		IF ARG:2 != 0
+			PRINTFORML ARG:2={ARG:2, 5}　母親・悪堕ち前キャラのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		ELSE
+			PRINTFORML ARG:2={ARG:2, 5}　母親・悪堕ち前キャラのID (敵が誰かの娘か、悪堕ちキャラでない場合は0)
+		ENDIF
+	CASE 62
+		PRINTFORML ARG:0={ARG:0, 5}　仲間を見捨てて逃げた
+		PRINTFORML ARG:1={ARG:1, 5}　0：通常戦闘　1：クイーン戦　2：ガーディアン戦
+		PRINTFORML ARG:2={ARG:2, 5}　見捨てられたキャラ1のID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		IF ARG:3 != 0
+			PRINTFORML ARG:3={ARG:3, 5}　見捨てられたキャラ2のID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		ELSE
+			PRINTFORML ARG:3={ARG:3, 5}　見捨てられたキャラ2のID (0なら見捨てられたキャラは一人だけ)
+		ENDIF
+		PRINTFORML ARG:4={ARG:4, 5}　0：PT残留　1：PT離脱
+	CASE 63
+		PRINTFORML ARG:0={ARG:0, 5}　仲間に見捨てられて逃げられた
+		PRINTFORML ARG:1={ARG:1, 5}　0：通常戦闘　1：クイーン戦　2：ガーディアン戦
+		PRINTFORML ARG:2={ARG:2, 5}　逃げたキャラ1のID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		IF ARG:3 != 0
+			PRINTFORML ARG:3={ARG:3, 5}　逃げたキャラ2のID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		ELSE
+			PRINTFORML ARG:3={ARG:3, 5}　逃げたキャラ2のID (0なら逃げたキャラは一人だけ)
+		ENDIF
+		PRINTFORML ARG:4={ARG:4, 5}　0：PT残留　1：PT離脱
+	CASE 70
+		PRINTFORML ARG:0={ARG:0, 5}　屈服刻印入手
+		PRINTFORML ARG:1={ARG:1, 5}　屈服刻印の種類
+	CASE 101
+		PRINTFORML ARG:0={ARG:0, 5}　迷宮内で他のキャラと会った
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　喪失キャラフラグ 0：通常　1：喪失中
+	CASE 102
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：別れた
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　喪失キャラフラグ 0：通常　1：喪失中
+	CASE 103
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：雑談
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　回復フラグ　0：回復しない　1：回復する
+	CASE 104
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：情報交換
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+	CASE 105
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：アイテム強請り成功
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　アイテムID (ID.{ARG:2}=%ITEMNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　喪失キャラフラグ 0：通常　1：喪失中
+	CASE 106
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：アイテム強請り失敗
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　喪失キャラフラグ 0：通常　1：喪失中
+	CASE 107
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：勧誘成功
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　喪失キャラフラグ 0：通常　1：喪失中
+	CASE 108
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：勧誘失敗
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+	CASE 109
+		PRINTFORML ARG:0={ARG:0, 5}　PTに加わった
+		PRINTFORML 補足       　共闘以外のルートでPT入りした場合の共通口上
+	CASE 110
+		PRINTFORML ARG:0={ARG:0, 5}　PTから離脱
+		PRINTFORML ARG:1={ARG:1, 5}　対象キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：確認　1：別れた
+		PRINTFORML 補足       　離脱キャラとは別に主人公側口上も呼び出されるので注意
+	CASE 111
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時逆襲：アイテムを取られた
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　アイテムID (ID.{ARG:2}=%ITEMNAME:(ARG:2)%)
+	CASE 112
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時逆襲：攻撃された
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+	CASE 113
+		PRINTFORML ARG:0={ARG:0, 5}　探索でアイテムを見つけた
+		PRINTFORML ARG:1={ARG:1, 5}　アイテムID (ID.{ARG:1}=%ITEMNAME:(ARG:1)%)
+	CASE 114
+		PRINTFORML ARG:0={ARG:0, 5}　睡眠開始
+		PRINTFORML ARG:1={ARG:1, 5}　0：見張り無し　1：PTで見張り　2：NPCが見張り
+		IF ARG:2
+			PRINTFORML ARG:2={ARG:2, 5}　見張っているNPCのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		ELSE
+			PRINTFORML ARG:2={ARG:2, 5}　見張っているNPCのID (0ならばNPCに見張りを頼んでいない)
+		ENDIF
+	CASE 115
+		PRINTFORML ARG:0={ARG:0, 5}　重度汚染部屋で睡眠開始
+	CASE 116
+		PRINTFORML ARG:0={ARG:0, 5}　重度汚染部屋で睡眠
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:2={ARG:2, 5}　EPダメージ
+	CASE 117
+		PRINTFORML ARG:0={ARG:0, 5}　睡眠時自慰発生
+	CASE 118
+		PRINTFORML ARG:0={ARG:0, 5}　自慰メッセージ
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V　4：母乳飲み　5：ニプルファック
+		PRINTFORML ARG:2={ARG:2, 5}　0：道具なし　1：道具あり
+	CASE 119
+		PRINTFORML ARG:0={ARG:0, 5}　自慰で絶頂失敗
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V
+	CASE 120
+		PRINTFORML ARG:0={ARG:0, 5}　絶頂の瞬間
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:2={ARG:2, 5}　MPダメージ
+		PRINTFORML ARG:3      　絶頂済み部位 各ビット桁に判定あり
+		PRINTFORML            　1：A(\@GETBIT(ARG:3, 1) ? ON # OFF\@)　2：B(\@GETBIT(ARG:3, 2) ? ON # OFF\@)　3：C(\@GETBIT(ARG:3, 3) ? ON # OFF\@)　4：V(\@GETBIT(ARG:3, 4) ? ON # OFF\@)　5：肌(\@GETBIT(ARG:3, 5) ? ON # OFF\@)　6：M(\@GETBIT(ARG:3, 6) ? ON # OFF\@)
+	CASE 121
+		PRINTFORML ARG:0={ARG:0, 5}　発情がおさまった
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M　99：自動回復
+	CASE 122
+		PRINTFORML ARG:0={ARG:0, 5}　戦意喪失中に絶頂
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+	CASE 123
+		PRINTFORML ARG:0={ARG:0, 5}　母乳を吸われる
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　回復量
+	CASE 125
+		PRINTFORML ARG:0={ARG:0, 5}　寄生が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+	CASE 126
+		PRINTFORML ARG:0={ARG:0, 5}　妊娠が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+	CASE 127
+		PRINTFORML ARG:0={ARG:0, 5}　出産イベント (寄生)
+		PRINTFORML ARG:1={ARG:1, 5}　状況　0：出産開始　1：出産完了＋強制授乳　2：子供が立ち去った
+		PRINTFORML                 　 3：部屋の触手に襲われた　4：ウォッチャーによるライブ中継　5：授乳時に子供からニプルファックされた
+	CASE 129
+		PRINTFORML ARG:0={ARG:0, 5}　出産イベント (妊娠)
+		PRINTFORML ARG:1={ARG:1, 5}　状況　0：出産開始　1：出産完了＋強制授乳　2：子供が立ち去った
+		PRINTFORML                 　 3：部屋の触手に襲われた　4：授乳時に子供からニプルファックされた
+		PRINTFORML ARG:2={ARG:2, 5}　子供の種類　0：敵　1：娘
+	CASE 130
+		PRINTFORML ARG:0={ARG:0, 5}　部屋の浄化実行
+		PRINTFORML ARG:1={ARG:1, 5}　0：通常の浄化　1：浄化力最大
+	CASE 131
+		PRINTFORML ARG:0={ARG:0, 5}　眠気が進行
+		PRINTFORML ARG:1={ARG:1, 5}　眠気
+	CASE 132
+		PRINTFORML ARG:0={ARG:0, 5}　部屋を移動：突撃
+	CASE 133
+		PRINTFORML ARG:0={ARG:0, 5}　部屋を移動：慎重
+	CASE 134
+		PRINTFORML ARG:0={ARG:0, 5}　部屋を移動：待ち伏せ
+	CASE 135
+		PRINTFORML ARG:0={ARG:0, 5}　探索開始
+	CASE 136
+		PRINTFORML ARG:0={ARG:0, 5}　処女喪失
+		PRINTFORML ARG:1={ARG:1, 5}　喪失原因　0：敵の攻撃　1：自慰　2：出産
+		PRINTFORML ARG:2={ARG:2, 5}　MPダメージ
+		PRINTFORML ARG:3={ARG:3, 5}　0：喪失　1：喪失の直前　2：喪失を防いだ (ARG:1==0以外の場合は常に0)
+		PRINTFORML                 　3：格下の敵に奪われた　4：格下相手なので抵抗補正
+	CASE 137
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：固定イベント情報取得　提供側口上
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　取得した情報 (探索イベントID)
+		PRINTFORML ARG:3={ARG:3, 5}　会話状況　0：雑談　1：情報交換
+		PRINTFORML 補足       　ARG:2(取得した情報)が100未満の場合は、探索イベントIDではなく
+		PRINTFORML            　捕食されているキャラクタIDになるので注意
+	CASE 138
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：アイテム強請り開始
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　喪失キャラフラグ 0：通常　1：喪失中
+	CASE 139
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：アイテムを強請られた
+		IF ARG:1 != 0
+			PRINTFORML ARG:1={ARG:1, 5}　アイテムID (ID.{ARG:1}=%ITEMNAME:(ARG:1)%)
+		ELSE
+			PRINTFORML ARG:1={ARG:1, 5}　アイテムID (0の場合アイテム強請り失敗)
+		ENDIF
+		PRINTFORML 補足       　喪失中のアイテム盗難はCFLAG:29をチェック
+		PRINTFORML            　酒に薬を盛られて睡眠中ならCFLAG:25をチェック(CFLAG:29もフラグが立つのでCFLAG:25優先)
+	CASE 140
+		PRINTFORML ARG:0={ARG:0, 5}　PTに勧誘された
+		PRINTFORML ARG:1={ARG:1, 5}　状況　0：通常　1：共闘
+		PRINTFORML ARG:2={ARG:2, 5}　結果　0：失敗　1：成功
+	CASE 141
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時逆襲：襲い掛かかられた
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：本人　1：ドッペルゲンガー
+	CASE 142
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時逆襲：襲い掛かった
+		PRINTFORML ARG:2={ARG:2, 5}　0：本人　1：ドッペルゲンガー
+	CASE 143
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：喪失キャラに気付け薬を使った
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：薬を使った　1：仲間にした　2：仲間入りを断った
+	CASE 144
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：喪失中に気付け薬を使われた + パッチによる拡張
+		PRINTFORML ARG:1={ARG:1, 5}　 0：喪失回復後に礼を言って立ち去る (拘束中の場合動けない)
+		PRINTFORML            　 1：喪失回復後PTへの参加を希望　2：PTに加わった　3：PTへの参加を拒否された
+		PRINTFORML            　 4：喪失回復後に、貰った日本酒を飲んだ (喪失回復後限定)　5：貰った日本酒は触手入り
+		PRINTFORML            　 6：乳搾り (強制)　7：乳搾り (同意)　8：好感度低の為、乳搾り失敗
+		PRINTFORML            　 9：ふたなりペニスを折られる
+		PRINTFORML            　10：強制射精開始　11：強制射精終了
+		PRINTFORML            　12：乳搾り終了
+		PRINTFORML            　13：魔法の拘束具を使われた
+		PRINTFORML            　14：優しくされた
+	CASE 145
+		PRINTFORML ARG:0={ARG:0, 5}　寄生が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 146
+		PRINTFORML ARG:0={ARG:0, 5}　妊娠が進行 (妊娠した本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　妊娠しているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 147
+		PRINTFORML ARG:0={ARG:0, 5}　出産イベント (寄生)　出産した本人以外の口上
+		PRINTFORML ARG:1={ARG:1, 5}　状況　0：出産開始　1：出産完了＋強制授乳　2：子供が立ち去った
+		PRINTFORML ARG:2={ARG:2, 5}　出産キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 148
+		PRINTFORML ARG:0={ARG:0, 5}　出産イベント (妊娠)　出産した本人以外の口上
+		PRINTFORML ARG:1={ARG:1, 5}　状況　0：出産開始　1：出産完了＋強制授乳　2：子供が立ち去った
+		PRINTFORML ARG:2={ARG:2, 5}　出産キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　子供の種類　0：敵　1：娘
+	CASE 149
+		PRINTFORML ARG:0={ARG:0, 5}　部屋に結界を張った＋入浴
+	CASE 150
+		PRINTFORML ARG:0={ARG:0, 5}　捕食開始
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+	CASE 151
+		PRINTFORML ARG:0={ARG:0, 5}　捕食されている
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：拘束　1：丸呑み
+	CASE 152
+		PRINTFORML ARG:0={ARG:0, 5}　捕食された
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：拘束　1：丸呑み
+	CASE 153
+		PRINTFORML ARG:0={ARG:0, 5}　リザレクション発生
+	CASE 154
+		PRINTFORML ARG:0={ARG:0, 5}　一回休み発生
+	CASE 155
+		PRINTFORML ARG:0={ARG:0, 5}　不死身発生
+	CASE 156
+		PRINTFORML ARG:0={ARG:0, 5}　敵ランクアップ
+		PRINTFORML ARG:1={ARG:1, 5}　敵の種類 (%ENEMY_NAME(ARG:1)%)
+	CASE 157
+		PRINTFORML ARG:0={ARG:0, 5}　ゲームオーバー
+		PRINTFORML ARG:1={ARG:1, 5}　敵の種類 (%ENEMY_NAME(ARG:1)%)
+		SELECTCASE ARG:1
+		CASE 98
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 158
+		PRINTFORML ARG:0={ARG:0, 5}　主人公が復活
+		PRINTFORML ARG:1={ARG:1, 5}　0：助けてもらって復活　1：打ち捨てられて復活
+	CASE 159
+		PRINTFORML ARG:0={ARG:0, 5}　ゲーム開始時
+		PRINTFORML 補足       　各種設定が終わって、MAPが表示される直前に全キャラに対して実行
+		PRINTFORML            　口上独自の設定などにどうぞ
+	CASE 160
+		PRINTFORML ARG:0={ARG:0, 5}　MAP表示時
+	CASE 161
+		PRINTFORML ARG:0={ARG:0, 5}　好感度低下によるPT離脱　抜けるキャラ側の口上
+		PRINTFORML ARG:1={ARG:1, 5}　抜けるキャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+	CASE 162
+		PRINTFORML ARG:0={ARG:0, 5}　好感度低下によるPT離脱　PT側の口上
+		PRINTFORML ARG:1={ARG:1, 5}　抜けるキャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+	CASE 163
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：アイテムをあげた
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　アイテムID (ID.{ARG:2}=%ITEMNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　0：本人　1：ドッペルゲンガー
+	CASE 164
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：アイテムを貰った
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　アイテムID (ID.{ARG:2}=%ITEMNAME:(ARG:2)%)
+		PRINTFORML ARG:3={ARG:3, 5}　0：本人　1：ドッペルゲンガー
+	CASE 165
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：固定イベント情報取得　取得側口上
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　取得した情報 (探索イベントID)
+		PRINTFORML ARG:3={ARG:3, 5}　会話状況　0：雑談　1：情報交換
+		PRINTFORML 補足       　ARG:2(取得した情報)が100未満の場合は、探索イベントIDではなく
+		PRINTFORML            　捕食されているキャラクタIDになるので注意
+	CASE 166
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：喪失キャラを浄化した
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+	CASE 167
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：喪失中に浄化してもらった
+	CASE 168
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：ドッペルゲンガーを見抜く
+		PRINTFORML ARG:1={ARG:1, 5}　遭遇キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:3, 5}　0：【覚】による読心　1：主人公が見抜く　2：仲間1が見抜く　3：仲間2が見抜く
+		PRINTFORML            　4：気付いた仲間(子供)の反応　5：気付いた仲間の反応
+		PRINTFORML 補足       　遭遇キャラIDは化けている対象のID、実際はドッペルゲンガー
+	CASE 169
+		PRINTFORML ARG:0={ARG:0, 5}　フェイズ終了時【覚】持ち精神力消耗
+		PRINTFORML ARG:1={ARG:1, 5}　0：小消耗　1：大消耗
+		PRINTFORML 補足       　部屋の汚染度が重度汚染の場合大消耗
+	CASE 200
+		PRINTFORML ARG:0={ARG:0, 5}　ランダムイベント発生
+		SELECTCASE ARG:1
+		CASE 130
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：全快湧き水
+			PRINTFORML ARG:2={ARG:2, 5}　0：飲んだ　1：飲まない
+		CASE 131
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：発情湧き水
+			PRINTFORML ARG:2={ARG:2, 5}　0：飲んだ　1：飲まない
+		CASE 132
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：ステUP湧き水
+			PRINTFORML ARG:2={ARG:2, 5}　0：飲んだ　1：飲まない
+		CASE 133
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：澄んだ泉
+			PRINTFORML ARG:2={ARG:2, 5}　0：水を飲んだ　1：泉に入った　2：何もせず立ち去った
+			PRINTFORML            　3：仲間を浄化した　4：浄化されて喪失が治った　5：薬草取得
+		CASE 134
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：白濁泉
+			PRINTFORML ARG:2={ARG:2, 5}　0：水を飲んだ(MP全回復)　1：水を飲んだ(眠気)　2：水を飲んだ(発情)
+			PRINTFORML            　3：泉に入った(速度増加)　4：泉に入った(寄生された)　6：泉に入った(ふたなり化)
+			PRINTFORML            　5：立ち去った
+		CASE 135
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：不思議な泉
+			PRINTFORML ARG:2={ARG:2, 5}　0：水を飲んだ(HP・MP・EP全回復)　1：泉に入った(状態異常回復)　2：立ち去った
+		CASE 136
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：スライム
+			PRINTFORML ARG:2={ARG:2, 5}　1：服を溶かされた　2：回避した
+			PRINTFORML 補足       　服を溶かされた際、ランダムでスライム服が張り付く
+		CASE 137
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：壁触手
+			PRINTFORML ARG:2={ARG:2, 5}　1：触手に捕まった　2：回避した
+		CASE 138
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：落とし穴
+			PRINTFORML ARG:2={ARG:2, 5}　1：穴に落ちた　2：回避した　3：寄生された
+		CASE 139
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：桃色ガス
+			PRINTFORML ARG:2={ARG:2, 5}　1：ガスを吸った　2：回避した
+		CASE 140
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：荷物袋
+			PRINTFORML ARG:2={ARG:2, 5}　0：開けた　1：開けない
+		CASE 141
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：荷物袋トラップ
+			PRINTFORML ARG:2={ARG:2, 5}　0：開けた　1：開けない
+			PRINTFORML                 　10～16：荷物袋におちんちんを突っ込んで中身が敵だった
+		CASE 142
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：にょろーん
+			PRINTFORML ARG:2={ARG:2, 5}　2：襲われる前　3：襲われた後　4：無視して立ち去る　5：4種コンプリート
+			PRINTFORML ARG:3={ARG:3, 5}　部位　0：A　1：B　2：C　3：V
+		CASE 143
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：不思議なガス
+			PRINTFORML ARG:2={ARG:2, 5}　1：眠くなってきた　2：発情した　3：自慰が止まらなくなった
+			PRINTFORML            　4：テンションが上がった(TP=MAX)　5：テンションが下がった(TP=0)
+			PRINTFORML            　6：ガスを回避　7：気絶した
+		CASE 144
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：柔らかい壁
+			PRINTFORML ARG:2={ARG:2, 5}　1：壁を崩した　2：壁に呑み込まれた　3：立ち去った
+		CASE 145
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：眠気覚まし
+			PRINTFORML ARG:2={ARG:2, 5}　1：眠気が吹き飛んだ　2：薬草を残す
+		CASE 146
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲A
+		CASE 147
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲B
+			PRINTFORML ARG:2={ARG:2, 5}　1：淫蟲にニプルファックされた
+		CASE 148
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲C
+			PRINTFORML ARG:2={ARG:2, 5}　0：淫蟲に襲われた(主人公以外)　1：淫蟲に襲われた(主人公)
+			PRINTFORML            　2：淫蟲の体液を浴びて発情した　3：ふたなり化
+		CASE 149
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲V
+		CASE 150
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：落石
+			PRINTFORML ARG:2={ARG:2, 5}　1：落石に巻き込まれた　2：回避した
+		CASE 151
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：不意打ち
+		CASE 152
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲ふたなり化(部屋ランダム)
+			PRINTFORML ARG:2={ARG:2, 5}　1：ふたなり化　2：既にふたなり　3：淫蟲を回避
+		CASE 153
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲肌
+		CASE 154
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲M
+		CASE 160
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：自販機
+			SELECTCASE ARG:2
+			CASE 0
+				PRINTFORML ARG:2={ARG:2, 5}　0：自販機を発見
+			CASE 1
+				PRINTFORML ARG:2={ARG:2, 5}　1：衣服を繕う
+				PRINTFORML ARG:3={ARG:3, 5}　0：触手スーツ発覚　1：触手スーツ装着完了
+			CASE 2
+				PRINTFORML ARG:2={ARG:2, 5}　2：腹を満たす
+				PRINTFORML ARG:3={ARG:3, 5}　0：強制妊娠開始　1：妊娠完了
+			CASE 3
+				PRINTFORML ARG:2={ARG:2, 5}　3：何か飲み物を
+				PRINTFORML ARG:3={ARG:3, 5}　0：触手液漬け開始　1：触手液漬け完了
+			CASE 4
+				PRINTFORML ARG:2={ARG:2, 5}　4：能力の強化　キャラ選択
+				PRINTFORML ARG:3={ARG:3, 5}　0：仲間を強化(主人公口上)　1：仲間を強化(仲間口上)　2：主人公を強化
+				PRINTFORML ARG:4={ARG:4, 5}　強化されるキャラのID (ID.{ARG:4}=%CALLNAME:(ARG:4)%)
+			CASE 5
+				PRINTFORML ARG:2={ARG:2, 5}　5：能力の強化開始
+				PRINTFORML ARG:3={ARG:3, 5}　部位　0：A　1：B　2：C　3：V　4：胸を小さくする
+				PRINTFORML 補足       　ARG:3==2の場合、武器が欲しい(ふたなり化)開始の口上も兼ねる
+			CASE 6
+				PRINTFORML ARG:2={ARG:2, 5}　6：能力の強化開始 回避率を上げる
+				PRINTFORML ARG:3={ARG:3, 5}　0：陵辱開始　1：陵辱完了(素質[小柄体型]取得)
+			CASE 7
+				PRINTFORML ARG:2={ARG:2, 5}　7：武器が欲しい ふたなり化完了
+			CASE 8
+				PRINTFORML ARG:2={ARG:2, 5}　8：何もせずに立ち去る
+			ENDSELECT
+		CASE 161
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：親睦
+			PRINTFORML ARG:2={ARG:2, 5}　発情フラグ　0：発情していない　1：発情中
+			SELECTCASE ARG:2
+			CASE 0
+				PRINTFORML ARG:3={ARG:3, 5}　0：襲われた(身を委ねた)　1：襲われた(救出された)　2：襲っているキャラを引き剥がした
+			CASE 1
+				PRINTFORML ARG:3={ARG:3, 5}　0：襲った　1：引き剥がされて自慰　2：合意
+			ENDSELECT
+			PRINTFORML 補足       　対象キャラクタが主人公である場合、ARG:2はPTメンバー全員が発情していないと1にならない
+			PRINTFORML            　発情中であるにもかかわらず0になる可能性があるので注意
+		CASE 170
+			PRINTFORML ARG:1={ARG:0, 5}　発生イベント：キュウリ畑
+			PRINTFORML ARG:2={ARG:1, 5}　1：食べた　2：下の口で食べた　3：食べさせられた
+		CASE 171
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：荷物袋トラップヒュプノ
+			PRINTFORML ARG:2={ARG:2, 5}　0：開けた　1：開けない
+			PRINTFORML                 　10～16：荷物袋におちんちんを突っ込んで中身が敵だった
+		CASE 173
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：動物耳
+			PRINTFORML ARG:2={ARG:2, 5}　1：発情した　2：動物耳取得　3：食べずに立ち去った　4：動物耳喪失　5：HP回復
+			PRINTFORML                 　6：動物耳と尻尾取得　7：動物耳ともふ尻尾取得　8：尻尾喪失
+		CASE 174
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：媚薬風呂
+			PRINTFORML ARG:2={ARG:2, 5}　1：落下した
+			PRINTFORML 補足       　落下を回避した場合はARG:1=138の落とし穴イベントが呼び出される
+		CASE 175
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：白濁風呂
+			PRINTFORML ARG:2={ARG:2, 5}　1：落下した
+			PRINTFORML 補足       　落下を回避した場合はARG:1=138の落とし穴イベントが呼び出される
+			
+		CASE 176
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：壁尻スライム
+			PRINTFORML ARG:2={ARG:2, 5}　0：被害者が母乳体質　1：被害者が非母乳体質　2：被害者を犯す
+			PRINTFORML            　3：犯す時にもう一人の仲間も犯行に加わる
+		CASE 177
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：淫蟲ふたなり化(部屋固定)
+			PRINTFORML ARG:2={ARG:2, 5}　1：ふたなり化　2：既にふたなり　3：淫蟲を回避
+		CASE 178
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：親睦(部屋固定)
+			PRINTFORML ARG:2={ARG:2, 5}　発情フラグ　0：発情していない　1：発情中
+			SELECTCASE ARG:2
+			CASE 0
+				PRINTFORML ARG:3={ARG:3, 5}　0：襲われた(身を委ねた)　1：襲われた(救出された)　2：襲っているキャラを引き剥がした
+			CASE 1
+				PRINTFORML ARG:3={ARG:3, 5}　0：襲った　1：引き剥がされて自慰　2：合意
+			ENDSELECT
+			PRINTFORML 補足       　対象キャラクタが主人公である場合、ARG:2はPTメンバー全員が発情していないと1にならない
+			PRINTFORML            　発情中であるにもかかわらず0になる可能性があるので注意
+		CASE 179
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：結婚式場
+			PRINTFORML ARG:2={ARG:2, 5}　1：結婚式前　2：触手服ウェディングドレス授与　3：誓いの公開レイプ
+			PRINTFORML            　4：誓いの公開孕ませ　5：花嫁素質取得　6：結婚式後
+			PRINTFORML            　8：無視して離れた
+			
+		CASE 180
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：入れ替わり
+			PRINTFORML 補足       　ARG:2の数値は用途不明
+		CASE 181
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：女体化魔法陣
+			PRINTFORML ARG:2={ARG:2, 5}　0：女体化　1：コンフィグOFF　2：女しかいなかった
+		CASE 201
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：石碑
+			PRINTFORML ARG:2={ARG:2, 5}　0：読むことができなかった　1：読めた
+		CASE 202
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：石版赤
+			PRINTFORML ARG:2={ARG:2, 5}　0：何も発見出来ない　1：既に呪文を唱え終わっている
+			PRINTFORML            　2：出現した光の渦を放置　3：何もせず立ち去った
+		CASE 203
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：石版青
+			PRINTFORML ARG:2={ARG:2, 5}　0：何も発見出来ない　1：既に呪文を唱え終わっている
+			PRINTFORML            　2：出現した光の渦を放置　3：何もせず立ち去った
+		CASE 204
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：石版黄
+			PRINTFORML ARG:2={ARG:2, 5}　0：何も発見出来ない　1：既に呪文を唱え終わっている
+			PRINTFORML            　2：出現した光の渦を放置　3：何もせず立ち去った
+		CASE 205
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：石版緑
+			PRINTFORML ARG:2={ARG:2, 5}　0：何も発見出来ない　1：不要な石版と判明
+		CASE 207
+			PRINTFORML ARG:1={ARG:1, 5}　発生イベント：統一言語辞書
+		CASEELSE
+			PRINTFORML 発生イベントの説明がありません
+		ENDSELECT
+	CASE 201
+		PRINTFORML ARG:0={ARG:0, 5}　PT分断テレポート
+		PRINTFORML ARG:1={ARG:1, 5}　0：飛ばされる前　1：飛ばされた後
+	CASE 202
+		PRINTFORML ARG:0={ARG:0, 5}　遺品発見
+		PRINTFORML ARG:1={ARG:1, 5}　発見キャラのID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML 補足       　キャラ番号を見るならNO:(ARG:1)を見る事
+	CASE 203
+		PRINTFORML ARG:0={ARG:0, 5}　オープニング
+		PRINTFORML 補足       　ARG:0 159の口上より早い段階で表示されます
+		PRINTFORML            　主にストーリーの地の文改変のために使う事を想定しています
+		PRINTFORML            　また、選択肢で表示するかどうか選べるため、飛ばされても問題ない内容はこっち、
+		PRINTFORML            　飛ばされたくない内容はARG:0 159に書いてください
+	CASE 204
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：仲間を囮にして逃げる(主人公口上)
+	CASE 205
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：仲間を囮にして逃げる(仲間口上)
+	CASE 206
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：ガーディアン撃破(主人公口上)
+	CASE 207
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：ガーディアン撃破(仲間口上)
+	CASE 208
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：転移門発見(主人公口上)
+	CASE 209
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：転移門発見(仲間口上)
+	CASE 210
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：クイーン撃破(主人公口上)
+	CASE 211
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：クイーン撃破(仲間口上)
+	CASE 212
+		PRINTFORML ARG:0={ARG:0, 5}　エンディング：クイーンソロ撃破
+	CASE 213
+		PRINTFORML ARG:0={ARG:0, 5}　転移門(光の渦)・ラスボス部屋に転送
+	CASE 214
+		PRINTFORML ARG:0={ARG:0, 5}　転移門(光の渦)・触手の巣に転送
+
+	CASE 221
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴寄生産卵が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時は尻穴寄生出産となる
+	CASE 222
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴寄生産卵が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時は尻穴寄生出産となる
+	CASE 223
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴産卵
+		PRINTFORML ARG:1={ARG:1, 5}　0：産卵開始　1：産卵終了　2：卵回収　3：産卵体質入手　4：産卵中触手に襲われる
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時は尻穴寄生出産となる
+	CASE 224
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴産卵 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：産卵開始　1：産卵終了　2：卵回収
+		SIF ARG:1 == 0
+			PRINTFORML ARG:2={ARG:2, 5}　産卵キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 225
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴寄生出産が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+	CASE 226
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴寄生出産が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 227
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴寄生出産
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動　3：出産中触手に襲われる
+	CASE 228
+		PRINTFORML ARG:0={ARG:0, 5}　尻穴寄生出産 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動
+		SIF ARG:1 == 0
+			PRINTFORML ARG:2={ARG:2, 5}　出産キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 229
+		PRINTFORML ARG:0={ARG:0, 5}　結婚報告
+		PRINTFORML ARG:1={ARG:1, 5}　 0：主人公からの報告　1：報告された側の反応
+	CASE 299
+		PRINTFORML ARG:0={ARG:0, 5}　EXオープニング (Extra・Phantasm用)
+		PRINTFORML 補足       　ARG:0 159の口上より早い段階で表示されます
+		PRINTFORML            　主にストーリーの地の文改変のために使う事を想定しています
+		PRINTFORML            　また、選択肢で表示するかどうか選べるため、飛ばされても問題ない内容はこっち、
+		PRINTFORML            　飛ばされたくない内容はARG:0 159に書いてください
+	CASE 400
+		PRINTFORML ARG:0={ARG:0, 5}　ペットの戦闘行動
+	CASE 401
+		PRINTFORML ARG:0={ARG:0, 5}　ペットコマンドのご主人様に下克上イベント
+		PRINTFORML ARG:1={ARG:1, 5}　0：下克上失敗　1：下克上失敗したときのPTメンバーの反応　2：主従関係結び直し
+		PRINTFORML            　3:連鎖堕ちイベント開始（主人公視点）　4：連鎖堕ちイベント開始（味方視点）
+		PRINTFORML            　5:連鎖堕ちイベント中（主人公視点）　6：連鎖堕ちイベント中（味方視点）
+	CASE 402
+		PRINTFORML ARG:0={ARG:0, 5}　素質【しもべ】持ちへの調教
+		PRINTFORML ARG:1={ARG:1, 5}　 0：調教開始
+		PRINTFORML            　 1：男の娘への尻開発　2：男の娘へのフェラ奉仕強要
+		PRINTFORML            　 3：ふたなり兜合わせ　4：騎乗位
+		PRINTFORML            　 5：植物やローパーによる発情
+		PRINTFORML            　 6：動物や海産による陵辱妊娠
+		PRINTFORML            　 7：スライムによる調教開始
+		PRINTFORML            　 8：スライムによる発情　 9：スライムによるEP減少
+		PRINTFORML            　10：好みの部位狙い（汎用）
+		PRINTFORML            　11：侵食度増加（共用）
+	CASE 403
+		PRINTFORML ARG:0={ARG:0, 5}　ペットを追放しようとした場合の連鎖堕ちイベント
+		PRINTFORML ARG:1={ARG:1, 5}　 0：正常なキャラが二人いる状態で一人目が捕まる
+		PRINTFORML            　 1：正常なキャラが二人いる状態で一人目が捕まるのを見ているPTメンバー（TALENT:140の有無で立場変更）
+		PRINTFORML            　 2：正常なキャラが一人堕ちているキャラが一人の状態で捕まる
+		PRINTFORML            　 3：2の捕まえた側
+		PRINTFORML            　 4：調教一人目
+		PRINTFORML            　 5：二人の洗脳済みがいる状態で次の犠牲者視点
+		PRINTFORML            　 6：5のPTメンバー視点
+		PRINTFORML            　 7：調教二人目
+		PRINTFORML            　 8：連鎖堕ちイベント終了
+	CASE 414
+		PRINTFORML ARG:0={ARG:0, 5}　敵の性攻撃 (命中) 男キャラにV攻撃
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　9：M
+		PRINTFORML ARG:3={ARG:3, 5}　EPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+	CASE 415
+		PRINTFORML ARG:0={ARG:0, 5}　敵の寄生攻撃 (命中) 男キャラにV攻撃
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：通常の寄生攻撃　1～：妊娠攻撃(射精量)
+		PRINTFORML ARG:3={ARG:3, 5}　MPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+	CASE 420
+		PRINTFORML ARG:0={ARG:0, 5}　絶頂時：淫乱素質持ちで装飾文
+		PRINTFORML ARG:1={ARG:1, 5}　部位　0：A　1：B　2：C　3：V
+		PRINTFORML ARG:2={ARG:2, 5}　MPダメージ
+		PRINTFORML 補足       　ARG:0 120 絶頂の瞬間 に統合された為廃止
+	CASE 427
+		PRINTFORML ARG:0={ARG:0, 5}　出産時豊乳化
+		PRINTFORML ARG:1={ARG:1, 5}　 0：普乳化　1：巨乳化　2：爆乳化　3：母乳体質悪化　4：[母乳体質]悪化素質取得　5：貧乳化
+	CASE 430
+		PRINTFORML ARG:0={ARG:0, 5}　部屋の浄化を失敗
+		PRINTFORML ARG:1={ARG:1, 5}　0：触手暴走開始　1：浄化完了　2：触手暴走中(主人公喪失中)　3：触手暴走中(仲間喪失中)
+		PRINTFORML            　4：触手暴走中(PTメンバー通常)　5：浄化力最大の為被害なし
+		PRINTFORML            　6：触手暴走中(PTメンバー外喪失)　7：触手暴走中(PTメンバー外通常)
+	CASE 440
+		PRINTFORML ARG:0={ARG:0, 5}　触手スーツ装着時
+		PRINTFORML ARG:1={ARG:1, 5}　 0：発覚　1：触手責め停止　2：引き剥がし挑戦　3：引き剥がし失敗
+		PRINTFORML            　 4：A開発開始　5：触手責め終了　6：性感開発終了　 7：A開発完了　8：B開発開始　9：B開発完了
+		PRINTFORML            　10：C開発開始　11：C開発完了　12：V開発開始　13：V開発完了
+		PRINTFORML            　14：引き剥がしを諦めた　15：触手スーツ装着完了　16：既に触手スーツ装着済
+		PRINTFORML            　17：全身開発開始　18：全身開発完了([淫乱]取得)　19：全身開発完了(全感度上昇)
+		PRINTFORML            　20：他のキャラに触手スーツを着せた　21：B開発時にニプルファックされた
+	CASE 441
+		PRINTFORML ARG:0={ARG:0, 5}　触手スーツ常駐時
+		PRINTFORML ARG:1={ARG:1, 5}　 0：睡眠中 RAND
+		PRINTFORML            　 1：A陵辱開始　2：A陵辱終了
+		PRINTFORML            　 3：B陵辱開始　4：B陵辱終了
+		PRINTFORML            　 5：C陵辱開始　6：C陵辱終了
+		PRINTFORML            　 7：V陵辱開始　8：V陵辱終了
+		PRINTFORML            　 9：通常時(通常時でも微ダメージあり)　10：喪失中
+		PRINTFORML            　11：C陵辱終了(ふたなり)
+		PRINTFORML            　12：セルフ膣内射精
+		PRINTFORML            　13：A貫通開始　14：A貫通終了
+		PRINTFORML            　15：触手電撃開始　16：触手電撃終了
+		PRINTFORML            　17：全身陵辱開始　18：全身陵辱終了
+		PRINTFORML            　19～26：ニプルファック関連
+		PRINTFORML            　27：ターン終了時EPダメージ　28：触手スーツ自己再生
+		PRINTFORML 補足       　A貫通は A感度LV3以上＋ランダム でA陵辱から派生
+	CASE 442
+		PRINTFORML ARG:0={ARG:0, 5}　触手スーツ自慰時
+		PRINTFORML ARG:1={ARG:1, 5}　0～4：自慰中のタイミング管理、順番に呼び出される
+		PRINTFORML ARG:2={ARG:2, 5}　自慰でニプルファックしている
+	CASE 443
+		PRINTFORML ARG:0={ARG:0, 5}　スライムスーツ装着時
+		PRINTFORML ARG:1={ARG:1, 5}　0：スライムイベントによる発生　1：スライム系の敵を倒した
+	CASE 444
+		PRINTFORML ARG:0={ARG:0, 5}　スライムスーツ常駐時
+		PRINTFORML ARG:1={ARG:1, 5}　 0：A攻撃　1：B攻撃
+		PRINTFORML            　 2：乳腺開発開始　3：乳腺開発(母乳製造装置未満)　4：乳腺開発(母乳製造装置)
+		PRINTFORML            　 5：乳肥大化開始　6：乳肥大化(サイズ限界)　7：精力増強開始　8：精力増強中　9：C攻撃
+		PRINTFORML            　10：尿道責め(尿意増加)　11：服侵食(汚れ増加)
+	CASE 445
+		PRINTFORML ARG:0={ARG:0, 5}　寄生侵食発生
+		PRINTFORML ARG:1={ARG:1, 5}　0：寄生時　1：侵食進行(再寄生による侵食)
+		PRINTFORML ARG:2={ARG:2, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		PRINTFORML            　2：侵食進行(エンドフェイズ初期)　3：侵食進行(エンドフェイズ初期以外)
+		PRINTFORML            　4：汚染部屋睡眠　5：汚染部屋戦闘　6：敵の攻撃の追加効果
+	CASE 446
+		PRINTFORML ARG:0={ARG:0, 5}　寄生侵食進行
+		PRINTFORML ARG:1={ARG:1, 5}　 0：A侵食　1：B侵食　2：C侵食　3：V侵食
+		PRINTFORML            　 4：Aインプラント　5：Bインプラント　6：Cインプラント　7：Vインプラント
+		PRINTFORML            　 8：自慰中毒悪化　9：触手中毒悪化
+		PRINTFORML            　11：レズ中毒悪化　12：精液中毒悪化　13：Mインプラント　14：強制EP1
+		PRINTFORML ARG:2={ARG:1, 5}　進行度
+	CASE 447
+		PRINTFORML ARG:0={ARG:0, 5}　悪堕ち関連
+		PRINTFORML ARG:1={ARG:1, 5}　0：【淫魔】取得　1：【狂気】取得
+		PRINTFORML            　2：脱走悪堕ち(脱走する側)　3：脱走悪堕ち(脱走される側)　4：PT外同室キャラ悪堕ち
+		SELECTCASE ARG:1
+		CASE 3, 4
+			PRINTFORML ARG:2={ARG:2, 5}　悪堕ちキャラのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		ENDSELECT
+	CASE 448
+		PRINTFORML ARG:0={ARG:0, 5}　触手放射器装填
+		PRINTFORML ARG:1={ARG:1, 5}　0：装填開始　1：装填完了
+		PRINTFORML ARG:2={ARG:2, 5}　装填残弾数
+	CASE 449
+		PRINTFORML ARG:0={ARG:0, 5}　露出癖取得
+		PRINTFORML ARG:1={ARG:1, 5}　露出癖芽生え確率（万分率）{CFLAG:167}
+	CASE 451
+		PRINTFORML ARG:0={ARG:0, 5}　ふたなり：射精した
+	CASE 452
+		PRINTFORML ARG:0={ARG:0, 5}　ふたなり：萎び落ちた
+	CASE 453
+		PRINTFORML ARG:0={ARG:0, 5}　ふたなり：ターン終了時発情
+	CASE 454
+		PRINTFORML ARG:0={ARG:0, 5}　ふたなり：触手定着　素質[ふたなり]取得
+	CASE 455
+		PRINTFORML ARG:0={ARG:0, 5}　性欲発散
+		PRINTFORML ARG:1={ARG:1, 5}　 0：V, 対象キャラ喪失中　 1：V, 対象キャラ拘束中　 2：V, 対象キャラ睡眠中
+		PRINTFORML            　 5：B, 対象キャラ喪失中　 6：B, 対象キャラ拘束中
+		PRINTFORML            　 7：B, 対象キャラ喪失中, 対象キャラが[巨乳]か[爆乳]を取得済
+		PRINTFORML            　 8：B, 対象キャラ拘束中, 対象キャラが[巨乳]か[爆乳]を取得済
+		PRINTFORML            　 9：B, 対象キャラ睡眠中
+		PRINTFORML            　10：A, 対象キャラ喪失中　11：A, 対象キャラ拘束中　12：A, 対象キャラ睡眠中
+		PRINTFORML            　15：M, 対象キャラ喪失中　16：M, 対象キャラ拘束中　17：M, 対象キャラ睡眠中
+		PRINTFORML            　21：NF, 対象キャラ喪失中　22：NF, 対象キャラ睡眠中　23：NF, 喪失・睡眠以外
+		PRINTFORML ARG:2={ARG:2, 5}　射精経験
+		PRINTFORML ARG:3={ARG:3, 5}　遭遇キャラのID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+	CASE 456
+		PRINTFORML ARG:0={ARG:0, 5}　性欲発散 (便乗して輪姦)
+		PRINTFORML ARG:1={ARG:1, 5}　 0：V, 対象キャラ喪失中
+		PRINTFORML            　 1：V, 対象キャラ拘束中
+		PRINTFORML            　 5：B, 対象キャラ喪失中
+		PRINTFORML            　 6：B, 対象キャラ拘束中
+		PRINTFORML            　10：A, 対象キャラ喪失中
+		PRINTFORML            　11：A, 対象キャラ拘束中
+		PRINTFORML            　15：M, 対象キャラ喪失中
+		PRINTFORML            　16：M, 対象キャラ拘束中
+		PRINTFORML            　30：PTメンバーによる行為後掃除
+		PRINTFORML            　31：PTメンバーによる行為後侮蔑
+		PRINTFORML            　35：NF, 2人目襲い掛かる　同時
+		PRINTFORML            　36：NF, 3人目襲い掛かる　同時
+		PRINTFORML            　37：NF, 3人目襲い掛かる　前の2人の事後
+		PRINTFORML ARG:2={ARG:2, 5}　射精経験
+		IF ARG:3 != 0
+			PRINTFORML ARG:3={ARG:3, 5}　遭遇キャラのID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		ELSE
+			PRINTFORML ARG:3={ARG:3, 5}　遭遇キャラのID (行為後掃除・侮蔑の場合は0)
+		ENDIF
+		PRINTFORML 補足       　ARG:1==30 or 31 の行為後口上が呼び出される条件は
+		PRINTFORML            　『ふたなりパッチ設定 - 主人公のみ』の設定と、PTに主人公以外のふたなりキャラが居ない事
+		PRINTFORML            　ゲーム中に設定を変更しても、PTメンバーにふたなり持ちが居る場合は呼び出されない
+	CASE 457
+		PRINTFORML ARG:0={ARG:0, 5}　性欲発散(催眠中)
+		PRINTFORML ARG:1={ARG:1, 5}　部位 0：V　1：V(同意)　5：B　10：A　15：M
+		PRINTFORML            　55：NF, 1人目誘い　56：NF, 2人目誘い
+		PRINTFORML            　57：NF, 3人目誘い 2人に犯され、1人目に片乳射精され、1人継続
+		PRINTFORML            　58：NF, 3人目誘い 2人に犯され、2人に両乳射精された
+		PRINTFORML ARG:2={ARG:2, 5}　射精経験
+		PRINTFORML ARG:3={ARG:3, 5}　遭遇キャラのID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+	CASE 458
+		PRINTFORML ARG:0={ARG:0, 5}　性欲発散の為に犯された
+		PRINTFORML ARG:1={ARG:1, 5}　部位 1：V　2：B　3：A　4：M
+		PRINTFORML 補足       　非喪失時のみ呼び出される、喪失中にレイプされても無反応
+		PRINTFORML            　また、ARG:1の部位判定が通常のものと違うので注意
+	CASE 459
+		PRINTFORML ARG:0={ARG:0, 5}　ふたなり治療(治療される側口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：V　1：B　2：A　3：M　4：手淫
+		PRINTFORML            　 5：69　11：ニプルファック　51：玉潰し
+	CASE 460
+		PRINTFORML ARG:0={ARG:0, 5}　ふたなりでおしおき
+		PRINTFORML ARG:1={ARG:1, 5}　-1：寄生触手におしおきを強制された　0：おしおきしなかった
+		PRINTFORML            　 1：V　2：B　3：A　4：M　5:触手
+	CASE 461
+		PRINTFORML ARG:0={ARG:0, 5}　ふたなり治療(治療する側口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：V　1：B　2：A　3：M　4：手淫
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 462
+		PRINTFORML ARG:0={ARG:0, 5}　放置プレイ(主人公側口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：V　1：B　2：A　3：C　4：M　5：ニプルファック
+	CASE 463
+		PRINTFORML ARG:0={ARG:0, 5}　放置プレイ(放置される側口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：V　1：B　2：A　3：C　4：M　5：ニプルファック
+	CASE 464
+		PRINTFORML ARG:0={ARG:0, 5}　キス
+		PRINTFORML ARG:1={ARG:1, 5}　偶数ならする側　奇数ならされる側
+		PRINTFORML ARG:2={ARG:2, 5}　EPダメージ
+		PRINTFORML ARG:3={ARG:3, 5}　対象キャラのID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+	CASE 465
+		PRINTFORML ARG:0={ARG:0, 5}　出会い頭治療
+		PRINTFORML ARG:1={ARG:1, 5}　0：足(治療される側)　1：足(治療する側)
+		PRINTFORML              2：M(治療される側)　3：M(治療する側)
+		PRINTFORML              4：手(治療される側)　5：手(治療する側)
+		PRINTFORML              6：V(治療される側)　7：V(治療する側)
+		PRINTFORML ARG:2={ARG:2, 5}　対象キャラのID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML 補足       　ARG:2 対象キャラのIDは治療する側のみ反映、治療される側は常に0
+	CASE 466
+		PRINTFORML ARG:0={ARG:0, 5}　勃起
+		PRINTFORML ARG:1={ARG:1, 5}　0：B勃起100％
+		PRINTFORML              1：C勃起100％（ペニスなし）
+		PRINTFORML              2：C勃起100％（ペニスあり）
+		PRINTFORML ARG:2={ARG:2, 5}　敵に攻撃されている場合そのID、0だと発情
+		PRINTFORML ARG:3={ARG:3, 5}　勃起度上昇量
+	CASE 467
+		PRINTFORML ARG:0={ARG:0, 5}　発情による勃起進行(システムメッセージ用)
+	CASE 468
+		PRINTFORML ARG:0={ARG:0, 5}　発情による勃起進行B
+		PRINTFORML 補足       　勃起値MAX時は呼び出されないので注意
+	CASE 469
+		PRINTFORML ARG:0={ARG:0, 5}　発情による勃起進行C
+		PRINTFORML 補足       　勃起値MAX時は呼び出されないので注意
+	CASE 470
+		PRINTFORML ARG:0={ARG:0, 5}　B勃起減衰
+		PRINTFORML ARG:1={ARG:1, 5}　0：0％　1：25％を割る　2：50％を割る　3：80％を割る
+	CASE 471
+		PRINTFORML ARG:0={ARG:0, 5}　C勃起減衰
+		PRINTFORML ARG:1={ARG:1, 5}　0：0％　1：25％を割る　2：50％を割る　3：80％を割る　4：1200％を割る　5：160％を割る
+	CASE 500
+		PRINTFORML ARG:0={ARG:0, 5}　精液ダメージ
+	CASE 501
+		PRINTFORML ARG:0={ARG:0, 5}　陥没乳首勃起
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML 補足       　コマンドIDが渡されるのは戦闘中のみ、非戦闘中は常に0
+	CASE 502
+		PRINTFORML ARG:0={ARG:0, 5}　偽酒
+		PRINTFORML ARG:1={ARG:1, 5}　0：偽酒飲み開始　1～6：強制飲酒(無害)　7：何も起きなかった
+		PRINTFORML            　8：強制飲酒(V)＋眠気MAX　9：強制飲酒(A)＋眠気MAX
+	CASE 503
+		PRINTFORML ARG:0={ARG:0, 5}　使い魔
+		PRINTFORML ARG:1={ARG:1, 5}　 0：睡眠中 B開発開始　1：睡眠時 見張りを頼んだ　2：睡眠中 B開発中
+		PRINTFORML            　 3：睡眠中性攻撃B　4：睡眠中B開発(母乳)　5：睡眠中B開発(B感度)　6：睡眠時 見張り決定前
+		PRINTFORML            　 7：ランダムイベント 使い魔が罠を発見
+		PRINTFORML            　 8：ランダムイベント 使い魔がアイテムを発見　9：睡眠中B開発(淫乳)
+		PRINTFORML            　10：戦闘中 使い魔による発情妨害 前
+		PRINTFORML            　11：戦闘中 使い魔による発情妨害 後
+		PRINTFORML 補足       　睡眠開始時、使い魔に見張りを頼んだ場合 ARG:0==114(睡眠開始) は呼び出されない
+	CASE 505
+		PRINTFORML ARG:0={ARG:0, 5}　胸揺れ
+		PRINTFORML ARG:1={ARG:1, 5}　 0：B感覚LV1以下　1：B感覚LV2以上　2：CP50％未満時追加ダメージ
+		PRINTFORML 補足       　素質[巨乳][爆乳][超乳]のいずれかを持っている＋敵の攻撃を回避した際に発生
+		PRINTFORML            　ただし、コウノトリとフコウノトリの男根見せつけ攻撃の場合は判定無し
+	CASE 506
+		PRINTFORML ARG:0={ARG:0, 5}　尿意
+		PRINTFORML ARG:1={ARG:1, 5}　 0：携帯トイレ触手化
+		PRINTFORML            　3：　 8：花摘み襲撃(性攻撃B以外ランダム)　9：花摘み襲撃(寄生攻撃)
+		PRINTFORML            　3：　10：花摘み襲撃(発情)　11：花摘み襲撃(下着強奪)
+	CASE 507
+		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：催眠 (掛けられた側の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：催眠に掛かった　1：視姦された(はいてない)　2：視姦された(はいてる)
+		PRINTFORML            　3：罵倒した　4：踏んだ
+	CASE 508
+		PRINTFORML ARG:0={ARG:0, 5}　触手包帯
+		PRINTFORML ARG:1={ARG:1, 5}　0：触手包帯発覚　1：触手包帯暴走
+	CASE 509
+		PRINTFORML ARG:0={ARG:0, 5}　膨乳病
+		PRINTFORML ARG:1={ARG:1, 5}　0～3：超乳化が進行　4：超乳化
+		PRINTFORML 補足       　フェイズ終了時、[母乳製造装置]を持っていれば超乳化が進行
+	CASE 510
+		PRINTFORML ARG:0={ARG:0, 5}　バストサイズ変化
+		PRINTFORML ARG:1={ARG:1, 5}　対象キャラID (ID.{ARG:1}=%CALLNAME:(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　変化前のサイズ (-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳)
+		PRINTFORML ARG:3={ARG:3, 5}　変化後のサイズ (-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳)
+		PRINTFORML ARG:4={ARG:4, 5}　理由 (0:その他　1:アイテムを使った　2:出産時豊乳化　3:自販機)
+		PRINTFORML ARG:5={ARG:5, 5}　使用したアイテムのID (ID.{ARG:5}=%ITEMNAME:(ARG:5)%)
+	CASE 511
+		PRINTFORML ARG:0={ARG:0, 5}　エネミー図鑑
+		PRINTFORML ARG:1={ARG:1, 5}　敵の種類 (%ENEMY_NAME(ARG:1)%)
+	CASE 512
+		PRINTFORML ARG:0={ARG:0, 5}　卵巣異常
+		PRINTFORML ARG:1={ARG:1, 5}　成長後の状態
+	CASE 513
+		PRINTFORML ARG:0={ARG:0, 5}　状態異常覚書
+		PRINTFORML ARG:1={ARG:1, 5}　状態異常の種類 (%DEBUFF_NAME(ARG:1)%)
+	CASE 514
+		PRINTFORML ARG:0={ARG:0, 5}　ペット関連
+		PRINTFORML ARG:1={ARG:1, 5}　0：ペットによるレイプ　1：身体を捧げた　2：餌やり　3：ペット加入　4：ペット別れ
+		SELECTCASE ARG:1
+		CASE 2
+			PRINTFORML ARG:2={ARG:1, 5}　与えたアイテムのID (ID.{ARG:2}=%ITEMNAME:(ARG:2)%)
+		CASE 4
+			PRINTFORML ARG:2={ARG:1, 5}　0：別れた　1：別れられなかった
+		ENDSELECT
+	CASE 515
+		PRINTFORML ARG:0={ARG:0, 5}　ステータス図鑑
+		PRINTFORML ARG:1={ARG:1, 5}　ステータスの種類 (%STATUS_NAME(ARG:1)%)
+	CASE 516
+		PRINTFORML ARG:0={ARG:0, 5}　罠図鑑
+		PRINTFORML ARG:1={ARG:1, 5}　罠の種類 (%TRAP_NAME(ARG:1)%)
+	CASE 517
+		PRINTFORML ARG:0={ARG:0, 5}　媚薬爆弾
+		PRINTFORML ARG:1={ARG:1, 5}　0：爆弾発動　1：発動終了
+	CASE 518
+		PRINTFORML ARG:0={ARG:0, 5}　B拡張
+		PRINTFORML ARG:1={ARG:1, 5}　0：【拡張乳腺】取得　1：【拡張乳腺+】取得　2：【拡張乳腺++】取得　3：【拡張乳腺+++】取得
+		PRINTFORML            　4：【拡張乳腺】NP　5：【拡張乳腺+】NP　6：【拡張乳腺++】NP　7：【拡張乳腺+++】NP
+	CASE 519
+		PRINTFORML ARG:0={ARG:0, 5}　骨折ダメージ
+	CASE 520
+		PRINTFORML ARG:0={ARG:0, 5}　捕虜制裁ダメージ
+	CASE 521
+		PRINTFORML ARG:0={ARG:0, 5}　乳首寄生産卵が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時は乳首寄生出産となる
+	CASE 522
+		PRINTFORML ARG:0={ARG:0, 5}　乳首寄生産卵が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時は乳首寄生出産となる
+	CASE 523
+		PRINTFORML ARG:0={ARG:0, 5}　乳首産卵
+		PRINTFORML ARG:1={ARG:1, 5}　0：産卵開始　1：産卵終了　2：卵回収　3：産卵体質入手　4：産卵中触手に襲われる
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時は乳首寄生出産となる
+	CASE 524
+		PRINTFORML ARG:0={ARG:0, 5}　乳首産卵 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：産卵開始　1：産卵終了　2：卵回収
+		SIF ARG:1 == 0
+			PRINTFORML ARG:2={ARG:2, 5}　産卵キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 525
+		PRINTFORML ARG:0={ARG:0, 5}　乳首寄生出産が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+	CASE 526
+		PRINTFORML ARG:0={ARG:0, 5}　乳首寄生出産が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 527
+		PRINTFORML ARG:0={ARG:0, 5}　乳首寄生出産
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動　3：出産中触手に襲われる
+	CASE 528
+		PRINTFORML ARG:0={ARG:0, 5}　乳首寄生出産 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動
+		SIF ARG:1 == 0
+			PRINTFORML ARG:2={ARG:2, 5}　出産キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 529
+		PRINTFORML ARG:0={ARG:0, 5}　性欲発散の為に犯された ニプルファック 行為中
+		PRINTFORML ARG:1={ARG:1, 5}　0：1人に犯された　1：輪姦
+		PRINTFORML 補足       　【超乳】以上所持で地の文が変化
+	CASE 530
+		PRINTFORML ARG:0={ARG:0, 5}　性欲発散の為に犯された ニプルファック 射精
+		PRINTFORML ARG:1={ARG:1, 5}　0：1人のみ　1：2人同時　2：1人のみ、1人継続
+		PRINTFORML ARG:2={ARG:2, 5}　射精キャラID1 (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		SIF ARG:3 != 0
+			PRINTFORML ARG:3={ARG:3, 5}　射精キャラID2 (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		PRINTFORML 補足       　射精キャラが2人以上の場合のみARG:3にもキャラIDが入る
+	CASE 531
+		PRINTFORML ARG:0={ARG:0, 5}　性欲発散の為に犯された ニプルファック 事後
+		PRINTFORML ARG:1={ARG:1, 5}　0：1人のみ　1：2人同時　2：1人のみ、1人継続
+		PRINTFORML ARG:2={ARG:2, 5}　射精キャラID1 (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		SIF ARG:3 != 0
+			PRINTFORML ARG:3={ARG:3, 5}　射精キャラID2 (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+		PRINTFORML 補足       　射精キャラが2人以上の場合のみARG:3にもキャラIDが入る
+	CASE 532
+		PRINTFORML ARG:0={ARG:0, 5}　大量膣内射精
+		PRINTFORML ARG:1={ARG:1, 5}　敵の種類 (%ENEMY_NAME(ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+	CASE 533
+		PRINTFORML ARG:0={ARG:0, 5}　精液風呂に入った
+	CASE 534
+		PRINTFORML ARG:0={ARG:0, 5}　娘の種族図鑑
+	CASE 541
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生産卵が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時はC寄生出産となる
+	CASE 542
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生産卵が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時はC寄生出産となる
+	CASE 543
+		PRINTFORML ARG:0={ARG:0, 5}　C産卵
+		PRINTFORML ARG:1={ARG:1, 5}　0：産卵開始　1：産卵終了　2：卵回収　3：産卵体質入手　4：産卵中触手に襲われる
+		PRINTFORML 補足       　産卵プレイコンフィグOFF時はC寄生出産となる
+	CASE 544
+		PRINTFORML ARG:0={ARG:0, 5}　C産卵 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：産卵開始　1：産卵終了　2：卵回収
+		SIF ARG:1 == 0
+			PRINTFORML ARG:2={ARG:2, 5}　産卵キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 545
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生出産が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+	CASE 546
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生出産が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 547
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生出産
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動　3：出産中触手に襲われる
+	CASE 548
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生出産 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動
+		SIF ARG:1 == 0
+			PRINTFORML ARG:2={ARG:2, 5}　出産キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 549
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生による射精妨害
+		PRINTFORML ARG:1={ARG:1, 5}　敵ID (ID.{ARG:1}=%SAVESTR:(ARG:1)%)
+	CASE 550
+		PRINTFORML ARG:0={ARG:0, 5}　C寄生による玉肥大化
+	CASE 551
+		PRINTFORML ARG:0={ARG:0, 5}　NPCの悲鳴
+		PRINTFORML ARG:1={ARG:1, 5}　0：NPCによる悲鳴　1：悲鳴を聞いた主人公の反応
+		PRINTFORML ARG:2={ARG:2, 5}　NPCの位置
+		SIF ARG:1 == 1
+			PRINTFORML ARG:3={ARG:3, 5}　悲鳴をあげたキャラID (ID.{ARG:3}=%CALLNAME:(ARG:3)%)
+	CASE 552
+		PRINTFORML ARG:0={ARG:0, 5}　C妊娠が進行
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+	CASE 553
+		PRINTFORML ARG:0={ARG:0, 5}　C妊娠が進行 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　残り時間
+		PRINTFORML ARG:2={ARG:2, 5}　寄生されているキャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 554
+		PRINTFORML ARG:0={ARG:0, 5}　C妊娠出産
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動　3：出産中触手に襲われる
+	CASE 555
+		PRINTFORML ARG:0={ARG:0, 5}　C妊娠出産 (寄生された本人以外の口上)
+		PRINTFORML ARG:1={ARG:1, 5}　0：出産開始　1：出産終了　2：子供移動
+		SIF ARG:1 == 0
+			PRINTFORML ARG:2={ARG:2, 5}　出産キャラID (ID.{ARG:2}=%CALLNAME:(ARG:2)%)
+	CASE 1012
+		PRINTFORML ARG:0={ARG:0, 5}　悪落ちキャラの通常攻撃
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　HPダメージ
+		PRINTFORML ARG:3={ARG:3, 5}　CPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		SELECTCASE ARG:1
+		CASE 126, 137, 138, 139, 140, 145
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 1013
+		PRINTFORML ARG:0={ARG:0, 5}　悪落ちキャラの衣服攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:3={ARG:3, 5}　CPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　EPダメージ
+		PRINTFORML ARG:5={ARG:5, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		SELECTCASE ARG:1
+		CASE 237, 238
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 1014
+		PRINTFORML ARG:0={ARG:0, 5}　悪落ちキャラの性攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　部位　0：A　1：B　2：C　3：V　5：肌　9：M
+		PRINTFORML ARG:3={ARG:3, 5}　EPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		SELECTCASE ARG:1
+		CASE 685, 692
+			PRINTFORML ※「テキスト表現の残酷さ」設定によって内容が変化
+		ENDSELECT
+	CASE 1015
+		PRINTFORML ARG:0={ARG:0, 5}　悪落ちキャラの拘束攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：拘束　1：丸呑み
+		PRINTFORML ARG:3={ARG:3, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+	CASE 1016
+		PRINTFORML ARG:0={ARG:0, 5}　悪落ちキャラの寄生攻撃 (命中)
+		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
+		PRINTFORML ARG:2={ARG:2, 5}　0：通常の寄生攻撃　1～：妊娠攻撃(射精量)
+		PRINTFORML ARG:3={ARG:3, 5}　MPダメージ
+		PRINTFORML ARG:4={ARG:4, 5}　命中メッセージによる特殊処理 (TFLAG:98)
+		PRINTFORML 補足       　特殊寄生・特殊妊娠の場合、産まれる敵は寄生主とは別の種族になる
+		PRINTFORML            　※クイーンによる寄生→リビングバインを出産　等
+	CASE 1200
+		PRINTFORML ARG:0={ARG:0, 5}　ランダムイベント発生（悪落ち）
+		PRINTFORML ARG:1={ARG:1, 5}　発生イベント：結婚式場
+		PRINTFORML ARG:2={ARG:2, 5}　1：結婚式前　2：触手服ウェディングドレス授与　3：誓いの公開レイプ
+		PRINTFORML            　4：誓いの公開孕ませ　5：花嫁素質取得　6：結婚式後
+	CASE 1401
+		PRINTFORML ARG:0={ARG:0, 5}　ペットコマンドのご主人様に下克上イベント（悪落ち）
+		PRINTFORML ARG:1={ARG:1, 5}　0：下克上失敗
+		PRINTFORML            　3:連鎖堕ちイベント開始
+		PRINTFORML            　5:連鎖堕ちイベント中
+		PRINTFORML 補足       　悪落ちキャラはPETNAMEで出せる
+	CASE 1403
+		PRINTFORML ARG:0={ARG:0, 5}　ペットを追放しようとした場合の連鎖堕ちイベント（悪落ち）
+		PRINTFORML ARG:1={ARG:1, 5}　 0：正常なキャラが二人いる状態で一人目が捕まる
+		PRINTFORML            　 2：正常なキャラが一人堕ちているキャラが一人の状態で捕まる
+		PRINTFORML            　 4：調教一人目
+		PRINTFORML            　 5：二人の洗脳済みがいる状態で次の犠牲者視点
+		PRINTFORML            　 7：調教二人目
+		PRINTFORML            　 8：連鎖堕ちイベント終了
+		PRINTFORML 補足       　悪落ちキャラはPETNAMEで出せる
+	;ペット周り
+	CASE 1514
+		PRINTFORML ARG:0={ARG:0, 5}　ペット関連
+		PRINTFORML ARG:1={ARG:1, 5}　0：ペットによるレイプ　1：身体を捧げた　2：餌やり　3：ペット加入
+	
+	
+	
+	
+	
+	
+	CASEELSE
+		PRINTFORML 説明がありません
+	ENDSELECT
+	
+	DRAWLINEFORM -
+	REDRAW TEMP_REDRAW
+	RESETCOLOR
+RETURN
+
+
+; ■ 味方の攻撃 SKILLNAME装飾
+@SHOW_SYSTEM_MESSAGE_INFO_ADD_SKILLNAME (ARG:0)
+#FUNCTIONS
+	SELECTCASE ARG:0
+	CASE 10 TO 15
+		RETURNF "通常攻撃　"
+	CASE 20 TO 25
+		RETURNF "消耗武器　"
+	CASE 30 TO 35
+		RETURNF "非消耗武器　"
+	CASE 45
+		RETURNF "何もしない"
+	CASE 46
+		RETURNF "強制自慰"
+	CASE 54
+		RETURNF "A"
+	CASE 55
+		RETURNF "B"
+	CASE 56
+		RETURNF "C"
+	CASE 57
+		RETURNF "V"
+	CASE 58
+		RETURNF "その他"
+	CASE 60 TO 61
+		RETURNF "装備アイテムを"
+	CASE 71 TO 86
+		RETURNF "催眠中コマンド　"
+	CASE 95
+		RETURNF "抱きつかれ"
+	CASE 96
+		RETURNF "抱きつき"
+	ENDSELECT
+RETURNF ""
+
+; ■ 敵の攻撃 コマンド一覧
+@SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:0)
+#FUNCTIONS
+	SELECTCASE ARG:0
+
+	; □ 特殊な行動
+	CASE 0
+		RETURNF "何もしない"
+	CASE 1
+		RETURNF "拘束キャラを解放"
+	CASE 2
+		RETURNF "アイテムを使用"
+	CASE 4
+		RETURNF "拘束キャラ射出"
+	CASE 10
+		RETURNF "砂煙（サンドワーム用）"	
+	CASE 11
+		RETURNF "煙幕（オクトパス・クラーケン用）"
+	CASE 12
+		RETURNF "睡眠花粉・単体（アルラウネ用）"
+	CASE 13
+		RETURNF "発情花粉・単体（アルラウネ用）"
+	CASE 14
+		RETURNF "睡眠花粉・全体（ドリアード用）"
+	CASE 15
+		RETURNF "発情花粉・全体（ドリアード用）"
+	CASE 16
+		RETURNF "凝視（ガーディアン用）発情＋強制自慰"
+	CASE 17
+		RETURNF "凝視（ガーディアン用）強制気絶"
+	CASE 18
+		RETURNF "吸収効果　命中時HPが1割回復"
+	CASE 19
+		RETURNF "絶頂吸収　命中時HPが1割回復　相手が絶頂時は2割回復"
+	CASE 20
+		RETURNF "自慰誘発　相手の行動を自慰に書き換える"
+	CASE 21
+		RETURNF "フラート　次ターン性攻撃威力３倍"
+	CASE 22
+		RETURNF "全体催眠（ヒュプノ用）　全員を行動不能に"
+	CASE 23
+		RETURNF "回復の光　処女膜とHP回復　浄化力とユニコーンのHP減少"
+	CASE 24
+		RETURNF "強制戦闘終了"
+	CASE 25
+		RETURNF "単体催眠（レッサーヒュプノ用）　誰か一人を数ターン行動不能に"
+	CASE 26
+		RETURNF "自慰見せつけ・全体（ナインテイルズ用）　発情"
+	CASE 27
+		RETURNF "卵幕（ドリフター用）"
+	CASE 28
+		RETURNF "睡眠攻撃・単体（ドリフター用）　昏睡"
+	CASE 29
+		RETURNF "ひなたぼっこ　自分のHPを最大HPの30%回復"
+	CASE 30
+		RETURNF "強制戦闘終了（ドリフター用）"
+	CASE 31
+		RETURNF "包囲（ハウンド用）　戦闘から逃げられなくなる"
+	CASE 32
+		RETURNF "乗っ取り 襲うの強制"
+	CASE 33
+		RETURNF "乗っ取り おねだり強制"
+	CASE 34
+		RETURNF "自己増殖"
+	CASE 35
+		RETURNF "自己回復"
+	CASE 36
+		RETURNF "悪臭の息 ランダムでバッドステータス付与攻撃が発動"
+	CASE 37
+		RETURNF "YMあなた 自慰見せつけ"
+	CASE 38
+		RETURNF "YMあなた 料理(回復)"
+	CASE 39
+		RETURNF "マミー 触手包帯"
+	CASE 40
+		RETURNF "幻惑の光 ランダムでバッドステータス付与攻撃が発動"
+	CASE 41
+		RETURNF "浄化の光 敵HPとPTの浄化力でHP・MP・EP・DP回復"
+	CASE 42
+		RETURNF "肉盾化"
+	CASE 43
+		RETURNF "自己回復(人型用)"
+	CASE 44
+		RETURNF "ユニコーン 回復のボコォ 処女膜・ 喪失・HP回復後、性攻撃V"
+	CASE 45
+		RETURNF "何もしない"
+	CASE 46
+		RETURNF "催眠胞子"
+	CASE 47
+		RETURNF "発情胞子"
+		
+	; □ 通常攻撃
+	CASE 100
+		RETURNF "通常攻撃　テスト敵用"
+	CASE 101
+		RETURNF "通常攻撃　クイーン本体　通常"
+	CASE 102
+		RETURNF "通常攻撃　クイーン本体　大振り"
+	CASE 103
+		RETURNF "通常攻撃　クイーン本体　全体"
+	CASE 104
+		RETURNF "通常攻撃　クイーンお供　通常"
+	CASE 105
+		RETURNF "通常攻撃　クイーンお供　大振り"
+	CASE 106
+		RETURNF "通常攻撃　ガーディアン　通常"
+	CASE 107
+		RETURNF "通常攻撃　ガーディアン　二段攻撃"
+	CASE 108
+		RETURNF "通常攻撃　ガーディアン　全体"
+	CASE 109
+		RETURNF "通常攻撃　バイオプラント　通常"
+	CASE 110
+		RETURNF "通常攻撃　バイオプラント　大振り"
+	CASE 111
+		RETURNF "通常攻撃　リビングバイン　通常"
+	CASE 113
+		RETURNF "通常攻撃　スカーレットバイン　通常"
+	CASE 114
+		RETURNF "通常攻撃　スカーレットバイン　二段攻撃"
+	CASE 115
+		RETURNF "通常攻撃　ワーム　通常"
+	CASE 116
+		RETURNF "通常攻撃　ワーム　大振り"
+	CASE 117
+		RETURNF "通常攻撃　サンドワーム　通常"
+	CASE 118
+		RETURNF "通常攻撃　サンドワーム　大振り"
+	CASE 119
+		RETURNF "通常攻撃　オクトパス　通常"
+	CASE 120
+		RETURNF "通常攻撃　オクトパス　吸収"
+	CASE 121
+		RETURNF "通常攻撃　クラーケン　通常"
+	CASE 122
+		RETURNF "通常攻撃　クラーケン　吸収"
+	CASE 123
+		RETURNF "通常攻撃　イソツビ　通常"
+	CASE 124
+		RETURNF "通常攻撃　イソツビ　大振り"
+	CASE 125
+		RETURNF "通常攻撃　アクティニア　通常"
+	CASE 126
+		RETURNF "通常攻撃　アクティニア　吸収"
+	CASE 127
+		RETURNF "通常攻撃　スライム　通常"
+	CASE 128
+		RETURNF "通常攻撃　スライム　全体"
+	CASE 129
+		RETURNF "通常攻撃　ブロブ　通常"
+	CASE 130
+		RETURNF "通常攻撃　ブロブ　全体"
+	CASE 131
+		RETURNF "通常攻撃　アルラウネ　通常"
+	CASE 132
+		RETURNF "通常攻撃　アルラウネ　二段攻撃"
+	CASE 133
+		RETURNF "通常攻撃　ドリアード　通常"
+	CASE 134
+		RETURNF "通常攻撃　ドリアード　二段攻撃"
+	CASE 135
+		RETURNF "通常攻撃　シェイプシフター　通常"
+	CASE 136
+		RETURNF "通常攻撃　シェイプシフター　二段攻撃"
+	CASE 137
+		RETURNF "通常攻撃　ドッペルゲンガー　通常"
+	CASE 138
+		RETURNF "通常攻撃　ドッペルゲンガー　二段攻撃"
+	CASE 139
+		RETURNF "通常攻撃　ドッペルゲンガー　全体"
+	CASE 140
+		RETURNF "通常攻撃　フェアリーイーター　吸収"
+	CASE 141
+		RETURNF "通常攻撃　コウノトリ　通常"
+	CASE 142
+		RETURNF "通常攻撃　フコウノトリ　通常"
+	CASE 143
+		RETURNF "通常攻撃　フコウノトリ　大振りオーバーキル"
+	CASE 144
+		RETURNF "通常攻撃　フコウノトリ　全体大振りオーバーキル"
+	CASE 145
+		RETURNF "通常攻撃　ユニコーン　拘束時通常攻撃　残虐表現でメッセージ変化"
+	CASE 146
+		RETURNF "通常攻撃　ユニコーン　通常"
+	CASE 147
+		RETURNF "通常攻撃　ラミア　通常"
+	CASE 148
+		RETURNF "通常攻撃　ミミック　通常"
+	CASE 149
+		RETURNF "通常攻撃　ヴォジャノーイ　通常"
+	CASE 150
+		RETURNF "通常攻撃　ナインテイルズ　通常"
+	CASE 151
+		RETURNF "通常攻撃　ナインテイルズ　九段攻撃"
+	CASE 152
+		RETURNF "通常攻撃　ナインテイルズ　大振り"
+	CASE 153
+		RETURNF "通常攻撃　ナインテイルズ　全体"
+	CASE 154
+		RETURNF "通常攻撃　ドリフター　通常"
+	CASE 155
+		RETURNF "通常攻撃　ドリフター　通常"
+	CASE 156
+		RETURNF "通常攻撃　ハウンド　通常"
+	CASE 157
+		RETURNF "通常攻撃　ハウンド　全体"
+	CASE 158
+		RETURNF "通常攻撃　男傀儡　通常"
+	CASE 159
+		RETURNF "通常攻撃　男傀儡　大振り"
+	CASE 160
+		RETURNF "通常攻撃　ジェリーフィッシュ　吸収"
+	CASE 161
+		RETURNF "通常攻撃　フレッシュゴーレム　大振り"
+	CASE 162
+		RETURNF "通常攻撃　フレッシュゴーレム　大振り全体"
+	CASE 163
+		RETURNF "通常攻撃　Cワンプ・Cアナコンダ　全体"
+	CASE 164
+		RETURNF "通常攻撃　YMあなた　全体"
+	CASE 165
+		RETURNF "通常攻撃　YMあなた　通常"
+	CASE 167
+		RETURNF "通常攻撃　ゲルシューター　通常"
+	CASE 168
+		RETURNF "通常攻撃　根無し草　大振り"
+	CASE 169
+		RETURNF "通常攻撃　テンタクルウォール・タングルフット　通常"
+	CASE 170
+		RETURNF "通常攻撃　メカテンタクルス　通常"
+	CASE 171
+		RETURNF "通常攻撃　メカテンタクルス　多段"
+	CASE 172
+		RETURNF "通常攻撃　メカテンタクスル　全体"
+	CASE 173
+		RETURNF "通常攻撃　悪堕ちキャラ　通常"
+	CASE 174
+		RETURNF "通常攻撃　悪堕ちキャラ　二段攻撃"
+	CASE 175
+		RETURNF "通常攻撃　悪堕ちキャラ　全体"
+
+	CASE 182
+		RETURNF "通常攻撃　ファンガス　吸収"
+	CASE 183
+		RETURNF "通常攻撃　ヴォッキ　肌＋精液ダメージ"
+	CASE 184
+		RETURNF "通常攻撃　ネコマタ　通常"
+	CASE 185
+		RETURNF "通常攻撃　オーガ　通常"
+		
+	; □ 衣服攻撃
+	CASE 200
+		RETURNF "衣服攻撃　テスト敵用"
+	CASE 201
+		RETURNF "衣服攻撃　クイーン本体　RAND"
+	CASE 204
+		RETURNF "衣服攻撃　クイーンお供　RAND"
+	CASE 206
+		RETURNF "衣服攻撃　ガーディアン　RAND"
+	CASE 207
+		RETURNF "衣服攻撃　ガーディアン　全体RAND"
+	CASE 209
+		RETURNF "衣服攻撃　バイオプラント　RAND"
+	CASE 211
+		RETURNF "衣服攻撃　リビングバイン　BV"
+	CASE 213
+		RETURNF "衣服攻撃　スカーレットバイン　BV"
+	CASE 215
+		RETURNF "衣服攻撃　ワーム　AC"
+	CASE 217
+		RETURNF "衣服攻撃　サンドワーム　AC"
+	CASE 219
+		RETURNF "衣服攻撃　オクトパス　BC"
+	CASE 221
+		RETURNF "衣服攻撃　クラーケン　BC"
+	CASE 223
+		RETURNF "衣服攻撃　イソツビ　AV"
+	CASE 225
+		RETURNF "衣服攻撃　アクティニア　AV"
+	CASE 227
+		RETURNF "衣服攻撃　スライム　AB"
+	CASE 228
+		RETURNF "衣服攻撃　スライム　全体AB"
+	CASE 229
+		RETURNF "衣服攻撃　ブロブ　二段AB"
+	CASE 230
+		RETURNF "衣服攻撃　ブロブ　全体AB"
+	CASE 231
+		RETURNF "衣服攻撃　アルラウネ　CV"
+	CASE 233
+		RETURNF "衣服攻撃　ドリアード　CV"
+	CASE 235
+		RETURNF "衣服攻撃　シェイプシフター　RAND"
+	CASE 237
+		RETURNF "衣服攻撃　ドッペルゲンガー　RAND"
+	CASE 238
+		RETURNF "衣服攻撃　ドッペルゲンガー　全体RAND"
+	CASE 240
+		RETURNF "衣服攻撃　ユニコーン　A"
+	CASE 242
+		RETURNF "衣服攻撃　ナインテイルズ　全体RAND"
+	CASE 244
+		RETURNF "衣服攻撃　ドリフター　BC"
+	CASE 245
+		RETURNF "衣服攻撃　男傀儡　RAND"
+	CASE 246
+		RETURNF "衣服攻撃　ジェリーフィッシュ　BC"
+	CASE 247
+		RETURNF "衣服攻撃　Cワンプ・Cアナコンダ　二段衣服攻撃"
+	CASE 248
+		RETURNF "衣服攻撃　Cワンプ・Cアナコンダ　下着を食いちぎる"
+	CASE 249
+		RETURNF "衣服攻撃　Cワンプ・Cアナコンダ　全体"
+	CASE 250
+		RETURNF "衣服攻撃　ホフゴブリン　RAND"
+	CASE 251
+		RETURNF "衣服攻撃　YMあなた"
+	CASE 253
+		RETURNF "衣服攻撃　ゲルシューター　強単体"
+	CASE 254
+		RETURNF "衣服攻撃　ゲルシューター　弱単体"
+	CASE 255
+		RETURNF "衣服攻撃　RAND"
+	CASE 256
+		RETURNF "衣服攻撃　テンタクルウォール・タングルフット　V"
+	CASE 257
+		RETURNF "衣服攻撃　メカテンタクルス　B"
+	CASE 258
+		RETURNF "衣服攻撃　メカテンタクルス　C"
+	CASE 259
+		RETURNF "衣服攻撃　悪堕ちキャラ　RAND"
+	CASE 260
+		RETURNF "衣服攻撃　悪堕ちキャラ　全体RAND"
+	CASE 261
+		RETURNF "衣服攻撃　触手姫　RAND"
+	CASE 262
+		RETURNF "衣服攻撃　触手姫　全体RAND"
+	CASE 263
+		RETURNF "衣服攻撃　スライム化　全体AB"
+	CASE 264
+		RETURNF "衣服攻撃　ネコマタ　C"
+		
+	; □ 性攻撃
+	CASE 300
+		RETURNF "性攻撃　テスト敵用"
+	CASE 301
+		RETURNF "性攻撃　テスト敵用"
+	CASE 302
+		RETURNF "性攻撃　クイーン本体　A"
+	CASE 303
+		RETURNF "性攻撃　クイーン本体　B"
+	CASE 304
+		RETURNF "性攻撃　クイーン本体　C"
+	CASE 305
+		RETURNF "性攻撃　クイーン本体　V+"
+	CASE 306
+		RETURNF "性攻撃　クイーン本体　二段複合"
+	CASE 307
+		RETURNF "性攻撃　クイーンお供　A+"
+	CASE 308
+		RETURNF "性攻撃　クイーンお供　B"
+	CASE 309
+		RETURNF "性攻撃　クイーンお供　C"
+	CASE 310
+		RETURNF "性攻撃　クイーンお供　V"
+	CASE 311
+		RETURNF "性攻撃　ガーディアン　A"
+	CASE 312
+		RETURNF "性攻撃　ガーディアン　B+"
+	CASE 313
+		RETURNF "性攻撃　ガーディアン　C"
+	CASE 314
+		RETURNF "性攻撃　ガーディアン　V"
+	CASE 315
+		RETURNF "性攻撃　ガーディアン　二段複合"
+	CASE 316
+		RETURNF "性攻撃　ガーディアン　全体複合"
+	CASE 317
+		RETURNF "性攻撃　バイオプラント　A"
+	CASE 318
+		RETURNF "性攻撃　バイオプラント　B"
+	CASE 319
+		RETURNF "性攻撃　バイオプラント　C+"
+	CASE 320
+		RETURNF "性攻撃　バイオプラント　V"
+	CASE 322
+		RETURNF "性攻撃　リビングバイン　B"
+	CASE 323
+		RETURNF "性攻撃　リビングバイン　V+"
+	CASE 325
+		RETURNF "性攻撃　スカーレットバイン　B"
+	CASE 326
+		RETURNF "性攻撃　スカーレットバイン　V+"
+	CASE 328
+		RETURNF "性攻撃　ワーム　A"
+	CASE 329
+		RETURNF "性攻撃　ワーム　C+"
+	CASE 331
+		RETURNF "性攻撃　サンドワーム　A"
+	CASE 332
+		RETURNF "性攻撃　サンドワーム　C+"
+	CASE 334
+		RETURNF "性攻撃　オクトパス　B+"
+	CASE 335
+		RETURNF "性攻撃　オクトパス　C"
+	CASE 336
+		RETURNF "性攻撃　オクトパス　B吸収"
+	CASE 337
+		RETURNF "性攻撃　オクトパス　C吸収"
+	CASE 338
+		RETURNF "性攻撃　クラーケン　B+"
+	CASE 339
+		RETURNF "性攻撃　クラーケン　C"
+	CASE 340
+		RETURNF "性攻撃　クラーケン　B吸収"
+	CASE 341
+		RETURNF "性攻撃　クラーケン　C吸収"
+	CASE 342
+		RETURNF "性攻撃　イソツビ　A"
+	CASE 343
+		RETURNF "性攻撃　イソツビ　V+"
+	CASE 344
+		RETURNF "性攻撃　イソツビ　複合"
+	CASE 346
+		RETURNF "性攻撃　アクティニア　A"
+	CASE 347
+		RETURNF "性攻撃　アクティニア　V+"
+	CASE 348
+		RETURNF "性攻撃　アクティニア　A吸収"
+	CASE 349
+		RETURNF "性攻撃　アクティニア　V吸収"
+	CASE 350
+		RETURNF "性攻撃　アクティニア　二段複合"
+	CASE 351
+		RETURNF "性攻撃　スライム　A+"
+	CASE 352
+		RETURNF "性攻撃　スライム　B"
+	CASE 353
+		RETURNF "性攻撃　スライム　全体A"
+	CASE 354
+		RETURNF "性攻撃　スライム　全体B"
+	CASE 355
+		RETURNF "性攻撃　ブロブ　A+"
+	CASE 356
+		RETURNF "性攻撃　ブロブ　B"
+	CASE 357
+		RETURNF "性攻撃　ブロブ　全体A"
+	CASE 358
+		RETURNF "性攻撃　ブロブ　全体B"
+	CASE 359
+		RETURNF "性攻撃　アルラウネ　C+"
+	CASE 360
+		RETURNF "性攻撃　アルラウネ　V"
+	CASE 361
+		RETURNF "性攻撃　アルラウネ　複合＋自慰誘発"
+	CASE 363
+		RETURNF "性攻撃　ドリアード　C+"
+	CASE 364
+		RETURNF "性攻撃　ドリアード　V"
+	CASE 365
+		RETURNF "性攻撃　ドリアード　複合＋自慰誘発"
+	CASE 367
+		RETURNF "性攻撃　シェイプシフター　A+"
+	CASE 368
+		RETURNF "性攻撃　シェイプシフター　B"
+	CASE 369
+		RETURNF "性攻撃　シェイプシフター　C"
+	CASE 370
+		RETURNF "性攻撃　シェイプシフター　V"
+	CASE 371
+		RETURNF "性攻撃　シェイプシフター　複合"
+	CASE 373
+		RETURNF "性攻撃　ドッペルゲンガー　A+"
+	CASE 374
+		RETURNF "性攻撃　ドッペルゲンガー　B"
+	CASE 375
+		RETURNF "性攻撃　ドッペルゲンガー　C"
+	CASE 376
+		RETURNF "性攻撃　ドッペルゲンガー　V"
+	CASE 377
+		RETURNF "性攻撃　ドッペルゲンガー　三段複合"
+	CASE 379
+		RETURNF "性攻撃　ヒュプノ　A"
+	CASE 380
+		RETURNF "性攻撃　ヒュプノ　B+"
+	CASE 381
+		RETURNF "性攻撃　ヒュプノ　C"
+	CASE 382
+		RETURNF "性攻撃　ヒュプノ　V"
+	CASE 383
+		RETURNF "性攻撃　ヒュプノ　二段複合"
+	CASE 384
+		RETURNF "性攻撃　ヒュプノ　全体複合"
+	CASE 385
+		RETURNF "性攻撃　ヒュプノ　全体B+"
+	CASE 386
+		RETURNF "性攻撃　ヒュプノ　全体V"
+	CASE 387
+		RETURNF "性攻撃　コウノトリ　全体V"
+	CASE 388
+		RETURNF "性攻撃　フコウノトリ　全体V"
+	CASE 390
+		RETURNF "性攻撃　ユニコーン　A"
+	CASE 391
+		RETURNF "性攻撃　ユニコーン　C"
+	CASE 392
+		RETURNF "性攻撃　スキュラ　全体B"
+	CASE 394
+		RETURNF "性攻撃　ナインテイルズ　A"
+	CASE 395
+		RETURNF "性攻撃　ナインテイルズ　B吸収"
+	CASE 396
+		RETURNF "性攻撃　ナインテイルズ　C"
+	CASE 397
+		RETURNF "性攻撃　ナインテイルズ　V"
+	CASE 398
+		RETURNF "性攻撃　男傀儡　A"
+	CASE 398
+		RETURNF "性攻撃　男傀儡　B"
+	CASE 400
+		RETURNF "性攻撃　男傀儡　C"
+	CASE 401
+		RETURNF "性攻撃　男傀儡　V"
+	CASE 402
+		RETURNF "性攻撃　ジェリーフィッシュ　C吸収"
+	CASE 403
+		RETURNF "性攻撃　アメーバ B"
+	CASE 404
+		RETURNF "性攻撃　フレッシュゴーレム　V全体"
+	CASE 405
+		RETURNF "性攻撃　フレッシュゴーレム　A全体"
+	CASE 406
+		RETURNF "性攻撃　Cワンプ・Cアナコンダ C"
+	CASE 407
+		RETURNF "性攻撃　Cワンプ・Cアナコンダ C"
+	CASE 408
+		RETURNF "性攻撃　Cワンプ・Cアナコンダ C"
+	CASE 409
+		RETURNF "性攻撃　Cワンプ・Cアナコンダ AV"
+	CASE 410
+		RETURNF "性攻撃　ホフゴブリン RAND"
+	CASE 412
+		RETURNF "性攻撃　根無し草　V吸収"
+	CASE 413
+		RETURNF "性攻撃　根無し草　B吸収"
+	CASE 414
+		RETURNF "触手責め攻撃　根無し草　M吸収"
+	CASE 415
+		RETURNF "触手責め攻撃　根無し草　M吸収中"
+	CASE 416
+		RETURNF "性攻撃　クリスタルエレメント　肌"
+	CASE 417
+		RETURNF "性攻撃　クリスタルエレメント　RAND"
+	CASE 418
+		RETURNF "性攻撃　テンタクルウォール・タングルフット　V"
+	CASE 419
+		RETURNF "性攻撃　メカテンタクルス　V"
+	CASE 420
+		RETURNF "性攻撃　メカテンタクルス　A"
+	CASE 421
+		RETURNF "性攻撃　スライム化　全体肌"
+	CASE 422
+		RETURNF "性攻撃　スライム化　全体B"
+		
+	; □ 拘束攻撃
+	CASE 500
+		RETURNF "拘束攻撃　テスト敵用"
+	CASE 501
+		RETURNF "拘束攻撃　クイーン本体　丸呑み"
+	CASE 502
+		RETURNF "拘束攻撃　クイーン本体　全体丸呑み"
+	CASE 503
+		RETURNF "拘束攻撃　クイーン本体　二段丸呑み"
+	CASE 504
+		RETURNF "拘束攻撃　クイーンお供　拘束"
+	CASE 506
+		RETURNF "拘束攻撃　ガーディアン　拘束"
+	CASE 507
+		RETURNF "拘束攻撃　ガーディアン　全体拘束"
+	CASE 508
+		RETURNF "拘束攻撃　ガーディアン　二段拘束"
+	CASE 509
+		RETURNF "拘束攻撃　バイオプラント　丸呑み"
+	CASE 511
+		RETURNF "拘束攻撃　リビングバイン　拘束"
+	CASE 513
+		RETURNF "拘束攻撃　スカーレットバイン　拘束"
+	CASE 515
+		RETURNF "拘束攻撃　ワーム　丸呑み"
+	CASE 517
+		RETURNF "拘束攻撃　サンドワーム　丸呑み"
+	CASE 519
+		RETURNF "拘束攻撃　オクトパス　拘束"
+	CASE 521
+		RETURNF "拘束攻撃　クラーケン　拘束"
+	CASE 523
+		RETURNF "拘束攻撃　イソツビ　丸呑み"
+	CASE 524
+		RETURNF "拘束攻撃　イソツビ　二段丸呑み"
+	CASE 525
+		RETURNF "拘束攻撃　アクティニア　丸呑み"
+	CASE 526
+		RETURNF "拘束攻撃　アクティニア　三段丸呑み"
+	CASE 527
+		RETURNF "拘束攻撃　スライム　丸呑み"
+	CASE 529
+		RETURNF "拘束攻撃　ブロブ　丸呑み"
+	CASE 530
+		RETURNF "拘束攻撃　ブロブ　全体丸呑み"
+	CASE 531
+		RETURNF "拘束攻撃　アルラウネ　拘束"
+	CASE 533
+		RETURNF "拘束攻撃　ドリアード　拘束"
+	CASE 535
+		RETURNF "拘束攻撃　シェイプシフター　拘束"
+	CASE 537
+		RETURNF "拘束攻撃　ドッペルゲンガー　拘束"
+	CASE 538
+		RETURNF "拘束攻撃　ドッペルゲンガー　全体拘束"
+	CASE 540
+		RETURNF "拘束攻撃　○○の娘　拘束"
+	CASE 542
+		RETURNF "拘束攻撃　ヒュプノ　拘束"
+	CASE 543
+		RETURNF "拘束攻撃　ヒュプノ　全体拘束"
+	CASE 544
+		RETURNF "拘束攻撃　フェアリーイーター　拘束"
+	CASE 545
+		RETURNF "拘束攻撃　フェアリーイーター　丸呑み 拘束中の丸呑みなので別枠としてFLAG55に10を使用"
+	CASE 546
+		RETURNF "拘束攻撃　コウノトリ　拘束"
+	CASE 547
+		RETURNF "拘束攻撃　フコウノトリ　全体拘束"
+	CASE 548
+		RETURNF "拘束攻撃　ユニコーン　拘束"
+	CASE 549
+		RETURNF "拘束攻撃　ラミア　拘束"
+	CASE 550
+		RETURNF "拘束攻撃　ミミック　丸呑み"
+	CASE 551
+		RETURNF "拘束攻撃　ヴォジャノーイ　丸呑み"
+	CASE 552
+		RETURNF "拘束攻撃　ナインテイルズ　拘束"
+	CASE 553
+		RETURNF "拘束攻撃　ハウンド　拘束"
+	CASE 554
+		RETURNF "拘束攻撃　男傀儡　拘束"
+	CASE 555
+		RETURNF "拘束攻撃　ジェリーフィッシュ　拘束"
+	CASE 556
+		RETURNF "拘束攻撃　フレッシュゴーレム　全体拘束"
+	CASE 557
+		RETURNF "拘束攻撃　アグー　拘束"
+	CASE 558
+		RETURNF "拘束攻撃　Cワンプ・Cアナコンダ　拘束"
+	CASE 559
+		RETURNF "拘束攻撃　ホフゴブリン　拘束"
+	CASE 560
+		RETURNF "拘束攻撃　YMあなた　拘束"
+	CASE 562
+		RETURNF "拘束攻撃　ゲルシューター　拘束"
+	CASE 563
+		RETURNF "拘束攻撃　根無し草　丸呑み"
+	CASE 564
+		RETURNF "拘束攻撃　拘束"
+	CASE 565
+		RETURNF "拘束攻撃　テンタクルウォール　丸呑み"
+	CASE 566
+		RETURNF "拘束攻撃　タングルフット　全体丸呑み"
+	CASE 567
+		RETURNF "拘束攻撃　メカテンタクルス　拘束"
+	CASE 568
+		RETURNF "拘束攻撃　悪堕ちキャラ　拘束"
+	CASE 569
+		RETURNF "拘束攻撃　触手姫　拘束(高難易度時は全体拘束)"
+	CASE 570
+		RETURNF "拘束攻撃　アルラウネ化　拘束"
+	CASE 571
+		RETURNF "拘束攻撃　スライム化　丸呑み"
+	CASE 572
+		RETURNF "拘束攻撃　ファンガス　拘束"
+	CASE 573
+		RETURNF "拘束攻撃　ヴォッキ　拘束"
+	CASE 574
+		RETURNF "拘束攻撃　ヴォッキ　丸呑み"
+
+	CASE 576
+		RETURNF "拘束攻撃　ネコマタ　拘束"
+		
+	; □ 性攻撃(強)
+	CASE 600
+		RETURNF "性攻撃(強)　テスト敵用"
+	CASE 601
+		RETURNF "性攻撃(強)　テスト敵用"
+	CASE 602
+		RETURNF "性攻撃(強)　クイーン本体　A"
+	CASE 603
+		RETURNF "性攻撃(強)　クイーン本体　B"
+	CASE 604
+		RETURNF "性攻撃(強)　クイーン本体　C"
+	CASE 605
+		RETURNF "性攻撃(強)　クイーン本体　V+"
+	CASE 606
+		RETURNF "性攻撃(強)　クイーン本体　二段複合"
+	CASE 607
+		RETURNF "性攻撃(強)　クイーンお供　A+"
+	CASE 608
+		RETURNF "性攻撃(強)　クイーンお供　B"
+	CASE 609
+		RETURNF "性攻撃(強)　クイーンお供　C"
+	CASE 610
+		RETURNF "性攻撃(強)　クイーンお供　V"
+	CASE 611
+		RETURNF "性攻撃(強)　ガーディアン　A"
+	CASE 612
+		RETURNF "性攻撃(強)　ガーディアン　B+"
+	CASE 613
+		RETURNF "性攻撃(強)　ガーディアン　C"
+	CASE 614
+		RETURNF "性攻撃(強)　ガーディアン　V"
+	CASE 615
+		RETURNF "性攻撃(強)　ガーディアン　二段複合"
+	CASE 617
+		RETURNF "性攻撃(強)　バイオプラント　A"
+	CASE 618
+		RETURNF "性攻撃(強)　バイオプラント　B"
+	CASE 619
+		RETURNF "性攻撃(強)　バイオプラント　C+"
+	CASE 620
+		RETURNF "性攻撃(強)　バイオプラント　V"
+	CASE 622
+		RETURNF "性攻撃(強)　リビングバイン　B"
+	CASE 623
+		RETURNF "性攻撃(強)　リビングバイン　V+"
+	CASE 625
+		RETURNF "性攻撃(強)　スカーレットバイン　B"
+	CASE 626
+		RETURNF "性攻撃(強)　スカーレットバイン　V+"
+	CASE 628
+		RETURNF "性攻撃(強)　ワーム　A"
+	CASE 629
+		RETURNF "性攻撃(強)　ワーム　C+"
+	CASE 631
+		RETURNF "性攻撃(強)　サンドワーム　A"
+	CASE 632
+		RETURNF "性攻撃(強)　サンドワーム　C+"
+	CASE 634
+		RETURNF "性攻撃(強)　オクトパス　B+"
+	CASE 635
+		RETURNF "性攻撃(強)　オクトパス　C"
+	CASE 636
+		RETURNF "性攻撃(強)　オクトパス　B吸収"
+	CASE 637
+		RETURNF "性攻撃(強)　オクトパス　C吸収"
+	CASE 638
+		RETURNF "性攻撃(強)　クラーケン　B+"
+	CASE 639
+		RETURNF "性攻撃(強)　クラーケン　C"
+	CASE 640
+		RETURNF "性攻撃(強)　クラーケン　B吸収"
+	CASE 641
+		RETURNF "性攻撃(強)　クラーケン　C吸収"
+	CASE 642
+		RETURNF "性攻撃(強)　イソツビ　A"
+	CASE 643
+		RETURNF "性攻撃(強)　イソツビ　V+"
+	CASE 644
+		RETURNF "性攻撃(強)　イソツビ　複合"
+	CASE 646
+		RETURNF "性攻撃(強)　アクティニア　A"
+	CASE 647
+		RETURNF "性攻撃(強)　アクティニア　V+"
+	CASE 648
+		RETURNF "性攻撃(強)　アクティニア　A吸収"
+	CASE 649
+		RETURNF "性攻撃(強)　アクティニア　V吸収"
+	CASE 650
+		RETURNF "性攻撃(強)　アクティニア　二段複合"
+	CASE 651
+		RETURNF "性攻撃(強)　スライム　A+"
+	CASE 652
+		RETURNF "性攻撃(強)　スライム　B"
+	CASE 653
+		RETURNF "性攻撃(強)　スライム　複合"
+	CASE 655
+		RETURNF "性攻撃(強)　ブロブ　A+"
+	CASE 656
+		RETURNF "性攻撃(強)　ブロブ　B"
+	CASE 657
+		RETURNF "性攻撃(強)　ブロブ　複合"
+	CASE 659
+		RETURNF "性攻撃(強)　アルラウネ　C+"
+	CASE 660
+		RETURNF "性攻撃(強)　アルラウネ　V"
+	CASE 661
+		RETURNF "性攻撃(強)　アルラウネ　複合＋自慰誘発"
+	CASE 663
+		RETURNF "性攻撃(強)　ドリアード　C+"
+	CASE 664
+		RETURNF "性攻撃(強)　ドリアード　V"
+	CASE 665
+		RETURNF "性攻撃(強)　ドリアード　複合＋自慰誘発"
+	CASE 667
+		RETURNF "性攻撃(強)　シェイプシフター　A+"
+	CASE 668
+		RETURNF "性攻撃(強)　シェイプシフター　B"
+	CASE 669
+		RETURNF "性攻撃(強)　シェイプシフター　C"
+	CASE 670
+		RETURNF "性攻撃(強)　シェイプシフター　V"
+	CASE 671
+		RETURNF "性攻撃(強)　シェイプシフター　複合"
+	CASE 673
+		RETURNF "性攻撃(強)　ドッペルゲンガー　A+"
+	CASE 674
+		RETURNF "性攻撃(強)　ドッペルゲンガー　B"
+	CASE 675
+		RETURNF "性攻撃(強)　ドッペルゲンガー　C"
+	CASE 676
+		RETURNF "性攻撃(強)　ドッペルゲンガー　V"
+	CASE 677
+		RETURNF "性攻撃(強)　ドッペルゲンガー　三段複合"
+	CASE 679
+		RETURNF "性攻撃(強)　ヒュプノ　A"
+	CASE 680
+		RETURNF "性攻撃(強)　ヒュプノ　B+"
+	CASE 681
+		RETURNF "性攻撃(強)　ヒュプノ　C"
+	CASE 682
+		RETURNF "性攻撃(強)　ヒュプノ　V"
+	CASE 683
+		RETURNF "性攻撃(強)　ヒュプノ　二段複合"
+	CASE 684
+		RETURNF "性攻撃(強)　フェアリーイーター　V吸収"
+	CASE 685
+		RETURNF "性攻撃(強)　フェアリーイーター　B吸収"
+	CASE 687
+		RETURNF "性攻撃(強)　ユニコーン　A+"
+	CASE 688
+		RETURNF "性攻撃(強)　ユニコーン　V+"
+	CASE 689
+		RETURNF "性攻撃(強)　ユニコーン　複合"
+	CASE 690
+		RETURNF "性攻撃(強)　ヴォジャノーイ　A"
+	CASE 691
+		RETURNF "性攻撃(強)　ヴォジャノーイ　三段A"
+	CASE 692
+		RETURNF "性攻撃(強)　ヴォジャノーイ　A"
+	CASE 693
+		RETURNF "性攻撃(強)　ナインテイルズ　A"
+	CASE 694
+		RETURNF "性攻撃(強)　ナインテイルズ　B吸収"
+	CASE 695
+		RETURNF "性攻撃(強)　ナインテイルズ　C"
+	CASE 696
+		RETURNF "性攻撃(強)　ナインテイルズ　複合"
+	CASE 697
+		RETURNF "性攻撃(強)　ハウンド　A"
+	CASE 698
+		RETURNF "性攻撃(強)　ハウンド　V+"
+	CASE 699
+		RETURNF "性攻撃(強)　ハウンド　三段複合"
+	CASE 700
+		RETURNF "性攻撃(強)　男傀儡　A"
+	CASE 701
+		RETURNF "性攻撃(強)　男傀儡　複合"
+	CASE 702
+		RETURNF "性攻撃(強)　男傀儡　複合"
+	CASE 703
+		RETURNF "性攻撃(強)　男傀儡　V"
+	CASE 704
+		RETURNF "性攻撃(強)　男傀儡　複合"
+	CASE 705
+		RETURNF "性攻撃(強)　男傀儡　複合"
+	CASE 706
+		RETURNF "性攻撃(強)　ジェリーフィッシュ　CB吸収"
+	CASE 707
+		RETURNF "性攻撃(強)　ジェリーフィッシュ　AV吸収"
+	CASE 708
+		RETURNF "性攻撃(強)　フレッシュゴーレム　A"
+	CASE 709
+		RETURNF "性攻撃(強)　フレッシュゴーレム　V"
+	CASE 710
+		RETURNF "性攻撃(強)　フレッシュゴーレム　複合"
+	CASE 711
+		RETURNF "性攻撃(強)　アグー　A"
+	CASE 712
+		RETURNF "性攻撃(強)　アグー　V"
+	CASE 713
+		RETURNF "性攻撃(強)　アグー　AV複合"
+	CASE 714
+		RETURNF "性攻撃(強)　Cワンプ　C NP追加"
+	CASE 715
+		RETURNF "性攻撃(強)　Cワンプ　C NP吸収"
+	CASE 716
+		RETURNF "性攻撃(強)　Cワンプ　B"
+	CASE 717
+		RETURNF "性攻撃(強)　Cワンプ　AV複合"
+	CASE 718
+		RETURNF "性攻撃(強)　ホフゴブリン　RAND"
+	CASE 719
+		RETURNF "性攻撃(強)　ホフゴブリン　V複合"
+	CASE 720
+		RETURNF "性攻撃(強)　ホフゴブリン　複合　妊娠効果あり"
+	CASE 721
+		RETURNF "性攻撃(強)　YMあなた　BCV複合"
+	CASE 722
+		RETURNF "性攻撃(強)　YMあなた　AB複合"
+	CASE 731
+		RETURNF "性攻撃(強)　サキュバス　C"
+	CASE 732
+		RETURNF "性攻撃(強)　サキュバス　C ふたなり時威力激増"
+	CASE 733
+		RETURNF "性攻撃(強)　クリスタルエレメント　肌"
+	CASE 734
+		RETURNF "性攻撃(強)　クリスタルエレメント　RAND"
+	CASE 735
+		RETURNF "性攻撃(強)　テンタクルウォール　V"
+	CASE 736
+		RETURNF "性攻撃(強)　テンタクルウォール　A"
+	CASE 737
+		RETURNF "性攻撃(強)　テンタクルウォール　AV複合"
+	CASE 738
+		RETURNF "性攻撃(強)　タングルフット　V"
+	CASE 739
+		RETURNF "性攻撃(強)　タングルフット　A"
+	CASE 740
+		RETURNF "性攻撃(強)　タングルフット　AV複合"
+	CASE 741
+		RETURNF "性攻撃(強)　メカテンタクルス　V"
+	CASE 742
+		RETURNF "性攻撃(強)　メカテンタクルス　A"
+	CASE 743
+		RETURNF "性攻撃(強)　メカテンタクルス　B"
+	CASE 744
+		RETURNF "性攻撃(強)　メカテンタクルス　C"
+	CASE 745
+		RETURNF "性攻撃(強)　メカテンタクルス　C"
+	CASE 746
+		RETURNF "性攻撃(強)　触手姫　A+"
+	CASE 747
+		RETURNF "性攻撃(強)　触手姫　B"
+	CASE 748
+		RETURNF "性攻撃(強)　触手姫　V"
+	CASE 749
+		RETURNF "性攻撃(強)　触手姫　三段複合"
+	CASE 750
+		RETURNF "性攻撃(強)　スライム化　A+"
+	CASE 751
+		RETURNF "性攻撃(強)　スライム化　B"
+	CASE 752
+		RETURNF "性攻撃(強)　スライム化　複合"
+	CASE 753
+		RETURNF "性攻撃(強)　スライム化　C ふたなり時威力激増"
+	CASE 754
+		RETURNF "性攻撃(強)　ラミア化　AV複合"
+	CASE 755
+		RETURNF "性攻撃(強)　ラミア化　B"
+	CASE 756
+		RETURNF "性攻撃(強)　ファンガス　B吸収"
+	CASE 757
+		RETURNF "性攻撃(強)　ファンガス　C吸収"
+	CASE 758
+		RETURNF "性攻撃(強)　ヴォッキ　M"
+	CASE 759
+		RETURNF "性攻撃(強)　フルヴォッキ　複合"
+
+	CASE 763
+		RETURNF "性攻撃(強)　ネコマタ　A"
+	CASE 764
+		RETURNF "性攻撃(強)　ネコマタ　C"
+	CASE 765
+		RETURNF "性攻撃(強)　ネコマタ　AC"
+	CASE 766
+		RETURNF "性攻撃(強)　スコールバイン　B　豊乳化またはB感度増大"
+	CASE 767
+		RETURNF "性攻撃(強)　パツィルーイ M"
+	CASE 768
+		RETURNF "性攻撃(強)　パツィルーイ M催眠"
+	CASE 769
+		RETURNF "性攻撃(強)　パツィルーイ Mフラート"
+	CASE 770
+		RETURNF "性攻撃(強)　パツィルーイ M 本気キス"
+		
+	; □ 寄生攻撃
+	CASE 800
+		RETURNF "寄生攻撃　テスト敵用"
+	CASE 801
+		RETURNF "寄生攻撃　クイーン本体　特殊寄生"
+	CASE 802
+		RETURNF "寄生攻撃　クイーン本体　特殊妊娠"
+	CASE 804
+		RETURNF "寄生攻撃　クイーンお供　特殊寄生"
+	CASE 806
+		RETURNF "寄生攻撃　ガーディアン　特殊寄生"
+	CASE 807
+		RETURNF "寄生攻撃　ガーディアン　特殊寄生　高威力低寄生率"
+	CASE 809
+		RETURNF "寄生攻撃　バイオプラント　特殊寄生"
+	CASE 811
+		RETURNF "寄生攻撃　リビングバイン　寄生"
+	CASE 813
+		RETURNF "寄生攻撃　スカーレットバイン　寄生"
+	CASE 815
+		RETURNF "寄生攻撃　ワーム　寄生"
+	CASE 817
+		RETURNF "寄生攻撃　サンドワーム　寄生"
+	CASE 819
+		RETURNF "寄生攻撃　オクトパス　妊娠"
+	CASE 821
+		RETURNF "寄生攻撃　クラーケン　妊娠"
+	CASE 823
+		RETURNF "寄生攻撃　イソツビ　妊娠"
+	CASE 824
+		RETURNF "寄生攻撃　イソツビ　妊娠　低威力大量射精"
+	CASE 825
+		RETURNF "寄生攻撃　アクティニア　妊娠"
+	CASE 826
+		RETURNF "寄生攻撃　アクティニア　妊娠　低威力大量射精"
+	CASE 827
+		RETURNF "寄生攻撃　スライム　寄生"
+	CASE 828
+		RETURNF "寄生攻撃　スライム　寄生　高威力低寄生率"
+	CASE 829
+		RETURNF "寄生攻撃　ブロブ　寄生"
+	CASE 830
+		RETURNF "寄生攻撃　ブロブ　寄生　高威力低寄生率"
+	CASE 831
+		RETURNF "寄生攻撃　アルラウネ　妊娠"
+	CASE 832
+		RETURNF "寄生攻撃　アルラウネ　二段妊娠"
+	CASE 833
+		RETURNF "寄生攻撃　ドリアード　妊娠"
+	CASE 834
+		RETURNF "寄生攻撃　ドリアード　三段妊娠"
+	CASE 835
+		RETURNF "寄生攻撃　シェイプシフター　特殊妊娠"
+	CASE 837
+		RETURNF "寄生攻撃　ドッペルゲンガー　特殊妊娠"
+	CASE 838
+		RETURNF "寄生攻撃　ドッペルゲンガー　特殊妊娠　低威力大量射精"
+	CASE 840
+		RETURNF "寄生攻撃　ヒュプノ　特殊寄生　高威力低寄生率"
+	CASE 841
+		RETURNF "寄生攻撃　フェアリーイーター　寄生"
+	CASE 842
+		RETURNF "寄生攻撃　コウノトリ　妊娠"
+	CASE 843
+		RETURNF "寄生攻撃　コウノトリ　妊娠　低威力大量射精"
+	CASE 844
+		RETURNF "寄生攻撃　コウノトリ　妊娠　高威力超大量射精"
+	CASE 845
+		RETURNF "寄生攻撃　コウノトリ　低威力二段妊娠"
+	CASE 846
+		RETURNF "寄生攻撃　コウノトリ　高威力三段妊娠"
+	CASE 847
+		RETURNF "寄生攻撃　コウノトリ　高威力十段妊娠"
+	CASE 848
+		RETURNF "寄生攻撃　フコウノトリ　寄生"
+	CASE 849
+		RETURNF "寄生攻撃　フコウノトリ　寄生　高威力高寄生率"
+	CASE 850
+		RETURNF "寄生攻撃　フコウノトリ　寄生　超高威力寄生率100%"
+	CASE 851
+		RETURNF "寄生攻撃　フコウノトリ　妊娠　オーバーキル大量射精"
+	CASE 852
+		RETURNF "寄生攻撃　ユニコーン　寄生"
+	CASE 853
+		RETURNF "寄生攻撃　ナインテイルズ　妊娠"
+	CASE 854
+		RETURNF "寄生攻撃　ハウンド　妊娠"
+	CASE 855
+		RETURNF "寄生攻撃　男傀儡　妊娠"
+	CASE 856
+		RETURNF "寄生攻撃　男傀儡　三段妊娠"
+	CASE 857
+		RETURNF "寄生攻撃　ジェリーフィッシュ　寄生"
+	CASE 858
+		RETURNF "寄生攻撃　フレッシュゴーレム　妊娠"
+	CASE 859
+		RETURNF "寄生攻撃　アグー　高威力三段妊娠"
+	CASE 860
+		RETURNF "寄生攻撃　ホフゴブリン　低威力三段妊娠"
+	CASE 861
+		RETURNF "寄生攻撃　YMあなた　妊娠"
+	CASE 862
+		RETURNF "寄生攻撃　クリスタルエレメント　妊娠"
+	CASE 863
+		RETURNF "寄生攻撃　テンタクルウォール　妊娠"
+	CASE 864
+		RETURNF "寄生攻撃　メカテンタクルス　妊娠"
+	CASE 865
+		RETURNF "寄生攻撃　触手姫　特殊寄生"
+	CASE 866
+		RETURNF "寄生攻撃　アルラウネ化　特殊妊娠"
+	CASE 867
+		RETURNF "寄生攻撃　アルラウネ化　三段特殊妊娠"
+	CASE 868
+		RETURNF "寄生攻撃　スライム化　特殊寄生"
+	CASE 869
+		RETURNF "寄生攻撃　スライム化　寄生　高威力低確率"
+	CASE 870
+		RETURNF "寄生攻撃　ネコマタ　妊娠"
+		
+	; □ パッチ追加行動
+	CASE 950
+		RETURNF "汚染攻撃　汚れを追加"
+	CASE 951
+		RETURNF "汚染攻撃　汚れを追加"
+	CASE 952
+		RETURNF "汚染攻撃　汚れを追加"
+	CASE 953
+		RETURNF "触手責め攻撃　汚れを追加"
+	CASE 954
+		RETURNF "妊娠催眠（ヒュプノ用）　寄生＋乳腺開発"
+	CASE 955
+		RETURNF "汚染攻撃強　ファンガス"
+	CASE 956
+		RETURNF "性攻撃(強)　サンドバタフライ　B"
+	CASE 957
+		RETURNF "乳腺開発（サンドバタフライ用）"
+	CASE 958
+		RETURNF "性攻撃　サンドバタフライ　V"
+	CASE 959
+		RETURNF "寄生攻撃　サンドバタフライ　寄生"
+	CASE 960
+		RETURNF "寄生攻撃　サンドバタフライ　妊娠"
+	CASE 961
+		RETURNF "性攻撃(強)　ワイヤーゴースト　RAND＋自慰誘発"
+	
+	CASE 962
+		RETURNF "性攻撃　ワイヤーゴースト　全体三段複合　ふたなり化あり"
+	CASE 963
+		RETURNF "拘束攻撃　ワイヤーゴースト　拘束"
+	CASE 964
+		RETURNF "性攻撃(強)　ワイヤーゴースト　三段複合"
+	CASE 965
+		RETURNF "引き寄せ（ショゴスセル用）　強制前進"
+	CASE 966
+		RETURNF "性攻撃(強)　ショゴスセル　三段B"
+	CASE 967
+		RETURNF "性攻撃(強)　ショゴスセル　複合"
+	CASE 968
+		RETURNF "フラート　ショゴスセル　次ターン性攻撃威力３倍"
+	CASE 969
+		RETURNF "拘束攻撃　ショゴスセル　全体丸呑み"
+	CASE 971
+		RETURNF "性攻撃(強)　サンダーラプター　二段A"
+	CASE 972
+		RETURNF "性攻撃(強)　サンダーラプター　二段B"
+	CASE 973
+		RETURNF "性攻撃(強)　サンダーラプター　二段C"
+	CASE 974
+		RETURNF "通常攻撃　サンダーラプター　通常＋性攻撃B"
+	CASE 975
+		RETURNF "通常攻撃　サンダーラプター　通常＋性攻撃C"
+	CASE 978
+		RETURNF "性攻撃　女性触手　キス弱"
+	CASE 979
+		RETURNF "性攻撃　女性触手　キス強"
+	CASE 980
+		RETURNF "性攻撃　女性触手　発情キス"
+	CASE 981
+		RETURNF "性攻撃　女性触手　吸収キス"
+	CASE 982
+		RETURNF "触手責め攻撃　植物orローパー　M攻撃"
+	CASE 983
+		RETURNF "触手責め攻撃　植物orローパー　M攻撃中"
+	CASE 984
+		RETURNF "触手責め攻撃　植物orローパー　M攻撃強"
+	CASE 985
+		RETURNF "性攻撃　汎用　口攻め"
+	CASE 986
+		RETURNF "強制キス＋胸合わせ　汎用"
+	CASE 987
+		RETURNF "強制クリ合わせ　汎用"
+	CASE 988
+		RETURNF "3P　ドッペルゲンガー"
+	CASE 989
+		RETURNF "催眠百合らせ　ヒュプノorレッサーヒュプノ"
+	CASE 990
+		RETURNF "性攻撃　汎用　足舐め"
+	CASE 991
+		RETURNF "性攻撃　汎用　手首舐め"
+	CASE 992
+		RETURNF "性攻撃　汎用　首舐め"
+	CASE 993
+		RETURNF "性攻撃　汎用　首舐め"
+	CASE 994
+		RETURNF "性攻撃　汎用　耳裏舐め"
+	CASE 995
+		RETURNF "性攻撃　汎用　へそ舐め"
+	CASE 996
+		RETURNF "性攻撃　丸呑み　足攻め"
+	CASE 997
+		RETURNF "性攻撃　丸呑み　足+背中"
+	CASE 998
+		RETURNF "性攻撃　汎用　鎖骨"
+	CASE 999
+		RETURNF "性攻撃　ダークアイ　M"
+	CASE 1000
+		RETURNF "寄生攻撃　産卵汎用　A"
+	CASE 1001
+		RETURNF "寄生攻撃　女性系　A"
+	CASE 1002
+		RETURNF "寄生攻撃　植物系　A"
+	CASE 1003
+		RETURNF "寄生攻撃　サンダーラプター　A"
+	CASE 1004
+		RETURNF "寄生攻撃　ホワイトスライム　妊娠　出産促進"
+	CASE 1005
+		RETURNF "性攻撃　汎用　相互挿入　V"
+	CASE 1006
+		RETURNF "寄生攻撃　汎用　相互妊娠　V"
+	CASE 1007
+		RETURNF "性攻撃　汎用　相互挿入　A"
+	CASE 1008
+		RETURNF "寄生攻撃　汎用　相互寄生　A"
+	CASE 1009
+		RETURNF "寄生攻撃　汎用　相互寄生　V"
+	CASE 1010
+		RETURNF "寄生攻撃　植物系　C"
+	CASE 1011
+		RETURNF "寄生攻撃　海産形　C"
+	CASE 1012
+		RETURNF "寄生攻撃　汎用　C"
+	CASE 1013
+		RETURNF "性攻撃　汎用　背中甘え A"
+	CASE 1014
+		RETURNF "性攻撃　汎用　背中甘え V"
+	CASE 1015
+		RETURNF "性攻撃　汎用　背中甘え AV"
+	CASE 1016
+		RETURNF "触手責め攻撃　汎用　フェラ強要"
+	CASE 1017
+		RETURNF "触手責め攻撃　汎用　イラマチオ"
+	CASE 1018
+		RETURNF "性攻撃　汎用　尻尾こき"
+	CASE 1019
+		RETURNF "性攻撃　汎用　騎乗位"
+	CASE 1020
+		RETURNF "特殊攻撃　汎用　膣内放尿"
+	CASE 1021
+		RETURNF "性攻撃　汎用　尻尾こき"
+	CASE 1022
+		RETURNF "性攻撃　汎用　ヴァンパイアキス"
+	CASE 1023
+		RETURNF "性攻撃　触手　C　コンフィグ次第で尿道責めorC妊娠に派生"
+	CASE 1024
+		RETURNF "性攻撃　女性　C　コンフィグ次第で尿道責めorC妊娠に派生"
+	CASE 1025
+		RETURNF "性攻撃　海産　C　コンフィグ次第で尿道責めorC妊娠に派生"
+	CASE 1026
+		RETURNF "性攻撃　スライム　C　コンフィグ次第で尿道責めorC妊娠に派生"
+	CASE 1027
+		RETURNF "性攻撃　アルケニー　肌責め"
+	CASE 1028
+		RETURNF "性攻撃　アルケニー　ドレインキス"
+		
+	CASE 1201
+		RETURNF "性攻撃　汎用触手系　ニプルファック"
+	CASE 1202
+		RETURNF "寄生攻撃　汎用触手系　B"
+	CASE 1203
+		RETURNF "性攻撃　タコ・イカ系　ニプルファック"
+	CASE 1204
+		RETURNF "寄生攻撃　タコ・イカ系　B"
+	CASE 1205
+		RETURNF "性攻撃　ツタ植物系　ニプルファック"
+	CASE 1206
+		RETURNF "寄生攻撃　ツタ植物系　B"
+	CASE 1207
+		RETURNF "性攻撃　スライム系　ニプルファック"
+	CASE 1208
+		RETURNF "寄生攻撃　スライム系　B"
+	CASE 1209
+		RETURNF "性攻撃　人型ペニス系　ニプルファック"
+
+	CASE 1300
+		RETURNF "糸　速度低下"
+	CASE 1301
+		RETURNF "暗闇　命中低下"
+	CASE 1302
+		RETURNF "トラウマ　回避低下"
+	CASE 1303
+		RETURNF "吹雪　回避低下"
+	CASE 1304
+		RETURNF "まぶしい光　命中低下"
+	CASE 1305
+		RETURNF "狂気の瞳　命中・回避低下"
+	CASE 1306
+		RETURNF "ひるみ"
+	CASE 1307
+		RETURNF "最大EP低下"
+	CASE 1308
+		RETURNF "援軍"
+	CASE 1309
+		RETURNF "戦闘経験低下"
+	CASE 1310
+		RETURNF "眠気追加"
+	CASE 1311
+		RETURNF "悲鳴"
+	CASE 1312
+		RETURNF "幻覚"
+	CASE 1314
+		RETURNF "ローパー　焦らし"
+	CASE 1315
+		RETURNF "ローパー　焦らし"
+	CASE 1317
+		RETURNF "ダブルイール　衰弱毒"
+	CASE 1318
+		RETURNF "射精EPダメージ"
+	CASE 1319
+		RETURNF "空腹催眠"
+	CASE 1867
+		RETURNF "通常攻撃　プロトクリーナー"
+	CASE 1868
+		RETURNF "性攻撃　プロトクリーナー"
+	CASE 1869
+		RETURNF "衣服攻撃　プロトクリーナー"
+	CASE 1870
+		RETURNF "性攻撃　プロトクリーナー"
+	CASE 1871
+		RETURNF "拘束攻撃　プロトクリーナー"
+	CASE 1872
+		RETURNF "性攻撃　プロトクリーナー"
+	CASE 1873
+		RETURNF "根触手　B吸収"
+	CASE 1874
+		RETURNF "性攻撃　サンドバタフライ　V"
+	CASE 1875
+		RETURNF "性攻撃　サンドバタフライ　V"
+	CASE 1876
+		RETURNF "衣服攻撃　サンドバタフライ　BC"
+	CASE 1877
+		RETURNF "通常攻撃　サンドバタフライ　通常"
+	CASE 1878
+		RETURNF "性攻撃　マンイーター等　複合"
+	CASE 1879
+		RETURNF "寄生攻撃　人食い箱　特殊寄生"	
+	CASE 1880
+		RETURNF "性攻撃　人食い箱　V+"
+	CASE 1881
+		RETURNF "性攻撃　人食い箱　C"
+	CASE 1882
+		RETURNF "性攻撃　人食い箱　A"
+	CASE 1883
+		RETURNF "性攻撃　人食い箱　B+"	
+	CASE 1884
+		RETURNF "性攻撃　ミステリードール　複合"
+	CASE 1885
+		RETURNF "性攻撃　ラミア　B"
+	CASE 1886
+		RETURNF "衣服攻撃　スモークミスト　全体AB"
+	CASE 1887
+		RETURNF "性攻撃　ラミア　B+"
+	CASE 1888
+		RETURNF "性攻撃　ラミア　C"
+	CASE 1889
+		RETURNF "性攻撃　ラミア　C+"
+	CASE 1890
+		RETURNF "性攻撃　サキュバス　複合"
+	CASE 1891
+		RETURNF "性攻撃　サキュバス　V"
+	CASE 1892
+		RETURNF "性攻撃　サキュバス　C"
+	CASE 1893
+		RETURNF "性攻撃　サキュバス　B"
+	CASE 1894
+		RETURNF "性攻撃　サキュバス　C"
+	CASE 1895
+		RETURNF "性攻撃　サキュバス　V"
+	CASE 1896
+		RETURNF "性攻撃　サキュバス　B"
+	CASE 1897
+		RETURNF "性攻撃　サキュバス　C"
+	CASE 1898
+		RETURNF "性攻撃　サキュバス　V"
+	CASE 1899
+		RETURNF "性攻撃　サキュバス　B"
+	CASE 1900
+		RETURNF "糸　速度低下"
+	CASE 1901
+		RETURNF "暗闇　命中低下"
+	CASE 1902
+		RETURNF "トラウマ　回避低下"
+	CASE 1903
+		RETURNF "吹雪　回避低下"
+	CASE 1904
+		RETURNF "まぶしい光　命中低下"
+	CASE 1905
+		RETURNF "狂気の瞳　命中・回避低下"
+	CASE 1906
+		RETURNF "通常攻撃　サンダーラプター　通常"
+	CASE 1907
+		RETURNF "衣服攻撃　サンダーラプター　BC"
+	CASE 1908
+		RETURNF "衣服攻撃　火炎　AB"
+	CASE 1909
+		RETURNF "衣服攻撃　火炎　BV"
+	CASE 1910
+		RETURNF "性攻撃　スノウガール　V"
+	CASE 1911
+		RETURNF "性攻撃　ワイヤーゴースト　C"
+	CASE 1912
+		RETURNF "地震　ひるみ効果"
+	CASE 1913
+		RETURNF "触手スーツを着せる　CPが0なら触手スーツを強制"
+	CASE 1914
+		RETURNF "援軍"
+	CASE 1915
+		RETURNF "眠気追加"
+	CASE 1916
+		RETURNF "ホフゴブリン　怯み効果"
+	CASE 1917
+		RETURNF "幻覚"
+	CASE 1918
+		RETURNF "悲鳴　怯み効果"
+	CASE 1919
+		RETURNF "プロトクリーナー　特殊攻撃"
+	CASE 2101
+		RETURNF "通常攻撃　ワイヤーゴースト"
+	CASE 2103
+		RETURNF "通常攻撃　ローパー"
+	CASE 2107
+		RETURNF "通常攻撃　ヴォジャノーイ　ひるみ"
+	CASE 2108
+		RETURNF "通常攻撃　バンシー"
+	CASE 2114
+		RETURNF "通常攻撃　ワイヤーゴースト　影触手"
+	CASE 2116
+		RETURNF "通常攻撃　スキュラ　剃刀ヒトデ"
+	CASE 2117
+		RETURNF "通常攻撃　バンシー　髪の毛を伸ばして攻撃"
+	CASE 2200
+		RETURNF "衣服攻撃　サンダーラプター"
+	CASE 2201
+		RETURNF "衣服攻撃　レッサーヒュプノ"
+	CASE 2202
+		RETURNF "衣服攻撃　ハウンド"
+	CASE 2203
+		RETURNF "衣服攻撃　ローパー"
+	CASE 2204
+		RETURNF "衣服攻撃　ダブルイール"
+	CASE 2205
+		RETURNF "衣服攻撃　ダブルイール"
+	CASE 2211
+		RETURNF "衣服攻撃　ワイヤーゴースト　鬼火　BC"
+	CASE 2213
+		RETURNF "衣服攻撃　ヴォジャノーイ　かえる幼生　AV"
+	CASE 2214
+		RETURNF "衣服攻撃　スキュラ　珊瑚の剣　BCV"
+	CASE 2215
+		RETURNF "衣服攻撃　バンシー　髪の毛を伸ばして攻撃　B"
+	CASE 2216
+		RETURNF "衣服攻撃　アルケニー　B"
+	CASE 2217
+		RETURNF "衣服攻撃　アルケニー　B"
+	CASE 2300
+		RETURNF "性攻撃　サンダーラプター"
+	CASE 2301
+		RETURNF "性攻撃　ローパー"
+	CASE 2302
+		RETURNF "性攻撃　喪失嬲り系の特殊処理"
+	CASE 2303
+		RETURNF "性攻撃　サンドバタフライ"
+	CASE 2306
+		RETURNF "性攻撃　ワイヤーゴースト　影移動抱きしめ AB"
+	CASE 2307
+		RETURNF "性攻撃　ヴォジャノーイ　かえるぴょこぴょこ A"
+	CASE 2308
+		RETURNF "性攻撃　ショゴスセル　水人形で感覚共有責め BC"
+	CASE 2309
+		RETURNF "性攻撃　ショゴスセル　水人形で感覚共有責め V"
+	CASE 2310
+		RETURNF "性攻撃　バンシー　ABCVランダム"
+	CASE 2311
+		RETURNF "性攻撃　スキュラ　一時拘束胸揉み B"
+	CASE 2315
+		RETURNF "性攻撃　アルケニー B"
+	CASE 2500
+		RETURNF "拘束攻撃　ローパー"
+	CASE 2501
+		RETURNF "拘束攻撃　ローパー"
+	CASE 2502
+		RETURNF "拘束攻撃　ダブルイール"
+	CASE 2503
+		RETURNF "拘束攻撃　ミルキーシェルター"
+	CASE 2504
+		RETURNF "拘束攻撃　デルタスラッグ"
+	CASE 2505
+		RETURNF "拘束攻撃　スノウガール"
+	CASE 2509
+		RETURNF "拘束攻撃　マンイーター　花の口へ一直線"
+	CASE 2510
+		RETURNF "拘束攻撃　アルケニー"
+	CASE 2600
+		RETURNF "性攻撃(強)　ローパー"
+	CASE 2601
+		RETURNF "性攻撃(強)　ダブルイール"
+	CASE 2614
+		RETURNF "性攻撃(強)　マンイーター　花の口の中で凌辱 AV"
+	CASE 2619
+		RETURNF "性攻撃(強)　アルケニー C"
+	CASE 2620
+		RETURNF "性攻撃(強)　アルケニー B"
+	CASE 2800
+		RETURNF "寄生攻撃　ローパー"
+	CASE 2801
+		RETURNF "寄生攻撃　ダブルイール"
+	CASE 2805
+		RETURNF "寄生攻撃　レッドプリン"
+	CASE 2808
+		RETURNF "寄生攻撃　アルケニー　妊娠"
+	CASE 2959
+		RETURNF "特殊攻撃　スキュラ　竜宮の煙　C"
+	CASE 2961
+		RETURNF "特殊攻撃　アルケニー　粘つく糸"
+		
+	CASEELSE
+		RETURNF "攻撃コマンドの説明がありません"
+	ENDSELECT
+RETURNF ""

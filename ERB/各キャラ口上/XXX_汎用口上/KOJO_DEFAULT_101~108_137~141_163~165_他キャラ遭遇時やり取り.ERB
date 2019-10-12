@@ -1,0 +1,633 @@
+﻿
+; ////////////////////////////
+; / ARG:0  101    迷宮内で他のキャラと出会った
+; / ARG:1         遭遇キャラのID
+; / ARG:2         喪失キャラフラグ
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前 
+@KOJO_DEFAULT_101(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	IF ARG:2 == 0
+		CALL ADD_RAND_MESSAGE, @"「こんな所に迷い込むなんて、お互い運が悪いですね」"
+		CALL ADD_RAND_MESSAGE, @"「意思疎通が出来る相手ってのは落ち着きますね」"
+		CALL ADD_RAND_MESSAGE, @"「あら、他にも迷い込んだ方が居たんですね」"
+			
+
+	ELSEIF ARG:2 == 1
+		CALL ADD_RAND_MESSAGE, @"「運が悪かったようですね…」"
+		CALL ADD_RAND_MESSAGE, @"「返事は……期待できないですね」"
+		CALL ADD_RAND_MESSAGE, @"「あら、他にも迷い込んだ方が居たんですね」"
+		CALL ADD_RAND_MESSAGE, @"「このままじゃ、まずいけど…」"
+		CALL ADD_RAND_MESSAGE, @"「もう少し早く会いたかった…」"
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「手当てを……」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「何か持ってないかしら」"
+			CALL ADD_RAND_MESSAGE, @"「ひどいわね」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  102    遭遇時会話:別れた
+; / ARG:1         遭遇キャラID
+; / ARG:2    0    喪失キャラフラグ 0:通常
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_102_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 雌の臭い
+	IF BASE:1:5 >= 100
+	CALL ADD_RAND_MESSAGE, @"「顔赤いですよ？　ほんとに一人で大丈夫ですか？」"
+	CALL ADD_RAND_MESSAGE, @"「熱とかありそうに見えますけど……気をつけてくださいね」"
+	CALL ADD_RAND_MESSAGE, @"「あなたも気をつけてくださいね」\n（真っ赤だったけど……照れ屋さんなのかな？）"
+	ELSE
+	CALL ADD_RAND_MESSAGE, @"「あなたも気をつけてくださいね」"
+	CALL ADD_RAND_MESSAGE, @"「また会えますよね、無事でいてください」"
+	CALL ADD_RAND_MESSAGE, @"「幸運を、お互いにね」"
+	CALL ADD_RAND_MESSAGE, @"「ええ、また」"
+	ENDIF
+RETURN 1
+; ////////////////////////////
+; / ARG:0  103    遭遇時会話:雑談
+; / ARG:1         遭遇キャラID
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_103(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 雌の臭い
+	IF BASE:1:5 >= 100
+		CALL ADD_RAND_MESSAGE, @"「顔赤いですけど大丈夫ですか？　……そう、ならいいですけど」"
+		CALL ADD_RAND_MESSAGE, @"「もしかして……においます……？」"
+
+		CALL ADD_RAND_MESSAGE, @"「厄介な罠がありまして……　それで、その」"
+		CALL ADD_RAND_MESSAGE, @"「厄介な敵がいたんですよ……　だから、その」"
+		CALL ADD_RAND_MESSAGE, @"「ちょっとひどい目にあっちゃって……」"
+
+		CALL ADD_RAND_MESSAGE, @"「綺麗な泉が見つかるといいんですけど……」"
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「それでですね」"
+		CALL ADD_RAND_MESSAGE, @"「そういえばー」"
+		CALL ADD_RAND_MESSAGE, @"「え、そうなんですか！？」"
+		CALL ADD_RAND_MESSAGE, @"「それほんとですか？ありがとうございます」"
+	ENDIF
+
+
+RETURN 1
+; ////////////////////////////
+; / ARG:0  104    遭遇時会話:情報交換
+; / ARG:1         遭遇キャラID
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_104(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 雌の臭い
+	IF BASE:1:5 >= 100
+		CALL ADD_RAND_MESSAGE, @"「ねぇ、顔赤いけど大丈夫？　……そう、ならいいんだけど」"
+		CALL ADD_RAND_MESSAGE, @"「もしかして……においます……？」"
+
+		CALL ADD_RAND_MESSAGE, @"「厄介な罠があってね……　それで、その」"
+		CALL ADD_RAND_MESSAGE, @"「厄介な敵がいたの……　だから、その」"
+		CALL ADD_RAND_MESSAGE, @"「ちょっとひどい目にあっちゃって……」"
+
+		CALL ADD_RAND_MESSAGE, @"「綺麗な泉が見つかるといいんだけど……」"
+
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「役に立つ情報があればいいですけど」"
+		CALL ADD_RAND_MESSAGE, @"「こっちの情報はこんなところですね」"
+		CALL ADD_RAND_MESSAGE, @"「どう？　お役に立てそうですか？」"
+		CALL ADD_RAND_MESSAGE, @"「なるほど、ということは……」"
+
+
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  105    アイテム強請り成功
+; / ARG:1         遭遇キャラID
+; / ARG:2         アイテムID
+; / ARG:3    0    喪失キャラフラグ 0:通常
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_105_X_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「ありがとう、助かるわ」"
+	CALL ADD_RAND_MESSAGE, @"「いいの？　ありがとう！」"
+	CALL ADD_RAND_MESSAGE, @"「埋め合わせはきっとするから！」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  106    アイテム強請り失敗
+; / ARG:1         遭遇キャラID
+; / ARG:2    0    喪失キャラフラグ 0:通常
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_106_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「まあ、仕方ないですね……」"
+	CALL ADD_RAND_MESSAGE, @"「お互い精一杯ですものね……　いいですよ、気にしないで」"
+	
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  107    遭遇時会話:勧誘成功
+; / ARG:1         遭遇キャラID
+; / ARG:2    0    喪失キャラフラグ 0:通常
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_107_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「ありがとう、これからよろしくお願いしますね」"
+	CALL ADD_RAND_MESSAGE, @"「絶対一緒に脱出しましょうね」"
+	
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  108    遭遇時会話:勧誘失敗
+; / ARG:1         遭遇キャラID
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「そう、残念です」"
+	CALL ADD_RAND_MESSAGE, @"「無理言っちゃいましたね、ごめんなさい」"
+	
+	
+	
+	; 好感度別 追加口上
+	; 冷めた目でこちらを見ている
+	IF CFLAG:5 < 0
+		CALL ADD_RAND_MESSAGE, @"「一緒に行動したくないのですね……　まあ、仕方ないかな……」"
+		CALL ADD_RAND_MESSAGE, @"「ご、ごめんなさい……」"
+		
+	; こちらを警戒している
+	ELSEIF CFLAG:5 < 50
+		CALL ADD_RAND_MESSAGE, @"（随分と警戒されちゃって……　何か気に障ることでもしたかな……）"
+		CALL ADD_RAND_MESSAGE, @"「え、えっと～」"
+		
+	; 通常
+	ELSEIF CFLAG:5 < 200
+		; 好感度:通常は汎用口上で記述
+		
+	; 笑顔で近づいてきた
+	ELSEIF CFLAG:5 >= 200
+		CALL ADD_RAND_MESSAGE, @"（一緒に来てくれると思ったんだけどな……）"
+		CALL ADD_RAND_MESSAGE, @"（あっれ～絶対いけると思ったんだけどなぁ）"
+	ENDIF
+RETURN 1
+
+
+
+; ////////////////////////////
+; / ARG:0  137    遭遇時会話:固定イベント情報取得 提供側口上
+; / ARG:1         装具キャラID
+; / ARG:2         取得した情報
+; / ARG:3    1    会話状況 0:雑談 1:情報交換
+; / ARGS:0        自分の名前
+; / ARGS:0        遭遇キャラの名前
+@KOJO_DEFAULT_137_X_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 雌の臭い
+	IF BASE:1:5 >= 100
+	CALL ADD_RAND_MESSAGE, @"「な、何かの役に立ちますかね？」（この匂い……）"
+	CALL ADD_RAND_MESSAGE, @"「って事があって……え？　熱？　ないない、大丈夫ですよ！」\n（匂いにあてられちゃったかも……）"
+	ELSE
+	CALL ADD_RAND_MESSAGE, @"「何かの役に立ちますかね？」"
+	CALL ADD_RAND_MESSAGE, @"「って事があって」"
+	CALL ADD_RAND_MESSAGE, @"「そうそう、そういえば…」"
+	ENDIF
+RETURN 1
+
+
+
+; ////////////////////////////
+; / ARG:0  138    アイテム強請り開始
+; / ARG:1         遭遇キャラID
+; / ARG:2    0    喪失キャラフラグ 0:通常
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_138_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「何か貰えると嬉しいのですが」"
+	CALL ADD_RAND_MESSAGE, @"「ごめんなさい、なんでもいいんだけど」"
+	
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  139    遭遇時会話:アイテムを強請られた
+; / ARG:1         アイテムID(0の場合はアイテム強請り失敗)
+; / ARGS:0        主人公の名前
+; / ARGS:1        自分の名前
+@KOJO_DEFAULT_139(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; アイテム強請りに失敗している場合はここでの口上は呼び出さない
+	SIF ARG:1 == 0
+		RETURN 0
+
+	CALL ADD_RAND_MESSAGE, @"「これでいいかしら」"
+	CALL ADD_RAND_MESSAGE, @"「こんなのでよければ」"
+	
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  139    遭遇時会話:アイテムを強請られた
+; / ARG:1    0    アイテムID(0の場合はアイテム強請り失敗)
+; / ARGS:0        主人公の名前
+; / ARGS:1        自分の名前
+@KOJO_DEFAULT_139_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 好感度で分岐
+	; 冷めた目でこちらを見ている…
+	IF CFLAG:5 < 0
+		CALL ADD_RAND_MESSAGE, @"「何で私がそんな事しなきゃいけないの？」"
+		
+	; こちらを警戒している…
+	ELSEIF CFLAG:5 < 50
+		CALL ADD_RAND_MESSAGE, @"「こっちも一杯一杯なの、悪いわね」"
+		CALL ADD_RAND_MESSAGE, @"「こっちもあんまり余裕がなくて……」"
+		
+	; ふつう
+	ELSEIF CFLAG:5 < 200
+		CALL ADD_RAND_MESSAGE, @"「悪いけど余裕がないの」"
+		CALL ADD_RAND_MESSAGE, @"「ごめんね」"
+	
+		
+	; 笑顔で近づいてきた…
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「ごめんね、何もあげられるものが無くて……」"
+	ENDIF
+	
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  140    PTに勧誘された
+; / ARG:1    0    状況 0:通常 1:共闘
+; / ARG:2    0    結果 0:失敗 1:成功
+; / ARGS:0        主人公の名前
+; / ARGS:1        自分の名前
+@KOJO_DEFAULT_140_0_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 好感度で分岐
+	; 冷めた目でこちらを見ている…
+	IF CFLAG:5 < 0
+		CALL ADD_RAND_MESSAGE, @"「あなたと一緒に行動する位なら一人のがマシよ」"
+		CALL ADD_RAND_MESSAGE, @"「あなたの仲間に？　冗談でしょ？」"
+		
+	; こちらを警戒している…
+	ELSEIF CFLAG:5 < 50
+		CALL ADD_RAND_MESSAGE, @"「せ、折角のお誘いだけど……」"
+		CALL ADD_RAND_MESSAGE, @"「その分見つかりやすくもなっちゃうから……」"
+		
+	; ふつう
+	ELSEIF CFLAG:5 < 200
+		CALL ADD_RAND_MESSAGE, @"「ごめんね、もうちょっと一人で調べてみたいの」"
+		
+	; 笑顔で近づいてきた…
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「今はタイミングが悪いの、また誘ってくれると嬉しいわ」"
+		CALL ADD_RAND_MESSAGE, @"「うーん、一緒に行きたいけど今はやることがあるのよね……」"
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  140    PTに勧誘された
+; / ARG:1    0    状況 0:通常 1:共闘
+; / ARG:2    1    結果 0:失敗 1:成功
+; / ARGS:0        主人公の名前
+; / ARGS:1        自分の名前
+@KOJO_DEFAULT_140_0_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 好感度で分岐
+	; 冷めた目でこちらを見ている…
+	IF CFLAG:5 < 0
+		CALL ADD_RAND_MESSAGE, @"（はぁ……　何でこんな奴と……）"
+		
+		
+	; こちらを警戒している…
+	ELSEIF CFLAG:5 < 50
+		CALL ADD_RAND_MESSAGE, @"「ま、まあ一人で動くよりマシかしら……」"
+		
+		
+	; ふつう
+	ELSEIF CFLAG:5 < 200
+		CALL ADD_RAND_MESSAGE, @"「いいわ、一緒に行きましょ」"
+		
+	; 笑顔で近づいてきた…
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「%ARGS:0%と一緒なら百人力ね」"
+		CALL ADD_RAND_MESSAGE, @"「助かるわ、一人で困ってたの」"
+	ENDIF
+RETURN 1
+
+
+
+; ////////////////////////////
+; / ARG:0  140    PTに勧誘された
+; / ARG:1    1    状況 0:通常 1:共闘
+; / ARG:2    1    結果 0:失敗 1:成功
+; / ARGS:0        主人公の名前
+; / ARGS:1        自分の名前
+@KOJO_DEFAULT_140_1_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「いいわ、手伝ってあげる」"
+
+	CALL ADD_RAND_MESSAGE, @"「数は力」"
+	CALL ADD_RAND_MESSAGE, @"「私の背中、預けるからね」"
+	CALL ADD_RAND_MESSAGE, @"「形勢逆転になるといいね」"
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おせっかい
+		CALL ADD_RAND_MESSAGE, @"「手助けが必要でしょ？」"
+		CALL ADD_RAND_MESSAGE, @"「手早く終わらせましょう」"
+
+		CALL ADD_RAND_MESSAGE, @"「さっさと済ませましょうか」"
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるわよ」"
+		CALL ADD_RAND_MESSAGE, @"「位置取り、しっかりね」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないもの」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いわ」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところなの」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないのだから、断る理由はないわ」"
+
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「あいつを倒せばいいのね」"
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるよ」"
+		CALL ADD_RAND_MESSAGE, @"「位置取り、しっかり」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないもん」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いよ」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところ」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないし」"
+
+	CASE 性格_がんこもの
+		CALL ADD_RAND_MESSAGE, @"「助太刀します！」"
+
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるわよ」"
+		CALL ADD_RAND_MESSAGE, @"「位置取り、しっかりね」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないもの」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いわ」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところなの」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないのだから、断る理由はないわ」"
+
+	CASE 性格_がんばりや
+
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるわよ」"
+		CALL ADD_RAND_MESSAGE, @"「位置取り、しっかりね」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないもの」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いわ」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところなの」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないのだから、断る理由はないわ」"
+
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるわよ」"
+		CALL ADD_RAND_MESSAGE, @"「位置取り、しっかりね」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないもの」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いわ」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところなの」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないのだから、断る理由はないわ」"
+		CALL ADD_RAND_MESSAGE, @"「意思疎通による連携。数の不利は組織力で補いましょう」"
+
+		CALL ADD_RAND_MESSAGE, @"「捕まらないでね。助ける自信はないから」"
+
+	CASE 性格_くろうにん
+		CALL ADD_RAND_MESSAGE, @"「少し手伝うだけですよ」"
+		CALL ADD_RAND_MESSAGE, @"「危なくなったら逃げましょう」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いです」"
+
+		CALL ADD_RAND_MESSAGE, @"「注意を引くくらいなら」"
+		CALL ADD_RAND_MESSAGE, @"「少しの間の囮くらいなら」"
+
+		CALL ADD_RAND_MESSAGE, @"「お力添え致します！」"
+	CASE 性格_しあわせもの
+
+		CALL ADD_RAND_MESSAGE, @"「何事も、みんなで挑みましょう！」"
+		CALL ADD_RAND_MESSAGE, @"「全員で攻撃して、全員で逃げましょう！」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ待っていました！」"
+
+		CALL ADD_RAND_MESSAGE, @"「捕まらないでくださいね。助ける余裕はないので！」"
+
+	CASE 性格_セクシーギャル
+
+		CALL ADD_RAND_MESSAGE, @"「そうね、悪いようにはしないわ」"
+		CALL ADD_RAND_MESSAGE, @"「囮なら任せてくださいね！」"
+
+		CALL ADD_RAND_MESSAGE, @"「何事も、みんなで挑みましょう！」"
+		CALL ADD_RAND_MESSAGE, @"「捕まらないでね。助ける余裕はないんだからね」"
+
+	CASE 性格_ぬけめがない
+
+		CALL ADD_RAND_MESSAGE, @"「危なくなったら逃げましょう」"
+
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるわよ」"
+		CALL ADD_RAND_MESSAGE, @"「位置取り、しっかりね」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないもの」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いわ」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところなの」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないのだから、断る理由はないわ」"
+
+		CALL ADD_RAND_MESSAGE, @"「意思疎通による連携。数の不利は組織力で補いましょう」"
+		CALL ADD_RAND_MESSAGE, @"「捕まらないでね。助ける自信はないから」"
+
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「人数は多い方が有利だろ？」"
+
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるよ」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないよ」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強い」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところ」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないし」"
+
+		CALL ADD_RAND_MESSAGE, @"「先に突っ込むからフォローを！」"
+
+	CASE 性格_のんきもの
+
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところなの」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ待っていたわ」"
+		CALL ADD_RAND_MESSAGE, @"「まずは敵の出方をうかがいましょうか」"
+
+		CALL ADD_RAND_MESSAGE, @"「捕まらないでね。助ける自信はないから」"
+
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「い、一緒に頑張ります！」"
+		CALL ADD_RAND_MESSAGE, @"「危なくなったら逃げましょう」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いです」"
+		CALL ADD_RAND_MESSAGE, @"「まずは逃げ道を探さないと……」"
+		CALL ADD_RAND_MESSAGE, @"「さ、先に捕まらないでくださいね……　助けられないと思うので」"
+
+		CALL ADD_RAND_MESSAGE, @"「あ、あまり期待はしないでくださいね」"
+
+	CASE 性格_やさしいひと
+		CALL ADD_RAND_MESSAGE, @"「少しでもお力になれるなら」"
+		CALL ADD_RAND_MESSAGE, @"「危なくなったら逃げましょう」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いです」"
+
+		CALL ADD_RAND_MESSAGE, @"「注意を引くくらいなら」"
+		CALL ADD_RAND_MESSAGE, @"「少しの間の囮くらいなら」"
+		CALL ADD_RAND_MESSAGE, @"「まずは傷の手当てを」"
+
+	CASE 性格_わがまま
+		CALL ADD_RAND_MESSAGE, @"「仕方ないわね、少しだけ力を貸してあげる」"
+		CALL ADD_RAND_MESSAGE, @"「目にもの見せるわよ」"
+		CALL ADD_RAND_MESSAGE, @"「ばらばらに戦って勝てる相手ではないもの」"
+		CALL ADD_RAND_MESSAGE, @"「こちらこそ、心強いわ」"
+		CALL ADD_RAND_MESSAGE, @"「ちょうど苦戦しいていたところなの」"
+		CALL ADD_RAND_MESSAGE, @"「どうせ倒さなくてはいけないのだから、断る理由はないわ」"
+		CALL ADD_RAND_MESSAGE, @"「いいけど、こちらは自由に戦わせてもらうわ」"
+
+		CALL ADD_RAND_MESSAGE, @"「そうね、悪いようにはしないわ」"
+		CALL ADD_RAND_MESSAGE, @"「捕まらないでね。助ける余裕はないから」"
+		CALL ADD_RAND_MESSAGE, @"「あまりアテにされても困るけどね」"
+
+	ENDSELECT
+
+
+
+RETURN 1
+
+
+
+; ////////////////////////////
+; / ARG:0  141    遭遇時逆襲：襲い掛かられた　ARG:2が1なら実はドッペル
+; / ARG:1    
+; / ARG:2    1    1:ドッペル
+; / ARGS:0        主人公の名前
+; / ARGS:1        自分の名前
+@KOJO_DEFAULT_141_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+	CALL ADD_RAND_MESSAGE, @"「操られているとでも言うの！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「なっ、なにを！？　……まさか！」"
+	CALL ADD_RAND_MESSAGE, @"「まさか、ニセモノ！？」"
+	CALL ADD_RAND_MESSAGE, @"「こ、こんな能力の奴までいるなんて！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「これは洗脳！？それとも、ニセモノ！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「！？　この殺気は！！」"
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+			CASE 性格_おせっかい
+				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってるでしょう？」"
+				CALL ADD_RAND_MESSAGE, @"「あの娘の姿を利用するなんて許せない！」"
+			CASE 性格_おてんば
+				CALL ADD_RAND_MESSAGE, @"「あの娘の姿を利用するなんて許せない！」"
+
+			CASE 性格_がんこもの
+				CALL ADD_RAND_MESSAGE, @"「くっ、手の込んだ真似を！」"
+			CASE 性格_がんばりや
+				CALL ADD_RAND_MESSAGE, @"「あの娘の姿を利用するなんて許せない！」"
+			CASE 性格_きれもの
+				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってるでしょう？」"
+				CALL ADD_RAND_MESSAGE, @"「くっ、手の込んだ真似を！」"
+
+				CALL ADD_RAND_MESSAGE, @"「疑心暗鬼による共倒れ狙いとはね……」"
+			CASE 性格_くろうにん
+
+				CALL ADD_RAND_MESSAGE, @"「ご、ごめんなさいっ！？」"
+				CALL ADD_RAND_MESSAGE, @"「えっ！？ど、どうして！？」"
+				CALL ADD_RAND_MESSAGE, @"「わ、私がわからないんですか！？」"
+				CALL ADD_RAND_MESSAGE, @"「は、話せばわかるはずです！」"
+				CALL ADD_RAND_MESSAGE, @"「しょ、正気に戻ってください！」"
+			CASE 性格_しあわせもの
+
+				CALL ADD_RAND_MESSAGE, @"「わ、私がわからないんですか！？」"
+				CALL ADD_RAND_MESSAGE, @"「は、話せばわかるはずです！」"
+				CALL ADD_RAND_MESSAGE, @"「しょ、正気に戻ってください！」"
+				CALL ADD_RAND_MESSAGE, @"「えっ！？ど、どうして！？」"
+
+			CASE 性格_セクシーギャル
+
+				CALL ADD_RAND_MESSAGE, @"「種明かしが少し早いです。我慢できなかったんですか？」"
+				CALL ADD_RAND_MESSAGE, @"「おもしろい手だと思います。でもね、形だけの人形相手なんて、ゴメンなんですよ！」"
+
+			CASE 性格_ぬけめがない
+				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってるでしょう？」"
+				CALL ADD_RAND_MESSAGE, @"「疑心暗鬼による共倒れ狙いとはね……」"
+				CALL ADD_RAND_MESSAGE, @"「くっ、手の込んだ真似を！」"
+			CASE 性格_ねっけつかん
+				CALL ADD_RAND_MESSAGE, @"「あの娘の姿を利用するなんて許せない！」"
+
+			CASE 性格_のんきもの
+				CALL ADD_RAND_MESSAGE, @"「……上手く倒せば、何かの手掛かりになりそうね」"
+				CALL ADD_RAND_MESSAGE, @"「くっ、手の込んだ真似を！」"
+			CASE 性格_ひっこみじあん
+
+				CALL ADD_RAND_MESSAGE, @"「ご、ごめんなさいっ！？」"
+				CALL ADD_RAND_MESSAGE, @"「えっ！？ど、どうして！？」"
+			CASE 性格_やさしいひと
+
+				CALL ADD_RAND_MESSAGE, @"「ニセモノ！？　では、ほ、本物はどこに……」"
+				CALL ADD_RAND_MESSAGE, @"「ご、ごめんなさいっ！？」"
+
+				CALL ADD_RAND_MESSAGE, @"「えっ！？ど、どうして！？」"
+			CASE 性格_わがまま
+
+				CALL ADD_RAND_MESSAGE, @"「気にいらない手を！」"
+				CALL ADD_RAND_MESSAGE, @"「あいにく、そんな姿になっても私は手加減しないわよ！」"
+
+		ENDSELECT
+
+
+
+RETURN 1
+
+
+
+; ////////////////////////////
+; / ARG:0  163    遭遇時会話:アイテムをあげた
+; / ARG:1         遭遇キャラID
+; / ARG:2         アイテムID
+; / ARG:3    0    0:本人 1:ドッペルゲンガー
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_163_X_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「これ、何かの役に立ちますかね？」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  164    遭遇時会話:アイテムを貰った
+; / ARG:1         自分のID
+; / ARG:2         アイテムID
+; / ARG:3    0    0:本人 1:ドッペルゲンガー
+; / ARGS:0        主人公の名前
+; / ARGS:1        自分の名前
+@KOJO_DEFAULT_164_X_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 好感度で分岐
+	; 冷めた目でこちらを見ている…
+	IF CFLAG:5 < 0
+		CALL ADD_RAND_MESSAGE, @"「こんな事で恩を売ったと思わないでください」"
+		
+	; こちらを警戒している…
+	ELSEIF CFLAG:5 < 50
+		CALL ADD_RAND_MESSAGE, @"「貰える物は貰っておきます」"
+		
+	; ふつう
+	ELSEIF CFLAG:5 < 200
+		CALL ADD_RAND_MESSAGE, @"「ありがとうございます、助かります」"
+		
+		
+	; 笑顔で近づいてきた…
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「ありがとう、大事に使わせて貰いますね」"
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  165    遭遇時会話:固定イベント情報取得 取得側口上
+; / ARG:1         遭遇キャラID
+; / ARG:2         取得した情報
+; / ARG:3         会話状況 0:雑談 1:情報交換
+; / ARGS:0        自分の名前
+; / ARGS:1        遭遇キャラの名前
+@KOJO_DEFAULT_165(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「忘れないよう覚えておかないと」"
+	CALL ADD_RAND_MESSAGE, @"「なるほど」"
+	CALL ADD_RAND_MESSAGE, @"「ありがとうございます、助かります」"
+	
+RETURN 1
+
+
+

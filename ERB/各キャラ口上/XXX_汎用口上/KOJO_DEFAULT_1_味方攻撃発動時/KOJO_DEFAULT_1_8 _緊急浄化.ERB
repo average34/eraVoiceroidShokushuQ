@@ -1,0 +1,44 @@
+﻿; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1    8    コマンドID(緊急浄化)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「ちょっとでも有利な場所で戦わないと」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「ちょっとはマシになるだろ」"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「急がば回れってね」"
+		CALL ADD_RAND_MESSAGE, @"「清潔な場所は苦手でしょ？」"
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「周りがこれじゃ集中してお相手できないでしょ？」"
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「周りの雑魚が邪魔だな」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「まあ、こんなもんかな」"
+	CASE 性格_わがまま
+		CALL ADD_RAND_MESSAGE, @"「遠回しな方法で余り好みじゃないけどね」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「これで少しは……」"
+	ENDSELECT
+	
+	; 部屋の汚染度別 追加口上
+	; 口上呼び出しは浄化前に発生する為、汚染度は浄化前を考慮
+	SELECTCASE BATTLE_POLUTION()
+	; 敵が苦しむ程度
+	CASE 0, 1
+		CALL ADD_RAND_MESSAGE, @"「そろそろ戦闘に集中した方がいいかな」"
+	; 敵が回復する程度
+	CASE 3, 4
+		CALL ADD_RAND_MESSAGE, @"「もう、汚いなあ」"
+		CALL ADD_RAND_MESSAGE, @"「もう少し戦いやすく」"
+	; 汚染度MAX
+	CASE 5
+		CALL ADD_RAND_MESSAGE, @"「こんな場所じゃ戦えないよ」"
+	ENDSELECT
+RETURN 1
+
+

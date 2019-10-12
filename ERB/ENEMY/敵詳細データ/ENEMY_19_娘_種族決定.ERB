@@ -1,0 +1,277 @@
+﻿
+;親の情報を参照して子供の種族を決定
+@SET_FAMILY_DATA_19(ENEMY_ID, MOTHER_ID)
+#DIM ENEMY_ID
+#DIM MOTHER_ID
+
+	DA:ENEMY_ID:47 = 0
+	
+	;母親による種族決定
+	IF RAND:2
+		CALL SET_FAMILY_MOTHER(ENEMY_ID, MOTHER_ID)
+		;種族未確定なら父親による種族決定
+		IF !RESULT
+			;NPCが竿親ならそちらを遺伝
+			IF CFLAG:MOTHER_ID:109
+				CALL SET_FAMILY_MOTHER(ENEMY_ID, CFLAG:MOTHER_ID:109)
+			ELSE
+				CALL SET_FAMILY_FATHER(ENEMY_ID, MOTHER_ID)
+			ENDIF
+		ENDIF
+	;父親による種族決定
+	ELSE
+		;NPCが竿親ならそちらを遺伝
+		IF CFLAG:MOTHER_ID:109
+			CALL SET_FAMILY_MOTHER(ENEMY_ID, CFLAG:MOTHER_ID:109)
+		ELSE
+			CALL SET_FAMILY_FATHER(ENEMY_ID, MOTHER_ID)
+		ENDIF
+	ENDIF
+	
+	;未だに種族未確定ならエラー対策として親から種族値を引き継ぐ
+	SIF DA:ENEMY_ID:47 == 0
+		DA:ENEMY_ID:47 = CFLAG:MOTHER_ID:107
+	
+	;以下特殊種族変化 特定条件達成で強い娘の誕生
+	;戦闘素質が90以上の低確率で、お姫様の誕生
+	IF RAND:20 == 0 && ABL:MOTHER_ID:98 > 89 && CFLAG:MOTHER_ID:107 != 1 && CFLAG:MOTHER_ID:107 != 2
+		DA:ENEMY_ID:47 = 1
+	;名前ありキャラ専用
+	ELSEIF RAND:19 == 0
+	ENDIF
+RETURN
+
+;母親の情報を参照して子供の種族を決定
+@SET_FAMILY_MOTHER(ENEMY_ID, MOTHER_ID)
+#DIM ENEMY_ID
+#DIM MOTHER_ID
+
+	;蓬莱人持ちは蓬莱人
+	IF TALENT:MOTHER_ID:128
+		DA:ENEMY_ID:47 = 32
+	;吸血鬼持ちは吸血鬼
+	ELSEIF TALENT:MOTHER_ID:114
+		DA:ENEMY_ID:47 = 25
+	;妖精持ちは妖精
+	ELSEIF TALENT:MOTHER_ID:150
+		DA:ENEMY_ID:47 = 21
+	;親が神気持ちなら半神
+	ELSEIF TALENT:MOTHER_ID:168 == 1
+		DA:ENEMY_ID:47 = 34
+	;親が半神の場合か神の血持ちは神の末裔
+	ELSEIF CFLAG:MOTHER_ID:107 == 34 || TALENT:MOTHER_ID:168 == 2
+		DA:ENEMY_ID:47 = 36
+	;親が半月の姫の場合はエンジェルドーターにランクダウン
+	ELSEIF CFLAG:MOTHER_ID:107 == 35
+		DA:ENEMY_ID:47 = 27
+	;娘は確率半分で種族値そのまま
+	ELSEIF RAND:2 && CFLAG:MOTHER_ID:104
+		IF CFLAG:MOTHER_ID:107 == 1
+			;プリンセスは区分（能力上昇の関係上）
+			DA:ENEMY_ID:47 = 2
+		ELSE
+			DA:ENEMY_ID:47 = CFLAG:MOTHER_ID:107
+		ENDIF
+	;名前ありキャラの娘は確定処理
+	ELSE
+
+		SELECTCASE CHARA_2_FAMILY(NO:MOTHER_ID)
+			CASE 60, 61, 62
+				DA:ENEMY_ID:47 = CHARA_2_FAMILY(NO:MOTHER_ID)
+			CASEELSE
+				RETURN 0
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+;父親の情報を参照して子供の種族を決定
+@SET_FAMILY_FATHER(ENEMY_ID, MOTHER_ID)
+#DIM ENEMY_ID
+#DIM MOTHER_ID
+
+	DA:ENEMY_ID:47 = CFLAG:MOTHER_ID:22
+
+	IF DA:ENEMY_ID:47 > 19
+		;エネミー番号が娘の種族番号と違うものになったのでスパゲティに
+		;スノウガールやスライム系など、妊娠攻撃しないっぽいやつも多いが整理も兼ねて記述しておく
+		SELECTCASE DA:ENEMY_ID:47
+			;サンドバタフライ（同名）
+			CASE 21
+				DA:ENEMY_ID:47 = 8
+			;マンイーターレディポイズン
+			CASE 23, 24 ,103
+				DA:ENEMY_ID:47 = 15
+			;ゲルスライムレッドプリンアメーバホワイトスライムパラサイトミスト（スライムガール）
+			CASE 27, 28, 55, 84, 92 ,104
+				DA:ENEMY_ID:47 = 13
+			;フェアリーイーター
+			CASE 31
+				DA:ENEMY_ID:47 = 16
+			;エンジェルドーター（同名）
+			CASE 32
+				DA:ENEMY_ID:47 = 27
+			;ショゴスセル（同名）　妊娠攻撃ない？
+			CASE 35
+				DA:ENEMY_ID:47 = 14
+			;ワイヤーゴースト
+			CASE 37
+				DA:ENEMY_ID:47 = 26
+			;スノウガール（同名）
+			CASE 38
+				DA:ENEMY_ID:47 = 22
+			;バンシーサキュバス（サキュバス）
+			CASE 40, 41
+				DA:ENEMY_ID:47 = 23
+			;ローズフェアリー（テンタクルフェアリー）
+			CASE 42
+				DA:ENEMY_ID:47 = 21
+			;コウノトリ系統（コウノトリ）
+			CASE 45, 46
+				DA:ENEMY_ID:47 = 45
+			;ナインテイルズ
+			CASE 50
+				DA:ENEMY_ID:47 = 55
+			;オーガ
+			CASE 58
+				DA:ENEMY_ID:47 = 37
+			;CワンプCアナコンダラミア
+			CASE 59, 60, 95, 105
+				DA:ENEMY_ID:47 = 59
+			;ネコマタ
+			CASE 69
+				DA:ENEMY_ID:47 = 39
+			;小悪魔
+			CASE 73
+				DA:ENEMY_ID:47 = 23
+			;レイニーバイン（リビングバインorスカーレットバイン）
+			CASE 87
+				IF RAND:2 == 0
+					DA:ENEMY_ID:47 = 5
+				ELSE
+					DA:ENEMY_ID:47 = 6
+				ENDIF
+			;スコールバイン（スカーレットバイン）
+			CASE 88
+				DA:ENEMY_ID:47 = 6
+			;セイレーン　夜雀
+			CASE 93
+				DA:ENEMY_ID:47 = 29
+			CASEELSE
+				DA:ENEMY_ID:47 = 5 + RAND:12
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+;5が戦闘力、9が速さ、2が最大HP
+;ここで敵時の戦闘力を変更しても味方時には影響を受けない、別途変更が必要となる
+@SET_FAMILY_ENEMYSTATUS_19(ENEMY_ID)
+#DIM ENEMY_ID
+
+	SELECTCASE DA:ENEMY_ID:47
+		CASE 1, 2
+			DA:ENEMY_ID:5 += 50
+			DA:ENEMY_ID:2 += 5000
+		CASE 5
+			DA:ENEMY_ID:5 -= 20
+			DA:ENEMY_ID:9 -= 30
+			DA:ENEMY_ID:2 -= 2000
+		CASE 6
+			DA:ENEMY_ID:9 += 30
+			DA:ENEMY_ID:2 -= 2000
+		CASE 7
+			DA:ENEMY_ID:9 -= 20
+			DA:ENEMY_ID:2 += 1000
+		CASE 8
+			DA:ENEMY_ID:2 += 1500
+		CASE 9
+			DA:ENEMY_ID:5 += 10
+			DA:ENEMY_ID:9 -= 10
+		CASE 10
+			DA:ENEMY_ID:5 += 10
+			DA:ENEMY_ID:9 += 10
+			DA:ENEMY_ID:2 += 1000
+		CASE 11
+			DA:ENEMY_ID:5 += 5
+			DA:ENEMY_ID:2 += 500
+		CASE 12
+			DA:ENEMY_ID:5 += 15
+			DA:ENEMY_ID:2 += 1500
+		CASE 13
+			DA:ENEMY_ID:9 -= 20
+			DA:ENEMY_ID:2 += 2000
+		CASE 14
+			DA:ENEMY_ID:5 += 10
+			DA:ENEMY_ID:9 -= 10
+			DA:ENEMY_ID:2 += 3000
+		CASE 15
+			DA:ENEMY_ID:5 += 15
+			DA:ENEMY_ID:9 -= 10
+		CASE 16
+			DA:ENEMY_ID:5 += 30
+			DA:ENEMY_ID:9 -= 10
+			DA:ENEMY_ID:2 += 1000
+		CASE 17
+			DA:ENEMY_ID:5 += 10
+			DA:ENEMY_ID:9 += 10
+		CASE 18
+			DA:ENEMY_ID:5 += 30
+			DA:ENEMY_ID:9 += 30
+		CASE 20
+			DA:ENEMY_ID:5 += 30
+			DA:ENEMY_ID:2 += 2000
+		CASE 21
+			DA:ENEMY_ID:5 -= 20
+			DA:ENEMY_ID:2 += 2500
+		CASE 24
+			DA:ENEMY_ID:5 += 10
+		CASE 25
+			DA:ENEMY_ID:5 += 15
+			DA:ENEMY_ID:9 += 15
+		CASE 27
+			DA:ENEMY_ID:5 += 20
+		CASE 28
+			DA:ENEMY_ID:5 += 20
+			DA:ENEMY_ID:2 += 3000
+		CASE 29
+			DA:ENEMY_ID:5 -= 5
+			DA:ENEMY_ID:9 += 5
+		CASE 32
+			DA:ENEMY_ID:2 += 5000
+		CASE 33
+			DA:ENEMY_ID:9 += 20
+			DA:ENEMY_ID:2 += 1000
+		CASE 34
+			DA:ENEMY_ID:2 += 2000
+		CASE 35
+			DA:ENEMY_ID:5 += 40
+		CASE 36
+			DA:ENEMY_ID:2 += 1000
+		CASE 37
+			DA:ENEMY_ID:5 += 30
+			DA:ENEMY_ID:2 += 1000
+		CASE 39
+			DA:ENEMY_ID:9 += 10
+		CASE 45
+			DA:ENEMY_ID:5 -= 20
+			DA:ENEMY_ID:9 += 40
+		CASE 50, 53
+			DA:ENEMY_ID:5 += 40
+			DA:ENEMY_ID:2 += 4000
+		CASE 51
+			DA:ENEMY_ID:5 += 40
+			DA:ENEMY_ID:9 += 40
+		CASE 52
+			DA:ENEMY_ID:5 += 40
+			DA:ENEMY_ID:9 += 20
+			DA:ENEMY_ID:2 += 2000
+		CASE 54
+			DA:ENEMY_ID:5 += 30
+			DA:ENEMY_ID:9 += 30
+			DA:ENEMY_ID:2 += 2000
+		CASE 55
+			DA:ENEMY_ID:5 += 20
+			DA:ENEMY_ID:2 += 1000
+		ENDSELECT
+		
+	SIF DA:ENEMY_ID:9 < 5
+		DA:ENEMY_ID:9 = 5

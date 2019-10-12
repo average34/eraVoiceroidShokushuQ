@@ -1,0 +1,1265 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;仲間と会話・別れる
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@PT_TALK(ARG)
+#DIM 入力
+#DIM 会話済,3
+#DIM 入力許可,50
+
+
+IF ARG < 0
+	VARSET 会話済
+	RETURN 1
+ENDIF
+
+WHILE 1
+
+	;＝＝＝＝＝＝＝＝＝＝
+	VARSET 入力許可
+	DRAWLINEFORM =
+	PRINTL
+	IF FLAG:10 > 0
+		PRINTFORML ・%CALLNAME:(FLAG:10)%
+		PRINTFORML [10]別れる
+		入力許可:10 = 1
+		IF 会話済:1
+			SETCOLOR 0x333333
+			PRINTFORML [--]話す
+			RESETCOLOR
+		ELSE
+			PRINTFORML [11]話す
+			入力許可:11 = 1
+		ENDIF
+		PRINTL
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML ・
+		PRINTL [--]ーーー
+		PRINTL [--]ーーー
+		RESETCOLOR
+		PRINTL
+	ENDIF
+	IF FLAG:11 > 0
+		PRINTFORML ・%CALLNAME:(FLAG:11)%
+		PRINTFORML [20]別れる
+		入力許可:20 = 1
+		IF 会話済:2
+			SETCOLOR 0x333333
+			PRINTFORML [--]話す
+			RESETCOLOR
+		ELSE
+			PRINTFORML [21]話す
+			入力許可:21 = 1
+		ENDIF
+		PRINTL
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML ・
+		PRINTL [--]ーーー
+		PRINTL [--]ーーー
+		RESETCOLOR
+		PRINTL
+	ENDIF
+
+	DRAWLINE
+	PRINTFORML [0]戻る
+	REUSELASTLINE 誰と話しますか？
+	;＝＝＝＝＝＝＝＝＝＝
+	$INPUT
+	INPUT
+	入力 = RESULT
+	RESULT = 0
+
+	IF 入力 == 0
+		RETURN 0
+		
+	ELSEIF 入力 == 10 && 入力許可:(入力)
+		;別れる
+		CALL BREAK_UP_TALK(FLAG:10)
+		IF RESULT
+			CALL MEMBER_EXIT_ID(FLAG:10)
+		ENDIF
+		
+	ELSEIF 入力 == 11 && 入力許可:(入力)
+		CALL PT_TALK_MENU(FLAG:10)
+		SIF RESULT > 0
+			会話済:1 = 1
+	ELSEIF 入力 == 20 && 入力許可:(入力)
+		;別れる
+		CALL BREAK_UP_TALK(FLAG:11)
+		IF RESULT
+			CALL MEMBER_EXIT_ID(FLAG:11)
+		ENDIF
+		
+	ELSEIF 入力 == 21 && 入力許可:(入力)
+		CALL PT_TALK_MENU(FLAG:11)
+		SIF RESULT > 0
+			会話済:2 = 1
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT
+		
+	ENDIF
+
+WEND
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@PT_TALK_MENU(ARG)
+#DIM 入力許可,300
+#DIM 入力
+
+WHILE 1
+	;＝＝＝＝＝＝＝＝＝＝
+	VARSET 入力許可
+	DRAWLINEFORM =
+	PRINTL
+	CALL PT_TALK_状態(ARG)
+	PRINTL
+
+	CALL PT_TALK_話す(-1, ARG)
+	IF RESULT > 0
+		PRINTFORML [11]話す
+		入力許可:11 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]話す
+		RESETCOLOR
+	ENDIF
+
+	CALL PT_TALK_スキンシップ(-1, ARG)
+	IF RESULT > 0
+		PRINTFORML [12]イチャイチャする
+		入力許可:12 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]イチャイチャする
+		RESETCOLOR
+	ENDIF
+	PRINTL
+
+	CALL PT_TALK_母乳飲み_1(-1, ARG)
+	IF RESULT >= 0
+		PRINTFORML [20]乳搾りをしてあげる
+		入力許可:20 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]乳搾りをしてあげる
+		RESETCOLOR
+	ENDIF
+	CALL PT_TALK_母乳飲み_2(-1, ARG)
+	IF RESULT >= 0
+		PRINTFORML [21]乳搾りをしてもらう
+		入力許可:21 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]乳搾りをしてもらう
+		RESETCOLOR
+	ENDIF
+	CALL PT_TALK_母乳飲み_3(-1, ARG)
+	IF RESULT >= 0
+		PRINTFORML [22]乳搾りをし合う
+		入力許可:22 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]乳搾りをし合う
+		RESETCOLOR
+	ENDIF
+	PRINTL
+
+	CALL PT_TALK_体を拭く_1(-1, ARG)
+	IF RESULT >= 0
+		PRINTFORML [30]体を拭いてあげる
+		入力許可:30 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]体を拭いてあげる
+		RESETCOLOR
+	ENDIF
+	CALL PT_TALK_体を拭く_2(-1, ARG)
+	IF RESULT >= 0
+		PRINTFORML [31]体を拭いてもらう
+		入力許可:31 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]体を拭いてもらう
+		RESETCOLOR
+	ENDIF
+	CALL PT_TALK_体を拭く_3(-1, ARG)
+	IF RESULT >= 0
+		PRINTFORML [32]体を拭き合う
+		入力許可:32 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [--]体を拭き合う
+		RESETCOLOR
+	ENDIF
+	PRINTL ※体を拭くと一人につき一つ着替えセットを消費します
+	PRINTL
+	PRINTL
+
+	CALL PT_TALK_睡眠(-1, ARG)
+	IF RESULT >= 0 && RESULT:1 == 0
+		PRINTFORML [100]眠らせる
+		入力許可:100 = 1
+	ELSEIF RESULT >= 0 && RESULT:1 == 1
+		PRINTFORML [100]起こす
+		入力許可:100 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [---]－－－
+		RESETCOLOR
+	ENDIF
+	CALL PT_TALK_催眠(-1, ARG)
+	IF RESULT >= 0 && RESULT:1 == 0
+		PRINTFORML [101]催眠をかける
+		入力許可:101 = 1
+	ELSEIF RESULT >= 0 && RESULT:1 == 1
+		PRINTFORML [101]催眠を解く
+		入力許可:101 = 1
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [---]－－－
+		RESETCOLOR
+	ENDIF
+	PRINTL
+
+	DRAWLINE
+	PRINTFORML [0]戻る
+	REUSELASTLINE %CALLNAME:(ARG)%さんに対して何をしますか？
+	;＝＝＝＝＝＝＝＝＝＝
+	$INPUT
+	INPUT
+	入力 = RESULT
+	RESULT = 0
+
+	IF 入力 == 0
+		RETURN 0
+	ELSEIF 入力 == 11 && 入力許可:(入力)
+		CALL PT_TALK_話す(, ARG)
+		
+	ELSEIF 入力 == 12 && 入力許可:(入力)
+		CALL PT_TALK_スキンシップ(, ARG)
+		
+	ELSEIF 入力 == 20 && 入力許可:(入力)
+		CALL PT_TALK_母乳飲み_1(, ARG)
+	ELSEIF 入力 == 21 && 入力許可:(入力)
+		CALL PT_TALK_母乳飲み_2(, ARG)
+	ELSEIF 入力 == 22 && 入力許可:(入力)
+		CALL PT_TALK_母乳飲み_3(, ARG)
+		
+	ELSEIF 入力 == 30 && 入力許可:(入力)
+		CALL PT_TALK_体を拭く_1(, ARG)
+	ELSEIF 入力 == 31 && 入力許可:(入力)
+		CALL PT_TALK_体を拭く_2(, ARG)
+	ELSEIF 入力 == 32 && 入力許可:(入力)
+		CALL PT_TALK_体を拭く_3(, ARG)
+		
+	ELSEIF 入力 == 100 && 入力許可:(入力)
+		CALL PT_TALK_睡眠(, ARG)
+	ELSEIF 入力 == 101 && 入力許可:(入力)
+		CALL PT_TALK_催眠(, ARG)
+		
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT
+	ENDIF
+
+
+	IF RESULT > 0
+		CFLAG:(ARG):25 = 0
+		CFLAG:(ARG):43 = 0
+		RETURN 1
+	ENDIF
+WEND
+
+
+
+
+
+;=========================================
+;状態表示
+;=========================================;
+@PT_TALK_状態(ARG)
+
+IF CFLAG:(ARG):25 > 0
+	PRINTFORML %CALLNAME:(ARG)%は寝息をたてている…
+ELSEIF CFLAG:(ARG):29
+	PRINTFORML %CALLNAME:(ARG)%はぐったりとしている…
+ELSEIF CFLAG:(ARG):43
+	PRINTFORML %CALLNAME:(ARG)%は%CALLNAME:(1)%の言うことに素直に従っている…
+ELSEIF CFLAG:(ARG):5 >= 200
+	PRINTFORML %CALLNAME:(ARG)%は%CALLNAME:(1)%に笑顔を向けている…
+ELSEIF CFLAG:(ARG):5 >= 50
+	PRINTFORML %CALLNAME:(ARG)%は普通にしている…
+ELSEIF CFLAG:(ARG):5 >= 0
+	PRINTFORML %CALLNAME:(ARG)%は%CALLNAME:(1)%を警戒している…
+ELSE
+	PRINTFORML %CALLNAME:(ARG)%は冷めた目で%CALLNAME:(1)%を見ている…
+ENDIF
+
+;=========================================
+;主人公がARG:0と話をする
+;=========================================
+@PT_TALK_話す(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF CFLAG:(ARG):29 > 0 || CFLAG:(ARG):25 > 0 || CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0
+	;話せない
+	RETURN -3
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN 1
+
+;シチュ分岐
+IF CFLAG:(ARG):43 > 0
+	;催眠状態
+	SITYU = 1
+	
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	SITYU = 100
+ELSEIF CFLAG:(ARG):5 >= 200
+	SITYU = 200
+ELSEIF CFLAG:(ARG):5 >= 100
+	SITYU = 300
+ENDIF
+
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+SELECTCASE SITYU
+CASE 0
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%と話をした
+	PRINTFORMW %CALLNAME:(ARG)%はめんどくさそうに話を聞いている
+	CFLAG:(ARG):5 += 2
+CASE 1
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%と話をした
+	PRINTFORMW %CALLNAME:(ARG)%は微笑んで%CALLNAME:(1)%の話を聞いている
+	CFLAG:(ARG):5 += 0
+CASE 100
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%と話をした
+	PRINTFORMW %CALLNAME:(ARG)%は嬉しそうに%CALLNAME:(1)%との会話を楽しんでいる
+	CFLAG:(ARG):5 += 2
+CASE 200
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%と話をした
+	PRINTFORMW %CALLNAME:(ARG)%は笑顔で%CALLNAME:(1)%との会話を楽しんでいる
+	CFLAG:(ARG):5 += 2
+CASE 300
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%と話をした
+	PRINTFORMW %CALLNAME:(ARG)%は%CALLNAME:(1)%との会話を楽しいんでいる
+	CFLAG:(ARG):5 += 2
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0とスキンシップする
+;=========================================
+@PT_TALK_スキンシップ(MODE = 0, ARG:0)
+#DIM LCOUNT,3
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF CFLAG:(ARG):29 > 0 || CFLAG:(ARG):25 > 0 || CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0
+	;話せない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+;---絶対いける系---
+IF CFLAG:(ARG):43 > 0
+	;催眠状態は無条件でOK
+	SITYU = 1
+	
+;---　　　---
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	SITYU = 100
+ELSEIF CFLAG:(ARG):5 >= 200
+	SITYU = 200
+ELSEIF CFLAG:(ARG):5 >= 100
+	SITYU = 300
+ELSE
+	;乗り気ではない
+	SITYU = 0
+ENDIF
+
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+SELECTCASE SITYU
+CASE 0
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%とスキンシップをした
+	PRINTFORMW %CALLNAME:(ARG)%は嬉しく無さそうだ…
+	CFLAG:(ARG):5 += 0
+CASE 1
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%と体を触れ合いながらスキンシップをした
+	PRINTFORMW %CALLNAME:(ARG)%は素直に%CALLNAME:(1)%との行為を受け入れている
+	CFLAG:(ARG):5 += 0
+CASE 100
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%と触れ合いながらスキンシップをした
+	PRINTFORMW %CALLNAME:(ARG)%は嬉しそうにしている…
+	CFLAG:(ARG):5 += 3
+CASE 200
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%とスキンシップをした
+	PRINTFORMW %CALLNAME:(ARG)%は楽しそうにしている…
+	CFLAG:(ARG):5 += 2
+CASE 300
+	PRINTFORML %CALLNAME:(1)%は%CALLNAME:(ARG)%とスキンシップをした
+	PRINTFORMW %CALLNAME:(ARG)%は反応に困っている…
+	CFLAG:(ARG):5 += 1
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+
+IF GROUPMATCH(SITYU, 1, 100)
+	FOR LCOUNT, 0 , 5
+		CALL PT_TALK_簡易ダメ(1, RAND:4, RAND:101 + 100, 50)
+		CALL PT_TALK_簡易ダメ(ARG, RAND:4, RAND:101 + 100, 50)
+	NEXT
+	;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 1)
+	;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 1)
+ENDIF
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0に乳搾りをする
+;=========================================
+@PT_TALK_母乳飲み_1(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF TALENT:(ARG):130 <= 0
+	;そもそも絞れない
+	RETURN -2
+ENDIF
+
+IF CFLAG:(1):29 > 0
+	;主人公が動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+;---絶対いける系---
+IF CFLAG:(ARG:0):25 > 0
+	;睡眠状態は無条件でOK
+	SITYU = 1
+	
+ELSEIF CFLAG:(ARG:0):29 > 0
+	;喪失状態は無条件でOK
+	SITYU = 2
+	
+ELSEIF CFLAG:(ARG:0):43 > 0
+	;催眠状態は無条件でOK
+	SITYU = 3
+	
+;---　　　---
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	IF CFLAG:(ARG:0):506 > 50
+		;かつ母乳が溜まってる
+		;CFLAG:(ARG:0):506 >= 100で膨乳する
+		;50超えると張る
+		SITYU = 101
+		
+	ELSE
+		;普通に
+		SITYU = 100
+		
+	ENDIF
+ELSEIF CFLAG:(ARG):5 >= 200
+	;好感度があればOK
+	IF CFLAG:(ARG:0):506 > 50
+		;かつ母乳が溜まってる
+		SITYU = 201
+		
+	ELSE
+		;普通に
+		SITYU = 200
+		
+	ENDIF
+	
+ELSEIF CFLAG:(ARG:0):506 > 50 && (CFLAG:(ARG):5 + CFLAG:(ARG:0):506 >= 200)
+	;好感度はあまり無いけど胸が張ってるから仕方なく
+	SITYU = 900
+	
+ELSE
+	;ダメでした
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+;---導入---
+SELECTCASE SITYU
+CASE 0
+	;ダメでした
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをしてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は軽蔑した目でこちらを見た後、胸を隠すように腕で覆いながらそっぽを向いてしまった…
+
+CASE 1
+	;睡眠
+	PRINTFORML %CALLNAME:(1)%は眠っている%CALLNAME:(ARG)%の横に座ると
+	PRINTFORMW 乳搾りをしてあげると小さく告げた
+CASE 2
+	;喪失
+	PRINTFORML %CALLNAME:(1)%はぐったりとしている%CALLNAME:(ARG)%の横に座ると
+	PRINTFORMW 乳搾りをしてあげると告げた
+CASE 3
+	;催眠
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをしてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は素直に了承してくれた
+
+CASE 100
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをしてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は快く了承してくれた
+CASE 101
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に苦しそうだから乳搾りをしてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は胸が張っていたので丁度良かったと、快く了承してくれた
+
+CASE 200
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをしてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し困惑したが、了承してくれた
+CASE 201
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に苦しそうだから乳搾りをしてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し困惑したが、胸が張っていたので丁度良かったと、了承してくれた
+
+CASE 900
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に苦しそうだから乳搾りをしてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し軽蔑した目こちらを見たが、自分の胸を見て少し考えた後、渋々了承してくれた
+
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+SIF GROUPMATCH(SITYU, 0)
+	RETURN 0, SITYU
+
+;飲むのは主人公のみ、喪失はしてない、はず
+BASE:1:HP = MIN(BASE:1:HP + MAXBASE:1:HP / 5, MAXBASE:1:HP)
+BASE:1:MP = MIN(BASE:1:MP + MAXBASE:1:MP / 10, MAXBASE:1:MP)
+
+;Bダメージ
+FOR LOCAL:0, 0, (RAND:7 +4)
+	CALL PT_TALK_簡易ダメ(ARG, 1, 800 + RAND:401, 10)
+NEXT
+
+;レズ中毒
+LOCAL = 3 + RAND:5
+CALL ADD_ABL_EXP(13, 1, LOCAL)
+CALL ADD_ABL_EXP(13, ARG, LOCAL)
+
+;溜まった母乳を吐き出す
+SIF CFLAG:(ARG:0):506 > 10
+	CFLAG:(ARG:0):506 -= RAND:10 + 1
+	
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 10)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 10)
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0に乳搾りをしてもらう
+;=========================================
+@PT_TALK_母乳飲み_2(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF TALENT:(1):130 <= 0
+	;そもそも絞れない
+	RETURN -2
+ENDIF
+
+IF CFLAG:(ARG):29 > 0 || CFLAG:(ARG):25 > 0 || CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0
+	;動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+;---絶対いける系---
+IF CFLAG:(ARG):43 > 0
+	;催眠状態は無条件でOK
+	SITYU = 1
+	
+;---　　　---
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	SITYU = 100
+
+ELSEIF CFLAG:(ARG):5 >= 200
+	;好感度があればOK
+	SITYU = 200
+
+ELSEIF ABL:(ARG):13 >= 3
+	;好感度は無いけどレズプレイは好きだからうさ晴らしで
+	SITYU = 900
+	
+ELSE
+	;ダメでした
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+;---導入---
+SELECTCASE SITYU
+CASE 0
+	;ダメでした
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをして欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は軽蔑した目でこちらを見た後そっぽを向いてしまった…
+
+CASE 1
+	;催眠
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをして欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は素直に了承してくれた
+
+CASE 100
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをして欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は快く了承してくれた
+
+CASE 200
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをして欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し困惑したが、了承してくれた
+
+CASE 900
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳搾りをして欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は一瞬軽蔑した目でこちらを見たが、含み笑いを浮かべて了承してくれた
+
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+SIF GROUPMATCH(SITYU, 0)
+	RETURN 0, SITYU
+
+;飲むのは相手、喪失はしてない、はず
+BASE:(ARG):HP = MIN(BASE:(ARG):HP + MAXBASE:(ARG):HP / 5, MAXBASE:(ARG):HP)
+BASE:(ARG):MP = MIN(BASE:(ARG):MP + MAXBASE:(ARG):MP / 10, MAXBASE:(ARG):MP)
+
+;Bダメージ
+IF GROUPMATCH(SITYU, 900)
+	FOR LOCAL:0, 0, (RAND:7 +8)
+		CALL PT_TALK_簡易ダメ(1, 1, 800 + RAND:401, 10)
+	NEXT
+ELSE
+	FOR LOCAL:0, 0, (RAND:7 +4)
+		CALL PT_TALK_簡易ダメ(1, 1, 800 + RAND:401, 10)
+	NEXT
+ENDIF
+
+;レズ中毒
+LOCAL = 3 + RAND:5
+CALL ADD_ABL_EXP(13, 1, LOCAL)
+CALL ADD_ABL_EXP(13, ARG, LOCAL)
+
+;溜まった母乳を吐き出す
+SIF CFLAG:(1):506 > 10
+	CFLAG:(1):506 -= RAND:10 + 1
+	
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 10)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 10)
+
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0と乳搾りをし合う
+;=========================================
+@PT_TALK_母乳飲み_3(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF TALENT:(ARG):130 <= 0 || TALENT:(1):130 <= 0
+	;そもそも絞れない
+	RETURN -2
+ENDIF
+
+IF CFLAG:(ARG):29 > 0 || CFLAG:(ARG):25 > 0 || CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0
+	;動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+;---絶対いける系---
+IF CFLAG:(ARG):43 > 0
+	;催眠状態は無条件でOK
+	SITYU = 1
+	
+;---　　　---
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	SITYU = 100
+
+ELSEIF CFLAG:(ARG):5 >= 200
+	;好感度があればOK
+	SITYU = 200
+
+ELSE
+	;ダメでした
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+;---導入---
+SELECTCASE SITYU
+CASE 0
+	;ダメでした
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳を搾り合いたい言うと
+	PRINTFORMW %CALLNAME:(ARG)%は軽蔑した目でこちらを見た後そっぽを向いてしまった…
+
+CASE 1
+	;催眠
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳を搾り合いたい言うと
+	PRINTFORMW %CALLNAME:(ARG)%は素直に了承してくれた
+
+CASE 100
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳を搾り合いたい言うと
+	PRINTFORMW %CALLNAME:(ARG)%は快く了承してくれた
+
+CASE 200
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に乳を搾り合いたい言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し困惑したが、了承してくれた
+
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+SIF GROUPMATCH(SITYU, 0)
+	RETURN 0, SITYU
+
+
+;飲むのは自分と相手
+BASE:1:HP = MIN(BASE:1:HP + MAXBASE:1:HP / 5, MAXBASE:1:HP)
+BASE:1:MP = MIN(BASE:1:MP + MAXBASE:1:MP / 10, MAXBASE:1:MP)
+BASE:(ARG):HP = MIN(BASE:(ARG):HP + MAXBASE:(ARG):HP / 5, MAXBASE:(ARG):HP)
+BASE:(ARG):MP = MIN(BASE:(ARG):MP + MAXBASE:(ARG):MP / 10, MAXBASE:(ARG):MP)
+
+;Bダメージ
+FOR LOCAL:0, 0, (RAND:7 +4)
+	CALL PT_TALK_簡易ダメ(1, 1, 800 + RAND:401, 10)
+	CALL PT_TALK_簡易ダメ(ARG, 1, 800 + RAND:401, 10)
+	SIF CFLAG:(1):29 || CFLAG:(ARG):29
+		BREAK
+NEXT
+
+;レズ中毒
+LOCAL = 3 + RAND:5
+CALL ADD_ABL_EXP(13, 1, LOCAL)
+CALL ADD_ABL_EXP(13, ARG, LOCAL)
+
+;溜まった母乳を吐き出す
+SIF CFLAG:(1):506 > 10
+	CFLAG:(1):506 -= RAND:10 + 1
+SIF CFLAG:(ARG):506 > 10
+	CFLAG:(ARG):506 -= RAND:10 + 1
+	
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 10)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 10)
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0の体を拭く
+;=========================================
+@PT_TALK_体を拭く_1(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF ITEM:54 < 1
+	;拭くものが無い
+	RETURN -2
+ENDIF
+
+IF CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0
+	;動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+;---絶対いける系---
+IF CFLAG:(ARG):25 > 0
+	;睡眠状態は無条件でOK
+	SITYU = 1
+	
+ELSEIF CFLAG:(ARG):29 > 0
+	;喪失状態は無条件でOK
+	SITYU = 2
+	
+ELSEIF CFLAG:(ARG):43 > 0
+	;催眠状態は無条件でOK
+	SITYU = 3
+	
+;---　　　---
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	SITYU = 100
+
+ELSEIF CFLAG:(ARG):5 >= 150
+	;好感度があればOK
+	SITYU = 200
+
+ELSE
+	;ダメでした
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+;---導入---
+SELECTCASE SITYU
+CASE 0
+	;ダメでした
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%に別にいらないと断られてしまった…
+CASE 1
+	;睡眠
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%の横に座ると
+	PRINTFORMW %CALLNAME:(ARG)%に体を拭いてあげると小さく告げた
+CASE 2
+	;喪失
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%の横に座ると
+	PRINTFORMW %CALLNAME:(ARG)%に体を拭いてあげると告げた
+CASE 3
+	;催眠
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は素直に了承してくれた
+CASE 100
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は快く了承してくれた
+CASE 200
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いてあげると言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し困惑したが、了承してくれた
+
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+SIF GROUPMATCH(SITYU, 0)
+	RETURN 0, SITYU
+
+
+
+SELECTCASE SITYU
+CASE 1
+	;睡眠
+	PRINTFORMW %CALLNAME:(1)%は%CALLNAME:(ARG)%を起こさぬよう優しく汚れを拭っている
+CASE 2
+	;喪失
+	PRINTFORMW %CALLNAME:(1)%はぐったりとした%CALLNAME:(ARG)%の体を優しく拭っている
+CASE 3
+	;催眠
+	PRINTFORMW %CALLNAME:(ARG)%は%CALLNAME:(1)%に身を委ねるようにして体を拭ってもらっている
+CASE 100
+	PRINTFORMW %CALLNAME:(ARG)%は嬉しそうにして%CALLNAME:(1)%に体を拭ってもらっている
+CASE 200
+	PRINTFORMW %CALLNAME:(ARG)%は照れながら%CALLNAME:(1)%に体を拭ってもらっている
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 1)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 1)
+
+
+;微小ダメージ
+FOR LOCAL:0, 0, (RAND:7 + 4)
+	CALL PT_TALK_簡易ダメ(ARG, RAND:4, 50 + RAND:151, 50)
+NEXT
+
+;レズ中毒
+LOCAL = 1 + RAND:2
+CALL ADD_ABL_EXP(13, 1, LOCAL)
+CALL ADD_ABL_EXP(13, ARG, LOCAL)
+
+;汚れが無くなる
+BASE:(ARG):DP = 0
+
+CALL ADD_ITEM(54, -1, 0)
+
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 10)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 10)
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0に体を拭いてもらう
+;=========================================
+@PT_TALK_体を拭く_2(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF ITEM:54 < 1
+	;拭くものが無い
+	RETURN -2
+ENDIF
+
+IF CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0 || CFLAG:(ARG):29 > 0 || CFLAG:(ARG):25 > 0
+	;動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+;---絶対いける系---
+IF CFLAG:(ARG):43 > 0
+	;催眠状態は無条件でOK
+	SITYU = 1
+	
+;---　　　---
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	SITYU = 100
+
+ELSEIF CFLAG:(ARG):5 >= 150
+	;好感度があればOK
+	SITYU = 200
+
+ELSE
+	;ダメでした
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+;---導入---
+SELECTCASE SITYU
+CASE 0
+	;ダメでした
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いて欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%に自分ですれば？と断られてしまった…
+CASE 1
+	;催眠
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いて欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は素直に了承してくれた
+CASE 100
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いて欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は快く了承してくれた
+CASE 200
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭いて欲しいと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し困惑したが、了承してくれた
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+SIF GROUPMATCH(SITYU, 0)
+	RETURN 0, SITYU
+
+
+SELECTCASE SITYU
+CASE 1
+	;催眠
+	PRINTFORMW %CALLNAME:(ARG)%は優しく%CALLNAME:(1)%の体を拭いている…
+CASE 100
+	PRINTFORMW %CALLNAME:(ARG)%は楽しそうに%CALLNAME:(1)%の体を拭いている…
+CASE 200
+	PRINTFORMW %CALLNAME:(ARG)%は黙々と%CALLNAME:(1)%の体を拭いている…
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 1)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 1)
+
+
+;微小ダメージ
+FOR LOCAL:0, 0, (RAND:7 + 4)
+	CALL PT_TALK_簡易ダメ(1, RAND:4, 50 + RAND:151, 50)
+NEXT
+
+;レズ中毒
+LOCAL = 1 + RAND:2
+CALL ADD_ABL_EXP(13, 1, LOCAL)
+CALL ADD_ABL_EXP(13, ARG, LOCAL)
+
+;汚れが無くなる
+BASE:(1):DP = 0
+
+CALL ADD_ITEM(54, -1, 0)
+
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 10)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 10)
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0と体を拭き合う
+;=========================================
+@PT_TALK_体を拭く_3(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF ITEM:54 < 2
+	;拭くものが足りない
+	RETURN -2
+ENDIF
+
+IF CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0 || CFLAG:(ARG):29 > 0 || CFLAG:(ARG):25 > 0
+	;動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+;---絶対いける系---
+IF CFLAG:(ARG):43 > 0
+	;催眠状態は無条件でOK
+	SITYU = 1
+	
+;---　　　---
+ELSEIF CFLAG:(ARG):5 >= 500
+	;好感度が沢山あれば快く
+	SITYU = 100
+
+ELSEIF CFLAG:(ARG):5 >= 150
+	;好感度があればOK
+	SITYU = 200
+
+ELSE
+	;ダメでした
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN SITYU
+
+
+;---導入---
+SELECTCASE SITYU
+CASE 0
+	;ダメでした
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭き合おうと言うと
+	PRINTFORMW %CALLNAME:(ARG)%に嫌だと断られてしまった…
+CASE 1
+	;催眠
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭き合おうと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は素直に了承してくれた
+CASE 100
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭き合おうと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は快く了承してくれた
+CASE 200
+	PRINTFORML %CALLNAME:(1)%が%CALLNAME:(ARG)%に体を拭き合おうと言うと
+	PRINTFORMW %CALLNAME:(ARG)%は少し困惑したが、了承してくれた
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 0)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 0)
+
+SIF GROUPMATCH(SITYU, 0)
+	RETURN 0, SITYU
+
+
+SELECTCASE SITYU
+CASE 1
+	;催眠
+	PRINTFORMW %CALLNAME:(ARG)%と%CALLNAME:(1)%はお互いの体を優しく拭き合っている…
+CASE 100
+	PRINTFORMW %CALLNAME:(ARG)%と%CALLNAME:(1)%は楽しそうにお互いの拭き合っている…
+CASE 200
+	PRINTFORMW %CALLNAME:(ARG)%と%CALLNAME:(1)%は照れながらお互いの体を拭き合っている…
+ENDSELECT
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 1)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 1)
+
+
+;微小ダメージ
+FOR LOCAL:0, 0, (RAND:7 + 4)
+	CALL PT_TALK_簡易ダメ(1, RAND:4, 50 + RAND:151, 50)
+	CALL PT_TALK_簡易ダメ(ARG, RAND:4, 50 + RAND:151, 50)
+	SIF CFLAG:(1):29 || CFLAG:(ARG):29
+		BREAK
+NEXT
+
+;レズ中毒
+LOCAL = 1 + RAND:2
+CALL ADD_ABL_EXP(13, 1, LOCAL)
+CALL ADD_ABL_EXP(13, ARG, LOCAL)
+
+;汚れが無くなる
+BASE:(1):DP = 0
+BASE:(ARG):DP = 0
+
+CALL ADD_ITEM(54, -2, 0)
+
+;CALL PRINT_MESSAGE(1, ---, ARG:0, CALLNAME:(1), CALLNAME:(ARG:0), SITYU, 10)
+;CALL PRINT_MESSAGE(ARG:0, ---, 1, CALLNAME:(ARG:0), CALLNAME:(1), SITYU, 10)
+
+RETURN 1, SITYU
+;=========================================
+;主人公がARG:0を眠らす・起こす
+;=========================================
+@PT_TALK_睡眠(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF ITEM:65 < 1 && ITEM:40 < 1
+	;眠らせるものが無い
+	RETURN -2
+ENDIF
+
+IF CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0
+	;動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+IF CFLAG:(ARG):25 > 0
+	;睡眠状態
+	SITYU = 1
+ELSE
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN 1, SITYU
+
+SELECTCASE SITYU
+CASE 0
+	IF ITEM:40 > 0
+		PRINTFORMW %CALLNAME:(1)%は%ITEMNAME:40%を使って%CALLNAME:(ARG)%を眠らせた…
+	ELSE
+		PRINTFORMW %CALLNAME:(1)%は%ITEMNAME:65%を使って%CALLNAME:(ARG)%を眠らせた…
+	ENDIF
+	CFLAG:(ARG):25 = 2
+CASE 1
+	PRINTFORMW %CALLNAME:(1)%は%CALLNAME:(ARG)%を起こした…
+	CFLAG:(ARG):25 = 0
+ENDSELECT
+
+RETURN 0, SITYU
+;=========================================
+;主人公がARG:0に催眠をかける・解く
+;=========================================
+@PT_TALK_催眠(MODE = 0, ARG:0)
+#DIM MODE
+#DIM SITYU
+
+;エラー予防
+IF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	;THROW 不正なキャラIDが指定されました！キャラID = {ARG:0}
+ENDIF
+
+IF ITEM:40 < 1
+	;催眠をかけるものが無い
+	RETURN -2
+ENDIF
+
+IF CFLAG:(1):29 > 0 || CFLAG:(1):25 > 0
+	;動けない
+	RETURN -3
+ENDIF
+
+;シチュ分岐
+IF CFLAG:(ARG):43 > 0
+	;催眠状態
+	SITYU = 1
+ELSE
+	SITYU = 0
+ENDIF
+
+;テストモード
+SIF MODE
+	RETURN 1, SITYU
+
+SELECTCASE SITYU
+CASE 0
+	PRINTFORMW %CALLNAME:(1)%は%CALLNAME:(ARG)%に催眠をかけた…
+	SIF !CFLAG:(ARG):43
+		CALL SET_HYPNO_TYPE(ARG)
+	CFLAG:(ARG):43 = 1
+CASE 1
+	PRINTFORMW %CALLNAME:(1)%は%CALLNAME:(ARG)%の催眠を解いた…
+	CFLAG:(ARG):43 = 0
+ENDSELECT
+
+RETURN 0, SITYU
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;EPダメ簡易呼び出し
+;キャラ、部位(ABCV)、ダメ量、MP倍率
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@PT_TALK_簡易ダメ(ARG:0, ARG:1, ARG:2, ARG:3 = 0)
+SIF ARG == 0
+	RETURN -1
+
+TFLAG:63 = ARG:1
+
+LOCAL = CALC_SENSITIVITY(ARG, TFLAG:63, ARG:2)
+CALL DAMAGE_COMMON(ARG, 2, LOCAL, ARG:3)
+
+TFLAG:63 = 0
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡

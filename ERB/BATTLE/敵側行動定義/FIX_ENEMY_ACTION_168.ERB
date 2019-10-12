@@ -1,0 +1,28 @@
+﻿@FIX_ENEMY_ACTION_168(ENEMY_ID)
+#DIM ENEMY_ID
+
+;52が技使用者、54がターゲット。基本的に弄らなくていい
+TFLAG:52 = ENEMY_ID
+TFLAG:54 = DA:ENEMY_ID:51
+
+;55には攻撃種別が入り、1~5がそれぞれ、通常・衣服・性・拘束・寄生
+TFLAG:55 = 1
+;60が1なら喪失の相手にも効く。基本的に弄らなくていい
+TFLAG:60 = 1
+
+;ベース威力。基本的に（ｒｙ
+TFLAG:57 = DA:ENEMY_ID:5
+
+;コマンド威力と命中基準値。攻撃種別によって意味が違ってくる
+TFLAG:58 = 140
+TFLAG:61 = 60
+
+;補助値として使われるフラグ。攻撃種別によって意味が違ってくる
+TFLAG:64 = 65
+
+TFLAG:89 = 6
+
+CALL ACTION_FILTER(-1, 2, 168, CALLNAME:(TFLAG:54), SAVESTR:ENEMY_ID, TFLAG:54)
+
+
+

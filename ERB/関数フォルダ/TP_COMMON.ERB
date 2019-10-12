@@ -1,0 +1,1148 @@
+﻿;TP関連の処理
+
+;TP基準値を取得
+;ARG:0	対象キャラID
+@GET_BASIC_TP(ARG:0)
+
+IF ARG:0 == 0
+	RETURN 100
+ENDIF
+
+IF CFLAG:(ARG:0):12 <= -40
+	LOCAL:1 = 90
+ELSEIF CFLAG:(ARG:0):12 <= -20
+	LOCAL:1 = 95
+ELSEIF CFLAG:(ARG:0):12 <= 19
+	LOCAL:1 = 100
+ELSEIF CFLAG:(ARG:0):12 <= 39
+	LOCAL:1 = 105
+ELSE
+	LOCAL:1 = 110
+ENDIF
+
+IF TALENT:(ARG:0):14
+	LOCAL:1 -= 10
+ENDIF
+
+IF CFLAG:(ARG:0):100 == 2 || CFLAG:(ARG:0):100 == 7 || CFLAG:(ARG:0):100 == 10
+	LOCAL:1 += 5
+ENDIF
+
+IF CFLAG:(ARG:0):100 == 6 || CFLAG:(ARG:0):100 == 12 || CFLAG:(ARG:0):100 == 13
+	LOCAL:1 -= 5
+ENDIF
+
+RETURN LOCAL:1
+
+
+
+
+;TP変動
+;ARG:0	対象キャラID
+;ARG:1	変動理由
+;		0	時間経過
+;		1	攻撃を当てた
+;		2	敵を倒した
+;		3	攻撃を外した
+;		4	通常攻撃を食らった
+;		5	通常攻撃を避けた
+;		6	衣服攻撃を食らった
+;		7	衣服攻撃を避けた
+;		8	性攻撃を食らった
+;		9	性攻撃を避けた
+;		10	拘束攻撃を食らった
+;		11	拘束攻撃を避けた
+;		12	寄生攻撃を食らった
+;		13	寄生攻撃を避けた
+;		14	拘束されている
+;		15	丸呑みされている
+;		16	HPが0になった
+;		17	CPが0になった
+;		18	絶頂した
+;		19	仲間が拘束された
+;		20	仲間が戦意喪失した
+;		21	おもらしをした
+;		22	仲間が捕虜にされた
+;		23	捕虜に攻撃を当ててしまった
+;		24	捕虜を助け出した、捕虜が投げ捨てられた、捕虜状態を自力で脱した(気付け薬)
+@CHANGE_TP(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	TEMP
+;2	変動量
+
+IF ARG:0 > CHARANUM - 1
+	RETURN
+ENDIF
+
+LOCAL:2 = 0
+
+SELECTCASE ARG:1
+	CASE 0
+		;時間経過
+		IF CFLAG:(ARG:0):10
+			;非戦闘中も拘束されている場合、TPは下がる一方
+			LOCAL:2 = -10
+		ELSE
+			CALL GET_BASIC_TP(ARG:0)
+			LOCAL:1 = (RESULT - BASE:(ARG:0):4) * 3 / 10
+			IF BASE:(ARG:0):4 < RESULT
+				LOCAL:2 = LIMIT((LOCAL:1 + 2), -999, (RESULT - BASE:(ARG:0):4))
+			ELSE
+				LOCAL:2 = LIMIT((LOCAL:1 - 2), (RESULT - BASE:(ARG:0):4), 999)
+			ENDIF
+		ENDIF
+	CASE 1
+		;攻撃を当てた
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 6
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 3
+		ELSE
+			LOCAL:2 = 3
+		ENDIF
+	CASE 2
+		;敵を倒した
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 10
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 20
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 15
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 15
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 10
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = 7
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 20
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 10
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 15
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 20
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 7
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = 7
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 12
+		ELSE
+			LOCAL:2 = 10
+		ENDIF
+	CASE 3
+		;攻撃を外した
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = -2
+		ELSE
+			LOCAL:2 = -2
+		ENDIF
+	CASE 4
+		;通常攻撃を食らった
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:2 = -3
+		ENDIF
+		
+		IF TALENT:(ARG:0):10
+			LOCAL:2 -= 1
+		ENDIF
+		IF TALENT:(ARG:0):11
+			LOCAL:2 += 4
+		ENDIF
+		IF TALENT:(ARG:0):40
+			IF LOCAL:2 < 0
+				LOCAL:2 -= 2
+			ELSE
+				LOCAL:2 += 2
+			ENDIF
+		ENDIF
+	CASE 5
+		;通常攻撃を避けた
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 6
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:2 = 1
+		ENDIF
+	CASE 6
+		;衣服攻撃を食らった
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:2 = -3
+		ENDIF
+		
+		IF TALENT:(ARG:0):10
+			LOCAL:2 -= 1
+		ENDIF
+		IF TALENT:(ARG:0):11
+			LOCAL:2 += 4
+		ENDIF
+		IF TALENT:(ARG:0):33
+			LOCAL:2 = 0
+		ENDIF
+	CASE 7
+		;衣服攻撃を避けた
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:2 = 1
+		ENDIF
+	CASE 8
+		;性攻撃を食らった
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 7
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:2 = -1
+		ENDIF
+		
+		IF TALENT:(ARG:0):10
+			LOCAL:2 -= 1
+		ENDIF
+		IF TALENT:(ARG:0):11
+			LOCAL:2 += 1
+		ENDIF
+		IF TALENT:(ARG:0):15
+			LOCAL:2 += 2
+		ENDIF
+		IF TALENT:(ARG:0):30 && TFLAG:63 == 3
+			LOCAL:2 -= 2
+		ENDIF
+		IF TALENT:(ARG:0):70
+			LOCAL:2 += 2
+		ENDIF
+		IF TALENT:(ARG:0):109 && TFLAG:63 == 1
+			LOCAL:2 += 3
+		ENDIF
+		IF TALENT:(ARG:0):155 && LOCAL:2 < 0
+			LOCAL:2 = 0
+		ENDIF
+		IF TALENT:(ARG:0):31 && TFLAG:63 == 3
+			LOCAL:2 = 0
+		ENDIF
+	CASE 9
+		;性攻撃を避けた
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 6
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:2 = 2
+		ENDIF
+	CASE 10
+		;拘束攻撃を食らった
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:2 = -4
+		ENDIF
+		
+		IF TALENT:(ARG:0):10
+			LOCAL:2 -= 1
+		ENDIF
+		IF TALENT:(ARG:0):11
+			LOCAL:2 += 3
+		ENDIF
+		IF TALENT:(ARG:0):26
+			LOCAL:2 = -1 * BASE:(ARG:0):4
+		ENDIF
+	CASE 11
+		;拘束攻撃を避けた
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:2 = 2
+		ENDIF
+	CASE 12
+		;寄生攻撃を食らった
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:2 = -5
+		ENDIF
+		
+		IF TALENT:(ARG:0):10
+			LOCAL:2 -= 1
+		ENDIF
+		IF TALENT:(ARG:0):11
+			LOCAL:2 += 4
+		ENDIF
+		IF TALENT:(ARG:0):152
+			LOCAL:2 -= 3
+		ENDIF
+		IF TALENT:(ARG:0):155 && LOCAL:2 < 0
+			LOCAL:2 = 0
+		ENDIF
+	CASE 13
+		;寄生攻撃を避けた
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 4
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 3
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:2 = 1
+		ENDIF
+	CASE 14
+		;拘束されている
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:2 = -3
+		ENDIF
+		
+		IF TALENT:(ARG:0):11
+			LOCAL:2 += 2
+		ENDIF
+		IF TALENT:(ARG:0):34
+			LOCAL:2 += 2
+		ENDIF
+	CASE 15
+		;丸呑みされている
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -9
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:2 = -5
+		ENDIF
+		
+		IF TALENT:(ARG:0):11
+			LOCAL:2 += 2
+		ENDIF
+		IF TALENT:(ARG:0):34
+			LOCAL:2 += 2
+		ENDIF
+		IF TALENT:(ARG:0):61
+			LOCAL:2 = 0
+		ENDIF
+		IF TALENT:(ARG:0):62
+			LOCAL:2 *= 2
+		ENDIF
+	CASE 16
+		;HPが0になった
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -15
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 5
+		ELSE
+			LOCAL:2 = -5
+		ENDIF
+		
+		IF TALENT:(ARG:0):25 && LOCAL:2 < 0
+			LOCAL:2 = 0
+		ENDIF
+	CASE 17
+		;CPが0になった
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -4
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -6
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:2 = -3
+		ENDIF
+		
+		IF TALENT:(ARG:0):33
+			LOCAL:2 = 10
+		ENDIF
+	CASE 18
+		;絶頂した
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = -5
+		ELSE
+			LOCAL:2 = -5
+		ENDIF
+		
+		IF TALENT:(ARG:0):13 || TALENT:(ARG:0):17 || TALENT:(ARG:0):25 || TALENT:(ARG:0):33 || TALENT:(ARG:0):36 || TALENT:(ARG:0):70
+			;一部の素質持ちはイくとTPアップ
+			IF LOCAL:2 < 0
+				LOCAL:2 = 2
+			ELSE
+				LOCAL:2 += 2
+			ENDIF
+		ENDIF
+		IF TALENT:(ARG:0):32
+			LOCAL:2 = 0
+		ENDIF
+	CASE 19
+		;仲間が拘束された
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 15
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -1
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 1
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = 0
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = 0
+		ELSE
+			LOCAL:2 = 0
+		ENDIF
+	CASE 20
+		;仲間が戦意喪失した
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = 5
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -12
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = -2
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -7
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = 2
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -3
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -20
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = -7
+		ELSE
+			LOCAL:2 = -7
+		ENDIF
+		
+		IF TALENT:(ARG:0):26
+			LOCAL:2 = -1 * BASE:(ARG:0):4
+		ENDIF
+		IF TALENT:(ARG:0):21
+			LOCAL:2 = 0
+		ENDIF
+	
+	;★尿意パッチ加筆点★
+	CASE 21
+		;おもらしをした
+		IF CFLAG:(ARG:0):100 == 1
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 2
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 3
+			LOCAL:2 = -15
+		ELSEIF CFLAG:(ARG:0):100 == 4
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 5
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 6
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 7
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 8
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 9
+			LOCAL:2 = -8
+		ELSEIF CFLAG:(ARG:0):100 == 10
+			LOCAL:2 = -10
+		ELSEIF CFLAG:(ARG:0):100 == 11
+			LOCAL:2 = -5
+		ELSEIF CFLAG:(ARG:0):100 == 12
+			LOCAL:2 = -15
+		ELSEIF CFLAG:(ARG:0):100 == 13
+			LOCAL:2 = -15
+		ELSEIF CFLAG:(ARG:0):100 == 14
+			LOCAL:2 = -10
+		ELSE
+			LOCAL:2 = -10
+		ENDIF
+		IF TALENT:(ARG:0):12
+			LOCAL:2 += 2
+		ENDIF
+		IF TALENT:(ARG:0):15 || TALENT:(ARG:0):30 || TALENT:(ARG:0):35
+			LOCAL:2 *= 3
+			LOCAL:2 /= 2
+		ENDIF
+		IF TALENT:(ARG:0):17 || TALENT:(ARG:0):36
+			LOCAL:2 /= 2
+		ENDIF
+	;★ここまで★
+	
+	;★状態異常【捕虜】追加★
+	CASE 22
+		;仲間が捕虜にされた
+		IF TALENT:(ARG:0):21 || TALENT:(ARG:0):22
+		;一部素質持ちはＴＰ変動が起こらない為処理なし
+		ELSE
+			IF CFLAG:(ARG:0):100 == 1
+				LOCAL:2 = 1 ;「私がしっかりしないと！」的な意味で少し増える
+			ELSEIF CFLAG:(ARG:0):100 == 2
+				LOCAL:2 = -7
+			ELSEIF CFLAG:(ARG:0):100 == 3
+				LOCAL:2 = -10
+			ELSEIF CFLAG:(ARG:0):100 == 4
+				LOCAL:2 = -5
+			ELSEIF CFLAG:(ARG:0):100 == 5
+				LOCAL:2 = -9
+			ELSEIF CFLAG:(ARG:0):100 == 6
+				LOCAL:2 = -9
+			ELSEIF CFLAG:(ARG:0):100 == 7
+				LOCAL:2 = -2
+			ELSEIF CFLAG:(ARG:0):100 == 8
+				LOCAL:2 = -7
+			ELSEIF CFLAG:(ARG:0):100 == 9
+				LOCAL:2 = -3
+			ELSEIF CFLAG:(ARG:0):100 == 10
+				LOCAL:2 = -20
+			ELSEIF CFLAG:(ARG:0):100 == 11
+				LOCAL:2 = -3
+			ELSEIF CFLAG:(ARG:0):100 == 12
+				LOCAL:2 = -20
+			ELSEIF CFLAG:(ARG:0):100 == 13
+				LOCAL:2 = -30
+			ELSEIF CFLAG:(ARG:0):100 == 14
+				LOCAL:2 = -7
+			ELSE
+				LOCAL:2 = -7
+			ENDIF
+			IF TALENT:(ARG:0):12
+				LOCAL:2 += 2
+			ENDIF
+			IF TALENT:(ARG:0):26
+				LOCAL:2 += -5
+			ENDIF
+		ENDIF
+		IF TALENT:(ARG:0):15 || TALENT:(ARG:0):24 || TALENT:(ARG:0):40
+			LOCAL:2 *= 3
+			LOCAL:2 /= 2
+		ENDIF
+		IF TALENT:(ARG:0):20 || TALENT:(ARG:0):25
+			LOCAL:2 /= 2
+		ENDIF
+		;淫魔、または狂気持ちは問答無用で増える、サドマゾとか実装されたら追加するかも
+		IF TALENT:(ARG:0):156 || TALENT:(ARG:0):123
+			LOCAL:2 += 10
+		ENDIF
+		
+	CASE 23
+		;捕虜に攻撃が当たった
+		IF TALENT:(ARG:0):21 || TALENT:(ARG:0):22
+		;一部素質持ちはＴＰ変動が起こらない為処理なし
+		ELSE
+			IF CFLAG:(ARG:0):100 == 1
+				LOCAL:2 = -99
+			ELSEIF CFLAG:(ARG:0):100 == 2
+				LOCAL:2 = -10
+			ELSEIF CFLAG:(ARG:0):100 == 3
+				LOCAL:2 = -10
+			ELSEIF CFLAG:(ARG:0):100 == 4
+				LOCAL:2 = -8
+			ELSEIF CFLAG:(ARG:0):100 == 5
+				LOCAL:2 = -10
+			ELSEIF CFLAG:(ARG:0):100 == 6
+				LOCAL:2 = -15
+			ELSEIF CFLAG:(ARG:0):100 == 7
+				LOCAL:2 = -5
+			ELSEIF CFLAG:(ARG:0):100 == 8
+				LOCAL:2 = -10
+			ELSEIF CFLAG:(ARG:0):100 == 9
+				LOCAL:2 = -5
+			ELSEIF CFLAG:(ARG:0):100 == 10
+				LOCAL:2 = -99
+			ELSEIF CFLAG:(ARG:0):100 == 11
+				LOCAL:2 = -3
+			ELSEIF CFLAG:(ARG:0):100 == 12
+				LOCAL:2 = -99
+			ELSEIF CFLAG:(ARG:0):100 == 13
+				LOCAL:2 = -99
+			ELSEIF CFLAG:(ARG:0):100 == 14
+				LOCAL:2 = -10
+			ELSE
+				LOCAL:2 = -10
+			ENDIF
+			IF TALENT:(ARG:0):12
+				LOCAL:2 += 2
+			ENDIF
+			IF TALENT:(ARG:0):26
+				LOCAL:2 += -5
+			ENDIF
+		ENDIF
+		IF TALENT:(ARG:0):15 || TALENT:(ARG:0):24 || TALENT:(ARG:0):40
+			LOCAL:2 *= 3
+			LOCAL:2 /= 2
+		ENDIF
+		IF TALENT:(ARG:0):20 || TALENT:(ARG:0):25
+			LOCAL:2 /= 2
+		ENDIF
+		;淫魔、または狂気持ちは問答無用で増える、サドマゾとか実装されたら追加するかも
+		IF TALENT:(ARG:0):156 || TALENT:(ARG:0):123
+			LOCAL:2 += 30
+		ENDIF
+		
+	CASE 24
+		;捕虜を助け出した、捕虜を投げつけられた、捕虜状態を自力で脱した(気付け薬)
+		IF TALENT:(ARG:0):21 || TALENT:(ARG:0):22
+		;一部素質持ちはＴＰ変動が起こらない為処理なし
+		ELSE
+			IF CFLAG:(ARG:0):100 == 1
+				LOCAL:2 = 10
+			ELSEIF CFLAG:(ARG:0):100 == 2
+				LOCAL:2 = 5
+			ELSEIF CFLAG:(ARG:0):100 == 3
+				LOCAL:2 = 5
+			ELSEIF CFLAG:(ARG:0):100 == 4
+				LOCAL:2 = 10
+			ELSEIF CFLAG:(ARG:0):100 == 5
+				LOCAL:2 = 5
+			ELSEIF CFLAG:(ARG:0):100 == 6
+				LOCAL:2 = -5
+			ELSEIF CFLAG:(ARG:0):100 == 7
+				LOCAL:2 = 10
+			ELSEIF CFLAG:(ARG:0):100 == 8
+				LOCAL:2 = 5
+			ELSEIF CFLAG:(ARG:0):100 == 9
+				LOCAL:2 = 10
+			ELSEIF CFLAG:(ARG:0):100 == 10
+				LOCAL:2 = 50 ;鬼とかはキレる
+			ELSEIF CFLAG:(ARG:0):100 == 11
+				LOCAL:2 = 3
+			ELSEIF CFLAG:(ARG:0):100 == 12
+				LOCAL:2 = -10
+			ELSEIF CFLAG:(ARG:0):100 == 13
+				LOCAL:2 = 10
+			ELSEIF CFLAG:(ARG:0):100 == 14
+				LOCAL:2 = -5
+			ELSE
+				LOCAL:2 = 1
+			ENDIF
+			IF TALENT:(ARG:0):12 || TALENT:(ARG:0):25
+				LOCAL:2 += 2
+			ENDIF
+			IF TALENT:(ARG:0):26
+				LOCAL:2 += -5
+			ENDIF
+		ENDIF
+		IF TALENT:(ARG:0):15 || TALENT:(ARG:0):24 || TALENT:(ARG:0):40
+			LOCAL:2 *= 3
+			LOCAL:2 /= 2
+		ENDIF
+		IF TALENT:(ARG:0):20
+			LOCAL:2 /= 2
+		ENDIF
+		
+	;★ここまで★	
+	
+	CASEELSE
+		PRINTFORMW (CHANGE_TP)不正な変動理由 {ARG:1} が指定されました
+ENDSELECT
+
+
+CALL ADD_TP(ARG:0, LOCAL:2)
+
+
+
+;TP変化
+;ARG:0	対象キャラ
+;ARG:1	変化量
+@ADD_TP(ARG:0, ARG:1)
+LOCAL:1 = ARG:1
+
+;性格基準値によるボーナス
+IF CFLAG:(ARG:0):12 <= -40
+	;超弱気：+0以下なら-1補正、-5以下なら-2補正
+	IF LOCAL:1 <= -5
+		LOCAL:1 -= 2
+	ELSEIF LOCAL:1 <= 0
+		LOCAL:1 -= 1
+	ENDIF
+ELSEIF CFLAG:(ARG:0):12 <= -20
+	;弱気：-5以下なら-1補正
+	IF LOCAL:1 <= -5
+		LOCAL:1 -= 1
+	ENDIF
+ELSEIF CFLAG:(ARG:0):12 <= 19
+	;普通：何もしない
+ELSEIF CFLAG:(ARG:0):12 <= 39
+	;強気：+5以上なら+1補正
+	IF LOCAL:1 >= 5
+		LOCAL:1 += 1
+	ENDIF
+ELSE
+	;超強気：+0以上なら+1補正、+5以上なら+2補正
+	IF LOCAL:1 >= 5
+		LOCAL:1 += 2
+	ELSEIF LOCAL:1 >= 0
+		LOCAL:1 += 1
+	ENDIF
+ENDIF
+
+;感情乏しい　の場合、変化量半分
+IF TALENT:(ARG:0):22
+	LOCAL:1 /= 2
+ENDIF
+
+;TP倍率を反映
+IF TFLAG:68
+	LOCAL:1 = LOCAL:1 * TFLAG:68 / 100
+ENDIF
+
+BASE:(ARG:0):4 += LOCAL:1
+
+IF BASE:(ARG:0):4 < 0
+	BASE:(ARG:0):4 = 0
+ELSEIF BASE:(ARG:0):4 > 200
+	BASE:(ARG:0):4 = 200
+ENDIF
+
+
+

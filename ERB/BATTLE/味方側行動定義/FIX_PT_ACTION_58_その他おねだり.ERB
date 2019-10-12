@@ -1,0 +1,20 @@
+﻿;おねだり
+;CHARA_ID	実行キャラ
+@FIX_PT_ACTION_58(CHARA_ID)
+#DIM CHARA_ID
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+
+CALL PRINT_MESSAGE(CHARA_ID,1,58,CALLNAME:CHARA_ID,"")
+
+;その他おねだり
+IF CFLAG:CHARA_ID:20
+	PRINTFORML %CALLNAME:CHARA_ID%は全身の力を抜き、触手の責めを待っている…
+ELSE
+	IF BASE:CHARA_ID:3 <= 0
+		PRINTFORML %CALLNAME:CHARA_ID%は無防備に裸体を晒し、触手の責めを待ち望んでいる…
+	ELSE
+		PRINTFORML %CALLNAME:CHARA_ID%は無防備に体を差し出し、触手の責めを待ちわびている…
+	ENDIF
+ENDIF

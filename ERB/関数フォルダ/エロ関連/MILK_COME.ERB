@@ -1,0 +1,89 @@
+﻿;母乳体質化
+;ARG:0	対象キャラ
+;ARG:1	母乳体質変更量
+;ARG:2	母乳体質限界上昇を認めるかどうか(0:母乳製造装置からは成長しない　1:母乳製造装置より上への成長を認める　2:爆乳以上なら認めるが巨乳以下は何もしない)
+;爆乳以上を条件にする場合発生バランス上の問題、母乳体質は敵が強くなる
+@MILK_COME(CHARA_ID, ARG:1, ARG:2)
+;LOCAL
+
+#DIM CHARA_ID
+IF ARG:2 == 0 && TALENT:CHARA_ID:130 > 3
+	;一時的に限界突破＆最大値も超える(MILK_ADJUSTで元に戻す)
+	TALENT:CHARA_ID:130 += 10
+	RETURN 10
+ELSEIF ARG:2 == 2 && GET_BUST(CHARA_ID) < 2 && FLAG:521 != 1
+	;豊乳化イベントがあるなら巨乳以下には何もしない
+	RETURN 0
+ELSEIF ARG:2 != 2 || (ARG:2 == 2 && GET_BUST(CHARA_ID) >= 2) || (ARG:2 == 0 && TALENT:CHARA_ID:130 < 4)
+	TALENT:CHARA_ID:130 += ARG:1
+	CALL PRINT_MESSAGE(CHARA_ID, 427, 4, CALLNAME:(CHARA_ID), "")
+	RETURN 0
+ELSE
+ENDIF
+
+
+;母乳粘度
+;ARG:0	対象キャラ
+;ARG:1	母乳粘度変更量
+;粘度が高いほど母乳飲み対象にされた時のHPMP回復量が増加。濃いと栄養価も高い的な
+;B属性攻撃を受けた際のEPダメージも増える
+@MILK_VISCOSITY(CHARA_ID, ARG:1)
+#DIM CHARA_ID
+TALENT:CHARA_ID:220 += ARG:1
+
+
+;母乳限界にそろえる、または一時的な増加を元に戻す
+@MILK_ADJUST(CHARA_ID, ARG:1)
+;ARG:1	母乳体質を下げる値
+#DIM CHARA_ID
+
+IF ARG:1 > 0
+	TALENT:CHARA_ID:130 -= ARG:1
+ENDIF
+
+IF TALENT:CHARA_ID:130 > 6
+	TALENT:CHARA_ID:130 = 6
+ELSEIF TALENT:CHARA_ID:130 < 0
+	TALENT:CHARA_ID:130 = 0
+ENDIF
+
+IF TALENT:CHARA_ID:220 > 6
+	TALENT:CHARA_ID:220 = 6
+ELSEIF TALENT:CHARA_ID:220 < 0
+	TALENT:CHARA_ID:220 = 0
+ENDIF
+
+
+;母乳飲みでの回復の計算
+;※限界突破した時の補正は自分の母乳を飲む時だけしかされていなかったので、他キャラが飲む時は限界突破してもそのままにしておく
+@DRINK_MILK_RECOVERY(CHARA_ID, ARG:1)
+#DIM CHARA_ID
+;ARG:0	母乳を飲まれるキャラ
+;ARG:1	母乳を飲むキャラ
+
+;自分の母乳を飲む場合
+IF CHARA_ID == ARG:1
+	BASE:(ARG:1):0 += MAXBASE:(ARG:1):0 / 10
+	BASE:(ARG:1):1 += MAXBASE:(ARG:1):1 / 15
+	;母乳粘度が1以上なら追加回復
+	IF TALENT:CHARA_ID:220 > 0
+		BASE:(ARG:1):0 += MAXBASE:(ARG:1):0 / 40 * TALENT:CHARA_ID:220
+		BASE:(ARG:1):1 += MAXBASE:(ARG:1):1 / 60 * TALENT:CHARA_ID:220
+	ENDIF
+	;現在値が最大値を超えた場合は補正
+	IF 	BASE:(ARG:1):0 > MAXBASE:(ARG:1):0
+		BASE:(ARG:1):0 = MAXBASE:(ARG:1):0
+	ENDIF
+	IF 	BASE:(ARG:1):1 > MAXBASE:(ARG:1):1
+		BASE:(ARG:1):1 = MAXBASE:(ARG:1):1
+	ENDIF
+;他キャラが飲む場合
+ELSE
+	BASE:(ARG:1):0 += MAXBASE:(ARG:1):0 / 5
+	BASE:(ARG:1):1 += MAXBASE:(ARG:1):1 / 10
+	;母乳粘度が1以上なら追加回復
+	IF TALENT:CHARA_ID:220 > 0
+		BASE:(ARG:1):0 += MAXBASE:(ARG:1):0 / 20 * TALENT:CHARA_ID:220
+		BASE:(ARG:1):1 += MAXBASE:(ARG:1):1 / 40 * TALENT:CHARA_ID:220
+	ENDIF
+ENDIF

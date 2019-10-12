@@ -1,0 +1,106 @@
+﻿;拘束からの離脱成功率を取得
+;ARG:0	実行キャラ
+@GET_RELEASE_RATE(ARG:0)
+
+
+;残りHPによる成功率基準値を取得
+LOCAL:2 = BASE:(ARG:0):0 * 100 / MAXBASE:(ARG:0):0
+IF LOCAL:2 <= 0
+	LOCAL:1 = 1
+ELSEIF LOCAL:2 <= 50
+	LOCAL:1 = 20 + LOCAL:2 / 5
+ELSEIF LOCAL:2 <= 99
+	LOCAL:1 = 30 + LOCAL:2 / 5
+ELSE
+	LOCAL:1 = 80
+ENDIF
+
+
+;残りMPによる成功率補正
+LOCAL:2 = BASE:(ARG:0):1 * 100 / MAXBASE:(ARG:0):1
+IF LOCAL:2 <= 10
+	;瀕死時のみ高補正
+	LOCAL:1 += 20
+ELSEIF LOCAL:2 <= 50
+	LOCAL:1 += 0
+ELSEIF LOCAL:2 <= 99
+	LOCAL:1 += LOCAL:2 / 15
+ELSE
+	LOCAL:1 += 10
+ENDIF
+
+
+;TPによる成功率補正
+IF BASE:(ARG:0):4 < 50
+	LOCAL:1 -= 10
+ELSEIF BASE:(ARG:0):4 < 100
+	LOCAL:1 -= 10 - BASE:(ARG:0):4 / 10
+ELSEIF BASE:(ARG:0):4 < 150
+	LOCAL:1 += BASE:(ARG:0):4 / 10 - 10
+ELSE
+	LOCAL:1 += BASE:(ARG:0):4 / 10
+ENDIF
+
+
+;妊娠によるペナルティ
+IF CFLAG:(ARG:0):36 >= 5
+	LOCAL:1 -= 20
+ELSEIF CFLAG:(ARG:0):36 >= 4
+	LOCAL:1 -= 10
+ELSEIF CFLAG:(ARG:0):36 >= 3
+	LOCAL:1 -= 5
+ENDIF
+
+
+;溜めた力による補正
+LOCAL:1 += CFLAG:(ARG:0):53
+
+
+;危機回避による補正
+IF ABL:(ARG:0):5 == 0
+	LOCAL:1 = LIMIT(LOCAL:1 * 6 / 10, 1, 80)
+ELSEIF ABL:(ARG:0):5 == 1
+	LOCAL:1 = LIMIT(LOCAL:1 * 8 / 10, 1, 100)
+ELSEIF ABL:(ARG:0):5 == 2
+	LOCAL:1 = LIMIT(LOCAL:1, 1, 140)
+ELSE
+	LOCAL:1 = LIMIT(LOCAL:1 * 12 / 10, 1, 999)
+ENDIF
+
+;素質補正
+IF TALENT:(ARG:0):34
+	LOCAL:1 += 10
+ENDIF
+IF TALENT:(ARG:1):213 == 2
+	LOCAL:1 += 3 - (2 * TALENT:(ARG:1):105)
+ENDIF
+
+
+;特定の割合を超えると成功率に補正
+IF LOCAL:1 > 50
+	LOCAL:1 = 50 + (LOCAL:1 - 50) / 2
+ENDIF
+IF LOCAL:1 > 65
+	LOCAL:1 = 65 + (LOCAL:1 - 65) / 2
+ENDIF
+IF LOCAL:1 > 80
+	LOCAL:1 = 80 + (LOCAL:1 - 80) / 5
+ENDIF
+
+;幸運のお守り（補正後の確率に追加）
+CALL GET_EQUIP_BONUS(ARG:0, 36)
+IF RESULT
+	LOCAL:1 += 15
+ENDIF
+
+;拘束レベルによる補正
+IF CFLAG:(ARG:0):38 != 0
+	LOCAL:1 -= CFLAG:(ARG:0):38 * 2
+ENDIF
+
+IF LOCAL:1 < 1
+	LOCAL:1 = 1
+ENDIF
+
+RETURN LOCAL:1
+

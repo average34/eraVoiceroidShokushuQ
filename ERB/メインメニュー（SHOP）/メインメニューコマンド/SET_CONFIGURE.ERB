@@ -1,0 +1,2358 @@
+﻿;=================================================
+;コンフィグメイン処理
+;
+;=================================================
+@SET_CONFIGURE
+#DIM LCOUNT,3	;ループ用
+
+#DIM ACTIVE, 100	;項目の有効記憶用
+
+#DIM LEVEL	;階層記憶用
+#DIM LEVELNO, 10	;階層番号記憶用
+#DIMS LEVELNAME, 10	;階層項目名記憶用
+
+;コンフィグ内でゆっくり表示する必要は無いので常時REDRAW 0
+REDRAW 0
+WHILE 1
+	DRAWLINEFORM -
+	PRINTFORML 変更したい内容を選択してください
+	PRINTFORML 
+
+	;---階層表示---
+	SETCOLOR 0x666666
+	FOR LCOUNT:0, 0, LEVEL
+		;インデント
+		FOR LCOUNT:1, 0, LCOUNT:0
+			PRINTFORM 　
+		NEXT
+		PRINTFORML [  ] %LEVELNAME:(LCOUNT:0)%
+	NEXT
+	RESETCOLOR
+	
+	;---階層用パス作成---
+	LOCALS = %""%
+	FOR LCOUNT:0, 0, LEVEL
+		LOCALS = %LOCALS%{LEVELNO:(LCOUNT:0)}_
+	NEXT
+	;---項目表示---
+	FOR LCOUNT:0, 1, 100
+		;返り値初期化
+		VARSET RESULTS, "", 0, 5
+
+		TRYCCALLFORM SET_CONFIGURE_%LOCALS%{LCOUNT:0}(0)
+			
+			;無効な項目なら
+			IF RESULTS:0 == ""
+				ACTIVE:(LCOUNT:0) = 0
+				CONTINUE
+			ENDIF
+			
+			;選択が無効な項目なら
+			IF RESULT:0 < 0 
+				ACTIVE:(LCOUNT:0) = 0
+				SETCOLOR 0x666666
+			ELSE
+				ACTIVE:(LCOUNT:0) = 1
+			ENDIF
+			
+			;インデント
+			FOR LCOUNT:1, 0, LEVEL
+				PRINTFORM 　
+			NEXT
+			
+			;ボタン
+			IF ACTIVE:(LCOUNT:0) == 0
+				PRINTFORM [  ] 
+			ELSE
+				PRINTFORM [{LCOUNT:0,2}] 
+			ENDIF
+			
+			;項目名
+			PRINTFORM %RESULTS:0, 34, LEFT%
+			
+			;現在の設定
+			IF RESULTS:1 != ""
+				PRINTFORM 現在の設定：%RESULTS:1%
+			ENDIF
+			PRINTL 
+			
+			;補足
+			FOR LCOUNT:1, 2, 5
+				IF RESULTS:(LCOUNT:1) != ""
+					;インデント
+					FOR LCOUNT:2, 0, LEVEL
+						PRINTFORM 　
+					NEXT
+					PRINTFORML 　%RESULTS:(LCOUNT:1)%
+				ENDIF
+			NEXT
+			
+			RESETCOLOR
+		CATCH
+			ACTIVE:(LCOUNT:0) = 0
+		ENDCATCH
+	NEXT
+	PRINTL 
+	;インデント
+	FOR LCOUNT:0, 0, LEVEL
+		PRINTFORM 　
+	NEXT
+	;戻るボタン
+	IF LEVEL > 0
+		PRINTFORML [ 0] 戻る
+	ELSE
+		PRINTFORML [ 0] 完了
+	ENDIF
+	;入力
+	$INPUT_LOOP
+	INPUT
+	
+	;戻る
+	IF RESULT == 0
+		IF LEVEL > 0
+			LEVEL --
+		ELSE
+			BREAK
+		ENDIF
+	;選択が有効な項目なら
+	ELSEIF RESULT >= 1 && RESULT <= 99 && ACTIVE:(RESULT) == 1
+		LOCAL = RESULT
+		TRYCALLFORM SET_CONFIGURE_%LOCALS%{LOCAL}(1)
+		;下の階層へ
+		IF RESULT > 0
+			TRYCALLFORM SET_CONFIGURE_%LOCALS%{LOCAL}(0)
+			LEVELNO:(LEVEL) = LOCAL
+			LEVELNAME:(LEVEL) = %RESULTS:0%
+			LEVEL ++
+		;トップへ
+		ELSEIF RESULT < 0
+			LEVEL = 0
+		ENDIF
+	ELSE
+		PRINTFORML 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP
+	ENDIF
+WEND
+REDRAW 1
+
+;=================================================
+;コンフィグ項目
+;ARG:0 処理ID（0:項目名表示 1:選択されたとき）
+;
+;(ARG:0が0の時)
+;RESULT:0 表示パターン（0:項目の選択有効　-1:項目の選択無効）
+;RESULTS:0 項目名(空の場合は項目非表示)
+;RESULTS:1 現在の設定
+;RESULTS:2～4 補足
+;
+;(ARG:0が1の時)
+;RESULT:0 階層移動（0:移動無し 1:１つ下へ移動 -1:トップに戻る）
+;
+;=================================================
+;コンフィグ項目
+;「表示に関する設定」
+;=================================================
+@SET_CONFIGURE_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 表示に関する設定
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		RETURN 1
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「チュートリアルに関する設定」
+;=================================================
+@SET_CONFIGURE_1_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = チュートリアルに関する設定
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		RETURN 1
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「閲覧済みフラグのリセット」
+;=================================================
+@SET_CONFIGURE_1_1_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 閲覧済みフラグのリセット
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 閲覧済みフラグを全てリセットすることで
+		PRINTFORML 再度内容を確認することができるようになります。
+		PRINTFORML 実行しますか？
+		PRINTFORML [1] 実行
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1
+			FOR LOCAL:0, 400, 500
+				FLAG:(LOCAL:0) &= 2
+			NEXT
+			PRINTFORMW 閲覧済みフラグをリセットしました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「チュートリアルの表示」
+;=================================================
+@SET_CONFIGURE_1_1_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = チュートリアルの表示
+		IF FLAG:500 == 1
+			RESULTS:1 = 表示する
+		ELSE
+			RESULTS:1 = 表示しない
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML チュートリアルの表示・非表示を切り替えます
+		PRINTFORML [1] 表示しない(デフォルト)
+		PRINTFORML [2] 表示する
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1
+			FLAG:500 = 0
+			FOR LOCAL:0, 400, 500
+				FLAG:(LOCAL:0) |= 2
+			NEXT
+			PRINTFORMW チュートリアルを表示しないよう設定しました
+		ELSEIF RESULT == 2
+			FLAG:500 = 1
+			FOR LOCAL:0, 400, 500
+				FLAG:(LOCAL:0) &= 1
+			NEXT
+			PRINTFORMW チュートリアルを表示するよう設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「経験値獲得メッセージの表示」
+;=================================================
+@SET_CONFIGURE_1_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 経験値獲得メッセージ
+		IF FLAG:501 == 1
+			RESULTS:1 = 表示しない
+		ELSE
+			RESULTS:1 = 表示する
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 行動時に表示される経験値獲得メッセージの表示・非表示を切り替えます
+		PRINTFORML [1] 表示する(デフォルト)
+		PRINTFORML [2] 表示しない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1
+			FLAG:501 = 0
+			PRINTFORMW 獲得メッセージを表示するよう設定しました
+		ELSEIF RESULT == 2
+			FLAG:501 = 1
+			PRINTFORMW 獲得メッセージを表示しないよう設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「戦闘中メッセージの表示」
+;=================================================
+@SET_CONFIGURE_1_3(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 戦闘中メッセージ表示
+		IF FLAG:504 == 1
+			RESULTS:1 = 高速表示
+		ELSE
+			RESULTS:1 = 通常
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 戦闘中のメッセージ表示を高速にするかどうか設定できます
+		PRINTFORML [1] 通常(デフォルト)
+		PRINTFORML [2] 高速表示　※入力待ちの回数が減ります
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:504 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「テキスト表現の残酷さ」
+;=================================================
+@SET_CONFIGURE_1_4(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = テキスト表現の残酷さ
+		IF FLAG:507 == 1
+			RESULTS:1 = Hard
+		ELSEIF FLAG:507 == 2
+			RESULTS:1 = Lunatic
+		ELSEIF FLAG:507 == -1
+			;実装するかどうか分からないけど、一応
+			RESULTS:1 = Easy
+		ELSE
+			RESULTS:1 = Normal
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML テキストによる表現の残酷さを設定できます
+		SETCOLOR 0xEEEE10
+		PRINTFORML ※ 現在Hardで一部文章が変化、Lunaticで一部イベントが解放されます
+		RESETCOLOR
+		PRINTFORML [1] Normal(デフォルト)  目安：苦痛に関する描画殆ど無し
+		PRINTFORML [2] Hard                目安：苦痛に関する描画あり
+		PRINTFORML [3] Lunatic             目安：R-18Gレベル
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～3
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			FLAG:507 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+
+;=================================================
+;コンフィグ項目
+;「敵との初回遭遇時テキストの表示」
+;=================================================
+@SET_CONFIGURE_1_5(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 敵との初回遭遇時テキスト
+		IF FLAG:508 == 1
+			RESULTS:1 = 表示しない
+		ELSE
+			RESULTS:1 = 表示する
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 敵との初回遭遇時に外見などの表示・非表示を切り替えます
+		PRINTFORML [1] 表示する(デフォルト)
+		PRINTFORML [2] 表示しない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:508 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「口上などのエフェクトの表示」
+;=================================================
+@SET_CONFIGURE_1_6(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = エフェクトの設定
+		IF FLAG:509 == 1
+			RESULTS:1 = 表示しない
+		ELSE
+			RESULTS:1 = 表示する
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 口上などでの画面の振動やフラッシュといったエフェクトの表示・非表示を切り替えます
+		PRINTFORML [1] 表示する(デフォルト)
+		PRINTFORML [2] 表示しない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1
+			FLAG:509 = 0
+			CALLF ANIME_CONFIG("FORCE", 0)
+			PRINTFORMW 設定しました
+		ELSEIF RESULT == 2
+			FLAG:509 = 1
+			 CALLF ANIME_CONFIG("FORCE", 2)
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「敵の名前」
+;=================================================
+@SET_CONFIGURE_1_7(ARG)
+#DIM LCOUNT
+#DIM SUPPORT_DATA
+
+	VARSET SUPPORT_DATA
+	
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 敵の外見の設定
+		IF FLAG:513 == 1
+			RESULTS:1 = 表示しない
+		ELSE
+			RESULTS:1 = 表示する
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 敵の名前を種族名のみにします
+		PRINTFORML （）部分のを表示を選べます
+		PRINTFORML [1] 表示する(デフォルト)
+		PRINTFORML [2] 表示しない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1 || RESULT == 2
+			FLAG:513 = RESULT - 1
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+		
+		;名前を再設定
+		FOR LCOUNT, 0, FLAG:1
+			;敵によって必要な補助値が違うので設定
+			SELECTCASE DA:LCOUNT:0
+			;バイオプラント 捕食キャラID
+			CASE 4
+				SUPPORT_DATA = DA:LCOUNT:87
+			;娘 親のID
+			CASE 19
+				SUPPORT_DATA = DA:LCOUNT:46
+			;ビオラキメラ 親のID
+			CASE 36
+				SUPPORT_DATA = DA:LCOUNT:47
+			;各種悪堕ちキャラ 元キャラのID
+			CASE 101, 102, 103, 104, 105
+				SUPPORT_DATA = DA:LCOUNT:46
+			ENDSELECT
+			TRYCCALLFORM SET_ENEMY_DATA_{DA:LCOUNT:0}(FLAG:1, SUPPORT_DATA)
+				SAVESTR:LCOUNT = %SAVESTR:(FLAG:1)%
+			CATCH
+			ENDCATCH
+		NEXT
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「システムに関する設定」
+;=================================================
+@SET_CONFIGURE_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = システムに関する設定
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		RETURN 1
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「捕食による最大HP減少」
+;=================================================
+@SET_CONFIGURE_2_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 捕食による最大HP減少
+		IF FLAG:502 == 0
+			RESULTS:1 = 救助時に８割回復
+		ELSEIF FLAG:502 == 1
+			RESULTS:1 = 救助時に４割回復
+		ELSEIF FLAG:502 == 2
+			RESULTS:1 = 回復しない
+		ELSEIF FLAG:502 == 3
+			RESULTS:1 = 救助時に全回復
+		ENDIF
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 捕食されて最大HPが減少した仲間を救出した際、最大HPが回復するかどうかを決定します
+		SETCOLOR 0xEEEE10
+		PRINTFORML ※難易度が変化しますので、ご注意ください
+		RESETCOLOR
+		PRINTFORML [1] 約８割回復する(デフォルト)
+		PRINTFORML [2] 約４割回復する
+		PRINTFORML [3] 回復しない
+		PRINTFORML [4] 全回復する
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～4
+		ELSEIF RESULT >= 1 && RESULT <= 4
+			FLAG:502 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「不死身モード」
+;=================================================
+@SET_CONFIGURE_2_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 不死身モード
+		IF FLAG:503 == 1
+			RESULTS:1 = 主人公のみON
+		ELSEIF FLAG:503 == 2
+			RESULTS:1 = 全員ON
+		ELSEIF FLAG:503 == 3
+			RESULTS:1 = 主人公以外のみON
+		ELSE
+			RESULTS:1 = OFF
+		ENDIF
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 捕食されて最大HPが0になっても、必ずその場で復活するように設定できます
+		SETCOLOR 0xEEEE10
+		PRINTFORML ※ゲームバランスが著しく損なわれるため、何度もヤられるところが見たい紳士のみご利用ください
+		PRINTFORML 　また、キャラロストが発生しなくなるため、一部のエンディングが達成できなくなります
+		RESETCOLOR
+		PRINTFORML [1] 不死身モードOFF(デフォルト)
+		PRINTFORML [2] 主人公のみ不死身
+		PRINTFORML [3] 全員不死身
+		PRINTFORML [4] 主人公以外のみ不死身
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～4
+		ELSEIF RESULT >= 1 && RESULT <= 4
+			FLAG:503 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「戦闘中の対象確認」
+;=================================================
+@SET_CONFIGURE_2_3(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 戦闘中の対象確認
+		IF FLAG:505 == 1
+			RESULTS:1 = 省略する
+		ELSE
+			RESULTS:1 = 省略しない
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 対象が１体しか存在しない場合、戦闘コマンドの対象確認を省略するかどうか設定できます
+		PRINTFORML [1] 省略しない(デフォルト)
+		PRINTFORML [2] 省略する
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:505 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「消耗武器の残弾自動補充」
+;=================================================
+@SET_CONFIGURE_2_4(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 消耗武器の残弾自動補充
+		IF FLAG:506 == 1
+			RESULTS:1 = 補充する
+		ELSE
+			RESULTS:1 = 補充しない
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 消耗武器を装備している場合、予備の弾が手持ちにあれば戦闘後に自動で補充するかどうか設定できます
+		PRINTFORML [1] 補充しない(デフォルト)
+		PRINTFORML [2] 補充する
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:506 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+	
+
+;=================================================
+;コンフィグ項目
+;「娘の人数制限」
+;=================================================
+@SET_CONFIGURE_2_5(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 娘の人数制限
+		IF FLAG:510 == 0
+			RESULTS:1 = 制限なし
+		ELSE
+			RESULTS:1 = {FLAG:510}人まで
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 一度に存在できる娘(孫娘、曾孫…)の最大人数を制限します
+		PRINTFORML 上限に達した場合、PTに入っていない中で古い娘から順に消えていきます
+		PRINTFORML 制限をかける場合、数値の直接入力も可能です
+		PRINTFORML [-1] 制限しない(デフォルト)
+		PRINTFORML [ 5] 5人まで
+		PRINTFORML [10] 10人まで
+		PRINTFORML [20] 20人まで
+		PRINTFORML [50] 50人まで
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == -1
+			FLAG:510 = 0
+			PRINTFORMW 制限を解除しました
+		ELSEIF RESULT > 0
+			FLAG:510 = RESULT
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「子供の男女比」
+;=================================================
+@SET_CONFIGURE_2_6(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 子供の男女比
+		IF FLAG:511 == 0
+			RESULTS:1 = 半々
+		ELSEIF FLAG:511 == 1
+			RESULTS:1 = 全部女の子
+		ELSE
+			RESULTS:1 = 全部男の子(モンスター)
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 妊娠状態から子供を産んだ際に、女の子（母親の素質を受け継いだキャラ）が生まれる確率を設定します
+		PRINTFORML [1] 半々(デフォルト)
+		PRINTFORML [2] 必ず女の子が産まれる
+		PRINTFORML [3] 必ず男の子(モンスター)が産まれる
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～3
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			FLAG:511 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「男」
+;=================================================
+@SET_CONFIGURE_2_7(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 野郎
+		IF FLAG:512 == 0
+			RESULTS:1 = 出ない
+		ELSEIF FLAG:512 == 1
+			RESULTS:1 = 敵に出る
+		ELSEIF FLAG:512 == 2 && FLAG:519 == 1
+			RESULTS:1 = 味方に出て女体化も認める
+		ELSEIF FLAG:512 == 2
+			RESULTS:1 = 味方に出る
+		ELSEIF FLAG:512 == 3 && FLAG:519 == 1
+			RESULTS:1 = 敵にも味方にも出て女体化も認める
+		ELSEIF FLAG:512 == 3
+			RESULTS:1 = 敵にも味方にも出る
+		ENDIF
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 男がいりますか？
+		PRINTFORML [1] いらない
+		PRINTFORML [2] 敵にだけ
+		PRINTFORML [3] 味方にだけ
+		PRINTFORML [4] 敵にも味方にも
+		PRINTFORML
+			IF FLAG:519 == 0
+				PRINTFORML [10] 味方の男の女体化を認めない
+			ELSE
+				PRINTFORML [10] 味方の男の女体化も認める
+			ENDIF
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1
+		ELSEIF RESULT == 1
+			FLAG:512 = 0
+			PRINTFORMW 触手ゲーですもんね
+		ELSEIF RESULT >= 2 && RESULT <= 4
+			FLAG:512 = RESULT - 1
+			PRINTFORMW 設定しました
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 10
+			IF FLAG:519 == 0
+				FLAG:519 = 1
+			ELSE
+				FLAG:519 = 0
+			ENDIF
+			PRINTFORMW 設定しました
+			GOTO INPUT_LOOP
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「旧作キャラ」
+;=================================================
+@SET_CONFIGURE_2_8(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 旧作キャラ
+		IF FLAG:537 == 0
+			RESULTS:1 = 出る
+		ELSE
+			RESULTS:1 = 出ない
+		ENDIF
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 旧作キャラを出しますか？
+		PRINTFORML （ランダム決定の際に旧作キャラが出ないようにできます）
+		PRINTFORML [1] 出す
+		PRINTFORML [2] 出さない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1
+		ELSEIF RESULT == 1
+			FLAG:537 = 0
+			PRINTFORMW 旧作キャラを出します
+		ELSEIF RESULT == 2
+			FLAG:537 = 1
+			PRINTFORMW 旧作キャラを出しません
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「霊撃」
+;=================================================
+@SET_CONFIGURE_2_9(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 罠での霊撃
+		IF FLAG:517 == 0
+			RESULTS:1 = 使用するか選ぶ
+		ELSEIF FLAG:517 == 1
+			RESULTS:1 = 自動使用
+		ELSEIF FLAG:517 == 2
+			RESULTS:1 = 使わない
+		ENDIF
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 罠を霊撃で回避するか自動で決定しますか？
+		PRINTFORML [1] 使用するかどうか毎回選ぶ
+		PRINTFORML [2] 自動で毎回使用
+		PRINTFORML [3] 霊撃を使わない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			FLAG:517 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「口上に関する設定」
+;=================================================
+@SET_CONFIGURE_3(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 口上に関する設定
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		RETURN 1
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「口上文字色変更」
+;=================================================
+@SET_CONFIGURE_3_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 口上文字色変更
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL CHANGE_PT_KOJO_COLOR
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「口上詳細設定」
+;=================================================
+@SET_CONFIGURE_3_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 口上詳細設定
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL KOJO_SELECT
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「パッチに関する設定」
+;=================================================
+@SET_CONFIGURE_4(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = パッチに関する設定
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		RETURN 1
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「ふたなり化イベント」
+;=================================================
+@SET_CONFIGURE_4_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = ふたなり化イベント
+		IF FLAG:520 == 1
+			RESULTS:1 = あり
+		ELSEIF FLAG:520 == 2
+			RESULTS:1 = 主人公のみ（主人公がNPCで性欲を発散します）
+		ELSEIF FLAG:520 == 3
+			RESULTS:1 = 主人公以外（主人公でNPCが性欲を発散します）
+		ELSE
+			RESULTS:1 = なし
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML ふたなり化イベントの有無を切り替えます
+		PRINTFORML [1] なし(デフォルト)
+		PRINTFORML [2] あり(難易度が上昇します)
+		PRINTFORML [3] 主人公のみ（主人公がNPCで性欲を発散します）
+		PRINTFORML [4] 主人公以外（主人公でNPCが性欲を発散します）
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～4
+		ELSEIF RESULT >= 1 && RESULT <= 4
+			FLAG:520 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「豊乳化イベント」
+;=================================================
+@SET_CONFIGURE_4_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 豊乳化イベント
+		IF FLAG:521 == 0
+			RESULTS:1 = あり
+		ELSEIF FLAG:521 == 1
+			RESULTS:1 = なし
+		ELSEIF FLAG:521 == 2
+			RESULTS:1 = 爆乳まで
+		ELSEIF FLAG:521 == 3
+			RESULTS:1 = 男の娘のみなし
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 妊娠時の胸の成長
+		PRINTFORML [1] あり(デフォルト)
+		PRINTFORML [2] なし
+		PRINTFORML [3] 爆乳まで
+		PRINTFORML [4] 男の娘のみなし
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 4
+			FLAG:521 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「黄金水」
+;=================================================
+@SET_CONFIGURE_4_3(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 黄金水
+		IF FLAG:522 == 0
+			RESULTS:1 = 愛液
+		ELSEIF FLAG:522 == 2
+			RESULTS:1 = パッチOFF
+		ELSEIF FLAG:522 == 1
+			RESULTS:1 = 黄金水
+		ENDIF
+		IF FLAG:544 == 1
+			RESULTS:1 += "・膣内放尿あり"
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML [1] 愛液(デフォルト)
+		PRINTFORML [2] 黄金水
+		PRINTFORML [3] 小お漏らしパッチOFF
+		PRINTFORML 
+		PRINTFORML [4] 膣内放尿OFF
+		PRINTFORML [5] 膣内放尿ON
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～3
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			FLAG:522 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSEIF RESULT >= 4 && RESULT <= 5
+			FLAG:544 = RESULT - 4
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+		
+;=================================================
+;コンフィグ項目
+;「着せ替えパッチ」
+;コンフィグのフラグはCLOTHフォルダ内のERBで操作
+;=================================================
+@SET_CONFIGURE_4_4(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 着せ替えパッチ ⇒
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		RETURN 1
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「パッチの動作」
+;=================================================
+@SET_CONFIGURE_4_4_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		;RESULTS:0 = 服装パッチの動作
+		IF GET_CLOTH_CONFIG("動作")
+			RESULTS:1 = ON
+		ELSE
+			RESULTS:1 = OFF
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL SET_CLOTH_CONFIG(1 - GET_CLOTH_CONFIG("動作"),"動作")
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「服装選択方法」
+;=================================================
+@SET_CONFIGURE_4_4_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 服装選択方法
+		IF GET_CLOTH_CONFIG("選択")
+			RESULTS:1 = 自動（ランダム）
+		ELSE
+			RESULTS:1 = 手動（入力）
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL SET_CLOTH_CONFIG(1 - GET_CLOTH_CONFIG("選択"),"選択")
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「服装効果」
+;=================================================
+@SET_CONFIGURE_4_4_3(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 服装による効果
+		IF GET_CLOTH_CONFIG("効果")
+			RESULTS:1 = 有り
+		ELSE
+			RESULTS:1 = 無し
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL SET_CLOTH_CONFIG(1 - GET_CLOTH_CONFIG("効果"),"効果")
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「各服装のON・OFF」
+;=================================================
+@SET_CONFIGURE_4_4_4(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 服装チョイス
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL CLOTH_CONFIG_CLOTH_LIST
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「パッチの動作」
+;=================================================
+@SET_CONFIGURE_4_4_5(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		;RESULTS:0 = 足装備パッチの動作
+		IF GET_FOOT_EQUIP_CONFIG("動作")
+			RESULTS:1 = ON
+		ELSE
+			RESULTS:1 = OFF
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL SET_FOOT_EQUIP_CONFIG(1 - GET_FOOT_EQUIP_CONFIG("動作"),"動作")
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「服装選択方法」
+;=================================================
+@SET_CONFIGURE_4_4_6(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 足装備選択方法
+		IF GET_FOOT_EQUIP_CONFIG("選択")
+			RESULTS:1 = 自動（ランダム）
+		ELSE
+			RESULTS:1 = 手動（入力）
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL SET_FOOT_EQUIP_CONFIG(1 - GET_FOOT_EQUIP_CONFIG("選択"),"選択")
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「服装効果」
+;=================================================
+@SET_CONFIGURE_4_4_7(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 足装備による効果
+		IF GET_FOOT_EQUIP_CONFIG("効果")
+			RESULTS:1 = 有り
+		ELSE
+			RESULTS:1 = 無し
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL SET_FOOT_EQUIP_CONFIG(1 - GET_FOOT_EQUIP_CONFIG("効果"),"効果")
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「各服装のON・OFF」
+;=================================================
+@SET_CONFIGURE_4_4_8(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 足装備チョイス
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CALL FOOT_EQUIP_CONFIG_FOOT_EQUIP_LIST
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「捕食中キャラの開放」
+;=================================================
+@SET_CONFIGURE_4_5(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 捕食中の開放
+		IF FLAG:524 == 0
+			RESULTS:1 = あり
+		ELSE
+			RESULTS:1 = なし
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 触手さんは…
+		PRINTFORML [1] 飽きっぽい(デフォルト)
+		PRINTFORML [2] ものは大事にする
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:524 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「追加モンスターの増加量」
+;=================================================
+@SET_CONFIGURE_4_6(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 触手達の繁殖具合
+		IF FLAG:525 == 0
+			RESULTS:1 = デフォルト
+		ELSE
+			RESULTS:1 = たくさん
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 触手さんは…
+		PRINTFORML [1] そこそこ出てくる(デフォルト)
+		PRINTFORML [2] なんかいっぱい出てくる
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:525 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「催眠の種類」
+;=================================================
+@SET_CONFIGURE_4_7(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 催眠の種類
+		IF FLAG:526 == 0
+			RESULTS:1 = 拘束・肉体操作系
+		ELSEIF FLAG:526 == 1
+			RESULTS:1 = 発情・感情操作系
+		ELSEIF FLAG:526 == 2
+			RESULTS:1 = 無意識・認識操作系
+		ELSEIF FLAG:526 == 3
+			RESULTS:1 = 催眠に掛かるたび変化
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML どんな催眠が好きですか？
+		PRINTFORML ※ 現在地の文章は変化しますが、口上は一部のみ対応しています
+		PRINTFORML [1] 抵抗できない(デフォルト)
+		PRINTFORML [2] 触手が大好きになる
+		PRINTFORML [3] 性欲処理係が当たり前or犯されていることに気が付かない
+		PRINTFORML [4] 術に掛かるまで何が起こるかわからない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 4
+			FLAG:526 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「敵の種類」
+;ビット演算のためFLAGの内部数値は1.2.4.8.…
+;=================================================
+@SET_CONFIGURE_4_8(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 敵の種類の傾向
+		IF FLAG:527 == 0 && FLAG:542 == 0
+			RESULTS:1 = 全て
+		ELSE
+			SIF FLAG:527 & 1
+				RESULTS:1 += "女性 "
+			SIF FLAG:527 & 2
+				RESULTS:1 += "植物 "
+			SIF FLAG:527 & 4
+				RESULTS:1 += "動物 "
+			SIF FLAG:527 & 8
+				RESULTS:1 += "丸呑 "
+			SIF FLAG:527 & 16
+				RESULTS:1 += "海産 "
+			SIF FLAG:527 & 32
+				RESULTS:1 += "ローパー "
+			SIF FLAG:527 & 64
+				RESULTS:1 += "スライム "
+			SIF FLAG:527 & 256
+				RESULTS:1 += "罠 "
+			SIF FLAG:542 & 1
+				RESULTS:1 += "A "
+			SIF FLAG:542 & 2
+				RESULTS:1 += "B "
+			SIF FLAG:542 & 4
+				RESULTS:1 += "C "
+			SIF FLAG:542 & 8
+				RESULTS:1 += "V "
+			RESULTS:1 += "系"
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		$INPUT_LOOP
+		PRINTFORML どんな触手が好きですか？　（複数可）
+		PRINTFORML [1] 全て
+		PRINTFORM [2] 女性系
+			IF FLAG:527 & 1
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [3] 植物系
+			IF FLAG:527 & 2
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [4] 動物系
+			IF FLAG:527 & 4
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [5] 丸呑系
+			IF FLAG:527 & 8
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [6] 海産系
+			IF FLAG:527 & 16
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [7] ローパー系
+			IF FLAG:527 & 32
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [8] スライム系
+			IF FLAG:527 & 64
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [9] 罠系
+			IF FLAG:527 & 256
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [10] A系
+			IF FLAG:542 & 1
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [11] B系
+			IF FLAG:542 & 2
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [12] C系
+			IF FLAG:542 & 4
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORM [13] V系
+			IF FLAG:542 & 8
+				PRINTFORML ○
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORML [100] フィルターをかけたい
+		PRINTFORML 
+		PRINTFORML [0] 決定
+		INPUT
+		IF RESULT == 0
+			PRINTFORML 設定しました
+		;1~7
+		ELSEIF RESULT == 1
+			FLAG:527 = 0
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 2
+			IF FLAG:527 & 1
+				FLAG:527 -= 1
+			ELSE
+				FLAG:527 += 1
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 3
+			IF FLAG:527 & 2
+				FLAG:527 -= 2
+			ELSE
+				FLAG:527 += 2
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 4
+			IF FLAG:527 & 4
+				FLAG:527 -= 4
+			ELSE
+				FLAG:527 += 4
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 5
+			IF FLAG:527 & 8
+				FLAG:527 -= 8
+			ELSE
+				FLAG:527 += 8
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 6
+			IF FLAG:527 & 16
+				FLAG:527 -= 16
+			ELSE
+				FLAG:527 += 16
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 7
+			IF FLAG:527 & 32
+				FLAG:527 -= 32
+			ELSE
+				FLAG:527 += 32
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 8
+			IF FLAG:527 & 64
+				FLAG:527 -= 64
+			ELSE
+				FLAG:527 += 64
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 9
+			IF FLAG:527 & 256
+				FLAG:527 -= 256
+			ELSE
+				FLAG:527 += 256
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 10
+			IF FLAG:542 & 1
+				FLAG:542 -= 1
+			ELSE
+				FLAG:542 += 1
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 11
+			IF FLAG:542 & 2
+				FLAG:542 -= 2
+			ELSE
+				FLAG:542 += 2
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 12
+			IF FLAG:542 & 4
+				FLAG:542 -= 4
+			ELSE
+				FLAG:542 += 4
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 13
+			IF FLAG:542 & 8
+				FLAG:542 -= 8
+			ELSE
+				FLAG:542 += 8
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 100
+			CALL ENEMY_FILTER
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+	
+;=================================================
+;コンフィグ項目
+;「便意」
+;=================================================
+@SET_CONFIGURE_4_9(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 便意
+		IF FLAG:528 == 0
+			RESULTS:1 = OFF
+		ELSEIF FLAG:528 == 1
+			RESULTS:1 = ON
+		ELSEIF FLAG:528 == 2
+			RESULTS:1 = 女の子はスライム的なビューティーをひり出すんだ
+		ELSEIF FLAG:528 == 3
+			RESULTS:1 = 女の子はきれいな色とりどりのゼリービーンズをお尻から出すよ
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] ON
+		PRINTFORML [3] スライムフィルター
+		PRINTFORML [4] ゼリービーンズフィルター
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～4
+		ELSEIF RESULT >= 1 && RESULT <= 4
+			FLAG:528 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「着衣」
+;=================================================
+@SET_CONFIGURE_4_10(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 着衣プレイモード
+		IF FLAG:529 == 0
+			RESULTS:1 = OFF
+		ELSE
+			RESULTS:1 = ON(服が破れにくくなります)
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] ON(服が破れにくくなります)
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:529 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「ランダム発情（など）」
+;=================================================
+@SET_CONFIGURE_4_11(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = ランダム発情（など）
+		IF !FLAG:530
+			RESULTS:1 = 全てOFF
+		ENDIF
+		SIF GETBIT(FLAG:530,1)
+			RESULTS:1 += "発情 "
+		SIF GETBIT(FLAG:530,3)
+			RESULTS:1 += "押し倒し"
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML [1] 発情
+		PRINTFORML [3] 押し倒し
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～3
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			INVERTBIT FLAG:530,RESULT 
+			SIF RESULT == 1
+				PRINT 発情を
+			SIF RESULT == 3
+				PRINT 押し倒しを
+			IF GETBIT(FLAG:530,RESULT)
+				PRINTL オンにしました
+				CALL RANDOM_ESTRUS_INITIALIZE(1)
+				CALL RANDOM_ESTRUS_INITIALIZE(FLAG:10)
+				CALL RANDOM_ESTRUS_INITIALIZE(FLAG:11)
+			ELSE
+				PRINTL オフにしました
+			ENDIF
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「陥没乳首」
+;=================================================
+@SET_CONFIGURE_4_12(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 陥没乳首
+		
+		IF FLAG:531 == 0
+			RESULTS:1 = OFF
+		ELSEIF FLAG:531 == 1
+			RESULTS:1 = 全員
+		ELSE
+			RESULTS:1 = ランダム
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML グローバルセーブに保存すると2周目以降は自動で同じ設定が適用されます
+		PRINTFORML 
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] 全員陥没乳首
+		PRINTFORML [3] ランダムで何人か陥没乳首
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			FLAG:531 = RESULT - 1
+			IF RESULT == 1
+				PRINTFORMW 設定しました
+			ELSEIF RESULT == 2
+				FOR LOCAL:1, 1, CHARANUM
+					TALENT:(LOCAL:1):159 = 1
+					PRINTFORML %CALLNAME:(LOCAL:1)%が陥没乳首なのが発覚しました
+				NEXT
+			ELSEIF RESULT == 3
+				FOR LOCAL:1, 1, CHARANUM
+					IF RAND:2 == 0
+						TALENT:(LOCAL:1):159 = 1
+						PRINTFORML %CALLNAME:(LOCAL:1)%が陥没乳首なのが発覚しました
+					ENDIF
+				NEXT
+			ENDIF
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「キャラ迷い込み」
+;=================================================
+@SET_CONFIGURE_4_13(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = キャラの迷い込み
+		
+		IF FLAG:532 == 0
+			RESULTS:1 = OFF
+		ELSEIF GETBIT(FLAG:532, 1) && GETBIT(FLAG:532, 2)
+			RESULTS:1 = 両方
+		ELSEIF GETBIT(FLAG:532, 1) && !GETBIT(FLAG:532, 2)
+			RESULTS:1 = ランダム
+		ELSEIF GETBIT(FLAG:532, 2) && !GETBIT(FLAG:532, 1)
+			RESULTS:1 = 入れ替え
+
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML グローバルセーブに保存すると2周目以降は自動で同じ設定が適用されます
+		PRINTFORML 
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] ランダムに迷い込む
+		PRINTFORML [3] リタイア者が出るとランダムに追加
+		PRINTFORML [4] 両方
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				PRINTFORML キャンセルしました
+			CASE 1
+				FLAG:532 = 0
+			CASE 2
+				SETBIT FLAG:532, 1
+				CLEARBIT FLAG:532, 2
+			CASE 3
+				SETBIT FLAG:532, 2
+				CLEARBIT FLAG:532, 1
+			CASE 4
+				SETBIT FLAG:532, 1
+				SETBIT FLAG:532, 2
+			CASEELSE
+				GOTO INPUT_LOOP
+		ENDSELECT
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「産卵」
+;=================================================
+@SET_CONFIGURE_4_14(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 産卵プレイ
+		
+		IF FLAG:533 == 0
+			RESULTS:1 = OFF
+		ELSEIF FLAG:533 == 1
+			RESULTS:1 = ON
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 産卵描写を行いますか？
+		PRINTFORML 
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] ON
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:533 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「卵巣パッチ」
+;=================================================
+@SET_CONFIGURE_4_15(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 卵巣パッチ
+		
+		IF FLAG:535 == 0
+			RESULTS:1 = OFF
+		ELSEIF FLAG:535 == 1
+			RESULTS:1 = ON
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 卵巣パッチを適用しますか？
+		PRINTFORML 
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] ON
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:535 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;悪堕ち
+;=================================================
+@SET_CONFIGURE_4_16(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 悪堕ちパッチ
+		
+		IF FLAG:538 == 0
+			RESULTS:1 = OFF
+		ELSEIF FLAG:538 == 1
+			RESULTS:1 = 非状態変化のみON
+		ELSEIF FLAG:538 == 2
+			RESULTS:1 = ON
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 悪堕ちパッチを適用しますか？　※EXモードでは選択に関わらず無効
+		PRINTFORML 
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] 非状態変化のみON
+		PRINTFORML [3] ON
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			FLAG:538 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;妊娠・寄生・産卵ONOFF
+;=================================================
+@SET_CONFIGURE_4_17(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 妊娠・寄生・産卵のONOFF
+		
+		IF FLAG:515 == 0
+			RESULTS:1 = ON
+		ELSEIF FLAG:515 == 1
+			RESULTS:1 = OFF（媚薬爆弾で代用します）
+		ELSEIF FLAG:515 == 2
+			RESULTS:1 = 両方（低確率で媚薬爆弾に書き換わります）
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 妊娠・寄生・産卵にフィルターを掛けて媚薬爆弾にしますか？
+		PRINTFORML 
+		PRINTFORML [1] 妊娠・寄生・産卵ON
+		PRINTFORML [2] 妊娠・寄生・産卵OFF（媚薬爆弾で代用します）
+		PRINTFORML [3] 両方
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 3
+			FLAG:515 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+
+
+;=================================================
+;コンフィグ項目
+;B寄生・産卵ONOFF
+;=================================================
+@SET_CONFIGURE_4_18(ARG)
+
+	IF (FLAG:515 == 0 || FLAG:515 == 2)
+		;---項目の表示---
+		IF ARG == 0
+			RESULTS:0 = B寄生C寄生・産卵のONOFF
+			
+			IF FLAG:516 == 0 && FLAG:518 == 0
+				RESULTS:1 = B寄生OFF C寄生OFF(デフォルト)
+			ELSEIF FLAG:516 == 1 && FLAG:518 == 0
+				RESULTS:1 = B寄生ON  C寄生OFF
+			ELSEIF FLAG:516 == 0 && FLAG:518 == 1
+				RESULTS:1 = B寄生OFF C寄生ON
+			ELSEIF FLAG:516 == 1 && FLAG:518 == 1
+				RESULTS:1 = B寄生ON  C寄生ON
+			ENDIF
+			
+		;---選択時の処理---
+		ELSEIF ARG == 1
+			PRINTFORML BとC（ふたなり）も寄生・産卵の対象にしますか？
+			PRINTFORML 
+			PRINTFORML [1] B寄生OFF
+			PRINTFORML [2] B寄生ON
+			PRINTFORML [3] C寄生OFF
+			PRINTFORML [4] C寄生ON
+			PRINTFORML [5] B寄生OFF C寄生OFF(デフォルト)
+			PRINTFORML [6] B寄生ON  C寄生ON
+			PRINTFORML 
+			PRINTFORML [0] キャンセル
+			$INPUT_LOOP
+			INPUT
+			IF RESULT == 0
+				PRINTFORML キャンセルしました
+			ELSEIF RESULT >= 1 && RESULT <= 2
+				FLAG:516 = RESULT - 1
+				PRINTFORMW 設定しました
+			ELSEIF RESULT >= 3 && RESULT <= 4
+				FLAG:518 = RESULT - 3
+				PRINTFORMW 設定しました
+			ELSEIF RESULT == 5
+				FLAG:516 = 0
+				FLAG:518 = 0
+				PRINTFORMW 設定しました
+			ELSEIF RESULT == 6
+				FLAG:516 = 1
+				FLAG:518 = 1
+				PRINTFORMW 設定しました
+			ELSE
+				GOTO INPUT_LOOP
+			ENDIF
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;触手同化
+;=================================================
+@SET_CONFIGURE_4_19(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 触手同化パッチ ⇒
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		RETURN 1
+	ENDIF
+;=================================================
+@SET_CONFIGURE_4_19_1(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = パッチ動作
+		IF FLAG:540
+			RESULTS:1 = ON
+		ELSE
+			RESULTS:1 = OFF
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		IF FLAG:540
+			FLAG:540 = 0
+		ELSE
+			FLAG:540 = 1
+		ENDIF
+	ENDIF
+;=================================================
+@SET_CONFIGURE_4_19_2(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 同化率リセット
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		CVARSET CFLAG, 163, 0
+		PRINTW リセットしました
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「無人部屋の汚染度自動上昇」
+;=================================================
+@SET_CONFIGURE_4_20(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 無人部屋の汚染度自動上昇
+		
+		IF FLAG:541 == 0
+			RESULTS:1 = OFF
+		ELSEIF FLAG:541 == 1
+			RESULTS:1 = ON
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 誰もいない部屋の汚染度が徐々に上昇していくようにしますか？
+		PRINTFORML 
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] ON
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:541 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「攻撃フィルター」
+;=================================================
+@SET_CONFIGURE_4_21(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 攻撃フィルター
+		IF FLAG:591 == 0
+			RESULTS:1 = フィルターなし
+		ELSE
+			SIF FLAG:591 & 1
+				RESULTS:1 += "通常 "
+			SIF FLAG:591 & 2
+				RESULTS:1 += "V "
+			SIF FLAG:591 & 4
+				RESULTS:1 += "A "
+
+			RESULTS:1 += "攻撃にフィルター"
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		$INPUT_LOOP
+		PRINTFORML 攻撃にフィルターをかけますか？
+		PRINTFORML [1] かけない
+		PRINTFORML 暴力表現が苦手な人用
+		PRINTFORM [2] 通常攻撃
+			IF FLAG:591 & 1
+				PRINTFORML  → 性
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORML 処女や男の娘向け
+		PRINTFORM [3] V攻撃
+			IF FLAG:591 & 2
+				PRINTFORML  → A
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORML A苦手な人向け
+		PRINTFORM [4] A攻撃
+			IF FLAG:591 & 4
+				PRINTFORML  → V
+			ELSE
+				PRINTFORML 
+			ENDIF
+		PRINTFORML [0] 決定
+		INPUT
+		IF RESULT == 0
+			PRINTFORML 設定しました
+		;1~3
+		ELSEIF RESULT == 1
+			FLAG:527 = 0
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 2
+			IF FLAG:591 & 1
+				FLAG:591 -= 1
+			ELSE
+				FLAG:591 += 1
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 3
+			IF FLAG:591 & 2
+				FLAG:591 -= 2
+			ELSE
+				FLAG:591 += 2
+			ENDIF
+			;相反するのでVフィルターかけたらAフィルターは消える
+			IF FLAG:591 & 4
+				FLAG:591 -= 4
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 4
+			IF FLAG:591 & 4
+				FLAG:591 -= 4
+			ELSE
+				FLAG:591 += 4
+			ENDIF
+			;相反するのでVフィルターかけたらAフィルターは消える
+			IF FLAG:591 & 2
+				FLAG:591 -= 2
+			ENDIF
+			GOTO INPUT_LOOP
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+;=================================================
+;コンフィグ項目
+;「ゲームの難易度」
+;=================================================
+@SET_CONFIGURE_96(ARG)
+
+	;★難易度追加パッチ改変
+	IF FLAG:999
+		;---項目の表示---
+		IF ARG == 0
+			RESULTS:0 = ゲームの難易度
+			IF FLAG:4 == 1
+				RESULTS:1 = Extra
+			ELSE
+				RESULTS:1 = Phantasm
+			ENDIF
+		;---選択時の処理---
+		ELSEIF ARG == 1
+			PRINTFORML ゲームの難易度を設定できます
+			PRINTFORML [1] Extra　 　Normalを基準に消耗した状態で始まるもの
+			PRINTFORML [2] Phantasm　Lunaticを基準に消耗した状態で始まるもの
+			PRINTFORML 
+			PRINTFORML [0] キャンセル
+			$INPUT_LOOPEX
+			INPUT
+			IF RESULT == 0
+				PRINTFORML キャンセルしました
+			ELSEIF RESULT == 1
+				FLAG:4 = 1
+				FLAG:999 = 1
+				PRINTFORMW 設定しました
+			ELSEIF RESULT == 2
+				FLAG:4 = 3
+				FLAG:999 = 2
+				PRINTFORMW 設定しました
+			ELSE
+				GOTO INPUT_LOOPEX
+			ENDIF
+		ENDIF
+	;★ここまで
+	ELSE
+		;---項目の表示---
+		IF ARG == 0
+			RESULTS:0 = ゲームの難易度
+			IF FLAG:4 == -1
+				RESULTS:1 = Very easy
+			ELSEIF FLAG:4 == 0
+				RESULTS:1 = Easy
+			ELSEIF FLAG:4 == 1
+				RESULTS:1 = Normal
+			ELSEIF FLAG:4 == 2
+				RESULTS:1 = Hard
+			ELSE
+				RESULTS:1 = Lunatic
+			ENDIF
+			
+		;---選択時の処理---
+		ELSEIF ARG == 1
+			IF FLAG:4 >= 0
+				PRINTFORML ゲームの難易度を設定できます
+				PRINTFORML [1] Easy     触手を苛めたい人向け
+				PRINTFORML [2] Normal   苛めたり苛められたりしたい人向け
+				PRINTFORML [3] Hard     厳しめのゲームが好きな人向け
+				PRINTFORML [4] Lunatic  ひたすらに全滅してみたい人向け
+				PRINTFORML 
+				PRINTFORML [0] キャンセル
+				$INPUT_LOOP
+				INPUT
+				IF RESULT == 0
+					PRINTFORML キャンセルしました
+				;1～4
+				ELSEIF RESULT >= 1 && RESULT <= 4
+					FLAG:4 = RESULT - 1
+					PRINTFORMW 設定しました
+				ELSE
+					GOTO INPUT_LOOP
+				ENDIF
+			ELSE
+				PRINTFORMW Very easyは難易度を変更できません
+			ENDIF
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「現在の設定をデフォルトとして保存」
+;=================================================
+@SET_CONFIGURE_97(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 現状を次週以降に引き継ぐ
+
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		LOCAL:0 = 0
+		PRINTFORML 図鑑とコンフィグ設定を次週に引継げます
+		PRINTFORML データは gloval.sav ファイルに保存されます
+		PRINTFORML セーブを行ってよろしいですか？
+		PRINTFORML 
+		PRINTFORML [1] 全てセーブする
+		PRINTFORML [2] コンフィグ設定のみセーブする
+		PRINTFORML [3] 図鑑のみセーブする
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1
+			FOR LOCAL:0, 0, 101
+				GLOBAL:(LOCAL:0) = FLAG:(LOCAL:0 + 500)
+			NEXT
+			;敵と出会ったかどうか記録　図鑑用
+			FOR LOCAL:0, 101, 251
+				GLOBAL:(LOCAL:0) = FLAG:(LOCAL:0 + 600)
+			NEXT
+			SAVEGLOBAL
+			PRINTFORMW 保存しました
+		ELSEIF RESULT == 2
+			FOR LOCAL:0, 0, 101
+				GLOBAL:(LOCAL:0) = FLAG:(LOCAL:0 + 500)
+			NEXT
+			SAVEGLOBAL
+			PRINTFORMW 保存しました
+		ELSEIF RESULT == 3
+			;敵と出会ったかどうか記録　図鑑用
+			FOR LOCAL:0, 101, 251
+				GLOBAL:(LOCAL:0) = FLAG:(LOCAL:0 + 600)
+			NEXT
+			SAVEGLOBAL
+			PRINTFORMW 保存しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「設定の初期化」
+;=================================================
+@SET_CONFIGURE_98(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 設定の初期化
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 現在の設定を初期化しますか？
+		PRINTFORML [1] 実行
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1
+			VARSET FLAG, 0, 500, 601
+			PRINTFORMW 初期化しました！
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================
+;コンフィグ項目
+;「ログ出力」
+;=================================================
+@SET_CONFIGURE_99(ARG)
+
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 画面ログの出力
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 画面ログを出力しますか？
+		PRINTFORML ※既にログファイルが存在する場合は上書きとなります。
+		PRINTFORML [1] 実行
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		ELSEIF RESULT == 1
+			OUTPUTLOG
+			PRINTFORMW 出力しました！
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
+;=================================================

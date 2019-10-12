@@ -1,0 +1,83 @@
+﻿;戦闘中にアイテムを使って貰った
+@SYSTEM_MESSAGE_36(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_36)アイテムのIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+	CASE 50
+		PRINTFORML %ARGS:0%のHPが回復した！
+	CASE 51
+		PRINTFORML %ARGS:0%のHPが回復した！
+	CASE 52
+		PRINTFORML %ARGS:0%のMPが回復した！
+	CASE 53
+		PRINTFORML %ARGS:0%のMPが回復した！
+	CASE 54
+		PRINTFORML %ARGS:0%は新しい服に着替えた！
+	CASE 55
+		PRINTFORML %ARGS:0%は心身ともに冷静になった！
+	CASE 56
+		PRINTFORML %ARGS:0%の頬が赤く染まり精力がみなぎってきた！
+	CASE 57
+		IF CFLAG:28
+			PRINTFORML %ARGS:0%の体調が火照った体以外は正常に戻った！
+		ELSE
+			PRINTFORML %ARGS:0%の体調が正常に戻った！
+		ENDIF
+	CASE 58
+		PRINTFORMW %ARGS:0%の瞳に光が戻った！
+	CASE 59
+		;メッセージ不要
+	CASE 60
+		;メッセージ不要
+	CASE 61
+		PRINTFORML %ARGS:0%の最大HPが300増えた！
+	CASE 62
+		PRINTFORML %ARGS:0%の戦闘素質が10増えた！
+	CASE 63
+		PRINTFORML %ARGS:0%の速度が10増えた！
+	CASE 64
+		;メッセージ不要
+	CASE 65
+		;メッセージ不要
+	CASE 66
+		PRINTFORMW %ARGS:0%はトイレを済ませた！
+	CASE 67
+		IF CFLAG:501 == 100 && GET_BUST(TARGET) >= 3
+			PRINTFORM その淫らに肥大した乳房を隠すように
+		ELSEIF CFLAG:501 == 100 && GET_BUST(TARGET) >= 1
+			PRINTFORM その豊満な胸を隠すように
+		ENDIF
+		PRINTFORML %ARGS:0%は包帯を巻いた！
+	CASE 69
+		IF CFLAG:506 > 40
+			PRINTFORML 母乳によって膨らんでいた%ARGS:0%の胸がゆっくりと元に戻った。
+		ELSE
+			PRINTFORML %ARGS:0%の胸がしぼんだ！
+		ENDIF
+	CASE 70
+		PRINTFORML %ARGS:0%は%ITEMNAME:70%を食べてみた……
+		PRINTFORML あまりのマズさに%ARGS:0%のテンションが下がってしまった！
+		PRINTFORML しかも何の成分が祟ったのか、%ARGS:0%の身体が火照り始めた！
+	CASE 71
+		PRINTFORML %ARGS:0%は%ITEMNAME:71%を使った！
+		PRINTFORML 部屋が若干浄化された！
+	CASE 72
+		PRINTFORML %ARGS:0%は%ITEMNAME:72%を覗きこんでみた……
+		PRINTFORML 迷宮内の様子が手に取るようにわかった！
+	CASE 73
+		PRINTFORML %ARGS:0%のHPが回復した！
+	CASE 74
+		PRINTFORML %ARGS:0%は股間に札を張った！
+	CASE 75
+		PRINTFORML %ARGS:0%はお腹に札を張った！
+	CASE 76
+		PRINTFORML %ARGS:0%は胸に札を張った！
+	CASE 77
+		PRINTFORML %ARGS:0%は排卵誘発剤を飲んだ！
+	CASE 78
+		PRINTFORML %ARGS:0%は産卵促進剤を飲んだ！
+	CASEELSE
+		PRINTFORMW (SYSTEM_MESSAGE_36)アイテムのIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+ENDSELECT
+

@@ -1,0 +1,65 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;現在の能力・EXPを表示
+;ARG:0	対象キャラID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@SHOW_ABL_LIST(ARG:0)
+#DIM LCOUNT,3	;ループ用
+
+;LOCAL
+;1	NEXT
+;2	EXP現在値
+
+
+;全能力分
+FOR LCOUNT, 0, 17
+
+	;次レベルに必要な量
+	CALL GET_NEED_EXP(LCOUNT, ABL:(ARG:0):(LCOUNT) + 1)
+	LOCAL:1 = RESULT
+	
+	;現在の量
+	LOCAL:2 = EXP:(ARG:0):(LCOUNT)
+	
+	;次のレベルがあるかどうか
+	IF LOCAL:1 > 0
+	
+		PRINTFORMLC %ABLNAME:(LCOUNT),8,LEFT% Lv{ABL:(ARG:0):(LCOUNT)} (EXP {LOCAL:2,6}/{LOCAL:1,5})
+		
+	ELSE
+		LOCALS = 
+		;表示桁調整
+		IF LOCAL:2 > 999999
+			LOCAL = 0
+			FOR LCOUNT:1, 0, 5
+				IF LOCAL:2 > 999999
+					LOCAL:2 /= 1000
+					LOCAL += 1
+				ENDIF
+			NEXT
+			SELECTCASE LOCAL
+				CASE 0
+					LOCALS = 
+				CASE 1
+					LOCALS = k
+				CASE 2
+					LOCALS = M
+				CASE 3
+					LOCALS = G
+				CASE 4
+					LOCALS = T
+				CASE 5
+					LOCALS = P
+				CASE 6
+					LOCALS = E
+			ENDSELECT
+		ENDIF
+			
+		PRINTFORMLC %ABLNAME:(LCOUNT),8,LEFT% Lv{ABL:(ARG:0):(LCOUNT)} (EXP%@"{LOCAL:2,6}%LOCALS%",7,RIGHT%/-----)
+	ENDIF
+	
+	;最後以外は３つごとに改行
+	SIF (LCOUNT % 3) == 2 && LCOUNT != 15
+		PRINTL  
+NEXT
+PRINTL  
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡

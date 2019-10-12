@@ -1,0 +1,616 @@
+﻿;素質一覧表示
+@SHOW_TALENT_WIKI
+#DIMS SLV,4	;LVにより名称の変わる素質用
+;LOCAL
+;0	ループ用
+;1	表示回数
+;2	表示する素質番号の範囲
+;3	ヘルプを見る素質番号
+;4	ループ用2
+;5	初期素質持ちがいるかどうかの判定
+;6	直前に選択した番号
+;7	素質を見たかどうか
+;10	行削除用カウント1(計算用)
+;11	行削除用カウント2(計算用)
+;12	行削除用カウント3(項目の改行数)
+;13	行削除用カウント4(計算用)
+;14	行削除用カウント5(計算用)
+;15	行削除用カウント6(詳細の改行数)
+
+	$START
+	REDRAW 0
+	LOCAL:10 = LINECOUNT
+
+	DRAWLINE
+	PRINTFORML どの素質を見ますか？
+	IF LOCAL:2 == 0 || LOCAL:2 > 300
+		LOCAL:2 = 100
+	ENDIF
+	FOR LOCAL:0, (LOCAL:2 - 100), LOCAL:2
+		IF TALENTNAME:(LOCAL:0) != ""
+			PRINTFORM [{LOCAL:0+1,3}] %TALENTNAME:(LOCAL:0),15,LEFT%
+			LOCAL:1 += 1
+			;3つ表示するごとに改行
+			SIF (LOCAL:1 % 3) == 0 && LOCAL:1 > 0
+				PRINTL  
+		ENDIF
+	NEXT
+	LOCAL:1 = 0
+	PRINTL
+	PRINTL
+	PRINTFORM [500] %"前へ",15,LEFT%
+	PRINTFORML [600] %"次へ",15,LEFT%
+	PRINTFORML [  0] キャンセル
+
+
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL:11 = LINECOUNT
+	;項目表示の改行数を記録
+	LOCAL:12 = LOCAL:11 - LOCAL:10
+
+	IF RESULT == 0
+		REDRAW 1
+		LOCAL:6 = 0
+		LOCAL:7 = 0
+		RETURN
+	ELSEIF RESULT == 500
+		IF LOCAL:2 > 100
+			LOCAL:2 -= 100
+		ELSE
+			LOCAL:2 = 300
+		ENDIF
+		CLEARLINE LOCAL:12
+		GOTO START
+	ELSEIF RESULT == 600
+		LOCAL:2 += 100
+		CLEARLINE LOCAL:12
+		GOTO START
+	ELSEIF TALENTNAME:(RESULT-1) != "" && RESULT > 0
+		;行削除(初回)
+		IF LOCAL:7 == 0
+			CLEARLINE LOCAL:12
+		;行削除(2回目～)
+		ELSEIF LOCAL:7 == 1 && LOCAL:6 != RESULT
+			CLEARLINE LOCAL:12 + LOCAL:15 + 3
+		;連打のログ流れ防止
+		ELSEIF LOCAL:6 == RESULT
+			CLEARLINE 1
+			GOTO INPUT_LOOP
+		ENDIF
+		LOCAL:6 = RESULT
+		LOCAL:3 = RESULT-1
+		DRAWLINE
+		SETCOLOR 0x60C0FF
+		PRINTFORML %"["+TALENTNAME:(RESULT-1)+"]",15,LEFT% 
+		RESETCOLOR
+		LOCAL:13 = LINECOUNT
+		CALL SHOW_TALENT_EXPLAIN_WIKI(RESULT-1)
+		PRINTL
+		SETCOLOR 0x60C0FF
+		PRINTFORML >> 初期取得者
+		RESETCOLOR
+
+		VARSET SLV
+		IF LOCAL:3 == 100
+			SLV:1 = ■ [小柄体型]
+			SLV:2 = ■ [小人体型]
+		ELSEIF LOCAL:3 >= 101 && LOCAL:3 <= 106
+			SELECTCASE LOCAL:3
+			CASE 101
+				LOCALS:0 = Ａ
+			CASE 102
+				LOCALS:0 = Ｂ
+			CASE 103
+				LOCALS:0 = Ｃ
+			CASE 104
+				LOCALS:0 = Ｖ
+			CASE 105
+				LOCALS:0 = 肌
+			CASE 106
+				LOCALS:0 = Ｍ
+			ENDSELECT
+			SLV:0 = ■ [%LOCALS:0%鈍感]      (被ダメージ -40％)
+			SLV:1 = ■ [%LOCALS:0%敏感]      (被ダメージ +30％)
+			SLV:2 = ■ [%LOCALS:0%過敏]      (被ダメージ +60％)
+			SLV:3 = ■ [%LOCALS:0%異常過敏]  (被ダメージ+100％)
+		ELSEIF LOCAL:3 == 160
+			SLV:1 = ■ [浄化知識]
+			SLV:2 = ■ [結界知識]
+		ELSEIF LOCAL:3 == 161
+			SLV:1 = ■ [体術習熟]
+			SLV:2 = ■ [剣術習熟]
+		ELSEIF LOCAL:3 == 164
+			SLV:1 = ■ [波動感知]
+			SLV:2 = ■ [術式知識]
+		ELSEIF LOCAL:3 == 169
+			SLV:1 = ■ [神気]
+			SLV:2 = ■ [神の血]
+		ELSEIF LOCAL:3 == 213
+			SLV:1 = ■ [羽]
+			SLV:2 = ■ [翼]
+		ELSEIF LOCAL:3 == 215
+			SLV:1 = ■ [尻尾]
+			SLV:2 = ■ [もふ尻尾]
+		ENDIF
+		
+		IF GROUPMATCH(LOCAL:3,100,101,102,103,104,105,106,160,161,164,213,215)
+			IF LOCAL:3 >= 101 && LOCAL:3 <= 106
+				SETCOLOR 0x2070FF
+				PRINTFORML %SLV:0%
+				RESETCOLOR
+				FOR LOCAL:4, 1, FLAG:2
+					IF CSVTALENT(LOCAL:4,LOCAL:3) == -1
+						PRINTFORM %CSVNAME(LOCAL:4,0)%　
+						SIF LOCAL:5 == 0
+							LOCAL:5 += 1
+					ENDIF
+					IF LOCAL:4 + 1 == FLAG:2
+						IF LOCAL:5
+							PRINTL
+						ELSE
+							SETCOLOR 0x333333
+							PRINTFORML －－－
+							RESETCOLOR
+						ENDIF
+					ENDIF
+				NEXT
+				LOCAL:5 = 0
+				PRINTL
+			ENDIF
+			PRINTFORML %SLV:1%
+			FOR LOCAL:4, 1, FLAG:2
+				IF CSVTALENT(LOCAL:4,LOCAL:3) == 1
+					PRINTFORM %CSVNAME(LOCAL:4,0)%　
+					SIF LOCAL:5 == 0
+						LOCAL:5 += 1
+				ENDIF
+				IF LOCAL:4 + 1 == FLAG:2
+					IF LOCAL:5
+						PRINTL
+					ELSE
+						SETCOLOR 0x333333
+						PRINTFORML －－－
+						RESETCOLOR
+					ENDIF
+				ENDIF
+			NEXT
+			LOCAL:5 = 0
+			PRINTL
+			SIF LOCAL:3 >= 101 && LOCAL:3 <= 106
+				SETCOLOR 0xD022D0
+			PRINTFORML %SLV:2%
+			RESETCOLOR
+			FOR LOCAL:4, 1, FLAG:2
+				IF CSVTALENT(LOCAL:4,LOCAL:3) == 2
+					PRINTFORM %CSVNAME(LOCAL:4,0)%　
+					SIF LOCAL:5 == 0
+						LOCAL:5 += 1
+				ENDIF
+				IF LOCAL:4 + 1 == FLAG:2
+					IF LOCAL:5
+						PRINTL
+					ELSE
+						SETCOLOR 0x333333
+						PRINTFORML －－－
+						RESETCOLOR
+					ENDIF
+				ENDIF
+			NEXT
+			LOCAL:5 = 0
+			PRINTL
+			IF LOCAL:3 >= 101 && LOCAL:3 <= 106
+				SETCOLOR 0xA00000
+				PRINTFORML %SLV:3%
+				RESETCOLOR
+				FOR LOCAL:4, 1, FLAG:2
+					IF CSVTALENT(LOCAL:4,LOCAL:3) == 3
+						PRINTFORM %CSVNAME(LOCAL:4,0)%　
+						SIF LOCAL:5 == 0
+							LOCAL:5 += 1
+					ENDIF
+					IF LOCAL:4 + 1 == FLAG:2
+						IF LOCAL:5
+							PRINTL
+						ELSE
+							SETCOLOR 0x333333
+							PRINTFORML －－－
+							RESETCOLOR
+						ENDIF
+					ENDIF
+				NEXT
+				LOCAL:5 = 0
+			ENDIF
+		ELSE
+			FOR LOCAL:4, 1, FLAG:2
+				IF EXISTCSV(LOCAL:4, 0) <= 0
+					CONTINUE
+				ELSEIF CSVTALENT(LOCAL:4,LOCAL:3)
+					PRINTFORM %CSVNAME(LOCAL:4,0)%　
+					SIF LOCAL:5 == 0
+						LOCAL:5 += 1
+				ENDIF
+				IF LOCAL:4 + 1 == FLAG:2
+					IF LOCAL:5
+						PRINTL
+					ELSE
+						SETCOLOR 0x333333
+						PRINTFORML －－－
+						RESETCOLOR
+					ENDIF
+				ENDIF
+			NEXT
+			LOCAL:5 = 0
+		ENDIF
+
+		LOCAL:14 = LINECOUNT
+		;説明表示の改行数を記録
+		LOCAL:15 = LOCAL:14 - LOCAL:13
+		LOCAL:5 = 0
+		PRINTFORML  
+		LOCAL:7 = 1
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+;素質の詳細を表示
+;ARG:0	素質ID
+@SHOW_TALENT_EXPLAIN_WIKI(ARG:0)
+
+;ステータスのコピペ
+SELECTCASE ARG:0
+	CASE 0
+		PRINTFORML V属性の攻撃を受けた際に処女喪失し、MPに大ダメージ
+		PRINTFORML 処女膜を復活させる敵も存在
+	CASE 10
+		PRINTFORML 敵の攻撃を受けた際にTPが1減少
+	CASE 11
+		PRINTFORML 敵の攻撃を受けた際にTPが1～4増加 仲間に誘いにくい
+		PRINTFORML また悪堕ちしにくくなる
+	CASE 12
+		PRINTFORML 寄生攻撃を受けた際のMPダメージを1割軽減
+	CASE 13
+		PRINTFORML 仲間に誘いやすくなる
+	CASE 14
+		PRINTFORML 戦闘開始時のTP-10
+	CASE 15
+		PRINTFORML 性攻撃を受けた際にTP+2 主人公のほうが強い場合に仲間に誘いにくい
+		PRINTFORML また悪堕ちしにくくなる
+	CASE 16
+		PRINTFORML 回避率+3 主人公の強さが自分以下の場合に仲間に誘いにくい
+	CASE 17
+		PRINTFORML 性攻撃を受けた際のMPダメージを1割軽減
+	CASE 18
+		PRINTFORML 仲間に誘う際に友好度が大きく影響
+	CASE 20
+		PRINTFORML 自慰が発生しにくい
+		PRINTFORML 睡眠時や戦闘中の発情で自慰への抵抗にプラス補正
+	CASE 21
+		PRINTFORML 仲間が戦意喪失した際に、TPが変化しない
+	CASE 22
+		PRINTFORML 様々な場面でのTP変化量が半減
+	CASE 23
+		PRINTFORML 探索の成功率が上昇
+	CASE 24
+		PRINTFORML 弱攻撃・弱攻撃の命中率が+20
+	CASE 25
+		PRINTFORML HPが0になった際にTPが減少しなくなる
+	CASE 26
+		PRINTFORML 自分が拘束された際と、仲間が戦意喪失した際に、TPが0に
+	CASE 27
+		PRINTFORML 各種感覚・中毒の能力が上がりにくい
+	CASE 28
+		PRINTFORML 戦闘開始時に前に出た状態になる
+	CASE 30
+		PRINTFORML V属性の攻撃を受けた際にTP-2
+	CASE 31
+		PRINTFORML V属性の攻撃を受けた際に、TPが変化しない
+	CASE 32
+		PRINTFORML 自分が絶頂した際にTPが変化しない　また、絶頂ダメージを1割軽減
+	CASE 33
+		PRINTFORML 衣服攻撃を受けた際に、TPが下がらない 全裸時にTP+10
+	CASE 34
+		PRINTFORML 敵の拘束から抜け出しやすい また、拘束中にTP+2
+	CASE 35
+		PRINTFORML 全裸になっている間、命中率+10、MPの自然減少量が2倍
+		PRINTFORML 戦闘中の発情で自慰への抵抗にプラス補正
+	CASE 36
+		PRINTFORML 全裸になっている間、MPが自然減少しない
+	CASE 40
+		PRINTFORML HPダメージが1割増加し、TPも2点の補正
+	CASE 41
+		PRINTFORML HPダメージを1割軽減
+	CASE 42
+		PRINTFORML A・V属性の攻撃を受けた際のEPダメージが2割増加し、MPダメージを2割軽減
+	CASE 43
+		PRINTFORML A・V属性の攻撃を受けた際のEPダメージを2割軽減
+	CASE 50
+		PRINTFORML 攻撃戦闘・道具戦闘が上がりやすい
+	CASE 51
+		PRINTFORML 気配察知・危機回避が上がりやすく、攻撃戦闘・道具戦闘が上がりにくい
+	CASE 52
+		PRINTFORML 話術が上がりやすい
+	CASE 53
+		PRINTFORML 消耗武器による攻撃力が1割上昇
+	CASE 54
+		PRINTFORML M属性の攻撃を受けた際自分へのEPダメージが増加し、相手のHPに3％ダメージを与える
+	CASE 55
+		PRINTFORML 探索時に回復アイテムなどを手に入れる確率が上昇
+	CASE 56
+		PRINTFORML 睡眠・発情になる確率が減少
+		PRINTFORML 戦闘中の睡眠・発情・発情による行動不能に対する抵抗にプラス補正
+	CASE 57
+		IF FLAG:521 == 0
+			PRINTFORML NPが溜まりやすくなり、愛液が出やすくなる
+		ELSE
+			PRINTFORML NPが溜まりやすくなり、おもらしもしやすくなる
+		ENDIF
+	CASE 60
+		PRINTFORML 自慰が発生しやすい
+		PRINTFORML 睡眠時や戦闘中の発情で自慰への抵抗にマイナス補正
+	CASE 61
+		PRINTFORML 丸呑み拘束中にTPが下がらなくなる
+	CASE 62
+		PRINTFORML 丸呑み拘束中にTP変化量が2倍
+		PRINTFORML 精液風呂作成に必要な精液中毒レベル+1
+	CASE 63
+		PRINTFORML 前に出ても友好度が下がらず、回避率も下がらなくなる
+	CASE 70
+		PRINTFORML 性攻撃を受けた際にTP+2
+		PRINTFORML 戦闘中の発情による行動不能に対する抵抗にマイナス補正
+	CASE 71
+		PRINTFORML 各種感覚の能力が上がりにくい
+	CASE 72
+		PRINTFORML 各種中毒の能力が上がりやすい
+	;悪堕ち　種族が値として入っている
+	CASE 73
+		PRINTFORML 悪堕ちした経験がある
+	CASE 74
+		PRINTFORML 快楽に負け、牝へと堕ちた烙印です。
+		PRINTFORML 絶頂の際にTPが増加
+		PRINTFORML 
+		PRINTFORML 触装か粘装なら発情時に自慰しながら通常攻撃可能
+	CASE 75
+		PRINTFORML 排泄するだけでイきそうになる、出口兼入口です
+		PRINTFORML A攻撃のダメージが2倍に増えますが淫乱なら絶頂時にMPが回復する場合があります
+	CASE 76
+		PRINTFORML 乳暈は下品に肥大し、乳首は太く長く成長しきっています
+		PRINTFORML B攻撃のダメージが2倍に増えますが淫乱なら絶頂時にMPが回復する場合があります
+	CASE 77
+		PRINTFORML 成長しすぎた醜い程の淫核は剥き出しの弱点そのものです
+		PRINTFORML C攻撃のダメージが2倍に増えますが淫乱なら絶頂時にMPが回復する場合があります
+	CASE 78
+		PRINTFORML どれだけ精を注がれても満たされることのない哀れな肉穴です
+		PRINTFORML V攻撃のダメージが2倍に増えますが淫乱なら絶頂時にMPが回復する場合があります
+	CASE 79
+		PRINTFORML キスするだけで体が震えるはしたない口です
+		PRINTFORML M攻撃のダメージが2倍に増えますが淫乱なら絶頂時にMPが回復する場合があります
+	CASE 81
+		PRINTFORML レズ中毒が上がりやすくなり、女性型触手との相性が上昇
+	CASE 94
+		PRINTFORML 出会った相手が触手の擬態か判別できるが、汚染率が高い部屋にいるとMPが減少
+	CASE 100
+		PRINTFORML 回避率+5 A・V属性の攻撃を受けた際のMPダメージが2割増加
+		PRINTFORML 戦闘後の寄生・妊娠に対し2割の耐性
+		SETCOLOR 0x60C0FF
+		PRINTFORML [小人体型]
+		RESETCOLOR
+		PRINTFORML 回避率+10 A・V属性の攻撃を受けた際のMPダメージが3割増加　寄生耐性
+		PRINTFORML 戦闘後の寄生・妊娠に対し2割の耐性
+	CASE 101 TO 106
+		PRINTFORML 対応する属性の攻撃を受けた際のダメージが4割軽減・等倍・3割増加・6割増加・2倍
+		PRINTFORML 鈍感→なし→敏感→過敏→異常過敏
+	CASE 107
+		PRINTFORML 乳がありません。なのに何故、B属性の攻撃が無効にならないのでしょうか？
+		PRINTFORML B属性の攻撃を受けた際のダメージが2割増加
+	CASE 108
+		PRINTFORML 身体の限界まで成長した胸 巨乳暈と極太乳首で垂れ気味の巨大すぎる乳房
+		PRINTFORML B属性の攻撃を受けた際のダメージを3割軽減
+	CASE 109
+		PRINTFORML B属性の攻撃を受けた際のダメージが1割増加、TP+3
+	CASE 110
+		PRINTFORML B属性の攻撃を受けた際のダメージを2割軽減
+	CASE 111
+		PRINTFORML 時間経過による自然回復量が1.5倍に上昇
+	CASE 112
+		PRINTFORML 時間経過による自然回復量が0.8倍に減少　寝こみを襲われた際に最初から起きている
+	CASE 114
+		PRINTFORML 時間経過による自然回復量が、昼は半分、夜は3倍
+	CASE 115
+		PRINTFORML 時間経過による自然回復量が、朝と昼のみ2倍
+	CASE 116
+		PRINTFORML 時間経過による自然回復量が、夕と夜のみ2倍
+	CASE 117
+		PRINTFORML 戦闘終了時にPT全体のHPを2％回復 健康だと一部のアイテムを強化
+	CASE 118
+		PRINTFORML 戦闘終了時にPT全体のMPを1％回復 健康だと一部のアイテムを強化
+	CASE 120
+		PRINTFORML 射精中毒が上がりやすくふたなりが治りにくいかわりに射精でのHPダメージ減少
+	CASE 121
+		PRINTFORML 女性同士でも子をなすことができる
+		PRINTFORML 状態異常「ふたなり」が解除できない
+	CASE 122
+		PRINTFORML 男
+		PRINTFORML 常に男性器あり、V性攻撃とV寄生を受け付けない、レズ中毒上昇しない
+	CASE 123
+		PRINTFORML もういつ仲間を裏切ってもおかしくない状態。好感度が重要になる
+	CASE 124
+		PRINTFORML 気配察知と危機回避のレベルに応じて戦闘を回避可能、肌ダメージが2割増加
+	CASE 125
+		PRINTFORML アヤシイ知識を持っています……が、持ってるだけです。これ単体では役に立ちません
+	CASE 127
+		PRINTFORML 射精にやや耐性があります　射精時のHPダメージ軽減
+	CASE 128
+		PRINTFORML ボスを除き、捕食されてもその場で復活
+	CASE 130
+		PRINTFORML 胸で絶頂した際のMPダメージが増加し、相手のHPを回復させる
+		PRINTFORML 母乳分泌異常→母乳製造装置 と成長
+	CASE 132
+		PRINTFORML 寄生攻撃を受けた際に、寄生される確率が減少
+	CASE 135
+		PRINTFORML 卵を生む体質 産卵時のペナルティ軽減
+	CASE 136
+		PRINTFORML 産卵に慣れてしまった肉体 産卵時のペナルティ軽減の代わりに産卵攻撃の成功率が増加
+	CASE 137
+		PRINTFORML ぶっくりと肥大化した卵巣は種付けの快楽を待っています
+		PRINTFORML 未熟卵巣→正常→異常排卵巣→肥大化卵巣→苗床卵巣　と成長
+	CASE 139
+		PRINTFORML 自身の胸の大きさや体型を変更可能
+	CASE 140
+		PRINTFORML 肉体が主人に忠誠を捧げています
+		PRINTFORML 主人の戦闘力増加
+		PRINTFORML 主人がペットを襲う頻度とダメージ、妊娠率増加
+		PRINTFORML 主人がペットを見捨てる確率減少
+		SETCOLOR 0x60C0FF
+		PRINTFORML [花嫁]
+		RESETCOLOR
+		PRINTFORML ペットの素質を入手済みのキャラはイベントでこの素質に変更することができます
+		PRINTFORML イベント終了後他のキャラクターに結婚報告ができます
+		SETCOLOR 0x60C0FF
+		PRINTFORML [しもべ]
+		RESETCOLOR
+		PRINTFORML ペットの素質を入手済みのキャラはイベントでこの素質に変更させられることがあります
+		PRINTFORML 精神的にも完全に屈服し自分から仕えるようになっています
+		PRINTFORML 消すことはできません
+	CASE 149
+		PRINTFORML ペットの加入率・好感度加算に補正
+		PRINTFORML ペットに対する屈服率が上がりにくい
+	CASE 150
+		PRINTFORML ボスを除き、捕食されても暫く経ってから復活
+	CASE 151
+		PRINTFORML 通常攻撃の際に、炎属性の攻撃も撃てる
+		PRINTFORML 炎に耐性がある敵だと属性をなくせる
+	CASE 152
+		PRINTFORML 寄生攻撃を受けた際に、TP-3 PTメンバーでない時に浄化量上昇
+	CASE 153
+		PRINTFORML 全裸以外の状態で戦闘を終了した場合、CPが1割回復
+	CASE 154
+		PRINTFORML 寝こみを襲われた際に敵に気付きやすい
+	CASE 155
+		PRINTFORML 性攻撃・寄生攻撃を受けた際に、TPが下がらなくなる
+	CASE 156
+		PRINTFORML 淫乱系素質による絶頂時のMP回復が発生しやすくなる代わりに……
+	CASE 157
+		PRINTFORML あなたの心と体に惚れ込んだ触手の証
+		PRINTFORML 欲望をあらわにした場合に好感度上昇
+	CASE 158
+		PRINTFORML 母乳が溜まりすぎて人の限界をとうに超えてしまった醜い乳房
+		PRINTFORML 超乳へと成長
+	CASE 159
+		PRINTFORML 絶頂するまで母乳が出ず、Bへのダメージも減少
+		PRINTFORML 一定確率で乳勃状態になりB属性のEPダメージ増加
+	CASE 160
+		PRINTFORML 健康な場合に浄化失敗時の触手暴走を回避する条件が緩和
+		SETCOLOR 0x60C0FF
+		PRINTFORML [結界知識]
+		RESETCOLOR
+		PRINTFORML 健康な場合に浄化失敗時の触手暴走回避条件及び結界使用の条件が緩和
+	CASE 161
+		PRINTFORML 非消耗武器による攻撃の際に戦闘素質に応じて補正
+		SETCOLOR 0x60C0FF
+		PRINTFORML [剣術習熟]
+		RESETCOLOR
+		PRINTFORML 白狼刀、緋緋色金の剣による攻撃の際に戦闘素質に応じて補正
+	CASE 162
+		PRINTFORML 乳首と乳腺の組織を変質させられ、乳房の内部に至るまで開発・拡張されています
+		PRINTFORML ニプルファック発生率が上昇し、また、ニプルファックを受けた時のダメージも増加します
+		PRINTFORML 素質成長あり
+	CASE 163
+		PRINTFORML 飛び道具による戦闘に特に精通しています。
+		PRINTFORML 消耗武器による攻撃の際に命中率に補正
+		PRINTFORML 非消耗武器の急所狙いでひるみが成功した場合、攻撃、または消耗武器の弱攻撃で追撃します
+	CASE 164
+		PRINTFORML 魔法陣の罠の回避率が上がります
+		PRINTFORML 術式知識であれば危機回避１、波動感知であれば危機回避２から魔法陣を完全に回避できます
+	CASE 166
+		PRINTFORML いわゆる名無しである証です
+		PRINTFORML 広く名が知られていないというだけで実力は未知数です
+		PRINTFORML HP・MP・CP・戦闘素質・速度がランダムで変化します
+		PRINTFORML 様々な素質がランダムで付き、性格もランダムです
+	CASE 167
+		PRINTFORML 恥ずかしさが快感に変わります
+		PRINTFORML 全裸だとMPが回復するようになります
+		PRINTFORML 【恥じらい】があると回復量が増加します
+		PRINTFORML 
+		PRINTFORML 全裸で、他のキャラに出会ったり絶頂すると入手できます
+	CASE 168
+		PRINTFORML EPとCPのダメージ10％減少
+		PRINTFORML ABCVM感覚レベルが1上昇するごとに減少率が1％下がります
+		PRINTFORML ABCVM感覚の合計が11以上では逆にダメージが増加します
+		SETCOLOR 0x60C0FF
+		PRINTFORML [神の血]
+		RESETCOLOR
+		PRINTFORML EPとCPのダメージ減少率が7％から始まります
+	CASE 170
+		PRINTFORML ペニスの長さを示す
+		PRINTFORML 短小→普通→巨根→爆根→超巨根
+	CASE 171
+		PRINTFORML ペニスの太さを示す
+	CASE 172
+		PRINTFORML ペニスの精力を示す
+		PRINTFORML 精力薄弱→普通→絶倫→超絶倫
+		PRINTFORML 
+		PRINTFORML 絶倫以上でふたなりが萎び落ちにくくなり、射精絶頂によるHPダメージがなくなります
+	CASE 173
+		PRINTFORML 固く閉じた包皮の中をたっぷり可愛がる手段を持つ者はこの迷宮に山ほどいます
+		PRINTFORML 剥けかけ→仮性包茎→真性包茎
+	CASE 174
+		PRINTFORML ペニスの新陳代謝が良すぎるみたいです。洗ってもいつの間にか汚れています
+	CASE 175
+		PRINTFORML きつい臭いが常に漂っています
+	CASE 176
+		PRINTFORML 寄生・魔法・薬品・森のキノコなど。本来はあるはずがなかったのに
+	CASE 177
+		PRINTFORML 色黒の力強さを感じさせる竿です
+	CASE 178
+		PRINTFORML ペニスの射精のしやすさを示す
+		PRINTFORML 遅漏→普通→早漏
+	CASE 180
+		PRINTFORML 睾丸のサイズ
+		PRINTFORML 玉あり→巨玉→爆玉→超巨玉
+	CASE 181
+		PRINTFORML 睾丸がびっしりと毛まみれです。気持ち悪い
+		PRINTFORML 産毛→剛毛
+	CASE 185
+		PRINTFORML 精液量
+		PRINTFORML 少量射精→普通→大量射精→超大量射精
+	CASE 186
+		PRINTFORML 精液の濃度
+		PRINTFORML 精液薄め→普通→精液濃厚→精液特濃
+	CASE 187
+		PRINTFORML 火傷しそうなくらいに熱いほかほか湯気立つ精液
+	CASE 188
+		PRINTFORML ちょっと黄ばんでいます。なぜか不潔な印象
+	CASE 200
+		PRINTFORML このゲームもこの人に支配されています
+	CASE 213
+		PRINTFORML 肌感度が低いほど回避に補正
+		PRINTFORML 元補正+3％から素質の感度レベルの2倍を引き、+5％～-3％まで変化
+		PRINTFORML 肌鈍感だと+5％、肌異常過敏だと-3％
+		SETCOLOR 0x60C0FF
+		PRINTFORML [翼]
+		RESETCOLOR
+		PRINTFORML 羽に加え拘束脱出率に同様の補正
+	CASE 214
+		PRINTFORML 人外の証です
+		PRINTFORML 
+	CASE 215
+		PRINTFORML 肌感度が低いほどA・V属性の攻撃のEPダメージ減少 肌過敏以上だと増加
+		PRINTFORML 元補正-3％から素質の感度レベルの2倍を引き、-5％～+3％までEPダメージ変化
+		PRINTFORML 肌鈍感だと-5％、肌異常過敏だと+3％
+		PRINTFORML イベントにて後天的に取得可能
+		SETCOLOR 0x60C0FF
+		PRINTFORML [もふ尻尾]
+		RESETCOLOR
+		PRINTFORML 尻尾と同じEPダメージ補正
+		PRINTFORML さらに睡眠によるPTメンバー回復量+5％
+		PRINTFORML イベントにて後天的に取得可能
+	CASEELSE
+		PRINTFORML この素質の説明は未実装です
+ENDSELECT
+

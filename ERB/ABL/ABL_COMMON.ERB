@@ -1,0 +1,48 @@
+﻿;ABL関係の共通関数
+
+
+;指定されたレベルに必要な経験取得
+;ARG:0	能力の種類
+;ARG:1	調べたいレベル（要するに１～３を指定することになる）
+@GET_NEED_EXP(ARG:0, ARG:1)
+
+IF ARG:1 == 0
+	RETURN 0
+ENDIF
+
+TRYCCALLFORM GET_NEED_EXP_{ARG:0}(ARG:1)
+	RETURN RESULT
+CATCH
+	PRINTFORMW (GET_NEED_EXP) 未実装の能力(ID:{ARG:0})のため、処理できません
+	RETURN 0
+ENDCATCH
+
+
+
+;経験値獲得
+;ARG:0	能力の種類
+;ARG:1	獲得したキャラ（IDを指定　つまり1～10）
+;ARG:2	獲得量
+@ADD_ABL_EXP(ARG:0, ARG:1, ARG:2)
+
+TRYCCALLFORM ADD_ABL_EXP_{ARG:0}(ARG:1, ARG:2)
+	RETURN 1
+CATCH
+	PRINTFORMW (ADD_ABL_EXP) 未実装の能力(ID:{ARG:0})のため、処理できません
+	RETURN 0
+ENDCATCH
+
+
+;PTメンバー全員が経験値獲得
+;ARG:0	能力の種類
+;ARG:1	獲得量
+@ADD_ABL_EXP_PT(ARG:0, ARG:1)
+
+CALL ADD_ABL_EXP(ARG:0, 1, ARG:1)
+IF FLAG:10
+	CALL ADD_ABL_EXP(ARG:0, FLAG:10, ARG:1)
+ENDIF
+IF FLAG:11
+	CALL ADD_ABL_EXP(ARG:0, FLAG:11, ARG:1)
+ENDIF
+

@@ -1,0 +1,449 @@
+﻿;=================================================
+;ニューゲーム時の処理
+;=================================================
+@EVENTFIRST
+#DIM LCOUNT
+#DIM QUICK
+;LCOUNT	ループ用
+;LOCAL:5	処女モードの際の行数
+
+	;開始時の時刻取得
+	TIME:2 = GETMILLISECOND() / 1000
+
+	;最初は１日目
+	DAY = 1
+
+	;最初は1周目
+	FLAG:3 = 1
+
+	;管理するキャラの人数設定
+	CALL GET_CSVCHARA
+
+	;＝＝＝ グローバルセーブから設定を読み込む ＝＝＝
+	LOADGLOBAL
+	IF RESULT
+		FOR LCOUNT, 0, 101
+			SIF LCOUNT == 84 && GLOBAL:(LCOUNT)
+				GLOBAL:(LCOUNT) = 0
+			FLAG:(LCOUNT + 500) = GLOBAL:(LCOUNT)
+		NEXT
+		;敵と出会ったかどうか記録　図鑑用
+		FOR LCOUNT, 101, 251
+			FLAG:(LCOUNT + 600) = GLOBAL:(LCOUNT)
+		NEXT
+	ENDIF
+	IF FLAG:509
+		LOCAL = ANIME_CONFIG("FORCE", 2)
+	ELSE
+		LOCAL = ANIME_CONFIG("FORCE", 0)
+	ENDIF
+	
+	;動作環境判別用フラグ
+	;0:触手宮  1:りばーす
+	FLAG:600 = 0
+
+	;★難易度追加パッチ改変	
+
+	;---難易度設定---
+	PRINTFORML ゲームの難易度を選択してください
+	PRINTFORML （Easy～Lunaticは「コンフィグ」で変更可能です）
+	PRINTFORML [ 0] %"Very easy",12,LEFT%		%"とりあえず歩きまわってみたい人向け",10,LEFT%
+	PRINTFORML [ 1] %"Easy",12,LEFT%			%"触手を苛めたい人向け",10,LEFT%
+	PRINTFORML [ 2] %"Normal",12,LEFT%			%"苛めたり苛められたりしたい人向け",10,LEFT%
+	PRINTFORML [ 3] %"Hard",12,LEFT%			%"厳しめのゲームが好きな人向け",10,LEFT%
+	PRINTFORML [ 4] %"Lunatic",12,LEFT%			%"ひたすらに全滅してみたい人向け",10,LEFT%
+	PRINTFORML [ 5] %"Extra",12,LEFT%			%"Normalを基準に捕まった状態から脱走を試みるもの",10,LEFT%
+	PRINTFORML [ 6] %"Phantasm",12,LEFT%		%"Lunaticを基準に捕まった状態から脱走を試みるもの",10,LEFT%
+	SIF FLAG:718
+		PRINTFORML [ 7] %"Doppel",12,LEFT%			%"敵がドッペルゲンガーのみモード",10,LEFT%
+	PRINTFORML [10] %"Trap",12,LEFT%			%"敵がほとんど存在しない代わりに罠にあふれたモード",10,LEFT%
+	PRINTFORML 
+	PRINTFORML [81] %"Minigame",12,LEFT%		%"ミニゲーム",10,LEFT%
+
+	$INPUT_LOOP_DIF
+	INPUT
+	IF RESULT >= 0 && RESULT <= 4
+		FLAG:4 = RESULT - 1
+	ELSEIF RESULT == 5
+		FLAG:4 = 1
+		FLAG:999 = 1
+	ELSEIF RESULT == 6
+		FLAG:4 = 3
+		FLAG:999 = 2
+	ELSEIF RESULT == 7
+		FLAG:4 = 3
+		FLAG:998 = 18
+	ELSEIF RESULT == 10
+		FLAG:4 = 3
+		FLAG:997 = 1
+	ELSEIF RESULT == 81
+		FLAG:997 = 81
+		JUMP MINIGAME
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP_DIF
+	ENDIF
+	
+	;＝＝＝ クイックスタート ＝＝＝
+	;大半の設定確認をとばしOP行き
+	FOR LCOUNT, 0, 100
+		IF FLAG:(LCOUNT + 500)
+			QUICK ++
+		ENDIF
+	NEXT
+	IF QUICK > 1
+	
+		PRINTFORML 
+		PRINTFORML クイックスタートを利用しますか？
+		PRINTFORML それ以外の設定は保存してある設定を利用します
+		PRINTFORML ※設定をまだコンフィグ画面で保存したことがない場合いいえを選ぶのをおすすめします。
+		PRINTFORML 
+		PRINTFORML 
+		PRINTFORML [0] はい
+		PRINTFORML [1] いいえ
+
+		INPUT
+		IF RESULT == 1
+			
+		ELSE
+			CALL QUICK_START
+			GOTO START_OP
+		ENDIF
+	ENDIF
+	QUICK = 0
+	;＝＝＝ チュートリアル設定 ＝＝＝
+	;チュートリアル確認だけはグローバルセーブの管轄外とする
+	PRINTL
+	PRINTL ～初めてプレイされる方へ～
+	PRINTL このゲームは割と色んな要素が存在します。
+	PRINTL 初めてプレイされる方は、ゲーム中のチュートリアルを良く確認しておくことをオススメします。
+	PRINTL  
+	PRINTL  
+
+	PRINTFORML というわけでチュートリアルをONにしますか？
+	PRINTFORML [0] はい
+	PRINTFORML [1] いいえ
+
+	INPUT
+	IF RESULT == 1
+		PRINTFORMW チュートリアルを無効にしました
+		FOR LCOUNT, 400, 500
+			FLAG:(LCOUNT) |= 2
+		NEXT
+	ELSE
+		FLAG:500 = 1
+		PRINTFORMW チュートリアルを有効にしました
+		CALL SHOW_TUTORIAL(0)
+	ENDIF
+
+
+	;--- 初期処理開始 ------------------
+	;キャラ登録番号メモ
+	;0		「あなた」が入っているが、使わない
+	;1		主人公　このキャラを操作する
+	;2～10	その他の仲間
+	;敵データは配列DAにて管理する
+
+	TARGET = -1
+	ASSI = -1
+
+	CALL START_CHARA_SELECT
+	CALL SHOW_TUTORIAL(1)
+	CALL OTHER_CHARA_SELECT
+
+
+
+	;主人公の能力ボーナス選択
+	;★EXモードではボーナスがない
+	IF FLAG:999
+		
+	ELSE
+		PRINTFORML 主人公に初期ボーナスとして、好きな能力レベルを+1するか、アイテムを貰う事ができます
+		PRINTFORML ※元々レベル１の能力をレベル２にすることはできません
+		PRINTFORML  
+		$INPUT_BONUS
+		PRINTFORML 初期ボーナスを選択してください
+		FOR LCOUNT, 0, 16
+			IF ABL:1:(LCOUNT)
+				SETCOLOR 0x333333
+				PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% はこれ以上上げられません
+				RESETCOLOR
+			ELSE
+				IF LCOUNT == 12
+					IF FLAG:520
+						PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% を上げる（ふたなりが付与されます)
+						CONTINUE
+					ELSE
+						CONTINUE
+					ENDIF
+				ENDIF
+				PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% を上げる
+			ENDIF
+		NEXT
+		PRINTFORML [16] アイテムを貰う（回復アイテムなどがいくつか貰えます）
+		PRINTFORML [17] ペットを貰う（きちんと世話してあげましょうね）
+		PRINTFORML [18] 素質を入手する
+		INPUT
+		IF (RESULT >= 0) && (RESULT <= 15) && RESULT != 12 && (ABL:1:(RESULT) == 0)
+			PRINTFORMW %ABLNAME:(RESULT)% のレベルが上がった！
+			ABL:1:RESULT += 1
+		ELSEIF RESULT == 12
+			ABL:1:12 += 1
+			CFLAG:1:42 = 10
+		ELSEIF RESULT == 16
+			PRINTFORMW 緑茶×１、日本酒×１、着替えセット×１、煙玉×１を手に入れた！
+			CALL ADD_ITEM(50, 1, 0)
+			CALL ADD_ITEM(52, 1, 0)
+			CALL ADD_ITEM(54, 1, 0)
+			CALL ADD_ITEM(59, 1, 0)
+		ELSEIF RESULT == 17
+			CALL DEBUG_COMMAND_ペット追加
+		ELSEIF RESULT == 18
+			CALL FIRST_TALENT
+			;キャンセルしたら戻る
+			IF RESULT == 0
+				GOTO INPUT_BONUS
+			ENDIF
+		ELSE
+			REUSELASTLINE 入力値が不正です。再入力してください
+			GOTO INPUT_BONUS
+		ENDIF
+
+		;どのボーナスを選択していても、最初から緑茶と着替えだけは持っている
+		CALL ADD_ITEM(50, 1, 0)
+		CALL ADD_ITEM(54, 1, 0)
+	ENDIF
+
+	;難易度EASYなら更に初期アイテム追加
+	IF FLAG:4 <= 0
+		CALL ADD_ITEM(3, 1, 0)
+		CALL ADD_ITEM(12, 1, 0)
+		CALL ADD_ITEM(21, 1, 0)
+		CALL ADD_ITEM(51, 1, 0)
+		CALL ADD_ITEM(53, 1, 0)
+		CALL ADD_ITEM(54, 1, 0)
+		CALL ADD_ITEM(57, 1, 0)
+		CALL ADD_ITEM(58, 1, 0)
+		CALL ADD_ITEM(59, 3, 0)
+		CALL ADD_ITEM(61, 1, 0)
+		CALL ADD_ITEM(62, 1, 0)
+		CALL ADD_ITEM(63, 1, 0)
+	ENDIF
+	
+	;EXモードなら更に初期アイテム追加
+	IF FLAG:999
+		CALL ADD_ITEM(59, 2, 0)
+	ENDIF
+
+	PRINTFORML 主人公のみ性格を自由に設定することができます
+	CALL SHOW_TUTORIAL(3)
+	CALL CHANGE_PERSONALITY(1)
+	
+	;各種初期化処理　敵の初期化は順番の関係で移動
+	CALL CHARA_INITIALIZE
+	CALL MAP_INITIALIZE
+
+	IF NO:1 == 0
+		PRINTFORML 主人公のみ、素質の変更ができます。
+		PRINTFORML %CALLNAME:1%の素質を変更しますか？
+		
+		PRINTFORML [0] デフォルト
+		PRINTFORML [1] 変更する
+		INPUT
+		IF RESULT == 1
+			CALL TALENT_SET(1)
+		ENDIF
+	ENDIF
+	
+	;＝＝＝ 口上 ＝＝＝
+	
+	PRINTL 
+	PRINTL ※ver1.00現在、口上はまだ存在していません
+	PRINTL ※以下の選択肢は2の「口上全OFF」をおすすめします	
+	PRINTL ゲーム開始後に口上を変更すると、口上独自の特殊な処理が正常に動作しないことがあります
+	PRINTL 今のうちに各キャラの口上の設定を確認しますか？
+		PRINTFORML [0] デフォルト　(口上の存在するキャラは口上を使用します)
+		PRINTFORML [1] 変更する
+		PRINTFORML [2] 口上全OFF
+		INPUT
+	IF RESULT == 1
+		CALL KOJO_SELECT
+		PRINTL 
+		DRAWLINE
+		PRINTL 
+	ELSEIF RESULT == 2
+		FOR LCOUNT, 1, CHARANUM
+			CFLAG:(LCOUNT):701 = -1
+		NEXT
+		PRINTFORML 口上をすべてOFFに設定しました
+		FLAG:565 = 2
+	ELSE
+		PRINTFORML 設定しました
+		FLAG:565 = 0
+	ENDIF
+	PRINTFORML 
+	
+
+	;★難易度追加パッチ・追加難易度だとここは出ない
+	IF FLAG:999 == 0
+		CALL CONFIGURE_FIRST_SEX
+	ENDIF
+	;★ここまで
+
+PRINTFORML 初期設定を確認しますか？（開始後コンフィグで設定可能）
+	PRINTFORML [0] 個別に行う　　：個別に設定してからスタート
+	PRINTFORML [1] 基本セット　　：初期から存在した基本的なシステム・魔物のみに限定します
+	PRINTFORML [2] 戦闘セット　　：直接的な戦闘による責めを重視した設定です
+	PRINTFORML [3] 堕落セット　　：責めを受けたことによる心身の変化を重視した設定です
+	PRINTFORML [4] そのまま　　　：デフォルトのまま、もしくは以前設定したままにします
+	$INPUT_LOOP_STARTSET
+	INPUT
+IF RESULT == 0
+	;ふたなりと豊乳化と尿意も最初に選べるように
+	CALL CONFIGURE_FIRST_TALENT
+	CALL CONFIGURE_FIRST_1
+	CALL CLOTH_CONFIG_CLOTH_LIST
+	CALL FOOT_EQUIP_CONFIG_FOOT_EQUIP_LIST
+	CALL SET_CONFIGURE_4_8(1)
+ELSEIF RESULT == 1
+	FLAG:501 = 1
+	FLAG:504 = 0
+	FLAG:505 = 0
+	FLAG:512 = 0
+	FLAG:513 = 1
+	FLAG:520 = 0
+	FLAG:521 = 0
+	FLAG:522 = 2
+	FLAG:528 = 0
+	FLAG:529 = 0
+	FLAG:531 = 0
+	FLAG:533 = 0
+	FLAG:535 = 0
+	FLAG:538 = 0
+
+	FLAG:523 = 1
+	FLAG:534 = 1
+
+			FOR LCOUNT, 5, 20
+				SIF FLAG:(LCOUNT + 700) < 0
+						FLAG:(LCOUNT + 700) *= -1
+			NEXT
+
+			FOR LCOUNT, 21, 99
+				TRYCCALLFORM SET_ENEMY_DATA_{LCOUNT}(FLAG:1)
+				CATCH
+					;湧かなかった時用にフラグリセット
+					FOR LOCAL:0, 0, VARSIZE("DA", 1)
+						DA:(FLAG:1):(LOCAL:0) = 0
+					NEXT
+					CONTINUE
+				ENDCATCH
+				IF DA:(FLAG:1):1
+					IF FLAG:(LCOUNT + 700) > 0
+						FLAG:(LCOUNT + 700) *= -1
+					ELSEIF FLAG:(LCOUNT + 700) == 0
+						FLAG:(LCOUNT + 700) = -1
+					ENDIF
+				ENDIF
+				FOR LOCAL:0, 0, VARSIZE("DA", 1)
+					DA:(FLAG:1):(LOCAL:0) = 0
+				NEXT
+			NEXT
+
+ELSEIF RESULT == 2
+	FLAG:501 = 0
+	FLAG:504 = 0
+	FLAG:505 = 0
+	FLAG:512 = 1
+	FLAG:513 = 0
+	FLAG:520 = 0
+	FLAG:521 = 1
+	FLAG:522 = 0
+	FLAG:529 = 1
+	FLAG:531 = 0
+	FLAG:533 = 1
+	FLAG:535 = 0
+	FLAG:538 = 1
+
+	FLAG:523 = 1
+	FLAG:534 = 1
+
+			FOR LCOUNT, 5, 99
+				SIF FLAG:(LCOUNT + 700) < 0
+					FLAG:(LCOUNT + 700) *= -1
+			NEXT
+
+
+ELSEIF RESULT == 3
+	FLAG:501 = 0
+	FLAG:504 = 1
+	FLAG:505 = 1
+	FLAG:512 = 0
+	FLAG:513 = 1
+	FLAG:520 = 1
+	FLAG:521 = 0
+	FLAG:522 = 1
+	FLAG:529 = 0
+	FLAG:531 = 2
+	FLAG:533 = 1
+	FLAG:535 = 1
+	FLAG:538 = 2
+
+	FLAG:523 = 1
+	FLAG:534 = 1
+
+			FOR LCOUNT, 5, 20
+				SIF FLAG:(LCOUNT + 700) < 0
+						FLAG:(LCOUNT + 700) *= -1
+			NEXT
+
+			FOR LCOUNT, 21, 96
+				IF LCOUNT != 49 && LCOUNT != 58 && LCOUNT != 86
+					IF LCOUNT == 37 || LCOUNT == 40 || LCOUNT == 41 || LCOUNT == 44 || LCOUNT == 45 || LCOUNT == 47 || LCOUNT == 52 || LCOUNT == 70 || LCOUNT == 83 || LCOUNT == 89 || LCOUNT == 90 || LCOUNT == 92
+						SIF FLAG:(LCOUNT + 700) < 0
+							FLAG:(LCOUNT + 700) *= -1
+					ELSE
+						IF FLAG:(LCOUNT + 700) > 0
+							FLAG:(LCOUNT + 700) *= -1
+						ELSEIF FLAG:(LCOUNT + 700) == 0
+							FLAG:(LCOUNT + 700) = -1
+						ENDIF
+					ENDIF
+				ENDIF
+			NEXT
+
+ELSEIF RESULT == 4
+;空
+
+ELSE
+	GOTO INPUT_LOOP_STARTSET
+ENDIF
+	$START_OP
+	;初期配置敵の外見をコンフィグと合わせるためここで敵のイニシャライズ
+	CALL ENEMY_INITIALIZE
+
+	;コンフィグに合わせてキャラ再設定
+	CALL CHARA_INITIALIZE_2
+
+	PRINTL
+	;ストーリー
+	PRINTL オープニングを見ますか？
+	CALL ASK_YN
+	IF RESULT == 0
+		IF FLAG:999
+			CALL PRINT_MESSAGE(1, 299, 0, CALLNAME:1, "")
+		ELSE
+			CALL PRINT_MESSAGE(1, 203, 0, CALLNAME:1, "")
+		ENDIF
+	ENDIF
+	
+	;ゲーム開始時
+	FOR LCOUNT, 1, CHARANUM
+		CALL PRINT_MESSAGE(LCOUNT, 159, 0, CALLNAME:(LCOUNT), "")
+	NEXT
+	
+	CALL EVENTFIRST_CHARABONUS
+
+	BEGIN SHOP
+;=================================================

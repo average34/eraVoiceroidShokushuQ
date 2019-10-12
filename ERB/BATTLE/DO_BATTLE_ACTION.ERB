@@ -1,0 +1,90 @@
+﻿;味方の行動
+;ARG:0	対象キャラID
+@DO_BATTLE_ACTION(ARG:0)
+
+;行動可能かどうか確認
+;行動不能なのでメッセージ無しでスキップ
+IF CFLAG:(ARG:0):24
+	RETURN
+	
+;コマンドが"抱きつかれ"の場合、本人の状況とは関係なく犯される為
+;バッドステータス判定を行わず確実にコマンドを実行する
+ELSEIF CFLAG:(ARG:0):50 == 95
+
+;戦意喪失になったら43（力溜め）以下スキップ、及び装備を使った攻撃をスキップ
+;催眠関連はキス手淫フェラパイズリのみ通す、抱きつきはそもそも行動決定の時に弾かれる……はず
+;「CFLAG:(ARG:0):50 && 」は不要っぽいがこの辺自信がないので念のため
+ELSEIF CFLAG:(ARG:0):29 && CFLAG:(ARG:0):50 && (CFLAG:(ARG:0):50 < 44 || CFLAG:(ARG:0):50 > 100 || (CFLAG:(ARG:0):50 > 59 && CFLAG:(ARG:0):50 < 83))
+	RETURN
+ELSEIF CFLAG:(ARG:0):25
+	CALL PRINT_MESSAGE(ARG:0, 49, 0, CALLNAME:(ARG:0), "")
+	RETURN
+ELSEIF CFLAG:(ARG:0):33
+	CALL PRINT_MESSAGE(ARG:0, 50, 0, CALLNAME:(ARG:0), "")
+	RETURN
+ELSEIF CFLAG:(ARG:0):43 < 1 && CFLAG:(ARG:0):28 < 1 && CFLAG:(ARG:0):304 > 0
+		PRINTL 
+
+		SETCOLOR 0x10EEEE
+		CALL GENKAKU_1312(ARG:0)
+
+		RESETCOLOR
+		PRINTL 
+
+		RETURN
+ENDIF
+
+;行動の属性を決定
+IF CFLAG:(ARG:0):50 < 100
+	TFLAG:50 = CFLAG:(ARG:0):50
+	TRYCCALLFORM FIX_PT_ACTION_{CFLAG:(ARG:0):50}(ARG:0)
+	CATCH
+		PRINTFORMW (DO_BATTLE_ACTION) 未実装のコマンド(ID:{CFLAG:(ARG:0):50})のため、処理できません
+		RETURN
+	ENDCATCH
+
+ELSE
+	;道具を使った攻撃の場合、道具の種類だけ記憶しておく
+	TFLAG:67 = CFLAG:(ARG:0):(6 + (CFLAG:(ARG:0):50 / 100))
+	TFLAG:50 = CFLAG:(ARG:0):50 % 100
+	TRYCCALLFORM FIX_PT_ACTION_{(CFLAG:(ARG:0):50 % 100)}(ARG:0, CFLAG:(ARG:0):50 / 100)
+	CATCH
+		PRINTFORMW (DO_BATTLE_ACTION) 未実装のコマンド(ID:{CFLAG:(ARG:0):50})のため、処理できません
+		RETURN
+	ENDCATCH
+
+ENDIF
+
+IF TFLAG:66 == 0
+	CALL FIX_BATTLE_ACTION
+ELSE
+	CALL MSG_WAIT(1)
+ENDIF
+
+
+;敵の行動
+;ARG:0	敵ID
+@DO_BATTLE_ACTION_ENEMY(ARG:0)
+
+;行動可能かどうか確認
+IF DA:(ARG:0):1 <= 0 || DA:(ARG:0):24 || DA:(ARG:0):25
+	;行動不能なのでスキップ
+	RETURN
+ENDIF
+
+;行動の属性を決定
+TFLAG:50 = DA:(ARG:0):50
+TRYCCALLFORM FIX_ENEMY_ACTION_{DA:(ARG:0):50}(ARG:0)
+CATCH
+	PRINTFORMW (DO_BATTLE_ACTION_ENEMY) 未実装の敵コマンド(ID:{DA:(ARG:0):50})のため、処理できません
+	RETURN
+ENDCATCH
+
+IF TFLAG:66 == 0
+	SIF DA:(ARG:0):0 >= 101 && DA:(ARG:0):0 <= 104 && DA:(ARG:0):46
+		CALL PRINT_MESSAGE(DA:(ARG:0):46, 9, DA:(ARG:0):50, CALLNAME:(TFLAG:54), CALLNAME:(DA:(ARG:0):46), TFLAG:54, ARG:0)
+
+	CALL FIX_BATTLE_ACTION
+ENDIF
+
+

@@ -1,0 +1,70 @@
+﻿
+;服を犠牲にして拘束から逃げられます　0が成功　失敗もあるので使いすぎに注意
+@CLOTH_ESCAPE(ARG:0)
+;ARG
+;0		攻撃されているキャラ
+
+;LOCAL
+;1	脱出成功率　CPとHPが影響
+;2	衣服へのダメージ
+
+LOCAL:1 = BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3
+LOCAL:2 = 200 + RAND:100
+
+;服が少なすぎたり触手服だと無理　行動不能ももちろん無理
+SIF LOCAL:1 <= 40 || CFLAG:(ARG:0):40 || CFLAG:(ARG:0):43 || CHECK_FINE(ARG:0) == 0
+	RETURN 1
+	
+;オートリピート & 着衣プレイON時は服を大事にするため破りません
+SIF TFLAG:17 && FLAG:529
+	RETURN 1
+	
+LOCAL:1 += BASE:(ARG:0):0 * 50 / MAXBASE:(ARG:0):0
+
+;オートリピート or AI行動時
+IF TFLAG:17 == 2 || CFLAG:(ARG:0):122
+	IF RAND:120 < LOCAL:1
+		PRINTFORML 服をやぶきながらも%CALLNAME:(ARG:0)%は脱出した
+		BASE:(ARG:0):3 -= LOCAL:2
+		SETCOLOR 0xFFFF70
+		PRINTFORM {LOCAL:2}
+		RESETCOLOR
+		PRINTFORML ダメージ！
+		RETURN 0
+	ELSE
+		PRINTFORML %CALLNAME:(ARG:0)%は強引に逃げようとして失敗した……
+		BASE:(ARG:0):3 -= LOCAL:2
+		SETCOLOR 0xFFFF70
+		PRINTFORM {LOCAL:2}
+		RESETCOLOR
+		PRINTFORML ダメージ！
+		RETURN 1
+	ENDIF
+;手動行動時
+ELSE
+	PRINTFORML 服を破って強引に拘束から抜けますか？
+	PRINTFORML [0] はい
+	PRINTFORML [1] いいえ
+	INPUT
+	IF RESULT == 0
+		IF RAND:120 < LOCAL:1
+			PRINTFORML 服をやぶきながらも%CALLNAME:(ARG:0)%は脱出した
+			BASE:(ARG:0):3 -= LOCAL:2
+			SETCOLOR 0xFFFF70
+			PRINTFORM {LOCAL:2}
+			RESETCOLOR
+			PRINTFORML ダメージ！
+			RETURN 0
+		ELSE
+			PRINTFORML しかし逃れられなかった……
+			BASE:(ARG:0):3 -= LOCAL:2
+			SETCOLOR 0xFFFF70
+			PRINTFORM {LOCAL:2}
+			RESETCOLOR
+			PRINTFORML ダメージ！
+			RETURN 1
+		ENDIF
+	ELSE
+		RETURN 1
+	ENDIF
+ENDIF

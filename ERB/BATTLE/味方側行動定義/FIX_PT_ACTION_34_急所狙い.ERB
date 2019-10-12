@@ -1,0 +1,225 @@
+﻿;急所狙い
+;CHARA_ID	実行キャラ
+;EQUIP_NO	装備１と２のどちらなのか
+@FIX_PT_ACTION_34(CHARA_ID, EQUIP_NO)
+#DIM CHARA_ID
+#DIM EQUIP_NO
+
+TFLAG:51 = CHARA_ID
+TFLAG:53 = CFLAG:CHARA_ID:51
+TFLAG:55 = 0
+TFLAG:56 = 1
+TFLAG:57 = EQUIP_POWER(TFLAG:67, CHARA_ID)
+
+TFLAG:58 = 45
+TFLAG:61 = 65
+
+;汚染度ＭＡＸかつ触手系武器を装備していた場合は命中率が上昇
+SIF FLAG:(FLAG:5 + 50) == 100 && (TFLAG:67 == 17 || TFLAG:67 == 18)
+	TFLAG:61 += 30
+
+
+TFLAG:68 = 110
+
+TFLAG:99 = 61
+
+CALL PRINT_MESSAGE(CHARA_ID, 1, 34, CALLNAME:CHARA_ID, "")
+
+
+@EXTRA_ACTION_61(CHARA_ID, ENEMY_ID)
+#DIM CHARA_ID
+#DIM ENEMY_ID
+;汚染度ＭＡＸかつ触手武器だとひるみ確率上昇、耐性も半分貫通
+IF FLAG:(FLAG:5 + 50) == 100 && (TFLAG:67 == 17 || TFLAG:67 == 18)
+	IF DA:ENEMY_ID:14 < 0
+		IF RAND:100 >= (45 + ((DA:ENEMY_ID:14) / 2))
+			RETURN
+		ENDIF
+	ELSE
+		IF RAND:100 >= (45 + DA:ENEMY_ID:14)
+			RETURN
+		ENDIF
+	ENDIF
+ELSE
+	IF RAND:100 >= (30 + DA:ENEMY_ID:14)
+		RETURN
+	ENDIF
+ENDIF
+
+
+PRINTFORML %SAVESTR:ENEMY_ID%をひるませた！
+DA:ENEMY_ID:24 = 1
+DA:ENEMY_ID:50 = 45
+
+
+; 連撃可能かどうかをチェック
+; 今回装備1の非消耗武器で攻撃した
+IF CFLAG:CHARA_ID:50 == 134
+
+	; 【体術or剣術】を持っている
+	IF TALENT:CHARA_ID:161 >= 1
+
+		; 装備1、2ともに非消耗武器
+		IF CFLAG:CHARA_ID:8 >= 11 && CFLAG:CHARA_ID:8 <= 19
+			PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+
+			; 装備1、2ともに非消耗武器（剣）装備中かつ、装備者が【剣術習熟】持ちならそれで弱攻撃
+			IF ((CFLAG:CHARA_ID:7 == 12 || CFLAG:CHARA_ID:7 == 16 || CFLAG:CHARA_ID:7 == 18) && (CFLAG:CHARA_ID:8 == 12 || CFLAG:CHARA_ID:8 == 16 || CFLAG:CHARA_ID:8 == 18)) && TALENT:CHARA_ID:161 == 2
+				TFLAG:67 = CFLAG:CHARA_ID:8
+				TFLAG:50 = 32
+				CALLFORM FIX_PT_ACTION_32(CHARA_ID, 2)
+
+			; 装備1、2ともに非消耗武器（剣以外）装備中かつ、装備者が【体術習熟】持ちならそれで弱攻撃
+			ELSEIF CFLAG:CHARA_ID:7 != 12 && CFLAG:CHARA_ID:7 != 16 && CFLAG:CHARA_ID:7 != 18 && CFLAG:CHARA_ID:8 != 12 && CFLAG:CHARA_ID:8 != 16 && CFLAG:CHARA_ID:8 != 18 && TALENT:CHARA_ID:161 == 1
+				TFLAG:67 = CFLAG:CHARA_ID:8
+				TFLAG:50 = 32
+				CALLFORM FIX_PT_ACTION_32(CHARA_ID, 2)
+
+			; 【体術・剣術】持ちで二刀流だが、左右の武器の系統がチグハグだった場合、攻撃による追撃は発生しない
+			; ※【体術・剣術】と【鷲の目】両方持っているキャラはバランス的に贅沢過ぎるので想定しない（依姫無双？）
+			ELSE
+				PRINTFORMW しかし扱いなれない得物による追撃は虚しく空を切った！
+				TRYGOTO NO_ACTION
+			ENDIF
+
+		; 【体術・剣術】持ちで二刀流でない
+		; ※【体術・剣術】と【鷲の目】両方持っているキャラはバランス的に贅沢過ぎるので想定しない（依姫無双？）
+		ELSE
+			TRYGOTO NO_ACTION
+		ENDIF
+
+	;【鷲の目】持ちなら全ての条件で追撃発生
+	ELSEIF TALENT:CHARA_ID:163
+		PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！	
+
+		; 装備2に消耗武器装備 & 残弾2以上なら射撃弱攻撃
+		IF (CFLAG:CHARA_ID:8 >= 1 && CFLAG:CHARA_ID:8 <= 9) && CFLAG:CHARA_ID:18 >= 2
+			TFLAG:67 = CFLAG:CHARA_ID:8
+			TFLAG:50 = 20
+
+			;消耗武器使用時の弾薬消費がどういうわけか動いてない（TFLAG:99が競合してる？）のでこっちで無理矢理処理（必ず弱攻撃なので消費は常に2）
+			CFLAG:CHARA_ID:18 -= 2
+
+			CALLFORM FIX_PT_ACTION_20(CHARA_ID, 2)
+	
+		; 攻撃用の装備品がなく、【鷲の目】を持っているなら攻撃弱で攻撃
+		; 当然二刀流装備でも弱攻撃
+		ELSE
+			TFLAG:50 = CFLAG:CHARA_ID:10
+			CALLFORM FIX_PT_ACTION_10(CHARA_ID)
+		ENDIF
+	; 【鷲の目】も【体術・剣術】もない場合は連撃は絶対に発生しない。
+	ELSE
+		TRYGOTO NO_ACTION
+	ENDIF
+
+; 今回装備2の非消耗武器で攻撃した
+ELSEIF CFLAG:CHARA_ID:50 == 234
+
+	; 【体術or剣術】を持っている
+	IF TALENT:CHARA_ID:161 >= 1
+
+		; 装備1、2ともに非消耗武器
+		IF CFLAG:CHARA_ID:7 >= 11 && CFLAG:CHARA_ID:7 <= 19
+			PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+
+			; 装備1、2ともに非消耗武器（剣）装備中かつ、装備者が【剣術習熟】持ちならそれで弱攻撃
+			IF ((CFLAG:CHARA_ID:7 == 12 || CFLAG:CHARA_ID:7 == 16 || CFLAG:CHARA_ID:7 == 18) && (CFLAG:CHARA_ID:7 == 12 || CFLAG:CHARA_ID:7 == 16 || CFLAG:CHARA_ID:8 == 18)) && TALENT:CHARA_ID:161 == 2
+				TFLAG:67 = CFLAG:CHARA_ID:7
+				TFLAG:50 = 32
+				CALLFORM FIX_PT_ACTION_32(CHARA_ID, 2)
+
+			; 装備1、2ともに非消耗武器（剣以外）装備中かつ、装備者が【体術習熟】持ちならそれで弱攻撃
+			ELSEIF CFLAG:CHARA_ID:7 != 12 && CFLAG:CHARA_ID:7 != 16 && CFLAG:CHARA_ID:7 != 18 && CFLAG:CHARA_ID:8 != 12 && CFLAG:CHARA_ID:8 != 16 && CFLAG:CHARA_ID:8 != 18 && TALENT:CHARA_ID:161 == 1
+				TFLAG:67 = CFLAG:CHARA_ID:7
+				TFLAG:50 = 32
+				CALLFORM FIX_PT_ACTION_32(CHARA_ID, 2)
+
+			; 【体術・剣術】持ちで二刀流だが、左右の武器の系統がチグハグだった場合、攻撃による追撃は発生しない
+			; ※【体術・剣術】と【鷲の目】両方持っているキャラはバランス的に贅沢過ぎるので想定しない（依姫無双？）
+			ELSE
+				PRINTFORMW しかし扱いなれない得物による追撃は虚しく空を切った！
+				TRYGOTO NO_ACTION
+			ENDIF
+			
+		; 【体術・剣術】持ちで二刀流でない
+		; ※【体術・剣術】と【鷲の目】両方持っているキャラはバランス的に贅沢過ぎるので想定しない（依姫無双？）
+		ELSE
+			TRYGOTO NO_ACTION
+		ENDIF
+
+	;【鷲の目】持ちなら全ての条件で追撃発生
+	ELSEIF TALENT:CHARA_ID:163
+		PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！	
+
+		; 装備2に消耗武器装備 & 残弾2以上なら射撃弱攻撃
+		IF (CFLAG:CHARA_ID:7 >= 1 && CFLAG:CHARA_ID:7 <= 9) && CFLAG:CHARA_ID:17 >= 2
+			TFLAG:67 = CFLAG:CHARA_ID:7
+			TFLAG:50 = 20
+
+			;消耗武器使用時の弾薬消費がどういうわけか動いてない（TFLAG:99が競合してる？）のでこっちで無理矢理処理（必ず弱攻撃なので消費は常に2）
+			CFLAG:CHARA_ID:17 -= 2
+
+			CALLFORM FIX_PT_ACTION_20(CHARA_ID, 2)
+	
+		; 攻撃用の装備品がなく、【鷲の目】を持っているなら攻撃弱で攻撃
+		; 当然二刀流装備でも弱攻撃
+		ELSE
+			TFLAG:50 = CFLAG:CHARA_ID:10
+			CALLFORM FIX_PT_ACTION_10(CHARA_ID)
+		ENDIF
+	; 【鷲の目】も【体術・剣術】もない場合は連撃は絶対に発生しない。
+	ELSE
+		TRYGOTO NO_ACTION
+	ENDIF
+ENDIF
+
+; -- 実際のダメージ処理 --------------------------------------------------------
+CALL CHECK_ATTACK_0(TFLAG:51, ENEMY_ID)
+
+; 攻撃命中
+IF RESULT:0
+	IF (TFLAG:50 / 10) == 1
+		CALL ADD_ABL_EXP(3, TFLAG:51, 200 + RAND:200)
+	ELSE
+		CALL ADD_ABL_EXP(4, TFLAG:51, 200 + RAND:200)
+	ENDIF
+	CALL PRINT_MESSAGE(TFLAG:51, 11, TFLAG:50, CALLNAME:(TFLAG:51), SAVESTR:ENEMY_ID, RESULT:1)
+	PRINTFORM %SAVESTR:ENEMY_ID%に
+	SETCOLOR 0x70FFFF
+	PRINTFORM {RESULT:1}
+	RESETCOLOR
+	PRINTFORML のダメージ！
+	DA:ENEMY_ID:1 -= RESULT:1
+	CALL CHANGE_TP(TFLAG:51, 1)
+	
+	IF TFLAG:50 == 60 && (CFLAG:(TFLAG:51):7 >= 20 && CFLAG:(TFLAG:51):7 <= 23)
+		CALL PRINT_MESSAGE(TFLAG:51, 1, 60, CALLNAME:(TFLAG:51), ITEMNAME:(CFLAG:(TFLAG:51):7), CFLAG:(TFLAG:51):7, 2)
+		CFLAG:(TFLAG:51):7 = 0
+	ENDIF
+	IF TFLAG:50 == 61 && (CFLAG:(TFLAG:51):8 >= 20 && CFLAG:(TFLAG:51):8 <= 23)
+		CALL PRINT_MESSAGE(TFLAG:51, 1, 60, CALLNAME:(TFLAG:51), ITEMNAME:(CFLAG:(TFLAG:51):8), CFLAG:(TFLAG:51):8, 2)
+		CFLAG:(TFLAG:51):8 = 0
+	ENDIF
+	
+	;ダメージによる拘束キャラ救出判定
+	IF DA:ENEMY_ID:1 > 0 && (DA:ENEMY_ID:10 || DA:ENEMY_ID:20)
+		IF RAND:100 < (2 + LIMIT((RESULT:1 * 50 / DA:ENEMY_ID:2), 1, 10) + LIMIT((DA:ENEMY_ID:1 * 10 / DA:ENEMY_ID:2), 0, 5))
+			CALL STATUS_RENEW_RELEASE(DA:ENEMY_ID:10, 0, 2)
+			CALL STATUS_RENEW_RELEASE(DA:ENEMY_ID:20, 0, 2)
+		ENDIF
+	ENDIF
+	
+; 攻撃回避
+ELSE
+	IF (TFLAG:50 / 10) == 1
+		CALL ADD_ABL_EXP(3, TFLAG:51, 300 + RAND:500)
+	ELSE
+		CALL ADD_ABL_EXP(4, TFLAG:51, 300 + RAND:500)
+	ENDIF
+	CALL PRINT_MESSAGE(TFLAG:51, 21, TFLAG:50, CALLNAME:(TFLAG:51), SAVESTR:ENEMY_ID, RESULT:1)
+	CALL CHANGE_TP(TFLAG:51, 3)
+ENDIF
+
+$NO_ACTION
+; そんな処理ないです

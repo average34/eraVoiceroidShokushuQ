@@ -1,0 +1,1264 @@
+﻿@SYSTEM_MESSAGE_14_718(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM おねだり
+#DIM 体位
+;ARG:4	NFフラグ
+
+;おねだり	CFLAG:50がおねだりであれば1に。簡略化用
+;体位		名前こそ体位だが、差分パターンを一時的に記憶するための変数。正常位なのにスパンキングのメッセージが出るとかいうのを防ぐためのもの。
+VARSET LOCAL
+VARSET おねだり
+VARSET 体位
+SELECTCASE CFLAG:50
+	CASE 54 TO 58
+		おねだり = 1
+	CASEELSE
+		おねだり = 0
+ENDSELECT
+;体位セレクタ
+SELECTCASE TFLAG:63
+	CASE 0, 3
+		IF おねだり
+			PRINTDATA 体位
+				DATAFORM みずから四つん這いになって尻を突き出し、
+				DATAFORM みずから四つん這いになって犬のように片足をあげ、
+				DATAFORM 壁に手をついてみずから腰を突き出し、
+				DATAFORM みずから、座る%ARGS:1%と向かい合うように跨り、
+				DATAFORM いわゆるまんぐり返しの姿勢をみずから取り、
+				DATAFORM 横たわる%ARGS:1%にみずから跨り、
+				DATAFORM みずから仰向けになって脚を開き
+			ENDDATA
+			IF !TFLAG:63
+				PRINTDATA
+					DATAFORM 尻たぶを両手で拡げ、肛門を衆目にさらしていた
+					DATAFORM 踊りのように淫らに尻を振っていた
+					DATAFORM 自分から屈服の言葉を吐いて%ARGS:1%達を誘う
+				ENDDATA
+			ELSE
+				PRINTDATA
+					DATAFORM 陰唇に指をかけ、膣口を衆目に晒していた
+					DATAFORM 踊りのように淫らに腰を揺らしていた
+					DATAFORM 自分から屈服の言葉を吐いて%ARGS:1%達を誘う
+				ENDDATA
+			ENDIF
+		ELSE
+			PRINTFORM 抵抗むなしく
+			PRINTDATA 体位
+				DATAFORM 四つん這いで尻を突き出した形で
+				DATAFORM いわゆるまんぐり返しの姿勢で
+				DATAFORM 仰向けになって脚を開いた姿勢で
+			ENDDATA
+			PRINTFORM 拘束された
+		ENDIF
+	CASE 1
+		IF おねだり
+			IF TALENT:貧乳 || TALENT:絶壁
+				PRINTFORM 薄い
+			ELSEIF TALENT:巨乳
+				PRINTFORM 豊かな
+			ELSEIF TALENT:爆乳
+				PRINTFORM はち切れそうな
+			ELSEIF TALENT:超乳
+				PRINTFORM 異常に肥大した
+			ENDIF
+			PRINTFORM 乳房をさらけ出し、科を作っておねだりしていた
+
+	ELSE
+		PRINTFORM 抵抗むなしく押さえつけられた
+	ENDIF
+	CASE 2
+		IF GET_PENIS(TARGET)
+			IF おねだり
+				PRINTFORM みずからペニスをさらけ出し、
+				PRINTDATA
+					DATAFORM 腰を振って
+					DATAFORM ゆるやかに扱きながら
+					DATAFORM 大股を開いて
+				ENDDATA
+				PRINTFORM おねだりしていた
+			ELSE
+				PRINTFORM 四肢を押さえられ、仰向けにがっしりと拘束された
+			ENDIF
+		ELSE
+			IF おねだり
+				PRINTFORM みずから陰核をさらけ出し、科を作っておねだりしていた
+			ELSE
+				PRINTFORM 拘束されながらも脚を閉じようとする
+			ENDIF
+		ENDIF
+ENDSELECT
+PRINTFORM %ARGS:0%に、%ARGS:1%達は
+PRINTDATA
+	DATAFORM ゲスな笑いを浮かべながら
+	DATAFORM 股間のモノを扱きながら
+	DATAFORM 獲物を見る目で
+	DATAFORM 捕まえた雌を逃がすまいと
+	DATAFORM 卑猥なヤジをかけながら
+	DATAFORM 下卑た笑みを浮かべながら
+	DATAFORM 股間のモノをふくらませながら
+	DATAFORM 雌にしつけをしてやろうと
+ENDDATA
+PRINTFORML 群がっていく
+
+;ここから本文（？）
+SELECTCASE DA:(TFLAG:52):87
+	;ペニス使用
+	CASE 0
+		SELECTCASE TFLAG:63
+			;ケツ,まんこ
+			CASE 0, 3
+				
+				IF TALENT:処女 && TFLAG:63
+					PRINTFORML %ARGS:1%は%ARGS:0%の陰裂に指を差し込み、中の襞の感触を確かめるように丹念になぞる
+					PRINTFORML %ARGS:0%の純潔の証に気がつくと、眼を血走らせはじめた……
+				ENDIF
+				IF おねだり
+					PRINTDATA
+						DATAFORM 期待に目尻を垂れ下げる
+						DATAFORM 熱い吐息を吐く
+					ENDDATA
+				ELSE
+					PRINTDATA
+						DATAFORM 身を捩って逃れようとする
+						DATAFORM 激しく抵抗する
+					ENDDATA
+				ENDIF
+				PRINTFORM %ARGS:0%の
+				IF !RAND:2 && おねだり
+					PRINTDATA
+						DATAFORM 期待に蕩ける
+						DATAFORM ひくひくと収縮する
+						DATAFORM 妖しく蠢く
+						DATAFORM 繁殖の欲求に突き動かされる
+						DATAFORM 肉欲に疼く
+					ENDDATA
+				ENDIF
+				SIF TALENT:処女 && TFLAG:63
+					PRINTFORM 男を知らない
+				PRINTFORML \@ TFLAG:63 ? 膣口 # 菊穴 \@に、%ARGS:1%の亀頭が押し当てられる
+				PRINTFORML そしてそのまま%ARGS:1%は、%ARGS:0%の\@ TFLAG:63 ? 子宮まで # 肛門を \@一息に貫いた！
+				IF TALENT:処女 && LOST_VIRGIN_CHECK(TARGET) && TFLAG:63
+					PRINTFORML みぢり、と嫌な音が身体のなかで響く
+					PRINTFORML 己の貞操が惨めな形で喪われたことを知り、%ARGS:0%は\@ おねだり ? その事実にすら興奮を覚えた # 顔を青ざめさせ、絶句した \@
+					IF おねだり
+						PRINTFORM %ARGS:0%は純潔を散らされたにも関わらず、自ら
+						PRINTDATAL 
+							DATAFORM 脚を大きく開き、腰を振って快楽を貪っている……
+							DATAFORM 腰を振って、淫らな言葉を吐き散らしながら膣内射精をねだっている……
+						ENDDATA
+					ELSE
+						PRINTFORM 純潔を散らされた怒りから、%ARGS:0%は
+						PRINTDATAL 
+							DATAFORM 激しく抵抗するものの、何体もの%ARGS:1%にがっしりと押さえつけられてしまう……
+							DATAFORM 腰を動かして逃げようとするが、それは相手の興奮と性感を煽る結果にしかなっていない……
+						ENDDATA
+					ENDIF
+				ENDIF
+				IF おねだり
+					IF !RAND:5
+						PRINTFORM 打ち込まれる熱い杭の感触に、%ARGS:0%は
+						PRINTDATAL
+							DATAFORM 歓喜の声をあげ、腰を振る……
+							DATAFORM たまらないというような嬌声をあげる……
+							DATAFORM 目尻を垂れ下げて、法悦の声をあげる……
+						ENDDATA
+					ENDIF
+					SIF !RAND:5
+						PRINTFORML %ARGS:1%は荒い息を吐きながら、%ARGS:0%の腰をがっしりと抱きかかえる……
+					SIF !RAND:5
+						PRINTFORML %ARGS:1%達は嬌声をあげる%ARGS:0%に下品な罵声を浴びせかける……
+					SIF !RAND:5
+						PRINTFORML %ARGS:0%は盛んに腰を振り、%ARGS:1%のモノに奉仕している……
+					SIF TALENT:処女 && LOST_VIRGIN_CHECK(TARGET) && TFLAG:63
+							PRINTFORML 愛液とともに、純潔だった証がつう、と筋になって流れる……
+					IF !RAND:5
+						SELECTCASE 体位
+							CASE 0, 1, 2
+								PRINTDATAL 
+									DATAFORM %ARGS:1%はもっと締めろと罵りながら、%ARGS:0%の尻を張った……
+									DATAFORM %ARGS:1%は荒い息を吐きながら、%ARGS:0%の背後から激しいピストンを繰り返す……
+									DATAFORM %ARGS:0%は犬のような姿勢で犯されることに悦びすら感じている……
+									DATAFORM %ARGS:1%の腰が%ARGS:0%の尻にぶつかり、乾いた音がリズムよく響く……
+								ENDDATA
+							CASE 3
+								PRINTDATAL
+									DATAFORM %ARGS:0%は%ARGS:1%の膝の上で、跳ねるようにして奉仕している……
+									DATAFORM %ARGS:0%は%ARGS:1%と抱き合い、積極的にくちづけを交わす……
+									DATAFORM %ARGS:1%は%ARGS:0%の胸を我が物のように揉みしだく……
+									DATAFORM %ARGS:1%は%ARGS:0%の尻に手を回し、無遠慮に揉みしだく……
+								ENDDATA
+							CASE 4
+								PRINTDATAL
+									DATAFORM %ARGS:0%の視界に、ズボズボと犯される自らの\@ TFLAG:63 ? 膣 # アナル \@がはっきりと映し出される……
+									DATAFORM 何もかも丸見えの屈辱的な姿勢で犯されることにすら、%ARGS:0%は快感を感じている……
+									DATAFORM %ARGS:1%は%ARGS:0%にのしかかるようにして、その穴をモノで抉っている……
+								ENDDATA
+							CASE 5
+								PRINTDATAL
+									DATAFORM %ARGS:0%は%ARGS:1%の上で、跳ねるようにして奉仕している……
+									DATAFORM %ARGS:0%は%ARGS:1%に覆いかぶさり、積極的にくちづけを交わす……
+									DATAFORM %ARGS:1%は%ARGS:0%の胸を我が物のように揉みしだく……
+									DATAFORM %ARGS:1%は%ARGS:0%の尻に手を回し、無遠慮に揉みしだく……
+								ENDDATA
+							CASE 6
+								PRINTDATAL
+									DATAFORM %ARGS:0%は%ARGS:1%の腰に脚を絡め、\@ TFLAG:63 ? 膣内射精 # 肛内射精 \@をねだっている……
+									DATAFORM %ARGS:0%は%ARGS:1%と抱き合い、積極的にくちづけを交わす……
+									DATAFORM %ARGS:0%は両脚を自ら抱え、%ARGS:1%のモノを迎え入れている……
+									DATAFORM %ARGS:1%は%ARGS:0%の首を締めつつ、締りがよくなったとさらに腰をうちつける……
+								ENDDATA
+						ENDSELECT
+					ENDIF
+				ELSE
+					IF !RAND:5
+						PRINTFORM 打ち込まれる熱い杭の感触に、%ARGS:0%は
+						PRINTDATAL
+							DATA 目を白黒させる……
+							DATA 心では否定しながらも、身体は反応してしまう……
+							DATA 暴れて抵抗するが、官能により力が抜け押さえられてしまう……
+						ENDDATA
+					ENDIF
+						SIF !RAND:5
+							PRINTFORML %ARGS:1%は口で否定しつつも感じている%ARGS:0%に下品な罵声を浴びせかける……
+						SIF !RAND:5
+							PRINTFORML %ARGS:1%は%ARGS:0%の官能を指摘し、羞恥を煽っている……
+						SIF !RAND:5
+							PRINTFORML %ARGS:1%達は%ARGS:0%の四肢をしっかりと押さえ、一切の抵抗を許さない……
+						SIF TALENT:処女 && LOST_VIRGIN_CHECK(TARGET) && TFLAG:63
+							PRINTFORML 愛液とともに、純潔だった証がつう、と筋になって流れる……
+					IF !RAND:5
+						SELECTCASE 体位
+							CASE 1
+								PRINTDATAL
+									DATAFORM %ARGS:1%の腰が%ARGS:0%の尻にぶつかり、乾いた音がリズムよく響く……
+									DATAFORM %ARGS:1%は土下座させるように%ARGS:0%の頭を押さえ、逃げることを許さない……
+									DATAFORM %ARGS:1%は荒い息を吐きながら、%ARGS:0%の背後から激しいピストンを繰り返す……
+									DATAFORM %ARGS:0%は犬のような姿勢で犯される屈辱に、目に涙を浮かべている……
+									DATAFORM %ARGS:1%達が%ARGS:0%の腰をがっしりとホールドし、逃げることはかなわない……
+								ENDDATA
+							CASE 2
+								PRINTDATAL
+									DATAFORM %ARGS:0%の視界に、ズボズボと犯される自らの\@ TFLAG:63 ? 膣 # アナル \@がはっきりと映し出される……
+									DATAFORM 何もかも丸見えの姿勢で\@ TFLAG:63 ?  # アナルを \@犯される羞恥と屈辱に、%ARGS:0%は怒りと悔しさを感じている……
+									DATAFORM 屈辱的な姿勢で犯される%ARGS:0%を、%ARGS:1%達はなんの遠慮もなくあざ笑う……
+									DATAFORM %ARGS:1%は%ARGS:0%にのしかかるようにして、その穴をモノで抉っている……
+								ENDDATA
+							CASE 3
+								PRINTDATAL
+									DATAFORM %ARGS:0%は%ARGS:1%の腰に脚を絡め、\@ TFLAG:63 ? 膣内射精 # 肛内射精 \@をねだっている……
+									DATAFORM 二体の%ARGS:1%が%ARGS:0%の両脚を抱えており、脚を閉じることすらかなわない……
+									DATAFORM %ARGS:0%は殺意のこもった視線を%ARGS:1%に向けるが、%ARGS:1%はそれすらあざ笑った……
+									DATAFORM %ARGS:1%は%ARGS:0%の首を締めつつ、締りがよくなったとさらに腰をうちつける……
+								ENDDATA
+						ENDSELECT
+					ENDIF
+				ENDIF
+				SIF !RAND:5
+					PRINTFORML 彼女の\@ TFLAG:63 ? 子宮 # 直腸 \@が、性交のための器官に作り変えられていく……
+				SIF !RAND:5
+					PRINTFORML \@ TFLAG:63 ? ぐちゅり、ぐちゅりと汁気の多い # ぐぷり、ぐぷりと粘度の高い \@音が鳴り響く……
+			;パイオツ
+			CASE 1
+				IF おねだり
+					PRINTDATA
+						DATAFORM %ARGS:1%は%ARGS:0%を横たわらせると覆いかぶさり、
+						DATAFORM %ARGS:1%は%ARGS:0%に跪かせ、
+					ENDDATA
+				ELSE
+					PRINTFORM %ARGS:1%は%ARGS:0%を押さえつけると覆いかぶさり、
+				ENDIF
+				;NF(巨乳以上)
+				IF ARG:4 > 0
+					IF TALENT:超乳
+						PRINTFORM 極太の乳首に
+					ELSEIF TALENT:爆乳
+						PRINTFORM 大きな乳首に
+					ELSE
+						PRINTFORM 乳首に
+					ENDIF
+					PRINTFORML ペニスを押し当て、乳首を掻き拡げて乳腺の中に挿入していく
+					TFLAG:98 += 1
+				ELSE
+					IF TALENT:超乳
+						PRINTFORML 異常なほど醜く肥大した乳肉の間に、ペニスを埋める
+					ELSEIF TALENT:爆乳
+						PRINTFORML 体格に不釣合いなほどの胸の間に、ペニスを埋める
+					ELSEIF TALENT:巨乳
+						PRINTFORML 柔らかで豊かな胸の間に、ペニスを埋める
+					ELSEIF TALENT:貧乳
+						PRINTFORML 慎ましやかな胸にペニスを押し当てる
+					ELSEIF TALENT:絶壁
+						PRINTFORML 胸板にペニスを押し当てる
+					ELSE
+						PRINTFORML 胸にペニスを挟み込む
+					ENDIF
+				ENDIF
+				PRINTFORML そして腰を振り、%ARGS:0%の乳房を性処理道具として使い始めた！
+				IF おねだり && ARG:4 > 0
+					SIF !RAND:3
+						PRINTFORML %ARGS:0%の乳房に、乳腺に、雄の匂いが染み付いていく……
+					SIF !RAND:3
+						PRINTFORML %ARGS:0%も自ら身体を揺らして、%ARGS:0%のモノを悦ばせようとする……
+				ELSEIF おねだり
+					SIF !RAND:3
+						PRINTFORML %ARGS:0%の乳房に、雄の匂いが染み付いていく……
+					SIF !RAND:3
+						PRINTFORML %ARGS:0%も自ら身体を揺らして、%ARGS:0%のモノを悦ばせようとする……
+					IF !RAND:5
+						PRINTDATAL
+							DATAFORM さらに%ARGS:1%は、%ARGS:0%に、ペニスの先端を咥えて奉仕するように命じ、%ARGS:0%は嬉々として従う
+							DATAFORM さらに%ARGS:0%は、自らペニスの先端を咥える
+						ENDDATA
+						PRINTFORML その途端、雄の味が口に広がり、彼女は思わず目尻を垂れ下げた……
+						SIF !RAND:2
+							PRINTFORML %ARGS:0%はそのまま、唇や舌で器用に愛撫をくわえていった……
+					ENDIF
+				ELSE
+					SIF !RAND:3
+						PRINTFORML %ARGS:0%は抵抗するが、両手両足を数匹がかりで押さえつけられては、どうしようもない……
+					SIF !RAND:3
+						PRINTFORML %ARGS:0%の乳房に、雄の匂いが染み付いていく……
+				ENDIF
+			;ペニクリ
+			CASE 2
+				;ペニス
+				IF GET_PENIS(TARGET)
+					IF おねだり
+						PRINTFORML 硬く膨らんだ%ARGS:0%のそれに、%ARGS:1%は己のモノを押し当てると、ペニスでペニスを擦りつけはじめる！
+						SIF !RAND:5
+							PRINTFORML 異常な行為に、%ARGS:0%はむしろ興奮を覚えてしまう……
+						SIF !RAND:5
+							PRINTFORML それぞれのモノは先走りを滲ませ、それが潤滑油となりさらなる快感をもたらす……
+						SIF !RAND:5  && !TALENT:122
+							PRINTFORML 女ではありえない快感に、%ARGS:0%は腰から身体が溶けていくような感覚を覚えている……
+						SIF !RAND:5
+							PRINTFORML %ARGS:0%の雄の象徴が、別の雄の匂いでマーキングされていく……
+						IF !RAND:5
+							PRINTDATAL
+								DATAFORM %ARGS:0%は%ARGS:1%と向い合ってくちづけをしつつ、積極的に奉仕する……
+								DATAFORM %ARGS:1%が舌を差し入れるのに合わせ、%ARGS:0%も舌を絡ませる。卑猥な水音が鳴る……
+								DATAFORM その間にも%ARGS:1%は%ARGS:0%の腰に手を回し、両の尻肉の感触をしっかり堪能する……
+								DATAFORM その間にも%ARGS:1%は%ARGS:0%の胸に手を回し、手垢がつきそうなほど揉みしだく……
+							ENDDATA
+						ENDIF
+					ELSE
+						PRINTFORML 激しく抵抗する%ARGS:0%のそれに、%ARGS:1%は己のモノを押し当てると、ペニスでペニスを擦りつけはじめる！
+							SIF !RAND:5
+								PRINTFORML 異常な行為に%ARGS:0%は嫌悪感を覚えながらも、肉体が伝える快感はごまかせない……
+							SIF !RAND:5
+								PRINTFORML 隠せない快感が先走りを滲ませ、それが潤滑油となりさらなる快感をもたらす……
+							SIF !RAND:5  && !TALENT:122
+								PRINTFORML 女ではありえない快感に、%ARGS:0%は嫌悪を覚えつつもそれを受け入れてしまいそうになる……
+							SIF !RAND:5
+								PRINTFORML %ARGS:0%の雄の象徴が、別の雄の匂いでマーキングされていく……
+					ENDIF
+				;クライテリオン
+				ELSE
+					IF おねだり
+						PRINTFORM %ARGS:0%を
+						PRINTDATA 体位
+							DATAFORM 自らの上に跨がせると、
+							DATAFORM 立たせて、両脚を閉じさせると、
+							DATAFORM 仰向けに寝かせると、
+						ENDDATA
+					ENDIF
+					PRINTDATA
+						DATAFORM 反り立つ
+						DATAFORM 悪臭を放つ
+						DATAFORM 雄々しい
+					ENDDATA
+					PRINTFORML ペニスを、%ARGS:0%の陰裂に擦りつけはじめた！
+					IF おねだり
+						SIF !RAND:5
+							PRINTFORML 陰核を雄の象徴で蹂躙され、%ARGS:0%は腰を跳ねさせる……
+						SIF !RAND:5
+							PRINTFORML ビリビリとした刺激に、%ARGS:0%の陰裂は愛液を溢れさせる……
+						SIF !RAND:5
+							PRINTFORML %ARGS:0%は自らも腰を動かし、快楽を貪っている……
+						SIF !RAND:5
+							PRINTFORML 股ぐらを這う熱く硬い感触を、%ARGS:0%は自ら望んでいる……
+						IF !RAND:5
+							PRINTDATAL
+								DATALIST
+									DATAFORM %ARGS:0%は%ARGS:1%と向い合ってくちづけをしつつ、積極的に奉仕する……
+									DATAFORM %ARGS:1%が舌を差し入れるのに合わせ、%ARGS:0%も舌を絡ませる。卑猥な水音が鳴る……
+								ENDLIST
+								DATAFORM その間にも%ARGS:1%は%ARGS:0%の腰に手を回し、両の尻肉の感触をしっかり堪能する……
+								DATAFORM その間にも%ARGS:1%は%ARGS:0%の胸に手を回し、手垢がつきそうなほど揉みしだく……
+							ENDDATA
+						ENDIF
+					ELSE
+						SIF !RAND:5
+							PRINTFORML 挿入だけはされまいと%ARGS:0%は抵抗するが、官能に次第に脱力していく……
+						SIF !RAND:5
+							PRINTFORML ビリビリとした刺激に、%ARGS:0%の陰裂は愛液を溢れさせる……
+						SIF !RAND:5
+							PRINTFORML %ARGS:0%は逃げようと腰を動かすが、相手に快楽を与える結果にしかなっていない……
+						SIF !RAND:5
+							PRINTFORML 股ぐらを這う熱く硬い感触に%ARGS:0%は嫌悪を覚えつつも、身体は敏感に反応する……
+					ENDIF
+				ENDIF
+		ENDSELECT
+		;射精セレクタ
+		IF !RAND:15
+			PRINTFORM %ARGS:1%は
+			PRINTDATA
+				DATAFORM 聞き苦しいうめき声をあげ
+				DATAFORM 短く呻くと
+				DATAFORM 低く呻くと
+			ENDDATA
+			IF !RAND:3 && TFLAG:63 == 0
+				PRINTFORML 腰を%ARGS:0%の尻に叩きつけて、肛内に射精した……
+				IF RAND:2
+					PRINTFORM %ARGS:1%がペニスを引き抜くと、白い汚濁が
+					PRINTDATA
+						DATAFORM ぶぴ、
+						DATAFORM こぽ、
+						DATAFORM つう、
+					ENDDATA
+					PRINTFORML と溢れだす……
+				ENDIF
+				IF !RAND:5
+					IF おねだり
+						PRINTDATAL
+							DATAFORM その後、%ARGS:1%は%ARGS:0%の口に\@ TALENT:処女 && LOST_VIRGIN_CHECK(TARGET) && TFLAG:63 ? 血や #  \@\@ TFLAG:63 ? 愛液や精液 # 腸液や精液 \@で汚れたペニスをねじ込み、しっかり掃除させた……
+							DATAFORM その後、%ARGS:0%は\@ TALENT:処女 && LOST_VIRGIN_CHECK(TARGET) && TFLAG:63 ? 血や #  \@\@ TFLAG:63 ? 愛液や精液 # 腸液や精液 \@で汚れた%ARGS:1%のペニスを口でしっかり掃除した……
+						ENDDATA
+					ELSE
+						PRINTFORML その後、%ARGS:1%は嫌がる%ARGS:0%を押さえ、口に\@ TALENT:処女 && LOST_VIRGIN_CHECK(TARGET) && TFLAG:63 ? 血や #  \@\@ TFLAG:63 ? 愛液や精液 # 腸液や精液 \@で汚れたペニスをねじ込んで掃除させた……
+					ENDIF
+				ENDIF
+			ELSEIF RAND:3 && TFLAG:63 == 1
+				PRINTFORM 射精し、その濃厚な精液で
+				IF ARG:4 > 0
+					IF RAND:5
+						PRINTFORML %ARGS:0%の乳腺を白濁で満たしていった……
+						TFLAG:98 += 1
+					ELSE
+						PRINTFORML %ARGS:0%の乳房を白く汚していった……
+					ENDIF
+				ELSEIF おねだり
+					PRINTDATAL
+						DATAFORM %ARGS:0%の乳房を白く汚していった……
+						DATAFORM %ARGS:0%の整った顔を白く汚していった……
+						DATAFORM %ARGS:0%の口内を白く染め上げた……
+					ENDDATA
+				ELSE
+					PRINTDATAL
+						DATAFORM %ARGS:0%の乳房を白く汚していった……
+						DATAFORM %ARGS:0%の整った顔を白く汚していった……
+					ENDDATA
+				ENDIF
+			ELSEIF RAND:3 && TFLAG:63 == 2 && GET_PENIS(TARGET)
+				PRINTFORML %ARGS:0%のそそり立つモノにそのまま精液をぶちまける……
+				IF おねだり
+					PRINTDATAL
+						DATAFORM %ARGS:0%のペニスは他の雄の精でたっぷりと白く穢されてしまった……
+						DATAFORM そのまま、ぶち撒けた精液をローションに、再びペニス同士を擦り合わせていく……
+					ENDDATA
+				ELSE
+					PRINTDATAL
+						DATAFORM %ARGS:0%のペニスは他の雄の精でたっぷりと白く穢されてしまった……
+						DATAFORM そのまま、ぶち撒けた精液をローションに、再びペニス同士を擦り合わせていく……
+					ENDDATA
+				ENDIF
+			ELSE
+				SIF TFLAG:63 == 0 || TFLAG:63 == 3
+					PRINTFORM 彼女の\@ TFLAG:63 ? 膣 # アナル \@からペニスを引きぬき、
+				PRINTFORM 彼女の
+				PRINTDATA 体位
+					DATAFORM 尻
+					DATAFORM 下腹
+					DATAFORM 膣口
+					DATAFORM 胸
+					DATAFORM 顔
+					DATAFORM 髪
+				ENDDATA
+				PRINTFORML に汚濁を吐き出した……
+				SELECTCASE 体位
+					CASE 0
+						IF おねだり
+							PRINTDATAL
+								DATAFORM 白く滑らかな肌を、精液がぬるりと滴り落ちていく……
+								DATAFORM %ARGS:0%は自ら、見せつけるように臀部全体に汚濁を塗り広げていく……
+							ENDDATA
+						ELSE
+							PRINTDATAL
+								DATAFORM 白く滑らかな肌を、精液がぬるりと滴り落ちていく……
+								DATAFORM %ARGS:1%は嫌がる%ARGS:0%の尻全体に汚濁を塗り広げ、マーキングする……
+							ENDDATA
+						ENDIF
+					CASE 1
+						IF おねだり
+							PRINTDATAL
+								DATAFORM %ARGS:0%は自ら全身にそれを塗り広げ、男の匂いを肌に染み付かせる……
+								DATAFORM %ARGS:0%はそれを指ですくって口に運び、見せつけるように味わっている……
+							ENDDATA
+						ELSE
+							PRINTDATAL
+								DATAFORM %ARGS:1%はそのまま%ARGS:0%の全身にそれを塗り広げ、匂いを染み付かせる……
+								DATAFORM %ARGS:1%はそれを指ですくって%ARGS:0%の口に運び、雄の味を強引に覚えこませる……
+							ENDDATA
+						ENDIF
+					CASE 2
+						IF おねだり
+							PRINTDATAL
+								DATAFORM %ARGS:0%の陰裂は白く汚され、ぬらぬらと妖しく輝いている……
+								DATAFORM %ARGS:0%は膣内に射精されなかったことを、少し残念がっている……
+								DATAFORM %ARGS:0%はそのまま淫靡な笑みを浮かべ、割れ目に射精された汚濁を膣内に塗り込めるように自慰をしている……
+							ENDDATA
+						ELSE
+							PRINTDATAL
+								DATAFORM %ARGS:0%の陰裂は白く汚され、ぬらぬらと妖しく輝いている……
+								DATAFORM %ARGS:0%は膣内に射精されるのかと一瞬青ざめたが、わずかに安堵の表情を見せた……
+							ENDDATA
+						ENDIF
+					CASE 3
+						IF おねだり
+							PRINTDATAL
+								DATAFORM %ARGS:0%は胸元に舌を伸ばし、それが甘露であるかのように舐めとっていく……
+								DATAFORM %ARGS:0%は精液を刷り込むように揉み、雄の匂いを染み付かせていく……
+								DATAFORM 白い泥が、彼女の柔らかな乳房をつぅ、と垂れ落ちていった……
+								DATAFORM %ARGS:1%は無遠慮に、ペニスの汚れを彼女の乳房にこすりつけて拭きとった……
+							ENDDATA
+						ELSE
+							PRINTDATAL
+								DATAFORM 白い泥が、彼女の柔らかな乳房をつぅ、と垂れ落ちていった……
+								DATAFORM %ARGS:1%は無遠慮に、ペニスの汚れを彼女の乳房にこすりつけて拭きとった……
+								DATAFORM %ARGS:1%は精液を刷り込むように%ARGS:0%の乳房を揉み、雄の匂いを染み付かせていく……
+							ENDDATA
+						ENDIF
+					CASE 4
+						IF おねだり
+							PRINTDATAL
+								DATAFORM %ARGS:0%はうっとりとした顔でそれを受け止め、頬をぬるぬると流れる生暖かい感触を味わっている……
+								DATAFORM %ARGS:0%は石鹸のようにそれを塗り広げ、美貌を自ら汚していく……
+								DATAFORM %ARGS:0%は深呼吸してその匂いを肺いっぱいに吸い込み、目尻を垂れ下げた……
+								DATAFORM %ARGS:1%は無遠慮に、ペニスの汚れを彼女の頬にこすりつけて拭きとった……
+							ENDDATA
+						ELSE
+							PRINTDATAL
+								DATAFORM %ARGS:0%は顔をしかめ、頬をぬるぬると流れる生暖かい感触に嫌悪を示している……
+								DATAFORM %ARGS:1%はそれを塗り広げ、%ARGS:0%の美貌を自らの精でマーキングしていく……
+							ENDDATA
+						ENDIF
+					CASE 5
+						IF おねだり
+							PRINTDATAL
+								DATAFORM %ARGS:0%はうっとりとした顔でそれを受け止め、自らの髪をぬるりと伝う感触を味わっている……
+								DATAFORM %ARGS:0%は石鹸のようにそれを塗り広げ、女の命ともいえる部位を自ら汚していく……
+								DATAFORM %ARGS:0%のキューティクルの隙間にまで、雄の匂いがこびりついていく……
+							ENDDATA
+						ELSE
+							PRINTDATAL
+								DATAFORM %ARGS:0%は顔をしかめ、自らの髪をぬるりと伝うそれに嫌悪を示している……
+								DATAFORM %ARGS:1%はそれを塗り広げ、%ARGS:0%の女の命ともいえる部位を自らの精でマーキングしていく……
+								DATAFORM %ARGS:0%のキューティクルの隙間にまで、雄の匂いがこびりついていく……
+							ENDDATA
+						ENDIF
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;指などによるプレイ
+	CASE 1, 2
+		SELECTCASE TFLAG:63
+			;けつとまんこ
+			;指、舌、玩具、低確率でフィスト
+			CASE 0, 3
+				IF TALENT:処女 && TFLAG:63
+					PRINTFORML %ARGS:1%は%ARGS:0%の陰裂に指を差し込み、中の襞の感触を確かめるように丹念になぞる
+					PRINTFORML %ARGS:0%の純潔の証に気がつくと、眼を血走らせはじめた……
+				ENDIF
+				IF おねだり
+					PRINTDATA
+						DATAFORM 期待に目尻を垂れ下げる
+						DATAFORM 熱い吐息を吐く
+					ENDDATA
+				ELSE
+					PRINTDATA
+						DATAFORM 身を捩って逃れようとする
+						DATAFORM 激しく抵抗する
+					ENDDATA
+				ENDIF
+				PRINTFORM %ARGS:0%の
+				IF !RAND:2 && おねだり
+					PRINTDATA
+						DATAFORM 期待に蕩ける
+						DATAFORM ひくひくと収縮する
+						DATAFORM 妖しく蠢く
+						DATAFORM 繁殖の欲求に突き動かされる
+						DATAFORM 肉欲に疼く
+					ENDDATA
+				ENDIF
+				SIF TALENT:処女 && TFLAG:63
+					PRINTFORM 男を知らない
+				PRINTFORM \@ TFLAG:63 ? 膣口 # 菊穴 \@に、
+				SELECTCASE RAND:12
+					CASE 0 TO 2
+						PRINTFORML 何本もの指をくぐらせ、ぐちゃぐちゃと掻き回しはじめる！
+						IF TFLAG:63 && LOST_VIRGIN_CHECK(TARGET) && TALENT:処女
+							PRINTFORML みぢり、と嫌な音が身体のなかで響く
+							PRINTFORML 己の貞操が惨めな形で喪われたことを知り、%ARGS:0%は\@ おねだり ? その事実にすら興奮を覚えた # 顔を青ざめさせ、絶句した \@
+							IF おねだり
+								PRINTDATAL 
+									DATAFORM 脚を大きく開き、腰を振って快楽を貪っている……
+									DATAFORM 腰を振って、淫らな言葉を吐き散らしてさらなる快楽をねだっている……
+								ENDDATA
+							ELSE
+								PRINTFORM 純潔を散らされた怒りから、%ARGS:0%は
+								PRINTDATAL 
+									DATAFORM 激しく抵抗するものの、何体もの%ARGS:1%にがっしりと押さえつけられてしまう……
+									DATAFORM 腰を動かして逃げようとするが、それは相手の興奮と優越を煽る結果にしかなっていない……
+								ENDDATA
+							ENDIF
+						ENDIF
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%の\@ TFLAG:63 ? 膣 # 肛門 \@は侵入者を歓待し、抱きしめるように柔らかく締め付ける……
+							SIF !RAND:4
+								PRINTFORML \@ TFLAG:63 ? 膣 # 腸 \@壁は掻き回されて悦び、指の動きに合わせて収縮を繰り返す……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%の\@ TFLAG:63 ? 秘部 # 菊穴 \@は盛んに\@ TFLAG:63 ? 愛液 # 腸液 \@を分泌し、汁をそこら中に撒き散らしながら、\@ TFLAG:63 ? ぐちゅぐちゅ # ぐぽぐぽ \@と淫らな水音をあげている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は%ARGS:0%の弱いところを中心に、責める場所を目まぐるしく変えていく……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML 口では否定し、抵抗するものの、%ARGS:0%の身体はその行為に確実に官能を覚えている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%の\@ TFLAG:63 ? 秘部 # 菊穴 \@は汗と言い張れない量の水分を分泌しており、彼女の官能を端的にしめしている……
+							SIF !RAND:4
+								PRINTFORML 感じているのを誤魔化しきれていない%ARGS:0%を、%ARGS:1%達は声をあげてあざ笑った……
+						ENDIF
+					CASE 3 TO 5
+						PRINTFORML ざらつく舌を這わせ始める！
+						TFLAG:95 = 1
+						SIF TFLAG:63 && TALENT:処女
+							PRINTFORML 舌先が処女膜をつつくように刺激し、%ARGS:0%は喪失の\@ おねだり ? 期待 # 恐怖 \@に%ARGS:0%は\@ おねだり ? 腰をくねらせる # 身を震わせる \@
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML ぬめつく舌で\@ TFLAG:63 ? 膣 # 腸 \@壁の襞まで丹念になぞられ、%ARGS:0%は甘い声をあげる……
+							SIF !RAND:4
+								PRINTFORML 舌が出入りするたび、%ARGS:0%の\@ TFLAG:63 ? 膣 # 腸 \@は盛んに液を分泌する……
+							SIF !RAND:4
+								PRINTFORML \@ TFLAG:63 ? 愛液 # 腸液 \@を音をたててすすられ、%ARGS:0%は羞恥に悦びを覚える……
+							SIF !RAND:4
+								PRINTFORML 蕩けるような快楽に、%ARGS:0%も自ら腰を押し付ける……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML 口では否定し、抵抗するものの、%ARGS:0%の身体はその行為に確実に官能を覚えている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%はどうにか逃げようとするが、舌が襞を擦るたびに手足から力が抜けてしまう……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%の\@ TFLAG:63 ? 秘部 # 菊穴 \@は汗と言い張れない量の水分を分泌しており、彼女の官能を端的にしめしている……
+							SIF !RAND:4
+								PRINTFORML 感じているのを誤魔化しきれていない%ARGS:0%を、%ARGS:1%達は声をあげてあざ笑った……
+						ENDIF
+					CASE 6 TO 8
+						PRINTFORML どこからか取り出した男根を模した大きな玩具を強引にねじ込む！
+						IF TFLAG:63 && LOST_VIRGIN_CHECK(TARGET) && TALENT:処女
+							PRINTFORML みぢり、と嫌な音が身体のなかで響く
+							PRINTFORML 己の貞操が惨めな形で喪われたことを知り、%ARGS:0%は\@ おねだり ? その事実にすら興奮を覚えた # 顔を青ざめさせ、絶句した \@
+							IF おねだり
+								PRINTDATAL 
+									DATAFORM 脚を大きく開き、腰を振って快楽を貪っている……
+									DATAFORM 腰を振って、淫らな言葉を吐き散らしてさらなる快楽をねだっている……
+								ENDDATA
+							ELSE
+								PRINTFORM 純潔を散らされた怒りから、%ARGS:0%は
+								PRINTDATAL 
+									DATAFORM 激しく抵抗するものの、何体もの%ARGS:1%にがっしりと押さえつけられてしまう……
+									DATAFORM 腰を動かして逃げようとするが、それは相手の興奮と優越を煽る結果にしかなっていない……
+								ENDDATA
+							ENDIF
+						ENDIF
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML 低い音とともに\@ TFLAG:63 ? 膣内 # 肛内 \@で玩具が蠢き、妖しげな性感を伝えてくる……
+							SIF !RAND:4
+								PRINTFORML 玩具を\@ TFLAG:63 ? じゅぶじゅぶ # ぐぷぐぷ \@と出し入れされ、触手やペニスとはまた違う感覚に%ARGS:0%はただ嬌声をあげ悦んでいる……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%の\@ TFLAG:63 ? 膣 # アナル \@は玩具をしっかりと咥え込み、抱きしめるようにして離さない……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%達に命じられ、%ARGS:0%は自ら玩具を己の\@ TFLAG:63 ? 膣 # アナル \@に突き込み、自慰にふけっている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%が無機物を突っ込まれてよがっていることを%ARGS:1%たちは指摘し、げらげらとあざ笑う……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML \@ TFLAG:63 ? 膣内 # 肛内 \@で玩具が蠢き、%ARGS:0%に容赦なく性感を叩きつける……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%は暴れて抵抗しようとするが、\@ TFLAG:63 ? 膣内 # 肛内 \@へ激しく出し入れされる玩具の快感に脱力してしまう……
+							SIF !RAND:4
+								PRINTFORML 容赦のない快感に、%ARGS:0%の抵抗する気力が蕩かされていく……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%の無機物で性感を得てしまうさまを%ARGS:1%たちは指摘し、げらげらとあざ笑う……
+						ENDIF
+					CASE 9 TO 11
+						PRINTFORML 自虐の味を覚えさせてやろうと、自慰を命じる！
+						TFLAG:95 = 1
+						SIF TFLAG:63 && TALENT:処女
+							PRINTFORML 指先が処女膜をつつくように刺激し、%ARGS:0%は喪失の\@ おねだり ? 期待 # 恐怖 \@に%ARGS:0%は\@ おねだり ? 腰をくねらせる # 身を震わせる \@
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%は見られる羞恥すら快感に感じてしまう……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%達に罵られながら、自らを嬲る悦びに%ARGS:0%は没頭しはじめる……
+							SIF !RAND:4
+								PRINTFORML \@ TFLAG:63 ? 膣内 # 肛内 \@の快楽を得たいという訴えに突き動かされ、%ARGS:0%は猿のように指を出し入れする……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%からかけられる罵倒の言葉すら、%ARGS:0%の興奮の材料となっている……
+							SIF !RAND:4
+								PRINTFORML 一人淫らに自らを嬲る%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%は拒否するが、%ARGS:1%に腕を掴まれ、無理やり自らの\@ TFLAG:63 ? 膣内 # 肛内 \@を嬲らされる……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%は否定しながらも、敏感な穴を虐めていくうちに、抵抗の意志を忘れていく……
+							SIF !RAND:4
+								PRINTFORML \@ TFLAG:63 ? 膣内 # 肛内 \@の快楽を得たいという訴えに突き動かされ、%ARGS:0%は次第に行為に没頭してしまう……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%からかけられる罵倒の言葉に、%ARGS:0%は屈辱を覚え、顔を歪めた……
+							SIF !RAND:4
+								PRINTFORML 一人情けなく自らを嬲る%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+						ENDIF
+					CASEELSE
+						PRINTFORML 握りこぶしを潜り込ませた！
+						IF TFLAG:63 && LOST_VIRGIN_CHECK(TARGET) && TALENT:処女 && 体位 != 1
+							PRINTFORML みぢり、と嫌な音が身体のなかで響く
+							PRINTFORML 己の貞操が惨めな形で喪われたことを知り、%ARGS:0%は\@ おねだり ? その事実にすら興奮を覚えた # 顔を青ざめさせ、絶句した \@
+							IF おねだり
+								PRINTDATAL 
+									DATAFORM 脚を大きく開き、腰を振って快楽を貪っている……
+									DATAFORM 腰を振って、淫らな言葉を吐き散らしてさらなる快楽をねだっている……
+								ENDDATA
+							ELSE
+								PRINTFORM 純潔を散らされた怒りから、%ARGS:0%は
+								PRINTDATAL 
+									DATAFORM 激しく抵抗するものの、何体もの%ARGS:1%にがっしりと押さえつけられてしまう……
+									DATAFORM 腰を動かして逃げようとするが、それは相手の興奮と優越を煽る結果にしかなっていない……
+								ENDDATA
+							ENDIF
+						ENDIF
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は、みちみちと悲鳴をあげる\@ TFLAG:63 ? 膣口 # 菊穴 \@を、\@ TFLAG:63 ? ぐちゅぐちゅ # ぐぽぐぽ \@と容赦なく掻き回す……
+							SIF !RAND:4
+								PRINTFORML \@ TFLAG:63 ? 膣内 # 肛門 \@を裂かれそうな苦痛にすら、%ARGS:0%は快感を感じ、腰を突き出してもっととねだっている……
+							SIF !RAND:4
+								PRINTFORML 目の裏が白く焼き付くような快感に、%ARGS:0%は口をぱくぱくとさせながら声にならない絶叫をあげている……
+							SIF !RAND:4
+								PRINTFORML 彼女の\@ TFLAG:63 ? 膣 # アナル \@は激しく液を分泌し、快感を貪っていく……
+							SIF !RAND:4
+								PRINTFORML 暴力的な行為にさえよがる%ARGS:0%を、%ARGS:1%達は見下げた雌だと馬鹿にしている……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は、みちみちと悲鳴をあげる\@ TFLAG:63 ? 膣口 # 菊穴 \@を、\@ TFLAG:63 ? ぐちゅぐちゅ # ぐぽぐぽ \@と容赦なく掻き回す……
+							SIF !RAND:4
+								PRINTFORML \@ TFLAG:63 ? 膣内 # 肛門 \@を裂かれそうな苦痛に、%ARGS:0%は苦悶の表情を浮かべている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:0%の額には脂汗が大きな珠となって浮かんでいる……
+							SIF !RAND:4
+								PRINTFORML 自らの\@ TFLAG:63 ? 秘部 # 排泄器官 \@を破壊される恐怖に、%ARGS:0%は声にならない絶叫をあげる……
+							SIF !RAND:4
+								PRINTFORML 彼女の\@ TFLAG:63 ? 膣 # アナル \@は激しく液を分泌し、自らを守ろうとしている……
+							SIF !RAND:4
+								PRINTFORML 苦しむ%ARGS:0%の姿を%ARGS:1%達は面白がり、もっとやろうと騒ぎ立てている……
+						ENDIF
+				ENDSELECT
+				SIF TALENT:処女 && LOST_VIRGIN_CHECK(TARGET) && TFLAG:63
+					PRINTFORML 愛液とともに、純潔だった証がつう、と筋になって流れる……
+			;パイオッツ
+			CASE 1
+				PRINTFORM %ARGS:0%の
+				IF TALENT:貧乳 || TALENT:絶壁
+					PRINTFORM 薄い
+				ELSEIF TALENT:巨乳
+					PRINTFORM 豊かな
+				ELSEIF TALENT:爆乳
+					PRINTFORM はち切れそうな
+				ELSEIF TALENT:超乳
+					PRINTFORM 異常に肥大した
+				ENDIF
+				PRINTFORM 乳房
+				PRINTDATAL 体位
+					DATA を指で乱暴に揉みしだいていく！
+					DATA を舌や歯で弄んでいく！
+					DATA を手のひらで張った！
+					DATA に小さな玩具を押し付ける！
+				ENDDATA
+				SELECTCASE 体位
+					CASE 0
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML 乳房をモノのように扱われることに、%ARGS:0%は精神的な悦びを感じている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は目を血走らせ、手垢が擦り込まれそうなほど執拗に%ARGS:0%の双丘を嬲っていく……
+							SIF !RAND:4
+								PRINTFORML 敏感な先端を乱暴に摘まれ、%ARGS:0%はひときわ高い声をあげる……
+							SIF !RAND:4
+								PRINTFORML 胸を触られるだけで、%ARGS:0%の秘部は期待に潤んでしまっている……
+							SIF !RAND:4
+								PRINTFORML 胸だけでよがっている%ARGS:0%の浅ましさを、%ARGS:1%たちは声を上げてあざ笑った……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML 乳房をモノのように扱われ、%ARGS:0%は屈辱と隠しきれない性感を覚えている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は目を血走らせ、手垢が擦り込まれそうなほど執拗に%ARGS:0%の双丘を嬲っていく……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%の執拗な責めに、%ARGS:0%は声を隠しきれない……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は抓るように%ARGS:0%の乳首をつまみ、彼女の性感を無理やり引き出している……
+							SIF !RAND:4
+								PRINTFORML 口では否定しながらも快感を隠しきれていない%ARGS:0%を、%ARGS:1%たちは声をあげてあざ笑う……
+						ENDIF
+					CASE 1
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML 乳房をモノのように扱われることに、%ARGS:0%は精神的な悦びを感じている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は目を血走らせ、%ARGS:0%の乳房を自らの唾液でべとべとに汚していく……
+							SIF !RAND:4
+								PRINTFORML 敏感な先端を歯でかりり、と愛撫され、%ARGS:0%はひときわ高い声をあげる……
+							SIF !RAND:4
+								PRINTFORML 敏感な先端を舌先が転がし、%ARGS:0%は悩ましげな声をあげる……
+							SIF !RAND:4
+								PRINTFORML 胸だけでよがっている%ARGS:0%の浅ましさを、%ARGS:1%たちは声を上げてあざ笑った……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML 乳房をモノのように扱われ、%ARGS:0%は屈辱と隠しきれない性感を覚えている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は目を血走らせ、%ARGS:0%の乳房を自らの唾液でべとべとに汚していく……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%の執拗な責めに、%ARGS:0%は声を隠しきれない……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は敏感な先端を歯で器用に甘噛みし、彼女の性感を無理やり引き出している……
+							SIF !RAND:4
+								PRINTFORML 口では否定しながらも快感を隠しきれていない%ARGS:0%を、%ARGS:1%たちは声をあげてあざ笑う……
+						ENDIF
+					CASE 2
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML 乳房に走る鋭い痛みと官能に、%ARGS:0%は悲鳴と嬌声を交互に上げる……
+							SIF !RAND:4
+								PRINTFORML モノのように扱われる被虐を、彼女は胸を突き出してもっともっととねだっている……
+							SIF !RAND:4
+								PRINTFORML 彼女の胸に小さな手形が赤く刻まれていく……
+							SIF !RAND:4
+								PRINTFORML 叩かれて感じている%ARGS:0%の浅ましさを、%ARGS:1%たちは罵った……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML 乳房に走る鋭い痛みに、%ARGS:0%は小さく悲鳴をあげる……
+							SIF !RAND:4
+								PRINTFORML モノのように扱われる屈辱に、彼女は%ARGS:1%たちを睨みつけている……
+							SIF !RAND:4
+								PRINTFORML 彼女の胸に小さな手形が赤く刻まれていく……
+							SIF !RAND:4
+								PRINTFORML 痛みを覚えながらも、それとは違うじわりとした熱を%ARGS:0%は覚えていた……
+							SIF !RAND:4
+								PRINTFORML 苦しむ%ARGS:0%の姿を%ARGS:1%達は面白がり、もっとやろうと騒ぎ立てている……
+						ENDIF
+					CASE 3
+						IF おねだり
+							SIF !RAND:4
+								PRINTFORML 乳房をモノのように扱われることに、%ARGS:0%は精神的な悦びを感じている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は目を血走らせ、%ARGS:0%の双丘を玩具で開拓していく……
+							SIF !RAND:4
+								PRINTFORML 敏感な先端に震える玩具を押し付けられ、%ARGS:0%はひときわ高い声をあげる……
+							SIF !RAND:4
+								PRINTFORML 胸を弄ばれただけで、%ARGS:0%の秘部は期待に潤んでしまっている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%達に命じられ、%ARGS:0%はその玩具で自らを慰め始めた……
+							SIF !RAND:4
+								PRINTFORML 胸だけでよがっている%ARGS:0%の浅ましさを、%ARGS:1%たちは声を上げてあざ笑った……
+						ELSE
+							SIF !RAND:4
+								PRINTFORML 乳房をモノのように扱われ、%ARGS:0%は屈辱と隠しきれない性感を覚えている……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は目を血走らせ、%ARGS:0%の双丘を玩具で開拓していく……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%の執拗な責めに、%ARGS:0%は声を隠しきれない……
+							SIF !RAND:4
+								PRINTFORML %ARGS:1%は%ARGS:0%の乳首へ震える玩具を強く押し付け、彼女の性感を無理やり引き出している……
+							SIF !RAND:4
+								PRINTFORML 口では否定しながらも快感を隠しきれていない%ARGS:0%を、%ARGS:1%たちは声をあげてあざ笑う……
+						ENDIF
+				ENDSELECT
+			;ちんこ・クライテリオン
+			CASE 2
+				;ちんこ女へ
+				IF GET_PENIS(TARGET)
+					PRINTDATAL 体位
+						DATAFORM %ARGS:1%達は%ARGS:0%のペニスを手で扱き始めた！
+						DATAFORM %ARGS:1%達は内側に触手の蠢く筒を取り出し、%ARGS:0%のペニスにそれを被せた！
+						DATAFORM %ARGS:1%達は%ARGS:0%のペニスを足で踏みはじめた！
+						DATAFORM %ARGS:1%達は%ARGS:0%に自らペニスを扱くよう命令した！
+					ENDDATA
+					SELECTCASE 体位
+						CASE 0
+							IF おねだり
+								SIF !RAND:4
+									PRINTFORML 雄である彼らの手つきは自分よりもはるかに巧みで、%ARGS:0%は腰が抜けそうな快感に溺れている……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は手つきに合わせて腰を振り、自らも快楽を貪っている……
+								SIF !RAND:4
+									PRINTFORML 扱かれる傍ら、おかえしにと%ARGS:0%も%ARGS:1%達のペニスに指を絡めて扱いている……
+								SIF !RAND:4
+									PRINTFORML 女では味わえない快楽に、%ARGS:0%は早くも先走りを滲ませている……
+								SIF !RAND:4
+									PRINTFORML ガシガシと乱暴に擦られながら、彼女は甘い声を出してねだっている……
+								SIF !RAND:4
+									PRINTFORML 雄の快楽に溺れる%ARGS:0%を、%ARGS:1%はちんぽ女めと罵る……
+							ELSE
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%はなんとか堪えようとするが、巧みな手つきに翻弄されてしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は己のペニスを弄ぶ手から逃れようと腰を動かすが、自らの快楽を煽る結果にしかなっていない……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は首を振って快楽を否定しているが、股間のモノは彼女の興奮をはっきりと示している……
+								SIF !RAND:4
+									PRINTFORML 意志とは無関係に身体は快楽を感じ、鈴口からは早くも先走りが滲んでいる……
+								SIF !RAND:4
+									PRINTFORML 女にありえない快楽を覚えている%ARGS:0%を、%ARGS:1%はちんぽ女めと罵る……
+							ENDIF
+						CASE 1
+							IF おねだり
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%達は筒の中に自らの精液をたっぷりとぶち撒け、ローションの代わりにする……
+								SIF !RAND:4
+									PRINTFORML 筒の中の触手達は激しく蠢動し、彼女のペニスから精液を搾り取ろうとする……
+								SIF !RAND:4
+									PRINTFORML 無数の触手達にペニスを余すところ無く愛撫され、%ARGS:0%は腰をがくがくと震わせる……
+								SIF !RAND:4
+									PRINTFORML 容赦の無い快感に、%ARGS:0%は身体の奥からこみ上げてくる白いものを感じる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%達はそのまま筒を使って%ARGS:0%たちのペニスを扱いていく……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は、抗いがたい快楽に、自ら筒へ腰を突き込んでしまう……
+								SIF !RAND:4
+									PRINTFORML 嬌声をあげる%ARGS:0%を、%ARGS:1%は見下げ果てた目で嘲っている……
+							ELSE
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%達は筒の中に自らの精液をたっぷりとぶち撒け、ローションの代わりにする……
+								SIF !RAND:4
+									PRINTFORML 筒の中の触手達は激しく蠢動し、彼女のペニスから精液を搾り取ろうとする……
+								SIF !RAND:4
+									PRINTFORML 無数の触手達にペニスを余すところ無く愛撫され、%ARGS:0%の腰は意志と無関係に震えてしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は必死に堪えようとするが、暴力的な快感は抵抗の意思を剥ぎとっていく……
+								SIF !RAND:4
+									PRINTFORML 容赦の無い快感に、%ARGS:0%は身体の奥からこみ上げてくる白いものを感じる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%達はそのまま筒を使って%ARGS:0%たちのペニスを扱いていく……
+								SIF !RAND:4
+									PRINTFORML 口で否定しながらも感じてしまっている%ARGS:0%を、%ARGS:1%は見下げ果てた目で嘲っている……
+							ENDIF
+						CASE 2
+							IF おねだり
+								SIF !RAND:4
+									PRINTFORML 足裏でペニスを弄ばれながらも、その刺激に%ARGS:0%は甘い声をあげる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%は足指で、竿を挟み込むように擦り、%ARGS:0%は腰を震わせる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%は下卑た笑みを浮かべながら、%ARGS:0%のモノを踏みつけている……
+								SIF !RAND:4
+									PRINTFORML 踏み潰される恐怖と同時に、%ARGS:0%は快感を覚えている……
+								SIF !RAND:4
+									PRINTFORML 足裏で敏感な亀頭を擦られ、%ARGS:0%はだらしなく声をあげる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%が足にかけた体重を強め、%ARGS:0%は腰を震わせる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%の情けない様を、%ARGS:1%達はニタニタと笑いながら罵っている……
+							ELSE
+								SIF !RAND:4
+									PRINTFORML 足裏でペニスを弄ばれ、屈辱に%ARGS:0%は目に涙を浮かべる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%は足指で、竿を挟み込むように擦り、%ARGS:0%は腰を震わせる……
+								SIF !RAND:4
+									PRINTFORML 暴れる%ARGS:0%に、罰として%ARGS:1%は足にかける体重を強めた……
+								SIF !RAND:4
+									PRINTFORML 踏み潰される恐怖に、%ARGS:0%は顔を青ざめさせる……
+								SIF !RAND:4
+									PRINTFORML 足裏で敏感な亀頭を擦られ、%ARGS:0%は意志と関係なく快感を覚えてしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%の情けない様を、%ARGS:1%達はニタニタと笑いながら罵っている……
+							ENDIF
+						CASE 3
+							IF おねだり
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は見られる羞恥すら快感に感じてしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%達に罵られながら、自らを嬲る悦びに%ARGS:0%は没頭しはじめる……
+								SIF !RAND:4
+									PRINTFORML 男根から込み上げる射精の衝動に突き動かされ、%ARGS:0%は猿のように陰茎を扱いている……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%からかけられる罵倒の言葉すら、%ARGS:0%の興奮の材料となっている……
+								SIF !RAND:4
+									PRINTFORML 一人情けなくペニスを扱く%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+							ELSE
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は拒否するが、%ARGS:1%に腕を掴まれ、無理やり自らのモノを扱かされる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は否定しながらも、敏感なモノを扱いていくうちに、抵抗の意志を忘れていく……
+								SIF !RAND:4
+									PRINTFORML 男根から込み上げる射精の衝動に突き動かされ、%ARGS:0%は次第に行為に没頭してしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%からかけられる罵倒の言葉に、%ARGS:0%は屈辱を覚え、顔を歪めた……
+								SIF !RAND:4
+									PRINTFORML 一人情けなくペニスを扱く%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+							ENDIF
+					ENDSELECT
+				ELSE
+					PRINTDATAL 体位
+						DATAFORM %ARGS:1%達は%ARGS:0%の陰核を指先で嬲り始めた！
+						DATAFORM %ARGS:1%達は%ARGS:0%の股に顔を埋め、陰核を舌で舐りはじめた！
+						DATAFORM %ARGS:1%達は%ARGS:0%に自らを慰めるよう命令した！
+					ENDDATA
+					SELECTCASE 体位
+						CASE 0
+							IF おねだり
+								SIF !RAND:4
+									PRINTFORML 揉み潰すような乱暴な指使いにさえ、%ARGS:0%は腰が抜けそうな快感に溺れている……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は手つきに合わせて腰を振り、自らも快楽を貪っている……
+								SIF !RAND:4
+									PRINTFORML 陰核を弄ばれるかたわら、おかえしにと%ARGS:0%も%ARGS:1%達のペニスに指を絡めて扱いている……
+								SIF !RAND:4
+									PRINTFORML 電気のようなビリビリと走る快楽に、%ARGS:0%はただ嬌声を上げ続けている……
+								SIF !RAND:4
+									PRINTFORML 指先で陰核を扱きあげられながら、彼女は甘い声を出してねだっている……
+								SIF !RAND:4
+									PRINTFORML 雌の快楽に溺れる%ARGS:0%に、%ARGS:1%は下卑た言葉を投げかける……
+							ELSE
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%はなんとか堪えようとするが、巧みな手つきに翻弄されてしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は己の陰核を弄ぶ手から逃れようと腰を動かすが、快楽を煽る結果にしかなっていない……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は首を振って快楽を否定しているが、蜜を湛える陰部は彼女の興奮をはっきりと示している……
+								SIF !RAND:4
+									PRINTFORML 意志とは無関係に身体は快楽を感じ、口からは嬌声が上がってしまう……
+								SIF !RAND:4
+									PRINTFORML 雌の快楽を覚えている%ARGS:0%に、%ARGS:1%は下卑た言葉を投げかける……
+							ENDIF
+						CASE 1
+							IF おねだり
+								SIF !RAND:4
+									PRINTFORML ザラザラとした感触が陰核を這い、%ARGS:0%は腰を抜かしそうな快感を覚える……
+								SIF !RAND:4
+									PRINTFORML 敏感な部位を舌先でつつかれ、しゃぶられ、%ARGS:0%はただ翻弄されるばかりだ……
+								SIF !RAND:4
+									PRINTFORML 雌の快感に%ARGS:0%は溺れ、%ARGS:1%にさらなる快感をねだった……
+								SIF !RAND:4
+									PRINTFORML 腰を揺らして嬌声をあげる%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+							ELSE
+								SIF !RAND:4
+									PRINTFORML ザラザラとした感触が陰核を這い、%ARGS:0%は腰を抜かしそうな快感を覚える……
+								SIF !RAND:4
+									PRINTFORML 敏感な部位を舌先でつつかれ、しゃぶられ、%ARGS:0%はただ翻弄されるばかりだ……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は腰を動かして逃げようとするが、%ARGS:1%達に押さえつけられてしまう……
+								SIF !RAND:4
+									PRINTFORML 口では否定しながらも嬌声をあげる%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+							ENDIF
+						CASE 2
+							IF おねだり
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は見られる羞恥すら快感に感じてしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%達に罵られながら、自らを嬲る悦びに%ARGS:0%は没頭しはじめる……
+								SIF !RAND:4
+									PRINTFORML 陰核に走る電気のような快感に、%ARGS:0%は猿のように陰部を弄り回す……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%からかけられる罵倒の言葉すら、%ARGS:0%の興奮の材料となっている……
+								SIF !RAND:4
+									PRINTFORML 一人情けなく自慰にふける%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+							ELSE
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は拒否するが、%ARGS:1%に腕を掴まれ、無理やり自らの陰核を扱かされる……
+								SIF !RAND:4
+									PRINTFORML %ARGS:0%は否定しながらも、敏感な肉粒をまさぐるうちに、抵抗の意志を忘れていく……
+								SIF !RAND:4
+									PRINTFORML 陰核に走る電気のような快感に、%ARGS:0%は次第に行為に没頭してしまう……
+								SIF !RAND:4
+									PRINTFORML %ARGS:1%からかけられる罵倒の言葉に、%ARGS:0%は屈辱を覚え、顔を歪めた……
+								SIF !RAND:4
+									PRINTFORML 一人情けなく自慰にふける%ARGS:0%を、%ARGS:1%達はニタニタと眺めている……
+							ENDIF
+					ENDSELECT
+				ENDIF
+		ENDSELECT
+ENDSELECT
+
+;周り表示
+;ザ・フレーバー
+IF !RAND:15
+	PRINTFORM その間にも、%ARGS:0%を取り囲む%ARGS:1%達は、
+	PRINTDATAL 体位
+		DATAFORM %ARGS:0%の髪でペニスを扱いている……
+		DATAFORM %ARGS:0%の顔にペニスを押し付け、扱いている……
+		DATAFORM %ARGS:0%の口にペニスをねじ込み、奉仕させている……
+		DATAFORM %ARGS:0%の手にペニスを握らせ、奉仕させている……
+		DATAFORM %ARGS:0%の胸にペニスを押し付け、扱いている……
+		DATAFORM %ARGS:0%の腹にペニスを押し付け、扱いている……
+		DATAFORM %ARGS:0%の尻にペニスを押し付け、扱いている……
+		DATAFORM %ARGS:0%の身体をまさぐっている……
+	ENDDATA
+	SELECTCASE 体位
+		CASE 0
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML 髪に雄の匂いを染みつけられる屈辱に、%ARGS:0%は目尻を垂れ下げた……
+			ELSE
+				SIF !RAND:4
+					PRINTFORML 髪に雄の匂いを染みつけられる屈辱に、%ARGS:0%は顔を歪めた……
+			ENDIF
+				SIF !RAND:4
+					PRINTFORML キューティクルの隅々まで、%ARGS:1%の匂いが染み付いていく……
+				SIF !RAND:4
+					PRINTFORML %ARGS:1%はそのまま、%ARGS:0%の髪を白く汚していった……
+		CASE 1
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML 頬にぐりぐりと押し付けられる熱い肉の塊に、%ARGS:0%は目尻を垂れ下げた……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は深く息を吸い込み、漂う雄の匂いを堪能する……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は自ら顔を動かし、頬を汚すペニスに奉仕する……
+			ELSE
+				SIF !RAND:4
+					PRINTFORML 頬にぐりぐりと押し付けられる熱い肉の塊に、%ARGS:0%は眉をしかめる……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は顔を背けようとするが、頭をしっかりと掴まれてしまう……
+			ENDIF
+			IF !RAND:4
+				PRINTFORML %ARGS:1%はそのまま、%ARGS:0%の顔面を白く汚していった……
+				SIF おねだり
+					PRINTFORML %ARGS:0%は舌を出し、汚濁をぺろりと舐めとった……
+			ENDIF
+		CASE 2
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML 口をぐぽぐぽと犯され、%ARGS:0%は悦んでいる……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は美味しそうに%ARGS:1%のモノに吸い付いている……
+				SIF !RAND:4
+					PRINTFORML 口腔に広がる雄の匂いを、%ARGS:0%は堪能している……
+				SIF !RAND:4
+					PRINTFORML 自ら積極的に舌を絡め、%ARGS:0%は奉仕している……
+				SIF !RAND:4
+					PRINTFORML 喉壁を突かれることにすら、%ARGS:0%は悦びを覚えている……
+			ELSE
+				SIF !RAND:4
+					PRINTFORML 口をぐぽぐぽと犯され、%ARGS:0%は屈辱に顔を歪める……
+				SIF !RAND:4
+					PRINTFORML 口腔に広がる雄の匂いに、%ARGS:0%は眉をしかめる……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は顔を背けようとするが、頭をしっかりと掴まれてしまう……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は喉壁を突かれ、苦痛に呻く……
+			ENDIF
+			IF !RAND:4
+				PRINTFORML %ARGS:1%はそのまま、%ARGS:0%の口内に精液をぶち撒けた……
+				IF おねだり
+					PRINTDATAL
+						DATAFORM %ARGS:0%は出された汚濁をしっかりと味わっている……
+						DATAFORM %ARGS:0%は甘露か何かのように、至福の表情で汚濁を飲み込んでいく……
+						DATAFORM %ARGS:0%は目尻を垂れ下げ、精液で口をすすいでいる……
+					ENDDATA
+				ELSE
+					PRINTDATAL
+						DATAFORM %ARGS:0%はそれを吐き出そうとするが、強引に飲み込まされる……
+						DATAFORM %ARGS:0%は口内に広がる悪臭にえづきそうになる……
+						DATAFORM %ARGS:0%は暴れて抵抗するが、頭を掴まれていては抵抗できない……
+					ENDDATA
+				ENDIF
+				SIF RAND:3
+					PRINTFORML その後、また別の%ARGS:1%が%ARGS:0%の口を犯し始めた……
+			ENDIF
+		CASE 3
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は丹念に、脈動するそれに指先を絡めて愛撫する……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%が腕を動かすのにあわせ、%ARGS:1%も腰を動かしている……
+			ELSE
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は拒否しようとするが、腕を掴まれ、それを無理やり握らされる……
+				SIF !RAND:4
+					PRINTFORML 手のひらから伝わる生々しい暖かさに、%ARGS:0%は嫌悪感を隠せない……
+			ENDIF
+			IF !RAND:4
+				PRINTFORML %ARGS:1%はそのまま、%ARGS:0%の手のひらに射精した……
+				SIF RAND:3
+					PRINTFORML その後、また別の%ARGS:1%が%ARGS:0%に奉仕を強要する……
+			ENDIF
+		CASE 4
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML 乳房で感じる雄の逞しさに、%ARGS:0%は熱い吐息をこぼす……
+				SIF !RAND:4
+					PRINTFORML 乳首を亀頭で小突きまわされ、%ARGS:0%は小さな声を漏らした……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%の肌に、雄の匂いが染み付いていく……
+			ELSE
+				SIF !RAND:4
+					PRINTFORML 肌から伝わる生々しい暖かさに、%ARGS:0%は嫌悪感を隠せない……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は身を捩って逃げようとするが、あっさりと抑えこまれてしまう……
+			ENDIF
+			IF !RAND:4
+				PRINTFORML %ARGS:1%はそのまま、%ARGS:0%の乳房に射精した……
+				SIF RAND:3
+					PRINTFORML その後、また別の%ARGS:1%が%ARGS:0%に奉仕を強要する……
+			ENDIF
+		CASE 5
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML
+			ELSE
+				SIF !RAND:4
+					PRINTFORML
+			ENDIF
+		CASE 6
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は自らも腰を振りたくり、尻肉でペニスに奉仕していく……
+				SIF !RAND:4
+					PRINTFORML 尻に熱く、硬いモノが押し当てられているのがはっきりと分かる……
+				SIF !RAND:4
+					PRINTFORML %ARGS:1%の腰の動きに合わせて、%ARGS:0%も腰を動かす……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%の肌に、雄の匂いが染み付いていく……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は、ソレでもって\@ RAND:1 ? 膣 # 尻穴 \@を貫かれる瞬間を想像し、恥部に蜜を湛えさせた……
+			ELSE
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は腰を振って逃げようとするが、相手の興奮と性感を煽ることにしかなっていない……
+				SIF !RAND:4
+					PRINTFORML 肌から伝わる生々しい暖かさに、%ARGS:0%は嫌悪感をあらわにした……
+			ENDIF
+			IF !RAND:4
+				PRINTFORML %ARGS:1%はそのまま、%ARGS:0%の尻に射精した……
+				SIF RAND:3
+					PRINTFORML その後、また別の%ARGS:1%が%ARGS:0%に奉仕を強要する……
+			ENDIF
+		CASE 7
+			IF おねだり
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は%ARGS:1%達と情熱的な口づけを交わし、舌を絡めて体液を交換している……
+			ELSE
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は%ARGS:1%達に唇を奪われ、目に涙を浮かべている……
+			ENDIF
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は乳房を無遠慮に揉みしだかれている……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%の陰裂を指が這いまわる……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%は尻肉を無遠慮に揉みしだかれている……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%の菊穴を指が這い回る……
+				SIF !RAND:4
+					PRINTFORML %ARGS:0%の\@ GET_PENIS(TARGET) ? ペニス # 陰核 \@を%ARGS:1%が扱いている……
+	ENDSELECT
+ENDIF
+

@@ -1,0 +1,182 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_65(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 10000
+DA:(ARG:0):2 = 10000
+;女の子を消化するとフル・ヴォッキに進化するぞ☆
+DA:(ARG:0):3 = 0
+DA:(ARG:0):5 = 100
+;進化すると攻撃回数が増えるぞ☆
+DA:(ARG:0):8 = 0
+DA:(ARG:0):9 = 60
+
+DA:(ARG:0):15 = 20
+DA:(ARG:0):16 = 50
+DA:(ARG:0):17 = 30
+DA:(ARG:0):18 = 100
+DA:(ARG:0):19 = 5
+
+DA:(ARG:0):14 = 10
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 40
+DA:(ARG:0):86 = 7
+DA:(ARG:0):89 = 32
+
+;玉ありふたなりを折る、で出現フラグ成立
+;フラグ成立時は強さランク変動
+SIF FLAG:994
+	DA:(ARG:0):86 = 5
+
+DA:(ARG:0):88 = 1
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(65)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_65(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+;4	拘束フラグ２
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+LOCAL:4 = 0
+IF DA:(ARG:0):10 == 1
+	;１人目拘束
+	LOCAL:4 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):10 == FLAG:10
+	;２人目拘束
+	LOCAL:4 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):10 == FLAG:11
+	;３人目拘束
+	LOCAL:4 = FLAG:11
+ELSEIF DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:4 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+
+;PTメンバーを拘束している場合
+IF LOCAL:1 > 0 || LOCAL:4 > 0
+	;拘束している相手を攻撃
+	IF ARG:1 == LOCAL:1 || ARG:1 == LOCAL:4
+		;既に戦意喪失し、拘束レベル最大の場合、一定確率で解放する（喪失者解放は投げつけを使うのでここでは処理なし）
+		;IF CFLAG:(ARG:1):29 && RAND:100 < 25 && RAND:100 < 25
+			;LOCAL:2 = 1
+		;ELSE
+			;拘束相手には強性攻撃・寄生攻撃・追加拘束攻撃　が選択肢
+			LOCAL:3 = RAND:100
+			IF LOCAL:3 < 10
+				LOCAL:2 = 2600
+			ELSEIF LOCAL:3 < 20
+				LOCAL:2 = 1314
+			ELSEIF LOCAL:3 < 30
+				LOCAL:2 = 1315
+			ELSEIF LOCAL:3 < 65
+				LOCAL:2 = 758
+			ELSEIF LOCAL:3 < 100
+				IF CFLAG:(ARG:1):38 >= 5
+					LOCAL:2 = 758
+				ELSE
+					LOCAL:2 = 574
+				ENDIF
+			ELSE
+				LOCAL:2 = 758
+			ENDIF
+		;ENDIF
+	;拘束対象以外を攻撃
+	ELSE
+		;拘束枠が無ければ拘束攻撃以外
+		IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+			LOCAL:3 = RAND:60
+		ELSE
+			LOCAL:3 = RAND:100
+		ENDIF
+		;拘束対象が既に戦意喪失している場合、投げつけ攻撃（解放）
+		IF CFLAG:(DA:(ARG:0):20):29
+			LOCAL:2 = 4
+		ELSEIF LOCAL:3 < 20
+			LOCAL:2 = 117
+		ELSEIF LOCAL:3 < 30
+			LOCAL:2 = 118
+		ELSEIF LOCAL:3 < 60
+			LOCAL:2 = 183
+		ELSEIF LOCAL:3 < 100
+			LOCAL:2 = 573
+		ELSE
+			LOCAL:2 = 573
+		ENDIF
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;拘束枠が無ければ拘束攻撃以外
+	IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+	LOCAL:3 = RAND:60
+	ELSE
+		LOCAL:3 = RAND:100
+	ENDIF
+	;拘束対象は既に戦意喪失しているはずなので、30％確率で投げつけ攻撃（解放）
+	IF CFLAG:(DA:(ARG:0):20):29 && RAND:100 < 30
+		LOCAL:2 = 4
+	ELSEIF LOCAL:3 < 20
+		LOCAL:2 = 117
+	ELSEIF LOCAL:3 < 40
+		LOCAL:2 = 118
+	ELSEIF LOCAL:3 < 60
+		LOCAL:2 = 183
+	ELSEIF LOCAL:3 < 100
+		LOCAL:2 = 573
+	ELSE
+		LOCAL:2 = 573
+	ENDIF
+ELSE
+	;通常時
+	LOCAL:3 = RAND:100
+	IF LOCAL:3 < 20
+		LOCAL:2 = 117
+	ELSEIF LOCAL:3 < 40
+		LOCAL:2 = 118
+	ELSEIF LOCAL:3 < 60
+		LOCAL:2 = 183
+	ELSEIF LOCAL:3 < 100
+		LOCAL:2 = 573
+	ELSE
+		LOCAL:2 = 573
+	ENDIF
+ENDIF
+
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+;拘束レベルアップ用 追加コマンド指定
+SIF DA:(ARG:0):50 == 573 || DA:(ARG:0):50 == 574
+	DA:(ARG:0):90 = DA:(ARG:0):50

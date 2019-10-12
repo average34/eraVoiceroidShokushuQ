@@ -1,0 +1,164 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_50(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 9000
+DA:(ARG:0):2 = 9000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 90
+DA:(ARG:0):9 = 90
+
+DA:(ARG:0):15 = 30
+DA:(ARG:0):16 = 40
+DA:(ARG:0):17 = 30
+DA:(ARG:0):18 = 90
+DA:(ARG:0):19 = 90
+
+DA:(ARG:0):41 = 120
+DA:(ARG:0):43 = 120
+
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 5
+DA:(ARG:0):86 = 4
+DA:(ARG:0):89 = 15
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(50)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_50(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 30
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:3 = RAND:33
+			SELECTCASE LOCAL:3
+				CASE 0 TO 2
+					LOCAL:2 = 693
+				CASE 3 TO 5
+					LOCAL:2 = 694
+				CASE 6 TO 8
+					LOCAL:2 = 695
+				CASE 9 TO 10
+					LOCAL:2 = 696
+				CASE 11 TO 12
+					LOCAL:2 = 1005
+				CASE 13 TO 15
+					LOCAL:2 = 1006
+				CASE 16 TO 18
+					LOCAL:2 = 1007
+				CASE 19 TO 20
+					LOCAL:2 = 1008
+				CASE 21 TO 22
+					LOCAL:2 = 1009
+				CASE 23 TO 24
+					LOCAL:2 = 1013
+				CASE 25 TO 26
+					LOCAL:2 = 1014
+				CASE 27 TO 28
+					LOCAL:2 = 1015
+				CASE 29
+					LOCAL:2 = 1018
+				CASE 30
+					LOCAL:2 = 1019
+				CASEELSE
+					LOCAL:2 = 853
+			ENDSELECT
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:11
+		SELECTCASE LOCAL:3
+		CASE 0 TO 4
+			LOCAL:2 = 242
+		CASE 5 TO 7
+			LOCAL:2 = 394
+		CASEELSE
+			LOCAL:2 = 397
+		ENDSELECT
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;PTには拘束攻撃以外
+	LOCAL:3 = RAND:11
+	SELECTCASE LOCAL:3
+		CASE 0 TO 4
+			LOCAL:2 = 242
+		CASE 5 TO 7
+			LOCAL:2 = 394
+		CASEELSE
+			LOCAL:2 = 397
+	ENDSELECT
+ELSE
+	;通常時
+	LOCAL:3 = RAND:35
+	SELECTCASE LOCAL:3
+		CASE 0 TO 3
+			LOCAL:2 = 150
+		CASE 4 TO 6
+			LOCAL:2 = 151
+		CASE 7 TO 9
+			LOCAL:2 = 152
+		CASE 10 TO 11
+			LOCAL:2 = 153
+		CASE 12 TO 15
+			LOCAL:2 = 242
+		CASE 16 TO 18
+			LOCAL:2 = 394
+		CASE 19 TO 22
+			LOCAL:2 = 395
+		CASE 23 TO 25
+			LOCAL:2 = 396
+		CASE 26 TO 28
+			LOCAL:2 = 397
+		CASE 29 TO 31
+			LOCAL:2 = 26
+		CASEELSE
+			LOCAL:2 = 552
+	ENDSELECT
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

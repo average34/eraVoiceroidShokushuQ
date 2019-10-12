@@ -1,0 +1,37 @@
+﻿;エンカウント判定
+;RETURNF	0:遭遇なし　1:味方と遭遇　2:敵と遭遇　1+2(3):両方と遭遇
+@CHECK_ENCOUNTER
+#FUNCTION
+;LOCAL
+;0	LOOP
+;1	RETURN
+
+LOCAL:1 = 0
+
+;味方遭遇判定
+FOR LOCAL:0, 1, CHARANUM
+	;主人公およびPTメンバーはスキップ
+	IF LOCAL:0 == 1 || LOCAL:0 == FLAG:10 || LOCAL:0 == FLAG:11
+		CONTINUE
+	ENDIF
+	
+	;現在位置が被っているかチェック
+	IF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+		LOCAL:1 |= 1
+		BREAK
+	ENDIF
+NEXT
+
+;敵遭遇判定
+FOR LOCAL:0, 1, FLAG:1
+	;現在位置が被っているかチェック
+	IF CFLAG:1:4 == DA:(LOCAL:0):4 && DA:(LOCAL:0):1 > 0 && DA:(LOCAL:0):0 == 18 && DA:(LOCAL:0):45 == 0
+		;ドッペルゲンガーは味方扱い
+		LOCAL:1 |= 1
+	ELSEIF CFLAG:1:4 == DA:(LOCAL:0):4 && DA:(LOCAL:0):1 > 0 && DA:(LOCAL:0):4 != FLAG:98
+		LOCAL:1 |= 2
+	ENDIF
+NEXT
+
+RETURNF LOCAL:1
+

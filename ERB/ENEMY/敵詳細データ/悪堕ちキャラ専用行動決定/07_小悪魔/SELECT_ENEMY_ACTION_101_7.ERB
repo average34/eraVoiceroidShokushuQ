@@ -1,0 +1,200 @@
+﻿;悪堕ち小悪魔用
+;戦闘中の行動決定
+
+@SELECT_ENEMY_ACTION_101_7(ARG:0, ARG:1)
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+;4	拘束フラグ２
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+LOCAL:4 = 0
+IF DA:(ARG:0):10 == 1
+	;１人目拘束
+	LOCAL:4 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):10 == FLAG:10
+	;２人目拘束
+	LOCAL:4 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):10 == FLAG:11
+	;３人目拘束
+	LOCAL:4 = FLAG:11
+ELSEIF DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:4 = -1
+ENDIF
+
+
+IF LOCAL:1 > 0 || LOCAL:4 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には枠が無ければ拘束攻撃以外
+	IF ARG:1 == LOCAL:1 || ARG:1 == LOCAL:4
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 40
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			IF DA:(ARG:0):35
+				IF FLAG:520 == 1 || FLAG:520 == 3
+					LOCAL:3 = RAND:15
+				ELSE
+					LOCAL:3 = RAND:9
+				ENDIF
+				
+				;すくねーふたなりじゃないと強性攻撃のレパートリーすくねー
+				IF LOCAL:3 < 2
+					LOCAL:2 = 675
+				ELSEIF LOCAL:3 < 4
+					LOCAL:2 = 1890
+				ELSEIF LOCAL:3 < 5
+					LOCAL:2 = 979
+				ELSEIF LOCAL:3 < 6
+					LOCAL:2 = 980
+				ELSEIF LOCAL:3 < 7
+					LOCAL:2 = 981
+				ELSEIF LOCAL:3 < 8
+					LOCAL:2 = 395
+				ELSEIF LOCAL:3 < 9
+					LOCAL:2 = 731
+				ELSEIF LOCAL:3 < 10
+					LOCAL:2 = 700
+				ELSEIF LOCAL:3 < 11
+					LOCAL:2 = 701
+				ELSEIF LOCAL:3 < 12
+					LOCAL:2 = 702
+				ELSEIF LOCAL:3 < 13
+					LOCAL:2 = 703
+				ELSEIF LOCAL:3 < 14
+					LOCAL:2 = 704
+				ELSE
+					LOCAL:2 = 705
+				ENDIF
+			ELSE
+				IF FLAG:520 == 1 || FLAG:520 == 3
+					LOCAL:3 = RAND:28
+				ELSE
+					LOCAL:3 = RAND:16
+				ENDIF
+				
+				IF LOCAL:3 < 2
+					LOCAL:2 = 1890
+				ELSEIF LOCAL:3 < 4
+					LOCAL:2 = 979
+				ELSEIF LOCAL:3 < 5
+					LOCAL:2 = 980
+				ELSEIF LOCAL:3 < 6
+					LOCAL:2 = 981
+				ELSEIF LOCAL:3 < 7
+					LOCAL:2 = 395
+				ELSEIF LOCAL:3 < 9
+					LOCAL:2 = 1885
+				ELSEIF LOCAL:3 < 11
+					LOCAL:2 = 1892
+				ELSEIF LOCAL:3 < 13
+					LOCAL:2 = 1893
+				ELSEIF LOCAL:3 < 15
+					LOCAL:2 = 21
+				;いちおうふたなりじゃなくても出るがメインはふたなり時。逆レだし
+				ELSEIF LOCAL:3 < 18
+					LOCAL:2 = 731
+				;これ以降はコンフィグでふたなりオンのみ。ふたなりオフだと攻撃がショボい……しょうがないといえばしょうがないが
+				ELSEIF LOCAL:3 < 20
+					LOCAL:2 = 837
+				ELSEIF LOCAL:3 < 22
+					LOCAL:2 = 838
+				ELSEIF LOCAL:3 < 23
+					LOCAL:2 = 700
+				ELSEIF LOCAL:3 < 24
+					LOCAL:2 = 701
+				ELSEIF LOCAL:3 < 25
+					LOCAL:2 = 702
+				ELSEIF LOCAL:3 < 26
+					LOCAL:2 = 703
+				ELSEIF LOCAL:3 < 27
+					LOCAL:2 = 704
+				ELSE
+					LOCAL:2 = 705
+				ENDIF
+			ENDIF
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+			LOCAL:3 = RAND:13
+		ELSE
+			LOCAL:3 = RAND:15
+		ENDIF
+		
+		IF LOCAL:3 < 2
+			LOCAL:2 = 173
+		ELSEIF LOCAL:3 < 4
+			LOCAL:2 = 174
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 175
+		ELSEIF LOCAL:3 < 9
+			LOCAL:2 = 259
+		ELSEIF LOCAL:3 < 11
+			LOCAL:2 = 980
+		ELSEIF LOCAL:3 < 13
+			LOCAL:2 = 260
+		ELSE
+			LOCAL:2 = 568
+		ENDIF
+	ENDIF
+ELSE
+	;通常時
+	IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+		LOCAL:3 = RAND:12
+	ELSE
+		IF BASE:(ARG:1):0 < MAXBASE:(ARG:1):0 / 2 || BASE:(ARG:1):2 < MAXBASE:(ARG:1):2 * 2 / 3
+			LOCAL:3 = RAND:17
+		ELSE
+			LOCAL:3 = RAND:15
+		ENDIF
+	ENDIF
+	
+		IF LOCAL:3 < 2
+			LOCAL:2 = 173
+		ELSEIF LOCAL:3 < 4
+			LOCAL:2 = 174
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 175
+		ELSEIF LOCAL:3 < 9
+			LOCAL:2 = 259
+		ELSEIF LOCAL:3 < 10
+			LOCAL:2 = 980
+		ELSEIF LOCAL:3 < 11
+			LOCAL:2 = 981
+		ELSEIF LOCAL:3 < 13
+			LOCAL:2 = 260
+		ELSE
+			LOCAL:2 = 568
+		ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+RETURN 1

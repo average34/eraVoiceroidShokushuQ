@@ -1,0 +1,54 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_100(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 1000
+DA:(ARG:0):2 = 1000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 40
+DA:(ARG:0):9 = 35
+
+DA:(ARG:0):15 = 33
+DA:(ARG:0):16 = 33
+DA:(ARG:0):17 = 33
+DA:(ARG:0):18 = 80
+DA:(ARG:0):19 = 5
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 32
+DA:(ARG:0):86 = 7
+
+DA:(ARG:0):88 = 1
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(100)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_100(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+LOCAL:2 = 1
+
+;味方を狙う確率決定
+;ARG:0	設定場所
+@SET_ENEMY_TARGET_RATE_100(ARG:0)
+
+DA:(ARG:0):60 = 100
+
+IF FLAG:10 == 0
+	DA:(ARG:0):61 = 0
+ENDIF
+IF FLAG:11 == 0
+	DA:(ARG:0):62 = 0
+ENDIF
+
+

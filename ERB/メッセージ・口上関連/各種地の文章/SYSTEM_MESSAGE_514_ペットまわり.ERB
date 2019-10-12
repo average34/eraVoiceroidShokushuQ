@@ -1,0 +1,63 @@
+﻿;ペット関連
+@SYSTEM_MESSAGE_514(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+SETCOLOR 0xEE1010
+
+SELECTCASE ARG:1
+	CASE 0
+		;moge ここPET:51参照してたの明らかに頭おかしい
+		IF !TALENT:(ARG:2):ペット
+			PRINTDATAL
+				DATAFORM %ARGS:1%は%ARGS:0%に襲いかかった！
+				DATAFORM %ARGS:1%は%ARGS:0%をレイプしはじめた！
+				DATAFORM 性欲の高ぶる%ARGS:1%は、%ARGS:0%で性処理をはじめた！
+				DATAFORM %ARGS:1%は%ARGS:0%を押し倒した！
+			ENDDATA
+		ELSE
+			PRINTDATAL
+				DATAFORM %ARGS:0%は主人である%ARGS:1%に奉仕を始めた！
+				DATAFORM 性欲の高ぶる%ARGS:1%は、%ARGS:0%に性処理をさせた！
+				DATAFORM %ARGS:0%は%ARGS:1%を誘った！
+				DATAFORM %ARGS:1%はペットである%ARGS:0%に襲いかかった！
+				DATAFORM %ARGS:1%は%ARGS:0%を「使い」始めた！
+				DATAFORM 我慢できなくなった%ARGS:0%は、%ARGS:1%と交わりはじめた！
+			ENDDATA
+		ENDIF
+	CASE 1
+		IF !TALENT:(ARG:2):ペット
+			PRINTDATAL
+				DATAFORM %ARGS:0%は%ARGS:1%に身体を開いた……
+				DATAFORM %ARGS:0%は%ARGS:1%に身体を捧げた……
+				DATAFORM %ARGS:0%は%ARGS:1%に栄養をあげることにした……
+				DATAFORM %ARGS:0%は自分の身体を%ARGS:1%の餌にすることにした……
+				DATAFORM %ARGS:0%は%ARGS:1%の性欲を鎮めることにした……
+			ENDDATA
+		ELSE
+			PRINTDATAL
+				DATAFORM %ARGS:0%は%ARGS:1%に悦んで身体を開いた……
+				DATAFORM %ARGS:1%は%ARGS:0%に奉仕するよう命じた……
+				DATAFORM %ARGS:0%は%ARGS:1%に奉仕を始めた……
+				DATAFORM %ARGS:0%は%ARGS:1%に可愛がってもらった……
+				DATAFORM %ARGS:0%は自分の身体で%ARGS:1%に愉しんでもらった……
+				DATAFORM %ARGS:0%は%ARGS:1%の性欲を鎮めさせていただいた……
+				DATAFORM %ARGS:1%は%ARGS:0%に「使って」もらった……
+			ENDDATA
+		ENDIF
+
+	CASE 3
+	CASE 4
+		SELECTCASE ARG:2
+			CASE 0
+				PRINTDATAW
+					DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れた……
+				ENDDATA
+			CASE 1
+				PRINTDATAW
+					DATALIST
+						DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れようとした……
+						DATAFORM しかし、情がわいてしまったため、別れることはできなかった……
+					ENDLIST
+				ENDDATA
+		ENDSELECT
+ENDSELECT

@@ -1,0 +1,153 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_176
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	被害者
+;5	ダメージ基準値
+;6	助けてもらえない場合
+;7	壁尻を犯した
+;8	犯人1
+;9	犯人2
+
+LOCAL:3 = 0
+LOCAL:6 = 0
+LOCAL:7 = 0
+LOCAL:8 = 0
+LOCAL:9 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = LIMIT(RAND:100, 50, 100) + RAND:150
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, LOCAL:1 * 10)
+	IF FLAG:11 && RAND:3 == 0
+		LOCAL:4 = FLAG:11
+		IF (FLAG:10 == 0 || CFLAG:(FLAG:10):29) && CFLAG:1:29
+			LOCAL:6 = 1
+		ENDIF
+	ELSEIF FLAG:10 && RAND:2 == 0
+		LOCAL:4 = FLAG:10
+		IF (FLAG:11 == 0 || CFLAG:(FLAG:11):29) && CFLAG:1:29
+			LOCAL:6 = 1
+		ENDIF
+	ELSE
+		LOCAL:4 = 1
+		IF (FLAG:11 == 0 || CFLAG:(FLAG:11):29) && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
+			LOCAL:6 = 1
+		ENDIF
+	ENDIF
+	PRINTFORMW %CALLNAME:(LOCAL:4)%は突然床から現れたスライムに上半身を捉えられた！
+	CALL REACTION_TRAP(LOCAL:4)
+	;霊撃で抜けたら終了
+	IF RESULT == 0
+		PRINTFORMW %CALLNAME:(LOCAL:4)%は脱出した！
+		LOCAL:4 = 0
+		LOCAL:6 = 0
+	ENDIF
+	
+	IF LOCAL:6 == 0 && LOCAL:4
+		PRINTFORMW %CALLNAME:(LOCAL:4)%は足を拘束されたまま尻をこちらに向けて動けないでいる！
+		PRINTFORML 
+		PRINTFORML 助けますか？
+		PRINTFORML [1] 助ける
+		PRINTFORML [2] 助けない
+		;主人公がふたなりで、仲間がいないか全員戦意喪失かふたなりだと犯せる
+		IF LOCAL:4 != 1 && GET_PENIS(1) && CFLAG:1:29 == 0 && (FLAG:520 == 2 || (FLAG:10 == 0 || (FLAG:11 == 0 && (CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10))) || ((CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10)) && (CFLAG:(FLAG:11):29 || GET_PENIS(FLAG:11)))))
+			PRINTFORML [3] 犯す
+		ENDIF
+		INPUT
+		IF RESULT == 1
+			PRINTFORML 敵意を感じたスライムは%CALLNAME:(LOCAL:4)%を離して逃げた！
+		ELSE
+			LOCAL:6 = 1
+			IF RESULT == 3
+				IF LOCAL:4 != 1
+					LOCAL:7 = 1
+					LOCAL:8 = 1
+					;被害者が2人目で、かつ3人目が喪失していない
+					IF LOCAL:4 == FLAG:10 && FLAG:11 && CFLAG:(FLAG:11):29 == 0
+						LOCAL:9 = FLAG:11
+					;被害者が3人目で、かつ2人目が喪失していない
+					ELSEIF LOCAL:4 == FLAG:11 && FLAG:10 && CFLAG:(FLAG:10):29 == 0
+						LOCAL:9 = FLAG:10
+					ELSE
+						LOCAL:9 = 0
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+	;主人公が捕まった場合ふたなりキャラより襲われる
+	IF LOCAL:4 == 1 && ((GET_PENIS(FLAG:10)) && (FLAG:11 == 0 || GET_PENIS(FLAG:11)))
+		IF FLAG:11 && CFLAG:(FLAG:11):29 == 0
+			LOCAL:8 = FLAG:11
+		ELSEIF (FLAG:11 == 0 || CFLAG:(FLAG:11):29) && (FLAG:10 && CFLAG:(FLAG:10):29 == 0)
+			LOCAL:8 = FLAG:10
+		ENDIF
+		IF (FLAG:11 && CFLAG:(FLAG:11):29 == 0) && (FLAG:10 && CFLAG:(FLAG:10):29 == 0)
+			LOCAL:9 = FLAG:10
+		ENDIF
+		LOCAL:7 = 1
+	ENDIF
+	;ダメージメッセージ処理
+	IF LOCAL:6
+		IF TALENT:(LOCAL:4):130
+			CALL PRINT_MESSAGE((LOCAL:4), 200, 176, CALLNAME:(LOCAL:4), "", 0)
+		ELSE
+			CALL PRINT_MESSAGE((LOCAL:4), 200, 176, CALLNAME:(LOCAL:4), "", 1)
+		ENDIF
+		IF LOCAL:7
+			CALL PRINT_MESSAGE((LOCAL:8), 200, 176, CALLNAME:(LOCAL:8), "", 2)
+			IF LOCAL:9
+				CALL PRINT_MESSAGE((LOCAL:9), 200, 176, CALLNAME:(LOCAL:9), "", 3)
+			ENDIF
+		ENDIF
+		FOR LOCAL:0, 1, 5
+			TFLAG:63 = 1
+			LOCAL:5 = CALC_SENSITIVITY((LOCAL:4), TFLAG:63, LOCAL:1)
+			IF TALENT:(LOCAL:4):130
+				CALL DAMAGE_COMMON((LOCAL:4), 2, LOCAL:5 * 15 * (TALENT:(LOCAL:4):102 + 2) * (TALENT:(LOCAL:4):76 + 1), 1500)
+			ELSE
+				CALL DAMAGE_COMMON((LOCAL:4), 2, LOCAL:5 * 7 * (TALENT:(LOCAL:4):102 + 2) * (TALENT:(LOCAL:4):76 + 1), 500)
+			ENDIF
+			TFLAG:63 = 0
+			;襲いかかっていると追加ダメージ　襲われている側は見えないので好感度増減なし
+			IF LOCAL:7 && LOCAL:8 > 0
+				TFLAG:63 = 3
+				LOCAL:5 = CALC_SENSITIVITY((LOCAL:4), TFLAG:63, LOCAL:1)
+				IF TALENT:(LOCAL:4):130
+					CALL DAMAGE_COMMON((LOCAL:4), 2, LOCAL:5 * 15 * (TALENT:(LOCAL:4):102 + 2) * (TALENT:(LOCAL:4):76 + 1), 1500)
+				ELSE
+					CALL DAMAGE_COMMON((LOCAL:4), 2, LOCAL:5 * 7 * (TALENT:(LOCAL:4):102 + 2) * (TALENT:(LOCAL:4):76 + 1), 500)
+				ENDIF
+				TFLAG:63 = 2
+				LOCAL:5 = CALC_SENSITIVITY((LOCAL:8), TFLAG:63, LOCAL:1)
+				CALL DAMAGE_COMMON((LOCAL:8), 2, LOCAL:5 * 7 * (TALENT:(LOCAL:8):102 + 2) * (TALENT:(LOCAL:8):76 + 1), 500)
+				IF LOCAL:9
+					LOCAL:5 = CALC_SENSITIVITY((LOCAL:9), TFLAG:63, LOCAL:1)
+					CALL DAMAGE_COMMON((LOCAL:9), 2, LOCAL:5 * 7 * (TALENT:(LOCAL:9):102 + 2) * (TALENT:(LOCAL:9):76 + 1), 500)
+				ENDIF
+			ENDIF
+			TFLAG:63 = 0
+		NEXT
+		PRINTFORMW %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
+	ENDIF
+	;別の場所に再配置
+	FLAG:176 = RAND:30 + 1
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

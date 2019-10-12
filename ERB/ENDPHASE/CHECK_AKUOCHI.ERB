@@ -1,0 +1,274 @@
+﻿;フェイズごとの悪堕ちチェック
+;ARG:0	対象キャラ
+@CHECK_AKUOCHI(ARG:0)
+;LOCAL
+;0	LOOP
+;1	メッセージ表示フラグ
+;2	習得条件カウント
+
+SIF FLAG:538 == 0
+	RETURN
+
+;喪失状態や拘束状態だといろいろと処理がめんどいのでスルー
+SIF CFLAG:(ARG:0):10 || CFLAG:(ARG:0):29
+	RETURN
+
+;触手中毒３orレズ中毒３は絶対条件
+SIF ABL:(ARG:0):11 < 3 && ABL:(ARG:0):13 < 3
+	RETURN
+
+;今のところ娘は悪堕ち（悪戻り？）しない
+SIF CFLAG:(ARG:0):104
+	RETURN
+
+;すでに悪堕ち+リタイア済みなら処理しない
+SIF TALENT:(ARG:0):73 && (CFLAG:(ARG:0):2 || ARG:0 == 1)
+	RETURN
+
+;主人公と場所が違うかチェック
+IF CFLAG:(ARG:0):4 != CFLAG:1:4
+	LOCAL:1 = 0
+ELSE
+	LOCAL:1 = 1
+ENDIF
+
+IF TALENT:(ARG:0):156 == 0
+	LOCAL:2 = 0
+	;ABLだけで最大＋９
+	FOR LOCAL:0, 6, 12
+		IF ABL:(ARG:0):(LOCAL:0)
+			LOCAL:2 += 1
+		ENDIF
+	NEXT
+
+	SIF ABL:(ARG:0):13 >= 3
+		LOCAL:2 += 1
+
+	SIF ABL:(ARG:0):14 >= 3
+			LOCAL:2 += 1
+	
+	SIF ABL:(ARG:0):15 >= 3
+			LOCAL:2 += 1
+
+	;状態異常で最大＋４
+	SIF CFLAG:(ARG:0):22
+		LOCAL:2 += 1
+
+	SIF CFLAG:(ARG:0):28 >= 2
+		LOCAL:2 += 1
+
+	SIF CFLAG:(ARG:0):80 >= 10
+		LOCAL:2 += 1
+
+	SIF CFLAG:(ARG:0):81
+		LOCAL:2 += 1
+	
+	;淫乱系素質で最大＋１１
+	SIF TALENT:(ARG:0):74
+		LOCAL:2 += 1
+	
+	FOR LOCAL:0, 75, 80
+		IF TALENT:(ARG:0):(LOCAL:0)
+			LOCAL:2 += 2
+		ENDIF
+	NEXT
+
+	;触手同化による補正
+	CALL DOUKA_EFFECT_2(ARG)
+	IF RESULT > 0
+		LOCAL:2 += RESULT:1
+	ENDIF
+
+
+	;９以上で淫魔化、悪堕ちスタート
+	IF LOCAL:2 >= 9
+		SIF LOCAL:1 == 1
+			CALL PRINT_MESSAGE(ARG:0, 447, 0, CALLNAME:(ARG:0), "")
+	
+		TALENT:(ARG:0):156 = 1
+	ENDIF
+
+	RETURN
+
+;悪堕ちポイント追加
+ELSE
+	;反抗的、プライド高いは悪堕ちしにくい。ちょっと頼りにくい感があったので丸ごと避けられるように改変して効果増
+	;……プライド高い奴が本当に悪堕ちしにくいかはさておき（「くっ殺せ！」とか言ってる依姫の画像を見ながら）
+	SIF RAND:4 == 0 && (TALENT:(ARG:0):11 || TALENT:(ARG:0):15)
+		RETURN
+
+	CFLAG:(ARG:0):160 += 1
+
+	;寄生、侵蝕で加速。ただし異形耐性と蓬莱人は寄生に耐性
+	SIF CFLAG:(ARG:0):22 && TALENT:(ARG:0):128 == 0 && TALENT:(ARG:0):155 == 0
+		CFLAG:(ARG:0):160 += 1
+
+	SIF CFLAG:(ARG:0):80 >= 15
+		CFLAG:(ARG:0):160 += 1
+
+	;拘束されていると悪堕ちが加速する。そりゃねえ……
+	SIF CFLAG:(ARG:0):504 == 1
+		CFLAG:(ARG:0):160 += 1
+
+	;触手同化による補正
+	CALL DOUKA_EFFECT_3(ARG)
+	IF RESULT > 0
+		CFLAG:(ARG:0):160 += RESULT:1
+	ENDIF
+
+	SIF CFLAG:(ARG:0):160 < 100
+		RETURN
+
+	;悪堕ちポイント100以上で危険水域
+	IF TALENT:(ARG:0):123 == 0
+		CALL PRINT_MESSAGE(ARG:0, 447, 1, CALLNAME:(ARG:0), "")
+		TALENT:(ARG:0):123 = 1
+	;パーティメンバーは好感度/2＜悪堕ちポイントで脱走悪堕ち。主人公が喪失している場合はさすがに脱走しない
+	ELSEIF (FLAG:10 == ARG:0 || FLAG:11 ==  ARG:0) && (CFLAG:(ARG:0):5 / 2 < CFLAG:(ARG:0):160) && CFLAG:1:29 == 0
+		CALL PRINT_MESSAGE(ARG:0, 447, 2, CALLNAME:(ARG:0), "")
+		CALL PRINT_MESSAGE(1, 447, 3, CALLNAME:1, CALLNAME:(ARG:0), ARG:0)
+
+		CALL MEMBER_EXIT_ID(ARG:0)
+
+		;現在位置をほんのりずらす
+		IF CFLAG:(ARG:0):4 < 15
+			CFLAG:(ARG:0):4 += 2
+		ELSE
+			CFLAG:(ARG:0):4 -= 2
+		ENDIF
+
+		CALL ADD_HISTORY(DAY, ARG:0,, 16)
+
+		IF FLAG:538 > 1 && BASE:(ARG:0):3 * 3 > MAXBASE:(ARG:0):3 * 2 && CFLAG:(ARG:0):48 && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 104
+			CALL CREATE_ENEMY(104, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSEIF FLAG:538 > 1 && (NO:(ARG:0) == 42 || NO:(ARG:0) == 43) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 105
+			CALL CREATE_ENEMY(105, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSEIF FLAG:538 > 1 && (NO:(ARG:0) == 34 || NO:(ARG:0) == 37 || NO:(ARG:0) == 38) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 103
+			CALL CREATE_ENEMY(103, CFLAG:(ARG:0):4, 0, ARG:0)
+		;戦闘素質が高いキャラ、もしくはパチュリーえーりんせーがは一定確率で触手姫
+		ELSEIF (ABL:(ARG:0):98 >= 75 || NO:(ARG:0) == 8 || NO:(ARG:0) == 29 || NO:(ARG:0) == 102) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 102
+			CALL CREATE_ENEMY(102, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSE
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 101
+			CALL CREATE_ENEMY(101, CFLAG:(ARG:0):4, 0, ARG:0)
+		ENDIF
+
+		;問答無用でリタイア。念のため喪失させる
+		;リタイアしているはずなのにスライムスーツが喋ったので対策を追加、念のため触手服も
+		CFLAG:(ARG:0):29 = 1
+		CFLAG:(ARG:0):48 = 0
+		CFLAG:(ARG:0):37 = 0
+		BASE:(ARG:0):3 = 0
+		CFLAG:(ARG:0):2 = 1
+		FLAG:0 -= 1
+		;敵に男なしなら悪堕ち男の娘は女の子に、リタイアから復活手段がまだないのでTSでいいか
+		IF FLAG:512 == 2
+			TALENT:(ARG:0):122 = 0
+		ENDIF
+	
+	;主人公は特殊イベント
+	ELSEIF ARG:0 == 1 && CFLAG:(ARG:0):160 > 100 && CFLAG:(ARG:0):504 == 0
+		
+		CALL PRINT_MESSAGE(1, 447, 5, CALLNAME:1, CALLNAME:(ARG:0), ARG:0)
+
+		;現在位置をほんのりずらす
+		IF CFLAG:(ARG:0):4 < 15
+			CFLAG:(ARG:0):4 += 2
+		ELSE
+			CFLAG:(ARG:0):4 -= 2
+		ENDIF
+
+		CALL ADD_HISTORY(DAY, ARG:0,, 16)
+
+		IF FLAG:538 > 1 && BASE:(ARG:0):3 * 3 > MAXBASE:(ARG:0):3 * 2 && CFLAG:(ARG:0):48 && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 104
+			CALL CREATE_ENEMY(104, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSEIF FLAG:538 > 1 && (NO:(ARG:0) == 42 || NO:(ARG:0) == 43) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 105
+			CALL CREATE_ENEMY(105, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSEIF FLAG:538 > 1 && (NO:(ARG:0) == 34 || NO:(ARG:0) == 37 || NO:(ARG:0) == 38) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 103
+			CALL CREATE_ENEMY(103, CFLAG:(ARG:0):4, 0, ARG:0)
+		;戦闘素質が高いキャラ、もしくはパチュリーえーりんせーがは一定確率で触手姫
+		ELSEIF (ABL:(ARG:0):98 >= 75 || NO:(ARG:0) == 8 || NO:(ARG:0) == 29 || NO:(ARG:0) == 102) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 102
+			CALL CREATE_ENEMY(102, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSE
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 101
+			CALL CREATE_ENEMY(101, CFLAG:(ARG:0):4, 0, ARG:0)
+		ENDIF
+		
+		
+		;敵に男なしなら悪堕ち男の娘は女の子に、リタイアから復活手段がまだないのでTSでいいか
+		IF FLAG:512 == 2
+			TALENT:(ARG:0):122 = 0
+		ENDIF
+
+	;それ以来の味方は悪堕ちポイント120越えで悪堕ち
+	;ただし拘束されていれば悪堕ちしない……というよりできない
+	ELSEIF FLAG:10 != ARG:0 && FLAG:11 != ARG:0 && CFLAG:(ARG:0):160 > 120 && CFLAG:(ARG:0):504 == 0
+		;主人公と同じ部屋で主人公の気配察知３
+		SIF LOCAL:1 == 1 && CFLAG:1:10 == 0 && CFLAG:1:29 == 0 && ABL:1:1 >= 3
+			CALL PRINT_MESSAGE(1, 447, 4, CALLNAME:1, CALLNAME:(ARG:0), ARG:0)
+
+		;現在位置をほんのりずらす
+		IF CFLAG:(ARG:0):4 < 15
+			CFLAG:(ARG:0):4 += 2
+		ELSE
+			CFLAG:(ARG:0):4 -= 2
+		ENDIF
+
+		CALL ADD_HISTORY(DAY, ARG:0,, 16)
+
+		IF FLAG:538 > 1 && BASE:(ARG:0):3 * 3 > MAXBASE:(ARG:0):3 * 2 && CFLAG:(ARG:0):48 && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 104
+			CALL CREATE_ENEMY(104, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSEIF FLAG:538 > 1 && (NO:(ARG:0) == 42 || NO:(ARG:0) == 43) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 105
+			CALL CREATE_ENEMY(105, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSEIF FLAG:538 > 1 && (NO:(ARG:0) == 34 || NO:(ARG:0) == 37 || NO:(ARG:0) == 38) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 103
+			CALL CREATE_ENEMY(103, CFLAG:(ARG:0):4, 0, ARG:0)
+		;戦闘素質が高いキャラ、もしくはパチュリーえーりんせーがは一定確率で触手姫
+		ELSEIF (ABL:(ARG:0):98 >= 75 || NO:(ARG:0) == 8 || NO:(ARG:0) == 29 || NO:(ARG:0) == 102) && RAND:2
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 102
+			CALL CREATE_ENEMY(102, CFLAG:(ARG:0):4, 0, ARG:0)
+		ELSE
+			;判別用の悪堕ち素質
+			TALENT:(ARG:0):73 = 101
+			CALL CREATE_ENEMY(101, CFLAG:(ARG:0):4, 0, ARG:0)
+		ENDIF
+		
+		;問答無用でリタイア。念のため喪失させる
+		;リタイアしているはずなのにスライムスーツが喋ったので対策を追加、念のため触手服も
+		CFLAG:(ARG:0):29 = 1
+		CFLAG:(ARG:0):48 = 0
+		CFLAG:(ARG:0):37 = 0
+		BASE:(ARG:0):3 = 0
+		CFLAG:(ARG:0):2 = 1
+		FLAG:0 -= 1
+		;敵に男なしなら悪堕ち男の娘は女の子に、リタイアから復活手段がまだないのでTSでいいか
+		IF FLAG:512 == 2
+			TALENT:(ARG:0):122 = 0
+		ENDIF
+
+	ENDIF
+ENDIF

@@ -1,0 +1,19 @@
+﻿;妖精復活処理
+;実は処理には妖精関係なし
+;ARG:0	対象キャラ
+@REVIVE_FAIRLY(ARG:0)
+
+IF CFLAG:(ARG:0):3 <= 0
+	;復活時間が設定されていなければ何もしない
+	RETURN
+ENDIF
+
+CFLAG:(ARG:0):3 -= 1
+
+IF CFLAG:(ARG:0):3 <= 0
+	;何もしなくて良いはずだが、念のためステータス異常などを解除
+	CFLAG:(ARG:0):10 = 0
+	CFLAG:(ARG:0):20 = 0
+	CFLAG:(ARG:0):21 = 0
+ENDIF
+

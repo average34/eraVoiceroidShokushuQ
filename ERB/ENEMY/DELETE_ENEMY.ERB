@@ -1,0 +1,245 @@
+﻿;敵の削除処理
+;ARG:0	削除する敵
+@DELETE_ENEMY(ARG:0)
+;LOCAL
+;0	LOOP
+;1	LOOP2
+;2	現在位置
+
+LOCAL:2 = DA:(ARG:0):4
+
+;悪堕ちキャラが負けた場合弱体化して復活
+IF DA:(ARG:0):0 >= 101 && DA:(ARG:0):0 <= 102
+	;味方の捕食相手変更＋解放チェック
+	FOR LOCAL:0, 1, CHARANUM
+		IF CFLAG:(LOCAL:0):10 && CFLAG:(LOCAL:0):10 == ARG:0
+			;削除する敵に捕食されていた場合、解放
+			;……いやまぁ削除しないんだが
+			CALL STATUS_RENEW_RELEASE(LOCAL:0)
+		ENDIF
+	NEXT
+
+	DA:(ARG:0):1 = DA:(ARG:0):2
+	IF DA:(ARG:0):5 >= 40
+		DA:(ARG:0):5 *= 4
+		DA:(ARG:0):5 /= 5
+		DA:(ARG:0):5 += RAND:5 - RAND:8
+	ENDIF
+
+	IF CFLAG:1:4 < 15
+		DA:(ARG:0):4 = 26 + RAND:5
+		DA:(ARG:0):13 = DA:(ARG:0):4
+	ELSE
+		DA:(ARG:0):4 = 1 + RAND:5
+		DA:(ARG:0):13 = DA:(ARG:0):4
+	ENDIF
+	
+	;戦闘素質一定以下でペット化可能
+	IF DA:(ARG:0):5 <= 50 + RAND:10
+		DA:(ARG:0):88 = 0
+	ENDIF
+
+	RETURN
+ENDIF
+
+;該当敵以降のデータを1つずつずらす
+FOR LOCAL:0, ARG:0, FLAG:1 - 1
+	FOR LOCAL:1, 0, VARSIZE("DA", 1)
+		DA:(LOCAL:0):(LOCAL:1) = DA:(LOCAL:0 + 1):(LOCAL:1)
+		SAVESTR:(LOCAL:0) = %SAVESTR:(LOCAL:0 + 1)%
+	NEXT
+NEXT
+
+;末尾に移動した削除対象を消去
+FOR LOCAL:1, 0, VARSIZE("DA", 1)
+	DA:(FLAG:1):(LOCAL:1) = 0
+NEXT
+
+;敵の数を減らす
+FLAG:1 -= 1
+
+;浄化力補充
+IF LOCAL:2 != FLAG:5
+	;NPCが倒した敵の分は少しだけ補充
+	FLAG:6 += 5 + RAND:11
+ELSE
+	FLAG:6 += 10 + RAND:21
+ENDIF
+IF FLAG:6 > 300
+	FLAG:6 = 300
+ENDIF
+
+;味方の捕食相手変更＋解放チェック
+FOR LOCAL:0, 1, CHARANUM
+	IF CFLAG:(LOCAL:0):10 && CFLAG:(LOCAL:0):10 == ARG:0
+		;削除する敵に捕食されていた場合、解放
+		CALL STATUS_RENEW_RELEASE(LOCAL:0)
+	ELSEIF CFLAG:(LOCAL:0):10 && CFLAG:(LOCAL:0):10 > ARG:0
+		;削除する敵よりIDが大きいものに捕食されていた場合、IDをずらす
+		CFLAG:(LOCAL:0):10 -= 1
+	ENDIF
+	IF CFLAG:(LOCAL:0):20 && CFLAG:(LOCAL:0):20 == ARG:0
+		;削除する敵に捕食されていた場合、解放
+		CALL STATUS_RENEW_RELEASE(LOCAL:0)
+	ELSEIF CFLAG:(LOCAL:0):20 && CFLAG:(LOCAL:0):20 > ARG:0
+		;削除する敵よりIDが大きいものに捕食されていた場合、IDをずらす
+		CFLAG:(LOCAL:0):20 -= 1
+	ENDIF
+	IF CFLAG:(LOCAL:0):504 && CFLAG:(LOCAL:0):504 == ARG:0
+		;削除する敵に捕食されていた場合、解放
+		CALL STATUS_RENEW_RELEASE(LOCAL:0)
+	ELSEIF CFLAG:(LOCAL:0):504 > 1 && CFLAG:(LOCAL:0):504 > ARG:0
+		;削除する敵よりIDが大きいものに捕食されていた場合、IDをずらす
+		CFLAG:(LOCAL:0):504 -= 1
+	ENDIF
+NEXT
+
+;勝利時一定確率で女性触手が仲間になることがある
+;ARG:0	削除する敵
+@DELETE_ENEMY_2(ARG:0)
+;LOCAL
+;0	LOOP
+;1	LOOP2
+;2	現在位置
+;3	お仕置きフラグ 仲間になっていると1なので襲えない
+;4	お仕置き部位
+
+
+LOCAL:2 = DA:(ARG:0):4
+LOCAL:3 = 0
+
+IF DA:(ARG:0):0 == 19
+	;後の条件に引っかからないように追加
+	LOCAL:3 += 1
+	;娘を倒した場合、味方陣営に移すか確認
+	;V1.00から、NPCは娘にトドメを刺せないように変更（ボスと同じ扱い）
+	PRINTFORML %CALLNAME:1%%TACHI()%に倒された%SAVESTR:(ARG:0)%は一旦大人しくなったようだ…
+	PRINTFORML %SAVESTR:(ARG:0)%をどうしますか？
+	PRINTFORML [1] こちらの陣営に引き込む
+	PRINTFORML [2] 自分たちを襲わないように言い聞かせる
+	IF FLAG:507 > 0
+		PRINTFORML [3] 埋める
+	ENDIF
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 1
+		;ここでは何もしない
+	ELSEIF RESULT == 2
+		PRINTFORMW %CALLNAME:1%%TACHI()%に説得された%SAVESTR:(ARG:0)%は、何処かに去って行った…
+		GOTO DELETE_START
+	ELSEIF RESULT == 3
+		PRINTFORMW %CALLNAME:1%%TACHI()%は動けなくなった%SAVESTR:(ARG:0)%を埋めた……
+		FLAG:48 += 1
+		GOTO DELETE_START
+	ELSE
+		GOTO INPUT_LOOP
+	ENDIF
+
+	CALL CHECK_DAUGHTER
+	IF RESULT == 0
+		;娘の追加ができない場合、キャンセル(滅多にないはず)
+		PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は、泣きながら去って行った…
+		GOTO DELETE_START
+	ENDIF
+		LOCAL:1 = CHARANUM - 1
+		CALLNAME:(LOCAL:1) = %SAVESTR:(ARG:0)%
+		
+
+		;娘を倒した場合、味方陣営に移る
+		PRINTFORMW オシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+
+	;●入れ替わりパッチごっそりと改修START
+		;該当する娘を虚空から呼び出す
+		CFLAG:(DA:(ARG:0):48):4 = LOCAL:2
+		;行動不能用喪失フラグを除去
+		CFLAG:(DA:(ARG:0):48):29 = 0
+		BASE:(DA:(ARG:0):48):1 = MAXBASE:(DA:(ARG:0):48):1
+		;仲間にしなかった場合ワープするので一応。
+		CFLAG:(DA:(ARG:0):48):11 = LOCAL:2
+		CFLAG:(DA:(ARG:0):48):13 = LOCAL:2
+		CFLAG:(DA:(ARG:0):48):14 = LOCAL:2
+	;●END
+
+;たぶんまだ増える
+;悪堕ちキャラはペット化のみ
+ELSEIF DA:(ARG:0):0 >= 101 && DA:(ARG:0):0 <= 105
+	;後の条件に引っかからないように追加
+	LOCAL:3 += 1
+ENDIF
+
+$DELETE_START
+;娘以外の仲間になる敵
+
+IF (DA:(ARG:0):85 & 1) && DA:(ARG:0):88 && DA:(ARG:0):4 == FLAG:5 && LOCAL:3 == 0
+	;バンシーは仲間になりやすい でも囮要因
+	IF DA:(ARG:0):0 == 40 && RAND:3 == 0 && DA:(ARG:0):88 == 2
+		PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+		PRINTFORMW しかし%SAVESTR:(ARG:0)%は自分の触手で自分を拘束し自慰に耽り始めてしまった……
+		CALL ADD_NPC_ENEMY(DA:(ARG:0):0)
+	
+	;条件に両刀を追加。効果がレズ中毒に比例するように変更。無駄な括弧があるけどまあこっちのほうが分かりやすいし……
+	ELSEIF FLAG:4 > 0 && DA:(ARG:0):88 == 2 && RAND:75 < (ABL:1:13 * (TALENT:1:81 + 1)) + (ABL:(FLAG:10):13 * (TALENT:(FLAG:10):81 + 1)) + (ABL:(FLAG:11):131 * (TALENT:(FLAG:11):81 + 1)) + 2
+		PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+		CALL ADD_NPC_ENEMY(DA:(ARG:0):0)
+	
+	;お仕置きフラグ
+	ELSEIF ((CFLAG:1:29 == 0 && GET_PENIS(1)) || (FLAG:10 > 0 && CFLAG:(FLAG:10):29 == 0 && GET_PENIS(FLAG:10)) || (FLAG:11 > 0 && CFLAG:(FLAG:11):29 == 0 && GET_PENIS(FLAG:11)) )
+		PRINTFORML %CALLNAME:1%%TACHI()%に倒された%SAVESTR:(ARG:0)%はまだ意識があるようだ
+		PRINTFORML おしおきしますか？
+		$INPUT_LOOP_2
+		PRINTFORML [1] V
+		PRINTFORML [2] B
+		PRINTFORML [3] A
+		PRINTFORML [4] 口
+		PRINTFORML [5] 触手
+		PRINTFORML [0] やめる
+
+		INPUT
+		IF RESULT == 0 && (ABL:1:12 < 2 && (FLAG:10 == 0 || ABL:(FLAG:10):12 < 2) && (FLAG:11 == 0 || ABL:(FLAG:11):12 < 2))
+			CALL PRINT_MESSAGE(1, 460, RESULT, SAVESTR:(ARG:0), CALLNAME:1)
+		ELSEIF RESULT == 0
+			IF FLAG:10 && (CFLAG:1:29 == 1 || GET_PENIS(1) == 0 || ABL:1:12 < 2)
+				IF FLAG:11 > 0 && (CFLAG:(FLAG:10):29 == 1 || GET_PENIS(FLAG:10) == 0 || ABL:(FLAG:10):12 < 2)
+					CALL PRINT_MESSAGE(FLAG:11, 460, -1, SAVESTR:(ARG:0), CALLNAME:(FLAG:10))
+				ELSE
+					CALL PRINT_MESSAGE(FLAG:10, 460, -1, SAVESTR:(ARG:0), CALLNAME:(FLAG:10))
+				ENDIF
+			ELSE
+				CALL PRINT_MESSAGE(1, 460, -1, SAVESTR:(ARG:0), CALLNAME:1)
+			ENDIF
+			GOTO INPUT_LOOP_2
+		ELSEIF RESULT > 0 && RESULT < 6
+			LOCAL:4 = RESULT
+			TFLAG:52 = ARG:0
+			TFLAG:63 = 2
+			IF CFLAG:1:29 == 0 && GET_PENIS(1)
+				CALL PRINT_MESSAGE(1, 460, LOCAL:4, SAVESTR:(ARG:0), CALLNAME:1)
+				LOCAL:1 = CFLAG:1:42 * (ABL:1:12 * ABL:1:12 + 1) * CALC_SENSITIVITY(1, TFLAG:63, 100) / 3
+				CALL DAMAGE_COMMON(1, 2, LOCAL:1 + RAND:1000, 20)
+				CALL ADD_ABL_EXP(11,1, 2 + RAND:5)
+				CALL ADD_ABL_EXP(13,1, 2 + RAND:5)
+			ENDIF
+			IF FLAG:10 > 0 && CFLAG:(FLAG:10):29 == 0 && GET_PENIS(FLAG:10)
+				CALL PRINT_MESSAGE(FLAG:10, 460, LOCAL:4, SAVESTR:(ARG:0), CALLNAME:(FLAG:10))
+				LOCAL:1 = CFLAG:(FLAG:10):42 * (ABL:(FLAG:10):12 * ABL:(FLAG:10):12 + 1) * CALC_SENSITIVITY(FLAG:10, TFLAG:63, 100) / 3
+				CALL DAMAGE_COMMON(FLAG:10, 2, LOCAL:1 + RAND:1000, 20)
+				CALL ADD_ABL_EXP(11,(FLAG:10), 2 + RAND:5)
+				CALL ADD_ABL_EXP(13,(FLAG:10), 2 + RAND:5)
+			ENDIF
+			IF FLAG:11 > 0 && CFLAG:(FLAG:11):29 == 0 && GET_PENIS(FLAG:11)
+				CALL PRINT_MESSAGE(FLAG:11, 460, LOCAL:4, SAVESTR:(ARG:0), CALLNAME:(FLAG:11))
+				LOCAL:1 = CFLAG:(FLAG:11):42 * (ABL:(FLAG:11):12 * ABL:(FLAG:11):12 + 1) * CALC_SENSITIVITY(FLAG:11, TFLAG:63, 100) / 3
+				CALL DAMAGE_COMMON(FLAG:11, 2, LOCAL:1 + RAND:1000, 20)
+				CALL ADD_ABL_EXP(11,(FLAG:11), 2 + RAND:5)
+				CALL ADD_ABL_EXP(13,(FLAG:11), 2 + RAND:5)
+			ENDIF
+		ELSE
+			GOTO INPUT_LOOP_2
+		ENDIF
+	ENDIF
+ENDIF
+
+;同じ部屋で中身入りのバイオプラントが倒されたらイベント
+;IF DA:(ARG:0):4 == FLAG:5 && DA:(ARG:0):0 == 4 && DA:(ARG:0):87 && FLAG:507 > 0
+;	CALL 
+;ENDIF

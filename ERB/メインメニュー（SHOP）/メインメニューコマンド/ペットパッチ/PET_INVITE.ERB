@@ -1,0 +1,159 @@
+﻿@PET_INVITE
+#DIM LCOUNT
+#DIM 対象
+VARSET LOCAL
+;LOCAL　仲間になる確率
+;LOCAL:1 - 10 仲間になる候補確定用
+
+;すでにいる場合はﾅｰｼ
+SIF PET:0
+	RETURN
+
+;-----------------
+;起き上がり候補確定
+;-----------------
+FOR LCOUNT, 1, TFLAG:15 + 1
+	SIF TFLAG:LCOUNT > 0
+		LOCAL:LCOUNT = RAND:100
+NEXT
+MAX LOCAL:1, LOCAL:2, LOCAL:3, LOCAL:4, LOCAL:5, LOCAL:6, LOCAL:7, LOCAL:8, LOCAL:9, LOCAL:10
+FOR LCOUNT, 1 , TFLAG:15 + 1
+	SIF RESULT == LOCAL:LCOUNT
+		対象 = TFLAG:LCOUNT
+NEXT
+;-----------------
+;起き上がり候補確定おわり
+;-----------------
+
+
+;-----------------
+;起き上がり確率判定おわり
+;エネミー図鑑の人のおかげでここの処理がめっちゃ簡単になったよ！！
+;-----------------
+SELECTCASE DA:対象:86
+	CASE 6, 7
+		LOCAL = 10
+	CASE 4, 5
+		LOCAL = 15
+	CASE 1, 2, 3
+		LOCAL = 20
+	CASE 0
+		LOCAL = 15
+ENDSELECT
+
+;触手使役術
+SIF TALENT:1:触手使役術 && CFLAG:1:29 == 0
+	LOCAL += 15
+
+SIF FLAG:10 && TALENT:(FLAG:10):触手使役術 && CFLAG:(FLAG:10):29 == 0
+	LOCAL += 15
+
+SIF FLAG:11 && TALENT:(FLAG:11):触手使役術 && CFLAG:(FLAG:11):29 == 0
+	LOCAL += 15
+
+;特別な処理
+SELECTCASE DA:対象:0
+	;ヒュプノ、マンボウは倒すの大変なので確定で起き上がる
+	;というか、マンボウは倒せるものなのだろうか……？
+	CASE 51, 98
+		LOCAL = 100
+	;追加、ペット専用敵の確率は100固定
+	CASE 70
+		LOCAL = 100
+	;悪堕ちキャラは高い確率でペットに
+	CASE 101, 102
+		LOCAL = 50
+	;転生悪堕ちキャラは必ずペットに
+	CASE 103, 104, 105
+		LOCAL = 100
+ENDSELECT
+
+;デバッグなら必ず仲間に
+SIF FLAG:9
+	LOCAL = 100000000
+
+SIF DA:対象:88
+	LOCAL = -1
+;-----------------
+;起き上がり確率判定おわり
+;-----------------
+
+
+;-----------------
+;条件満たさなければ戻す
+;-----------------
+IF LOCAL < RAND:100
+	;悪落ちの場合メッセージ
+	IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+		PRINTFORML 何とか%SAVESTR:(対象)%を気絶させることに成功したものの、
+		PRINTFORML 倒れたその体を肉々しい地面が飲み込んでそのままどこかへ隠してしまった。
+		PRINTFORMW もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
+	ENDIF
+	RETURN
+ENDIF
+;-----------------
+;条件満たさなければ戻す処理終わり
+;-----------------
+
+
+;-----------------
+;入力及び分岐
+;-----------------
+IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+	PRINTFORML ようやく大人しくなった%SAVESTR:対象%は起き上がってこちらを見ている。
+	PRINTFORML 敵意は無くなったようだが、ぼんやりとしたその瞳は正気に戻ったようには見えない……
+	PRINTFORML 連れて行きますか？
+ELSE
+
+	IF !TALENT:1:ペット
+		PRINTFORML なんと%SAVESTR:対象%が起き上がってこちらをみている！
+		PRINTFORML どうやら心を入れ替えたようだ……
+		PRINTFORML 仲間にしますか？
+	ELSE
+		PRINTFORML %SAVESTR:対象%のたくましさに%CALLNAME:1%は魅了されてしまった……
+		PRINTFORML ご主人様になってもらうのも悪くないかもしれない
+		PRINTFORML なってもらいますか？
+	ENDIF
+ENDIF
+PRINTFORML [1] - はい
+PRINTFORML [0] - いいえ
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	PRINTFORMW %SAVESTR:対象%は悲しそうに去っていった……
+	RETURN
+ELSEIF RESULT != 1
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORML %SAVESTR:対象%を仲間にした！
+PRINTFORML 名前を何にしますか？
+PRINTFORML 何も入力しないと種族名が入ります
+INPUTS
+IF RESULTS == ""
+	PETNAME = %SAVESTR:対象%
+ELSE
+	PETNAME = %RESULTS%
+ENDIF
+PRINTFORMW %PETNAME%を仲間にした！
+;悪堕ちキャラの場合元キャラを記憶
+;入れるタイミングは地味にここしかない
+IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+	PET:9 = DA:対象:46
+ELSE
+	PET:9 = 0
+ENDIF
+
+
+CALLFORM PRINT_MESSAGE(1, 514, 3, CALLNAME:1, PETNAME)
+IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+	CALLFORM PRINT_MESSAGE(PET:9, 1514, 3, CALLNAME:1, PETNAME)
+ENDIF
+CALL PET_INVITE_2(DA:対象:0)
+
+;悪堕ちキャラなど名前が可変な場合の対策
+SAVESTR:0 = %PETNAME%
+
+;-----------------
+;入力終わり
+;-----------------
+

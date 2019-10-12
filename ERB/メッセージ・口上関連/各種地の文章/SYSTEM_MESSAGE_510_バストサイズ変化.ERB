@@ -1,0 +1,70 @@
+﻿;=================================================
+;バストサイズ変化時のメッセージ（現状は対象キャラのみの呼び出し）
+;ARG:0 メッセージID（510固定）※使わない
+;ARG:1 対象キャラID
+;ARGS:0 対象キャラのCALLNAME
+;ARGS:1 未定義
+;ARG:2 変化前のサイズ（-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳　3:超乳　4:超々乳　5:接地乳房）
+;ARG:3 変化後のサイズ（-2:絶壁　-1:貧乳　0:普乳　1:巨乳　2:爆乳　3:超乳　4:超々乳　5:接地乳房）
+;ARG:4 理由（0:その他 1:アイテムを使った 2:出産時豊乳化 3:自販機 4:膨乳病）
+;ARG:5 理由の補足
+;	ARG:4 == 1 の時(アイテムID)
+;ARG:6 未定義
+;LOCAL:1 超乳レベルor超々乳レベル
+;=================================================
+@SYSTEM_MESSAGE_510(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;-MEMO-
+;変更後に呼び出されるのでここでGET_BUSTを使うと変更後のサイズが返ってくる
+
+IF TALENT:(ARG:1):158
+	LOCAL:1 = TALENT:(ARG:1):158
+	SIF LOCAL:1 >= PLUS_HB1
+		LOCAL:1 = PLUS_HB1
+ELSEIF TALENT:(ARG:1):222
+	LOCAL:1 = TALENT:(ARG:1):222
+	SIF LOCAL:1 >= PLUS_HB2
+		LOCAL:1 = PLUS_HB2
+ELSEIF TALENT:(ARG:1):223
+	LOCAL:1 = TALENT:(ARG:1):223
+	SIF LOCAL:1 >= PLUS_HB3
+		LOCAL:1 = PLUS_HB3
+ENDIF
+
+PRINTFORMD %ARGS:0%の胸が
+SELECTCASE ARG:3
+	CASE -2
+		PRINTD 【絶壁】
+	CASE -1
+		PRINTD 【貧乳】
+	CASE 0
+		PRINTD 【普乳】
+	CASE 1
+		PRINTD 【巨乳】
+	CASE 2
+		PRINTD 【爆乳】
+	CASE 3
+		PRINTD 【超乳
+		;+表記
+		IF LOCAL:1 > 1
+			PRINTFORM +{LOCAL:1-1}
+		ENDIF
+		PRINTD 】
+	CASE 4
+		PRINTD 【超々乳
+		;+表記
+		IF LOCAL:1 > 1
+			PRINTFORM +{LOCAL:1-1}
+		ENDIF
+		PRINTD 】
+	CASE 5
+		PRINTD 【接地乳房
+		;+表記
+		IF LOCAL:1 > 1
+			PRINTFORM +{LOCAL:1-1}
+		ENDIF
+		PRINTD 】
+ENDSELECT
+PRINTDL になった！
+
+;=================================================
+

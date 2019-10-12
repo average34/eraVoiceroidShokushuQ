@@ -1,0 +1,61 @@
+﻿;口上の書き方サンプル
+;複数の口上がある場合の例
+;_0と_1を両方入れれば、口上選択の際に選べるようになります
+;_0の口上がデフォルトになりますが、別の口上を選択すれば
+;グローバルデータにセーブされるので、次からはその口上が自動的に選ばれます
+
+
+;口上選択時のタイトル
+@KOJO_TITLE_87_1
+RESULTS = 半霊サンプル口上その２
+
+
+;口上選択時の詳細説明
+;フリーフォーマットです。ご自由にどうぞ
+@KOJO_DETAIL_87_1
+PRINTFORML 半霊のサンプル用口上です
+PRINTFORML 同じキャラに複数の口上がある場合のサンプルです
+PRINTFORML こちらを選ぶとみょんみょん言い始めます
+
+
+
+;デフォルトの文字色も個別に設定できます
+;口上を切り替えた後、文字色を「デフォルト」で選択しなおさないと反映されない点に注意
+@KOJO_DEFAULT_COLOR_87_1
+;妖夢口上とお揃い
+RETURN RGBCOLOR(0, 255, 32)
+
+
+
+;口上本体
+@KOJO_87_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;地の文はデフォルトのものを使用します
+CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;そのキャラの口上の文字色を反映します
+SETCOLOR CFLAG:700
+
+;面倒くさいので常時みょんみょん言わせます
+;ただし、ARG:0が0の時だけは処理してはいけません
+IF ARG:0 != 0
+	SELECTCASE RAND:4
+		CASE 0
+			PRINTFORML みょん
+		CASE 1
+			PRINTFORML みょんみょん
+		CASE 2
+			PRINTFORML みょみょん
+		CASEELSE
+			PRINTFORML ゆょん
+	ENDSELECT
+ENDIF
+
+RESETCOLOR
+
+;今の所汎用口上の概念が無いので、RETURN 0 が必要になる事は無いと思います
+RETURN 1
+
+
+
+

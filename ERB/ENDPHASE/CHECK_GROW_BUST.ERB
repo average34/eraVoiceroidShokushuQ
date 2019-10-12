@@ -1,0 +1,155 @@
+﻿;フェイズごとの母乳増加チェック
+;ARG:0	対象キャラ
+@CHECK_GROW_BUST(ARG:0)
+;LOCAL
+;0	LOOP
+;1	メッセージ表示フラグ
+;2	超乳レベル
+;3	メッセージ非表示フラグ保持用
+
+
+;豊乳OFFなら無効
+IF FLAG:521 == 1
+	RETURN
+;コンフィグ制限(爆乳まで)＆爆乳以上の場合は無効
+ELSEIF FLAG:521 == 2 && GET_BUST(ARG:0) >= 2
+	RETURN
+;コンフィグ制限(男の娘以外豊乳有り)＆男の娘の場合は無効
+ELSEIF FLAG:521 == 3 && TALENT:(ARG:0):122 > 0
+	RETURN
+ENDIF
+;リタイアしてるなら黙る
+SIF CFLAG:(ARG:0):2
+	RETURN
+
+LOCAL:1 = 0
+CFLAG:(ARG:0):506 += RAND:10
+
+;超乳レベルにより増加に+補正
+IF TALENT:(ARG:0):158 > 0
+	LOCAL:2 = TALENT:(ARG:0):158
+	CFLAG:(ARG:0):506 += RAND:(LOCAL:2 * 2)
+ENDIF
+;超々乳レベルにより増加に+補正
+IF TALENT:(ARG:0):222 > 0
+	LOCAL:2 = TALENT:(ARG:0):222
+	CFLAG:(ARG:0):506 += RAND:(LOCAL:2 * 2)
+ENDIF
+;接地乳房レベルにより増加に+補正
+IF TALENT:(ARG:0):223 > 0
+	LOCAL:2 = TALENT:(ARG:0):223
+	CFLAG:(ARG:0):506 += RAND:(LOCAL:2 * 2)
+ENDIF
+
+;主人公と場所が違うかチェック
+SIF CFLAG:(ARG:0):4 == CFLAG:1:4
+	LOCAL:1 = 1
+
+; メッセージ非表示フラグを保持
+LOCAL:3 = FLAG:20
+FLAG:20 = (LOCAL:1) ? 0 # 1
+
+; 膨乳メッセージ呼び出し
+IF LOCAL:1
+	; 既に接地乳房
+	IF GET_BUST(ARG:0) >= 5
+		IF CFLAG:(ARG:0):506 > 0
+			;奇乳化の値が0より大きい場合に膨乳病のメッセージ7を表示
+			CALL PRINT_MESSAGE(ARG:0, 509,7, CALLNAME:(ARG:0), "")
+		ENDIF
+	; 現在の乳サイズは[超々乳]
+	ELSEIF GET_BUST(ARG:0) == 4
+		IF CFLAG:(ARG:0):506 >= 100
+			;奇乳化の値が100以上に膨乳病のメッセージ6を表示
+			CALL PRINT_MESSAGE(ARG:0, 509,6, CALLNAME:(ARG:0), "")
+			
+			ELSEIF CFLAG:(ARG:0):506 > 50
+			;奇乳化の値が50以上に膨乳病のメッセージ5を表示
+			CALL PRINT_MESSAGE(ARG:0, 509,5, CALLNAME:(ARG:0), "")
+		ELSE
+			;奇乳化の値が上記以外に膨乳病のメッセージ4を表示
+			CALL PRINT_MESSAGE(ARG:0, 509,4, CALLNAME:(ARG:0), "")
+		ENDIF
+	; 現在の乳サイズは[超乳]
+	ELSEIF GET_BUST(ARG:0) == 3
+		IF CFLAG:(ARG:0):506 >= 100
+		;奇乳化の値が100以上に膨乳病のメッセージ6を表示
+			CALL PRINT_MESSAGE(ARG:0, 509,6, CALLNAME:(ARG:0), "")
+			
+			ELSEIF CFLAG:(ARG:0):506 > 50
+			;奇乳化の値が50以上に膨乳病のメッセージ5を表示
+			CALL PRINT_MESSAGE(ARG:0, 509,5, CALLNAME:(ARG:0), "")
+		ELSE
+			;奇乳化の値が上記以外に膨乳病のメッセージ4を表示
+			CALL PRINT_MESSAGE(ARG:0, 509,4, CALLNAME:(ARG:0), "")
+		ENDIF
+		
+	; 現在の乳サイズは[爆乳]
+	ELSEIF GET_BUST(ARG:0) == 2
+		IF CFLAG:(ARG:0):506 >= 100
+			CALL PRINT_MESSAGE(ARG:0, 509,4, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 90
+			CALL PRINT_MESSAGE(ARG:0, 509,3, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 70
+			CALL PRINT_MESSAGE(ARG:0, 509,2, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 50
+			CALL PRINT_MESSAGE(ARG:0, 509,1, CALLNAME:(ARG:0), "")
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 509,0, CALLNAME:(ARG:0), "")
+		ENDIF
+		
+	; 現在の乳サイズは[巨乳]
+	ELSEIF GET_BUST(ARG:0) == 1
+		IF CFLAG:(ARG:0):506 >= 100
+			CALL PRINT_MESSAGE(ARG:0, 509,3, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 75
+			CALL PRINT_MESSAGE(ARG:0, 509,2, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 50
+			CALL PRINT_MESSAGE(ARG:0, 509,1, CALLNAME:(ARG:0), "")
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 509,0, CALLNAME:(ARG:0), "")
+		ENDIF
+
+	; 現在の乳サイズは[並乳]
+	ELSEIF GET_BUST(ARG:0) == 0
+		IF CFLAG:(ARG:0):506 >= 100
+			CALL PRINT_MESSAGE(ARG:0, 509,2, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 50
+			CALL PRINT_MESSAGE(ARG:0, 509,1, CALLNAME:(ARG:0), "")
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 509,0, CALLNAME:(ARG:0), "")
+		ENDIF
+
+	; 現在の乳サイズは[貧乳]
+	ELSEIF GET_BUST(ARG:0) == -1
+		IF CFLAG:(ARG:0):506 >= 100
+			CALL PRINT_MESSAGE(ARG:0, 509,2, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 50
+			CALL PRINT_MESSAGE(ARG:0, 509,1, CALLNAME:(ARG:0), "")
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 509,0, CALLNAME:(ARG:0), "")
+		ENDIF
+
+
+	; 現在の乳のサイズは[絶壁]
+	ELSEIF GET_BUST(ARG:0) <= -2
+		IF CFLAG:(ARG:0):506 >= 100
+			CALL PRINT_MESSAGE(ARG:0, 509,1, CALLNAME:(ARG:0), "")
+		ELSEIF CFLAG:(ARG:0):506 > 50
+			CALL PRINT_MESSAGE(ARG:0, 509,0, CALLNAME:(ARG:0), "")
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 509,0, CALLNAME:(ARG:0), "")
+		ENDIF
+		
+		
+		
+	ENDIF
+ENDIF
+
+; 膨乳処理
+SIF CFLAG:(ARG:0):506 >= 100
+	CALL ADD_BUST(ARG:0, 1, 4)
+
+; メッセージ非表示フラグを復帰
+FLAG:20 = LOCAL:3
+

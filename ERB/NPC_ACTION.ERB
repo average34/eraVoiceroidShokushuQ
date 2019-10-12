@@ -1,0 +1,518 @@
+﻿;NPCのメインフェイズでの行動処理
+;ここでは主に敵との戦闘を処理する
+;ARG:0	対象キャラID
+@NPC_ACTION(ARG:0)
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	戦う相手
+;2	TEMP
+
+;行動不能ならスキップ
+IF CHECK_FINE(ARG:0) == 0 || CFLAG:(ARG:0):504 == 1
+	RETURN
+ENDIF
+
+;ふたなり化の処理
+IF FLAG:520 == 1 || FLAG:520 == 3
+	CALL FUTANARI_ATTACH(ARG:0)
+ENDIF
+
+;自慰しやすいキャラ・自慰中毒が高いキャラは勝手に自慰経験が溜まる
+LOCAL:2 = ABL:(ARG:0):10 * 5 + TALENT:(ARG:0):60 * 10
+IF RAND:100 < LOCAL:2
+	;ちょっと弄っちゃう程度なので感覚レベルはそんなに上がらない
+	CALL ADD_ABL_EXP(6 + RAND:4, ARG:0, 100 + RAND:100)
+	CALL ADD_ABL_EXP(10, ARG:0, 1)
+	;母乳体質だと噴乳中毒も微増
+	IF TALENT:(ARG:0):130
+		CALL ADD_ABL_EXP(16, ARG:0, 1)
+	ENDIF
+	;NPC超乳化回避
+	SIF CFLAG:(ARG:0):506 > 0
+		CFLAG:(ARG:0):506 -= RAND:10
+	CFLAG:(ARG:0):507 += 1
+ENDIF
+
+CALL ADD_ABL_EXP(0, ARG:0, 50 + RAND:100)
+
+;現在地に回復ポイントがあるなら、回復ボーナスを得る
+IF CFLAG:(ARG:0):4 == FLAG:133
+	BASE:(ARG:0):0 += MAXBASE:(ARG:0):0 / 15
+	BASE:(ARG:0):1 += MAXBASE:(ARG:0):1 / 20
+	BASE:(ARG:0):2 += MAXBASE:(ARG:0):2 / 10
+ENDIF
+IF CFLAG:(ARG:0):4 == FLAG:134
+	BASE:(ARG:0):0 += MAXBASE:(ARG:0):0 / 20
+	BASE:(ARG:0):1 += MAXBASE:(ARG:0):1 / 25
+	BASE:(ARG:0):2 += MAXBASE:(ARG:0):2 / 15
+ENDIF
+IF CFLAG:(ARG:0):4 == FLAG:135
+	BASE:(ARG:0):0 += MAXBASE:(ARG:0):0 / 7
+	BASE:(ARG:0):1 += MAXBASE:(ARG:0):1 / 10
+	BASE:(ARG:0):2 += MAXBASE:(ARG:0):2 / 5
+ENDIF
+IF CFLAG:(ARG:0):4 == FLAG:170
+	BASE:(ARG:0):0 += MAXBASE:(ARG:0):0 / 25
+ENDIF
+
+FOR LCOUNT, 0, 3
+	SIF BASE:(ARG:0):(LCOUNT) > MAXBASE:(ARG:0):(LCOUNT)
+		BASE:(ARG:0):(LCOUNT) = MAXBASE:(ARG:0):(LCOUNT)
+NEXT
+
+
+;同じ部屋に敵が居る場合、その敵と戦う
+;複数いる場合、先頭に近い方が選ばれやすい
+LOCAL:1 = 0
+FOR LCOUNT, 1, FLAG:1
+	IF DA:(LCOUNT):4 == CFLAG:(ARG:0):4 && DA:(LCOUNT):1 > 0 && (DA:(LCOUNT):0 != 18 || DA:(LCOUNT):45)
+		;同じ部屋に敵が見つかった場合
+		IF LOCAL:1 == 0
+			;初回のみ、とりあえず初期値として設定
+			LOCAL:1 = LCOUNT
+			IF RAND:3 == 0
+				;1/3でいきなり確定
+				BREAK
+			ENDIF
+		ELSE
+			;２匹目以降は1/2で確定
+			;選ばれる確率は先頭から順に　２匹→2/3・1/3　３匹→3/6・2/6・1/6　４匹→5/12・4/12・2/12・1/12　といった感じ
+			IF RAND:2 == 0
+				LOCAL:1 = LCOUNT
+				BREAK
+			ENDIF
+		ENDIF
+	ENDIF
+NEXT
+
+IF LOCAL:1
+	;相手が見つかった場合、戦闘
+	CALL ADD_ABL_EXP(1, ARG:0, 100 + RAND:100)
+	CALL NPC_BATTLE(ARG:0, LOCAL:1)
+ENDIF
+
+
+
+
+
+
+
+
+
+
+;NPCの戦闘処理
+;ARG:0	対象キャラID
+;ARG:1	対象敵ID
+@NPC_BATTLE(ARG:0, ARG:1)
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	NPC攻撃回数
+;2	敵攻撃回数
+;3	NPC攻撃力
+;4	NPC攻撃手段（0：攻撃　1：道具）
+;5	敵増分
+;6	NPC増分
+;7	先手（0：通常　1：NPC先制　2：敵先制）
+;8	TEMP
+;9	拘束モード
+;10	絶頂回数
+;11	戦闘中断
+;12	NPC攻撃倍率
+;13	NPCダメージ倍率
+;14	ダメージ計算用
+
+SELECTCASE FLAG:4
+	CASE 0
+		LOCAL:12 = 150
+		LOCAL:13 = 60
+	CASE 1
+		LOCAL:12 = 120
+		LOCAL:13 = 75
+	CASE 2
+		LOCAL:12 = 100
+		LOCAL:13 = 90
+	CASEELSE
+		LOCAL:12 = 80
+		LOCAL:13 = 100
+ENDSELECT
+
+
+;攻撃回数計算
+LOCAL:1 = 3
+LOCAL:2 = 3
+
+LOCAL:5 = -1
+FOR LCOUNT, 1, FLAG:1
+	IF DA:(LCOUNT):4 == CFLAG:(ARG:0):4 && DA:(LCOUNT):1 > 0
+		;同じ部屋に敵が見つかった場合(この処理は正体を現していないドッペルも数に数える)
+		;少なくとも本人は居るはずなので、最低+0になる
+		LOCAL:5 += 1
+	ENDIF
+NEXT
+
+LOCAL:6 = -1
+FOR LCOUNT, 1, CHARANUM
+	IF CFLAG:(LCOUNT):4 == CFLAG:(ARG:0):4 && CHECK_FINE(LCOUNT)
+		;PTメンバーを含む、行動可能なキャラの数を数える
+		;少なくとも本人は居るはずなので、最低+0になる
+		LOCAL:6 += 1
+	ENDIF
+NEXT
+
+LOCAL:5 -= LOCAL:6
+SIF LOCAL:5 < 0
+	LOCAL:5 = 0
+
+LOCAL:2 += LOCAL:5
+
+;先制チェック(前回の行動指針を元にしてチェック)
+IF CFLAG:(ARG:0):11 == 0
+	IF DA:(ARG:1):11 == 0
+		LOCAL:7 = 0
+	ELSEIF DA:(ARG:1):11 == 1
+		LOCAL:7 = 1
+	ELSE
+		LOCAL:7 = 2
+	ENDIF
+ELSEIF CFLAG:(ARG:0):11 == 1
+	IF DA:(ARG:1):11 == 0
+		LOCAL:7 = 2
+	ELSEIF DA:(ARG:1):11 == 1
+		LOCAL:7 = 0
+	ELSE
+		LOCAL:7 = 1
+	ENDIF
+ELSE
+	IF DA:(ARG:1):11 == 0
+		LOCAL:7 = 1
+	ELSEIF DA:(ARG:1):11 == 1
+		LOCAL:7 = 2
+	ELSE
+		LOCAL:7 = 0
+	ENDIF
+ENDIF
+
+IF LOCAL:7 == 1
+	;NPCが先制した場合、敵の回数-1＋NPCの回数が敵の回数+2に
+	LOCAL:2 -= 1
+	LOCAL:1 = LOCAL:2 + 2
+ELSEIF LOCAL:7 == 2
+	;敵が先制した場合、敵の回数+1＋NPCの回数-1
+	LOCAL:2 += 1
+	LOCAL:1 -= 1
+ENDIF
+
+
+;NPC攻撃力・攻撃手段計算
+LOCAL:3 = ABL:(ARG:0):98
+IF ABL:(ARG:0):3 == 0
+	LOCAL:3 += 0
+ELSEIF ABL:(ARG:0):3 == 1
+	LOCAL:3 = LOCAL:3 * 11 / 10 + 5
+ELSEIF ABL:(ARG:0):3 == 2
+	LOCAL:3 = LOCAL:3 * 25 / 20 + 13
+ELSE
+	LOCAL:3 = LOCAL:3 * 15 / 10 + 25
+ENDIF
+
+LOCAL:3 += CFLAG:(ARG:0):120
+
+LOCAL:8 = ABL:(ARG:0):98 / 2 + 20 + RAND:6 + RAND:6
+IF ABL:(ARG:0):0 == 0
+	LOCAL:8 += 0
+ELSEIF ABL:(ARG:0):0 == 1
+	LOCAL:8 += 5
+ELSEIF ABL:(ARG:0):0 == 2
+	LOCAL:8 += 10
+ELSE
+	LOCAL:8 += 15
+ENDIF
+IF ABL:(ARG:0):4 == 0
+	LOCAL:8 += 0
+ELSEIF ABL:(ARG:0):4 == 1
+	LOCAL:8 = LOCAL:8 * 11 / 10 + 5
+ELSEIF ABL:(ARG:0):4 == 2
+	LOCAL:8 = LOCAL:8 * 25 / 20 + 10
+ELSE
+	LOCAL:8 = LOCAL:8 * 15 / 10 + 15
+ENDIF
+
+LOCAL:8 += CFLAG:(ARG:0):121
+
+;攻撃と道具どちらで戦うか決定
+IF LOCAL:3 >= LOCAL:8
+	LOCAL:4 = 0
+ELSE
+	LOCAL:3 = LOCAL:8
+	LOCAL:4 = 1
+ENDIF
+
+
+LOCAL:9 = 0
+LOCAL:10 = 0
+LOCAL:11 = 0
+WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
+	;逃走閾値決定
+	LOCAL:8 = 30 - LIMIT(CFLAG:(ARG:0):12 / 2, -30, 15)
+	SIF TALENT:(ARG:0):10
+		LOCAL:8 += 15
+	
+	IF LOCAL:1 >= LOCAL:2
+		IF LOCAL:9
+			;拘束されている場合
+			IF RAND:100 < (35 - FLAG:4 * 5)
+				;一定確率で離脱
+				SIF FLAG:9
+					PRINTFORMW %CALLNAME:(ARG:0)%は拘束から逃れた！
+				CALL ADD_ABL_EXP(1, ARG:0, 100 + RAND:100)
+				LOCAL:9 = 0
+			ELSE
+				SIF FLAG:9
+					PRINTFORMW %CALLNAME:(ARG:0)%は拘束から逃れられなかった！
+				CALL ADD_ABL_EXP(1, ARG:0, 150 + RAND:150)
+			ENDIF
+		ELSEIF (BASE:(ARG:0):0 * 100 / MAXBASE:(ARG:0):0 <= LOCAL:8) && (RAND:100 < LIMIT(30 + LOCAL:8 - BASE:(ARG:0):0 * 100 / MAXBASE:(ARG:0):0, 30, 80))
+			;逃げようとする場合、一定確率（行動回数残りが多いほど高確率）で成功
+			IF RAND:100 < 40 + LOCAL:1 * 10
+				SIF FLAG:9
+					PRINTFORMW %CALLNAME:(ARG:0)%は逃げ出した！
+				CALL ADD_ABL_EXP(5, ARG:0, 100 + RAND:100)
+				LOCAL:11 = 1
+				BREAK
+			ELSE
+				SIF FLAG:9
+					PRINTFORMW %CALLNAME:(ARG:0)%は逃げられなかった！
+				CALL ADD_ABL_EXP(5, ARG:0, 150 + RAND:150)
+			ENDIF
+		ELSE
+			;普通に戦う場合
+			CALL ADD_ABL_EXP(3 + LOCAL:4, ARG:0, 100 + RAND:100)
+			LOCAL:8 = LOCAL:3 * (20 + RAND:11 + RAND:11) / 10
+			LOCAL:8 = LOCAL:8 * LOCAL:12 / 100
+			DA:(ARG:1):1 -= LOCAL:8
+			SIF FLAG:9
+				PRINTFORMW %CALLNAME:(ARG:0)%は%SAVESTR:(ARG:1)%に{LOCAL:8}のダメージ！（残り：{DA:(ARG:1):1}）
+			IF DA:(ARG:1):1 <= 0 && (DA:(ARG:1):0 == 1 || DA:(ARG:1):0 == 2 || DA:(ARG:1):0 == 3 || DA:(ARG:1):0 == 4)
+				;NPCはボス級の敵は倒せない
+				DA:(ARG:1):1 = 1
+			ENDIF
+		ENDIF
+		LOCAL:1 -= 1
+	ENDIF
+	
+	IF LOCAL:1 < LOCAL:2
+		IF LOCAL:9
+			;拘束している場合
+			LOCAL:8 = RAND:4
+			LOCAL:14 = CALC_SENSITIVITY(ARG:0, LOCAL:8, (DA:(ARG:1):5 * 10 + 700) * LOCAL:13 / 100) * GET_CP_RATE(ARG:0) / 100
+			BASE:(ARG:0):2 -= LOCAL:14
+			BASE:(ARG:0):1 -= LOCAL:14 / 200
+			SIF BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3 >= 40 || FLAG:529 == 0
+				BASE:(ARG:0):3 -= 30
+			IF BASE:(ARG:0):3 <= 0
+				BASE:(ARG:0):3 = 0
+				BASE:(ARG:0):1 -= 20
+			ENDIF
+			CALL ADD_ABL_EXP(6 + LOCAL:8, ARG:0, 150 + RAND:150)
+			SIF FLAG:9
+				PRINTFORMW %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}、MPを{BASE:(ARG:0):1}にされた！
+			IF BASE:(ARG:0):2 <= 0
+				CALL EXTASY(ARG:0, LOCAL:8, 100, 500)
+				BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
+				LOCAL:10 += 1
+			ENDIF
+		ELSEIF RAND:100 < (30 - FLAG:4 * 10)
+			;一定確率で敵の攻撃は外れる
+			SIF FLAG:9
+				PRINTFORMW %CALLNAME:(ARG:0)%は攻撃を避けた！
+		ELSE
+			;普通に戦う場合
+			IF RAND:3 == 0
+				;通常攻撃
+				CALL ADD_ABL_EXP(1, ARG:0, 50 + RAND:50)
+				IF BASE:(ARG:0):0 <= 0
+					SIF FLAG:9
+						PRINTFORMW %CALLNAME:(ARG:0)%は通常攻撃で追撃された！
+					SIF RAND:2 == 0
+						LOCAL:9 = 1
+				ELSE
+					BASE:(ARG:0):0 -= (DA:(ARG:1):5 * 5) * LOCAL:13 / 100
+					SIF BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3 >= 40 || FLAG:529 == 0
+						BASE:(ARG:0):3 -= DA:(ARG:1):5 * LOCAL:13 / 200
+					SIF FLAG:9
+						PRINTFORMW %CALLNAME:(ARG:0)%はHPを{BASE:(ARG:0):0}、CPを{BASE:(ARG:0):3}にされた！
+					IF BASE:(ARG:0):0 <= 0
+						BASE:(ARG:0):0 = 0
+						SIF RAND:4 == 0
+							LOCAL:9 = 1
+					ENDIF
+					IF BASE:(ARG:0):3 <= 0
+						BASE:(ARG:0):3 = 0
+						BASE:(ARG:0):1 -= 20
+					ENDIF
+				ENDIF
+			ELSEIF RAND:2 == 0
+				;衣服攻撃
+				CALL ADD_ABL_EXP(5, ARG:0, 50 + RAND:50)
+				IF BASE:(ARG:0):3 <= 0
+					SIF FLAG:9
+						PRINTFORMW %CALLNAME:(ARG:0)%は衣服攻撃で追撃された！
+					SIF RAND:2 == 0
+						LOCAL:9 = 1
+				ELSE
+					SIF BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3 >= 40 || FLAG:529 == 0
+						BASE:(ARG:0):3 -= (DA:(ARG:1):5 * 2) * LOCAL:13 / 100
+					BASE:(ARG:0):1 -= DA:(ARG:1):5 * LOCAL:13 / 200
+					SIF FLAG:9
+						PRINTFORMW %CALLNAME:(ARG:0)%はCPを{BASE:(ARG:0):3}、MPを{BASE:(ARG:0):1}にされた！
+					IF BASE:(ARG:0):3 <= 0
+						BASE:(ARG:0):3 = 0
+						SIF RAND:4 == 0
+							LOCAL:9 = 1
+					ENDIF
+				ENDIF
+			ELSE
+				;性攻撃
+				LOCAL:8 = RAND:4
+				BASE:(ARG:0):2 -= CALC_SENSITIVITY(ARG:0, LOCAL:8, (DA:(ARG:1):5 * 5 + 500) * LOCAL:13 / 100) * GET_CP_RATE(ARG:0) / 100
+				CALL ADD_ABL_EXP(6 + LOCAL:8, ARG:0, 50 + RAND:100)
+				SIF FLAG:9
+					PRINTFORMW %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}にされた！
+				IF BASE:(ARG:0):2 <= 0
+					CALL EXTASY(ARG:0, LOCAL:8, 100, 300)
+					;この絶頂ではEPは半分しか回復しないようにしておく
+					BASE:(ARG:0):2 = MAXBASE:(ARG:0):2 / 2
+					LOCAL:10 += 1
+					SIF RAND:3 == 0
+						LOCAL:9 = 1
+					;NPC超乳フラグ減少
+					SIF RAND:4 == 0
+						CFLAG:(ARG:0):506 -= RAND:5
+				ENDIF
+			ENDIF
+			IF LOCAL:9
+				SIF FLAG:9
+					PRINTFORMW %CALLNAME:(ARG:0)%は敵に捕まった！
+			ENDIF
+		ENDIF
+		LOCAL:2 -= 1
+	ENDIF
+	
+	SIF BASE:(ARG:0):1 <= 0 && CFLAG:(ARG:0):29 == 0
+		CALL HEART_BREAK(ARG:0)
+	
+	;戦闘終了チェック
+	IF CFLAG:(ARG:0):29
+		CALL ADD_ABL_EXP(1, ARG:0, 300 + RAND:200)
+		CALL ADD_ABL_EXP(11, ARG:0, 5 + RAND:6)
+		IF CFLAG:(ARG:0):4 == FLAG:5 || FLAG:9
+			;現在地と同じ場所だった場合、状況描写
+			PRINTFORMW %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%に負けてしまったようだ…
+		ENDIF
+		BREAK
+	ELSEIF DA:(ARG:1):1 <= 0
+		CALL ADD_ABL_EXP(3 + LOCAL:4, ARG:0, 1000 + RAND:500)
+		IF CFLAG:(ARG:0):4 == FLAG:5 || FLAG:9
+			;現在地と同じ場所だった場合、状況描写
+			PRINTFORMW %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%を倒したようだ…
+		ENDIF
+		CALL CHECK_DEFEAT_ENEMY_IN_BATTLE(ARG:1)
+		CALL DELETE_ENEMY(ARG:1)
+		LOCAL:11 = 1
+		BREAK
+	ELSEIF DA:(ARG:1):1 == 1
+		;瀕死にまで持ち込んだ（ボス級を倒した場合が殆ど）ら、倒していなくても解放処理
+		IF CFLAG:(ARG:0):4 == FLAG:5 || FLAG:9
+			;現在地と同じ場所だった場合、状況描写
+			PRINTFORMW %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%に深手を負わせたようだ…
+		ENDIF
+		CALL STATUS_RENEW_RELEASE(DA:(ARG:1):20)
+		LOCAL:11 = 1
+		BREAK
+	ENDIF
+WEND
+
+IF LOCAL:11 == 0
+	;敵を倒しきれていない＋逃げ切れていない場合、追撃発生
+	LOCAL:8 = LOCAL:10
+	SIF BASE:(ARG:0):0 <= 0
+		LOCAL:8 += 1
+	SIF BASE:(ARG:0):3 <= 0
+		LOCAL:8 += 1
+	IF LOCAL:9
+		LOCAL:8 += 2
+		CALL ADD_ABL_EXP(9, ARG:0, 300 + RAND:200)
+		CALL ADD_ABL_EXP(11, ARG:0, 3 + RAND:3)
+		SIF RAND:2 == 0 && LOCAL:8 >= 4
+			CALL LOST_VIRGIN(ARG:0, 2, 1, ARG:1)
+		IF RAND:100 < (10 + FLAG:4 * 5) && TALENT:(ARG:0):0 == 0 && CFLAG:(ARG:0):22 == 0
+			
+			IF CFLAG:(ARG:0):22 == 1 || CFLAG:(ARG:0):22 == 2 || CFLAG:(ARG:0):22 == 3 || CFLAG:(ARG:0):22 == 4 || CFLAG:(ARG:0):22 == 17 || CFLAG:(ARG:0):22 == 18 || CFLAG:(ARG:0):22 == 19 || CFLAG:(ARG:0):22 == 101 || CFLAG:(ARG:0):22 == 102 || CFLAG:(ARG:0):22 == 103 || CFLAG:(ARG:0):22 == 104 || CFLAG:(ARG:0):22 == 105
+				;特定の敵に寄生・妊娠された場合は対象をランダムにしておく
+				TFLAG:93 = 1
+			ENDIF
+			;寄生・妊娠は敵の種類に関係なく半々とする
+			IF RAND:2 == 0
+				;寄生
+				CALL PARASITE_TYPE(ARG:0, 0, DA:(ARG:1):0, 4 + RAND:5 + RAND:5 + RAND:3, 0)
+			ELSE
+				;妊娠　さらに1/4で流産
+				IF RAND:4 == 0
+					CALL PARASITE_TYPE(ARG:0, 1, DA:(ARG:1):0, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 1)
+				ELSE
+					CALL PARASITE_TYPE(ARG:0, 1, DA:(ARG:1):0, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2)
+				ENDIF
+			ENDIF
+			TFLAG:93 = 0
+		ENDIF
+	ENDIF
+	
+	;回数分だけ性攻撃の追撃
+	LOCAL:2 = LOCAL:8
+	FOR LCOUNT, 0, LOCAL:2
+		LOCAL:8 = RAND:4
+		LOCAL:14 = CALC_SENSITIVITY(ARG:0, LOCAL:8, (DA:(ARG:1):5 * 5 + 1500) * LOCAL:13 / 100) * GET_CP_RATE(ARG:0) / 100
+		BASE:(ARG:0):2 -= LOCAL:14
+		BASE:(ARG:0):1 -= LOCAL:14 / 300
+		SIF FLAG:9
+			PRINTFORMW %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}、MPを{BASE:(ARG:0):1}にされた！
+		IF BASE:(ARG:0):2 <= 0
+			CALL EXTASY(ARG:0, LOCAL:8, 100, 600)
+			;この絶頂ではEPは半分しか回復しないようにしておく
+			BASE:(ARG:0):2 = MAXBASE:(ARG:0):2 / 2
+			LOCAL:10 += 1
+		ENDIF
+	NEXT
+	
+	IF BASE:(ARG:0):1 <= 0 && CFLAG:(ARG:0):29 == 0
+		CALL HEART_BREAK(ARG:0)
+	ENDIF
+	
+	;追撃が4回以上の場合、絶頂回数に応じた確率でそのまま捕食される
+	IF CFLAG:(ARG:0):29 || (LOCAL:2 >= 4 && RAND:100 < (4 + (LOCAL:10 * (FLAG:4 + 2) / 2)) * LOCAL:13 / 100)
+		IF DA:(ARG:1):10 == 0
+			;捕食枠が空いているなら、対象キャラを捕食
+			IF FLAG:9
+				PRINTFORML %CALLNAME:(ARG:0)%は%SAVESTR:(ARG:1)%に捕まった…
+				FORCEWAIT
+			ENDIF
+			
+			;拘束枠に誰か居るかもしれないので（普通は居ないはずだが）念のため解放処理
+			CALL STATUS_RENEW_RELEASE(DA:(ARG:1):20)
+			
+			DA:(ARG:1):10 = ARG:0
+			DA:(ARG:1):20 = ARG:0
+			IF DA:(ARG:1):85 & 8
+				;特定の敵が相手だった場合、丸呑みもつけておく（地の文的な意味で）
+				CFLAG:(ARG:0):21 = 1
+			ENDIF
+			CFLAG:(ARG:0):10 = ARG:1
+			CFLAG:(ARG:0):20 = ARG:1
+		ENDIF
+	ENDIF
+ENDIF
+
+
+

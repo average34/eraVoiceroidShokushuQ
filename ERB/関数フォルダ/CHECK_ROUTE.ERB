@@ -1,0 +1,63 @@
+﻿;目的地にたどり着くための経路検索
+;ARG:0	現在地
+;ARG:1	目的地
+;RETURN	進むべき部屋
+@CHECK_ROUTE(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	LOOP2
+;2	未確定距離の最小値
+;3	現在注目している部屋
+;11-40	各部屋への距離
+;51-80	各部屋の「最短距離を目指す場合の隣の部屋」　探索完了したら+100する
+
+
+;値を初期化
+VARSET LOCAL, 255, 11, 41
+VARSET LOCAL, 0, 51, 81
+
+;目的地を確定済みにする
+LOCAL:(ARG:1 + 10) = 0
+LOCAL:(ARG:1 + 50) = ARG:1 + 100
+
+LOCAL:3 = ARG:1
+
+;現在地までのルートが確定するまで計算を続ける
+WHILE (LOCAL:(ARG:0 + 50) < 100)
+	FOR LOCAL:0, 1, 31
+		IF CHECK_NEXT(LOCAL:3, LOCAL:0) == 2 && LOCAL:(LOCAL:0 + 50) < 100
+			IF LOCAL:(LOCAL:0 + 10) > LOCAL:(LOCAL:3 + 10)
+				LOCAL:(LOCAL:0 + 10) = LOCAL:(LOCAL:3 + 10) + 1
+				LOCAL:(LOCAL:0 + 50) = LOCAL:3
+			ENDIF
+		ENDIF
+	NEXT
+
+	;未確定経路の中から、最小の距離の部屋を確定させ、次のチェックポイントにする
+	LOCAL:2 = 255
+	LOCAL:3 = 0
+	FOR LOCAL:0, 1, 31
+		IF LOCAL:(LOCAL:0 + 50) < 100 && LOCAL:(LOCAL:0 + 10) < LOCAL:2
+			LOCAL:2 = LOCAL:(LOCAL:0 + 10)
+			LOCAL:3 = LOCAL:0
+		ENDIF
+	NEXT
+
+	IF LOCAL:3 == 0 || LOCAL:2 == 255
+		;次が見つからなければ終了
+		BREAK
+	ENDIF
+
+	;次のチェックポイントを探索完了扱いにする
+	LOCAL:(LOCAL:3 + 50) += 100
+WEND
+
+IF LOCAL:(ARG:0 + 50) > 100
+	;ルートが確定していたら、その部屋を返す
+	RETURN (LOCAL:(ARG:0 + 50) - 100)
+ELSE
+	;ルートが確定していなければ、とりあえず0を返す
+	RETURN 0
+ENDIF
+
+

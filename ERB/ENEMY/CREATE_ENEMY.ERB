@@ -1,0 +1,146 @@
+﻿;敵データ新規作成
+;ARG:0	敵の種類
+;ARG:1	敵の位置(0指定だと、ランダムで決定)
+;ARG:2	除外位置(1以上を指定していると、その位置だけ避ける　初期配置などで利用　※ARG:1強制指定の方が優先)
+;ARG:3	その他データ
+@CREATE_ENEMY(ARG:0, ARG:1, ARG:2, ARG:3)
+;LOCAL
+;0	LOOP
+;1	POS
+;2	TEMP
+;3	削除対象１
+;4	削除対象１
+;5	削除対象１
+;6	敵の限界
+
+;迷宮に湧く限界量設定　VariableSize.csvのDAサイズに依存
+;DAの限界は100までなので限界は必須　厳密にはID0はダミー
+;また、図鑑やデバッグモードで1枠常に開けておく必要がある
+LOCAL:6 = 40 + (FLAG:4 * 15)
+IF LOCAL:6 >= VARSIZE("DA", 0) || FLAG:525 == 1
+	LOCAL:6 = (VARSIZE("DA", 0) - 1)
+ENDIF
+
+;既に限界以上居るなら増えない
+;そのためいっぱいならランクアップを発生させて数を減らす
+IF FLAG:1 >= LOCAL:6
+	;同じ敵が3匹以上居るなら、それらを吸収して最初から高ランク化する可能性あり
+	IF (ARG:0 <= 4) || (ARG:0 >= 19) || ((ARG:0 % 2) == 0)
+		;固定敵や、ランクアップ済みの敵（種類IDが偶数）なら、ランクアップしない
+		RETURN
+	ENDIF
+	
+	LOCAL:2 = 0
+	LOCAL:3 = 0
+	LOCAL:4 = 0
+	LOCAL:5 = 0
+	FOR LOCAL:0, 1, FLAG:1
+		IF DA:(LOCAL:0):0 == ARG:0 && DA:(LOCAL:0):10 == 0 && DA:(LOCAL:0):20 == 0 && DA:(LOCAL:0):1 > 0
+			;うろついてるだけの敵をカウント
+			LOCAL:(LOCAL:2 + 3) = LOCAL:0
+			LOCAL:2 += 1
+			IF LOCAL:2 >= 3
+				BREAK
+			ENDIF
+		ENDIF
+	NEXT
+	IF LOCAL:2 >= 3
+		CALL DELETE_ENEMY(LOCAL:5)
+		CALL DELETE_ENEMY(LOCAL:4)
+		CALL DELETE_ENEMY(LOCAL:3)
+		;3匹削除し、１ランク上の敵を追加
+		ARG:0 = ARG:0 + 1
+	ELSE
+		RETURN
+	ENDIF
+ENDIF
+
+;念のためここでもDAを初期化
+FOR LOCAL:0, 0, VARSIZE("DA", 1)
+	DA:(FLAG:1):(LOCAL:0) = 0
+NEXT
+
+
+DA:(FLAG:1):0 = ARG:0
+
+IF ARG:1 == 0
+	IF ARG:2 > 0
+		;除外位置が指定されているため、1～29で選択し、除外位置と被るなら30扱いに
+		LOCAL:1 = RAND:29 + 1
+		IF LOCAL:1 == ARG:2
+			LOCAL:1 = 30
+		ENDIF
+	ELSE
+		;除外位置未指定のため、普通に1～30で選択
+		LOCAL:1 = RAND:30 + 1
+	ENDIF
+ELSE
+	IF ARG:2 == ARG:1
+		;除外位置が指定位置と等しい場合、部屋の中央から適当に選択
+		LOCAL:1 = 1 + RAND:25
+		IF LOCAL:1 == 1
+			LOCAL:1 = 26
+		ELSEIF LOCAL:1 == 5
+			LOCAL:1 = 27
+		ELSEIF LOCAL:1 == 25
+			LOCAL:1 = 28
+		ENDIF
+		IF LOCAL:1 == ARG:2
+			LOCAL:1 = 29
+		ENDIF
+	ELSE
+		LOCAL:1 = ARG:1
+	ENDIF
+ENDIF
+
+DA:(FLAG:1):4 = LOCAL:1
+
+;ダミー、クイーン、クイーンの両手、ガーディアン、で敵が5体すでにいる状態で出てこないように安全装置
+IF (ARG:0 == 1 || ARG:0 == 2 || ARG:0 == 3) && FLAG:1 >= 6
+	PRINTFORMW 何か生まれてはいけないものの気配がしたが収まったようだ……
+	RETURN 0
+ENDIF
+
+;その他の能力を読み込む
+TRYCCALLFORM SET_ENEMY_DATA_{ARG:0}(FLAG:1, ARG:3)
+CATCH
+	PRINTFORMW (CREATE_ENEMY) 未実装の敵(ID:{ARG:0})のため、処理できません
+	RETURN 0
+ENDCATCH
+IF ARG:0 == 19 || ARG:0 == 101 || ARG:0 == 102 || ARG:0 == 103 || ARG:0 == 104 || ARG:0 == 105
+	SIF ARG:3 == 0
+		THROW 存在しないキャラの娘が生まれた、または存在しないキャラが悪堕ちしました
+ENDIF
+
+
+;エネミー多様化　easy以下は出ない(素の状態に慣れてほしいため)　ノーマル以上も全体的に出にくくする
+SIF FLAG:4 > 1 && RAND:5 == 0
+	CALL CREATE_ENEMY_RANDOMIZE
+
+;★EXモードでは能力に補正がかかる
+IF FLAG:999
+	DA:(FLAG:1):2 += 5000
+	DA:(FLAG:1):1 += 5000
+	DA:(FLAG:1):5 *= 5
+	DA:(FLAG:1):9 += 25
+;待ち伏せオンリーなら動くようにする
+	IF DA:(FLAG:1):17 == 100
+		DA:(FLAG:1):17 = 50
+		DA:(FLAG:1):16 = 50
+;待伏する確率があるなら減らす
+	ELSEIF DA:(FLAG:1):17 > 50
+		DA:(FLAG:1):17 -= 20
+		DA:(FLAG:1):16 += 20
+	ELSEIF DA:(FLAG:1):17 > 10
+		DA:(FLAG:1):17 -= 10
+		DA:(FLAG:1):16 += 10
+	ENDIF
+ENDIF
+;★ここまで
+
+;バグ対策に　拘束した状態の敵が生まれてしまうので解除しておく
+DA:(FLAG:1):20 = 0
+DA:(FLAG:1):21 = 0
+
+FLAG:1 += 1
+

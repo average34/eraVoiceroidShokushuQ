@@ -1,0 +1,91 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_70(ARG:0, ARG:1)
+
+;ペット専用敵の種類は70固定で、これにすると確率100%
+DA:(ARG:0):0 = 70
+
+DA:(ARG:0):1 = 500
+DA:(ARG:0):2 = 500
+DA:(ARG:0):3 = 0
+DA:(ARG:0):5 = 50
+DA:(ARG:0):9 = 40
+
+DA:(ARG:0):14 = 50
+
+DA:(ARG:0):15 = 10
+DA:(ARG:0):16 = 50
+DA:(ARG:0):17 = 40
+DA:(ARG:0):18 = 150
+DA:(ARG:0):19 = 25
+
+
+DA:(ARG:0):85 = 1
+DA:(ARG:0):86 = 7
+DA:(ARG:0):89 = 14
+
+
+;凄く出やすいが、パチュリーじゃないと出ない
+SIF NO:1 == 8 || NO:(FLAG:10) == 8 || NO:(FLAG:11) == 8
+	DA:(ARG:0):86 = 1
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(70)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_70(ARG:0, ARG:1)
+;LOCAL
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+IF LOCAL:1 > 0
+	;PTメンバーを拘束している場合
+	;戦闘外で確保したものなのでポイ捨て
+			LOCAL:2 = 1
+ELSE
+	LOCAL:3 = RAND:28
+	;拘束はしない
+	IF LOCAL:3 < 3
+		LOCAL:2 = 1891
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 1892
+	ELSEIF LOCAL:3 < 13
+		LOCAL:2 = 1893
+	ELSEIF LOCAL:3 < 16
+		LOCAL:2 = 1894
+	ELSEIF LOCAL:3 < 19
+		LOCAL:2 = 1895
+	ELSEIF LOCAL:3 < 23
+		LOCAL:2 = 1896
+	ELSEIF LOCAL:3 < 25
+		LOCAL:2 = 1897
+	ELSEIF LOCAL:3 < 27
+		LOCAL:2 = 1017
+	ELSEIF LOCAL:3 < 28
+		LOCAL:2 = 1018
+	ENDIF
+ENDIF
+
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+

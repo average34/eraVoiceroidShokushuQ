@@ -1,0 +1,568 @@
+﻿;履歴
+;ARG:0	ED条件
+@HISTORY(ARG:0)
+#DIM LCOUNT
+
+;●
+
+PRINTFORMW %CALLNAME:1%の記録
+
+;表示回数調整
+FLAG:8998 += 1
+
+FOR LCOUNT,0, FLAG:8998
+	IF FLAG:(9000 + LCOUNT) > 0
+
+
+		IF FLAG:(9300 + LCOUNT) == 1
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%が　%ENEMY_NAME(FLAG:(9200 + LCOUNT))%
+
+			SELECTCASE RAND:17
+			CASE 0
+				PRINTFORML の前に陥落 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 1
+				PRINTFORML の責めに屈服 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 2
+				PRINTFORML の猛攻により脱出を諦める 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 3
+				PRINTFORML に心を折られる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 4
+				PRINTFORML に身をゆだねる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 5
+				PRINTFORML に許しを請う 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 6
+				PRINTFORML に忠誠を誓う 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 7
+				PRINTFORML の前に泣き崩れる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 8
+				PRINTFORML の責めにより心を壊す 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 9
+				PRINTFORML の拷問によりプライドを捨てる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 10
+				PRINTFORML の性奴隷に堕ちる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 11
+				PRINTFORML の前で派手に失禁する 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 12
+				PRINTFORML に決定的な陵辱を受ける 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 13
+				PRINTFORML に対して自ら股を開く 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 14
+				PRINTFORML の玩具となる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 15
+				PRINTFORML に何度も敗北を宣言させられる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 16
+				PRINTFORML の前でさまざまな恥をさらす 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 2
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%
+			IF FLAG:(9400 + LCOUNT) == 1
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML の処女が%SAVESTR:(100+LCOUNT)%に奪われる
+				CASE 1
+					PRINTFORML の純潔が%SAVESTR:(100+LCOUNT)%によって散らされる
+				CASE 2
+					PRINTFORML の男を知らない秘所が%SAVESTR:(100+LCOUNT)%によって穢される
+				CASE 3
+					PRINTFORML の貞操が%SAVESTR:(100+LCOUNT)%に踏みにじられる
+				CASEELSE
+					PRINTFORML が%SAVESTR:(100+LCOUNT)%に膣内を穢される
+				ENDSELECT
+			ELSEIF FLAG:(9400 + LCOUNT) == 2
+				PRINTFORML が%CALLNAME:(FLAG:(9200 + LCOUNT))%に純潔を捧げる
+			ELSEIF FLAG:(9400 + LCOUNT) == 3
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML が%CALLNAME:(FLAG:(9200 + LCOUNT))%にレイプされ、処女を奪われる
+				CASE 1
+					PRINTFORML が%CALLNAME:(FLAG:(9200 + LCOUNT))%に犯され、純潔が散らされる
+				CASE 2
+					PRINTFORML が%CALLNAME:(FLAG:(9200 + LCOUNT))%に襲われ、男を知らない秘所を穢される
+				CASE 3
+					PRINTFORML が%CALLNAME:(FLAG:(9200 + LCOUNT))%に犯され、貞操を踏みにじられる
+				CASEELSE
+					PRINTFORML が%CALLNAME:(FLAG:(9200 + LCOUNT))%に襲われ、膣内を穢される
+				ENDSELECT
+			ELSEIF FLAG:(9400 + LCOUNT) == 4
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML が触手に処女を奪われる
+				CASE 1
+					PRINTFORML が触手に純潔を散らされる
+				CASE 2
+					PRINTFORML が男を知らない秘所を触手に穢される
+				CASE 3
+					PRINTFORML の貞操が触手に踏みにじられる
+				CASEELSE
+					PRINTFORML が膣内を触手に穢される
+				ENDSELECT
+			ELSEIF FLAG:(9400 + LCOUNT) == 5
+				IF RAND:2 == 0
+					PRINTFORML が自ら処女を散らす
+				ELSE
+					PRINTFORML が自慰で純潔を失う
+				ENDIF
+			ELSEIF FLAG:(9400 + LCOUNT) == 6
+				PRINTFORML が出産により処女を失う
+
+			ENDIF
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 3
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%が初出産で%ENEMY_NAME(FLAG:(9200 + LCOUNT))%の子を
+			IF RAND:2 == 0
+				PRINTFORML 出産する
+			ELSE
+				PRINTFORML 産み落とす
+			ENDIF
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 4
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%
+			SELECTCASE RAND:10
+			CASE 0
+				PRINTFORML が一時的に仲間になる
+			CASE 1
+				PRINTFORML が一時的に協力者になる
+			CASE 2
+				PRINTFORML が一時的に共闘してくれるようになる
+			CASE 3
+				PRINTFORML と脱出を誓い合う
+			CASE 4
+				PRINTFORML と励ましあう
+			CASE 5
+				PRINTFORML との絆が深まる
+			CASE 6
+				PRINTFORML と一時的に力を合わせる
+			CASE 7
+				PRINTFORML と親睦を深める
+			CASE 8
+				PRINTFORML と連携する
+			CASE 9
+				PRINTFORML と夢を語り合う
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 5
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%
+
+			SELECTCASE RAND:8
+			CASE 0
+				PRINTFORML と助け合う
+			CASE 1
+				PRINTFORML を介抱する
+			CASE 2
+				PRINTFORML の手当てをする
+			CASE 3
+				PRINTFORML の回復を待つ
+			CASE 4
+				PRINTFORML の治療を行う
+			CASE 5
+				PRINTFORML をかばう
+			CASE 6
+				PRINTFORML を救出する
+			CASE 7
+				PRINTFORML を鼓舞する
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 6
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%
+
+			SELECTCASE RAND:7
+			CASE 0
+				PRINTFORML と助け合う
+			CASE 1
+				PRINTFORML に助けられる
+			CASE 2
+				PRINTFORML に手当てをされる
+			CASE 3
+				PRINTFORML に介抱される
+			CASE 4
+				PRINTFORML の治療を受ける
+			CASE 5
+				PRINTFORML に救出される
+			CASE 6
+				PRINTFORML に励まされる
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 7
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%
+
+			SELECTCASE RAND:6
+			CASE 0
+				PRINTFORML が改心する
+			CASE 1
+				PRINTFORML が触手を裏切る
+			CASE 2
+				PRINTFORML が人の心に目覚める
+			CASE 3
+				PRINTFORML が人間の側に付く
+			CASE 4
+				PRINTFORML が心を入れ替える
+			CASE 5
+				PRINTFORML がオシオキされる
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 8
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9200 + LCOUNT))%
+			SELECTCASE RAND:6
+			CASE 0
+				PRINTFORML を犯して性欲を発散する
+			CASE 1
+				PRINTFORML をレイプして獣欲を満たす
+			CASE 2
+				PRINTFORML を欲望のままに辱める
+			CASE 3
+				IF FLAG:(9100 + LCOUNT) == 0
+					PRINTFORML の体を肉便器がわりに使う
+				ELSE
+					PRINTFORML の体を公衆便所がわりに使う
+				ENDIF
+			CASE 4
+				PRINTFORML の体を堪能する
+			CASE 5
+				PRINTFORML を組み伏せ嬲る
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 9
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML %CALLNAME:(FLAG:(9200 + LCOUNT))%にレイプされる
+			CASE 1
+				PRINTFORML %CALLNAME:(FLAG:(9200 + LCOUNT))%に性欲の捌け口にされる
+			CASEELSE
+				PRINTFORML %CALLNAME:(FLAG:(9200 + LCOUNT))%に犯される
+
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 10
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%
+			IF FLAG:(9200 + LCOUNT) == 0
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML がアナルセックスの虜になる
+				CASE 1
+					PRINTFORML が尻穴狂いに堕ちる
+				CASEELSE
+					PRINTFORML が尻穴を精液便所に改造される
+				ENDSELECT
+			ELSEIF FLAG:(9200 + LCOUNT) == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML が胸を快楽漬けにされる
+				CASE 1
+					PRINTFORML が胸を開発され尽くす
+				CASEELSE
+					PRINTFORML が胸好きの変態に堕ちる
+				ENDSELECT
+			ELSEIF FLAG:(9200 + LCOUNT) == 2
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML がクリトリスを快楽漬けにされる
+				CASE 1
+					PRINTFORML がクリトリスを開発され尽くす
+				CASEELSE
+					PRINTFORML がクリトリス好きの変態に堕ちる
+				ENDSELECT
+			ELSEIF FLAG:(9200 + LCOUNT) == 3
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML が性交のもたらす快楽に屈する
+				CASE 1
+					PRINTFORML がセックスのことしか考えられなくなる
+				CASEELSE
+					PRINTFORML が肉便器に堕ちる
+				ENDSELECT
+			ENDIF
+			
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 11
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9200 + LCOUNT))%の遺品を
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 見つけ、脱出を誓う
+			CASE 1
+				PRINTFORML 見つけ、挫けそうな自分を叱咤する
+			CASE 2
+				PRINTFORML 懐にしまい復讐を誓う
+			CASE 3
+				PRINTFORML 懐にしまい憎悪を燃やす
+			CASEELSE
+				PRINTFORML 涙を堪えて懐にしまう
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 12 && FLAG:(9400 + LCOUNT) == 0
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　
+			IF FLAG:(9400 + LCOUNT) == 0
+				PRINTFORM 大人の玩具を
+			ELSE
+				PRINTFORM 媚薬を
+			ENDIF
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 見つけ、こそこそと懐にしまう
+			CASE 1
+				PRINTFORML 見つけ、顔を真っ赤にしながら懐にしまう
+			CASE 2
+				PRINTFORML 見つけ必要なときがあるかもしれないと自分に言い聞かせて拾う
+			CASE 3
+				PRINTFORML 見つけ、迷いながらも懐にしまう
+			CASEELSE
+				PRINTFORML 見つけ、つい使っている自分の姿を妄想してしまう
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 13
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%
+			SELECTCASE RAND:6
+			CASE 0
+				PRINTFORML が完全な自慰中毒者になる
+			CASE 1
+				PRINTFORML が自慰好きの痴女になる
+			CASE 2
+				PRINTFORML が自慰好きの雌になる
+			CASE 3
+				PRINTFORML が自慰好きのヘンタイになる
+			CASE 4
+				PRINTFORML が完全な自慰中毒者になる
+			CASE 5
+				PRINTFORML がオナニー狂いの色魔になる
+	
+			ENDSELECT
+
+		ENDIF
+
+
+
+		IF FLAG:(9300 + LCOUNT) == 14
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%ENEMY_NAME(FLAG:(9100 + LCOUNT))%
+			SELECTCASE RAND:13
+			CASE 0
+				PRINTFORML から %CALLNAME:(FLAG:(9200 + LCOUNT))%を逃がすための囮となる
+			CASE 1
+				PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%にうっかり置いていかれる
+			CASE 2
+				PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%に見捨てられそうになる
+			CASE 3
+				PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%を助けようとして逃げ遅れる
+			CASE 4
+				PRINTFORML の注意をひきつけ、%CALLNAME:(FLAG:(9200 + LCOUNT))%を無事に逃がす
+			CASE 5
+				PRINTFORML から逃げ遅れ、%CALLNAME:(FLAG:(9200 + LCOUNT))%に心配をかける
+			CASE 6
+				PRINTFORML に大苦戦。%CALLNAME:(FLAG:(9200 + LCOUNT))%を庇う為にその身を差し出す
+			CASE 7
+				PRINTFORML に大苦戦。%CALLNAME:(FLAG:(9200 + LCOUNT))%の策を成功させるための時間を稼ぐ
+			CASE 8
+				PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%が態勢をたてなおすための囮となる
+			CASE 9
+				PRINTFORML から%CALLNAME:(FLAG:(9200 + LCOUNT))%を確実に逃がすために、しんがりをつとめる
+			CASE 10
+				PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%のために体をはる
+			CASE 11
+				PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%の前でカッコつける
+			CASE 12
+				PRINTFORML に捕まり、%CALLNAME:(FLAG:(9200 + LCOUNT))%の助けを待つ
+
+			ENDSELECT
+
+		ENDIF
+
+
+		IF FLAG:(9300 + LCOUNT) == 15
+				PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%ENEMY_NAME(FLAG:(9100 + LCOUNT))%
+			IF FLAG:(9400 + LCOUNT)
+				SELECTCASE RAND:7
+					CASE 0
+						PRINTFORML に捕まったままの%CALLNAME:(FLAG:(9200 + LCOUNT))%と%CALLNAME:(FLAG:(9400 + LCOUNT))%を見捨てて一人だけ逃げ出す
+					CASE 1
+						PRINTFORML に捕まった%CALLNAME:(FLAG:(9200 + LCOUNT))%と%CALLNAME:(FLAG:(9400 + LCOUNT))%に救出を約束し、その場を離れる
+					CASE 2
+						PRINTFORML から逃げ遅れた %CALLNAME:(FLAG:(9200 + LCOUNT))%と%CALLNAME:(FLAG:(9400 + LCOUNT))%を心配する
+					CASE 3
+						PRINTFORML に大苦戦。%CALLNAME:(FLAG:(9200 + LCOUNT))%と%CALLNAME:(FLAG:(9400 + LCOUNT))%が%CALLNAME:1%を庇う為にその身を差し出す
+					CASE 4
+						PRINTFORML に大苦戦。%CALLNAME:(FLAG:(9200 + LCOUNT))%と%CALLNAME:(FLAG:(9400 + LCOUNT))%が%CALLNAME:1%の策を成功させるための時間を稼ぐ
+					CASE 5
+						PRINTFORML から逃亡する際、%CALLNAME:(FLAG:(9200 + LCOUNT))%と%CALLNAME:(FLAG:(9400 + LCOUNT))%が態勢をたてなおすための囮となる
+					CASE 6
+						PRINTFORML に%CALLNAME:(FLAG:(9200 + LCOUNT))%と%CALLNAME:(FLAG:(9400 + LCOUNT))%が捕まり、 %CALLNAME:1%の助けを待つ
+
+				ENDSELECT
+
+			ELSE
+				SELECTCASE RAND:13
+					CASE 0
+						PRINTFORML との戦いの際、%CALLNAME:(FLAG:(9200 + LCOUNT))%を見捨てて逃げ出す
+					CASE 1
+						PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%をうっかり置いていく
+					CASE 2
+						PRINTFORML から逃亡の際、%CALLNAME:(FLAG:(9200 + LCOUNT))%に見捨てようとする
+					CASE 3
+						PRINTFORML から逃亡の際、%CALLNAME:1%を助けようとした%CALLNAME:(FLAG:(9200 + LCOUNT))%が逃げ遅れる
+					CASE 4
+						PRINTFORML に捕まった%CALLNAME:(FLAG:(9200 + LCOUNT))%に救出を約束し、その場を離れる
+					CASE 5
+						PRINTFORML %ENEMY_NAME(FLAG:(9100 + LCOUNT))%から逃げ遅れた %CALLNAME:(FLAG:(9200 + LCOUNT))%を心配する
+					CASE 6
+						PRINTFORML に大苦戦。%CALLNAME:(FLAG:(9200 + LCOUNT))%が%CALLNAME:1%を庇う為にその身を差し出す
+					CASE 7
+						PRINTFORML に大苦戦。%CALLNAME:(FLAG:(9200 + LCOUNT))%が%CALLNAME:1%の策を成功させるための時間を稼ぐ
+					CASE 8
+						PRINTFORML から逃亡する際、%CALLNAME:(FLAG:(9200 + LCOUNT))%が態勢をたてなおすための囮となる
+					CASE 9
+						PRINTFORML から逃亡する際、%CALLNAME:(FLAG:(9200 + LCOUNT))%がしんがりを買って出る
+					CASE 10
+						PRINTFORML から逃亡する際、%CALLNAME:(FLAG:(9200 + LCOUNT))%が%CALLNAME:1%のために体をはる
+					CASE 11
+						PRINTFORML から逃亡する際、%CALLNAME:(FLAG:(9200 + LCOUNT))%が%CALLNAME:1%の前でカッコつける
+					CASE 12
+						PRINTFORML に捕まり、%CALLNAME:1%の助けを待つ
+
+				ENDSELECT
+
+			ENDIF
+			
+		ENDIF
+
+		IF FLAG:(9300 + LCOUNT) == 16
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%が
+
+			SELECTCASE RAND:8
+				CASE 0
+					PRINTFORML 快楽欲しさに敵に回る 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+				CASE 1
+					PRINTFORML 洗脳される 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+				CASE 2
+					PRINTFORML 仲間を裏切る 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+				CASE 3
+					PRINTFORML 心を折られ触手の一員となる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+				CASE 4
+					PRINTFORML 迷宮に自らを売り渡す 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+				CASE 5
+					PRINTFORML 完全に堕ちる 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+				CASE 6
+					PRINTFORML 迷宮の主に忠誠を誓う 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+				CASE 7
+					PRINTFORML 悪堕ちする 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			ENDSELECT
+
+		ENDIF
+
+		IF FLAG:(9300 + LCOUNT) == 17
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%が
+
+			SELECTCASE RAND:8
+				CASE 0
+					PRINTFORML %SAVESTR:(100+LCOUNT)%と永遠の愛を誓う
+				CASE 1
+					PRINTFORML 純白のドレスに身を包み%SAVESTR:(100+LCOUNT)%の花嫁となる
+				CASE 2
+					PRINTFORML %SAVESTR:(100+LCOUNT)%に心も体も捧げた
+				CASE 3
+					PRINTFORML 孕まされながら%SAVESTR:(100+LCOUNT)%と結婚式を挙げる
+				CASE 4
+					PRINTFORML %SAVESTR:(100+LCOUNT)%のモノになった記念に激しく愛し合う
+				CASE 5
+					PRINTFORML %SAVESTR:(100+LCOUNT)%と夫婦になる
+				CASE 6
+					PRINTFORML %SAVESTR:(100+LCOUNT)%といつまでも一緒にいると決心する
+				CASE 7
+					PRINTFORML %SAVESTR:(100+LCOUNT)%のモノとなり心から幸せになった
+				CASE 8
+					PRINTFORML %SAVESTR:(100+LCOUNT)%という人生の伴侶を得た
+				CASE 9
+					PRINTFORML %SAVESTR:(100+LCOUNT)%と契りを結んだ
+			ENDSELECT
+
+		ENDIF
+
+	ENDIF
+
+NEXT
+
+SELECTCASE ARG:0
+CASE 0
+	PRINTFORM {DAY}日目　%CALLNAME:1%%TACHI()%がクィーンを撃破！　迷宮内での絶頂回数：{EXP:1:20}回
+CASE 1
+	PRINTFORM {DAY}日目　%CALLNAME:1%%TACHI()%がガーディアンを撃破し、脱出に成功する　迷宮内での絶頂回数：{EXP:1:20}回
+CASE 2
+	PRINTFORM {DAY}日目　%CALLNAME:1%が辛くも脱出に成功する　迷宮内での絶頂回数：{EXP:1:20}回
+CASE 3
+	PRINTFORM {DAY}日目　%CALLNAME:1%%TACHI()%は転移門を開き、脱出に成功する　迷宮内での絶頂回数：{EXP:1:20}回
+CASEELSE
+	PRINTFORM {DAY}日目　%CALLNAME:1%達に関する記録はここで終わっている…　迷宮内での絶頂回数：{EXP:1:20}回
+ENDSELECT
+
+IF FLAG:522 == 1 || FLAG:528 == 1
+	PRINTFORMW 　迷宮内でのお漏らし回数：{EXP:1:21}回
+ELSE
+	PRINTFORMW 　
+ENDIF
+IF FLAG:507 > 0
+	PRINTFORMW 　娘を埋めた回数：{FLAG:48}回
+ELSE
+ENDIF
+
+FLAG:813 /= DAY
+
+
+@ADD_HISTORY(WHEN, WHO_CHARA, WHO_ENEMY, WHAT, HOW, TEXT)
+#DIM WHEN
+#DIM WHO_CHARA
+#DIM WHO_ENEMY
+#DIM WHAT
+#DIM HOW
+#DIMS TEXT
+
+IF FLAG:8998 < 100
+	FLAG:8998 += 1
+	FLAG:(9000+FLAG:8998) = WHEN
+	FLAG:(9100+FLAG:8998) = WHO_CHARA
+	FLAG:(9200+FLAG:8998) = WHO_ENEMY
+	FLAG:(9300+FLAG:8998) = WHAT
+	FLAG:(9400+FLAG:8998) = HOW
+	SAVESTR:(100+FLAG:8998) = %TEXT%
+ENDIF

@@ -1,0 +1,382 @@
+﻿;キャラ選択用関数群
+
+;主人公（１人目のキャラデータ）選択
+@START_CHARA_SELECT
+;LOCAL
+;0	LOOP
+;1	選択したキャラ
+;FLAG:550-569	クイックスタート用
+
+LOCAL:1 = 0
+
+PRINTFORML 主人公(プレイヤーが操作するキャラ)を選択してください
+PRINTFORML [0] 自分で好きなキャラを選ぶ
+PRINTFORML [1] ランダムでキャラを選ぶ（確認あり）
+PRINTFORML [2] ランダムでキャラを選ぶ（ゲーム開始まで誰になるか不明）
+;PRINTFORML [3] 口上のあるキャラからランダムで選ぶ（確認あり）
+;PRINTFORML [4] 口上のあるキャラからランダムで選ぶ（ゲーム開始まで誰になるか不明）
+PRINTFORML [9] あなた（♀）
+PRINTFORML 
+IF FLAG:537 == 0
+;	PRINTFORML [10] ランダム選択で旧作キャラを出ないようにする
+ELSEIF FLAG:537 == 1
+;	PRINTFORML [10] ランダム選択で旧作キャラを出るように戻す
+ENDIF
+
+$INPUT_LOOP1
+INPUT
+
+IF RESULT == 0
+	CALL CHARA_SELECT
+	LOCAL:1 = RESULT
+	FLAG:567 = LOCAL:1
+	;キャンセルされた場合は最初から
+	SIF LOCAL:1 == 0
+		RESTART
+ELSEIF RESULT == 1
+	$RANDOM_START
+	LOCAL:1 = SELECT_RANDOM_CHARA()
+	PRINTFORML %CSVNAME(LOCAL:1, 0),14,LEFT% (戦闘素質 {CSVABL(LOCAL:1, 98, 0), 3} / 速度 {CSVABL(LOCAL:1, 97, 0), 3}) で良いですか？
+	CALL ASK_YN
+	IF RESULT == 0
+		GOTO FINALIZE
+	ELSE
+		GOTO RANDOM_START
+	ENDIF
+	FLAG:560 = 1
+ELSEIF RESULT == 2
+	LOCAL:1 = SELECT_RANDOM_CHARA()
+	FLAG:560 = 2
+;*********************口上あるキャラからランダムパッチ*****************************************
+ELSEIF RESULT == 3
+	$RANDOM_START_KOJO
+	LOCAL:1 = SELECT_RANDOM_CHARA()
+	TARGET = 0
+		TRYCCALLFORM KOJO_{LOCAL:1}_0(0, 0)
+			;口上本体がある場合、決定
+		CATCH
+			;口上本体が無い場合、再抽選
+			GOTO RANDOM_START_KOJO
+		ENDCATCH
+	PRINTFORML %CSVNAME(LOCAL:1, 0),14,LEFT% (戦闘素質 {CSVABL(LOCAL:1, 98, 0), 3} / 速度 {CSVABL(LOCAL:1, 97, 0), 3}) で良いですか？
+	CALL ASK_YN
+	IF RESULT == 0
+		GOTO FINALIZE
+	ELSE
+		GOTO RANDOM_START_KOJO
+	ENDIF
+	FLAG:560 = 3
+ELSEIF RESULT == 4
+	$RANDOM_START_UNKNOUN
+	LOCAL:1 = SELECT_RANDOM_CHARA()
+	TARGET = 0
+		TRYCCALLFORM KOJO_{LOCAL:1}_0(0, 0)
+			;口上本体がある場合、決定
+		CATCH
+			;口上本体が無い場合、再抽選
+			GOTO RANDOM_START_UNKNOUN
+		ENDCATCH
+	FLAG:560 = 4
+;*************************************************************************
+
+ELSEIF RESULT == 9
+	LOCAL:1 = 0
+	FLAG:567 = 0
+ELSEIF RESULT == 10
+	IF FLAG:537 == 0
+		FLAG:537 = 1
+	ELSE
+		FLAG:537 = 0
+	ENDIF
+	RESTART
+ELSE
+	REUSELASTLINE 入力値が不正です。再入力してください
+	GOTO INPUT_LOOP1
+ENDIF
+
+$FINALIZE
+
+FLAG:0 = 1
+
+;選択されたキャラで決定、キャラデータ追加
+IF FLAG:2 >= LOCAL:1
+	ADDCHARA LOCAL:1
+ELSE
+	ADDVOIDCHARA
+	CALL MOB_TYPE(FLAG:0, LOCAL:1 - FLAG:2)
+	CALL MOB_BASE(FLAG:0, LOCAL:1 - FLAG:2)
+ENDIF
+
+
+
+;他のキャラデータ選択
+@OTHER_CHARA_SELECT
+;LOCAL
+;0		LOOP
+;1		人数上限
+;10		TEMP
+
+LOCAL:1 = 9
+
+FOR LOCAL:0, 1, 10
+	FLAG:(LOCAL:0 + 20) = 0
+NEXT
+
+$START
+
+DRAWLINE
+PRINTFORML 主人公以外のキャラを選択してください  ( )内表記は　(戦闘素質/速度)
+DRAWLINE
+FOR LOCAL:0, 1, (LOCAL:1 + 1)
+	IF FLAG:(LOCAL:0 + 20) == 0
+		PRINTFORML ({LOCAL:0}人目) ？？？          (???/???)  [{LOCAL:0 * 10}] 自分で選ぶ  [{LOCAL:0 * 10 + 1}] ランダムに選ぶ  [{LOCAL:0 * 10 + 2}] ？？？に戻す
+	ELSEIF FLAG:2 >= FLAG:(LOCAL:0 + 20)
+		PRINTFORML ({LOCAL:0}人目) %CSVNAME(FLAG:(LOCAL:0 + 20), 0),14,LEFT%  ({CSVABL(FLAG:(LOCAL:0 + 20), 98, 0), 3}/{CSVABL(FLAG:(LOCAL:0 + 20), 97, 0), 3})  [{LOCAL:0 * 10}] 自分で選ぶ  [{LOCAL:0 * 10 + 1}] ランダムに選ぶ  [{LOCAL:0 * 10 + 2}] ？？？に戻す
+	ELSE
+		PRINTFORML ({LOCAL:0}人目) %MOB_NAME(FLAG:(LOCAL:0 + 20)),14,LEFT%  ( ??/ ??)  [{LOCAL:0 * 10}] 自分で選ぶ  [{LOCAL:0 * 10 + 1}] ランダムに選ぶ  [{LOCAL:0 * 10 + 2}] ？？？に戻す
+	ENDIF
+NEXT
+PRINTFORML [0] これでOK！（？？？が残っている場合、ランダムに決定されます）
+;PRINTFORML [1] これでOK！（？？？が残っている場合、口上のあるキャラからランダムに決定されます）
+PRINTFORML [2] 全員？？？に戻す
+IF FLAG:998
+	PRINTFORML [9] 人数を変更する（1～9人まで変更可能）
+ELSE
+	PRINTFORML [9] 人数を変更する（0～9人まで変更可能）
+ENDIF
+
+$INPUT_LOOP1
+INPUT
+
+IF RESULT == 0
+	;確定処理
+	;埋まっていない部分をランダムで埋める
+	FOR LOCAL:0, 1, (LOCAL:1 + 1)
+		SIF FLAG:(LOCAL:0 + 20) == 0
+			FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
+	NEXT
+	GOTO FINALIZE
+	FLAG:562 = 0
+;*********************口上あるキャラからランダムパッチ***************************************
+ELSEIF RESULT == 1
+	;確定処理
+	;埋まっていない部分をランダムで埋める
+	FOR LOCAL:0, 1, (LOCAL:1 + 1)
+		IF FLAG:(LOCAL:0 + 20) == 0
+			$RANDOM_PARTNER_START
+			FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
+			TARGET = 0
+			TRYCCALLFORM KOJO_{FLAG:(LOCAL:0 + 20)}_0(0, 0)
+				;口上本体がある場合、決定
+			CATCH
+				;口上本体が無い場合、再抽選
+				GOTO RANDOM_PARTNER_START
+			ENDCATCH
+		ENDIF
+	NEXT
+	FLAG:562 = 1
+	GOTO FINALIZE
+;********************************************************************************************
+
+ELSEIF RESULT == 2
+	;元に戻す
+	FOR LOCAL:0, 1, (LOCAL:1 + 1)
+		FLAG:(LOCAL:0 + 20) = 0
+	NEXT
+ELSEIF RESULT == 9
+	IF FLAG:998
+		PRINTFORML 主人公以外のキャラは何人登場させますか？（1～9の値を入力してください）
+	ELSE
+		PRINTFORML 主人公以外のキャラは何人登場させますか？（0～9の値を入力してください）
+	ENDIF
+	$INPUT_LOOP2
+	INPUT
+	IF RESULT < 0 || RESULT > 9 || (FLAG:998 && RESULT == 0)
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP2
+	ELSE
+		LOCAL:1 = RESULT
+		PRINTFORMW 人数を{RESULT}人に変更しました
+		FOR LOCAL:0, (1 + RESULT), 10
+			FLAG:(LOCAL:0 + 20) = 0
+		NEXT
+	ENDIF
+	GOTO START
+ELSEIF (RESULT % 10) == 0
+	;1の位が0→自分で選択？
+	;10の位が1～9でなければ不正
+	IF (RESULT / 10) < 1 || (RESULT / 10) > LOCAL:1
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP1
+	ENDIF
+	LOCAL:10 = RESULT / 10
+	CALL CHARA_SELECT
+	FLAG:(LOCAL:10 + 20) = RESULT
+	FLAG:(LOCAL:10 + 550) = RESULT
+ELSEIF (RESULT % 10) == 1
+	;1の位が1→ランダムで選択？
+	;10の位が1～9でなければ不正
+	IF (RESULT / 10) < 1 || (RESULT / 10) > LOCAL:1
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP1
+	ENDIF
+	LOCAL:10 = RESULT / 10
+	FLAG:(LOCAL:10 + 20) = SELECT_RANDOM_CHARA()
+ELSEIF (RESULT % 10) == 2
+	;1の位が2→リセット
+	;10の位が1～9でなければ不正
+	IF (RESULT / 10) < 1 || (RESULT / 10) > LOCAL:1
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP1
+	ENDIF
+	FLAG:(RESULT / 10 + 20) = 0
+ELSE
+	REUSELASTLINE 入力値が不正です。再入力してください
+	GOTO INPUT_LOOP1
+ENDIF
+;入力に戻る
+GOTO START
+
+
+$FINALIZE
+
+;選択されたキャラで決定、キャラデータ追加
+FOR LOCAL:0, 1, (LOCAL:1 + 1)
+	FLAG:0 += 1
+	IF FLAG:2 >= FLAG:(LOCAL:0 + 20)
+		ADDCHARA FLAG:(LOCAL:0 + 20)
+	ELSE
+		ADDVOIDCHARA
+		CALL MOB_TYPE(FLAG:0, FLAG:(LOCAL:0 + 20) - FLAG:2)
+		CALL MOB_BASE(FLAG:0, FLAG:(LOCAL:0 + 20) - FLAG:2)
+	ENDIF
+NEXT
+FLAG:561 = FLAG:0
+
+
+;キャラクターを1人選択して、キャラ番号を返す　キャンセル時は0を返す
+;ページ数は記憶しない方が使いやすそうなので、初期化しない（ゲーム開始時の初期化のみ）
+@CHARA_SELECT
+#DIM PAGE = 0
+#DIM LCOUNT
+#DIM SELECT_CHARA
+#DIM SELECT_MOB
+
+DRAWLINE
+HTML_PRINT "キャラクターを選択してください  ( )内表記は　(戦闘素質/速度)    <font color='#20FF70'>緑字は口上あり</font>"
+DRAWLINE
+
+;全体表示
+FOR LCOUNT, (11 + (30 * PAGE)), (41 + (30 * PAGE))
+	SIF (LCOUNT % 3 == 2) && (LCOUNT != (11 + (30 * PAGE)))
+		PRINTL 
+		
+	
+	;表示が終わったら終了
+	IF LCOUNT > (FLAG:2 + 10)
+		PRINTC  
+		CONTINUE
+	ENDIF
+	
+	
+	IF EXIST_CHARA(LCOUNT - 10)
+		;加入済み
+		SETCOLOR 0x333333
+		PRINTFORMLC [---] %CSVNAME(LCOUNT - 10, 0),16,LEFT% (選択済み)
+		RESETCOLOR
+	ELSE
+		TARGET = 0
+		TRYCCALLFORM KOJO_{LCOUNT - 10}_0(0, 0)
+			;口上本体がある場合、色を変える
+			SETCOLOR 0x20FF70
+		CATCH
+			;口上本体が無い場合、普通の色
+			RESETCOLOR
+		ENDCATCH
+		PRINTFORMLC [{LCOUNT,3}] %CSVNAME(LCOUNT - 10, 0),16,LEFT% ({CSVABL(LCOUNT - 10, 98, 0), 3}/{CSVABL(LCOUNT - 10, 97, 0), 3})
+		RESETCOLOR
+	ENDIF
+NEXT
+
+PRINTL 
+DRAWLINE
+PRINTLC [7] 前のページ
+PRINTFORMLC             Page({PAGE + 1}/{(FLAG:2 - 1)/30 + 1})
+PRINTC [9] 次のページ
+PRINTL 
+PRINTL [0] 戻る
+
+$INPUT_LOOP
+INPUT
+
+IF RESULT == 0
+	RETURN 0
+
+;前ページへ
+ELSEIF RESULT == 7
+	PAGE -= 1
+	SIF PAGE < 0
+		PAGE = (FLAG:2 - 1) / 30
+	RESTART
+	
+;次ページへ
+ELSEIF RESULT == 9
+	PAGE += 1
+	SIF PAGE > ((FLAG:2 - 1) / 30)
+		PAGE = 0
+	RESTART
+	
+;直接指定
+ELSEIF RESULT >= 11 && RESULT <= (FLAG:2 + 10)
+	SELECT_CHARA = RESULT - 10
+	
+	;加入済み
+	SIF !EXIST_CHARA(SELECT_CHARA)
+		RETURN SELECT_CHARA
+ELSEIF RESULT > FLAG:2 + 10 && RESULT < FLAG:2 + 23
+	SELECT_MOB = RESULT - 10
+	RETURN SELECT_MOB
+ENDIF
+
+REUSELASTLINE 入力値が不正です。再入力してください
+GOTO INPUT_LOOP
+
+
+
+;キャラの存在チェック
+;ARG:0	調べたいキャラ
+@EXIST_CHARA(ARG:0)
+#FUNCTION
+
+FOR LOCAL:0, 0, CHARANUM
+	;見つかった
+	SIF NO:(LOCAL:0) == ARG:0
+		RETURNF 1
+NEXT
+FOR LOCAL:0, 21, 30
+	;見つかった
+	SIF FLAG:(LOCAL:0) == ARG:0
+		RETURNF 1
+NEXT
+
+RETURNF 0
+
+
+
+;ランダムでキャラ選択
+;アルゴリズムが面倒なので、乱数で選択→重複したら再抽選にする
+;選択肢（人数）が少なすぎると無限ループになるので注意
+@SELECT_RANDOM_CHARA
+#FUNCTION
+LOCAL:0 = RAND:(FLAG:2) + 1
+;既に居るキャラが選ばれてしまったら再抽選
+SIF EXIST_CHARA(LOCAL:0)
+	RESTART
+;旧作キャラ排除のコンフィグONで旧作キャラなら再抽選
+IF FLAG:537
+	;IF LOCAL:0 == 51 || LOCAL:0 == 52 || (LOCAL:0 >= 57 && LOCAL:0 <= 76)
+	;	RESTART
+	;ENDIF
+ENDIF
+RETURNF LOCAL:0
+

@@ -1,0 +1,49 @@
+﻿;攻撃（分類4＝敵の拘束攻撃）を処理
+;ARG:0	攻撃側キャラ
+;ARG:1	防御側キャラ
+;RESULT:0	当たったかどうか（1で命中）
+;RESULT:1	ダメージ
+@CHECK_ATTACK_4(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	当たったかどうか
+;2	ダメージ
+;3	攻撃力(今の所未使用)
+;4	防御力(今の所未使用)
+;5	属性倍率
+;6	命中率
+;7	TEMP
+;8	TEMP2
+
+
+VARSET LOCAL, 0, 1, 9
+
+;ダメージは無いので命中率だけ返す
+
+
+;命中率チェック
+CALL GET_HIT_RATE_ENEMY(ARG:0, ARG:1, 4)
+LOCAL:6 = RESULT
+
+;拘束攻撃の場合、さらに残りEPによる命中率ボーナスをかける
+IF LOCAL:6 < 100
+	LOCAL:7 = BASE:(ARG:1):2 * 100 / MAXBASE:(ARG:1):2
+	IF LOCAL:7 <= 1
+		LOCAL:6 += 100
+	ELSEIF LOCAL:7 < 60
+		LOCAL:6 += 50 - LOCAL:7 / 2
+	ELSEIF LOCAL:7 < 90
+		LOCAL:6 += 40 - LOCAL:7 / 3
+	ELSE
+		LOCAL:6 += 100 - LOCAL:7
+	ENDIF
+ENDIF
+
+PRINTFORML 命中率：{LOCAL:6}％
+
+IF RAND:100 < LOCAL:6
+	LOCAL:1 = 1
+ENDIF
+
+RETURN LOCAL:1
+

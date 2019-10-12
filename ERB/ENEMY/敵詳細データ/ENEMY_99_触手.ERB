@@ -1,0 +1,198 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_99(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 1000
+DA:(ARG:0):2 = 1000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 40
+DA:(ARG:0):9 = 35
+
+DA:(ARG:0):15 = 33
+DA:(ARG:0):16 = 33
+DA:(ARG:0):17 = 33
+DA:(ARG:0):18 = 80
+DA:(ARG:0):19 = 5
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 32
+DA:(ARG:0):86 = 7
+
+DA:(ARG:0):88 = 1
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(99)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_99(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 20
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:3 = RAND:9
+			IF LOCAL:3 < 4
+				LOCAL:2 = 600
+			ELSEIF LOCAL:3 < 8
+				LOCAL:2 = 601
+			ELSE
+				LOCAL:2 = 800
+			ENDIF
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:9
+		IF LOCAL:3 < 3
+			LOCAL:2 = 100
+		ELSEIF LOCAL:3 < 5
+			LOCAL:2 = 200
+		ELSEIF LOCAL:3 < 7
+			LOCAL:2 = 300
+		ELSE
+			LOCAL:2 = 301
+		ENDIF
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;PTには拘束攻撃以外
+	LOCAL:3 = RAND:9
+	IF LOCAL:3 < 3
+		LOCAL:2 = 100
+	ELSEIF LOCAL:3 < 5
+		LOCAL:2 = 200
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 300
+	ELSE
+		LOCAL:2 = 301
+	ENDIF
+ELSE
+	;通常時
+	;色々
+	LOCAL:3 = RAND:11
+	IF LOCAL:3 < 3
+		LOCAL:2 = 100
+	ELSEIF LOCAL:3 < 5
+		LOCAL:2 = 200
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 300
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 301
+	ELSE
+		LOCAL:2 = 500
+	ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+
+
+;味方を狙う確率決定
+;ARG:0	設定場所
+@SET_ENEMY_TARGET_RATE_99(ARG:0)
+
+;誰かを拘束している場合、確率固定
+IF DA:(ARG:0):70
+	IF CFLAG:1:29 == 0
+		DA:(ARG:0):60 = 100
+		DA:(ARG:0):61 = 0
+		DA:(ARG:0):62 = 0
+	ELSE
+		DA:(ARG:0):60 = 50
+		DA:(ARG:0):61 = 25
+		DA:(ARG:0):62 = 25
+	ENDIF
+ELSEIF DA:(ARG:0):71
+	IF CFLAG:(FLAG:10):29 == 0
+		DA:(ARG:0):60 = 0
+		DA:(ARG:0):61 = 100
+		DA:(ARG:0):62 = 0
+	ELSE
+		DA:(ARG:0):60 = 25
+		DA:(ARG:0):61 = 50
+		DA:(ARG:0):62 = 25
+	ENDIF
+ELSEIF DA:(ARG:0):72
+	IF CFLAG:(FLAG:11):29 == 0
+		DA:(ARG:0):60 = 0
+		DA:(ARG:0):61 = 0
+		DA:(ARG:0):62 = 100
+	ELSE
+		DA:(ARG:0):60 = 25
+		DA:(ARG:0):61 = 25
+		DA:(ARG:0):62 = 50
+	ENDIF
+ELSE
+	DA:(ARG:0):60 = 30
+	DA:(ARG:0):61 = 30
+	DA:(ARG:0):62 = 30
+	
+	IF CFLAG:1:34
+		DA:(ARG:0):60 += 30
+	ENDIF
+	IF FLAG:10 && CFLAG:(FLAG:10):34
+		DA:(ARG:0):61 += 30
+	ENDIF
+	IF FLAG:11 && CFLAG:(FLAG:10):34
+		DA:(ARG:0):62 += 30
+	ENDIF
+ENDIF
+
+;おねだり中は狙われる確率UP
+IF CFLAG:1:50 >= 54 && CFLAG:1:50 <= 58
+	DA:(ARG:0):60 += 600
+ENDIF
+IF CFLAG:(FLAG:10):50 >= 54 && CFLAG:(FLAG:10):50 <= 58
+	DA:(ARG:0):61 += 600
+ENDIF
+IF CFLAG:(FLAG:11):50 >= 54 && CFLAG:(FLAG:11):50 <= 58
+	DA:(ARG:0):62 += 600
+ENDIF
+
+;存在しない味方を狙う割合を０にしておく
+IF FLAG:10 == 0
+	DA:(ARG:0):61 = 0
+ENDIF
+IF FLAG:11 == 0
+	DA:(ARG:0):62 = 0
+ENDIF
+
+

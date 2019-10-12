@@ -1,0 +1,139 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_78(ARG:0, ARG:1)
+
+
+DA:(ARG:0):1 = 15000
+DA:(ARG:0):2 = 15000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 100
+DA:(ARG:0):9 = 70
+
+DA:(ARG:0):15 = 0
+DA:(ARG:0):16 = 0
+DA:(ARG:0):17 = 100
+DA:(ARG:0):18 = 60
+DA:(ARG:0):19 = 20
+
+DA:(ARG:0):14 = -10
+
+DA:(ARG:0):40 = 110
+DA:(ARG:0):41 = 110
+DA:(ARG:0):42 = 110
+DA:(ARG:0):43 = 110
+DA:(ARG:0):44 = 50
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 296
+DA:(ARG:0):86 = 5
+DA:(ARG:0):89 = 9
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(78)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_78(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+;4	拘束フラグ２
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+LOCAL:4 = 0
+IF DA:(ARG:0):10 == 1
+	;１人目拘束
+	LOCAL:4 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):10 == FLAG:10
+	;２人目拘束
+	LOCAL:4 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):10 == FLAG:11
+	;３人目拘束
+	LOCAL:4 = FLAG:11
+ELSEIF DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:4 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0 || LOCAL:4 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1 || ARG:1 == LOCAL:4
+		;拘束している相手を攻撃
+		;戦意喪失状態でも離してくれない
+			LOCAL:3 = RAND:22
+			SELECTCASE LOCAL:3
+				CASE 0 TO 5
+					LOCAL:2 = 738
+				CASE 6 TO 10
+					LOCAL:2 = 739
+				CASE 11 TO 15
+					LOCAL:2 = 740
+				CASE 16 TO 17
+					LOCAL:2 = 1012
+				CASEELSE
+					LOCAL:2 = 863
+			ENDSELECT
+
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:9
+		SELECTCASE LOCAL:3
+			CASE 0 TO 2
+				LOCAL:2 = 169
+			CASE 3 TO 4
+				LOCAL:2 = 256
+			CASE 5 TO 6
+				LOCAL:2 = 418
+			CASEELSE
+				LOCAL:2 = 566
+		ENDSELECT
+	ENDIF
+
+ELSE
+	;通常時
+	;色々
+
+	LOCAL:3 = RAND:9
+	SELECTCASE LOCAL:3
+		CASE 0 TO 2
+			LOCAL:2 = 169
+		CASE 3 TO 4
+			LOCAL:2 = 256
+		CASE 5 TO 6
+			LOCAL:2 = 418
+		CASEELSE
+			LOCAL:2 = 566
+	ENDSELECT
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+

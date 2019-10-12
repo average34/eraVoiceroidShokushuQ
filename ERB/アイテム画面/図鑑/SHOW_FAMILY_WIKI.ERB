@@ -1,0 +1,208 @@
+﻿;状態異常一覧表示
+@SHOW_FAMILY_WIKI
+;LOCAL
+;0	ループ用
+;2	直前に選択した番号
+;3	状態異常詳細を見た
+;10	行削除用カウント1(計算用)
+;11	行削除用カウント2(計算用)
+;12	行削除用カウント3(項目の改行数)
+;13	行削除用カウント4(計算用)
+;14	行削除用カウント5(計算用)
+;15	行削除用カウント6(詳細の改行数)
+
+	$START
+	REDRAW 0
+	LOCAL:10 = LINECOUNT
+	
+	LOCAL:1 = 0
+	DRAWLINE
+	PRINTFORML どの種族を見ますか？
+	FOR LOCAL:0, 1, 60
+		IF FAMILY_NAME(LOCAL:0) != "存在しない種族"
+			PRINTFORM [{LOCAL:0,3}] %FAMILY_NAME(LOCAL:0),20,LEFT%
+		ELSE
+			;灰色表示
+			LOCALS = ？？？
+			SETCOLOR 0x333333
+			PRINTPLAINFORM [{LOCAL:0,3}] %LOCALS, 20, LEFT%
+			RESETCOLOR
+		ENDIF
+		LOCAL:1 += 1
+		;3つ表示するごとに改行
+		SIF (LOCAL:1 % 3) == 0 && LOCAL:1 > 0
+			PRINTL
+	NEXT
+	PRINTL
+	PRINTL
+	PRINTL [  0] キャンセル
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL:11 = LINECOUNT
+	;項目表示の改行数を記録
+	LOCAL:12 = LOCAL:11 - LOCAL:10
+
+	IF RESULT == 0
+		REDRAW 1
+		LOCAL:3 = 0
+		RETURN
+	ELSEIF RESULT > 0 && RESULT < 60 && FAMILY_NAME(RESULT) != "存在しない種族"
+		;行削除(初回)
+		IF LOCAL:3 == 0
+			CLEARLINE LOCAL:12
+		;行削除(2回目～)
+		ELSEIF LOCAL:3 == 1 && LOCAL:2 != RESULT
+			CLEARLINE LOCAL:15 + LOCAL:12 + 3
+		;連打のログ流れ防止
+		ELSEIF LOCAL:2 == RESULT
+			CLEARLINE 1
+			GOTO INPUT_LOOP
+		ENDIF
+		LOCAL:2 = RESULT
+		DRAWLINE
+		SETCOLOR 0x60C0FF
+		PRINTFORML >> %FAMILY_NAME(RESULT),15,LEFT%
+		RESETCOLOR
+		LOCAL:13 = LINECOUNT
+		CALL PRINT_MESSAGE(-1, 534, RESULT, CALLNAME:1, "")
+		LOCAL:14 = LINECOUNT
+		;説明表示の改行数を記録
+		LOCAL:15 = LOCAL:14 - LOCAL:13
+		PRINTL
+		LOCAL:3 = 1
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+
+@FAMILY_NAME(ARG:0)
+#FUNCTIONS
+
+SELECTCASE ARG:0
+	CASE 0
+		RETURNF "交配について"
+	CASE 1
+		RETURNF "プリンセス（真）"
+	CASE 2
+		RETURNF "プリンセス（偽）"
+	CASE 5
+		RETURNF "リビングバイン"
+	CASE 6
+		RETURNF "スカーレットバイン"
+	CASE 7
+		RETURNF "スケーターワーム"
+	CASE 8
+		RETURNF "サンドバタフライ"
+	CASE 9
+		RETURNF "タコ娘"
+	CASE 10
+		RETURNF "ヘレシーマーメル"
+	CASE 11
+		RETURNF "磯女"
+	CASE 12
+		RETURNF "アクティニア"
+	CASE 13
+		RETURNF "スライムガール"
+	CASE 14
+		RETURNF "ショゴスセル"
+	CASE 15
+		RETURNF "アルラウネ"
+	CASE 16
+		RETURNF "ドリアード"
+	CASE 17
+		RETURNF "シェイプシフター"
+	CASE 18
+		RETURNF "ドッペルゲンガー"
+	CASE 20
+		RETURNF "博麗の娘"
+	CASE 21
+		RETURNF "テンタクルフェアリー"
+	CASE 22
+		RETURNF "スノーガール"
+	CASE 23
+		RETURNF "サキュバス"
+	CASE 24
+		RETURNF "プレーンマジックガール"
+	CASE 25
+		RETURNF "吸血鬼"
+	CASE 26
+		RETURNF "半妖半霊"
+	CASE 27
+		RETURNF "エンジェルドーター"
+	CASE 28
+		RETURNF "スキマ妖怪"
+	CASE 29
+		RETURNF "夜雀"
+	CASE 30
+		RETURNF "イナバ"
+	CASE 31
+		RETURNF "玉兎"
+	CASE 32
+		RETURNF "蓬莱人"
+	CASE 33
+		RETURNF "天狗"
+	CASE 34
+		RETURNF "半神"
+	CASE 35
+		RETURNF "半月の姫"
+	CASE 36
+		RETURNF "神の末裔"
+	CASE 37
+		RETURNF "鬼"
+	CASE 38
+		RETURNF "覚"
+	CASE 39
+		RETURNF "ネコマタ"
+	CASE 45
+		RETURNF "コウノトリ"
+	CASE 50
+		RETURNF "チクタクガール"
+	CASE 51
+		RETURNF "スターカラーズ"
+	CASE 52
+		RETURNF "ダムドラック"
+	CASE 53
+		RETURNF "フォーマルフェアリー"
+	CASE 54
+		RETURNF "リリウムレディバグ"
+	CASE 55
+		RETURNF "狐狗狸"
+	CASE 56
+		RETURNF "聖獣"
+	CASE 59
+		RETURNF "ラミア"
+	CASE 60
+		RETURNF "VOICEROID"
+	CASE 61
+		RETURNF "CeVIO"
+	CASE 62
+		RETURNF "AITalk"
+	CASEELSE
+		RETURNF "存在しない種族"
+ENDSELECT
+
+
+@CHARA_2_FAMILY(ARG:0)
+#FUNCTION
+
+SELECTCASE ARG:0
+	;あなた　誰？
+	CASE 0
+		RETURNF 99
+	;VOICEROID
+	CASE 1, 2 ,3 ,4 ,5, 6, 7, 8, 15, 16, 17, 18
+		RETURNF 60
+	;CeVIO
+	CASE 9, 10, 11, 12
+		RETURNF 61
+	;AITalk
+	CASE 13, 14, 19, 20, 21
+		RETURNF 62
+	CASEELSE
+		RETURNF 99
+ENDSELECT

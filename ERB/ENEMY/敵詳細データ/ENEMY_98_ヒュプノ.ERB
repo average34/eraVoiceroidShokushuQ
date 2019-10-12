@@ -1,0 +1,178 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_98(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 400000
+DA:(ARG:0):2 = 400000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 180
+DA:(ARG:0):9 = 200
+
+DA:(ARG:0):15 = 0
+DA:(ARG:0):16 = 0
+DA:(ARG:0):17 = 100
+DA:(ARG:0):18 = 2000
+DA:(ARG:0):19 = 0
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 32
+DA:(ARG:0):86 = 7
+DA:(ARG:0):89 = 63
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(98)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_98(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+;4	拘束フラグ２
+;5	能力値減少カウント
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+LOCAL:4 = 0
+IF DA:(ARG:0):10 == 1
+	;１人目拘束
+	LOCAL:4 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):10 == FLAG:10
+	;２人目拘束
+	LOCAL:4 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):10 == FLAG:11
+	;３人目拘束
+	LOCAL:4 = FLAG:11
+ELSEIF DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:4 = -1
+ENDIF
+
+;催眠維持のためダメージ HPだけだと母乳で無限ループするので速度もタイムリミットにする
+
+IF DA:(ARG:0):9 > 10 && DA:(ARG:0):87 < TFLAG:11
+	DA:(ARG:0):1 -= DA:(ARG:0):2 / 25
+	DA:(ARG:0):9 -= 5
+	DA:(ARG:0):87 += 1
+ELSEIF DA:(ARG:0):9 < 0 && DA:(ARG:0):87 < TFLAG:11
+	DA:(ARG:0):1 -= DA:(ARG:0):2 / 2
+	DA:(ARG:0):87 += 1
+ENDIF
+
+
+
+;催眠チェック
+IF CFLAG:1:43 == 0 || (CFLAG:1:43 < 3 && RAND:7 == 0)
+	LOCAL:2 = 22
+ELSEIF LOCAL:1 > 0 || LOCAL:4 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には枠が無ければ拘束攻撃以外
+	;特殊なモンスターなのでHPと衣服には攻撃しない
+	IF ARG:1 == LOCAL:1 || ARG:1 == LOCAL:4
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 40
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:3 = RAND:21
+			SELECTCASE LOCAL:3
+				CASE 0 TO 2
+					LOCAL:2 = 679
+				CASE 3 TO 5
+					LOCAL:2 = 680
+				CASE 6 TO 8
+					LOCAL:2 = 681
+				CASE 9 TO 11
+					LOCAL:2 = 682
+				CASE 12 TO 14
+					LOCAL:2 = 683
+				CASE 15 TO 16
+					LOCAL:2 = 954
+				CASE 16 TO 17
+					LOCAL:2 = 989
+				CASEELSE
+					LOCAL:2 = 840
+			ENDSELECT
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+			LOCAL:3 = RAND:18
+		ELSE
+			LOCAL:3 = RAND:21
+		ENDIF
+		SELECTCASE LOCAL:3
+			CASE 0 TO 2
+				LOCAL:2 = 379
+			CASE 3 TO 5
+				LOCAL:2 = 380
+			CASE 6
+				LOCAL:2 = 381
+			CASE 7 TO 8
+				LOCAL:2 = 382
+			CASE 9 TO 10
+				LOCAL:2 = 383
+			CASE 11 TO 12
+				LOCAL:2 = 384
+			CASE 13 TO 14
+				LOCAL:2 = 385
+			CASE 15 TO 16
+				LOCAL:2 = 386
+			CASE 17 TO 18
+				LOCAL:2 = 542
+			CASEELSE
+				LOCAL:2 = 543
+		ENDSELECT
+	ENDIF
+ELSE
+	LOCAL:3 = RAND:21
+		SELECTCASE LOCAL:3
+			CASE 0 TO 2
+				LOCAL:2 = 379
+			CASE 3 TO 4
+				LOCAL:2 = 380
+			CASE 5 TO 6
+				LOCAL:2 = 381
+			CASE 7 TO 8
+				LOCAL:2 = 382
+			CASE 9 TO 10
+				LOCAL:2 = 383
+			CASE 11 TO 12
+				LOCAL:2 = 384
+			CASE 13 TO 14
+				LOCAL:2 = 385
+			CASE 15 TO 16
+				LOCAL:2 = 386
+			CASE 17 TO 18
+				LOCAL:2 = 542
+			CASEELSE
+				LOCAL:2 = 543
+		ENDSELECT
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

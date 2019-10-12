@@ -1,0 +1,20 @@
+﻿;おねだり
+;CHARA_ID	実行キャラ
+@FIX_PT_ACTION_54(CHARA_ID)
+#DIM CHARA_ID
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+
+CALL PRINT_MESSAGE(CHARA_ID,1,54,CALLNAME:CHARA_ID,"")
+
+;Aおねだり
+IF CFLAG:CHARA_ID:20
+	PRINTFORML %CALLNAME:CHARA_ID%は動きにくそうにしながらも、触手に尻を擦りつけ刺激をねだっている…
+ELSE
+	IF BASE:CHARA_ID:3 <= 0
+		PRINTFORML %CALLNAME:CHARA_ID%は尻を突き出し、自ら尻穴を広げ、触手の挿入を待ち望んでいる…
+	ELSE
+		PRINTFORML %CALLNAME:CHARA_ID%は尻を突き出し、触手の愛撫を待ちわびている…
+	ENDIF
+ENDIF

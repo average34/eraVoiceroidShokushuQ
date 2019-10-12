@@ -1,0 +1,160 @@
+﻿;攻撃（分類9＝味方の霊撃）を処理
+;ARG:0	攻撃側キャラ
+;ARG:1	防御側キャラ
+;ARG:2	HP補正倍率
+;RESULT:0	当たったかどうか（1で命中）
+;RESULT:1	ダメージ
+@CHECK_ATTACK_9(ARG:0, ARG:1, ARG:2)
+;LOCAL
+;0	LOOP
+;1	当たったかどうか
+;2	ダメージ
+;3	攻撃力(今の所未使用)
+;4	防御力(今の所未使用)
+;5	属性倍率
+;6	命中率
+;7	TEMP
+;8	関連スキル
+
+
+VARSET LOCAL, 0, 1, 9
+
+;----- 攻撃力計算 -----
+;基本値
+LOCAL:2 = TFLAG:57 * TFLAG:58
+
+;HPが0だと少し威力が下がる
+IF BASE:(ARG:0):0 <= 0
+	LOCAL:2 = LOCAL:2 * 9 / 10
+ENDIF
+
+;TP倍率
+LOCAL:7 = 0
+IF BASE:(ARG:0):4 >= 100
+	LOCAL:7 = BASE:(ARG:0):4
+ELSE
+	LOCAL:7 = 100 - (100 - BASE:(ARG:0):4) / 2
+ENDIF
+LOCAL:2 = LOCAL:2 * LOCAL:7 / 100
+
+
+;防御側TP倍率は、味方の攻撃の場合考慮しない
+
+
+;CP倍率も同上
+
+
+;対応スキルのレベル倍率
+LOCAL:7 = 0
+LOCAL:8 = 0
+;攻撃戦闘レベルを参照
+	LOCAL:8 = 3
+
+IF ABL:(ARG:0):(LOCAL:8) == 0
+	LOCAL:7 = 100
+ELSEIF ABL:(ARG:0):(LOCAL:8) == 1
+	LOCAL:7 = 120
+ELSEIF ABL:(ARG:0):(LOCAL:8) == 2
+	LOCAL:7 = 150
+ELSE
+	LOCAL:7 = 200
+ENDIF
+LOCAL:2 = LOCAL:2 * LOCAL:7 / 100
+
+
+;媚薬装備中は威力2倍
+CALL GET_EQUIP_BONUS(ARG:0, 39)
+IF RESULT
+	LOCAL:2 *= 2
+ENDIF
+
+
+;前進中は威力1.2倍
+IF CFLAG:(ARG:0):34
+	LOCAL:2 = LOCAL:2 * 12 / 10
+ENDIF
+
+
+;難易度補正
+IF FLAG:4 <= 0
+	LOCAL:2 = LOCAL:2 * 15 / 10
+ELSEIF FLAG:4 == 1
+	LOCAL:2 = LOCAL:2 * 12 / 10
+ENDIF
+;EASYのみ、ラスボス戦はさらに威力２倍
+SIF FLAG:4 <= 0 && TFLAG:0 == 1
+	LOCAL:2 = LOCAL:2 * 2
+
+;消耗武器が割と不遇なのでこっそり威力補正
+SIF TFLAG:56 == 2 || TFLAG:56 == 3
+	LOCAL:2 = LOCAL:2 * 12 / 10
+
+
+;眠気ペナルティ
+CALL GET_EQUIP_BONUS(ARG:0, 37)
+IF ARG:0 != FLAG:15 && ARG:0 != FLAG:16 && RESULT == 0 
+	IF FLAG:7 >= 11
+		LOCAL:2 = LOCAL:2 * 2 / 10
+	ELSEIF FLAG:7 >= 7
+		LOCAL:2 = LOCAL:2 * 5 / 10
+	ENDIF
+ENDIF
+
+;残HP補正
+;1.5以上なら1.5で固定
+IF ARG:2 > 150
+	LOCAL:2 = LOCAL:2 * 150 / 100
+ELSE
+	LOCAL:2 = LOCAL:2 * ARG:2 / 100
+ENDIF
+;乱数加算および桁補正
+LOCAL:2 = LOCAL:2 * (90 + RAND:11 + RAND:11) / 1000
+
+
+
+;!!! 今の所防御力という概念は無し
+
+
+
+;----- 属性倍率計算 -----
+LOCAL:5 = 100
+IF TFLAG:56 == 0
+	LOCAL:5 = DA:(ARG:1):40
+ELSEIF TFLAG:56 == 1
+	LOCAL:5 = DA:(ARG:1):44
+ELSEIF TFLAG:56 == 2
+	LOCAL:5 = DA:(ARG:1):42
+ELSEIF TFLAG:56 == 3
+	LOCAL:5 = DA:(ARG:1):43
+ELSEIF TFLAG:56 == 4
+	LOCAL:5 = DA:(ARG:1):41
+ENDIF
+IF LOCAL:5 == 0
+	;0なら100％
+	LOCAL:5 = 100
+ELSEIF LOCAL:5 == -1
+	;-1なら0％
+	LOCAL:5 = 0
+ENDIF
+
+
+;命中率チェック
+LOCAL:6 = ARG:2
+PRINTFORML 命中率：{LOCAL:6}％
+
+IF RAND:100 < LOCAL:6
+	LOCAL:1 = 1
+	;ヒットした霊撃が火属性の場合、敵に火傷状態が＋1蓄積される(ダメージ0でも)
+	IF TFLAG:56 == 3 || TFLAG:56 == 4
+		DA:(ARG:1):37 += 1
+	ENDIF
+ENDIF
+
+IF LOCAL:1
+	LOCAL:2 = LOCAL:2 * LOCAL:5 / 100
+ELSE
+	LOCAL:2 = 0
+ENDIF
+
+RETURN LOCAL:1, LOCAL:2
+

@@ -1,0 +1,68 @@
+﻿;探索イベント
+@SEARCH_EVENT
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	イベント成功フラグ
+;2	探索中断フラグ
+;3	探索結果
+
+LOCAL:1 = 0
+LOCAL:2 = 0
+
+PRINTFORMW %CALLNAME:1%%TACHI()%は周囲を探索し始めた…
+PRINTFORML 
+
+;固定イベントのチェック
+FOR LCOUNT, 100, 300
+	IF (FLAG:(LCOUNT) % 100) == FLAG:5
+		
+		;実行前のイベントの配置を記憶
+		LOCAL = FLAG:(LCOUNT) % 100
+		
+		;現在地で発生する可能性のあるイベントのチェック
+		TRYCCALLFORM CHECK_FIXED_EVENT_{LCOUNT}
+			LOCAL:3 = RESULT
+		CATCH
+			CONTINUE
+		ENDCATCH
+		
+		IF FLAG:(LCOUNT) % 100 != LOCAL
+			;配置が変更(再配置か削除)されてたら調書を更新
+			CALL ROOMREPORT_SEARCH_EVENT(LCOUNT, 0)
+			
+			
+		ELSEIF LOCAL:3 == 1
+			;FLAG値の変更がなく成功した→泉や祭壇などを発見or使用
+			;調書を更新
+			CALL ROOMREPORT_SEARCH_EVENT(LCOUNT, 1)
+			
+		ENDIF
+		
+		
+		IF LOCAL:3 == 1
+			;探索成功
+			PRINTL 
+			LOCAL:1 = 1
+		ELSEIF LOCAL:3 == 2
+			;探索中断
+			LOCAL:2 = 1
+			BREAK
+		ENDIF
+	ENDIF
+NEXT
+
+
+
+;ランダムイベントのチェック
+IF LOCAL:2
+	;中断フラグが立っていたら、ランダムイベントは起きない
+ELSE
+	CALL CHECK_RANDOM_EVENT(LOCAL:1)
+ENDIF
+
+;遺品があるかチェック
+CALL FIND_RELIC
+
+
+

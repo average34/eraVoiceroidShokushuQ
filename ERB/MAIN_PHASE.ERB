@@ -1,0 +1,684 @@
+﻿;各フェイズのメイン処理
+@MAIN_PHASE
+#DIM LCOUNT
+;ループ用
+;LOCAL
+;1	遭遇状況
+;2	TEMP1
+;3	TEMP2
+;4	TEMP3
+;5	敵の数
+;6	探索スキップ
+;7	夜這いした人
+;8	夜這い人数
+;9	夜這いを最初にした人
+;10	主人公喪失時のいじめイベント発生したかどうか
+;11	夜這いダメージ
+
+VARSET LOCAL
+
+;NPCの行動を処理
+FLAG:20 = 1
+FOR LCOUNT, 1, CHARANUM
+	;PTメンバーはスキップ
+	IF CHECK_MEMBER_FROM_ID(LCOUNT)
+		CONTINUE
+	ENDIF
+	CALL NPC_ACTION(LCOUNT)
+NEXT
+FLAG:20 = 0
+
+
+;全キャラの移動先決定(喪失・捕食などによる移動不可はここで処理)
+FOR LCOUNT, 1, CHARANUM
+	;主人公はスキップ　PTメンバーは後で上書きするので気にしない
+	IF LCOUNT == 1
+		CONTINUE
+	ENDIF
+	CALL MOVE_SELECT_FRIEND(LCOUNT)
+NEXT
+
+FOR LCOUNT, 1, FLAG:1
+	CALL MOVE_SELECT_ENEMY(LCOUNT)
+NEXT
+
+
+LOCAL:6 = 0
+
+;PT移動処理
+CFLAG:1:4 = FLAG:5
+IF FLAG:10
+	CFLAG:(FLAG:10):4 = FLAG:5
+	CFLAG:(FLAG:10):11 = CFLAG:1:11
+	CFLAG:(FLAG:10):13 = CFLAG:1:13
+	CFLAG:(FLAG:10):14 = CFLAG:1:14
+ENDIF
+IF FLAG:11
+	CFLAG:(FLAG:11):4 = FLAG:5
+	CFLAG:(FLAG:11):11 = CFLAG:1:11
+	CFLAG:(FLAG:11):13 = CFLAG:1:13
+	CFLAG:(FLAG:11):14 = CFLAG:1:14
+ENDIF
+
+
+
+;味方移動
+FOR LCOUNT, 1, CHARANUM
+	;すれ違い判定
+	IF CFLAG:(LCOUNT):13 == CFLAG:1:14 && CFLAG:(LCOUNT):14 == CFLAG:1:13
+		;すれ違う場合、移動は後で行う
+	ELSEIF CFLAG:(LCOUNT):13 == CFLAG:1:14 && CFLAG:(LCOUNT):13 == CFLAG:1:13
+		;主人公が移動無し＋相手と現在位置が同じ場合、50％で気づかれる＝移動は後で行う
+	ELSE
+		;主人公とすれ違う形でなければそのまま移動
+		CFLAG:(LCOUNT):4 = CFLAG:(LCOUNT):14
+	ENDIF
+NEXT
+
+FLAG:5 = CFLAG:1:14
+;各部屋に最初に侵入した場合アイテムひとつ入手+侵入経験　入手処理は下部
+IF FLAG:(600 + FLAG:5) == 0
+	FLAG:(600 + FLAG:5) = 1
+	CALL BONUS_ITEM
+ENDIF
+
+;敵移動
+FOR LCOUNT, 1, FLAG:1
+	;すれ違い判定
+	IF DA:(LCOUNT):12 == CFLAG:1:14 && DA:(LCOUNT):13 == CFLAG:1:13
+		;すれ違う場合、必ず気づかれる＝移動は後で行う
+	ELSEIF DA:(LCOUNT):12 == CFLAG:1:14 && DA:(LCOUNT):12 == CFLAG:1:13 && RAND:2 == 0
+		;主人公が移動無し＋敵と現在位置が同じ場合、50％で気づかれる＝移動は後で行う
+	ELSE
+		;気づかれなければそのまま移動
+		DA:(LCOUNT):4 = DA:(LCOUNT):13
+	ENDIF
+NEXT
+
+
+;遭遇判定
+$BEFORE_ENCOUNT
+LOCAL:1 = CHECK_ENCOUNTER()
+
+;各状況に応じて分岐
+IF FLAG:8
+	;寝ている場合は処理が特殊
+	IF LOCAL:1 == 2 || LOCAL:1 == 3
+		;敵が居る場合、戦闘になるのであまり回復しない
+		FLAG:7 -= 2
+		CALL SLEEP_HEAL(1, 1)
+		CALL SLEEP_HEAL(FLAG:10, 1)
+		CALL SLEEP_HEAL(FLAG:11, 1)
+		
+		IF FLAG:8 < 0
+			;FLAG:8を通常の値に戻しておく
+			FLAG:8 = ABS(FLAG:8)
+			;ドッペルの見張り付きで戦闘
+			PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			;ドッペルは必ず逃げる＋必ず睡眠状態のオマケつき
+			PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+			CALL PRE_BATTLE(5)
+		ELSEIF (FLAG:8 % 10) >= 2
+			;気絶したまま戦闘
+			PRINTFORMW 気絶している%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			CALL PRE_BATTLE(3)
+			;戦闘が終わったら強制的に一旦起きる。起きているとターン終了時に眠気が1増えるので、余分に1つ減らしておく
+			FLAG:7 -= 1
+			FLAG:8 = 0
+		ELSEIF FLAG:8 >= 10
+			;見張り付きで戦闘
+			PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			IF (FLAG:8 >= 100) && (CFLAG:(FLAG:8 / 100):5 < RAND:80)
+				;好感度が低いNPCはサボる場合がある
+				PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+				CALL PRE_BATTLE(1)
+			ELSE
+				CALL PRE_BATTLE(2)
+			ENDIF
+		ELSE
+			;見張り無しの睡眠戦闘
+			PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			CALL PRE_BATTLE(1)
+		ENDIF
+	ELSE
+		IF FLAG:8 < 0
+			;FLAG:8を通常の値に戻しておく
+			FLAG:8 = ABS(FLAG:8)
+		ENDIF
+		;敵が居ない場合、しっかり回復
+		IF ((FLAG:8 % 100) / 10)
+			;PTで見張り
+			FLAG:7 -= ((FLAG:8 % 100) / 10) + 1
+			LOCAL:7 = 0
+			;LOCAL
+			;2	主人公が眠れたかどうか 0~2の3段階
+			;3	仲間1（FLAG:10）が眠れたかどうか
+			;4	仲間2（FLAG:11)が眠れたかどうか
+			;7	夜這い相手
+			IF FLAG:11 > 0
+				;仲間2がいたとき
+				IF RAND:2 == 0
+					;1/2の確率で仲間2の夜這い判定
+					CALL FUTANARI_H(FLAG:11)
+					;0:襲わない	1:セックスした	2:限界までセックスした	3起こされたけどセックスしなかった
+					IF RESULT == 0
+						;仲間2が襲わないなら仲間1が来るか判定
+						CALL FUTANARI_H(FLAG:10)
+						;0:襲わない	1:セックスした	2:限界までセックスした	3起こされたけどセックスしなかった
+						IF RESULT == 1 || RESULT == 2
+							LOCAL:2 = RESULT
+							LOCAL:3 = RESULT
+							LOCAL:4 = 0
+							LOCAL:7 = FLAG:10
+						ELSE
+							LOCAL:2 = 0
+							LOCAL:3 = 0
+							LOCAL:4 = 0
+							LOCAL:7 = 0
+						ENDIF
+					ELSEIF RESULT == 1 || RESULT == 2
+						LOCAL:2 = RESULT
+						LOCAL:3 = 0
+						LOCAL:4 = RESULT
+						LOCAL:7 = FLAG:11
+					ELSE
+						LOCAL:2 = 0
+						LOCAL:3 = 0
+						LOCAL:4 = 0
+						LOCAL:7 = 0
+					ENDIF
+				ELSE
+					;1/2の確率で仲間1の夜這い判定
+					CALL FUTANARI_H(FLAG:10)
+					;0:襲わない	1:セックスした	2:限界までセックスした	3起こされたけどセックスしなかった
+					IF RESULT == 0
+						;仲間2が襲わないなら仲間1が来るか判定
+						CALL FUTANARI_H(FLAG:11)
+						;0:襲わない	1:セックスした	2:限界までセックスした	3起こされたけどセックスしなかった
+						IF RESULT == 1 || RESULT == 2
+							LOCAL:2 = RESULT
+							LOCAL:3 = 0
+							LOCAL:4 = RESULT
+							LOCAL:7 = FLAG:11
+						ELSE
+							LOCAL:2 = 0
+							LOCAL:3 = 0
+							LOCAL:4 = 0
+							LOCAL:7 = 0
+						ENDIF
+					ELSEIF RESULT == 1 || RESULT == 2
+						LOCAL:2 = RESULT
+						LOCAL:3 = RESULT
+						LOCAL:4 = 0
+						LOCAL:7 = FLAG:10
+					ELSE
+						LOCAL:2 = 0
+						LOCAL:3 = 0
+						LOCAL:4 = 0
+						LOCAL:7 = 0
+					ENDIF
+				ENDIF
+			ELSEIF FLAG:10 > 0
+				;仲間1しかいないときは仲間1の夜這い判定のみ
+				CALL FUTANARI_H(FLAG:10)
+				;0:襲わない	1:セックスした	2:限界までセックスした	3起こされたけどセックスしなかった
+				IF RESULT == 1 || RESULT == 2
+					LOCAL:2 = RESULT
+					LOCAL:3 = RESULT
+					LOCAL:7 = FLAG:10
+				ELSE
+					LOCAL:2 = 0
+					LOCAL:3 = 0
+				ENDIF
+			ENDIF
+		ELSE
+			;他のキャラが見張りか見張り無し
+			FLAG:7 -= 5
+			LOCAL:8 = 0
+			FOR LCOUNT, 2, CHARANUM
+				;現在位置が被っているかチェック
+				IF CFLAG:1:4 == CFLAG:(LCOUNT):4 && CFLAG:(LCOUNT):2 == 0 && CFLAG:(LCOUNT):3 == 0 && CFLAG:(LCOUNT):20 == 0 && CFLAG:(LCOUNT):21 == 0 && CFLAG:(LCOUNT):25 == 0 && CFLAG:(LCOUNT):29 == 0 && CFLAG:(LCOUNT):504 == 0
+					;夜這いチェックに発情フラグを使用
+					IF TALENT:(LCOUNT):157 == 1 || (GET_PENIS(LCOUNT) && CFLAG:(LCOUNT):5 > FUTANARI_PERCENT(1))
+						CFLAG:(LCOUNT):28 += 20
+						;エネミーは襲いたくなると精力増大
+						SIF TALENT:(LCOUNT):157 == 1
+							CFLAG:(LCOUNT):42 += 10
+						LOCAL:8 += 1
+						SIF LOCAL:8 == 1
+							LOCAL:9 = LCOUNT
+					ENDIF
+				ENDIF
+			NEXT
+			;夜這いが一人なのか複数なのかで分岐　複数だと処理が雑
+			IF LOCAL:8 == 1
+				IF TALENT:1:0 == 0 && RAND:5 == 0
+					CALL FUTANARI_H_SLEEPRAPE(LOCAL:9)
+					WAIT
+				ELSEIF CFLAG:(LOCAL:9):5 >= FUTANARI_PERCENT(4) && FUTANARI_PERCENT(4) != 0
+					CALL FUTANARI_H_SEX(LOCAL:9)
+					WAIT
+				ELSE
+					CALL FUTANARI_H_RAPE(LOCAL:9)
+					WAIT
+				ENDIF
+				LOCAL:2 = RESULT
+			ELSEIF LOCAL:8 > 1
+				IF TALENT:1:0 == 0 && RAND:5 == 0
+					PRINTFORML 
+					PRINTFORML ………
+					FOR LCOUNT, 2, CHARANUM
+						IF CFLAG:1:4 == CFLAG:(LCOUNT):4 && CFLAG:(LCOUNT):28 >= 15
+							TFLAG:52 = LCOUNT
+							IF TALENT:1:122 || RAND:3 == 0
+								TFLAG:63 = 0
+							ELSE
+								TFLAG:63 = 3
+							ENDIF
+							LOCAL:11 = CFLAG:1:42 * (ABL:1:12 * ABL:1:12 + 1) * CALC_SENSITIVITY(1, TFLAG:63, 100) / 3
+							CALL DAMAGE_COMMON(1, 2, LOCAL:11 + RAND:1000, 200)
+							TFLAG:63 = 2
+							LOCAL:11 = CFLAG:1:42 * (ABL:1:12 * ABL:1:12 + 1) * CALC_SENSITIVITY((LCOUNT), TFLAG:63, 100) / 3
+							CALL DAMAGE_COMMON((LCOUNT), 2, LOCAL:11 + RAND:1000, 20)
+						ENDIF
+					NEXT
+					PRINTFORML %CALLNAME:1%が目を覚ますと笑顔の%CALLNAME:(LOCAL:9)%達と秘所から垂れる白い液体に気がついてしまった
+					PRINTFORML 
+				ELSE
+					PRINTFORML 
+					PRINTFORML ………
+					PRINTFORML %CALLNAME:1%が目を覚ますと%CALLNAME:(LOCAL:9)%達が四肢を拘束して股間の触手をみなぎらせていた！
+					PRINTFORML 
+					FOR LCOUNT, 2, CHARANUM
+						IF CFLAG:1:4 == CFLAG:(LCOUNT):4 && CFLAG:(LCOUNT):28 >= 15
+							TFLAG:52 = 0
+							IF TALENT:1:122 || RAND:3 == 0
+								TFLAG:63 = 0
+							ELSE
+								TFLAG:63 = 3
+							ENDIF
+							
+							LOCAL:11 = CFLAG:1:42 * (ABL:1:12 * ABL:1:12 + 1) * CALC_SENSITIVITY(1, TFLAG:63, 100) / 3
+							CALL DAMAGE_COMMON(1, 2, LOCAL:11 + RAND:1000, 200)
+							TFLAG:63 = 2
+							LOCAL:11 = CFLAG:1:42 * (ABL:1:12 * ABL:1:12 + 1) * CALC_SENSITIVITY((LCOUNT), TFLAG:63, 100) / 3
+							CALL DAMAGE_COMMON((LCOUNT), 2, LOCAL:11 + RAND:1000, 20)
+						ENDIF
+					NEXT
+				ENDIF
+			ENDIF
+			IF LOCAL:8 > 0
+				CALL ADD_ABL_EXP(13, 1,3 * LOCAL:8 + RAND:5)
+				CALL ADD_ABL_EXP(14, 1,3 * LOCAL:8 + RAND:5)
+			ENDIF
+			;夜這い共通処理
+			FOR LCOUNT, 2, CHARANUM
+				IF CFLAG:1:4 == CFLAG:(LCOUNT):4 && CFLAG:(LCOUNT):28 >= 15
+					CFLAG:(LCOUNT):28 -= 20
+					CALL ADD_ABL_EXP(13, (LCOUNT),3 + RAND:5)
+					CFLAG:(LCOUNT):5 -= 15 + RAND:15 - (ABL:1:13 * ABL:1:14 * 3)
+						IF CFLAG:1:22 == 0 && RAND:2 == 0
+							;妊娠
+							CALL PARASITE_TYPE(1, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2)
+						ENDIF
+					LOCAL:2 = 2
+					LOCAL:7 = LCOUNT
+					SIF LOCAL:7 == FLAG:10
+						LOCAL:3 = 2
+					SIF LOCAL:7 == FLAG:11
+						LOCAL:4 = 2
+				ENDIF
+			NEXT
+		ENDIF
+		SIF LOCAL:2 == 3 || LOCAL:7 == 0
+			LOCAL:2 = 0
+		SIF LOCAL:2 != 2
+			CALL SLEEP_HEAL(1, (LOCAL:2))
+		SIF LOCAL:3 != 2
+			CALL SLEEP_HEAL(FLAG:10, (LOCAL:3))
+		SIF LOCAL:4 != 2
+			CALL SLEEP_HEAL(FLAG:11, (LOCAL:4))
+		IF (FLAG:8 % 10) == 1 && LOCAL:2 == 1
+			PRINTFORMW %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで時間がなくなり、あまり眠れなかった…
+		ELSEIF (FLAG:8 % 10) == 1 && LOCAL:2 == 2
+			PRINTFORMW %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで眠る暇がなかった
+		ELSEIF (FLAG:8 % 10) == 1
+			PRINTFORMW %CALLNAME:1%%TACHI()%はゆっくり休んで眠気・HP・MP・EPを回復した！
+		ENDIF
+		FLAG:8 = 0
+	ENDIF
+ELSEIF LOCAL:1 == 1
+	;味方のみ
+	FOR LCOUNT, 1, FLAG:1
+		IF CFLAG:1:4 == DA:(LCOUNT):4 && DA:(LCOUNT):1 > 0 && DA:(LCOUNT):0 == 18 && DA:(LCOUNT):45 == 0
+			CALL TALK_3(LCOUNT)
+			IF RESULT == 2 || RESULT == 3
+				GOTO END_ENCOUNT
+			ENDIF
+		ENDIF
+	NEXT
+	FOR LCOUNT, 1, CHARANUM
+		IF LCOUNT == 1 || LCOUNT == FLAG:10 || LCOUNT == FLAG:11
+			CONTINUE
+		ENDIF
+		
+		IF CFLAG:(LCOUNT):10 || CFLAG:(LCOUNT):20 || CFLAG:(LCOUNT):2 || CFLAG:(LCOUNT):3
+			;会話できそうにないキャラはスキップ(戦意喪失は専用分岐があるので除く)
+			CONTINUE
+		ENDIF
+		
+		;拘束されたNPCとの会話
+		IF CFLAG:(LCOUNT):4 == FLAG:5 && CFLAG:(LCOUNT):504 == 1
+			CALL TALK_4(LCOUNT)
+		;喪失状態のNPCとの会話
+		ELSEIF CFLAG:(LCOUNT):4 == FLAG:5 && CFLAG:(LCOUNT):29
+			CALL TALK_2(LCOUNT)
+		;元エネミーとの会話
+		ELSEIF CFLAG:(LCOUNT):4 == FLAG:5 && TALENT:(LCOUNT):157 == 1
+			CALL TALK_6(LCOUNT)
+		;正常なNPCとの会話
+		ELSEIF CFLAG:(LCOUNT):4 == FLAG:5 && CFLAG:(LCOUNT):29 == 0
+			CALL TALK(LCOUNT)
+		ENDIF
+	NEXT
+	
+	;PTでの会話　主人公が戦闘不能orPTメンバーがヒュプノの魔眼装備
+	CALL GET_EQUIP_BONUS(FLAG:10, 40)
+	IF (FLAG:10 > 0 && CFLAG:(FLAG:10):29 == 0) && (CFLAG:1:29 == 1 || RESULT == 1)
+		CALL TALK_5(1)
+		LOCAL:10 = 1
+	ENDIF
+	CALL GET_EQUIP_BONUS(FLAG:11, 40)
+	IF (FLAG:11 > 0 && CFLAG:(FLAG:11):29 == 0) && (CFLAG:1:29 == 1 || RESULT == 1) && LOCAL:10 == 0
+		CALL TALK_5(1)
+	ENDIF
+	
+	;PTでの会話　仲間が戦闘不能or主人公がヒュプノの魔眼装備or仲間がレズ中毒か元エネミーで高い好感度
+	CALL GET_EQUIP_BONUS(1, 40)
+	IF FLAG:10 > 0 && (CFLAG:(FLAG:10):29 == 1 || ( CFLAG:1:29 == 0 && RESULT == 1 || ( (ABL:(FLAG:10):13 > 1 || TALENT:(FLAG:10):157) && CFLAG:(FLAG:10):5 >= 200)))
+		CALL TALK_5(FLAG:10)
+	ENDIF
+	CALL GET_EQUIP_BONUS(1, 40)
+	IF FLAG:11 > 0 && (CFLAG:(FLAG:11):29 == 1 || ( CFLAG:1:29 == 0 && RESULT == 1 || ( (ABL:(FLAG:11):13 > 1 || TALENT:(FLAG:11):157) && CFLAG:(FLAG:11):5 >= 200)))
+		CALL TALK_5(FLAG:11)
+	ENDIF
+ELSEIF LOCAL:1 == 2
+	;敵のみ
+	IF TALENT:1:124 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && RAND:8 < ABL:1:1 + ABL:1:5
+		;動物耳による戦闘回避
+		PRINTFORML %CALLNAME:1%は嫌な予感がした
+		PRINTFORML 隠れますか？
+		CALL ASK_YN
+		IF RESULT == 0
+			GOTO END_ENCOUNT
+		ENDIF
+	ELSEIF FLAG:10 > 0 && TALENT:(FLAG:10):124 && CFLAG:(FLAG:10):28 == 0 && CFLAG:(FLAG:10):29 == 0 && RAND:8 < ABL:(FLAG:10):1 + ABL:(FLAG:10):5
+		;動物耳による戦闘回避
+		PRINTFORML %CALLNAME:(FLAG:10)%は嫌な予感がした
+		PRINTFORML 隠れますか？
+		CALL ASK_YN
+		IF RESULT == 0
+			GOTO END_ENCOUNT
+		ENDIF
+	ELSEIF FLAG:11 > 0 && TALENT:(FLAG:11):124 && CFLAG:(FLAG:11):28 == 0 && CFLAG:(FLAG:11):29 == 0 && RAND:8 < ABL:(FLAG:11):1 + ABL:(FLAG:11):5
+		;動物耳による戦闘回避
+		PRINTFORML %CALLNAME:(FLAG:11)%は嫌な予感がした
+		PRINTFORML 隠れますか？
+		CALL ASK_YN
+		IF RESULT == 0
+			GOTO END_ENCOUNT
+		ENDIF
+	ENDIF
+	CALL PRE_BATTLE(0)
+	IF RESULT == 1
+		;戦闘に勝利した場合、もう一度エンカウントチェック（普通は何も起きないはず。敵が多いなら連戦）
+		GOTO BEFORE_ENCOUNT
+	ELSEIF RESULT == 2
+		;全滅した場合、探索スキップ
+		LOCAL:6 = 1
+	ELSEIF RESULT == 0 && CHARANUM < 2
+		RETURN 1
+	ENDIF
+ELSEIF LOCAL:1 == 3
+	;味方も敵も居る
+	IF TALENT:1:124 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && RAND:8 < ABL:1:1 + ABL:1:5
+		;動物耳による戦闘回避
+		PRINTFORML %CALLNAME:1%は嫌な予感がした
+		PRINTFORML 隠れますか？
+		CALL ASK_YN
+		IF RESULT == 0
+			GOTO END_ENCOUNT
+		ENDIF
+	ELSEIF FLAG:10 > 0 && TALENT:(FLAG:10):124 && CFLAG:(FLAG:10):28 == 0 && CFLAG:(FLAG:10):29 == 0 && RAND:8 < ABL:(FLAG:10):1 + ABL:(FLAG:10):5
+		;動物耳による戦闘回避
+		PRINTFORML %CALLNAME:(FLAG:10)%は嫌な予感がした
+		PRINTFORML 隠れますか？
+		CALL ASK_YN
+		IF RESULT == 0
+			GOTO END_ENCOUNT
+		ENDIF
+	ELSEIF FLAG:11 > 0 && TALENT:(FLAG:11):124 && CFLAG:(FLAG:11):28 == 0 && CFLAG:(FLAG:11):29 == 0 && RAND:8 < ABL:(FLAG:11):1 + ABL:(FLAG:11):5
+		;動物耳による戦闘回避
+		PRINTFORML %CALLNAME:(FLAG:11)%は嫌な予感がした
+		PRINTFORML 隠れますか？
+		CALL ASK_YN
+		IF RESULT == 0
+			GOTO END_ENCOUNT
+		ENDIF
+	ENDIF
+	;共闘を申し込むことができる
+	CALL PRINT_SAME_ROOM_MEMBER
+	;LOCAL:2 を臨時メンバー１、3を臨時メンバー２、4を臨時メンバー限界数として扱う
+	LOCAL:2 = 0
+	LOCAL:3 = 0
+	IF FLAG:10 == 0
+		LOCAL:4 = 2
+	ELSEIF FLAG:11 == 0
+		LOCAL:4 = 1
+	ELSE
+		LOCAL:4 = 0
+	ENDIF
+	LOCAL:5 = 0
+	FOR LCOUNT, 1, FLAG:1
+		IF CFLAG:1:4 == DA:(LCOUNT):4 && DA:(LCOUNT):1 > 0 && DA:(LCOUNT):0 == 18 && DA:(LCOUNT):45 == 0 && LOCAL:4
+			IF CFLAG:1:10
+				PRINTFORML %SAVESTR:(LCOUNT)%に助けを乞いますか？
+			ELSE
+				PRINTFORML %SAVESTR:(LCOUNT)%に共闘を持ちかけてみますか？
+			ENDIF
+			CALL ASK_YN
+			IF RESULT == 0
+				IF CFLAG:1:10
+					PRINTFORML %SAVESTR:(LCOUNT)%に助けを求めたが、悲しそうな目をして去って行った…
+				ELSE
+					CALL PRINT_MESSAGE(1, 141, GET_DOPPEL_BASE(LCOUNT), CALLNAME:1, SAVESTR:(LCOUNT), 1)
+					DA:(LCOUNT):45 = 1
+					CALL PRE_BATTLE(4)
+					GOTO END_ENCOUNT
+				ENDIF
+			ENDIF
+		ENDIF
+	NEXT
+	FOR LCOUNT, 1, CHARANUM
+		IF LCOUNT == 1 || LCOUNT == FLAG:10 || LCOUNT == FLAG:11
+			CONTINUE
+		ENDIF
+		
+		IF CFLAG:(LCOUNT):4 == FLAG:5 && CFLAG:(LCOUNT):2 == 0 && CFLAG:(LCOUNT):3 == 0
+			IF CFLAG:(LCOUNT):10
+				PRINTFORML %CALLNAME:(LCOUNT)%は%SAVESTR:(CFLAG:(LCOUNT):10)%に捕まっているようだ…
+			ELSEIF CFLAG:(LCOUNT):29
+				PRINTFORML %CALLNAME:(LCOUNT)%はもはや動く気力が残っていないようだ…
+			ELSEIF CFLAG:(LCOUNT):504 >= 1
+				PRINTFORML %CALLNAME:(LCOUNT)%は拘束されて動けないようだ…
+			ELSEIF LOCAL:4 <= 0
+				;パーティーがいっぱいならもう誘えない
+			ELSE
+				IF CFLAG:1:10
+					PRINTFORML %CALLNAME:(LCOUNT)%に助けを乞いますか？
+				ELSE
+					PRINTFORML %CALLNAME:(LCOUNT)%に共闘を持ちかけてみますか？
+				ENDIF
+				CALL ASK_YN
+				IF RESULT == 0
+					CALL GET_INVITE_RATE(LCOUNT, 1)
+					IF RAND:100 < RESULT
+						PRINTFORMW %CALLNAME:(LCOUNT)%が一時的にパーティーに加わった！
+						LOCAL:4 -= 1
+						;催眠回復
+						CFLAG:(LCOUNT):43 = 0
+						CFLAG:(LCOUNT):5 += 5
+						CALL PRINT_MESSAGE(LCOUNT, 140, 1, CALLNAME:1, CALLNAME:(LCOUNT), 1)
+						IF FLAG:10 == 0
+							FLAG:10 = LCOUNT
+							LOCAL:2 = LCOUNT
+							FLAG:15 = LCOUNT
+						ELSEIF FLAG:11 == 0
+							FLAG:11 = LCOUNT
+							LOCAL:3 = LCOUNT
+							FLAG:16 = LCOUNT
+						ELSE
+							PRINTFORMW (MAIN_PHASE) 共闘処理エラー！{LOCAL:4}/{FLAG:10}/{FLAG:11}
+						ENDIF
+					ELSE
+						IF CFLAG:1:10
+							PRINTFORMW %CALLNAME:(LCOUNT)%に助けを求めたが、悲しそうな目をして去って行った…
+						ELSE
+							PRINTFORMW %CALLNAME:(LCOUNT)%に共闘を持ちかけてみたが、断られてしまった…
+							;でもちょっと嬉しい
+							CFLAG:(LCOUNT):5 += 2
+						ENDIF
+						CALL PRINT_MESSAGE(LCOUNT, 140, 1, CALLNAME:1, CALLNAME:(LCOUNT), 0)
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+	NEXT
+	;捕食中以外の敵が居るかチェック
+	;LOCAL:4を確認用に使う
+	LOCAL:4 = 0
+	FOR LCOUNT, 1, FLAG:1
+		;自由に動ける敵が居るならフラグを立てる
+		SIF DA:(LCOUNT):4 == FLAG:5 && DA:(LCOUNT):10 == 0
+			LOCAL:4 = 1
+	NEXT
+	IF LOCAL:4 == 0 && LOCAL:2 == 0 && LOCAL:3 == 0 && CFLAG:1:10 == 0
+		;共闘しておらず、自由に動ける敵が居ないなら、戦闘回避可能
+		PRINTFORML 敵は自分の獲物に夢中になっているようだ…
+		PRINTFORML 捕まっている者を見捨てるなら戦闘を回避できそうだ。戦闘を回避しますか？
+		CALL ASK_YN
+		;好感度は下がりそうで下がらない　まぁ仕方ないよねってことで
+		SIF RESULT == 0
+			GOTO END_ENCOUNT
+	ENDIF
+
+	CALL PRE_BATTLE(0)
+	FLAG:15 = 0
+	FLAG:16 = 0
+	LOCAL:4 = RESULT
+	SIF RESULT == 0 && CHARANUM < 2
+		RETURN 1
+	;戦闘終了後、共闘キャラは抜ける
+	IF LOCAL:2
+		;勝っていたらさらに好感度アップ
+		SIF LOCAL:4 == 1
+			CFLAG:(LOCAL:2):5 += 10
+		CALL MEMBER_EXIT_ID(LOCAL:2)
+	ENDIF
+	IF LOCAL:3
+		;勝っていたらさらに好感度アップ
+		SIF LOCAL:4 == 1
+			CFLAG:(LOCAL:3):5 += 10
+		CALL MEMBER_EXIT_ID(LOCAL:3)
+	ENDIF
+	IF LOCAL:4 == 1
+		;戦闘に勝利した場合、もう一度エンカウントチェック（普通は味方のみになるはず。敵が多いなら連戦）
+		;主人公が捕食されている所を共闘メンバーに助けてもらったという場合、主人公の喪失だけ治る
+		IF CFLAG:1:10 == 0 && ((CFLAG:1:29 && FLAG:10 == 0) || (CFLAG:1:29 && FLAG:10 && CFLAG:(FLAG:10):29 && FLAG:11 == 0))
+			CALL PRINT_MESSAGE(1, 158, 0, CALLNAME:1, "")
+			CFLAG:1:29 = 0
+			BASE:1:1 = 1
+			IF LOCAL:2
+				CALL ADD_HISTORY(DAY, LOCAL:2,, 6)
+			ELSE
+				CALL ADD_HISTORY(DAY, LOCAL:3,, 6)
+			ENDIF
+		ENDIF
+		GOTO BEFORE_ENCOUNT
+	ELSEIF LOCAL:4 == 2
+		;全滅した場合、探索スキップ
+		LOCAL:6 = 1
+	ELSEIF LOCAL:4 == 3
+		;主人公が捕食されている所を共闘メンバーに助けてもらったという場合、主人公の喪失だけ治る
+		IF CFLAG:1:10 == 0 && ((CFLAG:1:29 && FLAG:10 == 0) || (CFLAG:1:29 && FLAG:10 && CFLAG:(FLAG:10):29 && FLAG:11 == 0))
+			CALL PRINT_MESSAGE(1, 158, 0, CALLNAME:1, "")
+			CFLAG:1:29 = 0
+			BASE:1:1 = 1
+			IF LOCAL:2
+				CALL ADD_HISTORY(DAY, LOCAL:2,, 6)
+			ELSE
+				CALL ADD_HISTORY(DAY, LOCAL:3,, 6)
+			ENDIF
+		ENDIF
+	ENDIF
+ELSE
+	;何もなし
+ENDIF
+
+$END_ENCOUNT
+
+;最初の遭遇で止まっていたキャラを移動
+
+;味方
+FOR LCOUNT, 1, CHARANUM
+	;捕食中のキャラは移動をキャンセル
+	IF CFLAG:(LCOUNT):10 == 0 && CFLAG:(LCOUNT):14 && CFLAG:(LCOUNT):504 == 0
+		CFLAG:(LCOUNT):4 = CFLAG:(LCOUNT):14
+		IF LCOUNT != 1 && LCOUNT != FLAG:10 && LCOUNT != FLAG:11 && (CFLAG:(LCOUNT):13 == CFLAG:1:13 || (CFLAG:(LCOUNT):13 == CFLAG:1:14 && CFLAG:(LCOUNT):14 == CFLAG:1:13)) && CFLAG:(LCOUNT):13 != CFLAG:(LCOUNT):14 && CFLAG:(LCOUNT):14 != FLAG:5 && CFLAG:(LCOUNT):2 == 0 && CFLAG:(LCOUNT):3 == 0
+			PRINTFORMW %CALLNAME:(LCOUNT)%は{CFLAG:(LCOUNT):4}の部屋に移動したようだ…
+		ENDIF
+	ENDIF
+NEXT
+;敵
+FOR LCOUNT, 1, FLAG:1
+	;捕食中の敵は移動をキャンセル
+	IF DA:(LCOUNT):10 == 0 && DA:(LCOUNT):13
+		DA:(LCOUNT):4 = DA:(LCOUNT):13
+	ENDIF
+NEXT
+
+;探索処理＋終了処理（消滅処理などもここ）
+CALL END_PHASE(LOCAL:6)
+IF RESULT == 1
+	RETURN 1
+ENDIF
+
+;SHOPへ戻る
+
+;各部屋初期侵入ボーナス
+@BONUS_ITEM
+;気付け薬を多めにする
+LOCAL:1 = RAND:15
+IF LOCAL:1 <= 0
+	LOCAL:2 = 50
+ELSEIF LOCAL:1 <= 2
+	LOCAL:2 = 52
+ELSEIF LOCAL:1 <= 4
+	LOCAL:2 = 54
+ELSEIF LOCAL:1 <= 6
+	LOCAL:2 = 57
+ELSEIF LOCAL:1 <= 10
+	LOCAL:2 = 58
+ELSEIF LOCAL:1 <= 11
+	LOCAL:2 = 59
+ELSEIF LOCAL:1 <= 12
+	LOCAL:2 = 67
+ELSEIF LOCAL:1 <= 13
+	LOCAL:2 = 74 + RAND:3
+ELSE
+	LOCAL:2 = 73
+ENDIF
+PRINTFORML 
+PRINTFORML 新しい部屋には%ITEMNAME:(LOCAL:2)%が落ちていた！
+PRINTFORMW 
+CALL ADD_ITEM(LOCAL:2, 1, 1)

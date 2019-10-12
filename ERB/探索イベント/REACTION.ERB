@@ -1,0 +1,37 @@
+﻿;霊撃による罠回避
+@REACTION_TRAP(ARG:0)
+;ARG:0	対象キャラ
+
+;毎回使うか選ぶなら選択肢
+IF FLAG:517 == 0
+	PRINTFORML 霊撃を使いますか？
+	PRINTFORML 対象：%CALLNAME:(ARG:0)%
+	CALL ASK_YN
+	;いいえは失敗と同じ返し
+	IF RESULT == 1
+		RETURN 1
+	ENDIF
+;使わないの固定なら失敗と同じ返し
+ELSEIF FLAG:517 == 2
+	RETURN 1
+ENDIF
+
+;HP消費
+;戦闘値が90以上且つHP9割以上なら9割消費固定
+IF ABL:(ARG:0):98 >= 90 && 100 * BASE:(ARG:0):0 / MAXBASE:(ARG:0):0 > 90
+	BASE:(ARG:0):0 -= MAXBASE:(ARG:0):0 * 90 / 100
+ELSE
+	BASE:(ARG:0):0 -= MAXBASE:(ARG:0):0 * ABL:(ARG:0):98 / 100
+ENDIF
+
+;罠なのでHPが0以下になるような消耗をするとHPが減るだけ
+;実際に成功or失敗でどうなるかは罠それぞれに任せる
+IF BASE:(ARG:0):0 < 1
+	BASE:(ARG:0):0 = 0
+	PRINTFORML 霊撃中に%CALLNAME:(ARG:0)%の体力が尽きた！
+	RETURN 1
+ELSE
+	RETURN 0
+ENDIF
+
+

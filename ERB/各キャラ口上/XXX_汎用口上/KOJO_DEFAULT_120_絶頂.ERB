@@ -1,0 +1,486 @@
+﻿
+; ////////////////////////////
+; / ARG:0  120    絶頂の瞬間
+; / ARG:1         部位
+; / ARG:2         MPダメージ
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_120(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+
+
+IF FLAG:600 == 1
+	LOCAL:0 = (ABL:6 + ABL:7 + ABL:8 + ABL:9 + ABL:15) / 4
+	LOCAL:1 = (ABL:6 + ABL:7 + ABL:8 + ABL:9 + ABL:15) / 4
+ELSE
+	LOCAL:0 = (ABL:6 + ABL:7 + ABL:8 + ABL:9 + ABL:15) / 4
+	LOCAL:1 = (ABL:6 + ABL:7 + ABL:8 + ABL:9 + ABL:15) / 3
+ENDIF
+
+	; 喪失中
+	IF CFLAG:29
+		; 汎用口上では性感度平均で分岐を行う
+	; ◆◆◆りばーすにM感度なくない？　+　全感度MAXって結構高い◆◆◆
+	; ◆◆◆全身性感帯みたいな口上でなく、汎用絶頂って感じで口上書いてるし緩和していいかな、と思ったので式を/ 5から/ 3に、触手宮にあわせるなら/ 4がいいかもです
+	;	SELECTCASE (ABL:6 + ABL:7 + ABL:8 + ABL:9 + ABL:15) / 4
+		SELECTCASE LOCAL:0
+		; LV0
+		CASE 0
+			;発情してたらLV+1の口上コピペ
+			IF CFLAG:28
+				CALL ADD_RAND_MESSAGE, @"「あう……っ……　いっ、ひぃ……っ……」"
+				CALL ADD_RAND_MESSAGE, @"「はぅ……んっ……くっ……」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「うあぁ……　ぁ……」"
+				CALL ADD_RAND_MESSAGE, @"「あぅ…んっ…　」"
+			ENDIF
+		; LV1
+		CASE 1
+			;発情してたらLV+1の口上コピペ
+			IF CFLAG:28
+				CALL ADD_RAND_MESSAGE, @"「はひ……ぃっ……♥　ひいぃ……ぃっ♥」"
+				CALL ADD_RAND_MESSAGE, @"「んっ♥　あぁっ♥」"	
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「あう……っ……　いっ、ひぃ……っ……」"
+				CALL ADD_RAND_MESSAGE, @"「はぅ……んっ……くっ……」"
+			ENDIF
+		; LV2
+		CASE 2
+			;発情してたらLV+1の口上コピペ
+			IF CFLAG:28
+				CALL ADD_RAND_MESSAGE, @"「おﾞっ♥　ひぃっ♥　んいいぃぃぃっ♥」"
+				CALL ADD_RAND_MESSAGE, @"「あっ♥　あっ♥　あぁ～っ♥」"	
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「はひ……ぃっ……♥　ひいぃ……ぃっ♥」"
+				CALL ADD_RAND_MESSAGE, @"「んっ♥　あぁっ♥」"
+			
+			ENDIF
+		; LV3以上
+		CASEELSE
+			;発情してたら限界突破
+			IF CFLAG:28
+				CALL ADD_RAND_MESSAGE, @"「あひっ♥♥　ん♥♥　あっ♥あっ♥あ♥♥♥　おﾞおﾞっ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「んﾞっ♥　イﾞぅ♥♥　おﾞっ♥　おっ♥♥　ひあ……あぁ♥♥」"	
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「おﾞっ♥　ひぃっ♥　んいいぃぃぃっ♥」"
+				CALL ADD_RAND_MESSAGE, @"「あっ♥　あっ♥　あぁ～っ♥」"
+			ENDIF
+
+		ENDSELECT
+
+		;●ここ
+		RETURN 1
+	ENDIF
+
+
+; ////////////////////////////
+	; 汎用口上では性感度平均で分岐を行う
+	; ◆◆◆りばーすにM感度なくない？　+　全感度MAXって結構高い◆◆◆
+	; ◆全身性感帯みたいな口上でなく、汎用絶頂って感じで口上書いてるし緩和していいかな、と思ったので式を/ 5から/ 3に、触手宮にあわせるなら/ 4がいいかもです
+	;SELECTCASE (ABL:6 + ABL:7 + ABL:8 + ABL:9 + ABL:15) / 3
+	SELECTCASE LOCAL:1
+	; LV0
+
+	CASE 0
+		;発情してたらLV+1の口上コピペ
+		IF CFLAG:28
+			CALL ADD_RAND_MESSAGE, @"「イッく……っ……」"
+			CALL ADD_RAND_MESSAGE, @"「あぁ……っ……」"
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「う……っ……　うう……っ……　いい加減にしてよ……」"
+			CALL ADD_RAND_MESSAGE, @"「くぅっ……　こんなの気持ち悪いだけよ……」"
+			CALL ADD_RAND_MESSAGE, @"「こんなの……　気持ちいい訳ないでしょ……」"
+		
+		; 性格別追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ふつう
+			CALL ADD_RAND_MESSAGE, @"「ううっ……こんなのでぇ……」"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「こんな奴に感じさせられるなんて……」"
+			CALL ADD_RAND_MESSAGE, @"「くう……っ……　こんな筈は……」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"（頭の中、ふわふわする……）"
+			CALL ADD_RAND_MESSAGE, @"「な……なにこれぇ……」"
+		ENDSELECT
+		ENDIF
+	; LV1
+	CASE 1
+		;発情してたらLV+1の口上コピペ　といいながらちょっと改変
+		IF CFLAG:28
+			CALL ADD_RAND_MESSAGE, @"「いつもより敏感になって……♥　あぁ……っ……♥」"
+			CALL ADD_RAND_MESSAGE, @"「イっ♥　くぅ……♥」"
+			CALL ADD_RAND_MESSAGE, @"「はぁっ♥　イっ♥　イくぅ……♥」"
+			CALL ADD_RAND_MESSAGE, @"「身体火照って……♥　だ、だめ……イっちゃぅ♥」"
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「イッく……っ……」"
+			CALL ADD_RAND_MESSAGE, @"「あぁ……っ……」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「あ……ぐぅ……っ！　イッてません……っ！　こんな事でイクわけが……っ！」"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「こ、こんなの……　ただの生理現象よ……」"
+			CALL ADD_RAND_MESSAGE, @"「絶頂させた位でいい気にならないで……」"
+		ENDSELECT
+		ENDIF
+	; LV2
+	CASE 2
+		;発情してたらLV+1の口上コピペ　といいながらちょっと改変
+		IF CFLAG:28
+			; 絶頂中
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「しゅ、しゅご♥　まりゃ♥　イって♥♥　えぇ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「うあぁ……っ♥　イクの……とまんない♥　とまんないよぉ……っ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「ま、まひゃ、イっ♥♥　ってぇ♥　とまらなイっ♥♥　あ♥　イひぃ♥♥」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「なんで♥　こんなに♥　気持ちい……いっ……♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「身体♥　勝手に♥　イっ♥♥　あっ♥　あっ♥　っくぅ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「くるっ♥　きもちいのくるぅ♥♥　あ♥あ♥　イっくぅ♥♥」"
+			ENDIF
+		
+		; 絶頂中
+		ELSEIF CFLAG:35
+			CALL ADD_RAND_MESSAGE, @"「ま、またイっ♥　イッ……くぅ♥♥♥」"
+			CALL ADD_RAND_MESSAGE, @"「イったばっかり♥　なのに♥　いぃ♥」"
+		
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「あ……♥　あぁ……っ……♥」"
+			CALL ADD_RAND_MESSAGE, @"「イっ♥　くぅ……♥」"
+			CALL ADD_RAND_MESSAGE, @"「はぁっ♥　イっ♥　イくぅ……♥」"
+			CALL ADD_RAND_MESSAGE, @"「だ、だめ……イっちゃう♥　イっちゃぅ♥」"
+		ENDIF
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「こっ……こんなのっ……♥　ただの生理現象っ♥　生理現象よ……っ♥♥」"
+			CALL ADD_RAND_MESSAGE, @"「頭の中しびれ……っ……♥　冷静に、ならないと……っ♥♥」"
+		ENDSELECT
+		
+	; LV3以上
+	CASEELSE
+		; 発情してた限界突破
+		IF CFLAG:28
+			; 絶頂中
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「しゅ、しゅご♥♥　まりゃ♥　イって♥♥　えぇ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「いっ♥♥　いって♥♥　ずっと♥　いって♥　こんな♥♥　もどって♥　これなっ♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「ま、まひゃ、イっ♥♥　ってぇ♥　とまらなイっ♥♥　あ♥　イひぃ♥♥」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「はっ♥♥　はひ♥　あたまっ♥　おかひくなっ♥♥　あっ♥　なっひゃ♥♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「しゅご♥　すご♥　しゅごいのきてりゅ♥♥　きっ♥　あっ♥　っぐぅぅ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「イクっ♥　イクっ♥　イっ♥♥　あっ♥あっ♥あっ♥　っくぅぅぅ♥♥♥」"
+			ENDIF
+		ELSE
+			; 絶頂中
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「また♥　またくる♥♥　またきもちいいのくるぅ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「イクっ♥　イクの♥　とまらな♥　い♥　あ……♥　また……イっ♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「うあ♥　ぁ……っ♥　イクの……とまんない♥　とまんないよぉ……っ♥♥」"
+				
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「きたぁ……っ♥♥　気持ちい……いっ……♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「イクっ♥　イっ♥♥　あっ♥　あっ♥　っくぅ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「くるっ♥　きもちいのくるぅ♥♥　あ♥あ♥　イっくぅ♥♥」"
+			ENDIF
+		ENDIF
+	ENDSELECT
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  120    絶頂の瞬間
+; / ARG:1    0    部位 0:A
+; / ARG:2         MPダメージ
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_120_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+	; A感覚LVで分岐
+	SELECTCASE ABL:6
+	; LV0
+	CASE 0
+		CALL ADD_RAND_MESSAGE, @"「嫌あぁっ！？　何でお尻でなんかっ！？」"
+	
+	; LV1
+	CASE 1
+		CALL ADD_RAND_MESSAGE, @"「駄目っ！　そんな所で感じたくないっ！！　うああっ！？　お尻があああぁぁぁっ！？」"
+		
+	; LV2
+	CASE 2
+		CALL ADD_RAND_MESSAGE, @"「これ以上お尻で気持ちよくなるの……　嫌よぉ……」"
+		CALL ADD_RAND_MESSAGE, @"「もう……　そっちでイカせないでぇ……」"
+		
+	; LV3以上
+	CASEELSE
+		CALL ADD_RAND_MESSAGE, @"「おしりイクっ♥　おしりイクうぅ……っ♥」"
+		CALL ADD_RAND_MESSAGE, @"「うあぁ……っ♥　おしりの穴、ほじられてぇ……っ♥」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  120    絶頂の瞬間
+; / ARG:1    1    部位 1:B
+; / ARG:2         MPダメージ
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_120_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+	; B感覚LVで分岐
+	SELECTCASE ABL:7
+	; LV0
+	CASE 0
+		CALL ADD_RAND_MESSAGE, @"「うあぁ……っ！？　胸なんかで、どうしてっ！？」"
+	
+	; LV1
+	CASE 1
+		CALL ADD_RAND_MESSAGE, @"「いやああぁぁぁっ！？　胸が！？　胸があああぁぁぁっ！？」"
+		
+	; LV2
+	CASE 2
+		CALL ADD_RAND_MESSAGE, @"「また……♥　おっぱい、イカされちゃった……ぁ……♥」"
+		
+	; LV3以上
+	CASEELSE
+		;母乳体質
+		IF TALENT:130
+			CALL ADD_RAND_MESSAGE, @"「ひぁ♥　ミルク♥　みるく♥　溢れて止まらなくなっちゃっう♥♥」"
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「おっぱいイクっ♥　おっぱいイクうぅ……っ♥」"
+			CALL ADD_RAND_MESSAGE, @"「ひあぁ……っ♥　おっぱい、びりびりする……っ♥」"
+		ENDIF
+
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  120    絶頂の瞬間
+; / ARG:1    2    部位 2:C
+; / ARG:2         MPダメージ
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_120_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+	; C感覚LVで分岐
+	SELECTCASE ABL:8
+	; LV0
+	CASE 0
+		;発情してたらLV+1の口上コピペ
+		IF CFLAG:28
+			CALL ADD_RAND_MESSAGE, @"「あっ　お豆…イクっ……」"
+			CALL ADD_RAND_MESSAGE, @"「イっくぅ……あ……クリ……おっきくなっちゃってる……」"
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「クリで……イっちゃ……った……」"
+			CALL ADD_RAND_MESSAGE, @"「クリトリスが……びりびりしてるぅ……」"
+		ENDIF
+	; LV1
+	CASE 1
+		;発情してたらLV+1の口上コピペ　といいながらちょっと改変
+		IF CFLAG:28
+			CALL ADD_RAND_MESSAGE, @"「あぁっ♥　感度上がって……クリ♥　気持ちいいよぉ♥」"
+			CALL ADD_RAND_MESSAGE, @"「お豆が……しびれ……あぁ♥」"
+			CALL ADD_RAND_MESSAGE, @"「クリ♥　クリ……すきぃ♥」"
+			
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「あっ　お豆…イクっ……」"
+			CALL ADD_RAND_MESSAGE, @"「イっくぅ……あ……クリ……おっきくなっちゃってる……」"
+		ENDIF
+	; LV2
+	CASE 2
+		;発情してたらLV+1の口上コピペ　といいながらちょっと改変
+		IF CFLAG:28
+			; 絶頂中
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「くり♥♥　じゅっと♥　いっへりゅ♥♥　いきゅ♥♥っく♥　お♥あ♥あぁ～♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「ああっ♥　またイってひゅ♥♥　クリいき♥　とまらにゃいぃ♥♥」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「いつもより♥♥　クリ♥　すごい♥♥　イって♥♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「そこっ♥　そこ♥　いいっ♥♥　クリ♥　イっちゃ♥♥　いく♥♥　イっ♥♥」"
+			ENDIF
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「あぁっ♥　クリいい♥　気持ちいいよぉ♥」"
+			CALL ADD_RAND_MESSAGE, @"「お豆が……しびれ……あぁ♥」"
+			CALL ADD_RAND_MESSAGE, @"「クリ♥　クリ……すきぃ♥」"
+		ENDIF
+	; LV3以上
+	CASEELSE
+		;発情してたら限界突破
+		IF CFLAG:28
+			; 絶頂中
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「くり♥♥　じゅっと♥　いっへりゅ♥♥　いきゅ♥♥っく♥　お♥あ♥あぁ～♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「あひっ♥　またイってひゅ♥♥　クリ♥いって♥　とまらにゃいぃ♥♥」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「すきっ♥　そこしゅきぃ♥♥　えっちなおまめ♥　い♥　いっひゃ♥♥　ぅう♥♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「そこっ♥　そこ♥　いいっ♥♥　クリ♥　イっちゃ♥♥　いく♥♥　イっ♥♥」"
+			ENDIF
+		ELSE
+		; 連続絶頂
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「も、もう♥　イって……のにぃ♥♥　クリ♥　また♥　あぁ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「ああっ♥　またイって♥♥　クリいき♥　とまらないぃ♥♥」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「クリトリス♥　こりこり♥　イクっ♥イクぅ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「イクっ♥　えっちなお豆イっちゃ♥♥ぅ♥♥」"
+			ENDIF
+		ENDIF
+
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  120    絶頂の瞬間
+; / ARG:1   3     部位 3:V
+; / ARG:2         MPダメージ
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_120_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+;●バリアント分岐
+IF FLAG:600 == 1
+
+	IF ABL:11 > ABL:15
+
+		LOCAL:0 = ABL:11
+	ELSE
+
+		LOCAL:0 = ABL:15
+	ENDIF
+
+	IF ABL:9 > 2
+
+		LOCAL:0 += 1
+
+	ENDIF
+
+	IF LOCAL:0 < 1 && ABL:9 == 2
+		LOCAL:0 = 1
+	ENDIF
+
+
+ELSE
+
+	LOCAL:0 = ABL:9
+
+ENDIF
+
+
+
+
+	; V感覚LVで分岐
+	SELECTCASE LOCAL:0
+	; LV0
+	CASE 0
+		;発情してたらLV+1の口上コピペ　といいながらちょっと改変
+		IF CFLAG:28
+			CALL ADD_RAND_MESSAGE, @"「くっ……なんで……？　お腹の奥が熱くなっちゃう……」"
+			CALL ADD_RAND_MESSAGE, @"「なんで……こんなやつので気持ちよくなっちゃうの……！」"
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「うそ……イっちゃったの……？」"
+			CALL ADD_RAND_MESSAGE, @"「乱暴にしないでよっ……！」"
+		ENDIF
+		
+	; LV1
+	CASE 1
+		;発情してたらLV+1の口上コピペ　といいながらちょっと改変
+		IF CFLAG:28
+			CALL ADD_RAND_MESSAGE, @"（あっ♥　膣内イキしちゃってる……♥）"
+			CALL ADD_RAND_MESSAGE, @"「イクっ♥　おまんこイっちゃうっ♥」"
+			CALL ADD_RAND_MESSAGE, @"（子宮♥　降りてきちゃうぅ♥）"
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"「くっ……なんで……？　お腹の奥が熱くなっちゃう……」"
+			CALL ADD_RAND_MESSAGE, @"「なんで……こんなやつので気持ちよくなっちゃうの……！」"
+		ENDIF
+		
+		
+	; LV2
+	CASE 2
+		;発情してたらLV+1の口上コピペ
+		IF CFLAG:28
+			CALL ADD_RAND_MESSAGE, @"「そんな♥　乱暴にされたらぁ♥　イくっ♥　イくぅっ♥♥」"
+			CALL ADD_RAND_MESSAGE, @"「あっ♥　イく♥　子宮きゅんきゅんして♥♥　イってる♥♥」"
+		
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"（あっ♥　膣内イキしちゃってる……♥）"
+			CALL ADD_RAND_MESSAGE, @"「イクっ♥　おまんこイっちゃうっ♥」"
+			CALL ADD_RAND_MESSAGE, @"（子宮♥　降りてきちゃうぅ♥）"
+		ENDIF
+		
+	; LV3以上
+	CASEELSE
+		; 発情
+		IF CFLAG:28
+			; 絶頂中
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「もうイった♥♥　イったのに♥♥　とま♥　とみゃらない♥　い♥　イッ♥♥♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「また♥♥　いくっ♥♥　きゅんきゅん♥♥　きゅんきゅんとまりゃないぃ♥♥」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「なかいきっ♥♥　なかいきしゅき♥　きゅんきゅんするのしゅきィ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「あっ♥　あっ♥　じゅせい♥　じゅせいしたいって♥　はつじょうまんこ♥♥　はなしてくれないのぉ♥♥」"
+			ENDIF
+		ELSE
+			; 絶頂中
+			IF CFLAG:35
+				CALL ADD_RAND_MESSAGE, @"「こんなに♥　いったら♥♥　もどれなくなるぅ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「またイク♥　淫乱おまんこ♥♥　またいっちゃうぅ♥♥」"
+			ELSE
+				CALL ADD_RAND_MESSAGE, @"「そんな♥　乱暴にされたらぁ♥　イくっ♥　イくぅっ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「あっ♥　イく♥　子宮きゅんきゅんして♥♥　イってる♥♥」"
+			ENDIF
+		ENDIF
+	ENDSELECT
+
+RETURN 1
+
+

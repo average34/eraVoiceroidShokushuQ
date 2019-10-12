@@ -1,0 +1,258 @@
+﻿;アイテム一覧表示
+@SHOW_ITEM_WIKI
+;LOCAL
+;0	ループ用
+;1	表示回数
+;2	直前に選択した番号
+;3	アイテム詳細を見た
+;10	行削除用カウント1(計算用)
+;11	行削除用カウント2(計算用)
+;12	行削除用カウント3(項目の改行数)
+;13	行削除用カウント4(計算用)
+;14	行削除用カウント5(計算用)
+;15	行削除用カウント6(詳細の改行数)
+
+	$START
+	REDRAW 0
+	LOCAL:10 = LINECOUNT
+
+	LOCAL:1 = 0
+	DRAWLINE
+	PRINTFORML どのアイテムを見ますか？
+	FOR LOCAL:0, 1, 79
+		IF ITEMNAME:(LOCAL:0) != ""
+			;ヒュプノの魔眼はハード以上のみ
+			IF LOCAL:0 == 40 && FLAG:4 > 1
+				CONTINUE
+			ENDIF
+			PRINTFORM [{LOCAL:0+1,3}] %ITEMNAME:(LOCAL:0),22,LEFT%
+			LOCAL:1 += 1
+			;3つ表示するごとに改行
+			SIF (LOCAL:1 % 3) == 0 && LOCAL:1 > 0
+				PRINTL
+		ENDIF
+	NEXT
+	PRINTL
+	PRINTL
+	PRINTL [  0] キャンセル
+
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL:11 = LINECOUNT
+	;項目表示の改行数を記録
+	LOCAL:12 = LOCAL:11 - LOCAL:10
+
+	IF RESULT == 0
+		REDRAW 1
+		LOCAL:3 = 0
+		RETURN
+	ELSEIF ITEMNAME:(RESULT-1) != "" && RESULT > 0
+		;行削除(初回)
+		IF LOCAL:3 == 0
+			CLEARLINE LOCAL:12
+		;行削除(2回目～)
+		ELSEIF LOCAL:3 == 1 && LOCAL:2 != RESULT
+			CLEARLINE LOCAL:15 + LOCAL:12 + 3
+		;連打のログ流れ防止
+		ELSEIF LOCAL:2 == RESULT
+			CLEARLINE 1
+			GOTO INPUT_LOOP
+		ENDIF
+		LOCAL:2 = RESULT
+		DRAWLINE
+		SETCOLOR 0x60C0FF
+		PRINTFORML >> %ITEMNAME:(RESULT-1),15,LEFT%
+		RESETCOLOR
+		LOCAL:13 = LINECOUNT
+		CALL SHOW_ITEM_EXPLAIN_WIKI(RESULT-1)
+		LOCAL:14 = LINECOUNT
+		;説明表示の改行数を記録
+		LOCAL:15 = LOCAL:14 - LOCAL:13
+		PRINTL
+		LOCAL:3 = 1
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+;アイテムの詳細を表示
+;ARG:0	アイテムID
+@SHOW_ITEM_EXPLAIN_WIKI(ARG:0)
+
+;ステータスのコピペ
+IF ARG:0 == 1
+	PRINTFORML 威力35 弾数70 何の変哲もないクロスボウ
+ELSEIF ARG:0 == 2
+	PRINTFORML 威力50 弾数60 魔力が込められた弓矢　結構痛い
+ELSEIF ARG:0 == 3
+	PRINTFORML 威力65 弾数50 汚物を消毒できる道具　炎属性固定
+	PRINTFORML 部屋の汚染度減少効果
+ELSEIF ARG:0 == 4
+	PRINTFORML 威力80 弾数40 一般人にも扱いやすいピストル　替え弾も多い
+ELSEIF ARG:0 == 5
+	PRINTFORML 威力100 弾数30 爆発する弾を飛ばせる
+ELSEIF ARG:0 == 6
+	PRINTFORML 威力140 弾数20 大型の弾丸を飛ばす
+ELSEIF ARG:0 == 7
+	PRINTFORML 威力200 弾数10 軍隊でも使われる本格的な野砲
+ELSEIF ARG:0 == 8
+	PRINTFORML 威力10 弾数10 敵を拘束し電撃を与えますが触手相手では…… 
+	PRINTFORML 抵抗できないNPCに使用可能　キャラロスト防止効果
+	PRINTFORML 拘束した相手の体には半透明な力場が広がり服の代わりとして機能する
+ELSEIF ARG:0 == 9
+	PRINTFORML 威力100 弾数30 触手エキスを高圧で放出する禁断の生体兵器 
+	PRINTFORML 充填パイプの先端に口の様なプラグが付いている
+	PRINTFORML 再装填にはある種の素質が必要な様だが…
+ELSEIF ARG:0 == 10
+	PRINTFORML 威力25 大した威力は無いが、非力なキャラにとっては貴重な武器
+ELSEIF ARG:0 == 11
+	PRINTFORML 威力40 非力な女性でも扱いやすい忍者の武器
+ELSEIF ARG:0 == 12
+	PRINTFORML 威力55 調理にも使える打撃武器　それなりの威力がある
+ELSEIF ARG:0 == 13
+	PRINTFORML 威力70 どこかの魔法少女が持っていそうなステッキ　何故か強い
+	PRINTFORML 魔法少女に変身できる　オトコでも使用可能
+ELSEIF ARG:0 == 14
+	PRINTFORML 威力80 剣よりはバランスの悪い大型武器
+ELSEIF ARG:0 == 15
+	PRINTFORML 威力90 使いやすく切れやすい刀
+ELSEIF ARG:0 == 16
+	PRINTFORML 威力100 刀よりも威力と破壊力に優れた武器
+ELSEIF ARG:0 == 17
+	PRINTFORML 威力50 触手宮を支配するには、触手の力を受け入れるしかない！
+	PRINTFORML 使用者は触手服を通じ、自身の神経と触手を融合させられてしまう
+ELSEIF ARG:0 == 18
+	PRINTFORML 威力60 殺傷力の高い刃物状の触手を制御下に置く為の生体デバイス
+	PRINTFORML 使用者は触手服を通じ、自身の神経と触手を融合させられてしまう
+ELSEIF ARG:0 == 20
+	PRINTFORML 通常攻撃の威力微増（戦闘素質+10換算）
+ELSEIF ARG:0 == 21
+	PRINTFORML 通常攻撃の威力小増（戦闘素質+20換算）
+ELSEIF ARG:0 == 22
+	PRINTFORML 通常攻撃の威力中増（戦闘素質+40換算）
+	PRINTFORML 睡眠時の見張りやアイテムの探索を行う代わりに罠を発動させたり睡眠中に胸をいじったりする
+ELSEIF ARG:0 == 23
+	PRINTFORML 通常攻撃の威力大増（戦闘素質+60換算）
+ELSEIF ARG:0 == 24
+	PRINTFORML 速度+20
+	PRINTFORML 戦闘中に使用すると確実に逃げられる
+ELSEIF ARG:0 == 25
+	PRINTFORML 速度+50
+ELSEIF ARG:0 == 26
+	PRINTFORML 先制攻撃（速度+500）
+ELSEIF ARG:0 == 27
+	PRINTFORML 回避+15
+ELSEIF ARG:0 == 28
+	PRINTFORML HPダメージを33％カット
+	PRINTFORML 使うことで部屋の汚染度を微減
+ELSEIF ARG:0 == 29
+	PRINTFORML MPダメージを33％カット
+ELSEIF ARG:0 == 30
+	PRINTFORML EPダメージを33％カット
+ELSEIF ARG:0 == 31
+	PRINTFORML CPダメージを50％カット
+ELSEIF ARG:0 == 32
+	PRINTFORML 戦闘終了時にHPを20％回復
+ELSEIF ARG:0 == 33
+	PRINTFORML 戦闘終了時にMPを10％回復
+ELSEIF ARG:0 == 34
+	PRINTFORML 戦闘終了時にEPを20％回復
+ELSEIF ARG:0 == 35
+	PRINTFORML 戦闘終了時にCPを33％回復（全裸時は回復不可能）
+ELSEIF ARG:0 == 36
+	PRINTFORML 戦闘中に拘束から脱出できる確率+15
+ELSEIF ARG:0 == 37
+	PRINTFORML 睡眠攻撃と眠気ペナルティを無効化
+	PRINTFORML （眠気は半減するが体が限界に来ると昏睡する）
+ELSEIF ARG:0 == 38
+	PRINTFORML 煙幕・砂煙を防ぐ
+ELSEIF ARG:0 == 39
+	PRINTFORML 常に発情状態になるが、攻撃の威力が2倍になる
+ELSEIF ARG:0 == 40
+	PRINTFORML 催眠術が使えるようになるらしい
+	PRINTFORML 戦闘中にも使用可能
+ELSEIF ARG:0 == 41
+	PRINTFORML ウォッチャーのいる部屋の映像が見えることがあるメガネ
+ELSEIF ARG:0 == 50
+	PRINTFORML HPを50％回復
+ELSEIF ARG:0 == 51
+	PRINTFORML HPを100％回復
+ELSEIF ARG:0 == 52
+	PRINTFORML MPを25％回復
+	PRINTFORML 触手化する場合がある
+ELSEIF ARG:0 == 53
+	PRINTFORML MPを50％回復
+	PRINTFORML 触手化する場合がある
+ELSEIF ARG:0 == 54
+	PRINTFORML CPを100％回復
+	PRINTFORML 触手化する場合がある
+ELSEIF ARG:0 == 55
+	PRINTFORML EPを100％回復　戦闘中の場合、TPが0になる
+	PRINTFORML 初期のふたなりを治療できる
+ELSEIF ARG:0 == 56
+	PRINTFORML 発情状態にする　戦闘中の場合、TPが200になる
+	PRINTFORML 状態異常のふたなり時に使用すると精力が増加する
+ELSEIF ARG:0 == 57
+	PRINTFORML 状態異常を治療する
+	PRINTFORML 寄生や抱卵も回復できる
+	PRINTFORML 触手化する場合がある
+ELSEIF ARG:0 == 58
+	PRINTFORML 戦意喪失（MPが0）になってしまった仲間を、MP25％の状態で復活させる
+ELSEIF ARG:0 == 59
+	PRINTFORML 戦闘から必ず逃げられる
+ELSEIF ARG:0 == 60
+	PRINTFORML 非戦闘中のみ使用可能　自慰（＝絶頂）により、EPの回復や発情の解除ができる　唯一品　何度でも使用可能
+ELSEIF ARG:0 == 61
+	PRINTFORML 最大HP+300
+ELSEIF ARG:0 == 62
+	PRINTFORML 戦闘素質+10
+ELSEIF ARG:0 == 63
+	PRINTFORML 速度+10
+ELSEIF ARG:0 == 64
+	PRINTFORML 全滅時に一度だけ全回復してランダムな部屋に転送される　唯一品だが消耗品
+ELSEIF ARG:0 == 65
+	PRINTFORML その場で気絶する代わりにHPなどが回復する　唯一品　何度でも使用可能
+	PRINTFORML お酒が一緒にあると他のキャラに薬を盛ることができる
+ELSEIF ARG:0 == 66
+	PRINTFORML 非戦闘中のみ使用可能　トイレをすることによりNPを0にすることができる。 NPが10以下では使用不可
+	PRINTFORML 触手化する場合がある
+ELSEIF ARG:0 == 67
+	PRINTFORML HP・CP・汚れ微回復　骨折の治療
+	PRINTFORML 触手化する場合がある
+ELSEIF ARG:0 == 69
+	PRINTFORML 胸が小さくなる
+	PRINTFORML 胸が大きくなりすぎた場合たまった母乳をなくす効果がある
+ELSEIF ARG:0 == 70
+	PRINTFORML とってもおいしい、ペット用の缶詰
+	PRINTFORML 食べると発情する
+ELSEIF ARG:0 == 71
+	PRINTFORML 部屋の空気を綺麗にしてくれる便利グッズ
+ELSEIF ARG:0 == 72
+	PRINTFORML 特製盗撮用ゴーグル
+	PRINTFORML 迷宮の内部の様子がわかる
+ELSEIF ARG:0 == 73
+	PRINTFORML 空気が浄化されていれば澄んだ泉で必ず発見できる薬草　HP3000回復＋侵食治療
+ELSEIF ARG:0 == 74
+	PRINTFORML 破れるまで寄生を封じる
+	PRINTFORML 股間に貼って使用する
+	PRINTFORML 重ね貼り可能
+ELSEIF ARG:0 == 75
+	PRINTFORML 破れるまで卵を産み付けられなくなる
+	PRINTFORML お腹に貼って使用する
+	PRINTFORML 重ね貼り可能
+ELSEIF ARG:0 == 76
+	PRINTFORML 破れるまで母乳を止められる
+	PRINTFORML 胸に貼って使用する
+	PRINTFORML 重ね貼り可能
+ELSEIF ARG:0 == 77
+	PRINTFORML 飲んだ翌日が危険日になる
+ELSEIF ARG:0 == 78
+	PRINTFORML このターンの終わりに産卵する
+ELSE
+	PRINTFORML このアイテムの説明は未実装です
+ENDIF
+

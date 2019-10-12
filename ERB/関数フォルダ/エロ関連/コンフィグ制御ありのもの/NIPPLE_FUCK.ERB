@@ -1,0 +1,210 @@
+﻿@CALC_NIPPLE_FUCK(ARG:0, ARG:1, ARG:2)
+;ARG
+;0	対象キャラ
+;1	原因(0:触手服常駐　1:触手服暴走B　2:スライム服B攻め　3:敵の攻撃　4:ペットの攻撃　5:放置プレイ　6:自慰　7:V出産時の幼体NF)
+;2	追加分岐用
+;LOCAL
+;0	閾値(初期)
+;1	閾値(累積上限)
+;2	閾値底上げ倍率(拡張乳腺)
+;3	閾値底上げ倍率(Ｎ拡張経験)
+;4	自慰NF後に触手服に襲われるフラグ
+#DIM NF確率
+#DIM NF確率上限
+#DIM Ｎ拡張経験
+
+NF確率 = 0
+NF確率上限 = 0
+Ｎ拡張経験 = CFLAG:(ARG:0):512
+
+;NF必須条件 → 淫乳かつ巨乳以上 ([拡張乳腺]は並乳以上)
+;素質を累積した確率でNF発生
+
+;貧乳以下 → 無効
+SIF GET_BUST(ARG:0) <= -1
+	RETURN 0
+;淫乳無し → 無効
+SIF TALENT:(ARG:0):76 == 0
+	RETURN 0
+;Bインプラント無し → 無効
+SIF GETBIT(CFLAG:(ARG:0):81, 2) == 0
+	RETURN 0
+;拡張乳腺無し
+IF TALENT:(ARG:0):162 == 0
+	;並乳以下 → 無効
+	SIF GET_BUST(ARG:0) <= 0
+		RETURN 0
+ENDIF
+
+;自慰NF後の触手服の妨害
+IF ARG:1 == 6 && ARG:2 > 0 && LOCAL:4 == 1 && CFLAG:(ARG:0):40 >= 1
+	LOCAL:4 = 0
+	RETURN 2
+;自慰NFしていなかった
+ELSEIF ARG:1 == 6 && ARG:2 > 0 && LOCAL:4 == 0
+	RETURN 0
+ENDIF
+
+;確率増加 (爆乳or超乳、淫乳、母乳体質、侵食度、胸インプラント、拡張乳腺)
+NF確率 += TALENT:(ARG:0):108 * 10 + SIGN(TALENT:(ARG:0):158) * 12 + TALENT:(ARG:0):158
+NF確率 += TALENT:(ARG:0):76 * 10 + TALENT:(ARG:0):130 * 5 + CFLAG:(ARG:0):80
+NF確率 += GETBIT(CFLAG:(ARG:0):81, 2) * 10 + SIGN(TALENT:(ARG:0):162) * 20 + TALENT:(ARG:0):162 * 2
+
+;----------------------
+;確率操作
+;----------------------
+;0 ( 50～ 80％) 触手服常駐_ターン終了時
+;1 ( 70～100％) 触手服暴走_B攻撃
+;2 ( 40～ 80％) スライム服常駐_ターン終了時
+;3 ( 60～ 90％) 敵の攻撃
+;4 ( 40～ 70％) ペットの攻撃
+;5 ( 20～ 50％) 放置プレイ_触手B設置
+;6 ( 50～ 70％) 自慰
+;7 ( 50～ 80％) V出産時の幼体NF
+
+SELECTCASE ARG:1
+CASE 0, 7
+	LOCAL:0 = 50
+	LOCAL:1 = 80
+	LOCAL:2 = 10
+	LOCAL:3 = 2
+CASE 1
+	LOCAL:0 = 70
+	LOCAL:1 = 100
+	LOCAL:2 = 10
+	LOCAL:3 = 2
+CASE 2
+	LOCAL:0 = 40
+	LOCAL:1 = 80
+	LOCAL:2 = 10
+	LOCAL:3 = 2
+CASE 3
+	LOCAL:0 = 60
+	LOCAL:1 = 90
+	LOCAL:2 = 10
+	LOCAL:3 = 2
+CASE 4
+	LOCAL:0 = 40
+	LOCAL:1 = 70
+	LOCAL:2 = 10
+	LOCAL:3 = 2
+CASE 5
+	LOCAL:0 = 20
+	LOCAL:1 = 50
+	LOCAL:2 = 10
+	LOCAL:3 = 2
+CASE 6
+	LOCAL:0 = 50
+	LOCAL:1 = 70
+	LOCAL:2 = 10
+	LOCAL:3 = 1
+ENDSELECT
+
+IF TALENT:(ARG:0):162 >= 4
+	NF確率上限 = LIMIT(LOCAL:0 + TALENT:(ARG:0):162 * LOCAL:2 + Ｎ拡張経験 - 30, 0, LOCAL:1)
+ELSEIF TALENT:(ARG:0):162 >= 3
+	NF確率上限 = LIMIT(LOCAL:0 + TALENT:(ARG:0):162 * LOCAL:2 + Ｎ拡張経験 - 20, 0, LOCAL:1)
+ELSE
+	NF確率上限 = LIMIT(LOCAL:0 + TALENT:(ARG:0):162 * LOCAL:2 + Ｎ拡張経験 % 5 * LOCAL:3, 0, LOCAL:1)
+ENDIF
+
+;確率キャップの有無
+;IF Ｎ拡張経験 < 50
+	SIF NF確率 > NF確率上限
+		NF確率 = NF確率上限
+;ENDIF
+
+;NF判定
+IF RAND:100 < NF確率
+	;原因が自慰
+	SIF ARG:1 == 6
+		LOCAL:4 = 1
+	RETURN 1
+ELSE
+	RETURN 0
+ENDIF
+
+
+
+@CHECK_NIPPLE_EXTEND(ARG:0)
+;[拡張乳腺]素質取得
+;ARG：0		対象キャラ
+#DIM Ｎ拡張経験
+#DIM 素質取得	;素質取得したかどうか
+
+;残虐度表現ノーマル以下は無効
+SIF FLAG:507 < 1
+	RETURN 0
+
+Ｎ拡張経験 = CFLAG:(ARG:0):512
+素質取得 = 0
+
+IF TALENT:(ARG:0):162 <= 3 && Ｎ拡張経験 >= 30
+	CALL PRINT_MESSAGE(ARG:0, 518, 3, CALLNAME:(ARG:0), "")
+	TALENT:(ARG:0):162 = 4
+	素質取得 = 1
+ELSEIF TALENT:(ARG:0):162 <= 2 && Ｎ拡張経験 >= 20
+	CALL PRINT_MESSAGE(ARG:0, 518, 2, CALLNAME:(ARG:0), "")
+	TALENT:(ARG:0):162 = 3
+	素質取得 = 1
+ELSEIF TALENT:(ARG:0):162 <= 1 && Ｎ拡張経験 >= 10
+	CALL PRINT_MESSAGE(ARG:0, 518, 1, CALLNAME:(ARG:0), "")
+	TALENT:(ARG:0):162 = 2
+	素質取得 = 1
+ELSEIF TALENT:(ARG:0):162 <= 0 && Ｎ拡張経験 >= 5
+	CALL PRINT_MESSAGE(ARG:0, 518, 0, CALLNAME:(ARG:0), "")
+	TALENT:(ARG:0):162 = 1
+	素質取得 = 1
+ENDIF
+
+;メッセージ分岐用
+IF 素質取得 == 1
+	RETURN 2
+ELSE
+	RETURN 1
+ENDIF
+
+
+@CALC_NF_DAMAGE(ARG:0, ARG:1, ARG:2)
+#FUNCTION
+;NF追加ダメージ計算処理	B寄生しているとダメージ増加　タイムリミットが短いほどダメージ増大
+;ARG:0	対象キャラ
+;ARG:1	攻撃種別(0:敵の性攻撃　1:敵の寄生攻撃　2:触手服B責め　3:スライム服B責め　4:放置プレイ　5:性欲発散　6:ふたなり治療　7:自慰　8:V出産時の幼体NF)
+;ARG:2	予備
+;LOCAL:0	ダメージ増加量
+LOCAL:0 = 0
+
+;敵の性攻撃、Ｖ出産時の幼体NF
+IF ARG:1 == 0 || ARG:1 == 8
+	LOCAL:0 = MAX(TALENT:(ARG:0):162 * 10, CFLAG:(ARG:0):512 - 10, 1)
+	SIF CFLAG:(ARG:0):161 > 0
+		LOCAL:0 += RAND:(MAX(TALENT:(ARG:0):162 * 10, CFLAG:(ARG:0):512 - 10, 5) * MAX(15 - CFLAG:(ARG:0):162, 1) / 5)
+;敵の寄生攻撃
+ELSEIF ARG:1 == 1
+	LOCAL:0 = MAX(TALENT:(ARG:0):162 * 10, CFLAG:(ARG:0):512 - 10, 1)
+	SIF CFLAG:(ARG:0):161 > 0
+		LOCAL:0 += MAX(TALENT:(ARG:0):162 * 10, CFLAG:(ARG:0):512 - 10, 1) * MAX(15 - CFLAG:(ARG:0):162, 1) / 5
+;触手服B責め、スライム服B責め
+ELSEIF ARG:1 == 2 || ARG:1 == 3
+	LOCAL:0 = MAX(TALENT:(ARG:0):162 * 5, CFLAG:(ARG:0):512 - 10, 1)
+	SIF CFLAG:(ARG:0):161 > 0
+		LOCAL:0 += MAX(TALENT:(ARG:0):162 * 5, CFLAG:(ARG:0):512 - 10, 1) * MAX(15 - CFLAG:(ARG:0):162, 1) / 10
+;放置プレイ
+ELSEIF ARG:1 == 4
+	LOCAL:0 = MAX(TALENT:(ARG:0):162 * 5, CFLAG:(ARG:0):512 - 10, 1) * 100
+	SIF CFLAG:(ARG:0):161 > 0
+		LOCAL:0 += MAX(TALENT:(ARG:0):162 * 10, CFLAG:(ARG:0):512 - 10, 1) * MAX(15 - CFLAG:(ARG:0):162, 1) * 150 / 10
+;性欲発散、ふたなり治療
+ELSEIF ARG:1 == 5 || ARG:1 == 6
+	LOCAL:0 = MAX(TALENT:(ARG:0):162 * 10, CFLAG:(ARG:0):512 - 10, 1)
+	SIF CFLAG:(ARG:0):161 > 0
+		LOCAL:0 += MAX(TALENT:(ARG:0):162 * 10, CFLAG:(ARG:0):512 - 10, 1) * MAX(15 - CFLAG:(ARG:0):162, 1) / 10
+;自慰
+ELSEIF ARG:1 == 7
+	LOCAL:0 = MAX(3 * CFLAG:(ARG:0):512, 1)
+	SIF CFLAG:(ARG:0):161 > 0
+		LOCAL:0 += MAX(3 * CFLAG:(ARG:0):512, 1) * MAX(15 - CFLAG:(ARG:0):162, 1) / 10
+ENDIF
+
+RETURNF LOCAL:0
+

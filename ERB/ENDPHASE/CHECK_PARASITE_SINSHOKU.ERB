@@ -1,0 +1,383 @@
+﻿;フェイズごとの寄生侵食チェック
+;要は体が疼いて作り変えられていく
+;ARG:0	対象キャラ
+@CHECK_PARASITE_SINSHOKU(ARG:0)
+;LOCAL
+;0	LOOP
+;1	メッセージ表示フラグ
+;2	触手が襲う部位
+;3	ダメージ
+
+
+IF CFLAG:(ARG:0):80 <= 0
+	CFLAG:(ARG:0):80 = 0
+	RETURN
+ENDIF
+
+;主人公と場所が違うと発生しない　累積するしね……
+SIF CFLAG:(ARG:0):4 != CFLAG:1:4
+	RETURN
+
+;拘束中に侵食が発生するようにしたので同時発生すると多分ウザい
+SIF CFLAG:(ARG:0):10 || CFLAG:(ARG:0):504 >= 2
+	RETURN
+
+;リタイアしてるなら黙る
+SIF CFLAG:(ARG:0):2
+	RETURN
+
+LOCAL:1 = 0
+
+;寄生封じの札
+IF CFLAG:(ARG:0):153 >= 3
+	CFLAG:(ARG:0):80 -= 8
+	CFLAG:(ARG:0):153 -= 3
+	IF CFLAG:(ARG:0):80
+		PRINTFORMW 寄生封じの札が体に植え付けられていた異物を弱らせたようだ
+	ELSE
+		PRINTFORMW 寄生封じの札が体に植え付けられていた異物を完全に浄化したようだ
+
+	ENDIF
+		RETURN
+ENDIF
+
+;部屋が綺麗だと活動しない
+SIF FLAG:(FLAG:5 + 50) < 10
+	RETURN
+
+;毎ターン普通の効果とは別に侵食
+	CFLAG:(ARG:0):80 += 1
+	IF CFLAG:(ARG:0):80 < 5
+		CALL PRINT_MESSAGE(ARG:0, 445, 2, CALLNAME:(ARG:0), "")
+	ELSE
+		CALL PRINT_MESSAGE(ARG:0, 445, 3, CALLNAME:(ARG:0), "")
+	ENDIF
+;	LOCAL:1 = 1
+
+	;50は越えない
+	SIF CFLAG:(ARG:0):80 > 50
+		CFLAG:(ARG:0):80 = 50
+
+;発動率（％）は１０＋侵食度×５＋触手中毒×３＋中毒しやすい×５－蓬莱人×１０－薬毒耐性×５－治療×５－異形耐性×５
+;最低値１０％、最大値８０％
+LOCAL:0 = 10
+LOCAL:0 += CFLAG:(ARG:0):80 * 5
+LOCAL:0 += ABL:(ARG:0):11 * 3
+SIF TALENT:(ARG:0):72
+	LOCAL:0 += 5
+
+SIF TALENT:(ARG:0):128
+	LOCAL:0 -= 10
+
+SIF TALENT:(ARG:0):56
+	LOCAL:0 -= 5
+
+SIF TALENT:(ARG:0):117
+	LOCAL:0 -= 5
+
+SIF TALENT:(ARG:0):155
+	LOCAL:0 -= 5
+
+IF LOCAL:0 < 10
+	LOCAL:0 = 10
+ELSEIF LOCAL:0 > 80
+	LOCAL:0 = 80
+ENDIF
+
+SIF RAND:100 >= LOCAL:0
+	RETURN
+
+LOCAL:3 = 0
+
+;効果
+	;侵食したての頃は追加の侵食に専念
+	IF CFLAG:(ARG:0):80 < 5
+		LOCAL:0 = RAND:2
+	;軽度
+	;侵食orEPダウン
+	ELSEIF CFLAG:(ARG:0):80 < 10
+		LOCAL:0 = RAND:6
+		LOCAL:3 = 1000 + RAND:2500
+	;中度
+	;侵食orEPダウンorABCVMインプラント
+	ELSEIF CFLAG:(ARG:0):80 < 15
+		LOCAL:0 = RAND:12
+		LOCAL:3 = 1500 + RAND:2500
+	;重度
+	;侵食orEPダウンor全種インプラントor強制EP1
+	ELSEIF CFLAG:(ARG:0):80 < 20
+		LOCAL:0 = RAND:16
+		LOCAL:3 = 2000 + RAND:2500
+	;末期
+	;全種インプラントor強制EP1
+	ELSE
+		LOCAL:0 = 7 + RAND:10
+		;……まあ使ってないんだが
+		LOCAL:3 = 2500 + RAND:2500
+	ENDIF
+
+
+	SELECTCASE LOCAL:0
+		;侵食
+		CASE 0, 1, 6
+			CFLAG:(ARG:0):80 += 1
+			;すでに口上が表示されていた場合はパス　……侵食がランダムじゃなくなったので不使用
+;			IF LOCAL:1 == 0
+;				IF CFLAG:(ARG:0):80 < 5
+;					CALL PRINT_MESSAGE(ARG:0, 445, 2, CALLNAME:(ARG:0), "")
+;				ELSE
+;					CALL PRINT_MESSAGE(ARG:0, 445, 3, CALLNAME:(ARG:0), "")
+;				ENDIF
+;			ENDIF
+		;A
+		CASE 2
+				LOCAL:2 = 0
+				CALL PRINT_MESSAGE(ARG:0, 446, LOCAL:2, CALLNAME:(ARG:0), "")
+				CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 100 + RAND:100)
+				IF BASE:(ARG:0):2 > LOCAL:3
+					BASE:(ARG:0):2 -= LOCAL:3
+				ELSE
+					BASE:(ARG:0):2 = 1
+				ENDIF
+		;B
+		CASE 3
+				LOCAL:2 = 1
+				CALL PRINT_MESSAGE(ARG:0, 446, LOCAL:2, CALLNAME:(ARG:0), "")
+				CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 100 + RAND:100)
+				IF BASE:(ARG:0):2 > LOCAL:3
+					BASE:(ARG:0):2 -= LOCAL:3
+				ELSE
+					BASE:(ARG:0):2 = 1
+				ENDIF
+		;C
+		CASE 4
+				LOCAL:2 = 2
+				CALL PRINT_MESSAGE(ARG:0, 446, LOCAL:2, CALLNAME:(ARG:0), "")
+				CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 100 + RAND:100)
+				IF BASE:(ARG:0):2 > LOCAL:3
+					BASE:(ARG:0):2 -= LOCAL:3
+				ELSE
+					BASE:(ARG:0):2 = 1
+				ENDIF
+		;V
+		CASE 5
+				LOCAL:2 = 3
+				CALL PRINT_MESSAGE(ARG:0, 446, LOCAL:2, CALLNAME:(ARG:0), "")
+				CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 100 + RAND:100)
+				IF BASE:(ARG:0):2 > LOCAL:3
+					BASE:(ARG:0):2 -= LOCAL:3
+				ELSE
+					BASE:(ARG:0):2 = 1
+				ENDIF
+		;Aインプラント
+		CASE 7
+				LOCAL:2 = 0
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					IF CFLAG:(ARG:0):80 >= 20 && CFLAG:(ARG:0):151 <= 0 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						TFLAG:93 = 1
+						CALL PARASITE_TYPE(ARG:0, 2, 5 + RAND:12, 4 + RAND:4 + RAND:3, 0)
+						TFLAG:93 = 0
+						;植え付けるのに使った部分
+						CFLAG:(ARG:0):80 -= 1
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 150 + RAND:100 + RAND:50 + RAND:25)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;Bインプラント
+		CASE 8
+				LOCAL:2 = 1
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					IF CFLAG:(ARG:0):80 >= 20 && TALENT:(ARG:0):(101 + LOCAL:2) < 3 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						TALENT:(ARG:0):(101 + LOCAL:2) += 1
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 150 + RAND:100 + RAND:50 + RAND:25)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;Cインプラント
+		CASE 9
+				LOCAL:2 = 2
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					IF CFLAG:(ARG:0):80 >= 20 && TALENT:(ARG:0):(101 + LOCAL:2) < 3 && RAND:3 && GET_PENIS(ARG:0) > 0
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						TALENT:(ARG:0):(101 + LOCAL:2) += 1
+					;まだ定着していないふたなりのみふたなり強化される可能性がある
+					ELSEIF CFLAG:(ARG:0):80 >= 20 && GET_PENIS(ARG:0) == 1 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 3)
+						CFLAG:(ARG:0):42 += 3 + RAND:3 + RAND:2
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 150 + RAND:100 + RAND:50 + RAND:25)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;Vインプラント
+		CASE 10
+				LOCAL:2 = 3
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					IF CFLAG:(ARG:0):80 >= 20  && CFLAG:(ARG:0):22 == 0 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						TFLAG:93 = 1
+						CALL PARASITE_TYPE(ARG:0, 2, 5 + RAND:12, 4 + RAND:4 + RAND:3, 0)
+						TFLAG:93 = 0
+						;植え付けるのに使った部分
+						CFLAG:(ARG:0):80 -= 1
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 150 + RAND:100 + RAND:50 + RAND:25)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;Mインプラント
+		CASE 11
+				LOCAL:2 = 9
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					IF CFLAG:(ARG:0):80 >= 20 && TALENT:(ARG:0):106 < 3 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						TALENT:(ARG:0):106 += 1
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 150 + RAND:100 + RAND:50 + RAND:25)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;自慰中毒悪化
+		CASE 12
+				LOCAL:2 = 4
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					;戦意喪失か拘束中は他と同じ、そうでない場合はいきなりオナニーを始める
+					IF CFLAG:(ARG:0):29 == 0 && CFLAG:(ARG:0):10 == 0 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						CALL MASTURBATION(ARG:0, 1, 100)
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 25 + RAND:12 + RAND:6)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;触手中毒悪化
+		CASE 13
+				LOCAL:2 = 5
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					;戦意喪失しておらず部屋が汚染されている場合は催眠状態になる
+					IF CFLAG:(ARG:0):29 == 0 && FLAG:(FLAG:5 + 50) >= 70 && CFLAG:(ARG:0):43 < 2 && RAND:2
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						SIF !CFLAG:(ARG:0):43
+							CALL SET_HYPNO_TYPE(ARG:0)
+						CFLAG:(ARG:0):43 = LIMIT(CFLAG:(ARG:0):43 + 1, 0, 5)
+						;発情していると割増
+						SIF CFLAG:(ARG:0):28
+							CFLAG:(ARG:0):43 = LIMIT(CFLAG:(ARG:0):43 + 1, 0, 5)
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 25 + RAND:12 + RAND:6)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;レズ中毒悪化
+		CASE 14
+				LOCAL:2 = 7
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					;戦意喪失でも拘束でもなく味方がいる場合は発情する
+					IF CFLAG:(ARG:0):29 == 0 && CFLAG:(ARG:0):10 == 0 && CFLAG:(ARG:0):28 < 3 && FLAG:10 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						CFLAG:(ARG:0):28 += 1
+						;催眠状態だと割増、かなりレアなケースなので効果もかなり凶悪
+						SIF CFLAG:(ARG:0):43
+							CFLAG:(ARG:0):28 = 4
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 50 + RAND:25 + RAND:12)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;精液中毒悪化
+		CASE 15
+				LOCAL:2 = 8
+				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
+					;卵巣成長がありだと卵巣強化
+					IF FLAG:535 && TALENT:(ARG:0):137 < 3 && RAND:3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
+						;素質成長処理
+						IF TALENT:(ARG:0):137 == 2
+							TALENT:(ARG:0):137 = 3
+							CFLAG:(ARG:0):511 = 1
+							CFLAG:(ARG:0):510 = 0
+							CFLAG:(ARG:0):509 = 0
+							CFLAG:(ARG:0):508 = 0
+						ELSEIF TALENT:(ARG:0):137 == 1
+							TALENT:(ARG:0):137 = 2
+							CFLAG:(ARG:0):511 = 0
+							CFLAG:(ARG:0):510 = 1
+							CFLAG:(ARG:0):509 = 0
+							CFLAG:(ARG:0):508 = 0
+						ELSEIF TALENT:(ARG:0):137 == 0
+							TALENT:(ARG:0):137 = 1
+							CFLAG:(ARG:0):511 = 0
+							CFLAG:(ARG:0):510 = 0
+							CFLAG:(ARG:0):509 = 1
+							CFLAG:(ARG:0):508 = 0
+						ELSEIF TALENT:(ARG:0):137 == -1
+							TALENT:(ARG:0):137 = 0
+							CFLAG:(ARG:0):511 = 0
+							CFLAG:(ARG:0):510 = 0
+							CFLAG:(ARG:0):509 = 0
+							CFLAG:(ARG:0):508 = 1
+						ENDIF
+					;同じ部屋に白濁泉があると発情
+					ELSEIF CFLAG:(ARG:0):29 == 0 && FLAG:134 == CFLAG:1:4 && CFLAG:(ARG:0):28 < 3
+						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 3)
+						CFLAG:(ARG:0):28 += 1
+					ELSE
+						CALL ADD_ABL_EXP((6 + (LOCAL:2)), ARG:0, 6 + RAND:4 + RAND:2)
+					ENDIF
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 0)
+					SETBIT CFLAG:(ARG:0):81, (LOCAL:2) + 1
+					;植え付けるのに使った部分
+					CFLAG:(ARG:0):80 -= 1
+				ENDIF
+		;強制EP1
+		CASE 16
+			CALL PRINT_MESSAGE(ARG:0, 446, 14, CALLNAME:(ARG:0), "")
+			BASE:(ARG:0):2 = 1
+
+	ENDSELECT

@@ -1,0 +1,69 @@
+﻿;ARG:0	対象キャラ
+@MINIGAME_PENALTY_4(ARG:0)
+;LOCAL
+;0	LOOP
+
+;5-6	HP低下
+;7-8	MP低下
+;9		CP低下
+;10		寄生
+
+LOCAL:3 = RAND:14
+	SELECTCASE LOCAL:3
+		CASE 0 TO 9
+			PRINTFORMW 大量の淫蟲が%CALLNAME:(ARG:0)%%TACHI()%に襲い掛かる！
+			PRINTFORML 
+			;なんとなくで全員巻き込む
+			FOR LOCAL:0, 2, CHARANUM
+					TFLAG:63 = 2
+					LOCAL:1 = LIMIT(RAND:100, 50, 100) + RAND:150
+					CALL PRINT_MESSAGE((LOCAL:0), 200, 148, CALLNAME:(LOCAL:0), "")
+					LOCAL:5 = CALC_SENSITIVITY((LOCAL:0), TFLAG:63, LOCAL:1)
+					CALL DAMAGE_COMMON((LOCAL:0), 2, LOCAL:5 * 7 * (TALENT:(LOCAL:0):103 + 2) * (TALENT:(LOCAL:0):77 + 1), 500);◆
+					IF RAND:3 == 0 && GET_PENIS(LOCAL:0) == 0 && ( FLAG:520 == 1 || FLAG:520 == 3 )
+							PRINTFORML 淫蟲の一部が%CALLNAME:(LOCAL:0)%のクリトリスに吸い付くと、一体化して寄生し始めた……
+							PRINTFORML %CALLNAME:(LOCAL:0)%は【ふたなり】になってしまった！
+							CALL PRINT_MESSAGE((LOCAL:0), 200, 148, CALLNAME:1, "", 3)
+							CFLAG:(LOCAL:0):42 = 1 + RAND:4 + RAND:3 + RAND:2
+					ENDIF
+					IF RAND:4 == 0 && TALENT:(LOCAL:0):103 <= 2
+						PRINTFORMW %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+						IF GET_PENIS(LOCAL:0)
+							PRINTFORMW %CALLNAME:(LOCAL:0)%の陰茎が少し敏感になった
+						ELSE
+							PRINTFORMW %CALLNAME:(LOCAL:0)%のクリトリスが少し敏感になった
+						ENDIF
+						TALENT:(LOCAL:0):103 += 1
+					ENDIF
+			NEXT
+		CASE 10 TO 11
+				PRINTFORML 無数の触手が%CALLNAME:(ARG:0)%を絡め取る！
+				PRINTFORMW %CALLNAME:(ARG:0)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 4, 1)
+				CFLAG:(ARG:0):5 -= 15 + RAND:15
+			
+			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 5, 2)
+			FOR LOCAL:0, 0, 15
+				TFLAG:63 = 2
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:5+10)* (TALENT:(ARG:0):(101+TFLAG:63) + 2), 50)
+			NEXT
+			IF !GET_PENIS(ARG:0)
+				PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
+				PRINTFORMW %CALLNAME:(ARG:0)%のクリトリスが敏感になった！
+			ELSE
+				PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
+				PRINTFORMW %CALLNAME:(ARG:0)%の陰茎が敏感になった！
+			ENDIF
+			TALENT:(ARG:0):103 += 1
+		CASE 12 TO 13
+			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 9, 0)
+			PRINTFORML 　
+			PRINTFORMW …………
+			PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%の擬似陰茎は更に醜く太く大きく成長し、脈打っている
+			PRINTFORMW %CALLNAME:(ARG:0)%は下腹部に力が漲るのを感じた…
+			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 9, 1)
+			CFLAG:(ARG:0):42 += 10
+	ENDSELECT
+
+

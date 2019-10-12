@@ -1,0 +1,292 @@
+﻿;敵用の雑多な共通処理を一か所に纏めておく
+
+
+;敵がどの味方を狙ってくるかの確率を計算
+;ARG:0	戦闘中の敵ID
+@SET_ENEMY_TARGET_RATE(ARG:0)
+;LOCAL
+;1	特定キャラ固定
+;2	特定キャラ半固定
+
+LOCAL:1 = 0
+LOCAL:2 = 0
+
+;誰かを拘束している場合、確率固定
+IF DA:(ARG:0):70
+	IF CFLAG:1:29 == 0
+		LOCAL:1 |= 1
+	ELSE
+		LOCAL:2 |= 1
+	ENDIF
+ENDIF
+IF DA:(ARG:0):71
+	IF CFLAG:(FLAG:10):29 == 0
+		LOCAL:1 |= 2
+	ELSE
+		LOCAL:2 |= 2
+	ENDIF
+ENDIF
+IF DA:(ARG:0):72
+	IF CFLAG:(FLAG:11):29 == 0
+		LOCAL:1 |= 4
+	ELSE
+		LOCAL:2 |= 4
+	ENDIF
+ENDIF
+
+IF LOCAL:1 == 0 && LOCAL:2 == 0
+	DA:(ARG:0):60 = 30
+	DA:(ARG:0):61 = 30
+	DA:(ARG:0):62 = 30
+	
+	SIF CFLAG:1:34
+		DA:(ARG:0):60 += 30
+	SIF FLAG:10 && CFLAG:(FLAG:10):34
+		DA:(ARG:0):61 += 30
+	SIF FLAG:11 && CFLAG:(FLAG:11):34
+		DA:(ARG:0):62 += 30
+ELSEIF LOCAL:1 == 0
+	DA:(ARG:0):60 = 25
+	DA:(ARG:0):61 = 25
+	DA:(ARG:0):62 = 25
+	
+	SIF LOCAL:1 & 1
+		DA:(ARG:0):60 += 25
+	SIF LOCAL:1 & 2
+		DA:(ARG:0):61 += 25
+	SIF LOCAL:1 & 4
+		DA:(ARG:0):62 += 25
+ELSE
+	DA:(ARG:0):60 = 0
+	DA:(ARG:0):61 = 0
+	DA:(ARG:0):62 = 0
+	
+	SIF LOCAL:1 & 1
+		DA:(ARG:0):60 += 100
+	SIF LOCAL:1 & 2
+		DA:(ARG:0):61 += 100
+	SIF LOCAL:1 & 4
+		DA:(ARG:0):62 += 100
+	SIF LOCAL:2 & 1
+		DA:(ARG:0):60 += 40
+	SIF LOCAL:2 & 2
+		DA:(ARG:0):61 += 40
+	SIF LOCAL:2 & 4
+		DA:(ARG:0):62 += 40
+ENDIF
+
+;－－－－－服装補正－－－－－
+CALL CLOTH_TYPE_EFFECT_魅力補正(1)
+IF RESULT > 0
+	DA:(ARG:0):60 += RESULT:1
+ENDIF
+CALL CLOTH_TYPE_EFFECT_魅力補正(FLAG:10)
+IF RESULT > 0
+	DA:(ARG:0):61 += RESULT:1
+ENDIF
+CALL CLOTH_TYPE_EFFECT_魅力補正(FLAG:11)
+IF RESULT > 0
+	DA:(ARG:0):62 += RESULT:1
+ENDIF
+;－－－－－－－－－－
+
+
+;おねだり中は狙われる確率UP
+SIF CFLAG:1:50 >= 54 && CFLAG:1:50 <= 58
+	DA:(ARG:0):60 += 600
+SIF CFLAG:(FLAG:10):50 >= 54 && CFLAG:(FLAG:10):50 <= 58
+	DA:(ARG:0):61 += 600
+SIF CFLAG:(FLAG:11):50 >= 54 && CFLAG:(FLAG:11):50 <= 58
+	DA:(ARG:0):62 += 600
+
+;自分以外に丸呑みされているキャラは狙わない
+SIF CFLAG:1:21 && CFLAG:1:10 != ARG:0 && CFLAG:1:20 != ARG:0
+	DA:(ARG:0):60 = 0
+SIF FLAG:10 && CFLAG:(FLAG:10):21 && CFLAG:(FLAG:10):10 != ARG:0 && CFLAG:(FLAG:10):20 != ARG:0
+	DA:(ARG:0):61 = 0
+SIF FLAG:11 && CFLAG:(FLAG:11):21 && CFLAG:(FLAG:11):10 != ARG:0 && CFLAG:(FLAG:11):20 != ARG:0
+	DA:(ARG:0):62 = 0
+
+
+;存在しない味方を狙う割合を０にしておく
+SIF FLAG:10 == 0
+	DA:(ARG:0):61 = 0
+SIF FLAG:11 == 0
+	DA:(ARG:0):62 = 0
+
+
+
+
+;敵ごとの個別処理用スペース
+;DA:(ARG:0):60~62を増やしたり減らしたり
+SELECTCASE DA:(ARG:0):0
+	CASE 2
+		;本体が丸呑している場合狙う
+		SIF CFLAG:1:21 &&  (DA:(CFLAG:1:10):0 == 1 || DA:(CFLAG:1:20):0 == 1)
+			DA:(ARG:0):60 += 30
+		SIF FLAG:10 && (DA:(CFLAG:(FLAG:10):10):0 == 1 || DA:(CFLAG:(FLAG:10):20):0 == 1)
+			DA:(ARG:0):61 += 30
+		SIF FLAG:11 && (DA:(CFLAG:(FLAG:11):10):0 == 1 || DA:(CFLAG:(FLAG:11):20):0 == 1)
+			DA:(ARG:0):62 += 30
+
+	CASE 26,30,32,95
+		;戦意喪失補正
+		SIF CFLAG:1:29
+			DA:(ARG:0):60 /= 2
+		SIF FLAG:10 && CFLAG:(FLAG:10):29
+			DA:(ARG:0):61 /= 2
+		SIF FLAG:11 && CFLAG:(FLAG:11):29
+			DA:(ARG:0):62 /= 2
+
+	CASE 31,43
+		;体力の尽きた戦意喪失していない仲間を狙う確立がアップ
+		SIF BASE:1:0 < 50 && BASE:1:1
+			DA:(ARG:0):60 += 600
+		SIF BASE:(FLAG:10):0 < 50 && BASE:(FLAG:10):1
+			DA:(ARG:0):61 += 600
+		SIF BASE:(FLAG:11):0 < 50 && BASE:(FLAG:11):1
+			DA:(ARG:0):62 += 600
+
+	CASE 47
+		;処女狙い
+		SIF TALENT:1:0 > 0
+			DA:(ARG:0):60 += 600
+		SIF TALENT:(FLAG:10):0 > 0
+			DA:(ARG:0):61 += 600
+		SIF TALENT:(FLAG:11):0 > 0
+			DA:(ARG:0):62 += 600
+
+	CASE 48
+		;戦意喪失キャラ狙い
+		SIF CFLAG:1:29
+			DA:(ARG:0):60 += 20
+		SIF CFLAG:(FLAG:10):29
+			DA:(ARG:0):61 += 20
+		SIF CFLAG:(FLAG:11):29
+			DA:(ARG:0):62 += 20
+
+	CASE 52
+		;体力の尽きた獲物狙い
+		SIF BASE:1:0 < 50
+			DA:(ARG:0):60 += 60
+		SIF BASE:(FLAG:10):0 < 50
+			DA:(ARG:0):61 += 60
+		SIF BASE:(FLAG:11):0 < 50
+			DA:(ARG:0):62 += 60
+
+
+	CASE 61
+		;拘束されていない相手ねらい
+		IF DA:(ARG:0):70 || DA:(ARG:0):71 || DA:(ARG:0):72
+			SIF !CFLAG:1:20 && !CFLAG:1:21
+				DA:(ARG:0):60 += 100
+			SIF FLAG:10 && !CFLAG:(FLAG:10):20 && !CFLAG:(FLAG:10):21
+				DA:(ARG:0):61 += 100
+			SIF FLAG:11 && !CFLAG:(FLAG:11):20 && !CFLAG:(FLAG:11):21
+				DA:(ARG:0):62 += 100
+		ENDIF
+	CASE 64
+		;戦意喪失キャラを狙わない
+		SIF CFLAG:1:29
+			DA:(ARG:0):60 = 0
+		SIF FLAG:10 && CFLAG:(FLAG:10):29
+			DA:(ARG:0):61 = 0
+		SIF FLAG:11 && CFLAG:(FLAG:11):29
+			DA:(ARG:0):62 = 0
+	CASE 70
+		;パチュリーかその娘狙い
+		IF NO:1 == 8
+			DA:(ARG:0):60 += 100
+			DA:(ARG:0):61 = 0
+			DA:(ARG:0):62 = 0
+		ELSEIF NO:(FLAG:10) == 8 && CFLAG:(FLAG:10):104 == 0
+			DA:(ARG:0):60 = 0
+			DA:(ARG:0):61 += 100
+			DA:(ARG:0):62 = 0
+		ELSEIF NO:(FLAG:11) == 8 && CFLAG:(FLAG:11):104 == 0
+			DA:(ARG:0):60 = 0
+			DA:(ARG:0):61 = 0
+			DA:(ARG:0):62 += 100
+		ELSEIF NO:(FLAG:10) == 8
+			DA:(ARG:0):61 += 600
+		ELSEIF NO:(FLAG:11) == 8
+			DA:(ARG:0):62 += 600
+		ENDIF
+	CASE 73
+		;拘束しているキャラ狙い
+		IF DA:(ARG:0):70
+			DA:(ARG:0):60 += 100
+		ELSEIF DA:(ARG:0):71
+			DA:(ARG:0):61 += 100
+		ELSEIF DA:(ARG:0):72
+			DA:(ARG:0):62 += 100
+		ENDIF
+	CASE 84
+		;妊婦ねらい
+			SIF CFLAG:1:23
+				DA:(ARG:0):60 += 100
+			SIF FLAG:10 && CFLAG:(FLAG:10):23
+				DA:(ARG:0):61 += 100
+			SIF FLAG:11 && CFLAG:(FLAG:11):23
+				DA:(ARG:0):62 += 100
+	CASE 89,90
+		;拘束しているキャラ狙い
+		IF DA:(ARG:0):70
+				DA:(ARG:0):60 += 100
+		ELSEIF DA:(ARG:0):71
+				DA:(ARG:0):61 += 100
+		ELSEIF DA:(ARG:0):72
+				DA:(ARG:0):62 += 100
+		ENDIF
+		;戦意喪失キャラ狙い
+		SIF CFLAG:1:29
+			DA:(ARG:0):60 += 20
+		SIF CFLAG:(FLAG:10):29
+			DA:(ARG:0):61 += 20
+		SIF CFLAG:(FLAG:11):29
+			DA:(ARG:0):62 += 20
+
+ENDSELECT
+
+
+;敵の行動を決定
+;ARG:0	戦闘中の敵ID
+@SELECT_ENEMY_ACTION(ARG:0)
+;LOCAL
+;0	LOOP
+;1	狙う確率計算用・最大値
+;2	TEMP
+;3	狙うキャラ
+
+LOCAL:1 = 0
+FOR LOCAL:0, 0, 3
+	LOCAL:1 += DA:(ARG:0):(60 + LOCAL:0)
+NEXT
+IF LOCAL:1 == 0
+	;狙えるキャラが居なかった場合、主人公狙い
+	LOCAL:3 = 1
+ELSE
+	LOCAL:2 = RAND:(LOCAL:1)
+	
+	IF LOCAL:2 < DA:(ARG:0):60
+		LOCAL:3 = 1
+	ELSEIF LOCAL:2 < DA:(ARG:0):60 + DA:(ARG:0):61
+		LOCAL:3 = FLAG:10
+	ELSE
+		LOCAL:3 = FLAG:11
+	ENDIF
+ENDIF
+
+;居ないキャラを狙おうとしている場合、主人公狙いにしておく
+SIF LOCAL:3 <= 0
+	LOCAL:3 = 1
+
+
+TRYCCALLFORM SELECT_ENEMY_ACTION_{DA:(ARG:0):0}(ARG:0, LOCAL:3)
+CATCH
+	PRINTFORMW (SELECT_ENEMY_ACTION) 未実装の敵(ID:{DA:(ARG:0):0})のため、処理できません
+	RETURN 0
+ENDCATCH
+
+
+

@@ -1,0 +1,361 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_134
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	主人公のCP
+;5	主人公の装備1
+;6	主人公の装備2
+;7	主人公の装備3
+;8	主人公の装備1の残弾
+;9	主人公の装備2の残弾
+;10	主人公の装備3の残弾
+;11	仲間1のID
+;12	仲間1のCP
+;13	仲間1の装備1
+;14	仲間1の装備2
+;15	仲間1の装備3(予備)
+;16	仲間1の装備1の残弾
+;17	仲間1の装備2の残弾
+;18	仲間1の装備3の残弾（予備）
+;19	仲間2のID
+;20	仲間2のCP
+;21	仲間2の装備1
+;22	仲間2の装備2
+;23	仲間2の装備3
+;24	仲間2の装備1の残弾
+;25	仲間2の装備2の残弾
+;26	仲間2の装備3の残弾(予備)
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 40
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1 || FLAG:134 >= 100
+	;経験値が入るのは最初だけ
+	IF FLAG:134 < 100
+		CALL ADD_ABL_EXP_PT(0, 1000)
+		FLAG:134 += 100
+	ENDIF
+	PRINTFORML 白く濁った泉を発見した！　どうしますか？
+	PRINTFORML [1] 水を飲んでみる
+	PRINTFORML [2] 泉に入ってみる
+	PRINTFORML [0] その場を離れる
+	INPUT
+	IF RESULT == 1
+		;尿意増加
+		CALL ADD_BASE_NP(1,1+RAND:2)
+		IF FLAG:10
+			CALL ADD_BASE_NP(FLAG:10,1+RAND:2)
+		ENDIF
+		IF FLAG:11
+			CALL ADD_BASE_NP(FLAG:11,1+RAND:2)
+		ENDIF
+		
+		IF RAND:2 == 0
+			PRINTFORML %CALLNAME:1%%TACHI()%は泉の水を飲んでみた…
+			PRINTFORML 甘味のある不思議な水が、心を落ち着けてゆく…
+			PRINTFORML パーティーのMPが全回復した！
+			CALL PRINT_MESSAGE(1, 200, 134, CALLNAME:1, "", 0)
+			CALL PRINT_MESSAGE(FLAG:10, 200, 134, CALLNAME:1, "", 0)
+			CALL PRINT_MESSAGE(FLAG:11, 200, 134, CALLNAME:1, "", 0)
+			BASE:1:1 = MAXBASE:1:1
+			IF FLAG:10
+				BASE:(FLAG:10):1 = MAXBASE:(FLAG:10):1
+			ENDIF
+			IF FLAG:11
+				BASE:(FLAG:11):1 = MAXBASE:(FLAG:11):1
+			ENDIF
+		ELSEIF CFLAG:1:28 || (FLAG:10 && CFLAG:(FLAG:10):28) || (FLAG:11 && CFLAG:(FLAG:11):28)
+			PRINTFORML %CALLNAME:1%%TACHI()%は泉の水を飲んでみた…
+			PRINTFORML 不思議な喉越しの水を飲むと、%CALLNAME:1%%TACHI()%を猛烈な眠気が襲った！
+			CALL PRINT_MESSAGE(1, 200, 134, CALLNAME:1, "", 1)
+			CALL PRINT_MESSAGE(FLAG:10, 200, 134, CALLNAME:1, "", 1)
+			CALL PRINT_MESSAGE(FLAG:11, 200, 134, CALLNAME:1, "", 1)
+			FLAG:7 = 15
+		ELSE
+			PRINTFORML %CALLNAME:1%%TACHI()%は泉の水を飲んでみた…
+			PRINTFORML 不思議な喉越しの水を飲むと、%CALLNAME:1%%TACHI()%の性欲が急激に高められた！
+			PRINTFORML パーティー全員が【発情】状態になってしまった！
+			CALL PRINT_MESSAGE(1, 200, 134, CALLNAME:1, "", 2)
+			CALL PRINT_MESSAGE(FLAG:10, 200, 134, CALLNAME:1, "", 2)
+			CALL PRINT_MESSAGE(FLAG:11, 200, 134, CALLNAME:1, "", 2)
+			;◆発情レベルパッチ
+			IF CFLAG:1:28 < 3
+				CFLAG:1:28 += 1
+			ENDIF
+			IF FLAG:10 && CFLAG:(FLAG:10):28 < 3
+				CFLAG:(FLAG:10):28 += 1
+			ENDIF
+			IF FLAG:11 && CFLAG:(FLAG:11):28 < 3
+				CFLAG:(FLAG:11):28 += 1
+			ENDIF
+			;◆◆
+		ENDIF
+	ELSEIF RESULT == 2
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML %CALLNAME:1%%TACHI()%は裸になり、泉の中に入ってみた…
+				PRINTFORML 不思議な薬効を持った水が、%CALLNAME:1%%TACHI()%の身体にゆっくりと染み込んでゆく…
+				PRINTFORML パーティー全員の【速度】が少し増加した！
+				CALL PRINT_MESSAGE(1, 200, 134, CALLNAME:1, "", 3)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 134, CALLNAME:1, "", 3)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 134, CALLNAME:1, "", 3)
+				ABL:1:97 += 5
+				BASE:1:5 = 0
+				IF FLAG:10
+					ABL:(FLAG:10):97 += 5
+					BASE:(FLAG:10):5 = 0
+				ENDIF
+				IF FLAG:11
+					ABL:(FLAG:11):97 += 5
+					BASE:(FLAG:11):5 = 0
+				ENDIF
+			CASE 1
+				IF RAND:2 == 0 && FLAG:520 == 1
+					PRINTFORML %CALLNAME:1%%TACHI()%は裸になり、泉の中に入ってみた…
+					PRINTFORML 泉の水はまるで意思を持っているかのように%CALLNAME:1%%TACHI()%のクリトリスに張り付き、一体化した！
+					PRINTFORML パーティー全員が【ふたなり】にされてしまった！
+					CALL PRINT_MESSAGE(1, 200, 134, CALLNAME:1, "", 6)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 134, CALLNAME:1, "", 6)
+					CALL PRINT_MESSAGE(FLAG:11, 200, 134, CALLNAME:1, "", 6)
+					IF GET_PENIS(1) == 0
+						CFLAG:1:42 = 1 + RAND:4 + RAND:3 + RAND:2
+						CALL SHOW_TUTORIAL(17)
+					ELSEIF GET_PENIS(1) > 1 
+						PRINTFORML %CALLNAME:1%と一体化した陰茎は、今まで以上に強く屹立している…
+						PRINTFORML %CALLNAME:1%のEPが大幅に減少した！
+						BASE:1:2 = 1
+					ELSE
+						PRINTFORML %CALLNAME:1%に寄生した擬似陰茎は、張り付く強さを増している…
+						CFLAG:1:42 += 4
+					ENDIF
+					IF FLAG:10 && GET_PENIS(FLAG:10) == 0
+						CFLAG:(FLAG:10):42 = 1 + RAND:4 + RAND:3 + RAND:2
+					ELSEIF  FLAG:10 && GET_PENIS(FLAG:10) > 1
+						PRINTFORML %CALLNAME:(FLAG:10)%と一体化した陰茎は、今まで以上に強く屹立している…
+						PRINTFORML %CALLNAME:(FLAG:10)%のEPが大幅に減少した！
+						BASE:(FLAG:10):2 = 1
+					ELSEIF FLAG:10
+						PRINTFORML %CALLNAME:(FLAG:10)%に寄生した擬似陰茎は、張り付く強さを増している…
+						CFLAG:(FLAG:10):42 += 4
+					ENDIF
+					IF FLAG:11 && GET_PENIS(FLAG:11) == 0
+						CFLAG:(FLAG:11):42 = 1 + RAND:4 + RAND:3 + RAND:2
+					ELSEIF  FLAG:11 && GET_PENIS(FLAG:11) > 1
+						PRINTFORML %CALLNAME:(FLAG:11)%と一体化した陰茎は、今まで以上に強く屹立している…
+						PRINTFORML %CALLNAME:(FLAG:11)%のEPが大幅に減少した！
+						BASE:(FLAG:11):2 = 1
+					ELSEIF FLAG:11
+						PRINTFORML %CALLNAME:(FLAG:11)%に寄生した擬似陰茎は、張り付く強さを増している…
+						CFLAG:(FLAG:11):42 += 4
+					ENDIF
+				ELSE
+					PRINTFORML %CALLNAME:1%%TACHI()%は裸になり、泉の中に入ってみた…
+					PRINTFORML 泉の水はまるで意思を持っているかのように、%CALLNAME:1%%TACHI()%のナカに入り込んできた！
+					IF FLAG:515 == 0
+						PRINTFORML パーティー全員が何かに【寄生】されてしまった！
+					ENDIF
+					CALL PRINT_MESSAGE(1, 200, 134, CALLNAME:1, "", 4)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 134, CALLNAME:1, "", 4)
+					CALL PRINT_MESSAGE(FLAG:11, 200, 134, CALLNAME:1, "", 4)
+					IF CFLAG:1:22 == 0
+						CALL RANDOM_PARASITE(1, 0, 1)
+					ELSE
+						CFLAG:1:23 = 1
+					ENDIF
+					BASE:1:5 = 150
+					IF FLAG:10 && CFLAG:(FLAG:10):22 == 0
+						CALL RANDOM_PARASITE(FLAG:10, 0, 1)
+						BASE:(FLAG:10):5 = 150
+					ELSEIF FLAG:10
+						CFLAG:(FLAG:10):23 = 1
+						BASE:(FLAG:10):5 = 150
+					ENDIF
+					IF FLAG:11 && CFLAG:(FLAG:11):22 == 0
+						CALL RANDOM_PARASITE(FLAG:11, 0, 1)
+						BASE:(FLAG:11):5 = 150
+					ELSEIF FLAG:11
+						CFLAG:(FLAG:11):23 = 1
+						BASE:(FLAG:10):5 = 150
+					ENDIF
+				ENDIF
+			CASEELSE
+				;全裸で敵と戦闘
+				;全員のCPと装備を保存し一時的に丸腰にする、触手スーツのときは服を脱がない
+				IF CFLAG:1:40 == 0
+					LOCAL:4 = BASE:1:3
+					BASE:1:3 = 0
+				ENDIF
+				;主人公
+				FOR LOCAL:0, 0, 3
+					IF CFLAG:1:(LOCAL:0 + 7)
+						LOCAL:(LOCAL:0 + 5) = CFLAG:1:(LOCAL:0 + 7)
+						IF CFLAG:1:(LOCAL:0 + 17)
+							;残弾がある場合、残弾を記憶して0に
+							LOCAL:(LOCAL:0 + 8) = CFLAG:1:(LOCAL:0 + 17)
+							CFLAG:1:(LOCAL:0 + 17) = 0
+						ENDIF
+						CFLAG:1:(LOCAL:0 + 7) = 0
+					ENDIF
+				NEXT
+				;仲間1がいれば
+				IF FLAG:10
+					LOCAL:11 = FLAG:10
+					IF CFLAG:(FLAG:10):40 == 0
+						LOCAL:12 = BASE:(FLAG:10):3
+						BASE:(FLAG:10):3 = 0
+					ENDIF
+					FOR LOCAL:0, 0, 3
+						IF CFLAG:(FLAG:10):(LOCAL:0 +7)
+							LOCAL:(LOCAL:0 + 13) = CFLAG:(FLAG:10):(LOCAL:0 + 7)
+							IF CFLAG:(FLAG:10):(LOCAL:0 + 17)
+								;残弾がある場合、残弾を記憶して0に
+								LOCAL:(LOCAL:0 + 16) = CFLAG:(FLAG:10):(LOCAL:0 + 17)
+								CFLAG:(FLAG:10):(LOCAL:0 +17) = 0
+							ENDIF
+							CFLAG:(FLAG:10):(LOCAL:0 + 7) = 0
+						ENDIF
+					NEXT
+				ENDIF
+				;仲間2がいれば
+				IF FLAG:11
+					LOCAL:19 = FLAG:11
+					IF CFLAG:(FLAG:11):40 == 0
+						LOCAL:20 = BASE:(FLAG:11):3
+						BASE:(FLAG:11):3 = 0
+					ENDIF
+					FOR LOCAL:0, 0, 3
+						IF CFLAG:(FLAG:11):(LOCAL:0 + 7)
+							LOCAL:(LOCAL:0 + 21) = CFLAG:(FLAG:11):(LOCAL:0 + 7)
+							IF CFLAG:(FLAG:11):(LOCAL:0 + 17)
+								;残弾がある場合、残弾を記憶して0に
+								LOCAL:(LOCAL:0 + 24) = CFLAG:(FLAG:11):(LOCAL:0 + 17)
+								CFLAG:(FLAG:11):(LOCAL:0 +17) = 0
+							ENDIF
+							CFLAG:(FLAG:11):(LOCAL:0 + 7) = 0
+						ENDIF
+					NEXT
+				ENDIF
+
+				;出現する敵を決定
+				CALL REPOP_SELECT(0)
+				
+				PRINTFORML %CALLNAME:1%%TACHI()%が裸になり泉の中に入った瞬間、泉の中から敵が現れた！
+				CALL PRINT_MESSAGE(1, 200, 151, CALLNAME:1, "")
+				CALL PRINT_MESSAGE(FLAG:10, 200, 151, CALLNAME:1, "")
+				CALL PRINT_MESSAGE(FLAG:11, 200, 151, CALLNAME:1, "")
+				CALL PRE_BATTLE(4)
+				PRINTFORML なんとか難を逃れた%CALLNAME:1%%TACHI()%は身支度を整えると急いでその場を離れた…
+				
+				;装備を戻す（戦闘中に服を着替えた場合、戦闘前後でCPが大きいほうを選択）
+				IF CFLAG:1:40 == 0 && BASE:1:3 < LOCAL:4
+					BASE:1:3 = LOCAL:4
+				ENDIF
+				FOR LOCAL:0, 0, 3
+					IF (LOCAL:0 + 5)
+						CFLAG:1:(LOCAL:0 + 7) = LOCAL:(LOCAL:0 + 5)
+						IF LOCAL:(LOCAL:0 + 8)
+							;残弾がある場合、残弾も装備させる
+							CFLAG:1:(LOCAL:0 + 17) = LOCAL:(LOCAL:0 + 8)
+						ENDIF
+					ENDIF
+				NEXT
+				IF LOCAL:19
+				;2番目の仲間がいたとき
+					IF FLAG:11 > 0
+					;2番目の仲間が戦闘後もいる
+						IF CFLAG:(FLAG:11):40 == 0 && BASE:(FLAG:11):3 < LOCAL:20
+							BASE:(FLAG:11):3 = LOCAL:20
+						ENDIF
+						FOR LOCAL:0, 0, 3
+							IF (LOCAL:0 + 21)
+								CFLAG:(FLAG:11):(LOCAL:0 + 7) = LOCAL:(LOCAL:0 + 21)
+								IF LOCAL:(LOCAL:0 + 24)
+									;残弾がある場合、残弾も装備させる
+									CFLAG:(FLAG:11):(LOCAL:0 + 17) = LOCAL:(LOCAL:0 + 24)
+								ENDIF
+							ENDIF
+						NEXT
+					ELSEIF FLAG:10 == LOCAL:19
+					;2番目の仲間が戦闘後におらず、1番目の仲間が抜けて2番目の仲間がスライドしたとき
+						IF CFLAG:(FLAG:10):40 == 0 && BASE:(FLAG:10):3 < LOCAL:20
+							BASE:(FLAG:10):3 = LOCAL:20
+						ENDIF
+						FOR LOCAL:0, 0, 3
+							IF (LOCAL:0 + 21)
+								CFLAG:(FLAG:10):(LOCAL:0 + 7) = LOCAL:(LOCAL:0 + 21)
+								IF LOCAL:(LOCAL:0 + 24)
+									;残弾がある場合、残弾も装備させる
+									CFLAG:(FLAG:10):(LOCAL:0 + 17) = LOCAL:(LOCAL:0 + 24)
+								ENDIF
+							ENDIF
+						NEXT
+					ELSEIF FLAG:10 == LOCAL:11 || FLAG:10 == 0
+					;2番目の仲間が戦闘後にいなくなり、仲間1に移っていない＝2番目のキャラが抜けたとき、仲間2の装備をストックに戻す
+						FOR LOCAL:0, 0, 3
+							IF (LOCAL:0 + 21)
+								ITEM:(LOCAL:(LOCAL:0 + 21)) += 1
+								IF (LOCAL:0 + 24)
+									;残弾がある場合、残弾を戻す
+									ITEM:(GET_BULLET_ITEMID(LOCAL:(LOCAL:0 + 21))) += LOCAL:(LOCAL:0 + 24)
+								ENDIF
+							ENDIF
+						NEXT
+					ENDIF
+				ENDIF
+				IF LOCAL:11
+				;1番目の仲間がいたとき
+					IF FLAG:10 == LOCAL:11
+					;1番目の仲間が戦闘後もそのままいるとき
+						IF CFLAG:(FLAG:10):40 == 0 && BASE:(FLAG:10):3 < LOCAL:12
+							BASE:(FLAG:10):3 = LOCAL:12
+						ENDIF
+						FOR LOCAL:0, 0, 3
+							IF (LOCAL:0 + 13)
+								CFLAG:(FLAG:10):(LOCAL:0 + 7) = LOCAL:(LOCAL:0 + 13)
+								IF (LOCAL:0 + 16)
+									;残弾がある場合、残弾も装備させる
+									CFLAG:(FLAG:10):(LOCAL:0 + 17) = LOCAL:(LOCAL:0 + 16)
+								ENDIF
+							ENDIF
+						NEXT
+					ELSE
+					;1番目の仲間が抜けたとき
+						FOR LOCAL:0, 0, 3
+							IF (LOCAL:0 + 13)
+								ITEM:(LOCAL:(LOCAL:0 + 13)) += 1
+								IF (LOCAL:0 + 16)
+									;残弾がある場合、残弾を戻す
+									ITEM:(GET_BULLET_ITEMID(LOCAL:(LOCAL:0 + 13))) += LOCAL:(LOCAL:0 + 16)
+								ENDIF
+							ENDIF
+						NEXT
+					ENDIF
+				ENDIF
+		ENDSELECT
+	ELSE
+		PRINTFORML %CALLNAME:1%%TACHI()%は泉から立ち去った…
+		CALL PRINT_MESSAGE(1, 200, 134, CALLNAME:1, "", 5)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 134, CALLNAME:1, "", 5)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 134, CALLNAME:1, "", 5)
+	ENDIF
+	;どの場合でもイベントをその場に残す
+	LOCAL:3 = 1
+	WAIT
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

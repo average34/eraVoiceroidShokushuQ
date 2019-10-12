@@ -1,0 +1,79 @@
+﻿;=================================================
+;PTの人数を取得する
+;=================================================
+@GET_MEMBER_SUM()
+#FUNCTION
+#DIM LCOUNT
+
+LOCAL = 0
+FOR LCOUNT, 0, 10
+	IF GET_MEMBER(LCOUNT) > 0
+		LOCAL ++
+	ELSE
+		BREAK
+	ENDIF
+NEXT
+RETURNF LOCAL
+;=================================================
+;PTメンバーのIDを取得する
+;ARG:0	何人目のメンバーか　0：主人公　1：１人目の仲間　2：２人目の仲間
+;=================================================
+@GET_MEMBER(ARG:0)
+#FUNCTION
+IF ARG:0 == 0
+	RETURNF 1
+ELSEIF ARG:0 == 1
+	RETURNF FLAG:10
+ELSEIF ARG:0 == 2
+	RETURNF FLAG:11
+ELSE
+	RETURNF 0
+ENDIF
+
+;=================================================
+;PTメンバーのキャラ番号を取得する
+;ARG:0	何人目のメンバーか　0：主人公　1：１人目の仲間　2：２人目の仲間
+;=================================================
+@GET_MEMBER_NO(ARG:0)
+#FUNCTION
+IF ARG:0 == 0
+	RETURNF NO:1
+ELSEIF ARG:0 == 1
+	RETURNF NO:(FLAG:10)
+ELSEIF ARG:0 == 2
+	RETURNF NO:(FLAG:11)
+ELSE
+	RETURNF 0
+ENDIF
+
+;=================================================
+;PTメンバーの名前を取得する
+;ARG:0	何人目のメンバーか　0：主人公　1：１人目の仲間　2：２人目の仲間
+;=================================================
+@GET_MEMBER_NAME(ARG:0)
+#FUNCTIONS
+IF ARG:0 == 0
+	RETURNF CALLNAME:1
+ELSEIF ARG:0 == 1
+	RETURNF CALLNAME:(FLAG:10)
+ELSEIF ARG:0 == 2
+	RETURNF CALLNAME:(FLAG:11)
+ELSE
+	RETURNF CALLNAME:0
+ENDIF
+
+;=================================================
+;指定NOキャラのIDを取得する(娘は無視)
+;ARG:0	確認したいNO
+;RETURNF	0:見つからない　1:ID
+;=================================================
+@GET_ID_FROM_NO(ARG:0)
+#FUNCTION
+FOR LOCAL:0, 1, CHARANUM
+	IF NO:(LOCAL:0) == ARG:0 && CFLAG:(LOCAL:0):104 == 0
+		RETURNF LOCAL:0
+	ENDIF
+NEXT
+
+RETURNF 0
+;=================================================

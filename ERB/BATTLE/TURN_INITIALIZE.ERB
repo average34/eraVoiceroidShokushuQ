@@ -1,0 +1,264 @@
+﻿; ターン実処理開始前の初期化処理
+@TURN_INITIALIZE(CHARA_ID)
+#DIM CHARA_ID
+#DIM RAPE_TARGET_CHARA_ID
+#DIM COMMAND_OVERWRITE_PERCENTAGE
+#DIM ERECTION_LEVEL_B
+#DIM ERECTION_LEVEL_C
+#DIM LCOUNT
+
+	; --------------------------------------------------------------------------
+	; 初期化
+	VARSET RAPE_TARGET_CHARA_ID
+	VARSET COMMAND_OVERWRITE_PERCENTAGE
+	
+	; --------------------------------------------------------------------------
+	; 処理するのはPTメンバーのみ
+	SIF !CHECK_MEMBER_FROM_ID(CHARA_ID)
+		RETURN
+
+	; --------------------------------------------------------------------------
+	; REPEAT用に選択コマンドを記憶する
+	; 記憶対象コマンドの処理はCASEELSEで行う、記憶対象外コマンドは個別に除外
+	SELECTCASE CFLAG:CHARA_ID:50
+	CASE IS <= 0 ; 未定義コマンド
+	CASE 2       ; アイテムを使用
+	CASE 3, 4    ; 前進・後退
+	CASE 5       ; 逃げる
+	CASE 8       ; 緊急浄化
+	CASE 44      ; 諦める
+	CASE 45      ; 何もしない
+	CASE 95, 96  ; 抱きつかれ・抱きつき
+	CASEELSE
+		; 非催眠拘束時はCFLAG:102にコマンドを記憶する必要がある為分岐
+		IF (CFLAG:CHARA_ID:10 || CFLAG:CHARA_ID:20) && !CFLAG:CHARA_ID:43
+			CFLAG:CHARA_ID:102 = CFLAG:CHARA_ID:50
+		ELSE
+			CFLAG:CHARA_ID:101 = CFLAG:CHARA_ID:50
+			CFLAG:CHARA_ID:106 = CFLAG:CHARA_ID:51
+		ENDIF
+	ENDSELECT
+	
+	; --------------------------------------------------------------------------
+	; 喪失時は自動的にコマンドを決定する
+	; おねだりや自慰や部位防御を行うか、又は何もしない
+	IF CFLAG:CHARA_ID:29
+		IF ABL:CHARA_ID:11 > RAND:5
+			CFLAG:CHARA_ID:50 = 54 + RAND:5
+		ELSEIF ABL:CHARA_ID:10 > RAND:5
+			CFLAG:CHARA_ID:50 = 46
+		ELSEIF RAND:5 > 2
+			CFLAG:CHARA_ID:50 = 50 + RAND:4
+		ELSE
+			CFLAG:CHARA_ID:50 = 45
+		ENDIF
+		CFLAG:CHARA_ID:51 = CHARA_ID
+		CFLAG:CHARA_ID:52 = 0
+		CFLAG:CHARA_ID:54 = 0
+		CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+		GOTO INITIALIZE_END
+	ENDIF
+		
+	; --------------------------------------------------------------------------
+	; 外部コマンドによって既にコマンドが指定されている場合、即時終了処理を行う
+	; 現在の所は強制自慰と抱きつかれのみ
+	SIF CFLAG:CHARA_ID:50 == 46 || CFLAG:CHARA_ID:50 == 95
+		GOTO INITIALIZE_END
+	
+	
+	; --------------------------------------------------------------------------
+	; パラメータや装備品によって状況が悪化するアクション、発生する場合どれか一つのみ
+	
+	; 抱きつき時襲う相手を設定
+	; 他のキャラが抱きつき状態なら新規の抱きつき行動は発生しないので相手なし
+	IF !((CHARA_ID != 1 && CFLAG:1:52 == 96) || (CHARA_ID != FLAG:10 && CFLAG:(FLAG:10):52 == 96) || (CHARA_ID != FLAG:11 && CFLAG:(FLAG:11):52 == 96))
+		IF CHARA_ID == 1
+			SIF FLAG:10 && CFLAG:(FLAG:10):5 >= 200 && !(CFLAG:(FLAG:10):20 || CFLAG:(FLAG:10):21) && !(CFLAG:(FLAG:10):50 == 95 || CFLAG:(FLAG:10):50 == 96)
+				RAPE_TARGET_CHARA_ID = FLAG:10
+			SIF FLAG:11 && CFLAG:(FLAG:11):5 >= 200 && (CFLAG:(FLAG:11):5 > CFLAG:(FLAG:10):5 || (CFLAG:(FLAG:11):5 == CFLAG:(FLAG:10):5 && RAND:2)) && !(CFLAG:(FLAG:11):20 || CFLAG:(FLAG:11):21) && !(CFLAG:(FLAG:11):50 == 95 || CFLAG:(FLAG:11):50 == 96)
+				RAPE_TARGET_CHARA_ID = FLAG:11
+		ELSEIF FLAG:10 && CHARA_ID == FLAG:10
+			SIF CFLAG:(FLAG:10):5 >= 200 && !(CFLAG:1:20 || CFLAG:1:21) && !(CFLAG:1:50 == 95 || CFLAG:1:50 == 96)
+				RAPE_TARGET_CHARA_ID = 1
+			SIF RELATION:(FLAG:10):(FLAG:11) >= 200 && (RELATION:(FLAG:10):(FLAG:11) > CFLAG:(FLAG:10):5 || (RELATION:(FLAG:10):(FLAG:11) == CFLAG:(FLAG:10):5 && RAND:2)) && !(CFLAG:(FLAG:11):20 || CFLAG:(FLAG:11):21) && FLAG:11 != 0 && !(CFLAG:(FLAG:11):50 == 95 || CFLAG:(FLAG:11):50 == 96)
+				RAPE_TARGET_CHARA_ID = FLAG:11
+		ELSEIF FLAG:11 && CHARA_ID == FLAG:11
+			SIF CFLAG:(FLAG:11):5 >= 200 && !(CFLAG:1:20 || CFLAG:1:21) && !(CFLAG:1:50 == 95 || CFLAG:1:50 == 96)
+				RAPE_TARGET_CHARA_ID = 1
+			SIF RELATION:(FLAG:11):(FLAG:10) >= 200 && (RELATION:(FLAG:11):(FLAG:10) > CFLAG:(FLAG:11):5 || (RELATION:(FLAG:11):(FLAG:10) == CFLAG:(FLAG:11):5 && RAND:2)) && !(CFLAG:(FLAG:10):20 || CFLAG:(FLAG:10):21) && FLAG:10 != 0 && !(CFLAG:(FLAG:11):50 == 95 || CFLAG:(FLAG:11):50 == 96)
+				RAPE_TARGET_CHARA_ID = FLAG:10
+		ENDIF
+	ENDIF
+	
+	; 使い魔による発情妨害 胸が敏感な程妨害発生率が上昇
+	IF ((CFLAG:CHARA_ID:503 + ABL:CHARA_ID:7 + TALENT:CHARA_ID:102 + TALENT:CHARA_ID:130 + (TALENT:CHARA_ID:76 * 3)) > RAND:28)	&& CFLAG:CHARA_ID:28 && CFLAG:CHARA_ID:503 && !(CFLAG:CHARA_ID:20 || CFLAG:CHARA_ID:21)
+		CALL PRINT_MESSAGE(CHARA_ID, 503, 10, CALLNAME:CHARA_ID, "")
+		TFLAG:63 = 1
+		FOR LCOUNT, 0, (RAND:2 + 1)
+			CALL DAMAGE_COMMON(CHARA_ID, 2, 6000 + RAND:4001, 100)
+		NEXT
+		CALL PRINT_MESSAGE(CHARA_ID, 503, 11, CALLNAME:CHARA_ID, "")
+	
+	; 発情によるコマンド上書き
+	ELSEIF !CFLAG:CHARA_ID:24 && CFLAG:CHARA_ID:28 && !CFLAG:CHARA_ID:52
+		
+		; コマンド上書きの確率を設定
+		; 小数点以下を計算する為、値を10倍して計算(計算完了後10分の1に)
+		; 発情レベル・自慰中毒レベル
+		COMMAND_OVERWRITE_PERCENTAGE += CFLAG:CHARA_ID:28 * 25
+		COMMAND_OVERWRITE_PERCENTAGE += ABL:CHARA_ID:10 * 8
+		; [自制心]
+		SIF TALENT:CHARA_ID:20
+			COMMAND_OVERWRITE_PERCENTAGE -= 50
+		; [恥じらい]
+		SIF TALENT:CHARA_ID:35
+			COMMAND_OVERWRITE_PERCENTAGE -= 25
+		; [薬毒耐性]
+		SIF TALENT:CHARA_ID:56
+			COMMAND_OVERWRITE_PERCENTAGE -= 25
+		; [自慰しやすい]
+		SIF TALENT:CHARA_ID:60
+			COMMAND_OVERWRITE_PERCENTAGE += 50
+		; [快感に素直]
+		SIF TALENT:CHARA_ID:70
+			COMMAND_OVERWRITE_PERCENTAGE += 25
+		; 発情レベル4以上ならボーナス
+		SIF CFLAG:CHARA_ID:28 >= 4
+			COMMAND_OVERWRITE_PERCENTAGE += CFLAG:CHARA_ID:28 * 17
+		; 上限は25%
+		COMMAND_OVERWRITE_PERCENTAGE = LIMIT(COMMAND_OVERWRITE_PERCENTAGE, 0, 250)
+		COMMAND_OVERWRITE_PERCENTAGE /= 10
+		
+		; 発情による勃起発生 発情レベルの5倍までランダムで増量
+		; BC両方0や両方5などの偏りを避ける為、乱数を重ねてある
+		IF CFLAG:CHARA_ID:28 > 0
+			ERECTION_LEVEL_B = (RAND:(CFLAG:CHARA_ID:28 * 5) + RAND:(CFLAG:CHARA_ID:28 * 5) + RAND:(CFLAG:CHARA_ID:28 * 5)) / 3
+			ERECTION_LEVEL_C = (RAND:(CFLAG:CHARA_ID:28 * 5) + RAND:(CFLAG:CHARA_ID:28 * 5) + RAND:(CFLAG:CHARA_ID:28 * 5)) / 3
+			IF ERECTION_LEVEL_B > 0 || ERECTION_LEVEL_C > 0
+				CALL PRINT_MESSAGE(CHARA_ID, 467, 0, CALLNAME:CHARA_ID, "")
+				IF ERECTION_LEVEL_B > 0
+					CALL PRINT_MESSAGE(CHARA_ID, 468, 0, CALLNAME:CHARA_ID, "")
+					CALL ERECTION_B(CHARA_ID, ERECTION_LEVEL_B, 1)
+				ENDIF
+				IF ERECTION_LEVEL_C > 0
+					CALL PRINT_MESSAGE(CHARA_ID, 469, 0, CALLNAME:CHARA_ID, "")
+					CALL ERECTION_C(CHARA_ID, ERECTION_LEVEL_C, 1)
+				ENDIF
+				WAIT
+			ENDIF
+		ENDIF
+		
+		; 抱きつき
+		IF CFLAG:CHARA_ID:25 == 0 && COMMAND_OVERWRITE_PERCENTAGE > RAND:100 && RAPE_TARGET_CHARA_ID && !(CFLAG:CHARA_ID:20 || CFLAG:CHARA_ID:21)
+			; 行動順決定時に抱きつく側優先で自動ソートされる為
+			; 抱きつく側と抱きつかれる側の速度補正を両方とも最大値に設定
+			CFLAG:CHARA_ID:50 = 96
+			CFLAG:CHARA_ID:51 = RAPE_TARGET_CHARA_ID
+			CFLAG:CHARA_ID:52 = 0
+			CFLAG:CHARA_ID:54 = 0
+			CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+			CFLAG:RAPE_TARGET_CHARA_ID:50 = 95
+			CFLAG:RAPE_TARGET_CHARA_ID:51 = CHARA_ID
+			CFLAG:RAPE_TARGET_CHARA_ID:52 = 0
+			CFLAG:RAPE_TARGET_CHARA_ID:54 = 0
+			CFLAG:RAPE_TARGET_CHARA_ID:55 = BATTLE_SPEED_MAX
+			
+		; 自慰
+		ELSEIF CFLAG:CHARA_ID:25 < 2 && COMMAND_OVERWRITE_PERCENTAGE > RAND:100
+			; 淫乱なら攻撃を打てる
+			IF TALENT:CHARA_ID:74
+				CFLAG:CHARA_ID:50 = 47
+				;対象は生きている敵の先頭
+				FOR LCOUNT, 1, TFLAG:15 + 1
+					IF TFLAG:LCOUNT && DA:(TFLAG:LCOUNT):1 > 0
+						CFLAG:CHARA_ID:51 = TFLAG:(LCOUNT)
+						BREAK
+					ENDIF
+				NEXT
+				CFLAG:CHARA_ID:52 = 0
+				CFLAG:CHARA_ID:54 = 0
+				
+			; 通常の自慰を行う
+			ELSE
+				CFLAG:CHARA_ID:50 = 46
+				CFLAG:CHARA_ID:51 = CHARA_ID
+				CFLAG:CHARA_ID:52 = 0
+				CFLAG:CHARA_ID:54 = 0
+				CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+			ENDIF
+		ENDIF
+	ENDIF
+	
+	; --------------------------------------------------------------------------
+	; NEXTコマンド利用の場合、コマンド変更
+	IF CFLAG:CHARA_ID:50 == -1
+		CFLAG:CHARA_ID:50 = CFLAG:CHARA_ID:52
+
+		; NEXTコマンドを開放する
+		; CASEELSEで開放処理、一部特殊コマンドは明示的にNEXTコマンドを開放するまで永続する
+		SELECTCASE CFLAG:CHARA_ID:52
+		CASE 96  ; 抱きつき
+		CASEELSE
+			CFLAG:CHARA_ID:52 = 0
+		ENDSELECT
+	ENDIF
+	
+	$INITIALIZE_END
+	; --------------------------------------------------------------------------
+	; 確定したコマンドによる個別設定
+	
+	SELECTCASE (CFLAG:CHARA_ID:50 % 100)
+	
+	; 防御 ターン開始時から防御状態を付与
+	CASE  1
+		CFLAG:CHARA_ID:30 = 1
+	
+	; 溜め攻撃 ターン開始時から溜め状態を付与＋NEXTにも溜め攻撃を指定
+	;          溜めが一切無い時のみ処理
+	CASE 13
+		IF CFLAG:CHARA_ID:31 == 0
+			CFLAG:CHARA_ID:31 = 2
+			CFLAG:CHARA_ID:52 = 13
+		ENDIF
+	
+	; 一点集中ターン開始時から集中状態を付与
+	CASE 25
+		CFLAG:CHARA_ID:32 = 1
+		
+	;カウンタ ターン開始時から反撃状態を付与
+	CASE 35
+		CFLAG:CHARA_ID:33 = 1
+	
+	; 脱出 ターンの最後になるよう速度補正
+	; ただし力をしっかり溜めていた場合はペナルティ激減
+	CASE 42
+		IF CFLAG:CHARA_ID:53 >= 15
+			CFLAG:CHARA_ID:55 = 20
+		ELSEIF CFLAG:CHARA_ID:53 >= 5
+			CFLAG:CHARA_ID:55 = -20
+		ELSE
+			CFLAG:CHARA_ID:55 = BATTLE_SPEED_MIN
+		ENDIF
+		
+	; 強制自慰 優先呼び出しとするため速度補正を設定する
+	CASE 46
+		CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+	
+	; おねだり 優先呼び出しとするため速度補正を設定する
+	CASE 54 TO 58
+		CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+		
+	; 抱きつかれ 抱きつきと共に優先呼び出しとするため速度補正を設定する
+	CASE 95
+		; 行動順決定時に抱きつく側優先で自動ソートされる為
+		; 抱きつかれる側の速度補正も最大値に設定
+		CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+		
+	; 抱きつき 抱きつかれ側がステータス異常で開放されてしまうのを防ぐ
+	CASE 96
+		CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+		CFLAG:RAPE_TARGET_CHARA_ID:50 = 95
+		CFLAG:RAPE_TARGET_CHARA_ID:51 = CHARA_ID
+		CFLAG:RAPE_TARGET_CHARA_ID:55 = BATTLE_SPEED_MAX
+	ENDSELECT
+RETURN

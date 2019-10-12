@@ -1,0 +1,310 @@
+﻿;戦闘メイン処理（１ターンごとにこの関数が１ループ）
+;RETURN　0:味方の勝利　1:全滅　2:逃走
+@BATTLE_MAIN
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	TEMP
+;2	諦めフラグチェック
+;3	汚染度上昇値
+;4	汚染度に寄る敵死亡チェック
+
+;ターン先頭の処理
+;敵がどの味方を狙ってくるかの確率を再計算
+FOR LCOUNT, 1, 11
+	IF TFLAG:(LCOUNT)
+		CALL SET_ENEMY_TARGET_RATE(TFLAG:(LCOUNT))
+	ENDIF
+NEXT
+
+;ターン先頭の処理
+;味方が行動できるかどうかをチェック
+;ついでに一部のフラグを初期化
+LOCAL:1 = 0
+IF CFLAG:1:24 == 0 && CFLAG:1:25 == 0 && CFLAG:1:29 == 0 && CFLAG:1:31 == 0
+	LOCAL:1 = 1
+ENDIF
+CFLAG:1:50 = 0
+CFLAG:1:55 = 0
+;媚薬装備中は発情維持
+CALL GET_EQUIP_BONUS(1, 39)
+IF RESULT
+	;◆発情レベル０以下なら発情レベル１に
+	IF CFLAG:1:28 < 1
+		CFLAG:1:28 = 1
+	ENDIF
+	;◆◆
+ENDIF
+
+IF FLAG:10
+	IF CFLAG:(FLAG:10):24 == 0 && CFLAG:(FLAG:10):25 == 0 && CFLAG:(FLAG:10):29 == 0 && CFLAG:(FLAG:10):31 == 0
+		LOCAL:1 = 1
+	ENDIF
+	CFLAG:(FLAG:10):50 = 0
+	CFLAG:(FLAG:10):55 = 0
+	;媚薬装備中は発情維持
+	CALL GET_EQUIP_BONUS(FLAG:10, 39)
+	IF RESULT
+		;◆発情レベル０以下なら発情レベル１に
+		IF CFLAG:(FLAG:10):28 < 1
+			CFLAG:(FLAG:10):28 = 1
+		ENDIF
+		;◆◆
+	ENDIF
+ENDIF
+IF FLAG:11
+	IF CFLAG:(FLAG:11):24 == 0 && CFLAG:(FLAG:11):25 == 0 && CFLAG:(FLAG:11):29 == 0 && CFLAG:(FLAG:11):31 == 0
+		LOCAL:1 = 1
+	ENDIF
+	CFLAG:(FLAG:11):50 = 0
+	CFLAG:(FLAG:11):55 = 0
+	;媚薬装備中は発情維持
+	CALL GET_EQUIP_BONUS(FLAG:11, 39)
+	IF RESULT
+		;◆発情レベル０以下なら発情レベル１に
+		IF CFLAG:(FLAG:11):28 < 1
+			CFLAG:(FLAG:11):28 = 1
+		ENDIF
+		;◆◆
+	ENDIF
+ENDIF
+
+;諦めチェック
+IF TFLAG:16 < 2
+	;LOCAL:2 に値を入れていく。全員拘束or戦意喪失状態ならLOCAL:2は0(諦め可能)とする
+	IF CFLAG:1:10 || CFLAG:1:20 || CFLAG:1:29
+		LOCAL:2 = 0
+	ELSE
+		LOCAL:2 = 1
+	ENDIF
+	IF FLAG:10
+		IF CFLAG:(FLAG:10):10 || CFLAG:(FLAG:10):20 || CFLAG:(FLAG:10):29
+			LOCAL:2 |= 0
+		ELSE
+			LOCAL:2 |= 2
+		ENDIF
+	ENDIF
+	IF FLAG:11
+		IF CFLAG:(FLAG:11):10 || CFLAG:(FLAG:11):20 || CFLAG:(FLAG:11):29
+			LOCAL:2 |= 0
+		ELSE
+			LOCAL:2 |= 4
+		ENDIF
+	ENDIF
+	
+	IF LOCAL:2 == 0
+		TFLAG:16 = 1
+	ELSE
+		TFLAG:16 = 0
+	ENDIF
+ENDIF
+
+TFLAG:12 = 0
+
+;行動入力
+IF LOCAL:1
+	CALL SELECT_COMMAND_MAIN
+ELSE
+	CALL SELECT_COMMAND_MAIN
+	;味方全員が行動不能の場合、入力する機会が無いのでステータス確認用にWAITを入れる
+	WAIT
+ENDIF
+
+;敵の行動決定
+FOR LCOUNT, 1, 11
+	IF TFLAG:(LCOUNT)
+		CALL SELECT_ENEMY_ACTION(TFLAG:(LCOUNT))
+	ENDIF
+NEXT
+
+
+
+;行動開始前の初期化処理(NEXTの指定や、強制自慰など)
+CALL TURN_INITIALIZE(1)
+CALL TURN_INITIALIZE(FLAG:10)
+CALL TURN_INITIALIZE(FLAG:11)
+
+IF CFLAG:1:29 == 0 && CFLAG:1:50 >= 54 && CFLAG:1:50 <= 58
+	LOCAL:1 = 1
+ENDIF
+IF CFLAG:(FLAG:10):29 == 0 && CFLAG:(FLAG:10):50 >= 54 && CFLAG:(FLAG:10):50 <= 58
+	LOCAL:1 = 1
+ENDIF
+IF CFLAG:(FLAG:11):29 == 0 && CFLAG:(FLAG:11):50 >= 54 && CFLAG:(FLAG:11):50 <= 58
+	LOCAL:1 = 1
+ENDIF
+
+
+
+;行動が決定したら実処理へ
+CALL BATTLE_MAIN_LOOP
+
+IF RESULT != 3
+	;戦闘継続以外の値が返ってきた場合、戦闘終了
+	RETURN RESULT
+ENDIF
+
+IF TFLAG:0 == 1 && DA:(TFLAG:1):1
+	;吸収性攻撃により腕が回復していた場合、HPが恐ろしい値をとるので、修正
+	IF DA:(TFLAG:2):2 < DA:(TFLAG:2):1
+		DA:(TFLAG:1):1 += RAND(1000, 2000)
+		DA:(TFLAG:2):1 = DA:(TFLAG:2):2
+	ENDIF
+	IF DA:(TFLAG:3):2 < DA:(TFLAG:3):1
+		DA:(TFLAG:1):1 += RAND(1000, 2000)
+		DA:(TFLAG:3):1 = DA:(TFLAG:3):2
+	ENDIF
+	;クイーン戦の場合、両腕のダメージを本体に移す
+	;ただし、これによって本体のHPが０になることは無い
+	LOCAL:1 = 0
+	LOCAL:1 += DA:(TFLAG:2):2 - DA:(TFLAG:2):1
+	DA:(TFLAG:2):1 = DA:(TFLAG:2):2
+	LOCAL:1 += DA:(TFLAG:3):2 - DA:(TFLAG:3):1
+	DA:(TFLAG:3):1 = DA:(TFLAG:3):2
+	DA:(TFLAG:1):1 -= LOCAL:1
+	IF DA:(TFLAG:1):1 <= 0
+		DA:(TFLAG:1):1 = 1
+	ENDIF
+ENDIF
+
+;難易度E以上だと、敵の数に応じて汚染度上昇。
+;Eだと1体で1上昇固定、あとは難易度に応じて1ずつ乱数が増えていく感じ。
+LOCAL:3 = 0
+;難易度が0（EASY）以上で、汚染度がMAXになっていない
+IF FLAG:4 >= 0 && FLAG:(50 + FLAG:5) != 100
+	;敵の数だけ繰り返す
+	FOR LCOUNT, 1, TFLAG:15
+		;汚染度上昇カウントの条件：生存している。クイーンの腕かヒュプノでない。
+		SIF DA:(TFLAG:(LCOUNT)):1 > 0 && DA:(TFLAG:(LCOUNT)):0 != 2 && DA:(TFLAG:(LCOUNT)):0 != 98
+			LOCAL:3 += RAND:(FLAG:4 + 1)
+	NEXT
+	;上昇する場合のみ、処理を行う
+	IF LOCAL:3 > 0
+		SETCOLOR 0xEE1010
+		PRINTFORM 敵の気配により、部屋の汚染度が
+		SETCOLOR 0xFFFF00
+		PRINTFORM {LOCAL:3}
+		SETCOLOR 0xEE1010
+		PRINTFORML 上昇した！
+		RESETCOLOR
+		FLAG:(50 + FLAG:5) = MIN(FLAG:(50 + FLAG:5) + LOCAL:3, 100)
+	ENDIF
+ENDIF
+
+;汚染度に応じて敵のHPに変化
+;メッセージ表示
+;一回きりなのでここで。
+SELECTCASE BATTLE_POLUTION()
+	CASE 0, 1
+		SETCOLOR 0xEE1010
+		PRINTFORML 清浄な空気に、敵は苦しんでいる！
+		RESETCOLOR
+	CASE 3, 4, 5
+		SETCOLOR 0xEE1010
+		PRINTFORML \@ BATTLE_POLUTION() == 5 ? 限界まで #  \@汚染された空気に、敵が回復していく！
+		RESETCOLOR
+ENDSELECT
+
+FOR LCOUNT, 1, TFLAG:15 + 1
+	;生きていることが条件
+	;2つ目の条件はなにか嫌な予感がしたので念のため こうしとかないと多分DA:0が操作されまくってしまう？
+	;あとクイーンとヒュプノは例のごとく除外ﾝﾇ
+	IF DA:(TFLAG:(LCOUNT)):1 > 0 && TFLAG:(LCOUNT) != 0 && DA:(TFLAG:(LCOUNT)):0 != 2 && DA:(TFLAG:(LCOUNT)):0 != 98
+		;基礎値は最大HPの5%（最低500）
+		LOCAL:3 = MAX((DA:(TFLAG:(LCOUNT)):2 * 5 / 100), 500)
+		;ランダムで最大HPの3%までの修正を受ける。
+		SELECTCASE RAND:2
+			CASE 0
+				LOCAL:3 += RAND:(MAX((DA:(TFLAG:(LCOUNT)):2 * 3 / 100), 1))
+			CASE 1
+				LOCAL:3 -= RAND:(MAX((DA:(TFLAG:(LCOUNT)):2 * 3 / 100), 1))
+		ENDSELECT
+		;難易度による修正
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				;難易度による修正
+				SELECTCASE FLAG:4
+					CASE -1
+						LOCAL:3 = LOCAL:3 * 3 / 2
+					CASE 0
+						LOCAL:3 = LOCAL:3 * 5 / 4
+					CASE 2
+						LOCAL:3 = LOCAL:3 * 3 / 4
+					CASE 3
+						LOCAL:3 = LOCAL:3 * 2 / 4
+				ENDSELECT
+			CASE 2
+				LOCAL:3 = 0
+			CASE 3, 4, 5
+				;難易度による修正
+				SELECTCASE FLAG:4
+					CASE -1
+						LOCAL:3 = LOCAL:3 * 1 / 2
+					CASE 0
+						LOCAL:3 = LOCAL:3 * 3 / 4
+					CASE 2
+						LOCAL:3 = LOCAL:3 * 5 / 4
+					CASE 3
+						LOCAL:3 = LOCAL:3 * 3 / 2
+				ENDSELECT
+		ENDSELECT
+		;汚染度最大だと効果倍
+		SIF BATTLE_POLUTION() == 5
+			LOCAL:3 *= 2
+		;変数操作 汚染度普通だと回復もダメージもなし
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				IF DA:(TFLAG:(LCOUNT)):1 > 1
+					DA:(TFLAG:(LCOUNT)):1 = MAX(DA:(TFLAG:(LCOUNT)):1 - LOCAL:3, 1)
+				ELSE
+					LOCAL:3 = 0
+				ENDIF
+			CASE 3, 4, 5
+				DA:(TFLAG:(LCOUNT)):1 = DA:(TFLAG:(LCOUNT)):1 + LOCAL:3
+		ENDSELECT
+		IF LOCAL:3 && BATTLE_POLUTION() != 2
+			;メッセ表示
+			PRINTFORM %SAVESTR:(TFLAG:(LCOUNT))%のHPが、
+			SETCOLOR 0xFFFF00
+			PRINTFORM {LOCAL:3}
+			RESETCOLOR
+			PRINTFORML \@ BATTLE_POLUTION() <= 1 ? 削られた！ # 回復した！\@
+		ENDIF
+		;HP0以下の敵削除処理
+		IF DA:(TFLAG:(LCOUNT)):1 <= 0
+			DA:(TFLAG:(LCOUNT)):1 = 0
+			CALL CHECK_DEFEAT_ENEMY_IN_BATTLE(TFLAG:(LCOUNT))
+		ENDIF
+	ENDIF
+NEXT
+
+;汚染度で敵全滅
+FOR LCOUNT, 1, TFLAG:15 + 1
+	SIF DA:(TFLAG:(LCOUNT)):1 > 0
+		LOCAL:4 = 1
+NEXT
+IF LOCAL:4 == 0
+	PRINTFORML 汚物消毒
+	RETURN 0
+ENDIF
+
+;次のターンへ
+CALL TURN_FINALIZE(1)
+CALL TURN_FINALIZE(FLAG:10)
+CALL TURN_FINALIZE(FLAG:11)
+IF FLAG:(FLAG:5 + 50) >= 100 && (CFLAG:1:21 == 0 || (FLAG:10 && CFLAG:(FLAG:10):21 == 0) || (FLAG:11 && CFLAG:(FLAG:11):21 == 0))
+	CALL MSG_WAIT(1)
+ENDIF
+FOR LCOUNT, 1, 11
+	CALL TURN_FINALIZE_ENEMY(TFLAG:(LCOUNT))
+NEXT
+
+TFLAG:11 += 1
+IF TFLAG:11 == 2
+	CALL SHOW_TUTORIAL(22)
+ENDIF
+
+RESTART
+
+
+

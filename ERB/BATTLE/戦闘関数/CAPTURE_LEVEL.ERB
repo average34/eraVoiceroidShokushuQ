@@ -1,0 +1,58 @@
+﻿;拘束レベルは５まで用意。5で行動不能に
+;捕食中にじわじわ上がるとか考えたけど処理がめんどくさそうなのでとりあえず保留
+;丸呑みが実装されたらターン経過で拘束レベルアップとか興奮するかもしれない
+;とりあえず拘束レベルは拘束中にさらに拘束攻撃をくらうたびに1ずつアップ
+;命中判定行って経験値入れたり、拘束レベルアップ回避とか組み込むべきだろうか…
+;強力な拘束や敵次第だと一気にアップなんかもありかな？でも処理どうしよう
+;
+
+;拘束レベルアップは戦闘コマンド以外からも呼び出しが掛かる為、TFLAG:99の特殊処理が使えない
+;なので専用特殊処理EXTRA_CAPTUREを持つ
+;DA:90に必要なコマンドIDを渡す事で利用出来る
+
+
+;拘束レベル5以上で拘束不可
+;それ以外では拘束レベルアップ
+;CFLAG:38 拘束レベル
+@CAPTURE_LEVEL(ARG:0)
+
+IF CFLAG:(ARG:0):38 > 4
+	IF CFLAG:(ARG:0):20
+		CALL PRINT_MESSAGE(ARG:0, 53, CFLAG:(ARG:0):38, CALLNAME:(ARG:0), SAVESTR:(CFLAG:(ARG:0):20), CFLAG:(ARG:0):21, CFLAG:(ARG:0):20)
+	ELSE
+		CALL PRINT_MESSAGE(ARG:0, 53, CFLAG:(ARG:0):38, CALLNAME:(ARG:0), SAVESTR:(CFLAG:(ARG:0):10), CFLAG:(ARG:0):21, CFLAG:(ARG:0):10)
+	ENDIF
+ELSE
+	CFLAG:(ARG:0):38 += 1
+	IF CFLAG:(ARG:0):21
+		IF CFLAG:(ARG:0):20
+			CALL PRINT_MESSAGE(ARG:0, 52, CFLAG:(ARG:0):38, CALLNAME:(ARG:0), SAVESTR:(CFLAG:(ARG:0):20), CFLAG:(ARG:0):21, CFLAG:(ARG:0):20)
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 52, CFLAG:(ARG:0):38, CALLNAME:(ARG:0), SAVESTR:(CFLAG:(ARG:0):10), CFLAG:(ARG:0):21, CFLAG:(ARG:0):10)
+		ENDIF
+	ELSE
+		IF CFLAG:(ARG:0):20
+			CALL PRINT_MESSAGE(ARG:0, 52, CFLAG:(ARG:0):38, CALLNAME:(ARG:0), SAVESTR:(CFLAG:(ARG:0):20), CFLAG:(ARG:0):21, CFLAG:(ARG:0):20)
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 52, CFLAG:(ARG:0):38, CALLNAME:(ARG:0), SAVESTR:(CFLAG:(ARG:0):10), CFLAG:(ARG:0):21, CFLAG:(ARG:0):10)
+		ENDIF
+	ENDIF
+ENDIF
+
+;追加攻撃コマンドが設定されているなら処理
+IF CFLAG:(ARG:0):20
+	IF DA:(CFLAG:(ARG:0):20):90
+		TRYCCALLFORM EXTRA_CAPTURE_{DA:(CFLAG:(ARG:0):20):90}(CFLAG:(ARG:0):20, ARG:0)
+		CATCH
+			PRINTFORMW (EXTRA_CAPTURE)未実装の特殊効果(ID:{DA:(CFLAG:(ARG:0):20):90})が指定されました
+		ENDCATCH
+	ENDIF
+ELSE
+	IF DA:(CFLAG:(ARG:0):10):90
+		TRYCCALLFORM EXTRA_CAPTURE_{DA:(CFLAG:(ARG:0):10):90}(CFLAG:(ARG:0):10, ARG:0)
+		CATCH
+			PRINTFORMW (EXTRA_CAPTURE)未実装の特殊効果(ID:{DA:(CFLAG:(ARG:0):10):90})が指定されました
+		ENDCATCH
+	ENDIF
+ENDIF
+

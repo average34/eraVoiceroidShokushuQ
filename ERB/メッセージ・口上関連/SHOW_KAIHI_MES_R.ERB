@@ -1,0 +1,135 @@
+﻿;攻撃回避時の汎用描写  ARG:0　キャラ  　　ARG:1　拘束だけ例外
+@SHOW_KAIHI_MES_R(ARG:0, ARG:1)
+
+
+;触手服に邪魔されて回避が減少？　とおもったが、触手服の場合、通常技や衣服をくらう利点がないから、回避の邪魔はしなそう！
+;元から性攻撃系は必中に近いしね。
+;拘束技の時くらいは表記を出して触手服アピール
+
+
+
+		LOCAL:1 = 0
+		LOCAL:2 = 0
+		LOCAL:3 = 0
+
+		IF BASE:(ARG:0):0 < 1
+			LOCAL:1 = 1
+		ENDIF
+
+		IF BASE:(ARG:0):2 < 1000
+			LOCAL:2 = 1
+		ENDIF
+
+		IF CFLAG:(ARG:0):35
+			LOCAL:3 = 1
+		ENDIF
+
+
+		IF ARG:1 == 1 && LOCAL:1 == 0 && LOCAL:2 == 0 && LOCAL:3 == 0 && CFLAG:(ARG:0):40 > 0
+
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML %CALLNAME:(ARG:0)%は触手服の愛撫に妨害されながらも、攻撃を避けた！
+				CASE 1
+					PRINTFORML %CALLNAME:(ARG:0)%は触手服の動きに翻弄されながらも、攻撃を避けた！
+				CASE 2
+					PRINTFORML %CALLNAME:(ARG:0)%は触手服の刺激に耐えつつ、攻撃を避けた！
+				CASE 3
+					PRINTFORML %CALLNAME:(ARG:0)%はカラダを触手服に弄ばれつつも、攻撃を避けた！
+				CASE 4
+					PRINTFORML %CALLNAME:(ARG:0)%は触手服の感覚に意識をそらされつつも、攻撃を避けた！
+			ENDSELECT
+
+
+
+
+			RETURN
+
+
+		ELSEIF LOCAL:1 == 0 && LOCAL:2 == 0 && LOCAL:3 == 0
+			PRINTFORML %CALLNAME:(ARG:0)%は攻撃を避けた！
+			RETURN
+		ENDIF
+
+
+
+		IF LOCAL:3 > 0
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORM %CALLNAME:(ARG:0)%は、イかされてしまったカラダながらも、
+				CASE 1
+					PRINTFORM %CALLNAME:(ARG:0)%は、絶頂により力が入らなくなりながらも、
+				CASE 2
+					PRINTFORM %CALLNAME:(ARG:0)%は、絶頂により膝をガクガクとさせながらも、
+				CASE 3
+					PRINTFORM %CALLNAME:(ARG:0)%は、絶頂により足をふらつかさせながらも、
+			ENDSELECT
+
+
+		ELSEIF LOCAL:1 > 0
+
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORM %CALLNAME:(ARG:0)%は気力だけで体を動かし、
+				CASE 1
+					PRINTFORM %CALLNAME:(ARG:0)%は体力を失いながらも、
+				CASE 2
+					PRINTFORM %CALLNAME:(ARG:0)%は体力を失い、ふらついた足取りながらも、
+				CASE 3
+					PRINTFORM %CALLNAME:(ARG:0)%は疲労により、ふらついた足取りながらも、
+				CASE 4
+					PRINTFORM %CALLNAME:(ARG:0)%は疲労により、膝をガクガクとさせながらも、
+				CASE 5
+					PRINTFORM %CALLNAME:(ARG:0)%は肩で息をしながらも、
+
+			ENDSELECT
+		ELSEIF LOCAL:2 > 0
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORM %CALLNAME:(ARG:0)%は、快楽で力の入らなくなったカラダを奮い立たせ、
+				CASE 1
+					PRINTFORM %CALLNAME:(ARG:0)%は、イきそうなカラダの疼きを精神力で抑え、
+				CASE 2
+					PRINTFORM %CALLNAME:(ARG:0)%は、快楽に膝をガクガクとさせながらも、
+				CASE 3
+					PRINTFORM %CALLNAME:(ARG:0)%は、頬を紅潮させ、熱い吐息を吐きながらも、
+				CASE 4
+					PRINTFORM %CALLNAME:(ARG:0)%は、イきそうなカラダに、迷宮を吹き抜ける風の愛撫を受けながらも、
+
+			ENDSELECT
+
+		ENDIF
+
+
+
+
+
+
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML なんとか避けた！
+			CASE 1
+				PRINTFORML かろうじて避けた！
+			CASE 2
+				PRINTFORML 懸命に避けた！
+			CASE 3
+				PRINTFORML ぎりぎりのところで避けた！
+
+		ENDSELECT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

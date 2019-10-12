@@ -1,0 +1,645 @@
+﻿;レズに至るパターン
+;押し倒すのがARG;0
+;押し倒されるのがLOCAL
+@RANDOM_LESBIAN(ARG:0,ARGS:0)
+#DIM 確率
+#DIMS プレイ
+VARSET プレイ
+VARSET 確率
+
+;女性敵OFF中はレズもない
+IF FLAG:527 > 0 && (FLAG:527 & 1)
+	RETURN
+ENDIF
+
+;基礎確率
+;現在ターン - 最後に発情したターン - 10
+確率 = DAY * 4 - 3 + TIME - CFLAG:(ARG:0):600 - 10
+;EP分岐
+IF BASE:(ARG:0):2 <= MAXBASE:(ARG:0):2 / 4
+	確率 += 3
+ELSEIF BASE:(ARG:0):2 <= MAXBASE:(ARG:0):2 / 2
+	確率 += 2
+ENDIF
+;射精中毒分岐
+SELECTCASE ABL:(ARG:0):射精中毒
+	CASE 3
+		確率 += 3
+	CASE 2
+		確率 += 2
+	CASE 1
+		確率 ++
+ENDSELECT
+;レズ中毒分岐
+SELECTCASE ABL:(ARG:0):レズ中毒
+	CASE 3
+		確率 += 3
+	CASE 2
+		確率 += 2
+	CASE 1
+		確率 ++
+ENDSELECT
+;精液中毒分岐
+SELECTCASE ABL:(ARG:0):精液中毒
+	CASE 3
+	確率 += 3
+	CASE 2
+		確率 += 2
+	CASE 1
+		確率 ++
+	ENDSELECT
+	;現在の発情具合により分岐 発情するほど自慰率高い
+SELECTCASE CFLAG:(ARG:0):28
+	CASE 5
+		確率 += 5
+	CASE 4
+		確率 += 4
+	CASE 3
+		確率 += 3
+ENDSELECT
+;最大で20%
+MIN 確率,20
+
+IF RAND:100 < 確率
+	IF !CFLAG:(ARG:0):29
+		;対象選ぶ
+		IF ARG:0 == 1
+			IF RAND:2 && FLAG:11
+				LOCAL = FLAG:11
+			LOCALS = %CALLNAME:(FLAG:11)%
+			ELSE
+			LOCAL = FLAG:10
+			LOCALS = %CALLNAME:(FLAG:10)%
+			ENDIF
+		ELSEIF ARG:0 == FLAG:10
+			IF RAND:2 && FLAG:11
+				LOCAL = FLAG:11
+				LOCALS = %CALLNAME:(FLAG:11)%
+			ELSE
+				LOCAL = 1
+				LOCALS = %CALLNAME:(1)%
+			ENDIF
+		ELSE
+			IF RAND:2
+				LOCAL = 1
+				LOCALS = %CALLNAME:1%
+			ELSE
+				LOCAL = FLAG:10
+				LOCALS = %CALLNAME:(FLAG:10)%
+			ENDIF
+		ENDIF
+		;プレイ選ぶ
+		;押し倒す側Ｐ、される側Ｐ
+		IF GET_PENIS(ARG:0) > 0 && GET_PENIS(LOCAL) > 0
+			SELECTCASE RAND:7
+				CASE 0
+					プレイ = 兜合わせ
+				CASE 1
+					プレイ = フェラする
+				CASE 2
+					プレイ = フェラさせる
+				CASE 3
+					プレイ = Ｖ
+				CASE 4
+					プレイ = Ａ
+				CASE 5
+					プレイ = Ｖ逆
+				CASE 6
+					プレイ = Ａ逆
+			ENDSELECT
+		;押し倒す側Ｐ、される側なし
+		ELSEIF GET_PENIS(ARG:0) > 0 && !(GET_PENIS(LOCAL) > 0)
+			SELECTCASE RAND:3
+				CASE 0
+					プレイ = フェラさせる
+				CASE 1
+					プレイ = Ｖ
+				CASE 2
+					プレイ = Ａ
+			ENDSELECT
+		;押し倒す側なし、される側ちんこ
+			ELSEIF !(GET_PENIS(ARG:0) > 0) && GET_PENIS(LOCAL) > 0
+			SELECTCASE RAND:3
+				CASE 0
+					プレイ = フェラする
+				CASE 1
+					プレイ = Ｖ逆
+				CASE 2
+					プレイ = Ａ逆
+			ENDSELECT
+		;両方なし
+		ELSE
+			プレイ = レズ
+		ENDIF
+		
+		;以下メッセージ
+		IF ABL:(ARG:0):射精中毒 >= 2 && !RAND:3 && GET_PENIS(ARG:0) > 0
+			PRINTFORML すっかり射精の快楽を知ってしまった%ARGS:0%は、我慢できなくなり、%LOCALS%を押し倒した！
+		ELSEIF CFLAG:(ARG:0):28 >= 3 && !RAND:3
+			PRINTFORML すっかり発情し、雌の表情をしている%ARGS:0%は、我慢できなくなり、%LOCALS%を押し倒した！
+		ELSEIF ABL:(ARG:0):レズ中毒 >= 2 && !RAND:3
+			PRINTFORML すっかり同性と交わる快楽を知った%ARGS:0%は、我慢できなくなり、%LOCALS%を押し倒した！
+		ELSE
+			PRINTFORML この迷宮の淫靡な雰囲気に呑まれた%ARGS:0%は、我慢できなくなり、%LOCALS%を押し倒した！
+		ENDIF
+
+		IF プレイ == "兜合わせ"
+			PRINTFORM %ARGS:0%は
+			IF BASE:(ARG:0):3 == 0
+				PRINT 剥き出しの己のペニスを、
+			ELSE
+				PRINT 服をはだけ、ペニスを露出させると、
+			ENDIF
+			PRINTFORM %LOCALS%の
+			IF BASE:LOCAL:3 == 0
+				SIF BASE:(ARG:0):3 == 0
+					PRINT 同じく
+				PRINT 剥き出しの
+			ELSE
+				PRINT 服を剥ぎ、
+			ENDIF
+			PRINTFORML %LOCALS%のペニスと擦り合わせた……
+		ELSEIF プレイ == "フェラする"
+			PRINTFORM %LOCALS%の
+			IF BASE:LOCAL:3 == 0
+				PRINT 剥き出しの
+			ELSE
+				PRINT 服を剥ぎ、
+			ENDIF
+			PRINTL ペニスを咥え、舐めまわした……
+		ELSEIF プレイ == "フェラさせる"
+			PRINTFORM %ARGS:0%は
+			IF BASE:(ARG:0):3 == 0
+				PRINT 剥き出しの己のペニスを、
+			ELSE
+				PRINT 服をはだけ、ペニスを露出させると、
+			ENDIF
+			PRINTFORML %LOCALS%に咥えさせ、その快感を楽しんだ……
+		ELSEIF プレイ == "Ｖ"
+			PRINTFORM %ARGS:0%は
+			IF BASE:(ARG:0):3 == 0
+				PRINT 剥き出しの己のペニスを、
+			ELSE
+				PRINT 服をはだけ、ペニスを露出させると、
+			ENDIF
+			PRINTFORM %LOCALS%の
+			IF BASE:LOCAL:3 == 0
+				SIF BASE:(ARG:0):3 == 0
+					PRINT 同じく
+				PRINT 剥き出しの
+			ELSE
+				PRINT 服を剥ぎ、
+			ENDIF
+			SIF TALENT:LOCAL:処女
+				PRINT 未だ男を知らない
+			PRINT 膣穴を指で割り開き、
+			SIF RAND:2
+				PRINT 前戯もそこそこに
+			PRINTL 貫いた……
+		ELSEIF プレイ == "Ａ"
+			PRINTFORM %ARGS:0%は
+			IF BASE:(ARG:0):3 == 0
+				PRINT 剥き出しの己のペニスを、
+			ELSE
+				PRINT 服をはだけ、ペニスを露出させると、
+			ENDIF
+			PRINTFORM %LOCALS%の
+			IF BASE:LOCAL:3 == 0
+				SIF BASE:(ARG:0):3 == 0
+					PRINT 同じく
+				PRINT 剥き出しの
+			ELSE
+				PRINT 服を剥ぎ、
+			ENDIF
+			PRINT 尻穴を、尻たぶを指で割り開きつつ、
+			SIF RAND:2
+				PRINT 前戯もそこそこに
+			PRINTL 貫いた……
+		ELSEIF プレイ == "Ｖ逆"
+			PRINTFORM %ARGS:0%は
+			IF BASE:(ARG:0):3 == 0
+				PRINT 剥き出しの己の
+				SIF TALENT:(ARG:0):処女
+					PRINT 未だ男を知らない
+				PRINT 膣穴で、
+			ELSE
+				PRINT 服をはだけ、
+				SIF TALENT:(ARG:0):処女
+					PRINT 未だ男を知らない
+				PRINT 膣穴を露出させると、
+			ENDIF
+			PRINTFORM %LOCALS%の
+			IF BASE:LOCAL:3 == 0
+				SIF BASE:(ARG:0):3 == 0
+					PRINT 同じく
+				PRINT 剥き出しの
+			ELSE
+				PRINT 服を剥ぎ、
+			ENDIF
+			PRINTL ペニスを肉穴で咥え込んだ……
+		ELSEIF プレイ == "Ａ逆"
+			PRINTFORM %ARGS:0%は
+			IF BASE:(ARG:0):3 == 0
+				PRINT 剥き出しの己の尻穴で、
+			ELSE
+				PRINT 服をはだけ、尻穴を露出させると、
+			ENDIF
+			PRINTFORM %LOCALS%の
+			IF BASE:LOCAL:3 == 0
+				SIF BASE:(ARG:0):3 == 0
+					PRINT 同じく
+				PRINT 剥き出しの
+			ELSE
+				PRINT 服を剥ぎ、
+			ENDIF
+			PRINTL ペニスを肛門で咥え込んだ……
+		ELSEIF プレイ == "レズ"
+			PRINTFORM %ARGS:0%は
+			IF BASE:(ARG:0):3 == 0
+				PRINT 剥き出しの己の身体で、
+			ELSE
+				PRINT 服をはだけると、
+			ENDIF
+			PRINTFORM %LOCALS%の
+			IF BASE:LOCAL:3 == 0
+				SIF BASE:(ARG:0):3 == 0
+					PRINT 同じく
+				PRINT 剥き出しの
+			ELSE
+				PRINT 服を剥ぎ、
+			ENDIF
+			PRINTL その身体を味わった……
+		ENDIF
+		;EPダメージ量基本値は1000
+		;経験値は100
+		;処理
+		LOCAL:1 = 1000
+		LOCAL:2 = 100
+		LOCAL:3 = 1000
+		LOCAL:4 = 100
+		IF プレイ == "兜合わせ"
+			SELECTCASE ABL:(ARG:0):Ｃ感覚
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(ARG:0):射精中毒
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, 100)
+			CALL ADD_ABL_EXP(8, ARG:0, LOCAL:2)
+			CALL ADD_ABL_EXP(13, ARG:0, 2 + RAND:3);◆
+			SELECTCASE ABL:(LOCAL):Ｃ感覚
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(LOCAL):射精中毒
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(LOCAL, 2, LOCAL:3, 100)
+			CALL ADD_ABL_EXP(8, LOCAL, LOCAL:4)
+			CALL ADD_ABL_EXP(13, LOCAL, 1 + RAND:3);◆
+		ELSEIF プレイ == "フェラさせる"
+			SELECTCASE ABL:(ARG:0):Ｃ感覚
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(ARG:0):射精中毒
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, 100)
+			CALL ADD_ABL_EXP(8, ARG:0, LOCAL:2)
+			CALL ADD_ABL_EXP(13, ARG:0, 3 + RAND:5);◆
+			CALL ADD_ABL_EXP(13, LOCAL, 1 + RAND:3);◆
+		ELSEIF プレイ == "フェラする"
+			SELECTCASE ABL:(LOCAL):Ｃ感覚
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(LOCAL):射精中毒
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(LOCAL, 2, LOCAL:3, 100)
+			CALL ADD_ABL_EXP(8, LOCAL, LOCAL:4)
+			CALL ADD_ABL_EXP(13, LOCAL, 3 + RAND:5);◆
+			CALL ADD_ABL_EXP(13, ARG:0, 2 + RAND:3);◆
+		ELSEIF プレイ == "Ｖ"
+			SELECTCASE ABL:(ARG:0):Ｃ感覚
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(ARG:0):射精中毒
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, 100)
+			CALL ADD_ABL_EXP(8, ARG:0, LOCAL:2)
+			CALL ADD_ABL_EXP(13, ARG:0, 3 + RAND:5);◆
+			SELECTCASE ABL:(LOCAL):Ｖ感覚
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(LOCAL):精液中毒
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(LOCAL, 2, LOCAL:3, 100)
+			CALL ADD_ABL_EXP(9, LOCAL, LOCAL:4)
+			CALL ADD_ABL_EXP(13, LOCAL, 2 + RAND:3);◆
+			CALL LOST_VIRGIN(LOCAL,0,3,ARG:0)
+		ELSEIF プレイ == "Ａ"
+			SELECTCASE ABL:(ARG:0):Ｃ感覚
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(ARG:0):射精中毒
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, 100)
+			CALL ADD_ABL_EXP(8, ARG:0, LOCAL:2)
+			CALL ADD_ABL_EXP(13, ARG:0, 3 + RAND:5);◆
+			SELECTCASE ABL:(LOCAL):Ａ感覚
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(LOCAL):精液中毒
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(LOCAL, 2, LOCAL:3, 100)
+			CALL ADD_ABL_EXP(6, LOCAL, LOCAL:4)
+			CALL ADD_ABL_EXP(13, LOCAL, 2 + RAND:3);◆
+		ELSEIF プレイ == "Ｖ逆"
+			SELECTCASE ABL:(LOCAL):Ｃ感覚
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(LOCAL):射精中毒
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(LOCAL, 2, LOCAL:3, 100)
+			CALL ADD_ABL_EXP(8, LOCAL, LOCAL:4)
+			CALL ADD_ABL_EXP(13, LOCAL, 3 + RAND:5);◆
+			SELECTCASE ABL:(ARG:0):Ｖ感覚
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(ARG:0):精液中毒
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, 100)
+			CALL ADD_ABL_EXP(9, ARG:0, LOCAL:2)
+			CALL ADD_ABL_EXP(13, ARG:0, 3 + RAND:3);◆
+			CALL LOST_VIRGIN(ARG:0,0,3,LOCAL)
+		ELSEIF プレイ == "Ａ逆"
+			SELECTCASE ABL:(LOCAL):Ｃ感覚
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(LOCAL):射精中毒
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(LOCAL, 2, LOCAL:3, 100)
+			CALL ADD_ABL_EXP(8, LOCAL, LOCAL:4)
+			CALL ADD_ABL_EXP(13, LOCAL, 3 + RAND:5);◆
+			SELECTCASE ABL:(ARG:0):Ａ感覚
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(ARG:0):精液中毒
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, 100)
+			CALL ADD_ABL_EXP(6, ARG:0, LOCAL:2)
+			CALL ADD_ABL_EXP(13, ARG:0, 3 + RAND:3);◆
+		ELSEIF プレイ == "レズ"
+			SELECTCASE ABL:(ARG:0):Ｃ感覚
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(ARG:0):レズ中毒
+				CASE 3
+					LOCAL:1 += RAND:1500
+					LOCAL:2 += RAND:100
+				CASE 2
+					LOCAL:1 += RAND:1000
+					LOCAL:2 += RAND:50
+				CASE 1
+					LOCAL:1 += RAND:500
+					LOCAL:2 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, 100)
+			CALL ADD_ABL_EXP(8, ARG:0, LOCAL:2)
+			CALL ADD_ABL_EXP(13, ARG:0, 5 + RAND:5);◆
+			SELECTCASE ABL:(LOCAL):Ｃ感覚
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			SELECTCASE ABL:(LOCAL):レズ中毒
+				CASE 3
+					LOCAL:3 += RAND:1500
+					LOCAL:4 += RAND:100
+				CASE 2
+					LOCAL:3 += RAND:1000
+					LOCAL:4 += RAND:50
+				CASE 1
+					LOCAL:3 += RAND:500
+					LOCAL:4 += RAND:50
+			ENDSELECT
+			CALL DAMAGE_COMMON(LOCAL, 2, LOCAL:3, 100)
+			CALL ADD_ABL_EXP(8, LOCAL, LOCAL:4)
+			CALL ADD_ABL_EXP(13, LOCAL, 5 + RAND:3);◆
+		ENDIF
+	ENDIF
+	CALL RANDOM_ESTRUS_INITIALIZE(ARG:0)
+ENDIF

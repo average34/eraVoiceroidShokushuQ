@@ -1,0 +1,280 @@
+﻿;-------------
+;ペットのステータス用関数
+;-------------
+@SHOW_PET_STATUS
+PRINTFORML %"【"+PETNAME+"】"% 種族:%ENEMY_NAME(PET:0)%  腹:%PET_STARVE_STR()%
+PRINTFORML (ランク{PET:1, 2}/レベル{PET:2, 4}/戦闘{PET:10, 4}/速度{PET:11, 4}/やる気{PET:12, 4}/カッコよさ{PET:13, 4}/栄養:{PET:21,4})
+
+
+;-------------
+;PTメンの合計屈服度を計算する式中関数
+;GET_MEMBER_SUMなどと併用するとよい
+;-------------
+@PET_SUBMISSION_PT
+#FUNCTION
+VARSET LOCAL
+LOCAL += CFLAG:1:400
+IF FLAG:10
+	LOCAL += CFLAG:(FLAG:10):400
+ENDIF
+IF FLAG:11
+	LOCAL += CFLAG:(FLAG:11):400
+ENDIF
+RETURNF LOCAL
+
+;-------------
+;屈服度を表す式中関数
+;-------------
+@PET_SUBMISSION_STR(ARG:0)
+#FUNCTIONS
+IF TALENT:(ARG:0):ペット == 1
+	RETURNF "雌犬"
+ELSEIF TALENT:(ARG:0):ペット == 2
+	RETURNF "花嫁"
+ELSEIF TALENT:(ARG:0):ペット == 3
+	RETURNF "しもべ"
+ENDIF
+SELECTCASE CFLAG:(ARG:0):400
+	CASE IS >= 90
+		RETURNF UNICODE(0x2661)
+	CASE IS >= 70
+		RETURNF "堕ちかけ"
+	CASE IS >= 50
+		RETURNF "中毒気味"
+	CASE IS >= 30
+		RETURNF "ハマった"
+	CASE IS >= 0
+		RETURNF "清純"
+ENDSELECT
+
+;-------------
+;屈服度を減らす処理
+;-------------
+@PET_DECREASE_SUBMISSION
+#DIM LCOUNT
+VARSET LOCAL
+FOR LCOUNT, 0, CHARANUM
+	IF TALENT:LCOUNT:ペット
+		CFLAG:LCOUNT:400 -= MAX(RAND:4, 1)
+	ELSE
+		CFLAG:LCOUNT:400 -= MAX(RAND:5 + 1, 3)
+	ENDIF
+NEXT
+CALL LIMIT_PET_STATUS
+
+;-------------
+;ペットのハラヘリ具合を確認する式中関数
+;返り値3,2,1,0でそれぞれ満腹、腹八分、普通、ハラヘリ
+;-------------
+@PET_STARVE
+#FUNCTION
+IF PET:20 >= 85
+	RETURNF 3
+ELSEIF PET:20 >= 70
+	RETURNF 2
+ELSEIF PET:20 >= 30
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+
+;-------------
+;ペットのハラヘリ具合を確認する式中関数
+;満腹度はマスクデータにしたいので、ステータス表示などで利用する際はこちらをどうぞ
+;-------------
+@PET_STARVE_STR
+#FUNCTIONS
+SELECTCASE PET:20
+	CASE IS >= 85
+		RETURNF "おなかいっぱい！"
+	CASE IS >= 70
+		RETURNF "そこそこいっぱい"
+	CASE IS >= 30
+		RETURNF "ふつう"
+	CASEELSE
+		RETURNF "おなかすいたー"
+ENDSELECT
+
+;-------------
+;ペットが空腹になっていく処理
+;-------------
+@PET_DECREASE_SATIETY
+VARSET LOCAL
+SELECTCASE PET:1
+	CASE 1, 2, 3
+		LOCAL = 5
+	CASE 4, 5
+		LOCAL = 5
+	CASE 6, 7
+		LOCAL = 10
+ENDSELECT
+
+SELECTCASE PET_STARVE()
+	CASE 3
+		LOCAL += RAND:4 + 4
+	CASE 2
+		LOCAL += RAND:3 + 3
+	CASE 1
+		LOCAL += RAND:2 + 2
+	CASE 0
+		LOCAL += 0
+ENDSELECT
+
+PET:20 -= LOCAL
+CALL LIMIT_PET_STATUS
+
+;-------------
+;ペットの好感度を確認する式中関数
+;好感度は完全にマスクデータ
+;-------------
+@PET_LIKE
+#FUNCTION
+IF PET:22 >= 85
+	RETURNF 3
+ELSEIF PET:22 >= 70
+	RETURNF 2
+ELSEIF PET:22 >= 30
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+;-------------
+;渡された値より経験値が大きいか判断
+;-------------
+@PET_EXP_ENOUGH(ARG:0)
+#FUNCTION
+IF PET:21 > ARG:0
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+;-------------
+;素質ペット取得処理
+;-------------
+@CHECK_PET_SUBMISSION
+#DIM LCOUNT
+FOR LCOUNT, 0 , CHARANUM
+	IF CFLAG:LCOUNT:400 >= 90 && !TALENT:LCOUNT:ペット
+		PRINTFORMW %CALLNAME:LCOUNT%の身体が熱く疼いている……
+		PRINTFORMW どうやらその身も心もペットに服従し、立場が逆転してしまったようだ……
+		PRINTFORMW %CALLNAME:LCOUNT%は%PETNAME%の【ペット】になってしまった……
+		TALENT:LCOUNT:ペット = 1
+	ENDIF
+NEXT
+
+;-------------
+;ペットステータスのカンスト処理用関数（そんな廃人が居るのかはともかく）
+;それぞれにカット処理仕込めば必要ないのだけど、保険
+;-------------
+@LIMIT_PET_STATUS
+PET:1 = LIMIT(PET:1, 1, 7)
+PET:2 = LIMIT(PET:2, 1, 9999)
+PET:10 = LIMIT(PET:10, 1, 9999)
+PET:11 = LIMIT(PET:11, 1, 9999)
+PET:12 = LIMIT(PET:12, 1, 9999)
+PET:13 = LIMIT(PET:13, 1, 9999)
+PET:20 = LIMIT(PET:20, 0, 100)
+PET:21 = LIMIT(PET:21, 0, 9999)
+PET:22 = LIMIT(PET:22, 0, 100)
+FOR LOCAL, 0, CHARANUM
+	IF !TALENT:LOCAL:ペット
+		CFLAG:LOCAL:400 = LIMIT(CFLAG:LOCAL:400, 0, 100)
+	ELSE
+		CFLAG:LOCAL:400 = LIMIT(CFLAG:LOCAL:400, 50, 150)
+	ENDIF
+NEXT
+
+;-------------
+;栄養加算用関数
+;ARG:0 渡されたベース栄養
+;ARGS:0 何によって栄養をもらえるのか（敵触手やキャラの身体など）
+;-------------
+@PET_ADD_EXP(ARG:0, ARGS:0)
+;ペットが居なかったら返す　まぁ保険
+SIF PET:0 == 0
+	RETURN
+SELECTCASE PET_STARVE()
+	CASE 0
+		TIMES ARG:0, 1.5
+ENDSELECT
+
+SELECTCASE PET_LIKE()
+	CASE 0
+		TIMES ARG:0, 1.5
+ENDSELECT
+
+;レベル補正
+ARG:0 = ARG:0 * MAX(100 - PET:2, 50) / 100
+
+;ここまでで1-100に収める
+LOCAL = LIMIT(ARG:0, 1, 100)
+;メッセ
+SETCOLOR 0x10EEEE
+PRINTFORML %PETNAME%は%ARGS:0%により、{LOCAL}の栄養を手に入れた！
+RESETCOLOR
+PRINTFORMW 栄養:{PET:21} → {PET:21 + LOCAL}
+PET:21 += LOCAL
+;9999に抑える
+CALL LIMIT_PET_STATUS
+
+
+;-------------
+;倒した敵をペットが食べる関数
+;戦闘終了時に呼び出し
+;LOCAL　取り込む敵が戦闘時の何番目の敵だったか TFLAG:LOCALで取り込む敵のIDが分かる
+;LOCAL:1 栄養価計算用
+;-------------
+@ENEMY_TO_PET
+#DIM 計算,10
+VARSET LOCAL
+VARSET 計算
+SIF PET:0 == 0
+	RETURN
+;まず取り込む敵のIDを倒した敵の中から選択（ランダム）
+WHILE 1
+	LOCAL = RAND:10 + 1
+	SIF TFLAG:LOCAL
+		BREAK
+WEND
+
+;彼我のランク差による基礎経験値
+計算 = DA:0:86
+計算:1 = DA:(TFLAG:LOCAL):86
+計算:3 = 計算 - 計算:1
+SELECTCASE 計算:3
+	CASE -6, -5, -4
+		計算:4 = 1
+	CASE -3, -2
+		計算:4 = 7
+	CASE -1, 0, 1
+		計算:4 = 15
+	CASE 2, 3
+		計算:4 = 23
+	CASE 4, 5
+		計算:4 = 30
+	CASE 6
+		計算:4 = 40
+ENDSELECT
+
+;ランクが低いとボーナス
+SELECTCASE PET:1
+	CASE 1, 2, 3
+		計算:4 += 10
+	CASE 4, 5
+		計算:4 += 5
+ENDSELECT
+
+;このままだと低性能ランク7が浮かばれないので、種族能力差に応じたボーナス 1~100まで
+CALLFORM SET_ENEMY_DATA_{PET:0}(0)
+計算:5 = DA:0:2 / 100 + DA:0:5 + DA:0:9
+計算:6 = (DA:(TFLAG:LOCAL):2) / 100 + DA:(TFLAG:LOCAL):5 + DA:(TFLAG:LOCAL):9
+計算:7 = 計算:6 - 計算:5
+計算:7 = LIMIT(計算:7, 1, 100)
+
+;ベース栄養算出これをADD_EXPに投げる
+LOCAL:1 = 計算:4 + 計算:7
+
+CALL PET_ADD_EXP(LOCAL:1, SAVESTR:(TFLAG:LOCAL))

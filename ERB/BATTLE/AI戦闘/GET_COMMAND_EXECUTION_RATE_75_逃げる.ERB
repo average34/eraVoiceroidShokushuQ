@@ -1,0 +1,15 @@
+﻿; AI戦闘コマンド 逃げる
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_75(CHARA_ID, TARGET_ID, SUPPORT_VALUE)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM SUPPORT_VALUE ; Reserved
+#DIM RATE
+
+	VARSET RATE
+
+	; 催眠中コマンドは完全ランダム
+	RATE = RAND:10001
+
+RETURN LIMIT(RATE, 0, 10000)

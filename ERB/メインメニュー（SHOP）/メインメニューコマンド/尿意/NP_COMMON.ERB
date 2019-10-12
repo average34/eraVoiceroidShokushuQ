@@ -1,0 +1,68 @@
+﻿
+
+;=================================================
+;尿意処理
+;=================================================
+@ADD_BASE_NP(ARG:0,ARG:1)
+;ARG:0	キャラID
+;ARG:1	NP追加量
+
+	IF FLAG:522 == 2
+		BASE:(ARG:0):NP = 0
+		RETURN -1
+	ENDIF
+
+	BASE:(ARG:0):NP += ARG:1 + 2
+	IF TALENT:(ARG:0):57
+		BASE:(ARG:0):NP += LIMIT(ARG:1/3,1,ARG:1)
+	ENDIF
+	IF TALENT:(ARG:0):100
+		BASE:(ARG:0):NP += LIMIT(ARG:1/3,1,ARG:1)
+	ENDIF
+
+	IF BASE:(ARG:0):NP > 100
+		BASE:(ARG:0):NP = 100
+	ENDIF
+	SIF BASE:1:NP >= 50
+		CALL SHOW_TUTORIAL(16)
+RETURN 1,BASE:(ARG:0):NP
+
+
+;=================================================
+;複数の名前
+;=================================================
+@GET_NYOU_名前(ARG:0)
+;ARG:0 表示キャラ（ビット演算（1:主人公　2:仲間１　4:仲間２））
+#FUNCTIONS
+
+	IF ARG:0 == 1
+		RETURNF @"%CALLNAME:1%"
+	ELSEIF ARG:0 == 2
+		RETURNF @"%CALLNAME:(FLAG:10)%"
+	ELSEIF ARG:0 == 3
+		RETURNF @"%CALLNAME:1%と%CALLNAME:(FLAG:10)%"
+	ELSEIF ARG:0 == 4
+		RETURNF @"%CALLNAME:(FLAG:11)%"
+	ELSEIF ARG:0 == 5
+		RETURNF @"%CALLNAME:1%と%CALLNAME:(FLAG:11)%"
+	ELSEIF ARG:0 == 6
+		RETURNF @"%CALLNAME:(FLAG:10)%と%CALLNAME:(FLAG:11)%"
+	ELSE
+		RETURNF @"三人"
+	ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;EPダメ簡易呼び出し
+;キャラ、部位(ABCV)、ダメ量、MP倍率
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@NYOU_簡易ダメ(ARG:0, ARG:1, ARG:2, ARG:3 = 0)
+SIF ARG:0 == 0
+	RETURN -1
+
+TFLAG:63 = ARG:1
+
+LOCAL:1 = CALC_SENSITIVITY(ARG:0, TFLAG:63, ARG:2)
+CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:1, ARG:3)
+
+TFLAG:63 = 0
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡

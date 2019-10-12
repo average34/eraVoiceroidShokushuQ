@@ -1,0 +1,145 @@
+﻿;口上の書き方サンプル
+;「88」は上海のキャラ番号なので、他のキャラの口上を作るときは、適宜書き換えてください
+;
+;
+;口上基礎知識
+;　口上を書く時は基本的に ARG:0 と ARG:1 の中に「シチュエーション」が入っているので、
+;　それに応じて分岐を行い、適切なメッセージを表示する……というのが基本方針になります
+;　
+;　なお、TARGET に口上を表示するキャラが指定された状態になっているので、
+;　自分の名前や自分のCFLAGを見たい時などは CALLNAME:TARGET とか CFLAG:1 とかで参照できます
+;
+
+
+;口上選択時のタイトル
+@KOJO_TITLE_88_0
+RESULTS = 上海サンプル口上
+
+
+;口上選択時の詳細説明
+;フリーフォーマットです。ご自由にどうぞ
+@KOJO_DETAIL_88_0
+PRINTFORML 上海のサンプル用口上です
+PRINTFORML 内容自体はネタでしかないので、普通の口上として利用するのには向いていません
+
+
+;デフォルトの文字色を返す関数
+;これが無い場合、デフォルトはシステムカラー（白文字）になります
+@KOJO_DEFAULT_COLOR_88_0
+
+RETURN 0xFFC81E
+
+;10進数で書きたい場合は上、16進数で書きたい場合は下のような表現を使えばOKです
+;RETURN RGBCOLOR(255, 200, 30)
+;RETURN 0xFFC81E
+
+
+
+
+;口上本体
+@KOJO_88_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;デフォルトの地の文を表示するコマンドです
+CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;そのキャラの口上の文字色を反映します
+SETCOLOR CFLAG:700
+
+
+
+;↓↓↓　　ここから口上のメイン処理　　↓↓↓
+
+;ARG:0 や ARG:1 の内容で分岐をかけます
+;それぞれの値の意味は「資料とか\PRINT_MESSAGE(口上)フラグ一覧.txt」を参照してください
+SELECTCASE ARG:0
+	CASE 1
+		;自分が攻撃する時
+		IF ARG:1 >= 10 && ARG:1 <= 40
+			;ダメージを与えるコマンドの場合
+			;色んなコマンドで共通の処理をする場合、↓こんな感じでランダム分岐をかけると良いかも
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML ｺﾚﾃﾞﾓｸﾗｴｰ
+				CASE 1
+					PRINTFORML ｱｯﾁｲｯﾁｬｴｰ
+				CASEELSE
+					PRINTFORML ｷﾓﾁﾜﾙｲﾖｰ
+			ENDSELECT
+		ELSEIF ARG:1 == 2
+			;防御の場合
+			PRINTFORML ｺｯﾁｺﾅｲﾃﾞｰ
+		ENDIF
+	CASE 12
+		;敵の通常攻撃(HP攻撃)が当たった
+		PRINTFORML ｲﾀｲﾖｰ
+	CASE 14
+		;敵の性攻撃(EP攻撃)が当たった
+		;性攻撃などの場合、ARG:2に属性（0＝A攻撃　1＝B攻撃　2＝C攻撃　3＝V攻撃）が入っています
+		IF ARG:2 == 3
+			;V攻撃された
+			PRINTFORML ｿﾝﾅﾉﾊｲﾗﾅｲﾖｰ
+		ELSE
+			;それ以外
+			PRINTFORML ｷｬｰｴｯﾁｰ
+		ENDIF
+	CASE 22 TO 27
+		;敵の攻撃を避けた（22～27が避けた時の処理なので、全部まとめて処理）
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML ｱﾀﾗﾅｲﾖｰ
+			CASE 1
+				PRINTFORML ﾊﾞｶｼﾞｬﾈｰﾉ
+			CASEELSE
+				PRINTFORML ｷﾓﾁﾜﾙｲﾖｰ
+		ENDSELECT
+	CASE 33
+		;MPが0（戦意喪失）になった
+		PRINTFORML ﾓｳﾀﾞﾒ…
+	CASE 55
+		;敵から逃げた
+		PRINTFORML ﾆｹﾞﾛﾆｹﾞﾛｰ
+	CASE 57
+		;敵に勝った
+		PRINTFORML ﾆﾝｷﾞｮｳﾆﾏｹﾙﾅﾝﾃ ﾖﾜｽｷﾞﾙﾖｰ
+	CASE 101
+		;迷宮内で誰かに会った
+		IF NO:(ARG:1) == 14
+			;アリスに会った
+			PRINTFORML ｱﾘｰｽ!!!
+		ELSEIF NO:(ARG:1) == 89
+			;蓬莱に会った
+			PRINTFORML ﾎﾗｰｲ!!
+		ENDIF
+	CASE 109
+		;PTに加入した
+		PRINTFORML ｼｬﾝﾊｰｲ!
+	CASE 136
+		;処女喪失
+		IF ARG:3 == 2
+			;ARG:3が2の場合は「処女喪失を何とか防いだ」
+			PRINTFORML ﾔﾗｾﾊｾﾝﾖ!
+		ELSEIF ARG:3 == 1
+			;ARG:3が1の場合は「処女を喪失しそうなとき」
+			PRINTFORML ﾔﾒﾃｰ!
+		ELSE
+			;ARG:3が0の場合が本当の処女喪失時
+			PRINTFORML ｱ……
+		ENDIF
+	CASE 152
+		;捕食されきった（リタイア）
+		PRINTFORML ｱﾘｰ…ｽ…　ﾀｽ…ｹ……
+	CASEELSE
+		;特に処理しない口上は全部ここに飛んできます
+		;ここでは別に何もしなくてもOKです
+ENDSELECT
+
+;↑↑↑　　ここまで口上のメイン処理　　↑↑↑
+
+
+
+;表示が終わったら文字の色をリセットしておきましょう
+RESETCOLOR
+
+;自分で口上を書いた場合は RETURN 1 になります　　基本的にこのままにしておいてください
+RETURN 1
+

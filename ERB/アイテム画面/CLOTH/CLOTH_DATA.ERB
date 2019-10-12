@@ -1,0 +1,1715 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;各服装データ
+;服装ID 0～49は通常用　100以降は特殊用途
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;服装データ
+;「サンプル」
+;=================================================
+@CLOTH_DATA_服装ID(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+;-MEMO-
+;服装データの説明用
+;関数名の"服装ID"は0～49で空いてる番号に置き換えます
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		;服の名前をRESULTSに返します。
+		;返さないとその服は無かったことにされます
+		;他パッチ用に特殊な服(服装ID 100以降)を用意する場合はコンフィグ用変数を使って
+		;名前を返す・返さないを分岐することで、その服装の有効・無効を制御することができます
+		CASE 0
+			
+			RESULTS = 服の名前
+			
+			
+		;---服の説明---
+		;服の能力に関する説明をRESULTSに返します。
+		;一覧に表示する際に一緒に表示します
+		;その服に効果がある場合はここで簡潔に説明しておいたほうがよいでしょう
+		CASE 1
+			
+			RESULTS = 能力
+			
+			
+		;---選択可不可---
+		;服の種類を選択する時の一覧に表示するかどうかです
+		;-1を返すと一覧に表示されず選択可能候補から外されます
+		;キャラIDを使って返す値を分岐させれば条件を満たさないと着れないレア衣装が作れます
+		CASE 2
+			
+			RESULT = 0
+			
+			
+		;---服選択時の地の文---
+		;服の種類を選択した後に表示される地の文をここに書きます
+		;選んだ服がどのような服なのかを説明します
+		;キャラIDが使えるので胸の大きさとか素質とかで表現を変えるとおもしろいかも
+		;キャラの反応とかは口上の内容と矛盾が出るので書かない方がよいと思います
+		CASE 5
+			
+			PRINTFORMW 地の文
+			PRINTFORML 
+			
+			
+		;---ステータスの服装表示---
+		;CPゲージ下の服装欄に表示する文字列をRESULTSに返します
+		;省略した場合は服の名前を代用します
+		;キャラIDが使えます
+		CASE 10	;CP 通常時
+		
+			RESULTS = 通常時の服装表示
+			
+		CASE 11	;CP 損傷時
+		
+			RESULTS = 損傷時の服装表示
+			
+		CASE 12	;CP 半裸時
+		
+			RESULTS = 半裸(中破)時の服装表示
+
+		;---遭遇時の服装表現---
+		;迷宮内を進んでいると～～を着た○○に出会った！の所の"～～を着た"の部分の内容をRESULTSに返します
+		;返さなくても特に問題はありません
+		;キャラIDが使えます
+		CASE 20	;CP 通常時
+		
+			RESULTS = 通常時の服装表現
+			
+		CASE 21	;CP 損傷時
+		
+			RESULTS = 損傷時の服装表現
+			
+		CASE 22	;CP 半裸時
+		
+			RESULTS = 半裸(中破)時の服装表現
+			
+		;---服装による効果発動---
+		;服装に効果を持たせる場合は以下に各タイミングで呼び出しをしてますのでキャラIDを使って
+		;ステータスを操作したり地の文を表示したりしてください。
+		;必ず書かないといけないわけではないので特に必要ないところは書かなくてOKです
+		;口上対応とかは処理が固まってきてからの方が良いと思うのでPRINT_MESSAGEをCALLしたりするのはナシで
+		;地の文はPRINT命令とかで直接書いてね
+
+		
+		CASE 101 ;戦闘ファイナライズ
+			;戦闘での各ターンエンド直前くらいに呼び出されます
+			;全裸時のMP減少と同じ位置ですね
+			;※未実装
+			
+		CASE 102 ;はいてない
+			;状態異常「はいてない」を取得するときに呼び出されます
+			;RESULT = 1とすると取得をキャンセルします
+			
+		CASE 103 ;遭遇時
+			;迷宮内でだれかに遭遇したとき
+			;見られて恥ずかしい服とか用
+			;※未実装
+			
+			
+		;＝＝＝＝＝補正系＝＝＝＝＝
+		;----被ダメージ補正-----
+		;RESULTに補正値を代入（-5を返すと5％軽減となる）
+		;正数を代入するとダメージが増えるので気をつけてね
+		;RESULTへの代入以外の処理は書かないでね
+		;キャラIDは参照可能ですが、変数の値を書き換えたりはしないでください
+		CASE 1000
+		;HPダメに対する補正(%)
+			RESULT = 0
+		CASE 1001
+		;MPダメに対する補正(%)
+			RESULT = 0
+		CASE 1002
+		;EPダメに対する補正(%)
+			RESULT = 0
+		CASE 1003
+		;CPダメに対する補正(%)
+			RESULT = 0
+		CASE 1050
+		;EPダメ(A)に対する補正(%)
+			;EPダメを部位毎に補正をしたい時用
+			;CASE1002と両方で値を返した場合、こちらが優先される
+			RESULT = 0
+		CASE 1051
+		;EPダメ(B)に対する補正(%)
+			;上に同じく
+			RESULT = 0
+		CASE 1052
+		;EPダメ(C)に対する補正(%)
+			;上に同じく
+			RESULT = 0
+		CASE 1053
+		;EPダメ(V)に対する補正(%)
+			;上に同じく
+			RESULT = 0
+			
+		;-----ステータス補正-----
+		;各種能力を補正できます
+		;RESULTに補正値を代入（-5を返すと5％減となる）
+		;RESULTへの代入以外の処理は書かないでね
+		;キャラIDは参照可能ですが参照だけにしてください
+		CASE 1100
+		;戦闘力補正値(%)
+			RESULT = 0
+		CASE 1101
+		;攻撃威力補正値
+			;※未実装
+		CASE 1102
+		;道具威力補正値
+			;※未実装
+		CASE 1103
+		;速度補正値(%)
+			;動きやすい・動きにくい服用
+			RESULT = 0
+		CASE 1104
+		;命中補正
+			;値の度合いが説明できませんので0～100ぐらいでお願いします
+			RESULT = 0
+			
+		CASE 1105
+		;回避補正
+			;※未実装
+			
+		CASE 1106
+		;魅力補正
+			;いわゆるタゲ率、狙われ易さ
+			;対象の決定に使われる値に加算します
+			;値の度合いが説明できませんので0～100ぐらいでお願いします
+			;値が大きいほど狙われます
+			RESULT = 0
+			
+		CASE 1107
+		;幸運補正
+			;※未実装
+			
+		;-----リジェネ-----
+		;各種BASE値を時間経過毎(エンドフェーズ時)に操作します
+		;加減算する量をRESULTに代入して下さい(正数代入でBASE値増加)
+		CASE 1200
+		;HPリジェネ
+			RESULT = 0
+			
+		CASE 1201
+		;MPリジェネ
+			RESULT = 0
+			
+		CASE 1202
+		;EPリジェネ
+			RESULT = 0
+			
+		CASE 1203
+		;CPリジェネ
+			RESULT = 0
+			
+		CASE 1204
+		;TPリジェネ
+			RESULT = 0
+			
+		CASE 1205
+		;DPリジェネ
+			;光触媒的な何か
+			RESULT = 0
+			
+		CASE 1206
+		;NPリジェネ
+			;非実装
+			
+	ENDSELECT
+	
+RETURN RESULT
+;=================================================
+;服装データ
+;「サンプル２」
+;=================================================
+;@CLOTH_DATA_服装ID(処理ID, キャラID)
+;#DIM 処理ID
+;#DIM キャラID
+;-MEMO-
+;最小構成の例です。これでも問題無く動きます
+;服装選択時の地の文は無くても動作上問題ありませんが…それを省略するなんてとんでもない！
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			
+			RESULTS = 服の名前
+			
+		;---服選択時の地の文---
+		CASE 5
+			
+			PRINTFORMW 地の文
+			PRINTFORML 
+			
+	ENDSELECT
+	
+RETURN RESULT
+
+;=================================================
+;服装データ
+;「いつもの服」
+;=================================================
+@CLOTH_DATA_0(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = いつもの服
+		CASE 1
+			RESULTS = 只の普段着
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 自分が普段着ているものとよく似た服だ。
+			PRINTFORMW サイズまでぴったりなので自分の物が巻き込まれたのだろうか……
+			PRINTFORML 
+			
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = いつもの服
+		CASE 11	;CP 損傷時
+			RESULTS = 所々ほつれた服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの服
+
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「普通の服」
+;=================================================
+@CLOTH_DATA_1(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 普通の服
+		CASE 1
+			RESULTS = ごくごく普通の服
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 誰が着ていてもおかしくない普通の服だ。
+			PRINTFORMW スカートが妙に短い以外は……
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 普通の服
+		CASE 11	;CP 損傷時
+			RESULTS = 所々ほつれた服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの服
+
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「体操着」
+;=================================================
+@CLOTH_DATA_2(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 体操着
+		CASE 1
+			RESULTS = 動き易い運動着　速度(+10％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 白と紺を基調とした動きやすそうな薄手の体操服だ。
+			IF GET_BUST(キャラID) >= 2
+				PRINTFORMW 少しサイズが小さいのでへそや胸の下側が見えてしまっている。
+			ELSE
+				PRINTFORMW 少しサイズが小さいので息苦しい。
+			ENDIF
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 体操着
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いた体操着
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの体操着
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 体操着を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 体操着を着た
+		CASE 22	;CP 半裸時
+			RESULTS = 体操着を着た
+			
+		;---ステ補正---
+		CASE 1103
+			RESULT = 10
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「メイド服」
+;=================================================
+@CLOTH_DATA_3(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = メイド服
+		CASE 1
+			RESULTS = これで貴女も立派な従者！　魅力(+30)・CPﾘｼﾞｪﾈ
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML ひらひらしたスカートとフリルが目立つメイド服だ。
+			PRINTFORMW カチューシャとガーターベルトまである。
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = メイド服
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたメイド服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのメイド服
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = メイド服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = メイド服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = メイド服を着た
+			
+		;---ステ補正---
+		CASE 1106
+			RESULT = 30
+		;-----リジェネ-----
+		CASE 1203
+			RESULT = 50
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「パジャマ」
+;=================================================
+@CLOTH_DATA_4(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = パジャマ
+		CASE 1
+			RESULTS = 夢心地で痛みも忘れる？　HPダメ(-20％)・MPダメ(-10％)・速度(-30％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 体の前でボタンを止めるタイプのゆったりとした寝室用のパジャマだ。
+			PRINTFORMW 上がぶかぶかなので鎖骨が見えてしまう。
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = パジャマ
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたパジャマ
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのパジャマ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = パジャマを着た
+		CASE 21	;CP 損傷時
+			RESULTS = パジャマを着た
+		CASE 22	;CP 半裸時
+			RESULTS = パジャマを着た
+			
+			
+		;---ダメージ補正---
+		CASE 1000
+			RESULT = -20
+		CASE 1001
+			RESULT = -10
+		;---ステ補正---
+		CASE 1103
+			RESULT = -30
+		
+		
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「巫女服」
+;=================================================
+@CLOTH_DATA_5(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 巫女服
+		CASE 1
+			RESULTS = 脇は見えません…　与ダメ(+15％)・魅力(+30)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 脇が隠れるタイプの巫女服だ。
+			PRINTFORMW 胸元が大きく開いている以外は至ってまともである。
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 巫女服
+		CASE 11	;CP 損傷時
+			RESULTS = 前のはだけた巫女服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの巫女服
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 巫女服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 巫女服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = 巫女服を着た
+		;---ステ補正---
+		CASE 1100
+			RESULT = 15
+		CASE 1106
+			RESULT = 30
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「スクール水着」
+;=================================================
+@CLOTH_DATA_6(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = スクール水着
+		CASE 1
+			RESULTS = 今ならゼッケン付！　HPダメ(-20％)・与ダメ(+10％)・速度(+10％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 服は普通だが、下着の代わりになるのがスクール水着しかないようだ……
+			PRINTFORML どういうわけか胸元のゼッケンに自分の名前がひらがなで書いてある……
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 普通の服
+		CASE 11	;CP 損傷時
+			RESULTS = スク水
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのスク水
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 服の中にスクール水着を着た
+		CASE 21	;CP 損傷時
+			RESULTS = スクール水着を着た
+		CASE 22	;CP 半裸時
+			RESULTS = スクール水着を着た
+			
+		;---ダメージ補正---
+		CASE 1000
+			RESULT = 20
+		;---ステ補正---
+		CASE 1100
+			RESULT = 10
+		CASE 1103
+			RESULT = 10
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「マイクロビキニ」
+;=================================================
+@CLOTH_DATA_7(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = マイクロビキニ
+		CASE 1
+			RESULTS = 一応隠せます…　速度(+20％)・魅力(+50)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 下着の代わりになるのが”布の切れ端”としか形容できないきわどいビキニしかない……
+			PRINTFORML 上も肩に羽織るタイプのものしかなく、へそや胸元が無防備に近い……
+			PRINTFORMW 速度増加・タゲ率増加
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ケープ
+		CASE 11	;CP 損傷時
+			RESULTS = マイクロビキニ
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのマイクロビキニ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 
+		CASE 21	;CP 損傷時
+			RESULTS = マイクロビキニを着た
+		CASE 22	;CP 半裸時
+			RESULTS = マイクロビキニを着た
+		;---ステ補正---
+		CASE 1103
+			RESULT = 20
+		CASE 1106
+			RESULT = 50
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「ボディスーツ」
+;=================================================
+@CLOTH_DATA_8(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ボディスーツ
+		CASE 1
+			RESULTS = ピチピチです！　EPダメ(-20％)・与ダメ(-15％)・速度(-20％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 体の線がしっかりと浮き出るボディースーツだ……
+			PRINTFORMW 身体に吸い付くような拘束感があるのはなぜだろうか……
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ボディスーツ
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたボディスーツ
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのボディスーツ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = ボディスーツを着た
+		CASE 21	;CP 損傷時
+			RESULTS = ボディスーツを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボディスーツを着た
+			
+		;---ダメージ補正---
+		CASE 1002
+			RESULT = -20
+		;---ステ補正---
+		CASE 1100
+			RESULT = -15
+		CASE 1103
+			RESULT = -20
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「セーラー服」
+;=================================================
+@CLOTH_DATA_9(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = セーラー服
+		CASE 1
+			RESULTS = か い か ん ♪　命中(+15)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML このセーラー服は外の世界の海兵隊の制服らしい
+			PRINTFORML 男もスカートを履くのだろうか……
+			IF GET_BUST(キャラID) >= 2
+				PRINTFORML 少しサイズが小さいのでへそや胸の下側が見えてしまっている。
+			ENDIF
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = セーラー服
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたセーラー服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのセーラー服
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = セーラー服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = セーラー服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = セーラー服を着た
+		;---ステ補正---
+		CASE 1104
+			RESULT = 15
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「半ズボン」
+;=================================================
+@CLOTH_DATA_10(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 半ズボン
+		CASE 1
+			RESULTS = 動き易いが破き易い…　CPダメ(+20％)・速度(+20％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 幼い男の子が履くような膝の見える半ズボンだ……
+			PRINTFORML 見かけはともかく動きやすいのは評価できる。
+			PRINTFORMW 
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 半ズボン
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いた半ズボン
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの半ズボン
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 半ズボンをはいた
+		CASE 21	;CP 損傷時
+			RESULTS = 半ズボンをはいた
+		CASE 22	;CP 半裸時
+			RESULTS = 半ズボンをはいた
+			
+		;---ダメージ補正---
+		CASE 1003
+			RESULT = 20
+		;---ステ補正---
+		CASE 1103
+			RESULT = 20
+			
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「妊婦服」
+;=================================================
+@CLOTH_DATA_11(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 妊婦服
+		CASE 1
+			RESULTS = 腹部がゆったり　MPリジェネ
+			
+		;---選択可不可---
+		CASE 2
+			IF CFLAG:(キャラID):36 >= 3
+				RESULT = 0
+			ELSE
+				RESULT = -1
+			ENDIF
+			
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORMW お腹周りのサイズが大きめに作られた妊婦服だ
+			PRINTFORML 腹部と胸部の布が別になっていて胸部の布をめくることで
+			PRINTFORML 容易に胸が出せる作りになっている･･･
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 妊婦服
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いた妊婦服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの妊婦服
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 妊婦服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 妊婦服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = 妊婦服を着た
+		;-----リジェネ-----
+		CASE 1201
+			RESULT = 30
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「ランジェリードレス」
+;=================================================
+@CLOTH_DATA_12(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+;-MEMO-
+;露出癖が高そうな人向け
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ランジェリードレス
+		CASE 1
+			RESULTS = 魅力的で開放的　EPダメ(-20％)・魅力(+50)
+			
+		;---選択可不可---
+		CASE 2
+			IF TALENT:(キャラID):淫乱 > 0 || TALENT:(キャラID):恥薄い > 0 || TALENT:(キャラID):解放 > 0
+				RESULT = 0
+			ELSE
+				RESULT = -1
+			ENDIF
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORMW 形としてはフリルの付いた肩紐タイプのワンピースドレスのようだが･･･
+			PRINTFORML 服全体がレース加工されていて肌が透けて見える･･･
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ランジェリードレス
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたランジェリードレス
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのランジェリードレス
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = ランジェリードレスを着た
+		CASE 21	;CP 損傷時
+			RESULTS = ランジェリードレスを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ランジェリードレスを着た
+			
+		;---ダメージ補正---
+		CASE 1002
+			RESULT = -20
+		CASE 1106
+			RESULT = 50
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「セーター（タートルネック＋ノースリーブ）」
+;=================================================
+@CLOTH_DATA_13(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = セーター
+		CASE 1
+			RESULTS = ﾀｰﾄﾙﾈｯｸでひとつ上の女♪　与ダメ(+15％)・速度(-15％)
+			
+		;---選択可不可---
+		CASE 2
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML これは毛糸で編まれた服のようだが首に密着するほど襟が長く、
+			PRINTFORMW 袖が無いため肩が露出するデザインになっている。
+			PRINTFORML また、伸縮に優れているためか上半身のラインがくっきりと浮き出てしまい
+			IF GET_BUST(キャラID) >= 1
+				PRINTFORML 豊満な胸がより強調されて見える気がする…
+			ELSEIF GET_BUST(キャラID) <= -2
+				PRINTFORML 貧しい胸の形がより強調されて見える気がする…
+			ELSE
+				PRINTFORML 胸の形が強調されて見える気がする…
+			ENDIF
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = セーター
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたセーター
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのセーター
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = セーターを着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴のあいたセーターを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのセーターを着た
+		;---ステ補正---
+		CASE 1100
+			RESULT = 15
+		CASE 1103
+			RESULT = -15
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「チャイナドレス」
+;=================================================
+@CLOTH_DATA_14(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = チャイナドレス
+		CASE 1
+			RESULTS = 足のスリットが魅力的　速度(+10％)・命中(+10)・魅力(+30)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORM この服は
+			IF NO:(キャラID) == 6 && CFLAG:(キャラID):104 == 0
+				PRINTFORM 自分
+			ELSE
+				PRINTFORM 美鈴
+			ENDIF
+			PRINTFORMW が普段着ている服と似ているが少し違うようだ
+			PRINTFORML 首元は閉めれるが胸元に大きな穴が開いていて谷間が見えるようになっており、
+			PRINTFORML 左右のスリットが少し深めに切られている･･･
+			PRINTFORMW 速度増加・命中増加・タゲ率増加
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = チャイナドレス
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたチャイナドレス
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのチャイナドレス
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = チャイナドレスを着た
+		CASE 21	;CP 損傷時
+			RESULTS = チャイナドレスを着た
+		CASE 22	;CP 半裸時
+			RESULTS = チャイナドレスを着た
+		;---ステ補正---
+		CASE 1103
+			RESULT = 10
+		CASE 1106
+			RESULT = 30
+		CASE 1104
+			RESULT = 10
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「貞操帯」
+;=================================================
+@CLOTH_DATA_15(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 貞操帯
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 鍵付きの貞操帯だ
+			PRINTFORMW これなら化物に大切な場所を汚される心配も減るだろう
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = いつもの服
+		CASE 11	;CP 損傷時
+			RESULTS = 所々ほつれた服+貞操帯
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの服+貞操帯
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 服の下に貞操帯をつけた
+		CASE 21	;CP 損傷時
+			RESULTS = 服の下に貞操帯をつけた
+		CASE 22	;CP 半裸時
+			RESULTS = 服の下に貞操帯をつけた
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「ポイントアーマー」
+;=================================================
+@CLOTH_DATA_16(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ポイントアーマー
+		CASE 1
+			RESULTS = ちょっと重い…　HPダメ(-30％)・CPダメ(-20％)・速度(-50％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 胸当てと腰回りを覆える金属製の防具
+			PRINTFORML 隙間からは入っては来ないことを祈ろう
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ポイントアーマー
+		CASE 11	;CP 損傷時
+			RESULTS = 傷のあるポイントアーマー
+		CASE 12	;CP 半裸時
+			RESULTS = 劣化したポイントアーマー
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = ポイントアーマーをつけた
+		CASE 21	;CP 損傷時
+			RESULTS = 傷のあるポイントアーマーをつけた
+		CASE 22	;CP 半裸時
+			RESULTS = 劣化したポイントアーマーをつけた
+			
+		;---ダメージ補正---
+		CASE 1000
+			RESULT = -30
+		CASE 1003
+			RESULT = -20
+		;---ステ補正---
+		CASE 1103
+			RESULT = -50
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「園児服」
+;=================================================
+@CLOTH_DATA_17(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 園児服
+		CASE 1
+			RESULTS = 黄色い帽子がポイントです　与ダメ(-30％)・CPリジェネ
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 淡いブルーのワンピースと黄色い帽子のセット
+			PRINTFORML 胸元には花型のバッジがついている
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 園児服
+		CASE 11	;CP 損傷時
+			RESULTS = 所々ほつれた園児服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの園児服
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 園児服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 所々ほつれた園児服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロの園児服を着た
+		;---ステ補正---
+		CASE 1100
+			RESULT = -30
+		;-----リジェネ-----
+		CASE 1203
+			RESULT = 80
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「エプロン」
+;=================================================
+@CLOTH_DATA_18(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = エプロン
+		CASE 1
+			RESULTS = 何故か服から破れます　与ダメ(+10％)・DPリジェネ
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML フリルのついたエプロン
+			PRINTFORML 汚れを防げるのは非常にありがたい
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = エプロン
+		CASE 11	;CP 損傷時
+			RESULTS = ボロボロの服とエプロン
+		CASE 12	;CP 半裸時
+			RESULTS = 裸エプロン
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = エプロンをつけた
+		CASE 21	;CP 損傷時
+			RESULTS = ボロボロの服とエプロンを着た
+		CASE 22	;CP 半裸時
+			RESULTS = 裸エプロンをつけた
+		;---ステ補正---
+		CASE 1100
+			RESULT = 10
+		CASE 1205
+			RESULT = -5
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「ローブ」
+;=================================================
+@CLOTH_DATA_19(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ローブ
+		CASE 1
+			RESULTS = フードにするか帽子にするか…　MPリジェネ
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 首からひざ下までを覆う外套
+			PRINTFORML なんとなく不思議な力をまとっている
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ローブ
+		CASE 11	;CP 損傷時
+			RESULTS = 所々ほつれたローブ
+		CASE 12	;CP 半裸時
+			RESULTS = 肌がのぞくローブ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = ローブを着た
+		CASE 21	;CP 損傷時
+			RESULTS = 所々ほつれたローブを着た
+		CASE 22	;CP 半裸時
+			RESULTS = 肌がのぞくローブを着た
+		;-----リジェネ-----
+		CASE 1201
+			RESULT = 20
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「ウェディングドレス」
+;=================================================
+@CLOTH_DATA_20(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ウェディングドレス
+		CASE 1
+			RESULTS = 就職先は触手宮？　MPダメ(+30％)・MPリジェネ大
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 全身真っ白なケープ付きのドレス
+			PRINTFORML なぜこんなものが落ちていたのだろうか？
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ウェディングドレス
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の空いたウェディングドレス
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのウェディングドレス
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = ウェディングドレスを着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴の空いたウェディングドレスを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのウェディングドレスを着た
+			
+		;---ダメージ補正---
+		CASE 1001
+			RESULT = 30
+		;-----リジェネ-----
+		CASE 1201
+			RESULT = 100
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「ふんどし」
+;=================================================
+@CLOTH_DATA_21(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ふんどし
+		CASE 1
+			RESULTS = お祭り気分！　与ダメ(+20％)・魅力(+100)・TPリジェネ
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 日本の伝統的な下着
+			PRINTFORML 女性用なので前垂れがない
+			PRINTFORMW 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 普通の服
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いた服
+		CASE 12	;CP 半裸時
+			RESULTS = ふんどし一丁
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 普通の服の下にふんどしをしめた
+		CASE 21	;CP 損傷時
+			RESULTS = 穴の開いた服にふんどしをしめた
+		CASE 22	;CP 半裸時
+			RESULTS = ふんどし一丁の
+		;---ステ補正---
+		CASE 1100
+			RESULT = 20
+		CASE 1106
+			RESULT = 100
+		;-----リジェネ-----
+		CASE 1204
+			RESULT = 5
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「触手服」
+;=================================================
+@CLOTH_DATA_22(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 触手服
+		CASE 1
+			RESULTS = …
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML ……どことなく湿っている上、服の内側がうごめいている
+			PRINTFORMW 深く考えないほうがよさそうだ
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 普通の服
+		CASE 11	;CP 損傷時
+			RESULTS = 所々ほつれた服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの服
+
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「スリングショット」
+;=================================================
+@CLOTH_DATA_23(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = スリングショット
+		CASE 1
+			RESULTS = Y字型の水着
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML かろうじて胸と股間が隠せるY字の水着
+			PRINTFORMW 下着の代わりになるのはこれしか無いようだ……
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 普通の服
+		CASE 11	;CP 損傷時
+			RESULTS = スリングショット水着
+		CASE 12	;CP 半裸時
+			RESULTS = 破れたスリングショット水着
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 普通の服の下にスリングショット水着を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴の開いた服にスリングショット水着を着た
+		CASE 22	;CP 半裸時
+			RESULTS = スリングショット水着を着た
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「着ぐるみ」
+;=================================================
+@CLOTH_DATA_24(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 着ぐるみ
+		CASE 1
+			RESULTS = 装備しても猫にはなりません　EPダメ(-20％)・速度(-25％)・HPリジェネ
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 全身を包むフード付きの可愛い着ぐるみパジャマ。
+			;尻尾持ちは追加説明
+			IF TALENT:215
+				PRINTFORMW ご丁寧に尻尾部分が外に出せるようになっている。
+			ENDIF
+			PRINTFORMW 中は下着だけ。でもモコモコで暖かい。癒されるぅ…
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 着ぐるみパジャマ
+		CASE 11	;CP 損傷時
+			RESULTS = 所々解れている着ぐるみ
+		CASE 12	;CP 半裸時
+			RESULTS = 穴あき着ぐるみ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 着ぐるみパジャマを着た
+		CASE 21	;CP 損傷時
+			RESULTS = 傷んだ着ぐるみを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロな着ぐるみを着た
+
+		;---ダメージ補正---
+		CASE 1002
+			RESULT = -20
+		;---ステ補正---
+		CASE 1103
+			RESULT = -25
+		;---リジェネ---
+		CASE 1200
+			RESULT = 25
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「忍者服」
+;=================================================
+@CLOTH_DATA_25(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 忍者服
+		CASE 1
+			RESULTS = OH! NINJA! KUNOICHI! SHURIKEEEEN!　HPダメ(+20％)・速度(+30％)・魅力(-15)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORMW 魅力的なのになぜか狙われにくい謎装備。
+			PRINTFORMW 忍者だから仕方ない。古事記にもそう書いてある。
+			PRINTFORMW 中は鎖帷子では無く全身タイプの網タイツなので脆い。
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 忍者服
+		CASE 11	;CP 損傷時
+			RESULTS = 傷のある忍者服
+		CASE 12	;CP 半裸時
+			RESULTS = 全身網タイツ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 忍者服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 忍者服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = 全身網タイツの
+
+		;---ダメージ補正---
+		CASE 1000
+			RESULT = 20
+		;---ステ補正---
+		CASE 1103
+			RESULT = 30
+		CASE 1106
+			RESULT = -15
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;≡≡≡≡≡≡≡≡≡以下特殊用途≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;服装データ
+;「包帯」
+;特殊な服なので選ぶときには出てこない　文章だけ用意
+;=================================================
+@CLOTH_DATA_100(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+;-MEMO-
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 包帯
+			
+		;---服選択時の地の文---
+		CASE 5
+
+			PRINTFORMW 清潔感のある綺麗な包帯だ。
+			PRINTFORMW 他に身につけられるものはなかったのだろうか･･･
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 全身包帯
+		CASE 11	;CP 損傷時
+			RESULTS = 肌が見える包帯
+		CASE 12	;CP 半裸時
+			RESULTS = 包帯で局部を隠しただけ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 包帯を巻いた
+		CASE 21	;CP 損傷時
+			RESULTS = 包帯を巻いた
+		CASE 22	;CP 半裸時
+			RESULTS = 包帯を巻いた
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+;服装データ
+;「靴下のみ」
+;特殊な服なので選ぶときには出てこない　文章だけ用意
+;全裸の派生　CFLAG:500があるときのみ
+;=================================================
+@CLOTH_DATA_101(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+;-MEMO-
+
+	RESULT = 0
+	RESULTS = %""%
+
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			TRYCALLFORM FOOT_EQUIP_DATA_{CFLAG:キャラID:500}(0,LOCAL)
+			RESULTS += "のみ"
+			
+		;---服選択時の地の文---
+		CASE 5
+
+			PRINTFORMW 靴下だ。靴下しか無い。
+			PRINTFORMW 湿ると気持ち悪いがないよりはましだろうか……
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			TRYCALLFORM FOOT_EQUIP_DATA_{CFLAG:キャラID:500}(0,LOCAL)
+			RESULTS += "のみ"
+		CASE 11	;CP 損傷時
+			TRYCALLFORM FOOT_EQUIP_DATA_{CFLAG:キャラID:500}(0,LOCAL)
+			RESULTS += "のみ"
+		CASE 12	;CP 半裸時
+			TRYCALLFORM FOOT_EQUIP_DATA_{CFLAG:キャラID:500}(0,LOCAL)
+			RESULTS += "のみ"
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			TRYCALLFORM FOOT_EQUIP_DATA_{CFLAG:キャラID:500}(0,LOCAL)
+			RESULTS += "しか身に着けていない"
+		CASE 21	;CP 損傷時
+			TRYCALLFORM FOOT_EQUIP_DATA_{CFLAG:キャラID:500}(0,LOCAL)
+			RESULTS += "しか身に着けていない"
+		CASE 22	;CP 半裸時
+			TRYCALLFORM FOOT_EQUIP_DATA_{CFLAG:キャラID:500}(0,LOCAL)
+			RESULTS += "しか身に着けていない"
+			
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「魔法少女」
+;表示はされないけど一応セリフ関係全部用意
+;=================================================
+@CLOTH_DATA_102(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+;-MEMO-
+;服装データの説明用
+;関数名の"服装ID"は0～49で空いてる番号に置き換えます
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 魔法少女のドレス
+			
+		;---服の説明---
+		CASE 1
+			RESULTS = 少女達の夢の力で素質のある少女はパワーアップ
+			
+		;---選択可不可---
+		CASE 2
+			RESULT = -1
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORMW キラキラとひらひらとふりふりがぎゅっと詰まっている
+			PRINTFORMW なぜだか見ていると希望が沸いてくる
+			IF TALENT:(キャラID):100 || TALENT:(キャラID):150
+				PRINTFORMW 
+			ELSE
+				PRINTFORMW 
+			ENDIF
+			PRINTFORML 
+			
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 魔法少女の服
+			
+		CASE 11	;CP 損傷時
+			RESULTS = ボロボロの魔法少女の服
+			
+		CASE 12	;CP 半裸時
+			RESULTS = 布切れと化した魔法少女の服
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 魔法少女の姿をした
+			
+		CASE 21	;CP 損傷時
+			RESULTS = ボロボロの魔法少女の姿をした
+			
+		CASE 22	;CP 半裸時
+			RESULTS = 変身が今にも解けそうな魔法少女の
+			
+		;----被ダメージ補正-----
+		CASE 1000
+		;HPダメに対する補正(%)
+			RESULT = -10
+		CASE 1001
+		;MPダメに対する補正(%)
+			RESULT = -10
+		CASE 1002
+		;EPダメに対する補正(%)
+			RESULT = 10
+		CASE 1003
+		;CPダメに対する補正(%)
+			RESULT = -10
+		;-----ステータス補正-----
+		CASE 1100
+		;戦闘力補正値(%)
+			;小柄か妖精なら効果大
+			IF TALENT:(キャラID):100 || TALENT:(キャラID):150
+				RESULT = 30
+			ELSE
+				RESULT = 0
+			ENDIF
+		CASE 1103
+		;速度補正値
+			;小柄か妖精なら効果大
+			IF TALENT:(キャラID):100 || TALENT:(キャラID):150
+				RESULT = 30
+			ELSE
+				RESULT = 5
+			ENDIF
+			
+	ENDSELECT
+	
+RETURN RESULT
+;=================================================
+
+

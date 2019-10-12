@@ -1,0 +1,812 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;コンフィグ
+;FLAG:523はビット演算で色々情報が入っています
+;0:全機能OFF　1:たっていると選択がランダム　2:立っていると特殊効果あり　1024以降:立っていると番号に対応した装備選択可能
+
+;関数名とFLAG:523とCFLAG:501を置換すれば別物に応用出来るっぽい
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;コンフィグ取得
+;=================================================
+@GET_CLOTH_CONFIG(項目, 番号 = 0)
+#FUNCTION
+#DIMS 項目
+#DIM 番号
+
+	SELECTCASE 項目
+		CASE "動作"
+			SETBIT FLAG:523, 0
+			RETURNF GETBIT(FLAG:523, 0)
+		CASE "選択"
+			RETURNF GETBIT(FLAG:523, 1)
+		CASE "効果"
+			RETURNF GETBIT(FLAG:523, 2)
+		CASE "服装"
+			IF 番号 < 0
+				RETURNF -1
+			ELSEIF 番号 < 55
+				RETURNF GETBIT(FLAG:523, 10 + 番号-1)
+			ELSEIF 番号 >= 100
+				RETURNF 1
+			ENDIF
+	ENDSELECT
+
+RETURNF -1
+;=================================================
+;コンフィグ設定
+;=================================================
+@SET_CLOTH_CONFIG(ARG, 項目, 番号 = 0)
+#DIMS 項目
+#DIM 番号
+
+	SELECTCASE 項目
+		CASE "動作"
+			SIF ARG != GETBIT(FLAG:523, 0)
+				INVERTBIT FLAG:523, 0
+		CASE "選択"
+			SIF ARG != GETBIT(FLAG:523, 1)
+				INVERTBIT FLAG:523, 1
+		CASE "効果"
+			SIF ARG != GETBIT(FLAG:523, 2)
+				INVERTBIT FLAG:523, 2
+		CASE "服装"
+			IF 番号 < 0
+			
+			ELSEIF 番号 < 55
+				SIF ARG != GETBIT(FLAG:523, 10 + 番号-1)
+					INVERTBIT FLAG:523, 10 + 番号-1
+			ENDIF
+	ENDSELECT
+
+;=================================================
+;服装設定
+;=================================================
+@CLOTH_CONFIG_CLOTH_LIST
+#DIM LCOUNT,3	;ループ用
+#DIM ACTIVE, 100	;項目の有効記憶用
+#DIM デフォルト
+
+
+	デフォルト = FLAG:523
+
+	WHILE 1
+		;---表示---
+		DRAWLINEFORM -
+		PRINTL ここで服装のON・OFFを切り替えられます
+		PRINTL （他のパッチで使用している服装など、ここに表示されていないものは変更できません）
+		PRINTL
+		
+		VARSET ACTIVE
+		FOR LCOUNT ,0 ,26
+			CALL CLOTH_CONFIG_CLOTH_LIST_ボタン(LCOUNT)
+			SIF RESULT == 1
+				ACTIVE:(LCOUNT) = 1
+			
+			CALL CLOTH_CONFIG_CLOTH_LIST_ボタン(LCOUNT+26)
+			SIF RESULT == 1
+				ACTIVE:(LCOUNT+26) = 1
+			PRINTL
+		NEXT
+		PRINTL
+		PRINTFORML [100]決定　[101]全OFF　[102]全ON　[200]変更前に戻す
+		
+		$INPUT_LOOP_CLOTH
+		INPUT
+		LOCAL = RESULT
+		
+		;---入力判定---
+		IF LOCAL == 100
+			RETURN
+		
+		ELSEIF LOCAL == 101
+			FOR LCOUNT, 0, 56
+				CALL GET_CLOTH_DATA_名前(LCOUNT)
+				IF RESULT == 1
+					CALL SET_CLOTH_CONFIG( 0, "服装", LCOUNT)
+				ENDIF
+			NEXT
+		
+		ELSEIF LOCAL == 102
+			FOR LCOUNT, 0, 56
+				CALL GET_CLOTH_DATA_名前(LCOUNT)
+				IF RESULT == 1
+					CALL SET_CLOTH_CONFIG( 1, "服装", LCOUNT)
+				ENDIF
+			NEXT
+		
+		ELSEIF LOCAL == 200
+			FLAG:523 = デフォルト
+		
+		ELSEIF LOCAL >= 0 && LOCAL < 100 && ACTIVE:(LOCAL) == 1
+			CALL SET_CLOTH_CONFIG(1 - GET_CLOTH_CONFIG("服装",LOCAL),"服装",LOCAL)
+		ELSE
+			CLEARLINE 1
+			REUSELASTLINE 入力が不正です！
+			GOTO INPUT_LOOP_CLOTH
+		ENDIF
+	WEND
+
+;=================================================
+@CLOTH_CONFIG_CLOTH_LIST_ボタン(服装ID)
+#DIM 服装ID
+
+	CALL GET_CLOTH_DATA_名前(服装ID)
+	IF RESULT == 1
+		LOCALS:0 = [{服装ID, 2}] 
+		LOCALS:1 = %RESULTS, 25, LEFT%
+		IF GET_CLOTH_CONFIG("服装",服装ID)
+			LOCALS:2 = %"ON", 4, LEFT%
+		ELSE
+			LOCALS:2 = %"OFF", 4, LEFT%
+		ENDIF
+		PRINTBUTTON @"%LOCALS:0 + LOCALS:1 + LOCALS:2,40,LEFT%", 服装ID
+		RESETCOLOR
+		RETURN 1
+	ELSE
+		LOCALS:0 = [--] 
+		LOCALS:1 = %"－－－－－", 25, LEFT%
+		LOCALS:2 = %"--", 4, LEFT%
+		SETCOLOR 0x333333
+		PRINTFORM %LOCALS:0 + LOCALS:1 + LOCALS:2,40,LEFT%
+		RESETCOLOR
+		RETURN -1
+	ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;基本処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;服装変更
+;=================================================
+@CLOTH_TYPE_1(キャラID)
+#DIM LCOUNT,3	;ループ用
+#DIM キャラID
+
+	SIF GET_CLOTH_CONFIG("動作") == 0
+		RETURN -1
+		
+	SIF キャラID < 1 || キャラID >= CHARANUM
+		RETURN -1
+		
+
+	IF GET_CLOTH_CONFIG("選択")
+		CALL CLOTH_TYPE_SELECT_RAND(キャラID)
+	ELSE
+		CALL CLOTH_TYPE_SELECT(キャラID)
+	ENDIF
+	LOCAL = RESULT
+	IF LOCAL >= 0
+		PRINTFORML %CALLNAME:(キャラID)%が手にとったのは
+		CALL GET_CLOTH_DATA_選択文(LOCAL, キャラID)
+		CFLAG:(キャラID):501 = LOCAL
+	ENDIF
+
+;=================================================
+;服装変更（アイテム譲渡時用）
+;=================================================
+@CLOTH_TYPE_2(キャラID)
+#DIM LCOUNT,3	;ループ用
+#DIM キャラID
+
+	SIF GET_CLOTH_CONFIG("動作") == 0
+		RETURN -1
+		
+	SIF キャラID < 1 || キャラID >= CHARANUM
+		RETURN -1
+
+	IF GET_CLOTH_CONFIG("選択")
+		
+		CALL CLOTH_TYPE_SELECT_RAND(キャラID)
+		LOCAL = RESULT
+		
+		CALL GET_CLOTH_DATA_名前(LOCAL)
+		PRINTFORML %RESULTS%を取り出した
+		
+	ELSE
+		PRINTFORML %CALLNAME:(キャラID)%に渡したのは……
+		
+		CALL CLOTH_TYPE_SELECT(キャラID)
+		LOCAL = RESULT
+		
+	ENDIF
+	
+	
+	IF LOCAL >= 0
+		CFLAG:(キャラID):501 = LOCAL
+	ENDIF
+
+;=================================================
+;着せ替え選択
+;RESULT:0 服装ID（0:いつもの　1:・・・）
+;=================================================
+@CLOTH_TYPE_SELECT(キャラID)
+#DIM LCOUNT,3	;ループ用
+#DIM キャラID
+#DIM ACTIVE, 100	;項目の有効記憶用
+
+	SIF GET_CLOTH_CONFIG("動作") == 0
+		RETURN -1
+		
+	SIF キャラID < 1 || キャラID >= CHARANUM
+		RETURN -1
+
+	VARSET ACTIVE
+	FOR LCOUNT, 0, 100
+		CALL GET_CLOTH_DATA_可不可(LCOUNT, キャラID)
+		IF RESULT == 1
+		
+			ACTIVE:(LCOUNT) = 1
+			PRINTFORM [{LCOUNT,2}] 
+			
+			CALL GET_CLOTH_DATA_名前(LCOUNT)
+			PRINTFORM %RESULTS, 17, LEFT%　
+			
+			CALL GET_CLOTH_DATA_説明(LCOUNT)
+			PRINTFORM %RESULTS%
+			
+			PRINTL
+			;全部OFFのチェック用
+			LOCAL:1 += 1
+		ENDIF
+	NEXT
+	IF LOCAL:1 > 0
+		$INPUT_LOOP_CLOTH
+		INPUT
+	
+		IF RESULT >= 0 && RESULT <= 99 && ACTIVE:(RESULT) == 1
+			RETURN RESULT
+		ELSE
+			GOTO INPUT_LOOP_CLOTH
+		ENDIF
+	ELSE
+	;全OFFならメッセージのみ
+		PRINTFORML どこにでもありそうな普通の服だ
+	ENDIF
+
+;=================================================
+;着せ替えランダム選択
+;RESULT:0 服装ID（0:いつもの　1:・・・）
+;=================================================
+@CLOTH_TYPE_SELECT_RAND(キャラID)
+#DIM LCOUNT,3	;ループ用
+#DIM キャラID
+#DIM ACTIVE, 100	;項目の有効記憶用
+;LOCAL:1 全OFFかのチェック
+
+	SIF GET_CLOTH_CONFIG("動作") == 0
+		RETURN -1
+
+	VARSET ACTIVE
+	LOCAL = 0
+	FOR LCOUNT, 0, 100
+		CALL GET_CLOTH_DATA_可不可(LCOUNT, キャラID)
+		IF RESULT == 1
+			ACTIVE:(LCOUNT) = 1
+			LOCAL ++
+			LOCAL:1 += 1
+		ENDIF
+	NEXT
+	
+	IF LOCAL:1 > 0
+		FOR LCOUNT, 0, 100
+			IF ACTIVE:(LCOUNT) == 1
+				IF RAND:LOCAL == 0
+					RETURN LCOUNT
+				ENDIF
+				LOCAL --
+			ENDIF
+		NEXT
+	ELSEIF FLAG:5 == CFLAG:(キャラID):4 && (CFLAG:(キャラID):502 & 2) == 0 && FLAG:997 != 81
+	;全OFFならメッセージのみ
+		PRINTFORML どこにでもありそうな普通の服だ
+	ENDIF
+	
+;=================================================
+;ステータス上の服装表示
+;=================================================
+@PRINT_CLOTH_TYPE(キャラID)
+#DIM キャラID
+	
+	IF BASE:(キャラID):CP > 0 || CFLAG:(キャラID):500
+		CALL GET_CLOTH_DATA_服装表示(CFLAG:(キャラID):501,キャラID)
+		IF RESULT == 1
+			PRINTFORM %RESULTS%
+		ELSE
+			PRINTFORM いつもの服
+		ENDIF
+	ELSE
+		SETCOLOR 0xEE1010
+		PRINTFORM 全裸
+	ENDIF
+	RESETCOLOR
+	
+;=================================================
+;遭遇時の服装表現表示
+;=================================================
+@PRINT_SHOW_CLOTH(キャラID)
+#DIM キャラID
+	
+	SIF GET_CLOTH_CONFIG("動作") == 0
+		RETURN -1
+	
+	SIF キャラID < 1 || キャラID >= CHARANUM
+		RETURN -1
+	
+	IF BASE:(キャラID):CP > 0
+		CALL GET_CLOTH_DATA_服装表現(CFLAG:(キャラID):501,キャラID)
+		IF RESULT == 1
+			PRINTFORM %RESULTS%
+		ENDIF
+	ENDIF
+	
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;効果
+;各服装データの効果を呼び出し
+;処理結果が適正かチェックしたり調整したりする
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;服装効果用服装IDチェック
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 服装ID
+;=================================================
+@CHECK_CLOTH_EFFECT(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+	SIF GET_CLOTH_CONFIG("動作") == 0
+		RETURN -1
+		
+	SIF GET_CLOTH_CONFIG("効果") == 0
+		RETURN -1
+		
+	SIF キャラID < 1 || キャラID >= CHARANUM
+		RETURN -1
+
+	服装ID = CFLAG:(キャラID):501
+	SIF 服装ID < 0
+		RETURN -1
+
+	CALL GET_CLOTH_DATA_有効(服装ID)
+	SIF RESULT != 1
+		RETURN -1
+
+RETURN 1, 服装ID
+;=================================================
+;服装効果：戦闘ファイナライズ
+;RESULT:0 結果(1:成功 -1:失敗)
+;=================================================
+@CLOTH_TYPE_EFFECT_1(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+	CALL CHECK_CLOTH_EFFECT(キャラID)
+	SIF RESULT == -1
+		RETURN -1
+	服装ID = RESULT:1
+	
+	CALLFORM CLOTH_DATA_{服装ID}(101,キャラID)
+	
+	CALL CLOTH_TYPE_キャラチェック(キャラID)
+	
+RETURN 1
+;=================================================
+;服装効果：はいてない
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 はいてないの取得(0:許可 1:拒否)
+;=================================================
+@CLOTH_TYPE_EFFECT_2(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+	CALL CHECK_CLOTH_EFFECT(キャラID)
+	SIF RESULT == -1
+		RETURN -1
+	服装ID = RESULT:1
+	
+	CALLFORM CLOTH_DATA_{服装ID}(102,キャラID)
+	
+	CALL CLOTH_TYPE_キャラチェック(キャラID)
+	
+RETURN 1
+;=================================================
+;服装効果：遭遇時
+;RESULT:0 結果(1:成功 -1:失敗)
+;=================================================
+@CLOTH_TYPE_EFFECT_3(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+	CALL CHECK_CLOTH_EFFECT(キャラID)
+	SIF RESULT == -1
+		RETURN -1
+	服装ID = RESULT:1
+	
+	CALLFORM CLOTH_DATA_{服装ID}(103,キャラID)
+	
+	CALL CLOTH_TYPE_キャラチェック(キャラID)
+	
+RETURN 1
+;=================================================
+;服装効果：ダメ補正値を返す
+;ARG	ダメ種類
+;ARG:1	部位(EPダメ時)
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 補正値
+;=================================================
+@CLOTH_TYPE_EFFECT_ダメ補正(キャラID, ARG, ARG:1)
+#DIM キャラID
+#DIM 服装ID
+
+
+;---エラーチェック---
+CALL CHECK_CLOTH_EFFECT(キャラID)
+SIF RESULT == -1
+	RETURN -1
+服装ID = RESULT:1
+
+;---補正値取得---
+SELECTCASE ARG
+	CASE 0
+		;HP
+		CALLFORM CLOTH_DATA_{服装ID}(1000, キャラID)
+		LOCAL = LIMIT(RESULT, -100, 100)
+		
+	CASE 1
+		;MP
+		CALLFORM CLOTH_DATA_{服装ID}(1001, キャラID)
+		LOCAL = LIMIT(RESULT, -100, 100)
+		
+	CASE 2
+		;EP
+		SELECTCASE ARG:1
+			CASE 0
+				CALLFORM CLOTH_DATA_{服装ID}(1050, キャラID)
+				LOCAL = RESULT
+			CASE 1
+				CALLFORM CLOTH_DATA_{服装ID}(1051, キャラID)
+				LOCAL = RESULT
+			CASE 2
+				CALLFORM CLOTH_DATA_{服装ID}(1052, キャラID)
+				LOCAL = RESULT
+			CASE 3
+				CALLFORM CLOTH_DATA_{服装ID}(1053, キャラID)
+				LOCAL = RESULT
+			CASEELSE
+				RETURN -1
+		ENDSELECT
+		LOCAL = LIMIT(LOCAL, -100, 100)
+		
+	CASE 3
+		;CP
+		CALLFORM CLOTH_DATA_{服装ID}(1003)
+		LOCAL = LIMIT(RESULT, -100, 100)
+	CASEELSE
+		RETURN -1
+ENDSELECT
+
+RETURN 1, LOCAL
+;=================================================
+;服装効果：攻撃補正値を返す
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 補正値
+;=================================================
+@CLOTH_TYPE_EFFECT_攻撃補正(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+;---エラーチェック---
+CALL CHECK_CLOTH_EFFECT(キャラID)
+SIF RESULT == -1
+	RETURN -1
+服装ID = RESULT:1
+	
+;---補正値取得---
+RESULT = 0
+CALLFORM CLOTH_DATA_{服装ID}(1100, キャラID)
+LOCAL = LIMIT(RESULT, -100, 100)
+	
+RETURN 1, LOCAL
+;=================================================
+;服装効果：速度補正値を返す
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 補正値
+;=================================================
+@CLOTH_TYPE_EFFECT_速度補正(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+;---エラーチェック---
+CALL CHECK_CLOTH_EFFECT(キャラID)
+SIF RESULT == -1
+	RETURN -1
+服装ID = RESULT:1
+	
+;---補正値取得---
+RESULT = 0
+CALLFORM CLOTH_DATA_{服装ID}(1103, キャラID)
+LOCAL = LIMIT(RESULT, -100, 100)
+	
+RETURN 1, LOCAL
+;=================================================
+;服装効果：命中補正値を返す
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 補正値
+;=================================================
+@CLOTH_TYPE_EFFECT_命中補正(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+;---エラーチェック---
+CALL CHECK_CLOTH_EFFECT(キャラID)
+SIF RESULT == -1
+	RETURN -1
+服装ID = RESULT:1
+	
+;---補正値取得---
+RESULT = 0
+CALLFORM CLOTH_DATA_{服装ID}(1104, キャラID)
+LOCAL = LIMIT(RESULT, -100, 100)
+	
+RETURN 1, LOCAL
+;=================================================
+;服装効果：魅力補正値を返す
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 補正値
+;=================================================
+@CLOTH_TYPE_EFFECT_魅力補正(キャラID)
+#DIM キャラID
+#DIM 服装ID
+
+;---エラーチェック---
+CALL CHECK_CLOTH_EFFECT(キャラID)
+SIF RESULT == -1
+	RETURN -1
+服装ID = RESULT:1
+	
+;---補正値取得---
+RESULT = 0
+CALLFORM CLOTH_DATA_{服装ID}(1106, キャラID)
+LOCAL = LIMIT(RESULT, 0, 999)
+	
+RETURN 1, LOCAL
+;=================================================
+;服装効果：リジェネ
+;ARG	BASEの種類
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULT:1 回復量
+;=================================================
+@CLOTH_TYPE_EFFECT_リジェネ(キャラID, ARG)
+#DIM キャラID
+#DIM 服装ID
+
+;---エラーチェック---
+CALL CHECK_CLOTH_EFFECT(キャラID)
+SIF RESULT == -1
+	RETURN -1
+服装ID = RESULT:1
+	
+;---回復値取得---
+RESULT = 0
+
+SELECTCASE ARG
+	CASE 0
+		;HP
+		CALLFORM CLOTH_DATA_{服装ID}(1200, キャラID)
+	CASE 1
+		;MP
+		CALLFORM CLOTH_DATA_{服装ID}(1201, キャラID)
+	CASE 2
+		;EP
+		CALLFORM CLOTH_DATA_{服装ID}(1202, キャラID)
+	CASE 3
+		;CP
+		CALLFORM CLOTH_DATA_{服装ID}(1203, キャラID)
+	CASE 4
+		;TP
+		CALLFORM CLOTH_DATA_{服装ID}(1204, キャラID)
+	CASE 5
+		;DP
+		CALLFORM CLOTH_DATA_{服装ID}(1205, キャラID)
+	CASEELSE
+		RETURN -1
+ENDSELECT
+LOCAL = LIMIT(RESULT, -1000, 1000)
+	
+RETURN 1, LOCAL
+;=================================================
+;キャラデータ簡易チェック
+;RESULT:0 結果(1:成功 -1:失敗)
+;=================================================
+@CLOTH_TYPE_キャラチェック(キャラID)
+#DIM キャラID
+
+	SIF キャラID < 1 || キャラID >= CHARANUM
+		RETURN -1
+
+	BASE:(キャラID):HP = LIMIT(BASE:(キャラID):HP,0,MAXBASE:(キャラID):HP)
+
+	IF CFLAG:(キャラID):29
+		BASE:(キャラID):MP = 0
+	ELSE
+		BASE:(キャラID):MP = LIMIT(BASE:(キャラID):MP,1,MAXBASE:(キャラID):MP)
+	ENDIF
+
+	BASE:(キャラID):EP = LIMIT(BASE:(キャラID):EP,0,MAXBASE:(キャラID):EP)
+
+	BASE:(キャラID):CP = LIMIT(BASE:(キャラID):CP,0,MAXBASE:(キャラID):CP)
+	IF BASE:(キャラID):CP <= 0
+		CFLAG:(キャラID):40 = 0
+		CFLAG:(キャラID):44 = 0
+		IF CFLAG:(キャラID):500 == 0
+			CFLAG:(キャラID):501 = 0
+		ELSE
+			CFLAG:(キャラID):501 = 101
+		ENDIF
+	ENDIF
+	
+	RETURN 1
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;服装データ取得
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;服装データ:有効
+;RESULT:0 結果(1:有効 -1:無効)
+;=================================================
+@GET_CLOTH_DATA_有効(服装ID)
+#DIM 服装ID
+	
+	IF GET_CLOTH_CONFIG("服装",服装ID)
+		CALL GET_CLOTH_DATA_名前(服装ID)
+		IF RESULT == 1
+			RETURN 1
+		ELSE
+			RETURN -1
+		ENDIF
+	ELSE
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:名前
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULTS:0 名前
+;=================================================
+@GET_CLOTH_DATA_名前(服装ID)
+#DIM 服装ID
+	
+	RESULTS = %""%
+	TRYCCALLFORM CLOTH_DATA_{服装ID}(0)
+		IF RESULTS == ""
+			RETURN -1
+		ELSE
+			RETURN 1
+		ENDIF
+	CATCH
+		RETURN -1
+	ENDCATCH
+
+;=================================================
+;服装データ:説明
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULTS:0 説明
+;=================================================
+@GET_CLOTH_DATA_説明(服装ID)
+#DIM 服装ID
+	
+	
+	CALL GET_CLOTH_DATA_有効(服装ID)
+	IF RESULT == 1
+		RESULTS = %""%
+		CALLFORM CLOTH_DATA_{服装ID}(1)
+		RETURN 1
+	ELSE
+		RESULTS = %""%
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:選択可不可
+;RESULT:0 結果(1:可 -1:不可)
+;=================================================
+@GET_CLOTH_DATA_可不可(服装ID, キャラID)
+#DIM 服装ID
+#DIM キャラID
+	
+	
+	CALL GET_CLOTH_DATA_有効(服装ID)
+	IF RESULT == 1
+		CALLFORM CLOTH_DATA_{服装ID}(2,キャラID)
+		IF RESULT == 0
+			RETURN 1
+		ELSE
+			RETURN -1
+		ENDIF
+	ELSE
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:服装選択時地の文
+;RESULT:0 結果(1:成功 -1:失敗)
+;=================================================
+@GET_CLOTH_DATA_選択文(服装ID, キャラID)
+#DIM 服装ID
+#DIM キャラID
+	
+	CALL GET_CLOTH_DATA_有効(服装ID)
+	IF RESULT == 1
+		CALLFORM CLOTH_DATA_{服装ID}(5,キャラID)
+		RETURN 1
+	ELSE
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:ステータス服装表示
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULTS:0 表示
+;=================================================
+@GET_CLOTH_DATA_服装表示(服装ID, キャラID)
+#DIM 服装ID
+#DIM キャラID
+#DIM CP率
+	
+	CALL GET_CLOTH_DATA_有効(服装ID)
+	IF RESULT == 1
+		CP率 = BASE:(キャラID):CP * 100 / MAXBASE:(キャラID):CP
+		IF CP率 > 66 
+			LOCAL = 10
+		ELSEIF CP率 > 33
+			LOCAL = 11
+		ELSEIF CP率 > 0
+			LOCAL = 12
+		;足の装備が残っている時はここで変更
+		ELSEIF CFLAG:(キャラID):500
+			CFLAG:(キャラID):501 = 101
+			LOCAL = 12
+		ENDIF
+		RESULTS = %""%
+		CALLFORM CLOTH_DATA_{服装ID}(LOCAL,キャラID)
+		IF RESULTS == ""
+			CALL GET_CLOTH_DATA_名前(服装ID)
+		ENDIF
+		RETURN 1
+	ELSE
+		RESULTS = %""%
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:遭遇時服装表現
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULTS:0 表現
+;=================================================
+@GET_CLOTH_DATA_服装表現(服装ID, キャラID)
+#DIM 服装ID
+#DIM キャラID
+#DIM CP率
+	
+	CALL GET_CLOTH_DATA_有効(服装ID)
+	IF RESULT == 1
+		CP率 = BASE:(キャラID):CP * 100 / MAXBASE:(キャラID):CP
+		IF CP率 > 66 
+			LOCAL = 20
+		ELSEIF CP率 > 33
+			LOCAL = 21
+		ELSEIF CP率 > 0
+			LOCAL = 22
+		;足の装備が残っている時はここで変更
+		ELSEIF CFLAG:(キャラID):500
+			CFLAG:(キャラID):501 = 101
+			LOCAL = 22
+		ENDIF
+		RESULTS = %""%
+		CALLFORM CLOTH_DATA_{服装ID}(LOCAL,キャラID)
+		RETURN 1
+	ELSE
+		RESULTS = %""%
+		RETURN -1
+	ENDIF
+	
+;=================================================

@@ -1,0 +1,17 @@
+﻿;強制自慰
+;CHARA_ID	実行キャラ
+@FIX_PT_ACTION_46(CHARA_ID)
+#DIM CHARA_ID
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+
+CALL PRINT_MESSAGE(CHARA_ID, 1, 46, CALLNAME:CHARA_ID, "")
+
+;強制自慰フラグ
+CFLAG:CHARA_ID:156 = 1
+CALL MASTURBATION(CHARA_ID, 1, 100)
+;強制自慰による絶頂は、終了後EP1に
+BASE:CHARA_ID:2 = 1
+
+

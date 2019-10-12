@@ -1,0 +1,157 @@
+﻿;=================================================
+;絶頂の瞬間
+;ARG:0 メッセージID
+;ARG:1 部位(0:A 1:B 2:C 3:V 5:肌 9:M)
+;ARGS:0 対象キャラのCALLNAME（TARGET）
+;ARGS:1 未定義
+;ARG:2 MPダメージ量(負数で回復)
+;ARG:3 ビット桁 1:A 2:B 3:C 4:V 5:肌 6:M にそれぞれ絶頂済み部位フラグ
+;ARG:4 未定義
+;ARG:5 未定義
+;ARG:6 未定義
+;=================================================
+@SYSTEM_MESSAGE_120(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIMS CALLWORD, 2
+
+	VARSET CALLWORD
+
+	;絶頂部位の呼び方を設定
+	SELECTCASE ARG:1
+	CASE 0
+		CALLWORD:0 = 尻穴
+	CASE 1
+		CALLWORD:0 = 胸
+	CASE 2
+		IF GET_PENIS(TARGET) & 4
+			CALLWORD:0 = ペニス
+		ELSEIF GET_PENIS(TARGET)
+			CALLWORD:0 = ふたなりペニス
+		ELSE
+			CALLWORD:0 = クリトリス
+		ENDIF
+	CASE 3
+		CALLWORD:0 = 牝穴
+	CASE 5
+		CALLWORD:0 = 肌
+	CASE 9
+		CALLWORD:0 = 口
+	ENDSELECT
+	
+	;絶頂済み部位の呼び方を設定
+	SIF GETBIT(ARG:3, 1)
+		CALLWORD:1 = %CALLWORD:1%尻穴・
+	SIF GETBIT(ARG:3, 2)
+		CALLWORD:1 = %CALLWORD:1%胸・
+	IF GETBIT(ARG:3, 3)
+		IF GET_PENIS(TARGET) & 4
+			CALLWORD:1 = %CALLWORD:1%ペニス・
+		ELSEIF GET_PENIS(TARGET)
+			CALLWORD:1 = %CALLWORD:1%ふたなりペニス・
+		ELSE
+			CALLWORD:1 = %CALLWORD:1%クリトリス・
+		ENDIF
+	ENDIF
+	SIF GETBIT(ARG:3, 4)
+		CALLWORD:1 = %CALLWORD:1%牝穴・
+	SIF GETBIT(ARG:3, 5)
+		CALLWORD:1 = %CALLWORD:1%肌・
+	SIF GETBIT(ARG:3, 6)
+		CALLWORD:1 = %CALLWORD:1%口・
+	STRLENSU CALLWORD:1
+	SUBSTRINGU CALLWORD:1, 0, RESULT - 1
+	CALLWORD:1 = %RESULTS%
+	
+	;連続絶頂
+	{
+	IF (ARG:1 == 0 && GETBIT(ARG:3, 1)) ||
+	   (ARG:1 == 1 && GETBIT(ARG:3, 2)) ||
+	   (ARG:1 == 2 && GETBIT(ARG:3, 3)) ||
+	   (ARG:1 == 3 && GETBIT(ARG:3, 4)) ||
+	   (ARG:1 == 5 && GETBIT(ARG:3, 5)) ||
+	   (ARG:1 == 9 && GETBIT(ARG:3, 6))
+	}
+		PRINTDATA
+			DATAFORM 絶頂したままの%CALLWORD:0%に、
+			DATAFORM 絶頂で痙攣したままの%CALLWORD:0%に、
+			DATAFORM 絶頂で敏感になった%CALLWORD:0%に、
+		ENDDATA
+		PRINTDATAL
+			DATAFORM 休む事なく次の快感が襲いかかる！
+			DATAFORM 容赦ない快感が叩き込まれた！
+			DATAFORM 更なる快感が押し寄せる！
+		ENDDATA
+		
+	;多重絶頂
+	ELSEIF ARG:3 && CFLAG:99 != 0
+		PRINTDATA
+			DATAFORM %CALLWORD:1%の絶頂が治まるより早く、
+			DATAFORM %CALLWORD:1%を絶頂させたまま、
+			DATAFORM 絶頂し続ける%CALLWORD:1%の感覚に引きずられ、
+		ENDDATA
+		PRINTFORMD %CALLNAME:TARGET%の%CALLWORD:0%は
+		PRINTDATAL
+			DATAFORM 甘い痺れに支配されていく！
+			DATAFORM 快感に屈した！
+			DATAFORM 限界を迎えた！
+		ENDDATA
+	ENDIF
+	
+	;絶頂部位に対応した淫乱素質持ちの場合装飾文
+	IF TALENT:(75 + ARG:1) && (ARG:1 >= 0 && ARG:1 <= 3)
+		;感覚LV別地の文
+		IF ABL:(6 + ARG:1) <= 1
+			PRINTFORM 無慈悲に改造された
+		ELSEIF ABL:(6 + ARG:1) == 2
+			PRINTFORM 淫らに疼き続ける
+		ELSE
+			PRINTFORM 開発されきった
+		ENDIF
+		
+		;部位別地の文
+		SELECTCASE ARG:1
+		CASE 0
+			PRINTFORM 尻穴の快感に目の前が真っ白になって
+		CASE 1
+			PRINTFORM 胸を大きく突き出して
+		CASE 2
+			IF GET_PENIS(TARGET) & 4
+				PRINTFORM ペニスの刺激に耐えられるわけもなく
+			ELSEIF GET_PENIS(TARGET)
+				PRINTFORM ふたなりの身体が狂ったように跳ね
+			ELSE
+				PRINTFORM クリトリスの刺激に耐えられるわけもなく
+			ENDIF
+		CASE 3
+			PRINTFORM 牝穴の快楽に溺れて
+		ENDSELECT
+	ENDIF
+	
+	;◆淫乱系素質補正によるMP回復文
+	IF ARG:2 < 0
+		LOCAL:12 = ARG:2 * -1
+		PRINTFORM %ARGS:0%はイッてしまった！ (MP 
+		SETCOLOR 0x70FF70
+		PRINTFORM +{LOCAL:12}
+		RESETCOLOR
+		PRINTFORML )
+		
+		;感覚LV別地の文
+		IF ABL:(6 + ARG:1) <= 1
+			PRINTFORML %ARGS:0%は快楽に屈した身体に愕然としながら、甘い声を上げ続けている…
+		ELSEIF ABL:(6 + ARG:1) == 2
+			PRINTFORML 絶頂中毒寸前まで堕ちた%ARGS:0%は、快楽を求め蕩けきった声を上げている…
+		ELSE
+			PRINTFORML %ARGS:0%は快楽を完全に受け入れ、悦びの声を上げている…
+		ENDIF
+		PRINTFORML %ARGS:0%の精神が回復した！
+	ELSE
+		PRINTFORM %ARGS:0%はイッてしまった！ (MP 
+		SETCOLOR 0x70FF70
+		PRINTFORM -{ARG:2}
+		RESETCOLOR
+		PRINTFORML )
+	ENDIF
+
+
+;=================================================
+

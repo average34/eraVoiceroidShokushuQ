@@ -1,0 +1,153 @@
+﻿;刻印入手
+@GET_MARK(ARG:0 = 0, ARG:1 = 0, ARG:2 = 0)
+;ARG:0	キャラID
+;ARG:1	刻印番号
+;ARG:2	屈服させた敵番号
+
+IF MARK:(ARG:0):(ARG:1) == 0
+	MARK:(ARG:0):(ARG:1) = 1
+	CALL PRINT_MESSAGE(ARG:0, 70, ARG:1, CALLNAME:(ARG:0), "")
+	;いつ何によって刻印が刻まれたか保存
+	CFLAG:(ARG:0):(210 + ARG:1) = DAY
+	CFLAG:(ARG:0):(211 + ARG:1) = ARG:2
+ENDIF
+
+
+;敗北時の刻印の種類決定
+@GET_LOSE_MARK(ARG:0, ARG:1)
+;ARG:0	キャラID
+;ARG:1	刻印を与える敵番号
+;LOCAL
+;0	LOOP
+
+;敵の情報入手のため一時的に呼び出す
+TRYCCALLFORM SET_ENEMY_DATA_{ARG:1}(FLAG:1)
+CATCH
+PRINTFORMW (GET_MARK) 未実装の敵(ID:{ARG:1})のため、処理できません
+RETURN 0
+ENDCATCH
+
+;屈服刻印：触手　敵がローパー系
+IF MARK:(ARG:0):0 == 0 && (DA:(FLAG:1):85 & 32)
+	CALL GET_MARK(ARG:0, 0, ARG:1)
+;屈服刻印：百合　敵が女性系で自分が男の娘ではない
+ELSEIF MARK:(ARG:0):1 == 0 && (DA:(FLAG:1):85 & 1) && TALENT:(ARG:0):122 == 0
+	CALL GET_MARK(ARG:0, 1, ARG:1)
+;屈服刻印：発情　敵がガーディアン・アルラウネ・ドリアード・レディポイズン
+ELSEIF MARK:(ARG:0):2 == 0 && (ARG:1 == 3 || ARG:1 == 15 || ARG:1 == 16 || ARG:1 == 24)
+	CALL GET_MARK(ARG:0, 2, ARG:1)
+;屈服刻印：ドレイン　敵がオクトパス・クラーケン・イソギンチャク・イソツビ・アルラウネ・ドリアード・スキュラ
+ELSEIF MARK:(ARG:0):3 == 0 && (ARG:1 == 9 || ARG:1 == 10 || ARG:1 == 11 || ARG:1 == 12 || ARG:1 == 15 || ARG:1 == 16 || ARG:1 == 48)
+	CALL GET_MARK(ARG:0, 3, ARG:1)
+;屈服刻印：獣姦　敵がコウノトリ・フコウノトリ・ユニコーン・ハウンド・アグー
+ELSEIF MARK:(ARG:0):4 == 0 && (ARG:1 == 45 || ARG:1 == 46 || ARG:1 == 47 || ARG:1 == 52 || ARG:1 == 57)
+	CALL GET_MARK(ARG:0, 4, ARG:1)
+;屈服刻印：スライム　敵がスライム系
+ELSEIF MARK:(ARG:0):5 == 0 && (DA:(FLAG:1):85 & 64)
+	CALL GET_MARK(ARG:0, 5, ARG:1)
+;屈服刻印：ゴブリン　敵がホフゴブリン
+ELSEIF MARK:(ARG:0):6 == 0 && ARG:1 == 61 
+	CALL GET_MARK(ARG:0, 6, ARG:1)
+;屈服刻印：ちんぽ　敵が男性系・ヴォッキ・フルヴォッキ
+ELSEIF MARK:(ARG:0):7 == 0 && ((DA:(FLAG:1):85 & 128) || ARG:1 == 65 || ARG:1 == 66)
+	CALL GET_MARK(ARG:0, 7, ARG:1)
+;屈服刻印：催眠　敵がレッサーヒュプノ・ファンガス・ヒュプノ
+ELSEIF MARK:(ARG:0):8 == 0 && (ARG:1 == 44 || ARG:1 == 74 || ARG:1 == 98)
+	CALL GET_MARK(ARG:0, 8, ARG:1)
+;屈服刻印：丸呑み　敵が丸呑み系
+ELSEIF MARK:(ARG:0):9 == 0 && (DA:(FLAG:1):85 & 8)
+	CALL GET_MARK(ARG:0, 9, ARG:1)
+;屈服刻印：触手服　敵がパラサイトミスト
+ELSEIF MARK:(ARG:0):10 == 0 && ARG:1 == 92
+	CALL GET_MARK(ARG:0, 10, ARG:1)
+;屈服刻印：小悪魔　敵が小悪魔
+ELSEIF MARK:(ARG:0):11 == 0 && ARG:1 == 70
+	CALL GET_MARK(ARG:0, 11, ARG:1)
+;屈服刻印：尻尾　敵がナインテイルズ・ネコマタ・小悪魔・ラミア・ラミア化
+ELSEIF MARK:(ARG:0):12 == 0 && (ARG:1 == 50 || ARG:1 == 69 || ARG:1 == 70 || ARG:1 == 95 || ARG:1 == 105)
+	CALL GET_MARK(ARG:0, 12, ARG:1)
+;屈服刻印：視線　敵がガーディアン・ダークアイ・ウォッチャー
+ELSEIF MARK:(ARG:0):13 == 0 && (ARG:1 == 3 || ARG:1 == 25 || ARG:1 == 97)
+	CALL GET_MARK(ARG:0, 13, ARG:1)
+;屈服刻印：噴乳　敵がレイニーバイン・スコールバイン
+ELSEIF MARK:(ARG:0):14 == 0 && (ARG:1 == 87 || ARG:1 == 88)
+	CALL GET_MARK(ARG:0, 14, ARG:1)
+;屈服刻印：媚毒　敵がイソツビ・アクティニア・アルラウネ・ドリアード・アルケニー・ショゴスセル・ジェリーフィッシュ
+ELSEIF MARK:(ARG:0):15 == 0 && (ARG:1 == 11 || ARG:1 == 12 || ARG:1 == 15 || ARG:1 == 16 ||ARG:1 == 34 || ARG:1 == 35 || ARG:1 == 54)
+	CALL GET_MARK(ARG:0, 15, ARG:1)
+;屈服刻印：ふたなりちんぽ　敵が女性系で敵のふたなりON
+ELSEIF MARK:(ARG:0):16 == 0 && (DA:(FLAG:1):85 & 1) && (FLAG:520 == 1 || FLAG:520 == 3)
+	CALL GET_MARK(ARG:0, 16, ARG:1)
+;屈服刻印：粘液　敵がレイニーバイン・スコールバイン・丸呑み系・海産系・ローパー系・スライム系
+ELSEIF MARK:(ARG:0):19 == 0 && (ARG:1 == 87 || ARG:1 == 88 || (DA:(FLAG:1):85 & 8) || (DA:(FLAG:1):85 & 16) || (DA:(FLAG:1):85 & 32) || (DA:(FLAG:1):85 & 64))
+	CALL GET_MARK(ARG:0, 19, ARG:1)
+
+;ここから条件により再抽選
+;敵の番号は保存しないものが多め
+;屈服刻印：触手　部屋の汚染度が高い
+ELSEIF MARK:(ARG:0):0 == 0 && FLAG:(FLAG:5 + 50) > 50
+	CALL GET_MARK(ARG:0, 0)
+;屈服刻印：発情　自分が発情
+ELSEIF MARK:(ARG:0):2 == 0 && CFLAG:(ARG:0):28
+	CALL GET_MARK(ARG:0, 2)
+;屈服刻印：ドレイン　自分が母乳体質
+ELSEIF MARK:(ARG:0):3 == 0 && TALENT:(ARG:0):130
+	CALL GET_MARK(ARG:0, 3)
+;屈服刻印：スライム　自分がスライム服
+ELSEIF MARK:(ARG:0):5 == 0 && CFLAG:(ARG:0):48
+	CALL GET_MARK(ARG:0, 5)
+;屈服刻印：催眠　自分が催眠
+ELSEIF MARK:(ARG:0):8 == 0 && CFLAG:(ARG:0):43
+	CALL GET_MARK(ARG:0, 8)
+;屈服刻印：触手服　自分が触手服
+ELSEIF MARK:(ARG:0):10 == 0 && CFLAG:(ARG:0):37
+	CALL GET_MARK(ARG:0, 10)
+;屈服刻印：噴乳　自分が母乳体質2以上かつ敵がBを襲う
+ELSEIF MARK:(ARG:0):14 == 0 && (TALENT:(ARG:0):130 > 1 && (DA:(FLAG:1):89 & 2))
+	CALL GET_MARK(ARG:0, 14, ARG:1)
+;屈服刻印：粘液　自分がスライム服
+ELSEIF MARK:(ARG:0):19 == 0 && CFLAG:(ARG:0):48
+	CALL GET_MARK(ARG:0, 19)
+ENDIF
+
+;敵削除
+FOR LOCAL:0, 0, VARSIZE("DA", 1)
+	DA:(FLAG:1):(LOCAL:0) = 0
+NEXT
+
+
+;処女喪失時の刻印の種類決定
+@GET_VIRGIN_MARK(ARG:0, ARG:1)
+;ARG:0	キャラID
+;ARG:1	刻印を与える敵番号
+;LOCAL
+;0	LOOP
+
+;敵の情報入手のため一時的に呼び出す
+TRYCCALLFORM SET_ENEMY_DATA_{ARG:1}(FLAG:1)
+CATCH
+PRINTFORMW (CREATE_ENEMY) 未実装の敵(ID:{ARG:1})のため、処理できません
+RETURN 0
+ENDCATCH
+
+;屈服刻印：触手　敵がローパー系
+IF MARK:(ARG:0):0 == 0 && (DA:(FLAG:1):85 & 32)
+	CALL GET_MARK(ARG:0, 0, ARG:1)
+;屈服刻印：獣姦　敵がコウノトリ・フコウノトリ・ユニコーン・ハウンド・アグー
+ELSEIF MARK:(ARG:0):4 == 0 && (ARG:1 == 45 || ARG:1 == 46 || ARG:1 == 47 || ARG:1 == 52 || ARG:1 == 57)
+	CALL GET_MARK(ARG:0, 4, ARG:1)
+;屈服刻印：スライム　敵がスライム系
+ELSEIF MARK:(ARG:0):5 == 0 && (DA:(FLAG:1):85 & 64)
+	CALL GET_MARK(ARG:0, 5, ARG:1)
+;屈服刻印：ゴブリン　敵がホフゴブリン
+ELSEIF MARK:(ARG:0):6 == 0 && ARG:1 == 61 
+	CALL GET_MARK(ARG:0, 6, ARG:1)
+;屈服刻印：ちんぽ　敵が男性系・ヴォッキ・フルヴォッキ
+ELSEIF MARK:(ARG:0):7 == 0 && ((DA:(FLAG:1):85 & 128) || ARG:1 == 65 || ARG:1 == 66)
+	CALL GET_MARK(ARG:0, 7, ARG:1)
+ENDIF
+
+;敵削除
+FOR LOCAL:0, 0, VARSIZE("DA", 1)
+	DA:(FLAG:1):(LOCAL:0) = 0
+NEXT

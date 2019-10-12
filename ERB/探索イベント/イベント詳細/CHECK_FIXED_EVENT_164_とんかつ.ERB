@@ -1,0 +1,88 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_164
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 50
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1 || FLAG:164 >= 100
+	CALL ADD_ABL_EXP_PT(0, 200)
+	
+	PRINTFORML 迷宮の隅にトンカツが落ちているのを発見した！
+	PRINTFORML 揚げたてのトンカツからは、美味しそうな匂いが漂ってくる…
+	PRINTFORML 食べてみますか？
+	CALL ASK_YN
+	IF RESULT == 0
+		PRINTFORMW ！！！！！！！！
+		PRINTFORML 　
+		IF RAND:2 == 0
+			PRINTFORMW トンカツだと思っていたモノは、コロッケだった…
+		
+		ELSE
+			PRINTFORML どうやら、トンカツには何かの薬が仕込まれていたようだ…
+			PRINTFORMW  %CALLNAME:1%%TACHI()%の身体の敏感・鈍感部位が書き換えられてしまった！
+			TALENT:1:101 = RAND:4 - 1
+			TALENT:1:102 = RAND:4 - 1
+			TALENT:1:103 = RAND:4 - 1
+			TALENT:1:104 = RAND:4 - 1
+			IF FLAG:10
+				TALENT:(FLAG:10):101 = RAND:4 - 1
+				TALENT:(FLAG:10):102 = RAND:4 - 1
+				TALENT:(FLAG:10):103 = RAND:4 - 1
+				TALENT:(FLAG:10):104 = RAND:4 - 1
+			ENDIF
+			IF FLAG:11
+				TALENT:(FLAG:11):101 = RAND:4 - 1
+				TALENT:(FLAG:11):102 = RAND:4 - 1
+				TALENT:(FLAG:11):103 = RAND:4 - 1
+				TALENT:(FLAG:11):104 = RAND:4 - 1
+			ENDIF
+			
+		ENDIF
+		
+		PRINTFORML でも、美味しかった…
+		PRINTFORML パーティーのMPが少し回復した！
+		
+		BASE:1:1 += MAXBASE:1:1 / 4
+		IF BASE:1:1 > MAXBASE:1:1
+			BASE:1:1 = MAXBASE:1:1
+		ENDIF
+		IF FLAG:10
+			BASE:(FLAG:10):1 += MAXBASE:(FLAG:10):1 / 4
+			IF BASE:(FLAG:10):1 > MAXBASE:(FLAG:10):1
+				BASE:(FLAG:10):1 = MAXBASE:(FLAG:10):1
+			ENDIF
+		ENDIF
+		IF FLAG:11
+			BASE:(FLAG:11):1 += MAXBASE:(FLAG:11):1 / 4
+			IF BASE:(FLAG:11):1 > MAXBASE:(FLAG:11):1
+				BASE:(FLAG:11):1 = MAXBASE:(FLAG:11):1
+			ENDIF
+		ENDIF
+		;食べた場合、別の場所に移動
+		FLAG:164 = RAND:30 + 1
+	ELSE
+		;食べない場合、イベントは残す
+		PRINTFORMW %CALLNAME:1%%TACHI()%はトンカツを食べずに残しておくことにした…
+		
+	ENDIF
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

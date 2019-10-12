@@ -1,0 +1,212 @@
+﻿;キャラ一覧表示
+@SHOW_CHARA_WIKI
+#DIM LINE
+#DIM 選択中キャラ
+#DIM 現ページ
+#DIM 表示人数
+#DIM 一列表示キャラ数
+#DIM 登録人数
+#DIM キャラリスト , 200
+#DIM キャラページ
+#DIMS ページ内容 , 4
+
+
+	;初期化処理&設定
+	REDRAW 0
+	LINE = LINECOUNT
+	選択中キャラ = -1
+	現ページ = 0
+	キャラページ = 0
+	表示人数 = 40
+	一列表示キャラ数 = 4
+	;キャラクタのリストを作成
+	;というよりは人数の取得
+	VARSET キャラリスト , -1
+	FOR LOCAL , 1 , 200
+		SIF EXISTCSV(LOCAL)
+			キャラリスト:FINDELEMENT(キャラリスト , -1) = LOCAL
+	NEXT
+	登録人数 = FINDELEMENT(キャラリスト , -1)
+
+	
+	$PRINT
+	;画面を更新
+	CLEARLINE LINECOUNT - LINE
+	DRAWLINE
+	IF EXISTCSV(選択中キャラ)
+		;先にページの内容を決める
+		;最初に初期化
+		VARSET ページ内容 , ""
+		;1ページ目は能力で固定
+		ページ内容:0 = 能力
+		
+		
+		;現ページがページ数を超えてたら調整
+		SIF FINDELEMENT(ページ内容 , "" , , , 1) <= 現ページ
+			現ページ = 0
+		;説明を表示
+		CALL SHOW_CHARA_EXPLAIN_WIKI(選択中キャラ , ページ内容:現ページ)
+		
+		;操作UI表示
+		;他の関数参照しない力技タイプ
+		
+		;[-]前のページ [+]次のページ
+		IF FINDELEMENT(ページ内容 , "" , , , 1) != 1
+			LOCAL = STRLENS(GETLINESTR(" ")) - STRLENS("[-]前のページ[+]次のページ")
+			PRINTBUTTON "[-]前のページ" , "-"
+			PRINTFORM %" " * LOCAL%
+			PRINTBUTTON "[+]次のページ" , "+"
+		ENDIF
+		PRINTL
+		;[<]前のキャラ [>]次のキャラ
+		IF 登録人数 > 1
+			LOCAL = STRLENS(GETLINESTR(" ")) - STRLENS("[<]前のキャラ[>]次のキャラ")
+			PRINTBUTTON "[<]前のキャラ" , "<"
+			PRINTFORM %" " * LOCAL%
+			PRINTBUTTON "[>]次のキャラ" , ">"
+		ENDIF
+		PRINTL
+	ELSE
+		FOR LOCAL , 0 , 24
+			PRINTL
+		NEXT
+	ENDIF
+	
+	DRAWLINE
+	PRINTFORML どの乙女の情報を見ますか？
+	FOR LOCAL, キャラページ * 表示人数 , (キャラページ + 1) * 表示人数
+		IF キャラリスト:LOCAL != -1
+			SIF キャラリスト:LOCAL == 選択中キャラ
+				SETCOLORBYNAME Cyan
+			PRINTFORM 　[{キャラリスト:LOCAL,3}] %CSVNAME(キャラリスト:LOCAL),16,LEFT%
+			;4つ表示するごとに改行
+			SIF LOCAL % 一列表示キャラ数 == 一列表示キャラ数 -1  && LOCAL > 0
+				PRINTL  
+			RESETCOLOR
+		ENDIF
+	NEXT
+	PRINTL
+	PRINTL 　[  0] キャンセル
+	PRINTL 　[500] 次へ
+	PRINTL 　[600] 前へ
+
+
+
+	$INPUT_LOOP
+	INPUTS
+	
+	IF RESULTS == "0"
+		REDRAW 1
+		RETURN
+	ELSEIF RESULTS == "500"
+		キャラページ ++
+		SIF キャラページ > 登録人数 / 表示人数
+			キャラページ = 0
+	ELSEIF RESULTS == "600"
+		キャラページ --
+		SIF キャラページ < 0
+			キャラページ = 登録人数 / 表示人数
+	;キャラデータ表示のページ送り
+	ELSEIF FINDELEMENT(ページ内容 , "" , , , 1) != 1 && GROUPMATCH(RESULTS , "-" , "+")
+		IF RESULTS == "-"
+			現ページ --
+			SIF 現ページ < 0
+				現ページ = FINDELEMENT(ページ内容 , "" , , , 1) - 1
+		ELSE
+			現ページ ++
+			SIF 現ページ > FINDELEMENT(ページ内容 , "" , , , 1) - 1
+				現ページ = 0
+		ENDIF
+	;表示キャラ送り
+	ELSEIF 登録人数 > 1 && GROUPMATCH(RESULTS , "<" , ">")
+		LOCAL = FINDELEMENT(キャラリスト , 選択中キャラ)
+		IF RESULTS == "<"
+			LOCAL --
+			SIF LOCAL < 0
+				LOCAL = 登録人数 - 1
+		ELSE
+			LOCAL ++
+			SIF LOCAL > 登録人数 - 1
+				LOCAL = 0
+		ENDIF
+		選択中キャラ = キャラリスト:LOCAL
+	ELSEIF ISNUMERIC(RESULTS) && MATCH(キャラリスト , TOINT(RESULTS))
+		選択中キャラ = TOINT(RESULTS)
+	ELSE
+		PRINTW sss
+		REUSELASTLINE 入力が不正です！
+		CLEARLINE 1
+		GOTO INPUT_LOOP
+	ENDIF
+	GOTO PRINT
+
+
+
+;指定されたキャラの基本ステータスを表示
+;ARG	指定キャラ
+;ARGS	表示ページ
+@SHOW_CHARA_EXPLAIN_WIKI(ARG:0 , ARGS)
+#DIM LINE
+LINE = LINECOUNT
+PRINTFORML %CSVNAME(ARG),15,LEFT%
+SELECTCASE ARGS
+	CASE "能力"
+		ADDCHARA ARG
+		PRINTFORML 
+		
+		SETCOLOR 0x70FFFF
+		PRINTFORM HP {CSVBASE(ARG,0)}  
+		SETCOLOR 0x70FF70
+		PRINTFORM MP {CSVBASE(ARG,1)}  
+		SETCOLOR 0xFF70FF
+		PRINTFORM EP {CSVBASE(ARG,2)}  
+		SETCOLOR 0xFFFF70
+		PRINTFORML CP {CSVBASE(ARG,3)}  
+		RESETCOLOR
+		PRINTFORML 
+		
+		PRINTFORM 初期経験　
+		FOR LOCAL:0 , 0 ,15
+			IF ABL:(CHARANUM-1):(LOCAL:0)
+				PRINTFORM %ABLNAME:(LOCAL:0)% Lv{ABL:(CHARANUM-1):(LOCAL:0)} 
+				LOCAL:5 += 1
+			ENDIF
+		NEXT
+		IF LOCAL:5 == 0
+			PRINTFORM なし
+		ENDIF
+		PRINTFORML 
+		
+		
+		PRINTFORM 初期
+		CALL SHOW_PERSONALITY(CHARANUM-1)
+		
+		
+		PRINTFORML 戦闘素質 {CSVABL(ARG, 98, 0), 3} / 速度 {CSVABL(ARG, 97, 0), 3}
+		PRINTFORM 初期素質：
+		CALL SHOW_TALENT_LIST(CHARANUM-1,1)
+		PRINTFORML 
+		
+		PRINTFORM 相性：
+		FOR LOCAL:0 , 0 ,200
+			IF RELATION:(CHARANUM-1):(LOCAL:0)
+				PRINTFORM %CSVNAME(LOCAL:0)% {RELATION:(CHARANUM-1):(LOCAL:0) - 100} 
+			ENDIF
+		NEXT
+		PRINTFORML 
+		;見栄えのため2行ほど開ける
+		PRINTFORML 
+		PRINTFORML 
+		CALL SHOW_CHARA_EXPLAIN(ARG)
+		
+		LOCAL = 22 - (LINECOUNT - LINE) ;左：このページで表示させたい行数　右：現在この関数で消費した行数　LOCAL：不足行数
+		WHILE LOCAL > 0
+			PRINTL
+			LOCAL --
+		WEND
+
+		DELCHARA CHARANUM-1
+
+		
+ENDSELECT
+

@@ -1,0 +1,246 @@
+﻿;ペットについて
+;eraT0005754のコピペです
+@SHOW_PET_WIKI
+;LOCAL
+;2	直前に選択した番号
+;3	ペットの詳細を見た
+;10	行削除用カウント1(計算用)
+;11	行削除用カウント2(計算用)
+;12	行削除用カウント3(項目の改行数)
+;13	行削除用カウント4(計算用)
+;14	行削除用カウント5(計算用)
+;15	行削除用カウント6(詳細の改行数)
+
+	$START
+	REDRAW 0
+	LOCAL:10 = LINECOUNT
+
+	LOCAL:1 = 0
+	DRAWLINE
+	PRINTFORML どのペットの項目を見ますか？
+	
+	FOR LOCAL:0, 1, 23
+		IF GROUPMATCH(LOCAL:0,1,8,17)
+			SETCOLOR 0x60C0FF
+			IF LOCAL:0 == 1
+				PRINTFORML ■■ 概要
+			ELSEIF LOCAL:0 == 8
+				PRINTL
+				PRINTFORML ■■ ステータス
+			ELSEIF LOCAL:0 == 17
+				PRINTL
+				PRINTFORML ■■ ペットメニュー項目
+			ENDIF
+			RESETCOLOR
+			LOCAL:1 = 0
+		ENDIF
+		PRINTFORM [{LOCAL:0,3}] %PETMENU_NAME(LOCAL:0),30,LEFT%
+		LOCAL:1 += 1
+		;2つ表示するごとに改行
+		SIF (LOCAL:1 % 2) == 0 && LOCAL:1 > 0
+			PRINTL
+	NEXT
+	PRINTL
+	PRINTL
+	PRINTL [  0] キャンセル
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL:11 = LINECOUNT
+	;項目表示の改行数を記録
+	LOCAL:12 = LOCAL:11 - LOCAL:10
+
+	IF RESULT == 0
+		REDRAW 1
+		LOCAL:3 = 0
+		RETURN
+	ELSEIF RESULT > 0 && RESULT < 23
+		;行削除(初回)
+		IF LOCAL:3 == 0
+			CLEARLINE LOCAL:12
+		;行削除(2回目～)
+		ELSEIF LOCAL:3 == 1 && LOCAL:2 != RESULT
+			CLEARLINE LOCAL:15 + LOCAL:12 + 3
+		;連打のログ流れ防止
+		ELSEIF LOCAL:2 == RESULT
+			CLEARLINE 1
+			GOTO INPUT_LOOP
+		ENDIF
+		LOCAL:2 = RESULT
+		DRAWLINE
+		SETCOLOR 0x60C0FF
+		PRINTFORML >> %PETMENU_NAME(RESULT),15,LEFT%
+		RESETCOLOR
+		LOCAL:13 = LINECOUNT
+		CALL SHOW_PET_EXPLAIN_WIKI(RESULT)
+		LOCAL:14 = LINECOUNT
+		;説明表示の改行数を記録
+		LOCAL:15 = LOCAL:14 - LOCAL:13
+		PRINTL
+		LOCAL:3 = 1
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+;アイテムの詳細を表示
+;ARG:0	アイテムID
+@SHOW_PET_EXPLAIN_WIKI(ARG:0)
+
+;ほぼ原文のコピペ
+IF ARG:0 == 1
+	PRINTFORML 敵を倒すと、たまに起き上がる。このときがペットを手に入れるチャンスだ。
+	PRINTFORML 各種ステータスは元の種族に依存するが、ランダムで上下する。
+	PRINTFORML 苦労して手に入れたペットがすごい雑魚だったりすることもある。
+ELSEIF ARG:0 == 2
+	PRINTFORML 戦闘中のペットは種族に基づく技でPTを補助する。
+	PRINTFORML ただし、何もしないことも多々あるので、過信は禁物である。
+	PRINTFORML 
+	PRINTFORML ランクや満腹度や好感度、屈服度が、行動確率や攻撃の命中率・ダメージに補正する。
+	PRINTFORML また、同じ種族でもランクが高いほど強力な技を使う。 
+	PRINTFORML なお、行動する確率が高いペットは便利だが、ペットの行動には「レイプ」も含まれる。
+	PRINTFORML 必然的に、「行動率が高い＝レイプされる率も高い」である。
+ELSEIF ARG:0 == 3
+	PRINTFORML 戦闘などにより獲得できる栄養を消費し、アイテムの生産や各種サービスを受けられる。
+	PRINTFORML 生産もサービスも、有用なものからそうでないものまで色々揃っている。
+	PRINTFORML まずはペットメニューから覗いてみよう。
+	PRINTFORML 屈服度が高いとレートも上がるので、生産目的のペットなら屈服度を低く保とう。
+ELSEIF ARG:0 == 4
+	PRINTFORML ペットとは性交渉、ありていに言ってセックスが可能。
+	PRINTFORML 自発的に身体を捧げるか、レイプされるかの二つがある。
+	PRINTFORML 
+	PRINTFORML 捧げるほうはペットメニューから行える。
+	PRINTFORML レイプは戦闘中や移動中に発生するが、こまめに餌をやるとある程度予防できる。
+	PRINTFORML どちらであろうと性交渉はペットの満腹度を回復させ、受け手の身体の開発度に応じた栄養を入手させる。
+	PRINTFORML ただし身体開発や妊娠・寄生のリスクもあるし、屈服度も上昇する。メリットばかりではない。
+ELSEIF ARG:0 == 5
+	PRINTFORML 敵を倒す、ペットと性交渉する、餌をやる。以上のどれかで、ペットは栄養を獲得できる。
+	PRINTFORML 栄養はランクアップやレベルアップ、アイテム生産などに利用する。
+	PRINTFORML 有り体に言えばXPであり、ゴールドである。
+	PRINTFORML 得られる栄養はペットのランク・レベルが高いほど減っていく。ペットの強化は計画的に。
+ELSEIF ARG:0 == 6
+	PRINTFORML ペットと性交渉すると、屈服度というステータスが上昇する。時間経過で減少する。
+	PRINTFORML 屈服度に応じてペットは色々な意味で活発になり、様々なメリット・デメリットが生ずる。
+	PRINTFORML （屈服度の項を参照のこと）
+	PRINTFORML 
+	PRINTFORML あまりにも屈服度が上がったキャラは、フェイズ終了時に素質【ペット】を取得する。
+	PRINTFORML 【ペット】持ちは屈服度の上限・下限が上昇し、自然減少が極端に鈍る。
+	PRINTFORML さらに数値の確認ができなくなり、一部メッセージが変化する。
+	PRINTFORML PT内の【ペット】取得者数が多いほど襲ってくる率も上昇する。
+ELSEIF ARG:0 == 7
+	PRINTFORML 戦闘で敗北すると、たまにペットがいなくなる。屈服度が高いと予防できる。
+ELSEIF ARG:0 == 8
+	PRINTFORML ペットの「格」にあたる。栄養を消費して上げられる。
+	PRINTFORML 戦闘中の使用技、行動確率と襲われる確率の上限・下限に補正し、得られる栄養に逆補正する。
+	PRINTFORML 上げるメリットの大きい数値だが、アイテム生産目的のペットなら（栄養が沢山必要なので）放置でいい。
+ELSEIF ARG:0 == 9
+	PRINTFORML 読んで字の如し。栄養を消費して上げられる。
+	PRINTFORML 上げることで各種ステータスを強化できるが、手に入る栄養が減る。
+	PRINTFORML 上げるメリットの大きい数値だが、アイテム生産目的のペットなら（栄養が沢山必要なので）放置でいい。
+ELSEIF ARG:0 == 10
+	PRINTFORML ペットの強さである。
+	PRINTFORML 主人のものと同じ。
+ELSEIF ARG:0 == 11
+	PRINTFORML ペットの速さである。
+	PRINTFORML 基本的には主人のものと同じ。
+	PRINTFORML ただし、ペットの場合は行動速度だけでなく攻撃の命中率にも補正する。
+ELSEIF ARG:0 == 12
+	PRINTFORML ペットのやる気である。
+	PRINTFORML ペットの行動確率に補正する。
+	PRINTFORML ただし行動確率はランクに応じて制限されるため、特に低ランクだと効果のほどは微妙である。
+ELSEIF ARG:0 == 13
+	PRINTFORML ペットのかっこよさである。
+	PRINTFORML ペットのクリティカル率に補正する。クリティカルが出ると必中三倍ダメージ。
+	PRINTFORML 期待値は戦闘素質のほうが高い。
+ELSEIF ARG:0 == 14
+	PRINTFORML ペットの腹具合を示す。
+	PRINTFORML 行動率・命中率・攻撃のダメージに補正し、襲われる確率に逆補正する。
+	PRINTFORML 餌やりやペットとの性交渉で回復し、時間経過で減る。「おなかすいたー」だと得られる栄養が1.5倍になる。
+ELSEIF ARG:0 == 15
+	PRINTFORML 隠しステータス。
+	PRINTFORML 行動率・命中率に補正し、襲われる確率に逆補正する。30以下だと得られる栄養が1.5倍になる。
+	PRINTFORML ペットとの性交渉で回復し、戦闘中にペットが行動すると減る。あまり気にしなくて良い。
+ELSEIF ARG:0 == 16
+	PRINTFORML これはペット側でなく、飼い主側のステータス。身体がどれだけペットに屈しているかを指す。
+	PRINTFORML 行動率・攻撃力・命中率・襲ってくる率・襲ってきた時の攻撃力・ペットとの性交渉で妊娠する率・栄養の消費レートに補正する。
+	PRINTFORML また、高過ぎるとペットを手放せなくなる。
+	PRINTFORML 普段は上限100、下限0だが、【ペット】取得者は上限150、下限50。
+	PRINTFORML 上げるデメリットが大きいため、基本的に低くとどめたほうが良い。
+ELSEIF ARG:0 == 17
+	PRINTFORML 現在の屈服度をぼんやりと示す。危なそうなら性交渉を控えること。
+	PRINTFORML フェイズ終了時にペット取得が確定したものはハートマークが表示される。
+ELSEIF ARG:0 == 18
+	PRINTFORML ペットに餌をやることができる。餌はアイテム。
+	PRINTFORML 貴重なアイテムほどたくさん満腹度を回復でき、ものによって特殊な効果が手に入る。
+	PRINTFORML ただし、餌にできないアイテムもある。
+ELSEIF ARG:0 == 19
+	PRINTFORML ペットとセックスする。
+	PRINTFORML 栄養や満腹度の上昇幅は餌やりより大きいが、屈服度の上昇や身体の開発、妊娠の可能性に留意すること。
+	PRINTFORML 喪失状態のキャラはセックスすることができない。
+ELSEIF ARG:0 == 20
+	PRINTFORML ランクアップ、レベルアップ、アイテム生産などはここから。
+ELSEIF ARG:0 == 21
+	PRINTFORML ペットを改名できる。好きな名前をつけてあげよう。
+ELSEIF ARG:0 == 22
+	PRINTFORML ペットを手放す。屈服度次第では失敗する。
+ELSE
+	PRINTFORML この項目は未実装です
+ENDIF
+
+
+
+@PETMENU_NAME(ARG:0)
+#FUNCTIONS
+
+SELECTCASE ARG:0
+	CASE 1
+		RETURNF "ペットを仲間にするには"
+	CASE 2
+		RETURNF "戦闘中のペット"
+	CASE 3
+		RETURNF "アイテムの生産・各種サービス"
+	CASE 4
+		RETURNF "ペットとの性交渉"
+	CASE 5
+		RETURNF "栄養の獲得"
+	CASE 6
+		RETURNF "ペットへの屈服"
+	CASE 7
+		RETURNF "ペットの逃亡"
+	CASE 8
+		RETURNF "ランク"
+	CASE 9
+		RETURNF "レベル"
+	CASE 10
+		RETURNF "戦闘素質"
+	CASE 11
+		RETURNF "素早さ"
+	CASE 12
+		RETURNF "やる気"
+	CASE 13
+		RETURNF "カッコよさ"
+	CASE 14
+		RETURNF "腹"
+	CASE 15
+		RETURNF "好感度（マスクデータ）"
+	CASE 16
+		RETURNF "屈服度"
+	CASE 17
+		RETURNF "PTの状態"
+	CASE 18
+		RETURNF "餌やり"
+	CASE 19
+		RETURNF "身体を捧げる"
+	CASE 20
+		RETURNF "栄養を消費して色々する"
+	CASE 21
+		RETURNF "ペットの名前を変更する"
+	CASE 22
+		RETURNF "ペットとさよならする"
+	CASEELSE
+		RETURNF "存在しないペットの項目"
+ENDSELECT
+

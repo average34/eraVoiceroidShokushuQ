@@ -1,0 +1,122 @@
+﻿;敵撃破時の拘束キャラ解放処理
+;エンディングや倒した時に効果のある敵など
+;ARG:0	倒した敵のID（TFLAGに関係ない、純粋なID）
+@CHECK_DEFEAT_ENEMY_IN_BATTLE(ARG:0)
+
+;クイーン撃破
+IF TFLAG:0 == 1 && DA:(ARG:0):0 == 1
+	CALL GAMEOVER(0)
+ENDIF
+
+;ガーディアン撃破
+IF TFLAG:0 == 2 && DA:(ARG:0):0 == 3
+	CALL GAMEOVER(1)
+ENDIF
+
+;リバース産倒すとひどいことになる敵の実験
+;本家では減少率をやさしく
+
+;アルケニー撃破
+IF DA:(ARG:0):0 == 34 && DA:(ARG:0):1 <= 0
+	IF RAND:3 == 0
+		ABL:1:97 -= 3
+		IF ABL:1:97 < 1
+			ABL:1:97 = 1
+		ENDIF
+		PRINTFORML %CALLNAME:1%の速度が減少した……
+	ENDIF
+	IF FLAG:10 > 0 && RAND:3 == 0
+		ABL:(FLAG:10):97 -= 3
+		IF ABL:(FLAG:10):97 < 1
+			ABL:(FLAG:10):97 = 1
+		ENDIF
+		PRINTFORML %CALLNAME:(FLAG:10)%の速度が減少した……
+	ENDIF
+	IF FLAG:11 > 0 && RAND:3 == 0
+		ABL:(FLAG:11):97 -= 3
+		IF ABL:(FLAG:11):97 < 1
+			ABL:(FLAG:11):97 = 1
+		ENDIF
+		PRINTFORML %CALLNAME:(FLAG:11)%の速度が減少した……
+	ENDIF
+ENDIF
+
+;侵入するスライム撃破
+IF DA:(ARG:0):0 == 35 && DA:(ARG:0):1 <= 0
+	IF RAND:3 == 0
+		ABL:1:98 -= 3
+		IF ABL:1:98 < 1
+			ABL:1:98 = 1
+		ENDIF
+		PRINTFORML %CALLNAME:1%の戦闘素質が減少した……
+	ENDIF
+	IF FLAG:10 > 0 && RAND:3 == 0
+		ABL:(FLAG:10):98 -= 3
+		IF ABL:(FLAG:10):98 < 1
+			ABL:(FLAG:10):98 = 1
+		ENDIF
+		PRINTFORML %CALLNAME:(FLAG:10)%の戦闘素質が減少した……
+	ENDIF
+	IF FLAG:11 > 0 && RAND:3 == 0
+		ABL:(FLAG:11):98 -= 3
+		IF ABL:(FLAG:11):98 < 1
+			ABL:(FLAG:11):98 = 1
+		ENDIF
+		PRINTFORML %CALLNAME:(FLAG:11)%の戦闘素質が減少した……
+	ENDIF
+ENDIF
+
+;●
+
+;スライムによるスライム服フラグ　汚れが条件で張り付く
+IF (DA:(ARG:0):85 & 64) && DA:(ARG:0):1 <= 0
+	IF BASE:1:5 >= RAND:40 + 40
+		CFLAG:1:48 = 1
+		CALL PRINT_MESSAGE(1, 443, 1, CALLNAME:1, "")
+	ENDIF
+
+	IF FLAG:10 > 0 && BASE:(FLAG:10):5 >= RAND:40 + 40
+		CFLAG:(FLAG:10):48 = 1
+		CALL PRINT_MESSAGE(FLAG:10, 443, 1, CALLNAME:(FLAG:10), "")
+	ENDIF
+
+	IF FLAG:11 > 0 && BASE:(FLAG:11):5 >= RAND:40 + 40
+		CFLAG:(FLAG:11):48 = 1
+		CALL PRINT_MESSAGE(FLAG:11, 443, 1, CALLNAME:(FLAG:11), "")
+	ENDIF
+
+ENDIF
+
+;ヒュプノの魔眼入手処理
+IF DA:(ARG:0):0 == 98 && DA:(ARG:0):4 == FLAG:5
+	IF FLAG:4 >= 2
+		CALL ADD_ITEM(40, 1, 1)
+		CALL ADD_ITEM(8, 2, 1)
+		CALL ADD_ITEM(52, 2, 1)
+		CALL ADD_ITEM(53, 1, 1)
+		CALL ADD_ITEM(56, 1, 1)
+		CALL ADD_ITEM(58, 1, 1)
+	ELSE
+		CALL ADD_ITEM(51, 1, 1)
+		CALL ADD_ITEM(52, 3, 1)
+		CALL ADD_ITEM(53, 1, 1)
+		CALL ADD_ITEM(58, 2, 1)
+	ENDIF
+ENDIF
+
+;☆触手剣入手処理・難易度HARD以上かつ、まだ触手剣を未入手の時、バイオプラントまたはナイトメアケージを撃破
+IF (DA:(ARG:0):0 == 4 || DA:(ARG:0):0 == 43) && DA:(ARG:0):4 == FLAG:5 && FLAG:4 >= 2 && FLAG:996 == 0
+	PRINTFORML 息絶えた触手塊は、グズグズと泡をたてながら崩れ落ち、異臭を放つどす黒い水溜りと化した。
+	PRINTFORMW ・・・・・。
+	PRINTFORMW よく見ると水溜りの中に、硬質な刃のような鉤爪が溶けずに残されている。
+	CALL ADD_ITEM(18, 1, 1)
+	FLAG:996 = 1
+ENDIF
+;誰も拘束していないなら特に何もする必要は無い
+SIF DA:(ARG:0):10 == 0 && DA:(ARG:0):20 == 0
+	RETURN
+
+CALL STATUS_RENEW_RELEASE(DA:(ARG:0):10, 0, 2)
+CALL STATUS_RENEW_RELEASE(DA:(ARG:0):20, 0, 2)
+;追加ステータスの捕虜も解除
+CALL STATUS_RENEW_RELEASE(DA:(ARG:0):36, 0, 2)

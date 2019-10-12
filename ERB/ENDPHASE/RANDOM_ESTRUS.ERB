@@ -1,0 +1,99 @@
+﻿;ランダムに発情したりするパッチ追加分
+;歩いてるとランダムに発情したりします
+;ARG:0	対象キャラの番号
+;確率	発情や自慰にいたる確率
+@RANDOM_ESTRUS(ARG:0,ARGS:0)
+#DIM 確率
+VARSET 確率
+;発情するパターン
+;基礎確率
+;現在ターン - 最後に発情したターン - 5
+確率 = DAY * 4 - 3 + TIME - CFLAG:(ARG:0):600 - 5
+;EP分岐
+IF BASE:(ARG:0):2 <= MAXBASE:(ARG:0):2 / 4
+	確率 += 2
+ELSEIF BASE:(ARG:0):2 <= MAXBASE:(ARG:0):2 / 2
+	確率 += 1
+ENDIF
+;触手中毒分岐
+SELECTCASE ABL:(ARG:0):触手中毒
+	CASE 3
+		確率 += 2
+	CASE 2
+		確率 += 1
+ENDSELECT
+;射精中毒分岐
+SELECTCASE ABL:(ARG:0):射精中毒
+	CASE 3
+		確率 += 2
+	CASE 2
+		確率 += 1
+ENDSELECT
+;レズ中毒分岐
+SELECTCASE ABL:(ARG:0):レズ中毒
+	CASE 3
+		確率 += 2
+	CASE 2
+		確率 += 1
+ENDSELECT
+;精液中毒分岐
+SELECTCASE ABL:(ARG:0):精液中毒
+	CASE 3
+		確率 += 2
+	CASE 2
+		確率 += 1
+ENDSELECT
+;現在の発情具合により分岐 5（青）以上にはならない
+SELECTCASE CFLAG:(ARG:0):28
+	CASE 5
+		確率 = -1
+	CASE 4
+		MIN 確率,3
+	CASE 3
+		MIN 確率,5
+	CASE 2
+		MIN 確率,5
+	CASE 1
+		MIN 確率,8
+	CASE 0
+		MIN 確率,10
+ENDSELECT
+
+IF RAND:100 < 確率
+	IF !CFLAG:(ARG:0):29
+		CFLAG:(ARG:0):28 ++
+		IF ABL:(ARG:0):触手中毒 >= 2 && !RAND:5
+			PRINTFORML どうしたことだろう
+			PRINTFORML 触手に依存しつつある%ARGS:0%の肉体は、触手に犯される悦びを期待してしまっている……
+			PRINTFORML %ARGS:0%は発情してしまった！
+		ELSEIF ABL:(ARG:0):射精中毒 >= 2 && !RAND:5 && GET_PENIS(ARG:0) > 0
+			PRINTFORML どうしたことだろう
+			PRINTFORML すっかり射精の悦びを知ってしまった%ARGS:0%のペニスは、持ち主の意志と関係なく勃起し、射精を待ち望んでいる……
+			PRINTFORML %ARGS:0%は発情してしまった！
+		ELSEIF ABL:(ARG:0):レズ中毒 >= 2 && !RAND:5
+			PRINTFORML どうしたことだろう
+			PRINTFORML %ARGS:0%の脳裏に、柔らかな女体がちらついて離れない
+			PRINTFORML 同性同士で愛しあうことの快感を知ってしまった%ARGS:0%の肉体は、それを期待してしまっている……
+			PRINTFORML %ARGS:0%は発情してしまった！
+		ELSEIF ABL:(ARG:0):精液中毒 >= 2 && !RAND:5
+			PRINTFORML どうしたことだろう
+			PRINTFORML すっかり精液好みになってしまった%ARGS:0%の肉体は、射精される快感を期待してしまっている……
+			PRINTFORML %ARGS:0%は発情してしまった！
+		ELSE
+			PRINTFORML この迷宮の淫靡な雰囲気が%ARGS:0%の精神を否応無しに蝕む……
+			PRINTFORML %ARGS:0%は発情してしまった！
+		ENDIF
+		CALL RANDOM_ESTRUS_INITIALIZE(ARG:0)
+	ENDIF
+ENDIF
+
+;ランダム発情した最終時刻を保持
+@RANDOM_ESTRUS_INITIALIZE(CHARA_ID)
+#DIM CHARA_ID
+	
+	; キャラクタID異常は除外
+	SIF CHARA_ID < 0 || CHARA_ID >= CHARANUM
+		RETURN
+		
+	CFLAG:CHARA_ID:600 = DAY * 4 - 3 + TIME
+RETURN

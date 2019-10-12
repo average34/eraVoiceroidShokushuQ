@@ -1,0 +1,249 @@
+﻿;触手同化パッチ関連処理
+[SKIPSTART]
+雑記
+「触手同化率」ぱっち
+ライセンス：適当に組んだだけなので改造はお好きにどうぞ
+
+・ペナルティ
+	妊娠しやすくなる
+	悪堕ちしすくなる
+・メリット
+	汚染度合いが高い所でのエロペナルティ軽減（汚染環境に慣れる）
+	軽減箇所
+	・出産時	MP倍率を操作しています
+	・睡眠時	MP倍率を操作しています
+	・戦闘時	MP倍率を操作しています
+	
+使用変数---------
+CFLAG:163
+     :触手同化率
+	想定値範囲:0～1000(千分率)
+FLAG:540
+    :パッチ動作
+
+
+[SKIPEND]
+;=================================================
+;パッチ動作_ON
+;=================================================
+@DOUKA_MODE_ON()
+#FUNCTION
+
+IF FLAG:540 == 0
+	RETURNF 0
+ELSE
+	RETURNF 1
+ENDIF
+;=================================================
+;同化率効果＿妊娠率補正（AFTER_BATTLE時）
+;ARG:0	キャラID
+;ARG:1	現状妊娠確率(25～95)
+;RESULT:1	加算妊娠確率
+;=================================================
+@DOUKA_EFFECT_1(ARG, ARG:1)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+
+LOCAL = 0
+
+SELECTCASE CFLAG:ARG:触手同化率
+CASE IS >= 900
+	LOCAL = 15
+	
+CASE IS >= 500
+	LOCAL = 10
+	
+CASE IS >= 300
+	LOCAL = 5
+	
+ENDSELECT
+
+RETURN 1, LOCAL
+;=================================================
+;同化率効果＿悪堕ち化補助（淫魔取得値加算）
+;ARG:0	キャラID
+;RESULT:1	加算値
+;=================================================
+@DOUKA_EFFECT_2(ARG)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	
+LOCAL = 0
+
+SELECTCASE CFLAG:ARG:触手同化率
+CASE IS >= 900
+	LOCAL = 4
+	
+CASE IS >= 700
+	LOCAL = 3
+	
+CASE IS >= 500
+	LOCAL = 2
+	
+CASE IS >= 300
+	LOCAL = 1
+	
+ENDSELECT
+
+RETURN 1, LOCAL
+;=================================================
+;同化率効果＿悪堕ち化補助（悪堕ちポイント加算）
+;ARG:0	キャラID
+;RESULT:1	加算値
+;=================================================
+@DOUKA_EFFECT_3(ARG)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	
+LOCAL = 0
+
+SELECTCASE CFLAG:ARG:触手同化率
+CASE IS >= 900
+	LOCAL = 2
+	
+CASE IS >= 300
+	LOCAL = 1
+	
+ENDSELECT
+
+RETURN 1, LOCAL
+;=================================================
+;同化率効果＿汚染度によるペナ軽減（出産時）
+;ARG:0	キャラID
+;RESULT:1	MPダメージ倍率1～300
+;=================================================
+@DOUKA_EFFECT_4(ARG)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	
+LOCAL = CFLAG:ARG:触手同化率 / 50 + 100
+
+RETURN 1, LOCAL
+;=================================================
+;同化率効果＿汚染度によるペナ軽減（睡眠時）
+;ARG:0	キャラID
+;RESULT:1	MPダメージ倍率1～300
+;=================================================
+@DOUKA_EFFECT_5(ARG)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	
+LOCAL = CFLAG:ARG:触手同化率 / 50 + 100
+
+RETURN 1, LOCAL
+;=================================================
+;同化率効果＿汚染度によるペナ軽減（戦闘時）
+;ARG:0	キャラID
+;RESULT:1	MPダメージ倍率1～300
+;=================================================
+@DOUKA_EFFECT_6(ARG)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+	
+LOCAL = CFLAG:ARG:触手同化率 / 50 + 100
+
+RETURN 1, LOCAL
+;=================================================
+;同化進行（触手中毒経験取得時）
+;ARG:0	キャラID
+;ARG:1	取得経験値量
+;=================================================
+@DOUKA_PROGRESS_1(ARG:0, ARG:1)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+
+LOCAL = LIMIT((ARG:1) * 2, 0, 100)
+CALL DOUKA_ADD(ARG, LOCAL)
+
+RETURN 0
+;=================================================
+;同化進行（エンドフェイズ）
+;ARG:0	キャラID
+;ARG:1	取得経験値量
+;=================================================
+@DOUKA_PROGRESS_2(ARG:0)
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+
+
+LOCAL = -10
+CALL DOUKA_ADD(ARG, LOCAL)
+
+
+RETURN 0
+;=================================================
+;同化率増減
+;ARG:0	キャラID
+;ARG:1	増減量
+;=================================================
+@DOUKA_ADD(ARG:0, ADDSUM)
+#DIM ADDSUM
+
+;パッチ動作
+SIF DOUKA_MODE_ON() == 0
+	RETURN -1
+;エラー予防
+SIF ARG:0 <= 0 || ARG:0 >= CHARANUM
+	RETURN -1
+
+;---補正とか---
+;素質による増減値補正とかあればここに
+
+
+
+
+
+
+
+
+;---補正終わり---
+
+IF ADDSUM > 0
+	;PRINTFORML %CALLNAME:(ARG)%の身体が触手との同化を受け入れつつあるようだ…
+ELSEIF ADDSUM < 0
+	;PRINTFORML %CALLNAME:(ARG)%の身体が触手との同化を拒んでいるようだ…
+ENDIF
+CFLAG:ARG:触手同化率 = LIMIT(CFLAG:ARG:触手同化率 + ADDSUM, 0, 1000)
+
+;---増減毎チェック---
+;一定値になった時に何かするならここで
+
+
+
+
+;---チェック終わり---
+
+RETURN 0
+;=================================================

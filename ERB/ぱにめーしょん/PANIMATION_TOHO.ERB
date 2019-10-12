@@ -1,0 +1,471 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;文字列表示・アニメーション関数ファイル「ぱにめーしょん」0527版 同梱、東方Projectローカル関数ファイル
+;東方系バリアントで使えそうなビジュアル・雰囲気向上系の関数群です。東方系以外では…どうだろう。あっても邪魔はしませんが。
+;こちらは、ぱにめーしょん本体がないと動作しません
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;-------------------------------------------------
+;東方Project風BGMカットイン関数@BGM_CUTIN
+;	文字列引数0：曲名
+;	文字列引数1：フォント（等幅じゃないと機能しません。省略したらHG創英ﾌﾟﾚｾﾞﾝｽEB（神霊廟風に）、存在しなかったら変更なし）
+;	引数0：省略すると頭に「♪（紅・文・DS・妖戦タイプ）」、正にすると「ＢＧＭ. （永・風以降タイプ）」、負にすると何もつけない
+;	引数1：スクロール速度（デフォルトだと5）
+;	引数2：画面端まで入る文字数（デフォルトだと117）
+;	引数3：1にすると消え方がサイドアウトに（デフォルトだとフェードアウト）
+;-------------------------------------------------
+@BGM_CUTIN(ARGS, ARG, ARGS:1 = "HG創英ﾌﾟﾚｾﾞﾝｽEB", ARG:1 = 5, ARG:2 = 117, ARG:3)
+#LOCALSIZE 2
+#LOCALSSIZE 2
+IF ARG >= 0
+	LOCALS = %\@ ARG ? %"ＢＧＭ. "% # ♪ \@+ARGS%
+ELSE
+	LOCALS = %ARGS%
+ENDIF
+;色保存
+LOCAL:1 = GETCOLOR()
+RESETCOLOR
+ARGS = %" "*ARG:2+LOCALS%
+LOCALS:1 = %GETFONT()%
+SIF CHKFONT(ARGS:1)
+	SETFONT ARGS:1
+;表示オン
+IF ANIME_CONFIG("BGM_CUTIN")
+	;スクロール速度がウィンドウ幅に対し速すぎる場合、矯正する
+	ARG:1 = ARG:1 >= ARG:2 ? ARG:2-1 # ARG:1
+	REDRAW 0
+	LOCAL = 0
+	;サイドイン
+	FOR LOCAL, 0, STRLENS(LOCALS)+4, ARG:1
+		PRINTSINGLEFORM %SUBSTRING(ARGS , LOCAL)%
+		TWAIT 2, 0
+		CLEARLINE 1
+	NEXT
+	PRINTFORML %" "*(ARG:2-STRLENS(LOCALS)-4)+LOCALS%
+	TWAIT 800, 0
+	CLEARLINE 1
+
+	IF ARG:3 == 1
+		;サイドアウト
+		FOR LOCAL, 0, STRLENS(LOCALS)+4, ARG:1*2
+			PRINTSINGLEFORM %SUBSTRING(ARGS , STRLENS(LOCALS)+4-LOCAL)%
+			TWAIT 2 , 0
+			CLEARLINE 1
+		NEXT
+	ELSE
+		;BGMアニメオンだとフェードを強制表示する
+		CALLF ANIME_CONFIG("ONCE")
+		;フェードアウト
+		CALL FADEOUT(8, " "*(ARG:2-STRLENS(LOCALS)-4)+LOCALS)
+		CLEARLINE 1
+	ENDIF
+	REDRAW 1
+;表示オフ
+ELSE
+	PRINTFORMW %" "*(ARG:2-STRLENS(LOCALS)-4)+LOCALS%
+ENDIF
+SETFONT LOCALS:1
+SETCOLOR LOCAL:1
+RETURN RESULT
+
+;-------------------------------------------------
+;東方Project風キャラ登場カットイン関数@CHARA_CUTIN
+;	文字列引数0：肩書き
+;	文字列引数1：名前
+;	文字列引数2：ローマ字読み
+;	引数0：省略すると左、正だと右寄りに表示。表示位置の逆からクロールインする
+;	引数1：スクロール速度（デフォルトだと30）
+;	引数2：画面端まで入る文字数（デフォルトだと117）
+;			…バウンドいらんよね？
+;神霊廟風の中央揃えです。需要があれば一行目左寄せ・三行目右寄せのバージョンも作る？
+;-------------------------------------------------
+@CHARA_CUTIN(ARGS, ARGS:1, ARGS:2, ARG, ARG:1 = 30, ARG:2 = 117)
+#LOCALSIZE 11
+#LOCALSSIZE 11
+;フォント保存
+LOCALS:10 = %GETFONT()%
+;色保存
+LOCAL:10 = GETCOLOR()
+RESETCOLOR
+
+;まず、３つの文字列を偶数にする
+ARGS = %\@ STRLENS(ARGS)/2 ? %ARGS+" "% # %ARGS% \@%
+ARGS:1 = %\@ STRLENS(ARGS:1)/2 ? %ARGS:1+" "% # %ARGS:2% \@%
+ARGS:2 = %\@ STRLENS(ARGS:2)/2 ? %ARGS:2+" "% # %ARGS:2% \@%
+
+;一番長い文字列の字数を保存して、4を足す
+LOCAL:3 = MAX(STRLENS(ARGS), STRLENS(ARGS:1), STRLENS(ARGS:2))+4
+
+;文字列整理
+FOR LOCAL, 0, 3
+	LOCAL:1 = (LOCAL:3-STRLENS(ARGS:LOCAL))/2
+	;インデントがてらに頭としっぽをつけます
+	ARGS:LOCAL = %(" "*LOCAL:1)+ARGS:LOCAL+(" "*LOCAL:1)%
+	;原本を保存
+	LOCALS:LOCAL = %ARGS:LOCAL%
+	;スペースを付加
+	IF !ARG
+		LOCALS:LOCAL = %"  "+LOCALS:LOCAL%
+		ARGS:LOCAL = %(" "*ARG:2)+LOCALS:LOCAL%
+	ELSE
+		ARGS:LOCAL = %" "*(ARG:2 - 2 - STRLENS(ARGS:LOCAL))+ARGS:LOCAL%
+	ENDIF
+NEXT
+
+;罫線も用意しないとね
+LOCALS:4 = %"-="*(LOCAL:3/2)%
+LOCALS:5 = %"=-"*(LOCAL:3/2)%
+;スペースを付加
+IF !ARG
+	LOCALS:4 = %"  "+LOCALS:4%
+	LOCALS:5 = %"  "+LOCALS:5%
+	LOCALS:6 = %(" "*ARG:2)+LOCALS:4%
+	LOCALS:7 = %(" "*ARG:2)+LOCALS:5%
+ELSE
+	LOCALS:6 = %" "*(ARG:2 - 3 - STRLENS(LOCALS:4))+LOCALS:4%
+	LOCALS:7 = %" "*(ARG:2 - 3 - STRLENS(LOCALS:5))+LOCALS:5%
+ENDIF
+
+;表示オン
+IF ANIME_CONFIG("CHARA_CUTIN")
+	;スクロール速度がウィンドウ幅に対し速すぎる場合、矯正する
+	ARG:1 = ARG:1 >= ARG:2 ? ARG:2-1 # ARG:1
+	REDRAW 0
+	LOCAL = 0
+	FOR LOCAL, 0, ARG:2-2, ARG:1
+		IF !ARG
+			;罫線は元フォント
+			SETFONT LOCALS:10
+			PRINTSINGLEFORM %SUBSTRING(LOCALS:6 , LOCAL)%
+			;肩書きはHG教科書体
+			SIF CHKFONT("HG教科書体")
+				SETFONT "HG教科書体"
+			PRINTSINGLEFORM %SUBSTRING(ARGS , LOCAL)%
+			;名前は元フォント
+			SETFONT LOCALS:10
+			PRINTSINGLEFORM %SUBSTRING(ARGS:1 , LOCAL)%
+			;ローマ字読みはＭＳ 明朝（TimesNewRomanは等幅じゃなかった…）
+			SIF CHKFONT("ＭＳ 明朝")
+				SETFONT "ＭＳ 明朝"
+			PRINTSINGLEFORM %SUBSTRING(ARGS:2 , LOCAL)%
+			;罫線は元フォント
+			SETFONT LOCALS:10
+			PRINTSINGLEFORM %SUBSTRING(LOCALS:7 , LOCAL)%
+		ELSE
+			SETFONT LOCALS:10
+			PRINTSINGLEFORM %SUBSTRING(LOCALS:6 , (ARG:2 - 2) - LOCAL)%
+			SIF CHKFONT("HG教科書体")
+				SETFONT "HG教科書体"
+			PRINTSINGLEFORM %SUBSTRING(ARGS , (ARG:2 - 2) - LOCAL)%
+			SETFONT LOCALS:10
+			PRINTSINGLEFORM %SUBSTRING(ARGS:1 , (ARG:2 - 2) - LOCAL)%
+			SIF CHKFONT("ＭＳ 明朝")
+				SETFONT "ＭＳ 明朝"
+			PRINTSINGLEFORM %SUBSTRING(ARGS:2 , (ARG:2 - 2) - LOCAL)%
+			SETFONT LOCALS:10
+			PRINTSINGLEFORM %SUBSTRING(LOCALS:7 , (ARG:2 - 2) - LOCAL)%
+		ENDIF
+		TWAIT 2 , 0
+		SIF !ARG || LOCAL
+			CLEARLINE 5
+	NEXT
+ENDIF
+
+IF !ARG
+	SETFONT LOCALS:10
+	PRINTFORML %LOCALS:4%
+	SIF CHKFONT("HG教科書体")
+		SETFONT "HG教科書体"
+	PRINTFORML %LOCALS%
+	SETFONT LOCALS:10
+	PRINTFORML %LOCALS:1%
+	SIF CHKFONT("ＭＳ 明朝")
+		SETFONT "ＭＳ 明朝"
+	PRINTFORML %LOCALS:2%
+	SETFONT LOCALS:10
+	PRINTFORML %LOCALS:5%
+ELSE
+	SETFONT LOCALS:10
+	PRINTFORML %LOCALS:6%
+	SIF CHKFONT("HG教科書体")
+		SETFONT "HG教科書体"
+	PRINTFORML %ARGS%
+	SETFONT LOCALS:10
+	PRINTFORML %ARGS:1%
+	SIF CHKFONT("ＭＳ 明朝")
+		SETFONT "ＭＳ 明朝"
+	PRINTFORML %ARGS:2%
+	SETFONT LOCALS:10
+	PRINTFORML %LOCALS:7%
+ENDIF
+REDRAW 1
+SETCOLOR LOCAL:10
+RETURN RESULT
+
+
+;-------------------------------------------------
+;幻想暦関数@GENSOU_CALENDAR
+;	引数0：2000年1月1日（115季睦月一日）からの経過日数
+;引数に経過日数を与えることで、幻想卿の暦を文字列で返す関数です
+;-------------------------------------------------
+@GENSOU_CALENDAR(ARG)
+#FUNCTIONS
+#LOCALSIZE 3
+;LOCALに年数
+LOCAL = GETYEAR(ARG)
+;LOCAL:1に月数
+LOCAL:1 = GETDATE(GETYEAR(ARG, 1), GETURUU(LOCAL))
+;LOCAL:2に日数
+LOCAL:2 = GETDATE(GETYEAR(ARG, 1), GETURUU(LOCAL), 1)
+
+RETURNF @"第%TOKANJI(LOCAL+115)%季　%GETMONTHNAME(LOCAL:1)%の%TOKANJI(LOCAL:2)%"
+
+
+;-------------------------------------------------
+;古典時刻関数@CLASSICAL_TIME
+;	引数0：対象の変数（デフォでは秒）
+;	引数1：1なら引数0を秒で、2なら時で計算する
+;	引数2：表示形式（デフォ「○の○つ」、1=「○の刻、○つ」、2=「○の○つ　-○○-」）
+;式中で使用する関数です。引数に記録されている数字を秒として、現在の時刻を文字列で返します
+;古典時刻表記なので、30分単位未満の端数は切り捨てます。
+;-------------------------------------------------
+@CLASSICAL_TIME(ARG, ARG:1, ARG:2)
+#FUNCTIONS
+;分に変換する
+SELECTCASE ARG:1
+	;時で渡す場合
+	CASE 2
+		ARG *= 60
+	;秒で渡す場合
+	CASE 1
+		ARG /= 60
+ENDSELECT
+;0:00が子の三つなので、60分を足す
+ARG += 60
+;日付も管理しているケースを考え、24時間（1440分）で割ってあまりを取る（子の一つ～二つもここで対応される）
+ARG %= 1440
+;表示
+SIF GET_CLASSICAL_HOUR(ARG, 1) == "丑" && (ARG%120)/30 == 2
+	RETURNF "丑三つ時"
+RETURNF @"%GET_CLASSICAL_HOUR(ARG, 1)%の\@ ARG:2 == 1 ? 刻、 # \@%TOKANJI(((ARG%120)/30)+1)%つ\@ ARG:2 == 2 ? 　-%GET_CLASSICAL_HOUR(ARG, 1, 1)%時- # \@"
+
+;時を取得
+;引数2を真にすると、大まかな時間の様子を取る
+@GET_CLASSICAL_HOUR(ARG, ARG:1, ARG:2)
+#FUNCTIONS
+;分に変換する
+SELECTCASE ARG:1
+	;時で渡す場合
+	CASE 2
+		ARG *= 60
+	;分で渡す場合（処理なし）
+	CASE 1
+	;秒で渡す場合（デフォルト）
+	CASEELSE
+		ARG /= 60
+ENDSELECT
+
+SELECTCASE ARG/120
+	CASE 0
+		RETURNF \@ ARG:2 ? 深更（しんこう） # 子 \@
+	CASE 1
+		RETURNF \@ ARG:2 ? 未明（みめい） # 丑 \@
+	CASE 2
+		RETURNF \@ ARG:2 ? 東雲（しののめ） # 寅 \@
+	CASE 3
+		RETURNF \@ ARG:2 ? 暁（あかつき） # 卯 \@
+	CASE 4
+		RETURNF \@ ARG:2 ? 早天（そうてん） # 辰 \@
+	CASE 5
+		RETURNF \@ ARG:2 ? 小昼（こひる） # 巳 \@
+	CASE 6
+		RETURNF \@ ARG:2 ? 昼中（ひるなか） # 午 \@
+	CASE 7
+		RETURNF \@ ARG:2 ? 日盛り（ひざかり） # 未 \@
+	CASE 8
+		RETURNF \@ ARG:2 ? 終日（ひねもす） # 申 \@
+	CASE 9
+		RETURNF \@ ARG:2 ? 黄昏（たそがれ） # 酉 \@
+	CASE 10
+		RETURNF \@ ARG:2 ? 宵（よい） # 戌 \@
+	CASE 11
+		RETURNF \@ ARG:2 ? 夜半（よわ） # 亥 \@
+ENDSELECT
+
+
+;-------------------------------------------------
+;数値→漢数字変換関数@TOKANJI
+;TOSTR関数チックに、引数の数値を漢数字の文字列で返します
+;変数の最大値は約922京であるため、一、万、億、兆、京の5回処理します
+;-------------------------------------------------
+@TOKANJI(ARG)
+#FUNCTIONS
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIM LCOUNT, 1
+VARSET LOCALS
+FOR LCOUNT, 0, 5
+	LOCAL = ARG/POWER(10000, (4-LCOUNT))
+	ARG %= POWER(10000, (4-LCOUNT))
+	IF LOCAL
+		LOCALS += TOKANJIT(LOCAL)
+		SELECTCASE LCOUNT
+			CASE 0
+				LOCALS += "京"
+			CASE 1
+				LOCALS += "兆"
+			CASE 2
+				LOCALS += "億"
+			CASE 3
+				LOCALS += "万"
+		ENDSELECT
+	ENDIF
+NEXT
+RETURNF \@ LOCALS != "" ? %LOCALS% # 零 \@
+
+;内部用or簡易用
+;四桁以内の漢字変換。万以上与えるとバグ
+@TOKANJIT(ARG)
+#FUNCTIONS
+SIF ARG >= 10000
+	RETURNF "ばぐ"
+LOCALS = \@ ARG/1000 ? %TOKANJIS(ARG/1000, 1)%千 # \@
+ARG %= 1000
+LOCALS += \@ ARG/100 ? %TOKANJIS(ARG/100, 1)%百 # \@
+ARG %= 100
+LOCALS += \@ ARG/10 ? %TOKANJIS(ARG/10, 1)%十 # \@
+ARG %= 10
+RETURNF LOCALS + TOKANJIS(ARG)
+
+
+;一桁の変換。引数1を真にすると一を省略する。2以上にすると零を表示する
+@TOKANJIS(ARG, ARG:1)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+		RETURNF \@ ARG:1 > 1 ? 零 #  \@
+	CASE 1
+		RETURNF \@ ARG:1 ?  # 一 \@
+	CASE 2
+		RETURNF "二"
+	CASE 3
+		RETURNF "三"
+	CASE 4
+		RETURNF "四"
+	CASE 5
+		RETURNF "五"
+	CASE 6
+		RETURNF "六"
+	CASE 7
+		RETURNF "七"
+	CASE 8
+		RETURNF "八"
+	CASE 9
+		RETURNF "九"
+	CASE 10
+		RETURNF "十"
+	CASEELSE
+		RETURNF "ばぐ"
+ENDSELECT
+
+
+;-------------------------------------------------
+;閏年判定関数@GETURUU
+;	引数0：年数
+;西暦で年数を与えるとその年の日数を返します
+;-------------------------------------------------
+@GETURUU(ARG)
+#FUNCTION
+RETURNF (!(ARG % 4) && (ARG % 100)) || !(ARG % 400) ? 366 # 365
+
+
+;-------------------------------------------------
+;年数判定関数@GETYEAR
+;	引数0：2000年1月1日からの経過日数
+;	引数1：1にすると、端日数を返します
+;経過日数から、経過年数を返します。
+;引数1を真にすると、現在の年で何日経過しているかを返します。
+;2000年を0年として返すため、西暦表記する際は2000を足してください。
+;単純に経過年数を数える場合は意識しなくてもＯＫ
+;-------------------------------------------------
+@GETYEAR(ARG, ARG:1)
+#FUNCTION
+#LOCALSIZE 1
+VARSET LOCAL
+;2000年を0年目として扱う
+;2000年から順に回して、年数LOCALを増やす
+WHILE ARG > GETURUU(LOCAL)
+	LOCAL++
+	ARG -= GETURUU(LOCAL)
+WEND
+RETURNF ARG:1 ? ARG # LOCAL
+
+
+;-------------------------------------------------
+;日付判定関数@GETDATE
+;	引数0：年内経過日数（年内総日数を超えるときはエラー…にはせず、総日数で割った余りで計算する。でもやめてね？）
+;	引数1：年内総日数（GETURUU併用推奨）
+;	引数2：省略すると○月、真にすると○日を返します
+;-------------------------------------------------
+@GETDATE(ARG, ARG:1 = 365, ARG:2)
+#FUNCTION
+#LOCALSIZE 2
+;念のための処理
+ARG %= ARG:1
+;月ごとの日数計算
+FOR LOCAL, 1, 13
+	SELECTCASE LOCAL
+		;30日の月
+		CASE 4, 6, 9, 11
+			LOCAL:1 = 30
+		;2月
+		CASE 2
+			LOCAL:1 = 28 + (ARG:2 == 366)
+		;31日の月
+		CASEELSE
+			LOCAL:1 = 31
+	ENDSELECT
+	IF ARG > LOCAL:1
+		ARG -= LOCAL:1
+	ELSE
+		BREAK
+	ENDIF
+NEXT
+RETURNF ARG:2 ? ARG # LOCAL-1
+
+
+;-------------------------------------------------
+;月名変換関数@GETMONTHNAME
+;	引数0：ｎ月のｎ
+;旧暦の月名に変換するだけ！
+;12を超えていたら勝手に12で割って計算します。
+;-------------------------------------------------
+@GETMONTHNAME(ARG)
+#FUNCTIONS
+;念のための処理
+ARG %= 12
+SELECTCASE ARG
+	CASE 1
+		RETURNF "睦月"
+	CASE 2
+		RETURNF "如月"
+	CASE 3
+		RETURNF "弥生"
+	CASE 4
+		RETURNF "卯月"
+	CASE 5
+		RETURNF "皐月"
+	CASE 6
+		RETURNF "水無月"
+	CASE 7
+		RETURNF "文月"
+	CASE 8
+		RETURNF "葉月"
+	CASE 9
+		RETURNF "長月"
+	CASE 10
+		RETURNF "神無月"
+	CASE 11
+		RETURNF "霜月"
+	CASEELSE
+		RETURNF "師走"
+ENDSELECT

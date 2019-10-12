@@ -1,0 +1,420 @@
+﻿;部屋の浄化
+@CLEAN
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	ダメージ計算
+;2	HARD以上ループ用
+;3	素質判定
+;4	精液風呂をやらかすキャラID
+
+CALL SHOW_TUTORIAL(6)
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+;PTに【結界知識】持ちが万全な状態で存在
+IF (TALENT:1:160 == 2 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && (CFLAG:1:22 == 0 || CFLAG:1:23 >= 5)) || (FLAG:10 && TALENT:(FLAG:10):160 == 2 && CFLAG:(FLAG:10):28 == 0 && CFLAG:(FLAG:10):29 == 0 && (CFLAG:(FLAG:10):22 == 0 || CFLAG:(FLAG:10):23 >= 5)) || (FLAG:11 && TALENT:(FLAG:11):160 == 2 && CFLAG:(FLAG:11):28 == 0 && CFLAG:(FLAG:11):29 == 0 && (CFLAG:(FLAG:11):22 == 0 || CFLAG:(FLAG:11):23 >= 5))
+	LOCAL:3 = 2
+;PTに【浄化知識】持ちが万全な状態で存在
+ELSEIF (TALENT:1:160 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && (CFLAG:1:22 == 0 || CFLAG:1:23 >= 5)) || (FLAG:10 && TALENT:(FLAG:10):160 && CFLAG:(FLAG:10):28 == 0 && CFLAG:(FLAG:10):29 == 0 && (CFLAG:(FLAG:10):22 == 0 || CFLAG:(FLAG:10):23 >= 5)) || (FLAG:11 && TALENT:(FLAG:11):160 && CFLAG:(FLAG:11):28 == 0 && CFLAG:(FLAG:11):29 == 0 && (CFLAG:(FLAG:11):22 == 0 || CFLAG:(FLAG:11):23 >= 5))
+	LOCAL:3 = 1
+ENDIF
+
+;PTに万全な【結界知識】持ちがいてかつ全員【浄化知識】持ちか【結界知識】持ちならボーナス（万全でなくてよい）
+SIF LOCAL:3 == 2 && TALENT:1:160 && CFLAG:1:29 == 0 && FLAG:10 && TALENT:(FLAG:10):160 && CFLAG:(FLAG:10):29 == 0 && FLAG:11 && TALENT:(FLAG:11):160 && CFLAG:(FLAG:11):29 == 0
+	LOCAL:3 = 3
+
+;PTメンバーに精液中毒が2（汚臭敏感で3）以上+淫乱がいるなら精液風呂可能
+IF ABL:1:14 > 1 + TALENT:1:62 && TALENT:1:74
+	LOCAL:4 = 1
+ELSEIF FLAG:10 &&  ABL:(FLAG:10):14 > 1 + TALENT:(FLAG:10):62 && TALENT:(FLAG:10):74
+	LOCAL:4 = FLAG:10
+ELSEIF FLAG:11 &&  ABL:(FLAG:11):14 > 1 + TALENT:(FLAG:11):62 && TALENT:(FLAG:11):74
+	LOCAL:4 = FLAG:11
+ENDIF
+
+IF FLAG:6 < 100
+	PRINTFORMW 浄化力が不足しているため浄化が実行できません
+	RETURN
+ENDIF
+
+IF FLAG:(FLAG:5 + 50) == 0 && (FLAG:6 < 200 || (LOCAL:3 < 3 && FLAG:6 < 250) || (LOCAL:3 < 2 && FLAG:6 < 300))
+	PRINTFORMW この部屋を浄化する必要はありません
+	RETURN
+ENDIF
+
+DRAWLINE
+IF FLAG:6 == 300 || (LOCAL:3 == 2 && FLAG:6 >= 250) || (LOCAL:3 == 3 && FLAG:6 >= 200)
+	;フルパワーの場合、結界も張れる　結界知識で条件緩和
+	PRINTFORML 浄化力(現在値：{FLAG:6})を 100 消費して、この部屋を完全に浄化できます　　現在の汚染度：{FLAG:(FLAG:5 + 50)}
+	PRINTFORML 
+	IF LOCAL:3 == 3
+		PRINTFORML また【結界知識】により、浄化力を 200 消費して、この部屋に一時的に結界を張ることができます
+		PRINTFORML 結界を張った場合、このターンこの部屋では戦闘が発生せず、体に付いた汚れも落とすことができます
+		PRINTFORML 
+		PRINTFORML 浄化・結界作成を行っても時間は経過しません。どうしますか？
+		PRINTFORML [0] 浄化を行う（浄化力 100 消費）
+		PRINTFORML [1] 結界を張る（浄化力 200 消費）
+	ELSEIF LOCAL:3 == 2
+		PRINTFORML また【結界知識】により、浄化力を 250 消費して、この部屋に一時的に結界を張ることができます
+		PRINTFORML 結界を張った場合、このターンこの部屋では戦闘が発生せず、体に付いた汚れも落とすことができます
+		PRINTFORML 
+		PRINTFORML 浄化・結界作成を行っても時間は経過しません。どうしますか？
+		PRINTFORML [0] 浄化を行う（浄化力 100 消費）
+		PRINTFORML [1] 結界を張る（浄化力 250 消費）
+	ELSE
+		PRINTFORML また、浄化力を 300 消費して、この部屋に一時的に結界を張ることができます
+		PRINTFORML 結界を張った場合、このターンこの部屋では戦闘が発生せず、体に付いた汚れも落とすことができます
+		PRINTFORML 
+		PRINTFORML 浄化・結界作成を行っても時間は経過しません。どうしますか？
+		PRINTFORML [0] 浄化を行う（浄化力 100 消費）
+		PRINTFORML [1] 結界を張る（浄化力 300 消費）
+	ENDIF
+	IF LOCAL:4
+		PRINTFORML [2] 精液風呂を作る
+	ENDIF
+	PRINTFORML [3] キャンセル
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		FLAG:6 -= 100
+		FLAG:(FLAG:5 + 50) = 0
+		CALL PRINT_MESSAGE(-1, 130, 1, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(1, 130, 1, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(FLAG:10, 130, 1, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(FLAG:11, 130, 1, CALLNAME:1, "")
+		
+		;別案
+		SIF RAND:100 <= 30
+			CALL PRINT_MESSAGE(-1, 430, 5, CALLNAME:1, "")
+		
+	ELSEIF RESULT == 1
+		IF LOCAL:3 == 3
+			FLAG:6 -= 200
+		ELSEIF LOCAL:3 == 2
+			FLAG:6 -= 250
+		ELSE
+			FLAG:6 -= 300
+		ENDIF
+		FLAG:(FLAG:5 + 50) = 0
+		FLAG:98 = FLAG:5
+		PRINTFORML {FLAG:5}の部屋に結界を張りました！
+		PRINTFORML 更に浄化された水を利用して、%CALLNAME:1%%TACHI()%は風呂の準備を整えた！
+		CALL PRINT_MESSAGE(1, 149, 0, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(FLAG:10, 149, 0, CALLNAME:(FLAG:10), "")
+		CALL PRINT_MESSAGE(FLAG:11, 149, 0, CALLNAME:(FLAG:11), "")
+		FOR LOCAL:0, 0, 3
+			IF GET_MEMBER(LOCAL:0)
+				BASE:(GET_MEMBER(LOCAL:0)):5 = 0
+				IF CFLAG:(GET_MEMBER(LOCAL:0)):40
+					CFLAG:(GET_MEMBER(LOCAL:0)):40 = 0
+					PRINTFORML 結界で%CALLNAME:(GET_MEMBER(LOCAL:0))%を責め苛んでいた触手は擬態のまま封印され、ぴっちりしている以外は普通の服になった！
+					;*******************ユニーク武器追加パッチ、触手使役術や触手剣を装備していると触手服を解除できず制裁される
+					IF CFLAG:(GET_MEMBER(LOCAL:0)):7 == 17 || CFLAG:(GET_MEMBER(LOCAL:0)):7 == 18 || CFLAG:(GET_MEMBER(LOCAL:0)):8 == 17 || CFLAG:(GET_MEMBER(LOCAL:0)):8 == 18
+						PRINTFORML と、安心したのも束の間、%CALLNAME:(GET_MEMBER(LOCAL:0))%の体とあまりに深く結合した触手は再び息を吹き返し
+						PRINTFORML 見る見るうちに%CALLNAME:(GET_MEMBER(LOCAL:0))%の服を、より醜く侵食していった！
+						CALL SYOKUSYU_HUKU_B(GET_MEMBER(LOCAL:0))
+					ELSE
+						CFLAG:(GET_MEMBER(LOCAL:0)):40 = 0
+					ENDIF
+					;***********************************************************************************************
+				ENDIF
+				IF CFLAG:(GET_MEMBER(LOCAL:0)):46
+					CFLAG:(GET_MEMBER(LOCAL:0)):46 = 0
+					PRINTFORML 結界で%CALLNAME:(GET_MEMBER(LOCAL:0))%の触手包帯の拘束が弱まり通常の包帯に戻った！
+				ENDIF
+				IF CFLAG:(GET_MEMBER(LOCAL:0)):47
+					CFLAG:(GET_MEMBER(LOCAL:0)):47 = 0
+					PRINTFORML 結界で%CALLNAME:(GET_MEMBER(LOCAL:0))%の触手貞操帯から力が抜けて床に落ちた……
+					;*******************ユニーク武器追加パッチ、触手使役術や触手剣を装備していると解除できず制裁される
+					IF CFLAG:(GET_MEMBER(LOCAL:0)):7 == 17 || CFLAG:(GET_MEMBER(LOCAL:0)):7 == 18 || CFLAG:(GET_MEMBER(LOCAL:0)):8 == 17 || CFLAG:(GET_MEMBER(LOCAL:0)):8 == 18
+						PRINTFORML と、安心したのも束の間、%CALLNAME:(GET_MEMBER(LOCAL:0))%の体とあまりに深く結合した触手貞操帯は再び息を吹き返し
+						PRINTFORML 見る見るうちに%CALLNAME:(GET_MEMBER(LOCAL:0))%の服を、より醜く侵食していった！
+						CALL SYOKUSYU_HUKU_B(GET_MEMBER(LOCAL:0))
+					ELSE
+						CFLAG:(GET_MEMBER(LOCAL:0)):47 = 0
+					ENDIF
+					;***********************************************************************************************
+				ENDIF
+				IF CFLAG:(GET_MEMBER(LOCAL:0)):48
+					CFLAG:(GET_MEMBER(LOCAL:0)):48 = 0
+					PRINTFORML 結界で%CALLNAME:(GET_MEMBER(LOCAL:0))%の身体を覆っていたスライムが溶けて消えていった……
+				ENDIF
+				IF CFLAG:(GET_MEMBER(LOCAL:0)):80 > 4
+					CFLAG:(GET_MEMBER(LOCAL:0)):80 /= 2
+					PRINTFORML %CALLNAME:(GET_MEMBER(LOCAL:0))%の身体を侵食していた触手が結界で弱っている……
+				ENDIF
+			ENDIF
+		NEXT
+		WAIT
+		
+		LOCAL:11 = 0
+		FOR LOCAL:0, 1, FLAG:1
+			;現在位置が被ってる敵
+			IF CFLAG:1:4 == DA:(LOCAL:0):4
+			
+				;死体は除外
+				SIF DA:(LOCAL:0):1 <= 0
+					CONTINUE
+						
+				;ウォッチャーだとフラグ
+				IF DA:(LOCAL:0):0 == 97
+					LOCAL:11 += 1
+					BREAK
+				ENDIF
+			ENDIF
+		NEXT
+		
+		FOR LOCAL:0, 1, CHARANUM
+		;現在位置が被っているかチェック
+			IF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0 && CFLAG:(LOCAL:0):21 == 0 && CFLAG:(LOCAL:0):29 == 0
+				IF LOCAL:11
+					IF TALENT:(LOCAL:0):167
+						IF TALENT:(LOCAL:0):35
+							;恥じらいなら２倍
+							LOCAL:12 = MAXBASE:(LOCAL:0):1 * (5 + RAND:11) / 1000
+						ELSE
+							LOCAL:12 = MAXBASE:(LOCAL:0):1 * (3 + RAND:5) / 1000
+						ENDIF
+						BASE:(LOCAL:0):1 += LOCAL:1
+						SIF BASE:(LOCAL:0):1 >= MAXBASE:(LOCAL:0):1
+							BASE:(LOCAL:0):1 = MAXBASE:(LOCAL:0):1
+						CALL PRINT_MESSAGE(LOCAL:0, 46, 13, CALLNAME:(LOCAL:0), "", LOCAL:12)
+					ELSEIF TALENT:(LOCAL:0):36
+						;恥薄いならダメージなし
+						CALL PRINT_MESSAGE(LOCAL:0, 46, 6, CALLNAME:(LOCAL:0), "", 0)
+					ELSEIF TALENT:(LOCAL:0):35
+						;恥じらいなら２倍
+						LOCAL:12 = MAXBASE:(LOCAL:0):1 * (5 + RAND:11) / 1000
+						BASE:(LOCAL:0):1 -= LOCAL:12
+						
+						SIF BASE:(LOCAL:0):1 <= 0
+							BASE:(LOCAL:0):1 = 1
+						CALL PRINT_MESSAGE(LOCAL:0, 46, 8, CALLNAME:(LOCAL:0), "", LOCAL:12)
+					ELSE
+						LOCAL:12 = MAXBASE:(LOCAL:0):1 * (3 + RAND:5) / 1000
+						BASE:(LOCAL:0):1 -= LOCAL:12
+						SIF BASE:(LOCAL:0):1 <= 0
+							BASE:(LOCAL:0):1 = 1
+						CALL PRINT_MESSAGE(LOCAL:0, 46, 7, CALLNAME:(LOCAL:0), "", LOCAL:12)
+					ENDIF
+				ENDIF
+
+				;NPCの回復
+				IF LOCAL:0 == 1 || LOCAL:0 == FLAG:10 || LOCAL:0 == FLAG:11
+					CONTINUE
+				ELSE
+					CFLAG:(LOCAL:0):40 = 0
+					CFLAG:(LOCAL:0):46 = 0
+					CFLAG:(LOCAL:0):47 = 0
+					BASE:(LOCAL:0):0 += MAXBASE:(LOCAL:0):0 / 8
+					SIF BASE:(LOCAL:0):0 > MAXBASE:(LOCAL:0):0
+						BASE:(LOCAL:0):0 = MAXBASE:(LOCAL:0):0
+					BASE:(LOCAL:0):1 += MAXBASE:(LOCAL:0):1 / 8
+					
+					SIF BASE:(LOCAL:0):1 > MAXBASE:(LOCAL:0):1
+						BASE:(LOCAL:0):1 = MAXBASE:(LOCAL:0):1
+					BASE:(LOCAL:0):5 = 0
+				ENDIF
+				
+			ENDIF
+		NEXT
+		WAIT
+	ELSEIF RESULT == 2 && LOCAL:4
+		;同じ部屋なら入れる
+		FOR LOCAL:0, 0, CHARANUM
+			IF CFLAG:1:4 != CFLAG:(LOCAL:0):4
+				CONTINUE
+			ENDIF
+			;精液中毒がないと入れない
+			IF ABL:(LOCAL:0):14 < (1 + TALENT:(LOCAL:0):62) || CFLAG:(LOCAL:0):43
+				CONTINUE
+			ENDIF
+			;妊娠(orV寄生)とA寄生を自発的に行える
+			
+			TFLAG:93 = 1
+			CALL PARASITE_TYPE(LOCAL:0, RAND:2, 19, 8, 2)
+			CALL PARASITE_TYPE(LOCAL:0, 2, 19, 8, 2)
+			CALL PARASITE_TYPE(LOCAL:0, 3, 19, 8+RAND:3, 2)
+			CALL PARASITE_TYPE(LOCAL:0, 5, 19, 8+RAND:3, 2)
+			TFLAG:93 = 0
+			CALL PRINT_MESSAGE(LOCAL:0, 533, 0, CALLNAME:(LOCAL:0), CALLNAME:(LOCAL:4))
+		NEXT
+		WAIT
+		
+	ELSEIF RESULT == 3
+		RETURN
+	ELSE
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP
+	ENDIF
+ELSE
+	;通常の浄化のみ
+	PRINTFORML 浄化力(現在値：{FLAG:6})を 100 消費して、この部屋を完全に浄化できます　　現在の汚染度：{FLAG:(FLAG:5 + 50)}
+	PRINTFORML 浄化を行っても時間は経過しません。浄化を行いますか？
+	PRINTFORML [0] 浄化を行う（浄化力 100 消費）
+	IF LOCAL:4
+		PRINTFORML [1] 精液風呂を作る
+	ENDIF
+	PRINTFORML [2] キャンセル
+	$INPUT_LOOP_2
+	INPUT
+	
+	IF RESULT == 0
+		;浄化開始 浄化力100使用
+		FLAG:6 -= 100
+
+		;部屋を浄化した口上呼び出し
+		CALL PRINT_MESSAGE(-1, 130, 0, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(1, 130, 0, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(FLAG:10, 130, 0, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(FLAG:11, 130, 0, CALLNAME:1, "")
+		
+		;極稀に大変なことになる (ゲーム難易度依存ランダムで触手暴走)
+		IF RAND:10 <= (FLAG:4 + 1)
+			;浄化知識、結界知識持ちがいれば条件緩和　この段階では既に浄化力が-100されていることに注意
+			IF LOCAL:3 && FLAG:6 >= 150
+				CALL PRINT_MESSAGE(-1, 430, 5, CALLNAME:1, "")
+			ELSE
+				;触手暴走開始
+				CALL PRINT_MESSAGE(-1, 430, 0, CALLNAME:1, "")
+				
+				;主人公視点のシステムメッセージ表示
+				;主人公喪失時は、喪失していない仲間を見ている
+				IF CFLAG:1:29
+					IF CFLAG:(FLAG:10):29
+						CALL PRINT_MESSAGE(-1, 430, 2, CALLNAME:(FLAG:11), "")
+					ELSEIF CFLAG:(FLAG:11):29
+						CALL PRINT_MESSAGE(-1, 430, 2, CALLNAME:(FLAG:10), "")
+					ENDIF
+				;主人公は喪失していない
+				ELSE
+					CALL PRINT_MESSAGE(-1, 430, 4, CALLNAME:1, "")
+				ENDIF
+					
+				; ダメージ計算に利用する設定値
+				LOCAL:1 = LIMIT(RAND:80, 50, 80) + FLAG:(FLAG:5 + 50)
+			
+				;ダメージ処理(同室にいるキャラクタも巻き込まれる) - ステータスからの割合ダメージ
+				FOR LOCAL:0, 1, CHARANUM
+					;同室 & 行動可能チェック
+					IF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0 && CFLAG:(LOCAL:0):21 == 0
+						
+						;システムメッセージ表示(先に表示されている都合で主人公を除外)
+						;対象キャラはPTメンバー
+						IF (LOCAL:0 == FLAG:10 || LOCAL:0 == FLAG:11) && LOCAL:0 != 1
+							;PTメンバーで通常行動中
+								CALL PRINT_MESSAGE(-1, 430, 4, CALLNAME:(LOCAL:0), "")
+							IF !CFLAG:(LOCAL:0):29
+							;PTメンバーで喪失中
+							ELSE
+								CALL PRINT_MESSAGE(-1, 430, 3, CALLNAME:(LOCAL:0), "")
+							ENDIF
+						;対象キャラはPTメンバー外
+						ELSEIF LOCAL:0 != 1
+							;PTメンバー外で通常行動中
+							IF !CFLAG:(LOCAL:0):29
+								CALL PRINT_MESSAGE(-1, 430, 7, CALLNAME:(LOCAL:0), "")
+							;PTメンバー外で喪失中
+							ELSE
+								CALL PRINT_MESSAGE(-1, 430, 6, CALLNAME:(LOCAL:0), "")
+							ENDIF
+						ENDIF
+						
+						;ダメージ処理 難易度別分岐(Easy, Normal)
+						IF FLAG:4 <= 1
+							;Easy, Normalモードでは喪失キャラへのダメージなし
+							IF !CFLAG:(LOCAL:0):29
+								;HPダメージ
+								IF (BASE:(LOCAL:0):0 / (FLAG:4 + 6)) >= (MAXBASE:(LOCAL:0):0 / 4)
+									BASE:(LOCAL:0):0 = 0
+								ELSE
+									BASE:(LOCAL:0):0 /= (FLAG:4 + 6)
+								ENDIF
+								;MPダメージ
+								BASE:(LOCAL:0):1 /= (FLAG:4 + 6)
+								;EPダメージ
+								BASE:(LOCAL:0):2 /= (FLAG:4 + 6)
+							ENDIF
+						;ダメージ処理 難易度別分岐(Hard以上)
+						ELSE
+							; 難易度数値+5回 ループ
+							FOR LCOUNT,0, (FLAG:4 + 5)
+								TFLAG:63 = RAND:4
+								LOCAL:2 = CALC_SENSITIVITY((LOCAL:0), TFLAG:63, LOCAL:1)
+								CALL DAMAGE_COMMON((LOCAL:0), 2, LOCAL:2 * 7 * (TALENT:(LOCAL:0):(101 + TFLAG:63) + 2), 2000)
+							NEXT
+						ENDIF
+					ENDIF
+				NEXT
+				
+				; ダメージ属性・倍率の後片付け
+				TFLAG:63 = 0
+
+				; 触手暴走終了
+				CALL PRINT_MESSAGE(-1, 430, 1, CALLNAME:1, "")
+			ENDIF
+		ENDIF
+		
+		; 浄化完了 部屋の汚染度を0に
+		FLAG:(FLAG:5 + 50) = 0
+	ELSEIF RESULT == 1 && LOCAL:4
+		FOR LOCAL:0, 0, CHARANUM
+			;同じ部屋なら入れる
+			IF CFLAG:1:4 != CFLAG:(LOCAL:0):4
+				CONTINUE
+			ENDIF
+			;精液中毒がないと入れない
+			IF ABL:(LOCAL:0):14 < (1 + TALENT:(LOCAL:0):62) || CFLAG:(LOCAL:0):43
+				CONTINUE
+			ENDIF
+			;妊娠(orV寄生)とA寄生を自発的に行える
+			
+			TFLAG:93 = 1
+			CALL PARASITE_TYPE(LOCAL:0, RAND:2, 19, 8+RAND:3, 2)
+			CALL PARASITE_TYPE(LOCAL:0, 2, 19, 8+RAND:3, 2)
+			CALL PARASITE_TYPE(LOCAL:0, 3, 19, 8+RAND:3, 2)
+			CALL PARASITE_TYPE(LOCAL:0, 5, 19, 8+RAND:3, 2)
+			TFLAG:93 = 0
+			CALL PRINT_MESSAGE(LOCAL:0, 533, 0, CALLNAME:(LOCAL:0), CALLNAME:(LOCAL:4))
+		NEXT
+		WAIT
+	ELSEIF RESULT == 2
+		;何もしない
+	ELSE
+		GOTO INPUT_LOOP_2
+	ENDIF
+ENDIF
+
+;部屋の自然浄化
+;ARG:0	チェック対象キャラ
+@AUTO_CLEAN_PT(ARG:0)
+;PTメンバーは自然浄化無し
+SIF ARG:0 == 1 || ARG:0 == FLAG:10 || ARG:0 == FLAG:11
+	RETURN
+
+;捕食・喪失中は自然浄化無し
+SIF CFLAG:(ARG:0):10 || CFLAG:(ARG:0):29
+	RETURN
+
+FLAG:(CFLAG:(ARG:0):4 + 50) -= 3 + RAND:5
+
+;綺麗好き持ちは自然浄化量アップ
+SIF TALENT:(ARG:0):152
+	FLAG:(CFLAG:(ARG:0):4 + 50) -= 2 + RAND:5
+
+SIF FLAG:(CFLAG:(ARG:0):4 + 50) < 0
+	FLAG:(CFLAG:(ARG:0):4 + 50) = 0
+
+;部屋の自然汚染
+;ARG:0	チェック対象敵
+@AUTO_CLEAN_ENEMY(ARG:0)
+
+SIF DA:(ARG:0):1 <= 0
+	RETURN
+
+FLAG:(DA:(ARG:0):4 + 50) += 3 + RAND:6
+SIF FLAG:(DA:(ARG:0):4 + 50) > 100
+	FLAG:(DA:(ARG:0):4 + 50) = 100
+

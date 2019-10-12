@@ -1,0 +1,787 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;個人の能力表示
+;ARG:0	対象のID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@SHOW_PERSONAL_STATUS(ARG:0)
+
+;転送
+CALL CHECK_STATUS(ARG)
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;PT全体及び指定キャラの詳細能力確認
+;ARG:0	0:PT全体表示
+;		1～:キャラID指定(遭遇会話時の閲覧用)
+;ARG:1	1:キャラ情報の編集の許可
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@CHECK_STATUS(ARG = 0, ARG:1 = 0)
+#DIM LCOUNT,3	;ループ用
+
+#DIM PTID,3
+;PTメンバID格納用
+;ループ処理を容易にするために使用
+
+#DIM MODE
+;表示対象キャラ
+
+#DIM TABN
+;タブ位置
+;0全般
+;1素質
+#DIM TABMAX
+#DIM 入力
+#DIM LINECOUNTBAK
+
+#DIM LINEDEL
+;行削除判定
+#DIM LINEDELET
+;削除する追加行数
+
+
+#DIM NAMESTRSUM, 3
+
+;タブの数を変える時はココ
+IF FLAG:9
+	TABMAX = 4
+ELSE
+	TABMAX = 3
+ENDIF
+
+
+
+IF ARG > 0
+	PTID:0 = ARG
+	PTID:1 = 0
+	PTID:2 = 0
+ELSE
+	PTID:0 = 1
+	PTID:1 = FLAG:10
+	PTID:2 = FLAG:11
+	ARG:1 = 1
+ENDIF
+
+MODE = 0
+TABN = 0
+LINEDEL = 0
+LINEDELET = 0
+
+
+;≡≡≡≡≡ループここから≡≡≡≡≡
+DO
+
+;＝＝＝描画処理ここから＝＝＝
+REDRAW 2
+
+;-----前表示消去-----
+;基本的に47行消去、表示行数が多い場合それ以上
+IF LINEDEL > 0
+	IF LINEDEL == 1
+		CLEARLINE 47 + LINEDELET
+	ENDIF
+	LINEDEL = 0
+	LINEDELET = 0
+ENDIF
+DRAWLINEFORM =
+
+
+	;-----キャラタブ（３行）---
+	;ボタン割り当て1-9
+	
+	;前準備
+	VARSET NAMESTRSUM
+	FOR LCOUNT, 0, 3
+		IF PTID:(LCOUNT) > 0
+			;タブのラベル部分に表示する内容の長さを事前に算出（名前+括弧+ボタン）
+			STRLENS CALLNAME:(PTID:(LCOUNT))
+			NAMESTRSUM:(LCOUNT) = RESULT + 7
+			;タブの表示には全角文字をつかうので文字数を偶数にしておく
+			SIF NAMESTRSUM:(LCOUNT) % 2
+				NAMESTRSUM:(LCOUNT)++
+		ENDIF
+	NEXT
+	
+	;タブ上部
+	PRINTFORM 　
+	PRINTFORM ┌
+	FOR LCOUNT, 0, 3
+		IF PTID:(LCOUNT) > 0
+			PRINTFORM %"─" * (NAMESTRSUM:(LCOUNT) / 2)%
+			IF LCOUNT < MODE
+				PRINTFORM ┌
+			ELSE
+				PRINTFORM ┐
+			ENDIF
+		ENDIF
+	NEXT
+	PRINTL
+	
+	
+	;タブ中部
+	PRINTFORM 　
+	PRINTFORM │
+	FOR LCOUNT, 0, 3
+		IF PTID:(LCOUNT) > 0
+			SETCOLOR LCOUNT == MODE ? 0xFFFF70 # 0x00FF00
+			PRINTBUTTON @"%@"[{LCOUNT+1}]【%CALLNAME:(PTID:(LCOUNT))%】", NAMESTRSUM:(LCOUNT), LEFT%", LCOUNT + 1
+			RESETCOLOR
+			PRINTFORM │
+		ENDIF
+	NEXT
+	PRINTL
+	
+	
+	;タブ下部
+	PRINTFORM ─
+	PRINTFORM \@MODE == 0?┘#┴\@
+	FOR LCOUNT, 0, 3
+		IF PTID:(LCOUNT) > 0
+			PRINTFORM %@"\@LCOUNT == MODE?　#─\@" * (NAMESTRSUM:(LCOUNT) / 2)%
+			IF LCOUNT == MODE
+				PRINTFORM └
+			ELSEIF LCOUNT + 1 == MODE
+				PRINTFORM ┘
+			ELSE
+				PRINTFORM ┴
+			ENDIF
+		ELSE
+			PRINT ─
+		ENDIF
+	NEXT
+	LOCAL = 0
+	FOR LCOUNT, 0, 3
+		LOCAL += NAMESTRSUM:(LCOUNT)
+	NEXT
+	PRINTFORM %"─" * ((90 - LOCAL) / 2 - 1)%
+	PRINTL
+
+
+
+	;-----選択キャラステータス------
+	
+	;---メイン---
+	CALL SHOW_SIMPLE_STATUS(PTID:(MODE))
+	
+	
+	
+	
+	;---装備---
+	DRAWLINEFORM ･
+	CALL SHOW_EQUIP_LIST(PTID:(MODE))
+	
+	
+	
+	
+	
+	;---タブ（３行）---
+	;ボタン割り当て10-19
+	
+	;タブ上部
+	PRINTFORM 　
+	PRINTFORM ┌
+	FOR LCOUNT, 0, TABMAX
+		PRINTFORM ──────
+		IF LCOUNT < TABN
+			PRINTFORM ┌
+		ELSE
+			PRINTFORM ┐
+		ENDIF
+	NEXT
+	PRINTL
+	
+	
+	;タブ中部
+	PRINTFORM 　
+	PRINTFORM │
+	FOR LCOUNT, 0, TABMAX
+		SETCOLOR LCOUNT == TABN ? 0xFFFF70 # 0x00FF00
+		SELECTCASE LCOUNT
+		CASE 0
+			PRINTBUTTON "[10]全　般  ",10
+		CASE 1
+			PRINTBUTTON "[11]素　質  ",11
+		CASE 2
+			PRINTBUTTON "[12]刻　印  ",12
+		CASEELSE
+			PRINTBUTTON @"[{10+LCOUNT}]未定義  ",10 + LCOUNT
+		ENDSELECT
+		RESETCOLOR
+		PRINTFORM │
+	NEXT
+	PRINTL
+	
+	
+	;タブ下部
+	PRINTFORM ─
+	PRINTFORM \@TABN == 0?┘#┴\@
+	FOR LCOUNT, 0, TABMAX
+		PRINTFORM \@LCOUNT == TABN?　　　　　　#──────\@
+		IF LCOUNT == TABN
+			PRINTFORM └
+		ELSEIF LCOUNT + 1 == TABN
+			PRINTFORM ┘
+		ELSE
+			PRINTFORM ┴
+		ENDIF
+		
+	NEXT
+	
+	FOR LCOUNT, 0, 6 - TABMAX
+		PRINTFORM ───────
+	NEXT
+	PRINTL ─────
+	
+	
+	;＝＝＝＝＝タブの内容表示ここから＝＝＝＝＝
+	LINECOUNTBAK = LINECOUNT
+	IF TABN == 0
+		;全般
+		;CALL CHECK_STATUS_TAB1(PTID:(MODE))
+		CALL CHECK_STATUS_TAB3(PTID:(MODE))
+	
+	ELSEIF TABN == 1
+	
+		;素質
+		CALL SHOW_TALENT_LIST(PTID:(MODE))
+		
+		
+		
+	ELSEIF TABN == 2
+		;刻印
+		CALL SHOW_MARK_LIST(PTID:(MODE))
+	ENDIF
+	
+	;---余白自動調整---
+	FOR LCOUNT, 0, 30 - (LINECOUNT - LINECOUNTBAK)
+		PRINTL
+	NEXT
+	;---表示行数が多い場合記憶---
+	IF 30 - (LINECOUNT - LINECOUNTBAK) < 0
+		LINEDELET -= 30 - (LINECOUNT - LINECOUNTBAK)
+	ENDIF
+	
+	
+	;＝＝＝＝＝タブの内容表示ここまで＝＝＝＝＝
+	
+	;---その他のコマンド---
+	PRINTFORM [ 0]戻る　
+	IF ARG:1 == 1
+		PRINTFORM [20]愛称を変更する　
+		;変幻自在持ち
+		IF TALENT:(PTID:(MODE)):139
+			PRINTFORM [21]変幻自在で能力を変更する　
+		ELSEIF TALENT:(PTID:(MODE)):166 && (DAY == 1 && TIME:0 == 0)
+			PRINTFORM [22]モブの能力を変更する（最初のみ）　
+		ENDIF
+	ENDIF
+	PRINTL
+	DRAWLINE
+	
+	;---案内---
+	REUSELASTLINE %CALLNAME:(PTID:(MODE))%さんのステータスです
+	
+	
+
+REDRAW 1
+;＝＝＝入力処理ここから＝＝＝
+INPUT
+入力 = RESULT
+
+
+
+
+IF 入力 == 0
+	BREAK
+ELSEIF 入力 >= 1 && 入力 <= 3 && PTID:(入力 - 1) > 0
+	MODE = 入力 - 1
+	LINEDEL = 1
+ELSEIF 入力 >= 10 && 入力 <= (9 + TABMAX)
+	TABN = 入力 - 10
+	LINEDEL = 1
+ELSEIF 入力 == 20 && ARG:1 == 1
+	;愛称変更
+	CALL CHECK_STATUS_CHANGE_CALLNAME(PTID:(MODE))
+	
+ELSEIF 入力 == 21 && ARG:1 == 1 && TALENT:(PTID:(MODE)):139
+	;能力変更
+	CALL CHANGE_PERSONAL_STATUS(PTID:(MODE))
+	
+ELSEIF 入力 == 22 && ARG:1 == 1 && TALENT:(PTID:(MODE)):166 && (DAY == 1 && TIME:0 == 0)
+	;能力変更
+	CALL CHANGE_PERSONAL_STATUS_2(PTID:(MODE))
+	
+ELSE
+	LINEDEL = 1
+ENDIF
+
+
+
+
+
+LOOP 1
+;≡≡≡≡≡ループここまで≡≡≡≡≡
+
+
+
+
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;全般表示用
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@CHECK_STATUS_TAB1(ARG)
+
+;性格
+CALL SHOW_PERSONALITY(ARG)
+
+;汚れ
+PRINTFORM 汚れ：
+IF BASE:(ARG):5 < 30
+	PRINTFORML 清潔な状態だ
+ELSEIF BASE:(ARG):5 < 60
+	SETCOLOR 0xEEEE10
+	PRINTFORML 触手の体液や自らの愛液で汚されている…
+ELSEIF BASE:(ARG):5 < 100
+	SETCOLOR 0xEE10EE
+	PRINTFORML 染み付いた体液が甘い香りを放っている…
+ELSE
+	SETCOLOR 0xEE1010
+	PRINTFORML 強烈な雌の臭いが漂っている…
+ENDIF
+RESETCOLOR
+
+;●入れ替わりパッチ加筆START
+;名前（呼び名ではない）が異なっていれば入れ替わっている理論、表示する名前は呼び名
+IF CFLAG:(ARG):119 > 0 && NAME:(ARG) != CSTR:(ARG):1
+	PRINTFORML 体：%CSTR:(ARG):2%
+ELSE
+	
+ENDIF
+;●END
+
+PRINTL
+
+;能力
+CALL SHOW_ABL_LIST(ARG)
+
+;経験補足
+PRINTFORM %@"迷宮内での絶頂回数：{EXP:(ARG):20}回",32,LEFT% 
+PRINTFORM %@"迷宮内でのおもらし回数：{EXP:(ARG):21}回",32,LEFT% 
+PRINTFORML 迷宮内でのキス回数：{EXP:(ARG):24}回
+
+PRINTFORM %@"迷宮内での出産回数：{EXP:(ARG):22}回",32,LEFT% 
+PRINTFORML 迷宮内での産卵回数：{EXP:(ARG):23}回
+
+PRINTL
+
+IF CFLAG:(ARG):107
+	CALL SHOW_FAMILY_LIST(ARG) 
+ENDIF
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;能力表示用
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@CHECK_STATUS_TAB3(ARG)
+#DIM LCOUNT,3	;ループ用
+
+;性格
+PRINT 　
+CALL SHOW_PERSONALITY(ARG)
+
+;汚れ
+PRINTFORM 　汚れ：
+IF BASE:(ARG):5 < 30
+	PRINTFORML 清潔な状態だ
+ELSEIF BASE:(ARG):5 < 60
+	SETCOLOR 0xEEEE10
+	PRINTFORML 触手の体液や自らの愛液で汚されている…
+ELSEIF BASE:(ARG):5 < 100
+	SETCOLOR 0xEE10EE
+	PRINTFORML 染み付いた体液が甘い香りを放っている…
+ELSE
+	SETCOLOR 0xEE1010
+	PRINTFORML 強烈な雌の臭いが漂っている…
+ENDIF
+RESETCOLOR
+
+;●入れ替わりパッチ加筆START
+;名前（呼び名ではない）が異なっていれば入れ替わっている理論、表示する名前は呼び名
+IF CFLAG:(ARG):119 > 0 && NAME:(ARG) != CSTR:(ARG):1
+	PRINTFORML 　　体：%CSTR:(ARG):2%
+ELSE
+	
+ENDIF
+;●END
+
+;種族
+IF CFLAG:(ARG):107
+	CALL SHOW_FAMILY_LIST(ARG) 
+ELSE
+	
+ENDIF
+PRINTL
+
+
+PRINTL -基礎能力-
+CALL CHECK_STATUS_TAB_SUB1(ARG, 0)
+PRINT 　￤
+CALL CHECK_STATUS_TAB_SUB1(ARG, 1)
+PRINTL
+CALL CHECK_STATUS_TAB_SUB1(ARG, 2)
+PRINT 　￤
+CALL CHECK_STATUS_TAB_SUB1(ARG, 3)
+PRINTL
+CALL CHECK_STATUS_TAB_SUB1(ARG, 4)
+PRINT 　￤
+CALL CHECK_STATUS_TAB_SUB1(ARG, 5)
+PRINTL
+PRINTL
+
+
+PRINTL -部位感覚-
+;A
+CALL CHECK_STATUS_TAB_SUB1(ARG, 6)
+PRINT …
+FOR LCOUNT, 0, 300
+	SELECTCASE LCOUNT
+	CASE 101, 75
+		CALL PERSONAL_TALENT(ARG, LCOUNT)
+		PRINTFORM %RESULTS%
+	ENDSELECT
+NEXT
+PRINTL
+
+;B
+CALL CHECK_STATUS_TAB_SUB1(ARG, 7)
+PRINT …
+FOR LCOUNT, 0, 300
+	SELECTCASE LCOUNT
+	CASE 102, 76, 107, 108, 109, 110, 158, 159, 162, 222 ,223
+		CALL PERSONAL_TALENT(ARG, LCOUNT)
+		PRINTFORM %RESULTS%
+	ENDSELECT
+NEXT
+PRINTL
+
+;C
+CALL CHECK_STATUS_TAB_SUB1(ARG, 8)
+PRINT …
+FOR LCOUNT, 0, 300
+	SELECTCASE LCOUNT
+	CASE 103, 77, 121
+		CALL PERSONAL_TALENT(ARG, LCOUNT)
+		PRINTFORM %RESULTS%
+	ENDSELECT
+NEXT
+PRINTL
+
+;V
+CALL CHECK_STATUS_TAB_SUB1(ARG, 9)
+PRINT …
+FOR LCOUNT, 0, 300
+	SELECTCASE LCOUNT
+	CASE 104, 78
+		CALL PERSONAL_TALENT(ARG, LCOUNT)
+		PRINTFORM %RESULTS%
+	ENDSELECT
+NEXT
+PRINTL
+
+;M
+CALL CHECK_STATUS_TAB_SUB1(ARG, 15)
+PRINT …
+FOR LCOUNT, 0, 300
+	SELECTCASE LCOUNT
+	CASE 106, 79
+		CALL PERSONAL_TALENT(ARG, LCOUNT)
+		PRINTFORM %RESULTS%
+	ENDSELECT
+NEXT
+PRINTL
+PRINTL
+
+;-----ふたなり-----
+IF GET_PENIS(ARG) & 4
+	PRINTL -ペニス-
+ELSE
+	PRINTL -ふたなり-
+ENDIF
+;射精中毒
+CALL CHECK_STATUS_TAB_SUB1(ARG, 12)
+PRINTL
+PRINT …
+
+LOCALS = 
+FOR LCOUNT, 0, 300
+	SELECTCASE LCOUNT
+	CASE 170, 171, 172, 173, 174, 175, 176, 177, 178, 180, 181, 185, 186, 187, 188
+		CALL PERSONAL_TALENT(ARG, LCOUNT)
+		LOCALS += @"%RESULTS%"
+	ENDSELECT
+NEXT
+
+STRLENFORM %LOCALS%
+IF RESULT > 80
+	SUBSTRING LOCALS, 0, 94
+	PRINTFORML %RESULTS%
+	SUBSTRING LOCALS, 94, -1
+	PRINTFORM %RESULTS%
+	
+ELSE
+	PRINTFORM %LOCALS%
+ENDIF
+
+PRINTL
+PRINTL
+;-----　-----
+
+PRINTL -その他-
+;自慰中毒
+CALL CHECK_STATUS_TAB_SUB1(ARG, 10)
+PRINT 　￤
+;触手中毒
+CALL CHECK_STATUS_TAB_SUB1(ARG, 11)
+PRINTL
+;レズ中毒
+CALL CHECK_STATUS_TAB_SUB1(ARG, 13)
+PRINT 　￤
+;精液中毒
+CALL CHECK_STATUS_TAB_SUB1(ARG, 14)
+PRINTL
+;噴乳中毒
+CALL CHECK_STATUS_TAB_SUB1(ARG, 16)
+FOR LCOUNT, 0, 300
+	SELECTCASE LCOUNT
+	CASE 130
+		CALL PERSONAL_TALENT(ARG, LCOUNT)
+		PRINTFORM %RESULTS%
+	CASE 220
+		IF TALENT:(ARG):130 >= 1
+			CALL PERSONAL_TALENT(ARG, LCOUNT)
+			PRINTFORM %RESULTS%
+		ENDIF
+	ENDSELECT
+NEXT
+PRINTL
+PRINTL
+
+
+;経験補足
+PRINTFORM %@"迷宮内での絶頂回数：{EXP:(ARG):20}回",32,LEFT% 
+PRINTFORM %@"迷宮内でのおもらし回数：{EXP:(ARG):21}回",32,LEFT% 
+PRINTFORML 迷宮内でのキス回数：{EXP:(ARG):24}回
+
+PRINTFORM %@"迷宮内での出産回数：{EXP:(ARG):22}回",32,LEFT% 
+PRINTFORM %@"迷宮内での産卵回数：{EXP:(ARG):23}回",32,LEFT% 
+PRINTFORML 迷宮内での自慰回数：{EXP:(ARG):25}回
+
+IF CFLAG:(ARG):81 > 0
+	SPLIT "/直腸/乳房/クリトリス/子宮/脊髄/頭/射精/唇/卵巣/舌根/","/",LOCALS
+	PRINT インプラント：
+	FOR LCOUNT,1 ,11
+		IF GETBIT(CFLAG:(ARG:0):81,LCOUNT) > 0
+			PRINTFORM %"<"+LOCALS:LCOUNT+"> ",5,LEFT%
+		ENDIF
+	NEXT
+	PRINTL
+ENDIF
+
+
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+;表示補佐
+;ARG:0	キャラID
+;ARG:1	能力ID
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@CHECK_STATUS_TAB_SUB1(ARG:0, ARG:1)
+#DIM LCOUNT,3	;ループ用
+#DIM 現在値
+#DIM 必要値
+	
+	
+	
+	
+	;-----レベル表示-----
+	PRINTFORM %ABLNAME:(ARG:1),8,LEFT% Lv{ABL:(ARG:0):(ARG:1)} EXP:
+	
+	
+	
+	
+	;-----バー表示-----
+	;現在の量
+	現在値 = EXP:(ARG:0):(ARG:1)
+	
+	;次レベルに必要な量
+	;※レベルMAXだと-1を返す
+	CALL GET_NEED_EXP(ARG:1, ABL:(ARG:0):(ARG:1) + 1)
+	必要値 = RESULT
+	
+	IF 必要値 <= 0
+		CALL PRINT_COLORBAR( 1, 1, 15, BARCOLORSET("白"), RESULT:1)
+	ELSE
+		CALL PRINT_COLORBAR( 現在値, 必要値, 15, BARCOLORSET("白"), RESULT:1)
+	ENDIF
+	
+	;-----数値表示-----
+	;---現在値---
+	;表示桁調整
+	LOCAL = 0
+	IF 現在値 > 999999
+		FOR LCOUNT:1, 0, 5
+			IF 現在値 > 999999
+				現在値 /= 1000
+				LOCAL += 1
+			ENDIF
+		NEXT
+	ENDIF
+	LOCALS:1 = {現在値}
+	SELECTCASE LOCAL
+		CASE 0
+			
+		CASE 1
+			LOCALS:1 = %LOCALS:1%k
+		CASE 2
+			LOCALS:1 = %LOCALS:1%M
+		CASE 3
+			LOCALS:1 = %LOCALS:1%G
+		CASE 4
+			LOCALS:1 = %LOCALS:1%T
+		CASE 5
+			LOCALS:1 = %LOCALS:1%P
+		CASE 6
+			LOCALS:1 = %LOCALS:1%E
+	ENDSELECT
+	
+	;---目標値---
+	IF 必要値 <= 0
+		LOCALS:2 = -----
+	ELSE
+		LOCALS:2 = {必要値}
+	ENDIF
+	
+	;---表示---
+	PRINTFORM (%LOCALS:1,7,RIGHT%/%LOCALS:2,5,RIGHT%)
+	
+	
+	
+	
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;呼称変更
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@CHECK_STATUS_CHANGE_CALLNAME(ARG:0)
+
+
+	DRAWLINE
+	PRINTFORML %CALLNAME:(ARG)%の愛称を入力してください（キャンセルする場合はそのままEnterを押してください）
+	INPUTS
+	IF RESULTS == ""
+		PRINTFORMW 愛称の変更をキャンセルしました
+	ELSE
+		PRINTFORMW %CALLNAME:(ARG)%の愛称を%RESULTS%に変更しました
+		CALLNAME:(ARG) = %RESULTS%
+	ENDIF
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;変幻自在の能力変化
+;ARG:0	対象のID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@CHANGE_PERSONAL_STATUS(ARG:0)
+
+
+	DRAWLINE
+	PRINTFORML [ 1] 胸を絶壁にする
+	PRINTFORML [ 2] 胸を貧乳にする
+	PRINTFORML [ 3] 胸を普乳にする
+	PRINTFORML [ 4] 胸を巨乳にする
+	PRINTFORML [ 5] 胸を爆乳にする
+	IF TALENT:(ARG:0):159 == 0
+		PRINTFORML [ 9] 胸を陥没乳首にする
+	ELSEIF TALENT:(ARG:0):159 == 1
+		PRINTFORML [ 9] 陥没乳首を治す
+	ENDIF
+	PRINTFORML [10] 体型を普通にする
+	PRINTFORML [11] 体型を小柄にする
+	PRINTFORML [12] 体型を小人にする
+	PRINTFORML 
+	PRINTFORML [ 0] 終了
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		PRINTFORML 終了します
+		RETURN
+	ELSEIF RESULT == 1
+		TALENT:(ARG:0):107 = 1
+		TALENT:(ARG:0):108 = 0
+		TALENT:(ARG:0):109 = 0
+		TALENT:(ARG:0):110 = 0
+		TALENT:(ARG:0):158 = 0
+		PRINTFORML 胸を絶壁にしました
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 2
+		TALENT:(ARG:0):107 = 0
+		TALENT:(ARG:0):108 = 0
+		TALENT:(ARG:0):109 = 1
+		TALENT:(ARG:0):110 = 0
+		TALENT:(ARG:0):158 = 0
+		PRINTFORML 胸を貧乳にしました
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 3
+		TALENT:(ARG:0):107 = 0
+		TALENT:(ARG:0):108 = 0
+		TALENT:(ARG:0):109 = 0
+		TALENT:(ARG:0):110 = 0
+		TALENT:(ARG:0):158 = 0
+		PRINTFORML 胸を普乳にしました
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 4
+		TALENT:(ARG:0):107 = 0
+		TALENT:(ARG:0):108 = 0
+		TALENT:(ARG:0):109 = 0
+		TALENT:(ARG:0):110 = 1
+		TALENT:(ARG:0):158 = 0
+		PRINTFORML 胸を巨乳にしました
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 5
+		TALENT:(ARG:0):107 = 0
+		TALENT:(ARG:0):108 = 1
+		TALENT:(ARG:0):109 = 0
+		TALENT:(ARG:0):110 = 0
+		TALENT:(ARG:0):158 = 0
+		PRINTFORML 胸を爆乳にしました
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 9
+		IF TALENT:(ARG:0):159 == 0
+			TALENT:(ARG:0):159 = 1
+			PRINTFORML 胸を陥没乳首にしました
+		ELSEIF TALENT:(ARG:0):159 == 1
+			TALENT:(ARG:0):159 = 0
+			PRINTFORML 陥没乳首を治しました
+		ENDIF
+		
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 10
+		TALENT:(ARG:0):100 = 0
+		PRINTFORML 体型を普通にしました
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 11
+		TALENT:(ARG:0):100 = 1
+		PRINTFORML 体型を小柄にしました
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 12
+		TALENT:(ARG:0):100 = 2
+		PRINTFORML 体型を小人にしました
+		GOTO INPUT_LOOP
+	ELSE
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP
+	ENDIF
+	
+	
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;モブの能力取り直し ゲーム開始直後のみ
+;ARG:0	対象のID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@CHANGE_PERSONAL_STATUS_2(ARG:0)
+
+CALL MOB_RESET(ARG:0)
+CALL MOB_CUSTOMIZE(ARG:0)
+

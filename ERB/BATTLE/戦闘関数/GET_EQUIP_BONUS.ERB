@@ -1,0 +1,49 @@
+﻿;装備品による補正を取得
+;ARG:0	対象キャラ
+;ARG:1	能力の種類(0：戦闘素質合計、1：速度合計、27以上：該当アクセ装備中か確認)
+@GET_EQUIP_BONUS(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	RETURN
+
+LOCAL:1 = 0
+
+SELECTCASE ARG:1
+	CASE 0
+		;戦闘素質の合計補正を返す
+		IF CFLAG:(ARG:0):7 == 20 || CFLAG:(ARG:0):8 == 20 || CFLAG:(ARG:0):9 == 20
+			LOCAL:1 += 10
+		ENDIF
+		IF CFLAG:(ARG:0):7 == 21 || CFLAG:(ARG:0):8 == 21 || CFLAG:(ARG:0):9 == 21
+			LOCAL:1 += 20
+		ENDIF
+		IF CFLAG:(ARG:0):7 == 22 || CFLAG:(ARG:0):8 == 22 || CFLAG:(ARG:0):9 == 22
+			LOCAL:1 += 40
+		ENDIF
+		IF CFLAG:(ARG:0):7 == 23 || CFLAG:(ARG:0):8 == 23 || CFLAG:(ARG:0):9 == 23
+			LOCAL:1 += 60
+		ENDIF
+		
+	CASE 1
+		;速度の合計補正を返す
+		IF CFLAG:(ARG:0):7 == 24 || CFLAG:(ARG:0):8 == 24 || CFLAG:(ARG:0):9 == 24
+			LOCAL:1 += 20
+		ENDIF
+		IF CFLAG:(ARG:0):7 == 25 || CFLAG:(ARG:0):8 == 25 || CFLAG:(ARG:0):9 == 25
+			LOCAL:1 += 50
+		ENDIF
+		IF CFLAG:(ARG:0):7 == 26 || CFLAG:(ARG:0):8 == 26 || CFLAG:(ARG:0):9 == 26
+			LOCAL:1 += 500
+		ENDIF
+		
+	CASEELSE
+		;該当アクセを装備中かを返す
+		IF CFLAG:(ARG:0):7 == ARG:1 || CFLAG:(ARG:0):8 == ARG:1 || CFLAG:(ARG:0):9 == ARG:1
+			LOCAL:1 = 1
+		ENDIF
+		
+ENDSELECT
+
+RETURN LOCAL:1
+
+

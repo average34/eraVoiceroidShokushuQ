@@ -1,0 +1,171 @@
+﻿
+; PRINT_MESSAGE前に見出しで行動内容を表示
+@PRINT_MESSAGE_HEADLINE (ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM  LCOUNT
+#DIMS VALUE
+#DIM  TEMP_REDRAW
+
+	; 初期化
+	VARSET VALUE
+	
+	; メッセージによっては探索・戦闘中の区分がないものがある
+	; 探索時に見出しが表示されると邪魔なので、表示は戦闘中のみ
+	SIF !TFLAG:13
+		RETURN 0
+	
+	; 状況ID分岐 SYSTEM_MESSAGE.ERBのARG:0と同じもの
+	SELECTCASE ARG:0
+	; 味方の行動 ---------------------------------------------------------------
+	CASE 1
+		SELECTCASE ARG:1
+		CASE 1
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：防御
+		CASE 2
+			VALUE = %VALUE%【%CALLNAME:TARGET%】はアイテムを使用　≫　【%CALLNAME:(ARG:3)%】
+		CASE 3 TO 4 
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：移動
+		CASE 5
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：逃走
+		CASE 8
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：浄化
+		CASE 10 TO 35
+			IF ARG:1 == 12 && CFLAG:50 == 19
+				VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：霊撃　≫　【%SAVESTR:(TFLAG:53)%】
+			ELSEIF ARG:1 == 13 && ARG:2 == 0
+				VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：溜め攻撃
+			ELSEIF ARG:1 == 15
+				VALUE = %VALUE%【%CALLNAME:TARGET%】の攻撃　≫　【全体】
+			ELSE
+				VALUE = %VALUE%【%CALLNAME:TARGET%】の攻撃　≫　【%SAVESTR:(TFLAG:53)%】
+			ENDIF
+		CASE 42
+			SIF ARG:3 == 0
+				VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：脱出
+		CASE 43
+			SIF ARG:2 == 0
+				VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：力溜め
+		CASE 44
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：諦め
+		CASE 45
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：行動不能
+		CASE 46
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：自慰
+		CASE 47
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：自慰撃ち
+		CASE 50 TO 53
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：防御
+		CASE 54 TO 58
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：おねだり
+		CASE 60 TO 61
+			SIF ARG:3 == 1
+				VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：アクセサリ使用　≫　【%SAVESTR:(TFLAG:53)%】
+		CASE 71 TO 77
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：催眠行動
+		CASE 80 TO 86
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の性攻撃　≫　【%SAVESTR:(TFLAG:53)%】
+		CASE 95
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：脱出
+		CASE 96
+			VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：発情行動
+		ENDSELECT
+		
+	; 敵の行動 -----------------------------------------------------------------
+	CASE 2
+		VALUE = %VALUE%【%SAVESTR:(TFLAG:52)%】の通常攻撃　≫　
+	CASE 3
+		VALUE = %VALUE%【%SAVESTR:(TFLAG:52)%】の衣服攻撃　≫　
+	CASE 4
+		VALUE = %VALUE%【%SAVESTR:(TFLAG:52)%】の性攻撃　≫　
+	CASE 5
+		VALUE = %VALUE%【%SAVESTR:(TFLAG:52)%】の拘束攻撃　≫　
+	CASE 6
+		VALUE = %VALUE%【%SAVESTR:(TFLAG:52)%】の寄生攻撃　≫　
+	CASE 7
+		VALUE = %VALUE%【%SAVESTR:(TFLAG:52)%】の特殊攻撃　≫　
+	CASE 8
+		VALUE = %VALUE%【%SAVESTR:(TFLAG:52)%】の触手責め攻撃　≫　
+	
+	; ターン開始時処理 ---------------------------------------------------------
+	CASE 467
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：発情による勃起
+		
+	; ターン終了時処理 ---------------------------------------------------------
+	CASE 43, 44, 45
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：バッドステータス回復
+	CASE 46
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：衣服状態
+	CASE 47
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：汚染部屋
+	CASE 48
+		VALUE = %VALUE%【%CALLNAME:TARGET%】の行動：自慰
+	CASE 59
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：捕食中
+	CASE 445
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：寄生侵食
+	CASE 453
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：男性器発情
+	CASE 508
+		VALUE = %VALUE%【%CALLNAME:TARGET%】：触手包帯
+	
+	; ペット関連処理 ---------------------------------------------------------
+	CASE 400, 514
+		IF TALENT:1:140
+			VALUE = %VALUE%【ご主人様】の行動
+		ELSE
+			VALUE = %VALUE%【ペット】の行動
+		ENDIF
+	ENDSELECT
+	
+	; 味方の攻撃は既に対象が死亡している可能性があるので確認
+	IF ARG:0 == 1 && (ARG:1 >= 10 && ARG:1 <= 35 && ARG:1 != 15)
+		SIF DA:(TFLAG:53):1 <= 0
+			VALUE = %VALUE%（撃破済・別の敵を自動選択）
+	ENDIF
+	
+	
+	; 敵の攻撃は範囲攻撃の可能性があるので対象指定を別にする
+	IF ARG:0 >= 2 && ARG:0 <= 8
+		; 単体
+		IF TFLAG:59 == 0
+			VALUE = %VALUE%【%CALLNAME:(TFLAG:54)%】
+		; 全体
+		ELSE
+			VALUE = %VALUE%【全体】
+		ENDIF
+	ENDIF
+
+	; 表示処理
+	; VALUEが空なら何も表示しない
+	IF VALUE != ""
+		CURRENTREDRAW
+		TEMP_REDRAW = RESULT
+		REDRAW 0
+		
+		; 黄色っぽい色
+		SETCOLOR RGBCOLOR(229, 255, 38)
+		
+		; 見やすさ重視 前の処理ブロックとの間に空白を挟む
+		PRINTL 
+		
+		; 左側の罫線
+		FONTSTYLE 4
+		PRINT 　　
+		FONTSTYLE 0
+
+		; 内容表示
+		PRINTFORM 　%VALUE%　
+		
+		; 右側の罫線(触手宮の標準設定 横全角50文字 に合わせて数を調整)
+		FONTSTYLE 4
+		STRLENSU VALUE
+		FOR LCOUNT, (RESULT + 4), 50
+			PRINT 　
+		NEXT
+		FONTSTYLE 0
+
+		; 後片付け
+		PRINTL 
+		RESETCOLOR
+		REDRAW TEMP_REDRAW
+	ENDIF
+RETURN 1

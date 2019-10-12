@@ -1,0 +1,724 @@
+﻿@DAUGHTER_FAMILYINPUT(ARG:0)
+
+;娘の娘＝孫世代以降　プリンセス１以外は能力補正が少ない
+IF CFLAG:(ARG:0):107 > 1
+	SELECTCASE CFLAG:(ARG:0):107
+		;プリンセス（真）
+		CASE 1
+			ABL:(ARG:0):98 += 50
+			MAXBASE:(ARG:0):0 += 1000
+			ABL:(ARG:0):3 = 3
+		;プリンセス（偽）
+		CASE 2
+			ABL:(ARG:0):98 += 5
+			MAXBASE:(ARG:0):0 += 100
+		;リビングバイン
+		CASE 5
+			ABL:(ARG:0):98 -= 2
+			ABL:(ARG:0):97 -= 3
+			MAXBASE:(ARG:0):0 -= 40
+		;シャア専用リビングバイン
+		CASE 6
+			ABL:(ARG:0):97 += 3
+			MAXBASE:(ARG:0):0 -= 40
+		;スケーターワーム
+		CASE 7
+			ABL:(ARG:0):97 -= 2
+			MAXBASE:(ARG:0):0 += 20
+		;サンドバタフライ
+		CASE 8
+			MAXBASE:(ARG:0):0 += 30
+			TALENT:(ARG:0):42 = 0
+			TALENT:(ARG:0):43 = 1
+			TALENT:(ARG:0):213 = 1
+		;タコ娘
+		CASE 9
+			ABL:(ARG:0):98 += 1
+			ABL:(ARG:0):97 -= 1
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;ヘレシーマーメル
+		CASE 10
+			ABL:(ARG:0):98 += 1
+			ABL:(ARG:0):97 += 1
+			MAXBASE:(ARG:0):0 += 20
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;磯女
+		CASE 11
+			ABL:(ARG:0):98 += 1
+			MAXBASE:(ARG:0):0 += 10
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;アクティニア
+		CASE 12
+			ABL:(ARG:0):98 += 2
+			MAXBASE:(ARG:0):0 += 30
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;スライムガール
+		CASE 13
+			ABL:(ARG:0):97 -= 2
+			MAXBASE:(ARG:0):0 += 40
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;ショゴスセル
+		CASE 14
+			ABL:(ARG:0):98 += 1
+			ABL:(ARG:0):97 -= 1
+			MAXBASE:(ARG:0):0 += 60
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;アルラウネ
+		CASE 15
+			ABL:(ARG:0):98 += 2
+			ABL:(ARG:0):97 -= 1
+			TALENT:(ARG:0):115 = 1
+			TALENT:(ARG:0):116 = 0
+		;ドリアード
+		CASE 16
+			ABL:(ARG:0):98 += 3
+			ABL:(ARG:0):97 -= 1
+			MAXBASE:(ARG:0):0 += 20
+			TALENT:(ARG:0):115 = 1
+			TALENT:(ARG:0):116 = 0
+		;シェイプシフター
+		CASE 17
+			ABL:(ARG:0):98 += 1
+			ABL:(ARG:0):97 += 1
+			TALENT:(ARG:0):120 = 0
+			TALENT:(ARG:0):127 = 1
+		;ドッペルゲンガー
+		CASE 18
+			ABL:(ARG:0):98 += 3
+			ABL:(ARG:0):97 += 3
+			TALENT:(ARG:0):139 = 1
+		;博麗の娘
+		CASE 20
+			MAXBASE:(ARG:0):0 += 40
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):5 += 1
+			IF ABL:(ARG:0):98 < 72
+				ABL:(ARG:0):98 = 75
+			ELSE
+				ABL:(ARG:0):98 += 3
+			ENDIF
+			TALENT:(ARG:0):53 = 1
+		;テンタクルフェアリー
+		CASE 21
+			ABL:(ARG:0):98 -= 2
+			MAXBASE:(ARG:0):0 += 30
+			TALENT:(ARG:0):150 = 1
+			TALENT:(ARG:0):100 = 1
+			TALENT:(ARG:0):114 = 0
+		;スノーガール
+		CASE 22
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;サキュバス
+		CASE 23
+			MAXBASE:(ARG:0):2 += 200
+			ABL:(ARG:0):2 += 1
+			TALENT:(ARG:0):71 = 0
+			TALENT:(ARG:0):213 = 1
+			TALENT:(ARG:0):215 = 1
+		;プレーンマジックガール
+		CASE 24
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+			ABL:(ARG:0):98 += 1
+			TALENT:(ARG:0):50 = 1
+			TALENT:(ARG:0):51 = 0
+			IF RAND:4 == 0
+				TALENT:(ARG:0):153 = 1
+			ELSEIF RAND:3 == 0
+				TALENT:(ARG:0):55 = 1
+			ELSEIF RAND:2 == 0
+				TALENT:(ARG:0):151 = 1
+			ELSE
+				TALENT:(ARG:0):117 = 1
+			ENDIF
+		;吸血鬼
+		CASE 25
+			ABL:(ARG:0):98 += 1
+			ABL:(ARG:0):97 += 1
+			ABL:(ARG:0):3 += 1
+			TALENT:(ARG:0):115 = 0
+			TALENT:(ARG:0):150 = 0
+			TALENT:(ARG:0):114 = 1
+			TALENT:(ARG:0):116 = 1
+			TALENT:(ARG:0):213 = 1
+		;半妖半霊
+		CASE 26
+			ABL:(ARG:0):4 += 1
+		;エンジェルドーター
+		CASE 27
+			ABL:(ARG:0):98 += 2
+			ABL:(ARG:0):3 += 1
+			TALENT:(ARG:0):61 = 0
+			TALENT:(ARG:0):152 = 1
+		;スキマ妖怪
+		CASE 28
+			IF ABL:(ARG:0):98 < 68
+				ABL:(ARG:0):98 = 70
+			ELSE
+				ABL:(ARG:0):98 += 2
+			ENDIF
+			MAXBASE:(ARG:0):0 += 60
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+		;夜雀
+		CASE 29
+			ABL:(ARG:0):98 -= 1
+			ABL:(ARG:0):97 += 1
+			ABL:(ARG:0):2 += 1
+			TALENT:(ARG:0):213 = 2
+		;イナバ
+		CASE 30
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):1 += 1
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;玉兎
+		CASE 31
+			ABL:(ARG:0):4 += 1
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;蓬莱人
+		CASE 32
+			MAXBASE:(ARG:0):0 += 100
+		;天狗
+		CASE 33
+			ABL:(ARG:0):97 += 2
+			MAXBASE:(ARG:0):0 += 20
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):4 += 1
+		;半神
+		CASE 34
+			MAXBASE:(ARG:0):0 += 40
+			TALENT:(ARG:0):118 = 1
+		;半月の姫
+		CASE 35
+			ABL:(ARG:0):98 += 4
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+			TALENT:(ARG:0):61 = 0
+			TALENT:(ARG:0):152 = 1
+		;神の末裔
+		CASE 36
+			MAXBASE:(ARG:0):0 += 20
+			TALENT:(ARG:0):118 = 1
+		;鬼
+		CASE 37
+			ABL:(ARG:0):98 += 3
+			MAXBASE:(ARG:0):0 += 20
+			TALENT:(ARG:0):40 = 0
+			TALENT:(ARG:0):41 = 1
+			TALENT:(ARG:0):214 = 1
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+		;覚
+		CASE 38
+			ABL:(ARG:0):1 += 1
+			TALENT:(ARG:0):50 = 1
+			TALENT:(ARG:0):51 = 0
+			TALENT:(ARG:0):94 = 1
+		;ネコマタ
+		CASE 39
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):97 += 1
+			TALENT:(ARG:0):54 = 1
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;コウノトリ
+		CASE 45
+			ABL:(ARG:0):98 -= 2
+			ABL:(ARG:0):97 += 4
+			TALENT:(ARG:0):120 = 1
+			TALENT:(ARG:0):127 = 0
+			IF FLAG:535
+				TALENT:(ARG:0):137 = 1
+				CFLAG:(ARG:0):511 = 0
+				CFLAG:(ARG:0):510 = 0
+				CFLAG:(ARG:0):509 = 1
+				CFLAG:(ARG:0):508 = 0
+			ENDIF
+			TALENT:(ARG:0):213 = 2
+
+		;チクタクガール　道具戦闘特化型
+		CASE 50
+			IF ABL:(ARG:0):98 < 86
+				ABL:(ARG:0):98 = 90
+			ELSE
+				ABL:(ARG:0):98 += 4
+			ENDIF
+			ABL:(ARG:0):4 = 3
+			MAXBASE:(ARG:0):0 += 80
+			TALENT:(ARG:0):40 = 0
+			TALENT:(ARG:0):41 = 1
+			TALENT:(ARG:0):42 = 0
+			TALENT:(ARG:0):43 = 1
+			TALENT:(ARG:0):10 = 0
+			TALENT:(ARG:0):15 = 0
+			TALENT:(ARG:0):16 = 0
+			TALENT:(ARG:0):18 = 0
+			TALENT:(ARG:0):22 = 1
+			TALENT:(ARG:0):23 = 0
+			TALENT:(ARG:0):28 = 0
+			TALENT:(ARG:0):35 = 0
+			TALENT:(ARG:0):53 = 1
+			TALENT:(ARG:0):56 = 1
+			IF CFLAG:(ARG:0):100 == 2 || CFLAG:(ARG:0):100 == 8 || CFLAG:(ARG:0):100 == 10 || CFLAG:(ARG:0):100 == 14
+				CFLAG:(ARG:0):100 = 0
+			ENDIF
+		;スターカラーズ　攻撃戦闘スピード型
+		CASE 51
+			IF ABL:(ARG:0):98 < 96
+				ABL:(ARG:0):98 = 100
+			ELSE
+				ABL:(ARG:0):98 += 4
+			ENDIF
+			IF ABL:(ARG:0):97 < 86
+				ABL:(ARG:0):97 = 90
+			ELSE
+				ABL:(ARG:0):97 += 4
+			ENDIF
+			ABL:(ARG:0):3 = 3
+			ABL:(ARG:0):5 += 1
+			TALENT:(ARG:0):115 = 0
+			TALENT:(ARG:0):116 = 1
+		;ダムドラック　サポート型
+		CASE 52
+			IF ABL:(ARG:0):98 < 58
+				ABL:(ARG:0):98 = 60
+			ELSE
+				ABL:(ARG:0):98 += 2
+			ENDIF
+			ABL:(ARG:0):97 += 2
+			MAXBASE:(ARG:0):0 += 30
+			MAXBASE:(ARG:0):1 += 30
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):1 += 1
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+			TALENT:(ARG:0):53 = 1
+			TALENT:(ARG:0):55 = 1
+			TALENT:(ARG:0):117 = 1
+			TALENT:(ARG:0):118 = 1
+			TALENT:(ARG:0):152 = 1
+			TALENT:(ARG:0):153 = 1
+		;フォーマルフェアリー　攻撃戦闘耐久型
+		CASE 53
+			IF ABL:(ARG:0):98 < 96
+				ABL:(ARG:0):98 = 100
+			ELSE
+				ABL:(ARG:0):98 += 4
+			ENDIF
+			MAXBASE:(ARG:0):0 += 80
+			ABL:(ARG:0):3 = 3
+			TALENT:(ARG:0):115 = 1
+			TALENT:(ARG:0):116 = 0
+			TALENT:(ARG:0):111 = 1
+			TALENT:(ARG:0):112 = 0
+			TALENT:(ARG:0):151 = 1
+			TALENT:(ARG:0):42 = 0
+			TALENT:(ARG:0):43 = 1
+			TALENT:(ARG:0):213 = 1
+		;リリウムレディバグ　万能型
+		CASE 54
+			IF ABL:(ARG:0):98 < 77
+				ABL:(ARG:0):98 = 80
+			ELSE
+				ABL:(ARG:0):98 += 3
+			ENDIF
+			IF ABL:(ARG:0):97 < 77
+				ABL:(ARG:0):97 = 80
+			ELSE
+				ABL:(ARG:0):97 += 3
+			ENDIF
+			MAXBASE:(ARG:0):0 += 40
+			MAXBASE:(ARG:0):1 += 40
+			TALENT:(ARG:0):154 = 1
+			TALENT:(ARG:0):40 = 0
+			TALENT:(ARG:0):41 = 1
+			TALENT:(ARG:0):63 = 1
+			TALENT:(ARG:0):213 = 1
+		;狐狗狸
+		CASE 55
+			ABL:(ARG:0):98 += 3
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):127 = 1
+			TALENT:(ARG:0):215 = 2
+		;聖獣
+		;孫以降の伸びが良いのはわざと
+		CASE 56
+			ABL:(ARG:0):97 += 3
+			ABL:(ARG:0):98 += 2
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;ラミア
+		CASE 59
+			ABL:(ARG:0):97 += 3
+			TALENT:(ARG:0):215 = 1
+		ENDSELECT
+ELSE
+	SELECTCASE CFLAG:(ARG:0):107
+		;プリンセス（真）
+		CASE 1
+			ABL:(ARG:0):98 += 50
+			MAXBASE:(ARG:0):0 += 1000
+			ABL:(ARG:0):3 = 3
+		;リビングバイン
+		CASE 5
+			ABL:(ARG:0):98 -= 20
+			ABL:(ARG:0):97 -= 30
+			MAXBASE:(ARG:0):0 -= 400
+		;シャア専用リビングバイン
+		CASE 6
+			ABL:(ARG:0):97 += 30
+			MAXBASE:(ARG:0):0 -= 400
+		;スケーターワーム
+		CASE 7
+			ABL:(ARG:0):97 -= 20
+			MAXBASE:(ARG:0):0 += 200
+		;サンドバタフライ
+		CASE 8
+			MAXBASE:(ARG:0):0 += 300
+			TALENT:(ARG:0):42 = 0
+			TALENT:(ARG:0):43 = 1
+			TALENT:(ARG:0):213 = 1
+		;タコ娘
+		CASE 9
+			ABL:(ARG:0):98 += 10
+			ABL:(ARG:0):97 -= 10
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;ヘレシーマーメル
+		CASE 10
+			ABL:(ARG:0):98 += 10
+			ABL:(ARG:0):97 += 10
+			MAXBASE:(ARG:0):0 += 200
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;磯女
+		CASE 11
+			ABL:(ARG:0):98 += 10
+			MAXBASE:(ARG:0):0 += 100
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;アクティニア
+		CASE 12
+			ABL:(ARG:0):98 += 20
+			MAXBASE:(ARG:0):0 += 300
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;スライムガール
+		CASE 13
+			ABL:(ARG:0):97 -= 20
+			MAXBASE:(ARG:0):0 += 400
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;ショゴスセル
+		CASE 14
+			ABL:(ARG:0):98 += 10
+			ABL:(ARG:0):97 -= 10
+			MAXBASE:(ARG:0):0 += 600
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;アルラウネ
+		CASE 15
+			ABL:(ARG:0):98 += 20
+			ABL:(ARG:0):97 -= 10
+			TALENT:(ARG:0):115 = 1
+		;ドリアード
+		CASE 16
+			ABL:(ARG:0):98 += 30
+			ABL:(ARG:0):97 -= 10
+			MAXBASE:(ARG:0):0 += 200
+			TALENT:(ARG:0):115 = 1
+		;シェイプシフター
+		CASE 17
+			ABL:(ARG:0):98 += 10
+			ABL:(ARG:0):97 += 10
+			TALENT:(ARG:0):120 = 0
+			TALENT:(ARG:0):127 = 1
+		;ドッペルゲンガー
+		CASE 18
+			ABL:(ARG:0):98 += 30
+			ABL:(ARG:0):97 += 30
+			TALENT:(ARG:0):139 = 1
+		;博麗の娘
+		CASE 20
+			MAXBASE:(ARG:0):0 += 400
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):5 += 1
+			IF ABL:(ARG:0):98 < 45
+				ABL:(ARG:0):98 = 75
+			ELSE
+				ABL:(ARG:0):98 += 30
+			ENDIF
+			TALENT:(ARG:0):53 = 1
+		;テンタクルフェアリー
+		CASE 21
+			ABL:(ARG:0):98 -= 20
+			MAXBASE:(ARG:0):0 += 300
+			TALENT:(ARG:0):150 = 1
+			TALENT:(ARG:0):100 = 1
+			TALENT:(ARG:0):114 = 0
+		;スノーガール
+		CASE 22
+			TALENT:(ARG:0):42 = 1
+			TALENT:(ARG:0):43 = 0
+		;サキュバス
+		CASE 23
+			MAXBASE:(ARG:0):2 += 2000
+			ABL:(ARG:0):2 += 1
+			TALENT:(ARG:0):71 = 0
+			TALENT:(ARG:0):213 = 1
+			TALENT:(ARG:0):215 = 1
+		;プレーンマジックガール
+		CASE 24
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+			ABL:(ARG:0):98 += 10
+			TALENT:(ARG:0):50 = 1
+			TALENT:(ARG:0):51 = 0
+			IF RAND:4 == 0
+				TALENT:(ARG:0):153 = 1
+			ELSEIF RAND:3 == 0
+				TALENT:(ARG:0):55 = 1
+			ELSEIF RAND:2 == 0
+				TALENT:(ARG:0):151 = 1
+			ELSE
+				TALENT:(ARG:0):117 = 1
+			ENDIF
+		;吸血鬼
+		CASE 25
+			ABL:(ARG:0):98 += 15
+			ABL:(ARG:0):97 += 15
+			ABL:(ARG:0):3 += 1
+			TALENT:(ARG:0):115 = 0
+			TALENT:(ARG:0):150 = 0
+			TALENT:(ARG:0):114 = 1
+			TALENT:(ARG:0):116 = 1
+			TALENT:(ARG:0):213 = 1
+		;半妖半霊
+		CASE 26
+			ABL:(ARG:0):4 += 1
+		;エンジェルドーター
+		CASE 27
+			ABL:(ARG:0):98 += 20
+			ABL:(ARG:0):3 += 1
+			TALENT:(ARG:0):61 = 0
+			TALENT:(ARG:0):152 = 1
+		;スキマ妖怪
+		CASE 28
+			IF ABL:(ARG:0):98 < 50
+				ABL:(ARG:0):98 = 70
+			ELSE
+				ABL:(ARG:0):98 += 20
+			ENDIF
+			MAXBASE:(ARG:0):0 += 600
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+		;夜雀
+		CASE 29
+			ABL:(ARG:0):98 -= 10
+			ABL:(ARG:0):97 += 10
+			ABL:(ARG:0):2 += 1
+			TALENT:(ARG:0):213 = 2
+		;イナバ
+		CASE 30
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):1 += 1
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;玉兎
+		CASE 31
+			ABL:(ARG:0):4 += 1
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;蓬莱人
+		CASE 32
+			MAXBASE:(ARG:0):0 += 1000
+		;天狗
+		CASE 33
+			ABL:(ARG:0):97 += 20
+			MAXBASE:(ARG:0):0 += 200
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):4 += 1
+		;半神
+		CASE 34
+			MAXBASE:(ARG:0):0 += 400
+			TALENT:(ARG:0):118 = 1
+		;半月の姫
+		CASE 35
+			ABL:(ARG:0):98 += 40
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+			TALENT:(ARG:0):61 = 0
+			TALENT:(ARG:0):152 = 1
+		;神の末裔
+		CASE 36
+			MAXBASE:(ARG:0):0 += 200
+			TALENT:(ARG:0):118 = 1
+		;鬼
+		CASE 37
+			ABL:(ARG:0):98 += 30
+			MAXBASE:(ARG:0):0 += 200
+			TALENT:(ARG:0):40 = 0
+			TALENT:(ARG:0):41 = 1
+			TALENT:(ARG:0):214 = 1
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+		;覚
+		CASE 38
+			ABL:(ARG:0):1 += 1
+			TALENT:(ARG:0):50 = 1
+			TALENT:(ARG:0):51 = 0
+			TALENT:(ARG:0):94 = 1
+		;ネコマタ
+		CASE 39
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):97 += 10
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;コウノトリ
+		CASE 45
+			ABL:(ARG:0):98 -= 20
+			ABL:(ARG:0):97 += 40
+			TALENT:(ARG:0):120 = 1
+			TALENT:(ARG:0):127 = 0
+			IF FLAG:535
+				TALENT:(ARG:0):137 = 1
+				CFLAG:(ARG:0):511 = 0
+				CFLAG:(ARG:0):510 = 0
+				CFLAG:(ARG:0):509 = 1
+				CFLAG:(ARG:0):508 = 0
+			ENDIF
+			TALENT:(ARG:0):213 = 2
+		;チクタクガール　道具戦闘特化型
+		CASE 50
+			IF ABL:(ARG:0):98 < 50
+				ABL:(ARG:0):98 = 90
+			ELSE
+				ABL:(ARG:0):98 += 40
+			ENDIF
+			ABL:(ARG:0):4 = 3
+			MAXBASE:(ARG:0):0 += 800
+			TALENT:(ARG:0):40 = 0
+			TALENT:(ARG:0):41 = 1
+			TALENT:(ARG:0):42 = 0
+			TALENT:(ARG:0):43 = 1
+			TALENT:(ARG:0):10 = 0
+			TALENT:(ARG:0):15 = 0
+			TALENT:(ARG:0):16 = 0
+			TALENT:(ARG:0):18 = 0
+			TALENT:(ARG:0):22 = 1
+			TALENT:(ARG:0):23 = 0
+			TALENT:(ARG:0):28 = 0
+			TALENT:(ARG:0):35 = 0
+			TALENT:(ARG:0):53 = 1
+			TALENT:(ARG:0):56 = 1
+			IF CFLAG:(ARG:0):100 == 2 || CFLAG:(ARG:0):100 == 8 || CFLAG:(ARG:0):100 == 10 || CFLAG:(ARG:0):100 == 14
+				CFLAG:(ARG:0):100 = 0
+			ENDIF
+		;スターカラーズ　攻撃戦闘スピード型
+		CASE 51
+			IF ABL:(ARG:0):98 < 60
+				ABL:(ARG:0):98 = 100
+			ELSE
+				ABL:(ARG:0):98 += 40
+			ENDIF
+			IF ABL:(ARG:0):97 < 50
+				ABL:(ARG:0):97 = 90
+			ELSE
+				ABL:(ARG:0):97 += 40
+			ENDIF
+			ABL:(ARG:0):3 = 3
+			ABL:(ARG:0):5 += 1
+			TALENT:(ARG:0):115 = 0
+			TALENT:(ARG:0):116 = 1
+		;ダムドラック　サポート型
+		CASE 52
+			IF ABL:(ARG:0):98 < 40
+				ABL:(ARG:0):98 = 60
+			ELSE
+				ABL:(ARG:0):98 += 20
+			ENDIF
+			ABL:(ARG:0):97 += 20
+			MAXBASE:(ARG:0):0 += 300
+			MAXBASE:(ARG:0):1 += 300
+			ABL:(ARG:0):0 += 1
+			ABL:(ARG:0):1 += 1
+			ABL:(ARG:0):3 += 1
+			ABL:(ARG:0):4 += 1
+			TALENT:(ARG:0):51 = 0
+			TALENT:(ARG:0):55 = 1
+			TALENT:(ARG:0):117 = 1
+			TALENT:(ARG:0):118 = 1
+			TALENT:(ARG:0):152 = 1
+			TALENT:(ARG:0):153 = 1
+		;フォーマルフェアリー　攻撃戦闘耐久型
+		CASE 53
+			IF ABL:(ARG:0):98 < 60
+				ABL:(ARG:0):98 = 100
+			ELSE
+				ABL:(ARG:0):98 += 40
+			ENDIF
+			MAXBASE:(ARG:0):0 += 800
+			ABL:(ARG:0):3 = 3
+			TALENT:(ARG:0):115 = 1
+			TALENT:(ARG:0):116 = 0
+			TALENT:(ARG:0):111 = 1
+			TALENT:(ARG:0):112 = 0
+			TALENT:(ARG:0):151 = 1
+			TALENT:(ARG:0):42 = 0
+			TALENT:(ARG:0):43 = 1
+		;リリウムレディバグ　万能型
+		CASE 54
+			IF ABL:(ARG:0):98 < 50
+				ABL:(ARG:0):98 = 80
+			ELSE
+				ABL:(ARG:0):98 += 30
+			ENDIF
+			IF ABL:(ARG:0):97 < 50
+				ABL:(ARG:0):97 = 80
+			ELSE
+				ABL:(ARG:0):97 += 30
+			ENDIF
+			MAXBASE:(ARG:0):0 += 400
+			MAXBASE:(ARG:0):1 += 400
+			TALENT:(ARG:0):154 = 1
+			TALENT:(ARG:0):40 = 0
+			TALENT:(ARG:0):41 = 1
+			TALENT:(ARG:0):63 = 1
+		;狐狗狸
+		CASE 55
+			ABL:(ARG:0):98 += 25
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):127 = 1
+			TALENT:(ARG:0):215 = 2
+		;聖獣
+		CASE 56
+			ABL:(ARG:0):97 += 10
+			ABL:(ARG:0):98 += 10
+			TALENT:(ARG:0):124 = 1
+			TALENT:(ARG:0):215 = 1
+		;ラミア
+		CASE 59
+			ABL:(ARG:0):97 += 30
+			TALENT:(ARG:0):215 = 1
+		ENDSELECT
+ENDIF
+
+SIF MAXBASE:(ARG:0):0 < 1000
+	MAXBASE:(ARG:0):0 = 1000
+	
+SIF ABL:(ARG:0):97 < 10
+	ABL:(ARG:0):97 = 10
+	
+SIF ABL:(ARG:0):98 < 10
+	ABL:(ARG:0):98 = 10

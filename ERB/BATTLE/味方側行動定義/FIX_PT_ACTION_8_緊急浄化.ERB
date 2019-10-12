@@ -1,0 +1,111 @@
+﻿;緊急浄化
+;CHARA_ID	実行キャラ
+;PURIFICATION_BONUS	【浄化知識】【結界知識】持ちの状況
+@FIX_PT_ACTION_8(CHARA_ID)
+#DIM CHARA_ID
+#DIM LCOUNT,2
+#DIM PURIFICATION_BONUS
+#DIM DAMAGE_BASE
+#DIM FIXED_DAMAGE
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+IF FLAG:6 >= 50
+	;PTに【結界知識】持ちが万全な状態で存在
+	IF (TALENT:1:160 == 2 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && (CFLAG:1:22 == 0 || CFLAG:1:23 >= 5)) || (FLAG:10 && TALENT:(FLAG:10):160 == 2 && CFLAG:(FLAG:10):28 == 0 && CFLAG:(FLAG:10):29 == 0 && (CFLAG:(FLAG:10):22 == 0 || CFLAG:(FLAG:10):23 >= 5)) || (FLAG:11 && TALENT:(FLAG:11):160 == 2 && CFLAG:(FLAG:11):28 == 0 && CFLAG:(FLAG:11):29 == 0 && (CFLAG:(FLAG:11):22 == 0 || CFLAG:(FLAG:11):23 >= 5))
+		PURIFICATION_BONUS = 2
+	;PTに【浄化知識】持ちが万全な状態で存在
+	ELSEIF (TALENT:1:160 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && (CFLAG:1:22 == 0 || CFLAG:1:23 >= 5)) || (FLAG:10 && TALENT:(FLAG:10):160 && CFLAG:(FLAG:10):28 == 0 && CFLAG:(FLAG:10):29 == 0 && (CFLAG:(FLAG:10):22 == 0 || CFLAG:(FLAG:10):23 >= 5)) || (FLAG:11 && TALENT:(FLAG:11):160 && CFLAG:(FLAG:11):28 == 0 && CFLAG:(FLAG:11):29 == 0 && (CFLAG:(FLAG:11):22 == 0 || CFLAG:(FLAG:11):23 >= 5))
+		PURIFICATION_BONUS = 1
+	ENDIF
+
+	;PTに万全な【結界知識】持ちがいてかつ全員【浄化知識】持ちか【結界知識】持ちならボーナス（万全でなくてよい）
+	SIF PURIFICATION_BONUS == 2 && TALENT:1:160 && CFLAG:1:29 == 0 && FLAG:10 && TALENT:(FLAG:10):160 && CFLAG:(FLAG:10):29 == 0 && FLAG:11 && TALENT:(FLAG:11):160 && CFLAG:(FLAG:11):29 == 0
+		PURIFICATION_BONUS = 3
+	
+	
+	CALL PRINT_MESSAGE(CHARA_ID, 1, 8, CALLNAME:CHARA_ID, "")
+	;極稀に大変なことになる (ゲーム難易度依存ランダムで触手暴走) Normal以上かつ、浄化力が一定以下
+	IF FLAG:4 > 0 && RAND:100 <= (FLAG:4 + 1) && FLAG:6 < 300 - PURIFICATION_BONUS * 50
+		;触手暴走開始
+		CALL PRINT_MESSAGE(-1, 430, 0, CALLNAME:1, "")
+		
+		;主人公視点のシステムメッセージ表示
+		;主人公喪失時は、喪失していない仲間を見ている
+		IF CFLAG:1:29
+			IF CFLAG:(FLAG:10):29
+				CALL PRINT_MESSAGE(-1, 430, 2, CALLNAME:(FLAG:11), "")
+			ELSEIF CFLAG:(FLAG:11):29
+				CALL PRINT_MESSAGE(-1, 430, 2, CALLNAME:(FLAG:10), "")
+			ENDIF
+		;主人公は喪失していない
+		ELSE
+			CALL PRINT_MESSAGE(-1, 430, 4, CALLNAME:1, "")
+		ENDIF
+			
+		; ダメージ計算に利用する設定値
+		DAMAGE_BASE = LIMIT(RAND:80, 50, 80) + FLAG:(FLAG:5 + 50)
+	
+		;ダメージ処理(同室にいるキャラクタも巻き込まれる) - ステータスからの割合ダメージ
+		FOR LCOUNT:0, 1, CHARANUM
+			;同室 & 行動可能チェック
+			IF CFLAG:1:4 == CFLAG:(LCOUNT:0):4 && CFLAG:(LCOUNT:0):2 == 0 && CFLAG:(LCOUNT:0):3 == 0 && CFLAG:(LCOUNT:0):21 == 0
+				
+				;システムメッセージ表示(先に表示されている都合で主人公を除外)
+				;対象キャラはPTメンバー
+				IF (LCOUNT:0 == FLAG:10 || LCOUNT:0 == FLAG:11) && LCOUNT:0 != 1
+					;PTメンバーで通常行動中
+						CALL PRINT_MESSAGE(-1, 430, 4, CALLNAME:(LCOUNT:0), "")
+					IF !CFLAG:(LCOUNT:0):29
+					;PTメンバーで喪失中
+					ELSE
+						CALL PRINT_MESSAGE(-1, 430, 3, CALLNAME:(LCOUNT:0), "")
+					ENDIF
+				;対象キャラはPTメンバー外
+				ELSEIF LCOUNT:0 != 1
+					;PTメンバー外で通常行動中
+					IF !CFLAG:(LCOUNT:0):29
+						CALL PRINT_MESSAGE(-1, 430, 7, CALLNAME:(LCOUNT:0), "")
+					;PTメンバー外で喪失中
+					ELSE
+						CALL PRINT_MESSAGE(-1, 430, 6, CALLNAME:(LCOUNT:0), "")
+					ENDIF
+				ENDIF
+				
+				;ダメージ処理 難易度別分岐(Normal)
+				IF FLAG:4 <= 1
+					;Easy, Normalモードでは喪失キャラへのダメージなし
+					IF !CFLAG:(LCOUNT:0):29
+						;HPダメージ
+						IF (BASE:(LCOUNT:0):0 / (FLAG:4 + 6)) >= (MAXBASE:(LCOUNT:0):0 / 4)
+							BASE:(LCOUNT:0):0 = 0
+						ELSE
+							BASE:(LCOUNT:0):0 /= (FLAG:4 + 6)
+						ENDIF
+						;MPダメージ
+						BASE:(LCOUNT:0):1 /= (FLAG:4 + 6)
+						;EPダメージ
+						BASE:(LCOUNT:0):2 /= (FLAG:4 + 6)
+					ENDIF
+				;ダメージ処理 難易度別分岐(Hard以上)
+				ELSE
+					; 難易度数値+5回 ループ
+					FOR LCOUNT:1, 0,  (FLAG:4 + 5)
+						TFLAG:63 = RAND:4
+						FIXED_DAMAGE = CALC_SENSITIVITY((LCOUNT:0), TFLAG:63, DAMAGE_BASE)
+						CALL DAMAGE_COMMON((LCOUNT:0), 2, FIXED_DAMAGE * 7 * (TALENT:(LCOUNT:0):(101 + TFLAG:63) + 2), 2000)
+					NEXT
+				ENDIF
+			ENDIF
+		NEXT
+		
+		; ダメージ属性・倍率の後片付け
+		TFLAG:63 = 0
+			; 触手暴走終了
+		CALL PRINT_MESSAGE(-1, 430, 1, CALLNAME:1, "")
+	ENDIF
+	FLAG:6 = MAX(FLAG:6 - 50, 0)
+	FLAG:(50 + FLAG:5) = MAX(FLAG:(50 + FLAG:5) - 20, 0)
+ELSE
+	CALL PRINT_MESSAGE(CHARA_ID, 1, 8, CALLNAME:CHARA_ID, "")
+ENDIF

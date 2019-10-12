@@ -1,0 +1,124 @@
+﻿;屈服刻印一覧表示
+@SHOW_MARK_WIKI
+;LOCAL
+;0	ループ用
+;2	直前に選択した番号
+;3	状態異常詳細を見た
+;10	行削除用カウント1(計算用)
+;11	行削除用カウント2(計算用)
+;12	行削除用カウント3(項目の改行数)
+;13	行削除用カウント4(計算用)
+;14	行削除用カウント5(計算用)
+;15	行削除用カウント6(詳細の改行数)
+
+	$START
+	REDRAW 0
+	LOCAL:10 = LINECOUNT
+
+	LOCAL:1 = 0
+	DRAWLINE
+	PRINTFORML どの屈服刻印を見ますか？
+	FOR LOCAL:0, 0, 20
+			PRINTFORM [{LOCAL:0 + 1,3}] %MARKNAME:(LOCAL:0),15,LEFT%
+			LOCAL:1 += 1
+			;3つ表示するごとに改行
+			SIF (LOCAL:1 % 3) == 0 && LOCAL:1 > 0
+				PRINTL
+	NEXT
+	PRINTL
+	PRINTL
+	PRINTL [  0] キャンセル
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL:11 = LINECOUNT
+	;項目表示の改行数を記録
+	LOCAL:12 = LOCAL:11 - LOCAL:10
+
+	IF RESULT == 0
+		REDRAW 1
+		LOCAL:3 = 0
+		RETURN
+	ELSEIF RESULT > 0 && RESULT < 21
+		;行削除(初回)
+		IF LOCAL:3 == 0
+			CLEARLINE LOCAL:12
+		;行削除(2回目～)
+		ELSEIF LOCAL:3 == 1 && LOCAL:2 != RESULT
+			CLEARLINE LOCAL:15 + LOCAL:12 + 3
+		;連打のログ流れ防止
+		ELSEIF LOCAL:2 == RESULT
+			CLEARLINE 1
+			GOTO INPUT_LOOP
+		ENDIF
+		LOCAL:2 = RESULT
+		DRAWLINE
+		SETCOLOR 0x60C0FF
+		PRINTFORML >> %MARKNAME:(RESULT-1),15,LEFT%
+		RESETCOLOR
+		LOCAL:13 = LINECOUNT
+		CALL SHOW_MARK_EXPLAIN_WIKI(RESULT-1)
+		LOCAL:14 = LINECOUNT
+		;説明表示の改行数を記録
+		LOCAL:15 = LOCAL:14 - LOCAL:13
+		PRINTL
+		LOCAL:3 = 1
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+
+;刻印の詳細を表示
+;ARG:0	素質ID
+@SHOW_MARK_EXPLAIN_WIKI(ARG:0)
+
+;ステータスのコピペ
+SELECTCASE ARG:0
+	CASE 0
+		PRINTFORML 触手に屈服した者の証
+	CASE 1
+		PRINTFORML 百合に屈服した者の証
+	CASE 2
+		PRINTFORML 発情に屈服した者の証
+	CASE 3
+		PRINTFORML ドレインに屈服した者の証
+	CASE 4
+		PRINTFORML 獣姦に屈服した者の証
+	CASE 5
+		PRINTFORML スライムに屈服した者の証
+	CASE 6
+		PRINTFORML ゴブリンに屈服した者の証
+	CASE 7
+		PRINTFORML ちんぽに屈服した者の証
+	CASE 8
+		PRINTFORML 催眠に屈服した者の証
+	CASE 9
+		PRINTFORML 丸呑みに屈服した者の証
+	CASE 10
+		PRINTFORML 触手服に屈服した者の証
+	CASE 11
+		PRINTFORML 小悪魔に屈服した者の証
+	CASE 12
+		PRINTFORML 尻尾に屈服した者の証
+	CASE 13
+		PRINTFORML 視線に屈服した者の証
+	CASE 14
+		PRINTFORML 噴乳に屈服した者の証
+	CASE 15
+		PRINTFORML 媚毒に屈服した者の証
+	CASE 16
+		PRINTFORML ふたなりちんぽに屈服した者の証
+	CASE 17
+		PRINTFORML 睡魔に屈服した者の証
+	CASE 18
+		PRINTFORML 偽物のお酒に屈服した者の証
+	CASE 19
+		PRINTFORML 粘液に屈服した者の証
+	CASEELSE
+		PRINTFORML この素質の説明は未実装です
+ENDSELECT
+

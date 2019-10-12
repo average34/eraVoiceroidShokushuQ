@@ -1,0 +1,542 @@
+﻿;寄生攻撃命中時の描写
+@SYSTEM_MESSAGE_16(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;敵のコマンドごとに命中時の描写したり
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_16)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+	CASE 801
+		PRINTFORML 体内へはっきりと分かる程の異物が送り込まれるのを感じ、%ARGS:0%は絶望の悲鳴をあげた…
+	CASE 802
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:0%の精一杯の抵抗が実り、何とか最奥までの侵入は防げたものの、
+			PRINTFORML このまま妊娠してしまうのではないかという程の大量の液体が%ARGS:0%の膣内に注ぎ込まれた…
+		ELSE
+			PRINTFORML 嫌な予感に逃げ出そうとする%ARGS:0%を別の触手が捕らえ、拒絶を許さない
+			PRINTFORML 精一杯の抵抗も空しく、%ARGS:0%の胎内に大量の液体が注ぎ込まれた…
+		ENDIF
+	CASE 804
+		PRINTFORML 体内へはっきりと分かる程の異物が送り込まれるのを感じ、%ARGS:0%は絶望の悲鳴をあげた…
+	CASE 806
+		PRINTFORML あらゆる触手からゼリー状の白濁液が吹き出し、%ARGS:0%は全身粘液塗れになってしまった…
+	CASE 807
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 膣口に押し付けられた触手から大量の白濁液が迸り、膣内へとどんどん注ぎ込まれる！
+		ELSE
+			PRINTFORML %ARGS:0%の膣内に入った触手から大量の白濁液が迸り、%ARGS:0%の下腹部が膨れ上がった…
+		ENDIF
+	CASE 809
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 必死で触手を突き放そうとする%ARGS:0%を無視して、大量の液体が注ぎ込まれてゆく…！
+		ELSE
+			PRINTFORML %ARGS:1%の子種を体内に注がれた%ARGS:0%は、声にならない声を上げ涙を流した…
+		ENDIF
+	CASE 811
+		IF RAND:2 == 0
+			FLAG:99 = 0
+			PRINTFORML 暴れる%ARGS:0%を別の触手で押さえつけながら、%ARGS:1%はその膣内に体液を流し込んだ…
+		ELSE
+			FLAG:99 = 1
+			PRINTFORML 人ならざるものの射精を受け、%ARGS:0%は言葉を失いながら痙攣している…
+		ENDIF
+	CASE 813
+		IF RAND:2 == 0
+			FLAG:99 = 0
+			PRINTFORML 暴れる%ARGS:0%を別の触手で押さえつけながら、%ARGS:1%はその膣内に体液を流し込んだ…
+		ELSE
+			FLAG:99 = 1
+			PRINTFORML 人ならざるものの射精を受け、%ARGS:0%は言葉を失いながら痙攣している…
+		ENDIF
+	CASE 815
+		PRINTFORML 体内の奥へ奥へと侵入してくる正体不明の質量に%ARGS:0%は戦慄している…
+	CASE 817
+		PRINTFORML しかし狭い体内では逃げることもできず、侵入を許すことしかできなかった…
+	CASE 819
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 触手は何度も膣内へ潜り込もうとしたがついに諦め、少しでも白濁液を注ぎ込もうと膣口周辺で射精を繰り返した！
+		ELSEIF RAND:2 == 0
+			FLAG:99 = 0
+			PRINTFORML 触手は体液を潤滑油にあっという間に奥深くまで侵入し、%ARGS:0%は快感の悲鳴を上げる
+			PRINTFORML そして激しく出し入れを繰り返すと、にわかに膨らみ%ARGS:0%の膣内へ大量の精を送り込んだ…
+		ELSE
+			FLAG:99 = 1
+			PRINTFORML 触手は激しく出し入れを繰り返すと、にわかに膨らみ%ARGS:0%の膣内へ大量の精を送り込んだ
+			PRINTFORML %ARGS:0%は人ならざるものに種付けされ、震えながら言葉を失っている…
+		ENDIF
+	CASE 821
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 触手は何度も膣内へ潜り込もうとしたがついに諦め、少しでも白濁液を注ぎ込もうと膣口周辺で射精を繰り返した！
+		ELSEIF RAND:2 == 0
+			FLAG:99 = 0
+			PRINTFORML 触手は体液を潤滑油にあっという間に奥深くまで侵入し、%ARGS:0%は快感の悲鳴を上げる
+			PRINTFORML そして激しく出し入れを繰り返すと、にわかに膨らみ%ARGS:0%の膣内へ大量の精を送り込んだ…
+		ELSE
+			FLAG:99 = 1
+			PRINTFORML 触手は激しく出し入れを繰り返すと、にわかに膨らみ%ARGS:0%の膣内へ大量の精を送り込んだ
+			PRINTFORML %ARGS:0%は人ならざるものに種付けされ、震えながら言葉を失っている…
+		ENDIF
+	CASE 823
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 挿入を防いだにも関わらず膣口からは白濁液が溢れている…
+		ELSE
+			PRINTFORML 子種を吐き出した触手が引き抜かれると、%ARGS:0%の膣穴から白濁液がドロリと零れ落ちた…
+		ENDIF
+	CASE 824
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 大量に射精された%ARGS:0%は、挿入を避けたというのに子宮の中まで%ARGS:1%の精液の生ぬるさを感じる…
+		ELSE
+			PRINTFORML 大量に射精された%ARGS:0%は、子宮の中まで%ARGS:1%の精液に満たされている…
+		ENDIF
+	CASE 825
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 挿入を防いだにも関わらず膣口からは白濁液が溢れている…
+		ELSE
+			PRINTFORML 子種を吐き出した触手が引き抜かれると、%ARGS:0%の膣穴から白濁液がドロリと零れ落ちた…
+		ENDIF
+	CASE 826
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 大量に射精された%ARGS:0%は、挿入を避けたというのに子宮の中まで%ARGS:1%の精液の生ぬるさを感じる…
+		ELSE
+			PRINTFORML 大量に射精された%ARGS:0%は、子宮の中まで%ARGS:1%の精液に満たされている…
+		ENDIF
+	CASE 827
+		PRINTFORML 半透明だった%ARGS:1%の体のうち、%ARGS:0%の性器周辺だけが白く濁り始めた…
+	CASE 828
+		PRINTFORML %ARGS:0%の穴という穴に%ARGS:1%の体液が注ぎ込まれてゆく…
+	CASE 829
+		PRINTFORML 半透明だった%ARGS:1%の体のうち、%ARGS:0%の性器周辺だけが白く濁り始めた…
+	CASE 830
+		PRINTFORML %ARGS:0%の穴という穴に%ARGS:1%の体液が注ぎ込まれてゆく…
+	CASE 831
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:0%は必死に下の口を庇ったが、%ARGS:1%の体液の進入は防ぎきれなかった…
+		ELSE
+			PRINTFORML 上と下の両方の口から%ARGS:0%に%ARGS:1%の体液が注ぎ込まれてゆく…
+		ENDIF
+	CASE 832
+		;多段攻撃はとりあえず省略
+	CASE 833
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:0%は必死に下の口を庇ったが、%ARGS:1%の体液の進入は防ぎきれなかった…
+		ELSE
+			PRINTFORML 上と下の両方の口から%ARGS:0%に%ARGS:1%の体液が注ぎ込まれてゆく…
+		ENDIF
+	CASE 834
+		;多段攻撃はとりあえず省略
+	CASE 837
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:1%の身体が小さく震えたかと思うと、%ARGS:0%のワレメと男性器の間から白濁液が迸った！
+		ELSE
+			PRINTFORML %ARGS:1%の身体が小さく震えたかと思うと、%ARGS:0%の奥へ向け粘ついた精液が吐き出された…
+		ENDIF
+	CASE 838
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:1%の身体が小さく震えたかと思うと、%ARGS:0%のワレメと男性器の間から大量の白濁液が迸った！
+		ELSE
+			PRINTFORML %ARGS:1%の身体が小さく震えたかと思うと、%ARGS:0%の奥へ向け大量の精液が吐き出された…
+		ENDIF
+	CASE 840
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 膣口に押し付けられた触手から大量の白濁液が迸り、膣内へとどんどん注ぎ込まれる！
+		ELSE
+			PRINTFORML %ARGS:0%の膣内に入った触手から大量の白濁液が迸り、%ARGS:0%の下腹部が膨れ上がった…
+		ENDIF
+	CASE 841
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			;ありえないから省略
+		ELSE
+			PRINTFORML %ARGS:0%の子宮口を押し広げ触手は子宮内へと次々と卵を産みつけていく…
+		ENDIF
+	CASE 842
+		PRINTFORML %ARGS:1%が放った精液の霧は%ARGS:0%の鼻や口だけでは無く、%ARGS:0%の膣内にも立ち込める
+		PRINTFORML 霧を下の口で吸ってしまった%ARGS:0%は、何故か%ARGS:1%の子供を身ごもったような気がした…
+	CASE 843
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 大量に射精された%ARGS:0%は、挿入を避けたにも関わらず%ARGS:1%の精液で下腹部が膨れ上がったのを感じた…
+		ELSE
+			PRINTFORML 体の限界を超えて大量に射精された%ARGS:0%は、だらしなく開いた膣穴から白濁液をゴポゴポ垂れ流している…
+		ENDIF
+	CASE 844
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:1%の精液は挿入を避けたにも関わらず%ARGS:0%の膣穴から吹き出し、部屋を深さ数センチほどのプールに変えた…
+		ELSE
+			PRINTFORML %ARGS:1%の精液は射精と同時に%ARGS:0%の胎内から逆流し、部屋を深さ数センチほどのプールに変えた…
+		ENDIF
+	CASE 845
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 連続で大量に射精された%ARGS:0%は、挿入を避けたにも関わらず子宮の中まで%ARGS:1%の精液に満たされている…
+		ELSE
+			PRINTFORML 連続で大量に射精された%ARGS:0%は、子宮の中まで%ARGS:1%の精液に満たされている…
+		ENDIF
+	CASE 846
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 連続で大量に射精された%ARGS:0%は、挿入を避けたにも関わらず子宮の中まで%ARGS:1%の精液に満たされている…
+		ELSE
+			PRINTFORML 連続で大量に射精された%ARGS:0%は、子宮の中まで%ARGS:1%の精液に満たされている…
+		ENDIF
+	CASE 847
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML 連続で大量に射精された%ARGS:0%は、挿入を避けたにも関わらず%ARGS:1%の精液に溺れるような感覚を覚えた…
+		ELSE
+			PRINTFORML %ARGS:1%の精液は射精と同時に%ARGS:0%の胎内から逆流したにも関わらず、何度も何度も%ARGS:0%の胎内に注がれた…
+		ENDIF
+	CASE 848
+
+		IF FLAG:507 >= 1
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML 触手は細く形状を変え%ARGS:0%の膣内に強引に侵入すると、子宮口付近で先端部分のみをプツリと切り離した…
+			ELSE
+				PRINTFORML 強引に侵入した触手は%ARGS:0%の子宮内に先端部分を突っ込ませ、そこでプツリと本体のみを切り離した…
+			ENDIF
+		ELSE
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML 触手は細く形状を変え%ARGS:0%の膣内に強引に侵入すると、脈打ちながら子宮口付近をも責めはじめた…
+			ELSE
+				PRINTFORML 強引に侵入した触手は%ARGS:0%の子宮内にまで迫る勢いで、脈打ちながら激しく卵責めを始めた…
+			ENDIF
+		ENDIF
+	CASE 849
+		IF FLAG:507 >= 1
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML 触手は細く形状を変え%ARGS:0%の膣内に強引に侵入すると、子宮口付近で先端部分のみをプツリと切り離した…
+			ELSE
+				PRINTFORML 強引に侵入した触手は%ARGS:0%の子宮内に先端部分を突っ込ませ、そこでプツリと本体のみを切り離した…
+			ENDIF
+		ELSE
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML 触手は細く形状を変え%ARGS:0%の膣内に強引に侵入すると、激しく振動しつつ子宮口付近をも責めはじめた…
+			ELSE
+				PRINTFORML 強引に侵入した触手は%ARGS:0%の子宮内にまで迫る勢いで、激しく振動しつつ卵責めを始めた…
+			ENDIF
+		ENDIF
+	CASE 850
+		IF FLAG:507 >= 1
+	
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML 触手は細く形状を変え%ARGS:0%の膣内に強引に侵入すると、子宮口付近で先端部分のみをプツリと切り離した…
+			ELSE
+				PRINTFORML 強引に侵入した触手は%ARGS:0%の子宮内に先端部分を突っ込ませ、そこでプツリと本体のみを切り離した…
+			ENDIF
+
+		ELSE
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML 大量の細い触手は、それぞれ別の形状になりつつ%ARGS:0%の膣内に強引に侵入すると、子宮口付近をも責めはじめた…
+			ELSE
+				PRINTFORML 強引に侵入した大量の触手は%ARGS:0%の子宮内にまで迫る勢いで、次々に激しく卵責めを始めた…
+			ENDIF
+
+		ENDIF
+	CASE 851
+		IF FLAG:507 >= 1
+	
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML %ARGS:1%が放った精液は、その勢いで持って%ARGS:0%をゴミのように吹き飛ばし、壁に叩き付けた…
+			ELSE
+				PRINTFORML %ARGS:1%は射精の反動に耐え切れずに%ARGS:0%と反対の方向に吹っ飛び、一緒に壁に叩きつけられた…
+			ENDIF
+		ELSE
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML %ARGS:1%が放った体液は、その勢いで持って%ARGS:0%を壁際まで押し流した…
+			ELSE
+				PRINTFORML %ARGS:1%は何かを忘れたのか、%ARGS:0%の周囲を飛び回ると、そのまま壁に激突してしまった…
+			ENDIF
+		ENDIF
+	CASE 852
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:1%が%ARGS:0%の処女膜を一気に引き裂いた！
+		ELSE
+			PRINTFORML %ARGS:0%の女性器から%ARGS:1%の精液が流れ落ちてゆく…
+		ENDIF
+	CASE 853
+		PRINTFORML 絶頂と共に尻尾が激しく脈動し、濃厚な精液が%ARGS:0%と%ARGS:1%の膣内に注ぎ込まれていく…
+		IF RAND:2 == 0
+			PRINTL
+			PRINTFORML %ARGS:1%のお腹が膨らみ始めている
+			PRINTFORML どうやら今の射精の際に自己妊娠してしまったようだ…
+		ENDIF
+	CASE 854
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:1%が%ARGS:0%の処女膜を一気に引き裂いた！
+		ELSE
+			PRINTFORML %ARGS:0%の女性器から%ARGS:1%の精液が流れ落ちるのもお構いなしに何度も触手が突きこまれた……
+		ENDIF
+	CASE 855,856
+			PRINTFORML %ARGS:1%のペニスは激しく脈動し、%ARGS:0%の胎内へポンプのように子種を送り込む
+			PRINTFORM 躊躇なく放たれた%ARGS:1%の精液が、
+		SIF TALENT:0
+			PRINT その純潔を喪った
+		PRINTFORML %ARGS:0%の子宮を白く染め上げていく……
+		SIF ARG:1 == 856
+			PRINTFORML その量は人間のそれとは思えないほどで、限界を超え注ぎ込まれた%ARGS:0%の胎は膨れ、膣から白濁が溢れた……。
+		SELECTCASE ABL:精液中毒
+			CASE 3
+				SIF TALENT:0
+					PRINTFORM 貞操を最悪の形で奪われた挙句、
+				PRINTFORML 得体のしれない仔を孕んだかもしれないのに、精液に依存する身体になってしまった%ARGS:0%は、思わず目尻を下げる
+			CASE 2
+				SIF TALENT:0
+					PRINTFORM 貞操を最悪の形で奪われたにも関わらず、
+				PRINTFORML %ARGS:0%の身体は、持ち主の意志と関係なく精液によって発情してしまう
+			CASE 1
+				SIF TALENT:0
+					PRINTFORM 貞操を最悪の形で奪われた挙句、
+				PRINTFORML 得体のしれない仔を孕んだかもしれない恐怖に、%ARGS:0%は声にならない涙を流す
+				PRINTFORML だが、その奥で欲望が微かに燻ってもいる……
+			CASE 0
+				SIF TALENT:0
+					PRINTFORM 貞操を最悪の形で奪われた挙句、
+				PRINTFORML 得体のしれない仔を孕んだかもしれない恐怖に、%ARGS:0%は声にならない涙を流した……
+		ENDSELECT
+		PRINTFORM やがて射精を終えた%ARGS:1%がペニスを引き抜くと、
+		IF ARG:1 == 855
+			PRINTFORM %ARGS:0%の膣穴から、白濁
+			SIF TALENT:0
+				PRINT と処女血の混ざった桃色
+			PRINTL の筋がつう、と滴った……
+		ELSE
+			PRINTFORML %ARGS:0%の膣穴から、白濁がごぽり、と溢れだした……
+		ENDIF
+		IF TALENT:淫乱 && !RAND:3
+			SIF TALENT:処女
+				PRINTFORM 生娘でありながら、自ら膣虐を求めた
+			PRINTFORML %ARGS:0%はその後、自ら%ARGS:1%のペニスに舌を這わせ、その汚れを清めていった……
+		ENDIF
+	CASE 857
+		PRINTFORML %ARGS:1%から分裂した触手は、新たな個体として%ARGS:0%の胎内で成長を始める
+		PRINTFORML %ARGS:0%は人ならざるものに苗床にされてしまった……
+	CASE 858
+		PRINTFORML 許容量を超えた射精に%ARGS:0%の子宮が押し広げられ、妊婦のように膨らむ
+		PRINTFORML それでも収まらない精液が、%ARGS:0%の膣口から噴水のように溢れた……
+	CASE 859
+		PRINTFORML 凄まじく粘度の高い精液が%ARGS:0%の子宮へ直接注ぎ込まれ、埋め尽くしていく
+		SIF RAND:3
+			PRINTFORML その射精は恐ろしく長時間に及んだ……
+		PRINTFORML 最後に%ARGS:1%は、とびきり粘性の高い精子で%ARGS:0%の子宮口に蓋をする
+		PRINTFORML %ARGS:0%の腹は、精液によって妊婦のように膨らんでしまっている……
+	CASE 860
+		CALLFORM SYSTEM_MESSAGE_17_860(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CASE 861
+		PRINTFORML ペニスを抜き去ると、精液が肉棒を伝って垂れ落ちていった…
+	CASE 862
+		IF TALENT:0
+			PRINTFORML %ARGS:0%は処女喪失を覚悟した…
+			PRINTFORML しかし%ARGS:1%の水晶球から放たれた魔力は子宮の奥まで優しく満たしてゆく
+			PRINTFORML やがて%ARGS:0%は処女でありながら子どもを身籠ったような気がした…
+		ELSE
+			PRINTFORML %ARGS:1%の水晶球から放たれた魔力は%ARGS:0%の子宮の奥まで優しく満たしてゆく
+			PRINTFORML やがて%ARGS:0%は交わっていないにもかかわらず子どもを身籠ったような気がした…
+		ENDIF
+	CASE 863
+		PRINTFORML %ARGS:1%の触手から出された白濁液が%ARGS:0%の子宮に注がれていく……
+	CASE 864
+		IF TALENT:0
+			PRINTFORML %ARGS:0%は処女喪失を覚悟したが、ピストンの先が処女膜の穴に刺さり、処女膜を傷つけることなく膣内に精液が流し込まれていく……！
+		ELSE
+			PRINTFORML ピストンの先が子宮口に突き刺さり、%ARGS:0%の子宮に直接性液が流し込まれる！
+		ENDIF
+	CASE 865
+		PRINTFORML 膣内の奥の奥まで潜り込んだ触手が精液を吐き出すと、
+		PRINTFORML %ARGS:1%はまるで自分が射精したかのようにその身を震わせた……
+	CASE 866
+		IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+			PRINTFORML %ARGS:0%は必死に下の口を庇ったが、%ARGS:1%の体液の進入は防ぎきれなかった…
+		ELSE
+			PRINTFORML 上と下の両方の口から%ARGS:0%に%ARGS:1%の体液が注ぎ込まれてゆく…
+		ENDIF
+	CASE 867
+		;多段攻撃はとりあえず省略
+	CASE 868
+		PRINTFORML 半透明だった%ARGS:1%の体のうち、%ARGS:0%の性器周辺だけが白く濁り始めた…
+	CASE 869
+		PRINTFORML %ARGS:0%の穴という穴に%ARGS:1%の体液が注ぎ込まれてゆく…
+	CASE 870
+		PRINTFORML %ARGS:0%の穴に%ARGS:1%の白濁液が注がれる…
+
+	CASE 954
+		PRINTFORML 催眠をかけられながら膣を開発されたせいで%ARGS:0%は自分が妊娠したと思いこむ！
+	CASE 959
+		PRINTFORML %ARGS:0%の膣内に精液まみれの卵が産み付けられていく……
+	CASE 960
+		PRINTFORML %ARGS:0%の膣内に精液まみれの卵が産み付けられていく……
+	CASE 1000
+		PRINTFORML 逃げることのできない%ARGS:0%の尻穴からあふれるほどの卵が産み付けられていく……
+	CASE 1001
+		PRINTFORML %ARGS:1%は唾液に混じりの種子を%ARGS:0%に流し込んでいる……
+	CASE 1002
+		PRINTFORML %ARGS:1%は口いっぱいの白濁液を%ARGS:0%に飲ませている……
+
+	CASE 1006
+		IF GET_PENIS(TARGET)
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML %ARGS:0%は何とか処女喪失を防いだが、%ARGS:1%は腰を激しく動かしながら膣口に脈打つ触手を押し当てる…
+				PRINTFORML %ARGS:1%は自らの膣で陰茎を締め付けながら%ARGS:0%の中に大量の精液を流し込んでいく…
+			ELSE
+				PRINTFORML %ARGS:0%は%ARGS:1%と挿入し合うように膣奥まで繋がってしまった…
+				PRINTFORML %ARGS:1%は自らの膣で陰茎を締め付けながら%ARGS:0%の子宮へ大量の精液を吐き出していく…
+			ENDIF
+				PRINTFORML そして%ARGS:1%は大きく震えると、%ARGS:0%の首に手を回し零れる涙をそっと舐めとった
+				PRINTFORML %ARGS:0%と%ARGS:1%の結合部から白濁液が溢れ出し、太腿を伝って垂れ落ちている…
+		ELSE
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML %ARGS:0%は何とか処女喪失を防いだが、%ARGS:1%の触手は容赦なく膣口から精液を流し込んでくる…
+			ELSE
+				PRINTFORML %ARGS:1%は触手で一気に奥まで%ARGS:0%を貫くと舌を絡めながら子宮へと精液を吐き出していく！
+			ENDIF
+				PRINTFORML そして%ARGS:1%は小さく震えると、%ARGS:0%の首に手を回し零れる涙をそっと舐めとった
+				PRINTFORML %ARGS:0%と%ARGS:1%の結合部から白濁液が溢れ出し、太腿を伝って垂れ落ちている…
+		ENDIF
+	CASE 1008
+		IF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:0%は%ARGS:1%と挿入し合うように腸内まで繋がってしまった…
+				PRINTFORML %ARGS:1%は自らの肛門で陰茎を締め付けながら%ARGS:0%の腸内へ大量の体液を吐き出していく…
+				PRINTFORML そして%ARGS:1%は大きく震えると、%ARGS:0%の首に手を回し零れる涙をそっと舐めとった
+				PRINTFORML %ARGS:0%と%ARGS:1%の結合部から粘液が溢れ出し、太腿を伝って垂れ落ちている…
+		ELSE
+				PRINTFORML %ARGS:1%は触手を奥まで%ARGS:0%の肛門に突き込むと舌を絡めながら腸内へと体液を吐き出していく！
+				PRINTFORML そして%ARGS:1%は小さく震えると、%ARGS:0%の首に手を回し零れる涙をそっと舐めとった
+				PRINTFORML %ARGS:0%と%ARGS:1%の結合部から粘液が溢れ出し、太腿を伝って垂れ落ちている…
+		ENDIF
+	CASE 1009
+		IF GET_PENIS(TARGET)
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML %ARGS:0%は何とか処女喪失を防いだが、%ARGS:1%は腰を激しく動かしながら膣口に脈打つ触手を押し当てる…
+				PRINTFORML %ARGS:1%は自らの膣で陰茎を締め付けながら%ARGS:0%の中に大量の体液を流し込んでいく…
+			ELSE
+				PRINTFORML %ARGS:0%は%ARGS:1%と挿入し合うように膣奥まで繋がってしまった…
+				PRINTFORML %ARGS:1%は自らの膣で陰茎を締め付けながら%ARGS:0%の子宮へ大量の体液を吐き出していく…
+			ENDIF
+				PRINTFORML そして%ARGS:1%は大きく震えると、%ARGS:0%の首に手を回し零れる涙をそっと舐めとった
+				PRINTFORML %ARGS:0%と%ARGS:1%の結合部から粘液が溢れ出し、太腿を伝って垂れ落ちている…
+		ELSE
+			IF TALENT:0 && LOST_VIRGIN_CHECK(TARGET) == 0
+				PRINTFORML %ARGS:0%は何とか処女喪失を防いだが、%ARGS:1%の触手は容赦なく膣口から体液を流し込んでくる…
+			ELSE
+				PRINTFORML %ARGS:1%は触手で一気に奥まで%ARGS:0%を貫くと舌を絡めながら子宮へと体液を吐き出していく！
+			ENDIF
+				PRINTFORML そして%ARGS:1%は小さく震えると、%ARGS:0%の首に手を回し零れる涙をそっと舐めとった
+				PRINTFORML %ARGS:0%と%ARGS:1%の結合部から粘液が溢れ出し、太腿を伝って垂れ落ちている…
+		ENDIF
+	CASE 1010
+		IF GET_PENIS(TARGET)
+			PRINTFORML %ARGS:1%が何かを尿道に流しこむ感覚に%ARGS:0%はゾクゾクとした恐怖混じりの快感を覚えた……
+		ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%の陰核を執拗に愛撫している……
+		ENDIF
+	CASE 1011
+		IF BASE:3 <= 0
+			IF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:1%の卵を%ARGS:0%の陰茎が吐き出す感覚にどうしようもない悦びが混じる……
+			ELSE
+				PRINTFORML %ARGS:1%は%ARGS:0%の陰核を執拗に愛撫している……
+			ENDIF
+		ELSE
+			IF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:1%が何かを尿道に流しこむ感覚に%ARGS:0%はゾクゾクとした恐怖混じりの快感を覚えた……
+			ELSE
+				PRINTFORML %ARGS:1%は%ARGS:0%の陰核を執拗に愛撫している……
+			ENDIF
+		ENDIF
+	CASE 1012
+		IF BASE:3 <= 0
+			IF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:1%の卵を%ARGS:0%の陰茎が吐き出す感覚にどうしようもない悦びが混じる……
+			ELSE
+				PRINTFORML %ARGS:1%は%ARGS:0%の陰核を執拗に愛撫している……
+			ENDIF
+		ELSE
+			IF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:1%が何かを尿道に流しこむ感覚に%ARGS:0%はゾクゾクとした恐怖混じりの快感を覚えた……
+			ELSE
+				PRINTFORML %ARGS:1%は%ARGS:0%の陰核を執拗に愛撫している……
+			ENDIF
+		ENDIF
+
+	;B寄生、汎用触手系
+	CASE 1202
+		PRINTFORM 乳首の中に大量の白濁液を吐き出され、%ARGS:0%の
+		IF GET_BUST(TARGET) >= 4
+			PRINTFORM 特大の乳肉が
+		ELSEIF GET_BUST(TARGET) == 3
+			PRINTFORM 巨大な双丘が
+		ELSEIF GET_BUST(TARGET) == 2
+			PRINTFORM 爆乳が
+		ELSE
+			PRINTFORM 乳房が
+		ENDIF
+		PRINTFORML 一回り大きく膨れ上がった！
+		PRINTFORML 中に収まりきらず、結合部から大量の精液が飛び散り、触手と%ARGS:0%の躰を白く染めていく…
+		PRINTFORM 子種を吐き出した触手が引き抜かれると、乳首から精液
+		IF TALENT:130 >= 3
+			PRINT と粘つく母乳の混じった液体
+		ELSEIF TALENT:130 >= 1
+			PRINT と母乳の混じった液体
+		ENDIF
+		PRINTFORML がドロドロ流れ出す…
+	;B寄生、タコ・イカ系
+	CASE 1204
+		PRINTFORML 乳首の中にゼリー状の卵嚢に包まれた卵を次々と産みつけられ、%ARGS:0%の乳房が醜く膨らんでいく…
+		IF TALENT:162 >= 4 && GET_BUST(TARGET) >= 4 && TALENT:130 >= 3
+			PRINTFORML 産卵を終えた触手が引き抜かれると、異様に膨れ上がった乳房の圧力に押し出され、
+			PRINTFORML 収まりきらなかった卵がドロドロの母乳と一緒に肥大した乳首からボタボタと溢れ出てくる…
+		ELSEIF TALENT:162 >= 3 && GET_BUST(TARGET) >= 1 && TALENT:130
+			PRINTFORML 産卵を終えた触手が引き抜かれると、膨れ上がった乳房の圧力に押し出され、
+			PRINTFORML 収まりきらなかった卵が母乳まみれになって乳首の先端からボタボタと溢れ出てくる…
+		ELSE
+			PRINTFORML 産卵を終えた触手が引き抜かれると、膨れ上がった乳房の圧力に押し出され、
+			PRINTFORML 収まりきらなかった卵が乳首の先端からボタボタと溢れ出てくる…
+		ENDIF
+	;B寄生、植物系
+	CASE 1206
+		PRINTFORML 胸の中に熱湯の様に熱い樹液を大量に注ぎ込まれ、%ARGS:0%の乳房が更に体積を増していく…！
+		IF TALENT:162 >= 4 && GET_BUST(TARGET) >= 4 && TALENT:130 >= 3
+			PRINTFORML 蜜を出し終えたツルが引き抜かれると、異様に肥大した乳房の圧力に押し出され、
+			PRINTFORML %ARGS:0%の乳首から大量の樹液と粘つく母乳が撒き散らされ、辺りに甘い匂いを漂わせている…
+		ELSEIF TALENT:162 >= 3 && GET_BUST(TARGET) >= 1 && TALENT:130
+			PRINTFORML 蜜を出し終えたツルが引き抜かれると、膨れ上がった乳房の圧力に押し出され、
+			PRINTFORML %ARGS:0%の乳首から大量の樹液と母乳が撒き散らされ、辺りに甘い匂いを漂わせている…
+		ELSE
+			PRINTFORML 蜜を出し終えたツルが引き抜かれると、膨れ上がった乳房の圧力に押し出され、
+			PRINTFORML %ARGS:0%の乳首から大量の樹液と母乳が撒き散らされ、辺りに甘い匂いを漂わせている…
+		ENDIF
+	;B寄生、スライム系
+	CASE 1208
+		PRINTFORM 粘体が脈動する度、それに包み込まれた%ARGS:0%の
+		IF GET_BUST(TARGET) >= 4
+			PRINTFORM 特大の乳肉
+		ELSEIF GET_BUST(TARGET) == 3
+			PRINTFORM 巨大な双丘
+		ELSEIF GET_BUST(TARGET) == 2
+			PRINTFORM 爆乳
+		ELSEIF GET_BUST(TARGET) == 1
+			PRINTFORM 巨乳
+		ELSE
+			PRINTFORM 乳房
+		ENDIF
+		PRINTFORML も一緒に撓み、ぷるんぷるんと揺れている…！
+		SIF TALENT:130
+			PRINTFORML 拡がった乳首の中で粘体が脈動しながら噴き出す母乳を直接を吸い上げ、自身を更に白く染めていく…
+		PRINTFORML 胸の奥から迸る灼熱感と快楽に、%ARGS:0%は蕩けた顔を晒しながら、だらしない嬌声を上げる…！
+
+	CASE 1879
+		PRINTFORML ポンプのように精液を吐き出し続ける触手は、膣から精液があふれ出しても勢いを衰えさせることはなく、
+		PRINTFORML ついには溢れた精液に、%ARGS:0%の身体の半分ほどが沈んでしまった…
+	CASE 2800
+		PRINTFORML その意図に気付いたものの、もはや逃げることのできない%ARGS:0%は、
+		PRINTFORML 身をよじり、声を上げることしかできない。
+		PRINTFORML ……白濁液は、挿入された結合部を無慈悲にも通過し、そして胎内の最奥を無惨に汚していった。
+		PRINTFORML %ARGS:1%は最後の仕上げとばかりに、触手の先端から、膣内に蓋をするための粘液まで流し込みはじめた……
+	CASE 2801
+		PRINTFORML %ARGS:1%は、%ARGS:0%から出る潮に濡れながら、膣内へと大量の精液を注入し始めた…
+		PRINTFORML 注入時に与えられる強烈な快感で、%ARGS:0%の目の前は真っ白になっていく！
+	CASE 2805
+		PRINTFORML %ARGS:1%の高温の精液を両穴に注ぎ込まれた%ARGS:0%は、
+		PRINTFORML 内部から押し寄せる熱い刺激に、体を震わせ悶え始めた……
+	CASE 2808
+		PRINTFORML %ARGS:1%の糸は%ARGS:0%の胎内の各所にたやすく辿り着くと、受精のための刺激を送り込み始めた……
+		PRINTFORML %ARGS:0%のカラダは、あっけなく淫熱を帯びては、生殖の求めに応えていく！
+	CASEELSE	
+		;何もなし
+ENDSELECT
+
+

@@ -1,0 +1,127 @@
+﻿; AI戦闘コマンド アイテム 鎮静剤
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_2_55(CHARA_ID, TARGET_ID)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+#DIM TARGET_TP
+
+	; 鎮静剤は戦闘中に使ってもあまりメリットは無い
+	; 鎮静剤を必要とするキャラはTPが高く、戦闘素質が低いキャラのみ
+	; サポート系に徹した方が良いキャラのTPを下げる事を目的とする
+	; EP回復は副次的に利用する
+
+	VARSET RATE
+	
+	; 想定TPを取得
+	CALL CHECK_RECOVERED_TP(TARGET_ID)
+	TARGET_TP = RESULT
+	
+	; 使えるアイテムストックがない
+	SIF CHECK_STOCK_ITEM(55) == 0
+		RETURN 0
+	
+	; 対象キャラが存在しない
+	SIF !TARGET_ID
+		RETURN 0
+	
+	; 拘束中のキャラTPを変動させても意味がない
+	SIF CFLAG:TARGET_ID:10 || CFLAG:TARGET_ID:20
+		RETURN 0
+		
+	; 丸呑み中のキャラにアイテムは届かない
+	SIF CFLAG:TARGET_ID:21
+		RETURN 0
+		
+	; 発情中のキャラを冷静にしても行動に不安が残る
+	SIF CFLAG:TARGET_ID:28
+		RETURN 0
+	
+	; 喪失中のキャラの回復は無意味
+	SIF CFLAG:TARGET_ID:29
+		RETURN 0
+		
+	; 対象キャラのTPが50以下なら無効
+	SIF TARGET_TP <= 50
+		RETURN 0
+		
+	; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+	;                超弱気    弱気    普通    強気  超強気
+	DATA_TABLE:10:0 =  3500,   3900,   4300,   3900,   3500  ; 10:ねっけつかん
+	DATA_TABLE:2:0  =  3600,   4000,   4400,   4000,   3600  ; 02:おてんば
+	DATA_TABLE:14:0 =  3700,   4100,   4500,   4100,   3700  ; 14:わがまま
+	DATA_TABLE:3:0  =  3800,   4200,   4600,   4200,   3800  ; 03:がんこもの
+	DATA_TABLE:6:0  =  3900,   4300,   4700,   4300,   3900  ; 06:くろうにん
+	DATA_TABLE:4:0  =  4000,   4400,   4800,   4400,   4000  ; 04:がんばりや
+	DATA_TABLE:5:0  =  4100,   4500,   4900,   4500,   4100  ; 05:きれもの
+	DATA_TABLE:1:0  =  4200,   4600,   5000,   4600,   4200  ; 01:おせっかい
+	DATA_TABLE:0:0  =  4100,   4500,   4900,   4500,   4100  ; 00:ふつう
+	DATA_TABLE:9:0  =  4000,   4400,   4800,   4400,   4000  ; 09:ぬけめがない
+	DATA_TABLE:8:0  =  3900,   4300,   4700,   4300,   3900  ; 08:セクシーギャル
+	DATA_TABLE:7:0  =  3800,   4200,   4600,   4200,   3800  ; 07:しあわせもの
+	DATA_TABLE:11:0 =  3700,   4100,   4500,   4100,   3700  ; 11:のんきもの
+	DATA_TABLE:13:0 =  3600,   4000,   4400,   4000,   3600  ; 13:やさしいひと
+	DATA_TABLE:12:0 =  3500,   3900,   4300,   3900,   3500  ; 12:ひっこみじあん
+	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+	
+	; 対象TPによる補正
+	SELECTCASE TARGET_TP
+	CASE IS <= 50
+		; コマンド無効化済
+	CASE IS <= 80
+		TIMES RATE, 0.5
+	CASE IS <= 119
+		TIMES RATE, 0.75
+	CASE IS <= 149
+		TIMES RATE, 1.0
+	CASEELSE
+		TIMES RATE, 1.25
+	ENDSELECT
+	
+	; 対象戦闘素質による補正
+	SELECTCASE ABL:TARGET_ID:98
+	CASE IS <= 20
+		TIMES RATE, 1.7
+	CASE IS <= 40
+		TIMES RATE, 1.25
+	CASE IS <= 60
+		TIMES RATE, 0.8
+	CASE IS <= 80
+		TIMES RATE, 0.6
+	CASEELSE
+		TIMES RATE, 0.4
+	ENDSELECT
+	
+	; 対象性格による補正
+	; すぐにTPが上がる攻撃的な性格のキャラは薬を使うだけ無駄
+	SELECTCASE CFLAG:TARGET_ID:100
+	CASE 10, 2, 14
+		TIMES RATE, 0.5
+	CASE 3, 6, 4
+		TIMES RATE, 0.5
+	CASE 5, 1, 0
+		TIMES RATE, 0.7
+	CASE 9, 8, 7
+		TIMES RATE, 0.9
+	CASE 11, 13, 12
+		TIMES RATE, 1.0
+	ENDSELECT
+	
+	; TPによる補正
+	; 冷静な程まわりが見える
+	SELECTCASE BASE:CHARA_ID:TP
+	CASE IS >= 160
+		TIMES RATE, 0.4
+	CASE IS >= 120
+		TIMES RATE, 0.7
+	CASE IS >= 80
+		TIMES RATE, 1.0
+	CASE IS >= 40
+		TIMES RATE, 1.3
+	CASEELSE
+		TIMES RATE, 1.6
+	ENDSELECT
+	
+RETURN LIMIT(RATE, 0, 10000)

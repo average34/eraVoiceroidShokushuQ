@@ -1,0 +1,64 @@
+﻿;催眠系
+;イタズラをこっちに
+@SYSTEM_MESSAGE_507(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+IF ARG:1 == 0
+	PRINTFORML ヒュプノの魔眼が効果を発揮した！
+	IF CFLAG:TARGET:43
+		SELECTCASE FLAG:526
+		CASE 0
+			PRINTFORML 身体が自由に動かなくなった%ARGS:1%は、突然の事に困惑している！
+		CASE 1
+			PRINTFORML %ARGS:1%の思考は一瞬で書き換えられ、愛情と性欲で埋め尽くされた！
+		CASE 2
+			PRINTFORML %ARGS:1%は強い朦朧状態に陥り、うつろな表情を浮かべている……
+		ENDSELECT
+	ELSE
+		SELECTCASE FLAG:526
+		CASE 0
+			PRINTFORML 催眠が解除され、%ARGS:1%は身体の自由を取り戻した！
+		CASE 1, 2
+			PRINTFORML 催眠が解除され、%ARGS:1%は正常な思考を取り戻した！
+		ENDSELECT
+	ENDIF
+ELSEIF ARG:1 == 1
+	PRINTFORMW %ARGS:1%は突然全身を強い快楽に襲われた！
+	PRINTFORMW %CALLNAME:1%に気が付かれないように振る舞いながら耐えている……
+ELSEIF ARG:1 == 2
+	IF RAND:2 == 0
+		PRINTFORMW %ARGS:1%は突然全身を強い快楽に襲われた！
+		PRINTFORMW 甘い誘惑に耐え切れず、%ARGS:1%の秘部から力が抜けて体液が漏れ出る……
+		PRINTFORMW すっかりぐしょぐしょになったパンツを%ARGS:1%はおずおずと差し出してきた
+	ELSE
+		PRINTFORMW %CALLNAME:1%と目を合わせた%ARGS:1%は脱力したかと思うと虚ろな目でどこかを見ている
+		PRINTFORMW %CALLNAME:1%が命令すると%ARGS:1%はうなずき自分のパンツに手をかけ自ら差し出してきた
+	ENDIF
+ELSEIF ARG:1 == 3
+	IF RAND:2 == 0
+		PRINTFORML %ARGS:1%に口汚く存在を否定された
+		PRINTFORMW %CALLNAME:1%はなんだかうれしくなった！
+	ELSE
+		PRINTFORML %ARGS:1%に口汚く罵倒された。
+		PRINTFORMW 言われてるうちに%CALLNAME:1%は体の奥がだんだん疼いてきた
+	ENDIF
+ELSEIF ARG:1 == 4
+	IF BASE:3 < 100
+		PRINTFORMW 寝転ぶように指示されて従うと、%ARGS:1%は柔らかい足で%CALLNAME:1%の股を踏みつけてきた！
+		PRINTFORMW 指を器用に動かしながらいじられてるうちに%CALLNAME:1%は気持ちが良くなった！
+	ELSEIF BASE:3 < 1000
+		PRINTFORMW 寝転ぶように指示されて従うと、%ARGS:1%は靴下を穿いた足で%CALLNAME:1%の股を踏みつけてきた！
+		PRINTFORMW 布がこすれて絶妙な刺激を感じながら%CALLNAME:1%は気持ちが良くなった！ 
+	ELSE
+		PRINTFORMW 寝転ぶように指示されて従うと、%ARGS:1%は靴を履いたまま足で%CALLNAME:1%の股を踏みつけてきた！
+		PRINTFORMW ぐりぐりと痛みを感じる手前の絶妙な刺激を与えられているうちに%CALLNAME:1%は気持ちが良くなった！ 
+	ENDIF
+;パターンを増やすために作っておくだけ
+ELSEIF ARG:1 == 8
+	PRINTFORML 
+ELSEIF ARG:1 == 9
+	PRINTFORML 
+ELSEIF ARG:1 == 10
+	PRINTFORML 
+ELSEIF ARG:1 == 11
+	PRINTFORML 
+ENDIF

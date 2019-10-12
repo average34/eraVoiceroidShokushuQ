@@ -1,0 +1,157 @@
+﻿;キャラのステータス再計算処理
+@STATUS_RENEW
+;LOCAL
+;0	LOOP
+;1	TEMP
+
+;そんなに人数居ない＋処理も軽いので、毎回全員更新しておく
+FOR LOCAL:0, 1, CHARANUM
+	CALL STATUS_RENEW2(LOCAL:0)
+NEXT
+
+
+;キャラのステータス個別計算
+;ARG:0	キャラID
+@STATUS_RENEW2(ARG:0)
+;LOCAL
+;0	LOOP
+;1	TEMP
+
+;戦闘素質補正計算(攻撃戦闘のみ反映。仲間を誘う際の判定などに使用)
+LOCAL:1 = ABL:(ARG:0):98
+
+IF ABL:(ARG:0):3 == 1
+	LOCAL:1 = LOCAL:1 * 12 / 10
+ELSEIF ABL:(ARG:0):3 == 2
+	LOCAL:1 = LOCAL:1 * 15 / 10
+ELSEIF ABL:(ARG:0):3 >= 3
+	LOCAL:1 = LOCAL:1 * 2
+ENDIF
+
+CFLAG:(ARG:0):1 = LOCAL:1
+
+;媚薬装備中は発情維持
+CALL GET_EQUIP_BONUS(ARG:0, 39)
+SIF RESULT && CFLAG:(ARG:0):28 < 1
+	CFLAG:(ARG:0):28 = 1
+
+;戦意喪失中はMPが回復しないようにしておく
+SIF CFLAG:(ARG:0):29
+	BASE:(ARG:0):1 = 0
+
+;戦闘素質や速度が0以下になったときに直しておく
+IF ABL:(ARG:0):97 < 1
+	ABL:(ARG:0):97 = 1
+ENDIF
+IF ABL:(ARG:0):98 < 1
+	ABL:(ARG:0):98 = 1
+ENDIF
+
+;キャラ解放時の最大HP処理(解放処理そのものも込み)(肉盾解放も追加)
+;ARG:0	キャラID
+;ARG:1	特殊処理無効化フラグ
+;ARG:2	口上用解放の状況 1:触手による自然解放 2:味方の攻撃による解放 3:霊撃 4:自力脱出
+@STATUS_RENEW_RELEASE(ARG:0, ARG:1, ARG:2)
+;LOCAL
+;0	LOOP
+;1	TEMP
+;2	対象の敵
+
+SIF ARG:0 == 0
+	RETURN
+
+LOCAL:2 = 0
+
+;解放処理 肉盾解放処理も追加
+IF CFLAG:(ARG:0):20
+	LOCAL:2 = CFLAG:(ARG:0):20
+	SIF DA:(CFLAG:(ARG:0):20):20 == ARG:0
+		DA:(CFLAG:(ARG:0):20):20 = 0
+		DA:(CFLAG:(ARG:0):20):36 = 0
+	CFLAG:(ARG:0):20 = 0
+ENDIF
+IF CFLAG:(ARG:0):10
+	LOCAL:2 = CFLAG:(ARG:0):10
+	SIF DA:(CFLAG:(ARG:0):10):10 == ARG:0
+		DA:(CFLAG:(ARG:0):10):10 = 0
+		DA:(CFLAG:(ARG:0):10):36 = 0
+	CFLAG:(ARG:0):10 = 0
+ENDIF
+CFLAG:(ARG:0):21 = 0
+CFLAG:(ARG:0):38 = 0
+CFLAG:(ARG:0):202 = 0
+;魔法の拘束具についた敵解除
+IF CFLAG:(ARG:0):504 > 1
+	SIF DA:(CFLAG:(ARG:0):504):10 == ARG:0
+		DA:(CFLAG:(ARG:0):504):10 = 0
+	CFLAG:(ARG:0):504 = 1
+ENDIF
+
+IF TFLAG:13 && LOCAL:2
+	;戦闘中なら、他にも処理を追加
+	SIF ARG:1 == 0
+		CALL PRINT_MESSAGE(ARG:0, 42, LOCAL:2, CALLNAME:(ARG:0), SAVESTR:(LOCAL:2), ARG:2)
+	IF ARG:0 == 1
+		IF ARG:1 == 0
+			CFLAG:(ARG:0):50 = 45
+			CFLAG:(ARG:0):52 = 0
+			CFLAG:(ARG:0):53 = 0
+		ENDIF
+		
+		DA:(LOCAL:2):70 = 0
+	ELSEIF ARG:0 == FLAG:10
+		IF ARG:1 == 0
+			CFLAG:(ARG:0):50 = 45
+			CFLAG:(ARG:0):52 = 0
+			CFLAG:(ARG:0):53 = 0
+			CFLAG:(ARG:0):5 += 10
+		ENDIF
+		
+		DA:(LOCAL:2):71 = 0
+	ELSEIF ARG:0 == FLAG:11
+		IF ARG:1 == 0
+			CFLAG:(ARG:0):50 = 45
+			CFLAG:(ARG:0):52 = 0
+			CFLAG:(ARG:0):53 = 0
+			CFLAG:(ARG:0):5 += 10
+		ENDIF
+		
+		DA:(LOCAL:2):72 = 0
+	ELSE
+		;PTメンバー以外の場合、好感度大幅増加
+		CFLAG:(ARG:0):5 += 50
+	ENDIF
+ENDIF
+
+LOCAL:1 = CFLAG:(ARG:0):15
+
+IF LOCAL:1
+
+	;コンフィグによって回復量変更
+	IF FLAG:502 == 1
+		;4割回復
+		LOCAL:1 = LOCAL:1 * 2 / 5
+	ELSEIF FLAG:502 == 2
+		;回復なし
+		LOCAL:1 = 0
+	ELSEIF FLAG:502 == 3
+		;全回復
+	ELSE
+		;8割回復（デフォルト）
+		LOCAL:1 = LOCAL:1 * 4 / 5
+	ENDIF
+
+	CFLAG:(ARG:0):15 = 0
+	MAXBASE:(ARG:0):0 += LOCAL:1
+
+	;とりあえず1000未満にはならないようにしておく
+	SIF MAXBASE:(ARG:0):0 < 1000
+		MAXBASE:(ARG:0):0 = 1000
+
+	;解放後、HPは半分まで回復
+	SIF BASE:(ARG:0):0 < (MAXBASE:(ARG:0):0 / 2)
+		BASE:(ARG:0):0 = MAXBASE:(ARG:0):0 / 2
+
+ENDIF
+
+

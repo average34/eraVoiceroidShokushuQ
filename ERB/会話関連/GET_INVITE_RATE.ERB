@@ -1,0 +1,63 @@
+﻿;各種勧誘成功率をチェック
+;ARG:0	対象キャラ
+;ARG:1	シチュエーション（0:通常　1:共闘）
+@GET_INVITE_RATE(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	成功率
+;2	TEMP
+
+;基準成功率を算出
+LOCAL:1 = 80 - ABS(ABL:1:98 - ABL:(ARG:0):98) * 2
+
+;戦闘素質に50を超える差がついているなら、さらにペナルティ（＝素質が中間のキャラは常にペナルティ無し）
+SIF ABS(ABL:1:98 - ABL:(ARG:0):98) > 50
+	LOCAL:1 -= 50
+
+;3人目の仲間は成功率が下がる
+SIF FLAG:10
+	LOCAL:1 -= 30
+
+;話術補正
+LOCAL:2 = GET_PT_MAX_ABL(2)
+IF LOCAL:2 == 0
+	LOCAL:1 += 0
+ELSEIF LOCAL:2 == 1
+	LOCAL:1 += 10
+ELSEIF LOCAL:2 == 2
+	LOCAL:1 += 25
+ELSE
+	LOCAL:1 += 50
+ENDIF
+
+;好感度補正
+LOCAL:2 += (CFLAG:(ARG:0):5 - 100) * 2
+IF TALENT:(ARG:0):18
+	;ツンデレはデレるまで大変
+	LOCAL:2 *= 3
+	LOCAL:2 -= 120
+ENDIF
+
+LOCAL:1 += LOCAL:2
+
+;素質補正
+SIF TALENT:(ARG:0):11
+	LOCAL:1 -= 10
+SIF TALENT:(ARG:0):13
+	LOCAL:1 += 15
+SIF TALENT:(ARG:0):15 && ABL:(ARG:0):98 < ABL:1:98
+	LOCAL:1 -= 25
+SIF TALENT:(ARG:0):16 && ABL:(ARG:0):98 >= ABL:1:98
+	LOCAL:1 -= 15
+
+
+;ここまでで一旦-50～100に丸める
+LOCAL:1 = LIMIT(LOCAL:1, -50, 100)
+
+
+;共闘補正
+SIF ARG:1 == 1
+	LOCAL:1 += 100
+
+RETURN LOCAL:1
+

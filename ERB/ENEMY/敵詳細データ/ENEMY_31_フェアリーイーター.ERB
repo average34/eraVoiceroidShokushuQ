@@ -1,0 +1,207 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_31(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 20000
+DA:(ARG:0):2 = 20000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 65
+DA:(ARG:0):9 = 20
+
+DA:(ARG:0):15 = 5
+DA:(ARG:0):16 = 15
+DA:(ARG:0):17 = 80
+DA:(ARG:0):18 = 130
+DA:(ARG:0):19 = 10
+
+DA:(ARG:0):14 = 10
+
+DA:(ARG:0):41 = 150
+DA:(ARG:0):43 = 150
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 10
+DA:(ARG:0):86 = 5
+DA:(ARG:0):89 = 10
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(31)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_31(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 5
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		;丸呑みで強力な攻撃
+		ELSEIF CFLAG:(ARG:1):21
+			LOCAL:3 = RAND:17
+			IF LOCAL:3 < 3
+				LOCAL:2 = 684
+			ELSEIF LOCAL:3 < 8
+				LOCAL:2 = 685
+			ELSEIF LOCAL:3 < 13
+				LOCAL:2 = 140
+			ELSEIF LOCAL:3 < 15
+				LOCAL:2 = 1002
+			ELSE
+				LOCAL:2 = 841
+			ENDIF
+		;拘束レベル4で丸呑み
+		ELSEIF CFLAG:(ARG:1):38 == 4
+			LOCAL:2 = 545
+		;拘束レベル１～３まで
+		ELSEIF CFLAG:(ARG:1):20
+			LOCAL:3 = RAND:20
+			IF LOCAL:3 < 12
+				LOCAL:2 = 544
+			ELSEIF LOCAL:3 < 14
+				LOCAL:2 = 622
+			ELSEIF LOCAL:3 < 16
+				LOCAL:2 = 623
+			ELSEIF LOCAL:3 < 18
+				LOCAL:2 = 140
+			ELSEIF LOCAL:3 < 19
+				LOCAL:2 = 1002
+			ELSE
+				LOCAL:2 = 813
+			ENDIF
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:17
+		IF LOCAL:3 < 2
+			LOCAL:2 = 111
+		ELSEIF LOCAL:3 < 3
+			LOCAL:2 = 113
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 211
+		ELSEIF LOCAL:3 < 9
+			LOCAL:2 = 213
+		ELSEIF LOCAL:3 < 12
+			LOCAL:2 = 322
+		ELSEIF LOCAL:3 < 13
+			LOCAL:2 = 950
+		ELSEIF LOCAL:3 < 14
+			LOCAL:2 = 951
+		ELSEIF LOCAL:3 < 15
+			LOCAL:2 = 952
+		ELSE
+			LOCAL:2 = 323
+		ENDIF
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;PTには拘束攻撃以外
+	LOCAL:3 = RAND:17
+	IF LOCAL:3 < 2
+		LOCAL:2 = 111
+	ELSEIF LOCAL:3 < 3
+		LOCAL:2 = 113
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 211
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 213
+	ELSEIF LOCAL:3 < 12
+		LOCAL:2 = 322
+	ELSEIF LOCAL:3 < 13
+		LOCAL:2 = 950
+	ELSEIF LOCAL:3 < 14
+		LOCAL:2 = 951
+	ELSEIF LOCAL:3 < 15
+		LOCAL:2 = 952
+	ELSE
+		LOCAL:2 = 323
+	ENDIF
+ELSEIF BASE:(ARG:1):0 < 200
+	;対象の体力がない場合拘束多用
+	LOCAL:3 = RAND:30
+	IF LOCAL:3 < 1
+		LOCAL:2 = 111
+	ELSEIF LOCAL:3 < 2
+		LOCAL:2 = 113
+	ELSEIF LOCAL:3 < 3
+		LOCAL:2 = 211
+	ELSEIF LOCAL:3 < 4
+		LOCAL:2 = 213
+	ELSEIF LOCAL:3 < 5
+		LOCAL:2 = 322
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 950
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 951
+	ELSEIF LOCAL:3 < 8
+		LOCAL:2 = 952
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 323
+	ELSE
+		LOCAL:2 = 544
+	ENDIF
+ELSE
+	;通常時
+	;色々
+	LOCAL:3 = RAND:23
+	IF LOCAL:3 < 2
+		LOCAL:2 = 111
+	ELSEIF LOCAL:3 < 3
+		LOCAL:2 = 113
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 211
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 213
+	ELSEIF LOCAL:3 < 12
+		LOCAL:2 = 322
+	ELSEIF LOCAL:3 < 13
+		LOCAL:2 = 950
+	ELSEIF LOCAL:3 < 14
+		LOCAL:2 = 951
+	ELSEIF LOCAL:3 < 15
+		LOCAL:2 = 952
+	ELSEIF LOCAL:3 < 20
+		LOCAL:2 = 544
+	ELSE
+		LOCAL:2 = 323
+	ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

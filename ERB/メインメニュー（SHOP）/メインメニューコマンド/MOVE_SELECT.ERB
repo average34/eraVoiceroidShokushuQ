@@ -1,0 +1,643 @@
+﻿
+;=================================================
+;移動先の選択
+;NOWROOM 現在地（部屋番号）
+;RESULT:0 移動先部屋番号（1～30）
+;RESULT:1 移動パターン（0：突撃　1：慎重　2：待ち伏せ　3：その他（探索））
+;RESULT:2 イベントフラグ
+;=================================================
+@MOVE_SELECT(NOWROOM)
+#DIM LCOUNT,3	;ループ用
+#DIM NOWROOM	;現在地
+#DIM TOROUTE,4	;移動先候補通路番号（要素番号0:上　1:左　2:右　3:下）（値-1:移動不可　以外:通路番号）
+#DIM TOROOM,4	;移動先候補部屋番号（要素番号0:上　1:左　2:右　3:下）（値-1:移動不可　以外:部屋番号）
+#DIM ALLROUTE	;存在する通路数
+
+;-MEMO-
+;FLAG
+;300～　通路
+;210　クイーンの位置
+
+ALLROUTE = 0
+
+	;全方位移動候補チェック
+	FOR LCOUNT, 0, 4
+	
+		;通路チェック
+		CALL CHECK_ROUTE_NO(NOWROOM, LCOUNT)
+		IF (RESULT >= 0 && RESULT <= 48) && FLAG:(300 + RESULT) == 1
+			TOROUTE:(LCOUNT) = RESULT
+			ALLROUTE ++
+		ELSE
+			TOROUTE:(LCOUNT) = -1
+		ENDIF
+		
+		;部屋チェック
+		CALL CHECK_ROOM_NO(NOWROOM, LCOUNT)
+		IF (RESULT >= 1 && RESULT <= 30)
+			TOROOM:(LCOUNT) = RESULT
+		ELSE
+			TOROUTE:(LCOUNT) = -1
+			TOROOM:(LCOUNT) = -1
+		ENDIF
+		
+	NEXT
+
+
+
+	;---表示---
+	REDRAW 0
+	PRINTFORML どこに移動しますか？
+	PRINTL
+
+
+	FOR LCOUNT, 0, 9
+		ALIGNMENT CENTER
+		;左
+		IF LCOUNT == 3 && TOROOM:1 != -1
+			PRINTFORM 　　 【 {TOROOM:1,2} の部屋 (←) 】 　　
+		ELSEIF LCOUNT == 4 && TOROOM:1 != -1
+			CALL PRINT_MOVE_SELECT(TOROOM:1,TOROUTE:1)
+		ELSE
+			PRINTFORM %" ",30%
+		ENDIF
+		PRINT 　
+		;中央
+		IF LCOUNT == 0 && TOROOM:0 != -1
+			PRINTFORM 　　 【 {TOROOM:0,2} の部屋 (↑) 】 　　
+		ELSEIF LCOUNT == 1 && TOROOM:0 != -1
+			CALL PRINT_MOVE_SELECT(TOROOM:0,TOROUTE:0)
+			
+		ELSEIF LCOUNT == 3
+			PRINTFORM 　　 【 {NOWROOM,2} の部屋 (今) 】 　　
+		ELSEIF LCOUNT == 4
+			PRINT 　　　　
+			SETCOLOR 0x00FF00 ;緑っぽいの
+			PRINTBUTTON "[300] 待ち伏せ　", 300
+			RESETCOLOR
+			PRINT 　　　　
+		ELSEIF LCOUNT == 5 && ALLROUTE == 1
+			PRINT 　　　　
+			SETCOLOR 0x00FF00 ;緑っぽいの
+				PRINTBUTTON "[301] 通路を崩す", 301
+			RESETCOLOR
+			PRINT 　　　　
+		ELSEIF LCOUNT == 7 && TOROOM:3 != -1
+			PRINTFORM 　　 【 {TOROOM:3,2} の部屋 (↓) 】 　　
+		ELSEIF LCOUNT == 8 && TOROOM:3 != -1
+			CALL PRINT_MOVE_SELECT(TOROOM:3,TOROUTE:3)
+		ELSE
+			PRINTFORM %" ",30%
+		ENDIF
+		PRINT 　
+		;右
+		IF LCOUNT == 3 && TOROOM:2 != -1
+			PRINTFORM 　　 【 {TOROOM:2,2} の部屋 (→) 】 　　
+		ELSEIF LCOUNT == 4 && TOROOM:2 != -1
+			CALL PRINT_MOVE_SELECT(TOROOM:2,TOROUTE:2)
+		ELSE
+			PRINTFORM %" ",30%
+		ENDIF
+		PRINTL
+	NEXT
+	ALIGNMENT LEFT
+	PRINTL
+
+	PRINTFORML [ 0] キャンセル
+	REDRAW 1
+	
+	CALL SHOW_TUTORIAL(5)
+	SIF RESULT
+		RESTART
+
+	;---入力---
+	$INPUT_LOOP
+	INPUT
+
+	IF RESULT == 0
+		RETURN 0
+	ELSEIF RESULT == 300
+		RETURN NOWROOM, 2, 0
+	ELSEIF RESULT == 301
+		;柔らかい壁を配置
+		FLAG:144 = NOWROOM
+		;全方位移動候補チェック
+		FOR LCOUNT, 0, 4
+		
+			;通路チェック
+			CALL CHECK_ROUTE_NO(NOWROOM, LCOUNT)
+			IF (RESULT >= 0 && RESULT <= 48) && FLAG:(300 + RESULT) == 1
+				;壁崩し
+				FLAG:(300 + RESULT) = 0
+			ENDIF
+			
+		NEXT
+		
+		PRINTFORML 壁を崩して閉じこもることにした
+		
+		RETURN NOWROOM, 2, 0
+	ELSEIF RESULT >= 1 && RESULT <= 299
+		LOCAL:0 = 0
+		FOR LCOUNT, 0, 4
+			IF TOROOM:(LCOUNT) == (RESULT % 100) && TOROUTE:(LCOUNT) != -1
+				LOCAL:0 = 1
+				BREAK
+			ENDIF
+		NEXT
+		IF LOCAL:0 == 1
+			;LOCAL:1 移動先の部屋番号
+			;LOCAL:2 移動パターン
+			LOCAL:1 = RESULT % 100
+			LOCAL:2 = (RESULT / 100) - 1
+			LOCAL:3 = 0
+
+			;汚染度と確率で触手通路イベント発生
+			IF RAND:15000 <= FLAG:(50 + NOWROOM) * FLAG:(50 + NOWROOM)
+				CALL TENTACLE_PATHWAY(NOWROOM, LOCAL:1, LOCAL:2)
+				LOCAL:1 = RESULT:0
+				LOCAL:2 = RESULT:1
+				LOCAL:3 = 1
+			ENDIF
+			RETURN LOCAL:1, LOCAL:2, LOCAL:3
+		ENDIF
+	ENDIF
+	REUSELASTLINE 入力値が不正です。再入力してください
+	GOTO INPUT_LOOP
+
+
+
+;=================================================
+;移動パターン選択ボタン表示
+;=================================================
+@PRINT_MOVE_SELECT(TOROOM, TOROUTE)
+#DIM LCOUNT,3	;ループ用
+#DIM TOROOM		;移動先候補部屋番号
+#DIM TOROUTE	;移動先候補通路番号
+
+
+	IF TOROUTE != -1
+		PRINT 　　
+		SETCOLOR 0xFF6666 ;赤っぽいの
+		LOCALS = {TOROOM + 100,3}
+		PRINTBUTTON "[" + LOCALS + "] 突撃", TOROOM + 100
+		PRINT 　
+		SETCOLOR 0x3399FF ;青っぽいの
+		LOCALS = {TOROOM + 200,3}
+		PRINTBUTTON "[" + LOCALS + "] 慎重", TOROOM + 200
+		PRINT 　　
+	ELSE
+		PRINT 　　[　　　移動不可　　　]　　
+	ENDIF
+	RESETCOLOR
+
+;=================================================
+;味方の移動先選択
+;ARG:0	対象キャラ
+;=================================================
+@MOVE_SELECT_FRIEND(ARG:0)
+;LOCAL
+;0	LOOP
+;1	突撃選択確率
+;2	慎重選択確率
+;3	待伏選択確率
+;4	移動先１
+;5	移動先２
+;6	移動先３
+;7	移動先４
+;8	TEMP
+;9	TEMP2
+;10	クイーン部屋
+;11	ガーディアン部屋
+
+;移動不可能な状態異常の場合、移動無し
+IF CFLAG:(ARG:0):20 || CFLAG:(ARG:0):29 || CFLAG:(ARG:0):10 || CFLAG:(ARG:0):2 || CFLAG:(ARG:0):3 || CFLAG:(ARG:0):504 >= 1
+	CFLAG:(ARG:0):11 = 3
+	CFLAG:(ARG:0):13 = CFLAG:(ARG:0):4
+	CFLAG:(ARG:0):14 = CFLAG:(ARG:0):4
+	RETURN
+ENDIF
+
+;クイーンは先頭に居るので、その位置を取得
+LOCAL:10 = DA:1:4
+;ガーディアンは4番目に居るので、その位置を取得
+LOCAL:11 = DA:4:4
+
+;行動パターン決定
+LOCAL:1 = 30
+LOCAL:2 = 40
+LOCAL:3 = 30
+
+;素質による確率補正
+;大人しい
+SIF TALENT:(ARG:0):14
+	LOCAL:2 += 30
+;保守的
+SIF TALENT:(ARG:0):24
+	LOCAL:3 += 30
+;悲観的
+SIF TALENT:(ARG:0):26
+	LOCAL:2 += 30
+;目立ちたがり
+SIF TALENT:(ARG:0):28
+	LOCAL:1 += 30
+;幼稚
+SIF TALENT:(ARG:0):132
+	LOCAL:1 += 30
+;以下、素質説明には表示していないが微妙に補正を入れるもの
+;素直
+SIF TALENT:(ARG:0):13
+	LOCAL:1 += 10
+;自制心
+SIF TALENT:(ARG:0):20
+	LOCAL:2 += 10
+;感情乏しい
+SIF TALENT:(ARG:0):22
+	LOCAL:3 += 10
+;抑圧
+SIF TALENT:(ARG:0):32
+	LOCAL:2 += 10
+;妖精
+SIF TALENT:(ARG:0):150
+	LOCAL:1 += 10
+;綺麗好き
+SIF TALENT:(ARG:0):152
+	LOCAL:3 += 10
+;哨戒
+SIF TALENT:(ARG:0):154
+	LOCAL:3 += 10
+
+;クイーンと同室の場合、基本的に待ち伏せは選択しない
+SIF CFLAG:(ARG:0):4 == LOCAL:10
+	LOCAL:3 = 0
+;NORMAL以下の場合、ガーディアン部屋も避ける
+SIF CFLAG:(ARG:0):4 == LOCAL:11 && FLAG:4 <= 1
+	LOCAL:3 = 0
+
+LOCAL:8 = RAND:(LOCAL:1 + LOCAL:2 + LOCAL:3)
+IF LOCAL:8 < LOCAL:1
+	CFLAG:(ARG:0):11 = 0
+ELSEIF LOCAL:8 < (LOCAL:1 + LOCAL:2)
+	CFLAG:(ARG:0):11 = 1
+ELSE
+	CFLAG:(ARG:0):11 = 2
+	;待ち伏せの場合、移動無しで確定
+	CFLAG:(ARG:0):13 = CFLAG:(ARG:0):4
+	CFLAG:(ARG:0):14 = CFLAG:(ARG:0):4
+	RETURN
+ENDIF
+
+IF CFLAG:(ARG:0):12 <= -20
+	;弱気キャラの場合60％ランダム、40％目的地移動
+	LOCAL:8 = 60
+ELSEIF CFLAG:(ARG:0):12 >= 20
+	;強気キャラの場合20％ランダム、80％目的地移動
+	LOCAL:8 = 20
+ELSE
+	;普通キャラの場合100％ランダム
+	LOCAL:8 = 100
+ENDIF
+
+IF RAND:100 < LOCAL:8
+	;ランダム移動
+	;移動できる部屋を取得
+	LOCAL:4 = 0
+	LOCAL:5 = 0
+	LOCAL:6 = 0
+	LOCAL:7 = 0
+	LOCAL:8 = 0
+	FOR LOCAL:0, 1, 31
+		IF CHECK_NEXT(CFLAG:(ARG:0):4, LOCAL:0) == 2
+			;※最大でも4方向＝4部屋しか移動できない
+			LOCAL:(LOCAL:8 + 4) = LOCAL:0
+			LOCAL:8 += 1
+		ENDIF
+	NEXT
+
+	;どこにも移動できない（エラーのはずだけど）
+	IF LOCAL:4 == 0
+		CFLAG:(ARG:0):11 = 2
+		CFLAG:(ARG:0):13 = CFLAG:(ARG:0):4
+		CFLAG:(ARG:0):14 = CFLAG:(ARG:0):4
+		RETURN
+	ENDIF
+
+	LOCAL:9 = RAND:(LOCAL:8)
+
+	CFLAG:(ARG:0):13 = CFLAG:(ARG:0):4
+	CFLAG:(ARG:0):14 = LOCAL:(LOCAL:9 + 4)
+ELSE
+	;目的地に向かって移動
+	
+	;目的地が設定されていなかった場合、新たな目的地を設定しておく
+	IF CFLAG:(ARG:0):105 == 0
+		IF CFLAG:(ARG:0):12 <= -20
+			;弱気キャラの場合、目的地が変更されないため、それなりに条件の良い場所を探してあげる
+			;LOCAL:1～31を使って良い場所検索
+			VARSET LOCAL, 0, 0, 32
+			FOR LOCAL:0, 1, 31
+				IF CHECK_ENEMY_EXIST(LOCAL:0,1) || CHECK_ENEMY_EXIST(LOCAL:0,3) || CHECK_ENEMY_EXIST(LOCAL:0,4)
+					;ボス系が居る部屋は選ばない
+				ELSEIF LOCAL:0 == FLAG:133 || LOCAL:0 == FLAG:134
+					;固定泉のある部屋は選択確率２倍
+					;※ボス部屋を選ばないので、30個を溢れることは無い
+					LOCAL:(LOCAL:31 + 1) = LOCAL:0
+					LOCAL:(LOCAL:31 + 2) = LOCAL:0
+					LOCAL:31 += 2
+				ELSE
+					;普通の部屋なら普通に候補に加える
+					LOCAL:(LOCAL:31 + 1) = LOCAL:0
+					LOCAL:31 += 1
+				ENDIF
+			NEXT
+			
+			IF LOCAL:31 == 0
+				;候補地が見つからなければ主人公の位置を目的地にする
+				CFLAG:(ARG:0):105 = FLAG:5
+			ELSE
+				CFLAG:(ARG:0):105 = LOCAL:(RAND:(LOCAL:31) + 1)
+			ENDIF
+			
+			;上手く処理できなかった場合、現在地を目的地にする
+			SIF CFLAG:(ARG:0):105 == 0
+				CFLAG:(ARG:0):105 = CFLAG:(ARG:0):4
+		ELSE
+			CFLAG:(ARG:0):105 = 1 + RAND:25
+			IF CFLAG:(ARG:0):105 == 1
+				CFLAG:(ARG:0):105 = 26
+			ELSEIF CFLAG:(ARG:0):105 == 5
+				CFLAG:(ARG:0):105 = 27
+			ELSEIF CFLAG:(ARG:0):105 == 25
+				CFLAG:(ARG:0):105 = 28
+			ENDIF
+			SIF CFLAG:(ARG:0):105 == CFLAG:(ARG:0):4
+				CFLAG:(ARG:0):105 = 29
+		ENDIF
+	ENDIF
+	
+	;好感度が高い＋主人公が捕食されている場合、高確率でそちらに移動
+	IF CFLAG:1:10 && CFLAG:(ARG:0):5 >= 200 && RAND:100 < (40 + CFLAG:(ARG:0):5 / 10)
+		CALL CHECK_ROUTE(CFLAG:(ARG:0):4, CFLAG:1:4)
+		IF RESULT == CFLAG:(ARG:0):4
+			;既に目的地に到達している場合、待ち伏せに変更
+			CFLAG:(ARG:0):11 = 2
+			CFLAG:(ARG:0):13 = CFLAG:(ARG:0):4
+			CFLAG:(ARG:0):14 = CFLAG:(ARG:0):4
+			RETURN
+		ENDIF
+	ELSE
+		CALL CHECK_ROUTE(CFLAG:(ARG:0):4, CFLAG:(ARG:0):105)
+		IF RESULT == CFLAG:(ARG:0):4
+			;既に目的地に到達している場合、弱気キャラは待ち伏せに変更、強気キャラは新たな目的地に移動
+			IF CFLAG:(ARG:0):12 <= -20
+				;弱気キャラ
+				CFLAG:(ARG:0):11 = 2
+				CFLAG:(ARG:0):13 = CFLAG:(ARG:0):4
+				CFLAG:(ARG:0):14 = CFLAG:(ARG:0):4
+				RETURN
+			ELSE
+				CFLAG:(ARG:0):105 = 1 + RAND:25
+				IF CFLAG:(ARG:0):105 == 1
+					CFLAG:(ARG:0):105 = 26
+				ELSEIF CFLAG:(ARG:0):105 == 5
+					CFLAG:(ARG:0):105 = 27
+				ELSEIF CFLAG:(ARG:0):105 == 25
+					CFLAG:(ARG:0):105 = 28
+				ENDIF
+				SIF CFLAG:(ARG:0):105 == CFLAG:(ARG:0):4
+					CFLAG:(ARG:0):105 = 29
+				CALL CHECK_ROUTE(CFLAG:(ARG:0):4, CFLAG:(ARG:0):105)
+			ENDIF
+		ENDIF
+	ENDIF
+	CFLAG:(ARG:0):13 = CFLAG:(ARG:0):4
+	CFLAG:(ARG:0):14 = RESULT
+ENDIF
+
+
+;=================================================
+;敵の移動先選択
+;ARG:0	対象キャラ
+;=================================================
+@MOVE_SELECT_ENEMY(ARG:0)
+;LOCAL
+;0	LOOP
+;1	突撃選択確率
+;2	慎重選択確率
+;3	待伏選択確率
+;4	移動先１
+;5	移動先２
+;6	移動先３
+;7	移動先４
+;8	TEMP
+;9	TEMP2
+
+;移動不可能な状態異常の場合、移動無し
+IF DA:(ARG:0):10
+	DA:(ARG:0):11 = 3
+	DA:(ARG:0):12 = DA:(ARG:0):4
+	DA:(ARG:0):13 = DA:(ARG:0):4
+	RETURN
+ENDIF
+
+;ロックオンしているキャラが居ない場合、ロックオン確認
+SIF DA:(ARG:0):7 == 0 || DA:(ARG:0):82 == 0
+	CALL CHECK_LOCKON(ARG:0)
+
+;行動パターン決定
+LOCAL:1 = DA:(ARG:0):15
+LOCAL:2 = DA:(ARG:0):16
+LOCAL:3 = DA:(ARG:0):17
+
+LOCAL:8 = RAND:(LOCAL:1 + LOCAL:2 + LOCAL:3)
+IF LOCAL:8 < LOCAL:1
+	DA:(ARG:0):11 = 0
+ELSEIF LOCAL:8 < (LOCAL:1 + LOCAL:2)
+	DA:(ARG:0):11 = 1
+ELSE
+	DA:(ARG:0):11 = 2
+	;待ち伏せの場合、移動無しで確定
+	DA:(ARG:0):12 = DA:(ARG:0):4
+	DA:(ARG:0):13 = DA:(ARG:0):4
+	RETURN
+ENDIF
+
+IF DA:(ARG:0):7 && DA:(ARG:0):82
+	;ロックオン中の場合、そのキャラを追いかける
+	CALL CHECK_ROUTE(DA:(ARG:0):4, CFLAG:(DA:(ARG:0):7):4)
+	DA:(ARG:0):12 = DA:(ARG:0):4
+	DA:(ARG:0):13 = RESULT
+	DA:(ARG:0):82 -= 1
+ELSE
+	;移動できる部屋を取得
+	LOCAL:4 = 0
+	LOCAL:5 = 0
+	LOCAL:6 = 0
+	LOCAL:7 = 0
+	LOCAL:8 = 0
+	FOR LOCAL:0, 1, 31
+		IF CHECK_NEXT(DA:(ARG:0):4, LOCAL:0) == 2
+			;※最大でも4方向＝4部屋しか移動できない
+			LOCAL:(LOCAL:8 + 4) = LOCAL:0
+			LOCAL:8 += 1
+		ENDIF
+	NEXT
+
+	;どこにも移動できない（エラーのはずだけど）
+	IF LOCAL:4 == 0
+		DA:(ARG:0):11 = 2
+		DA:(ARG:0):12 = DA:(ARG:0):4
+		DA:(ARG:0):13 = DA:(ARG:0):4
+		RETURN
+	ENDIF
+
+	LOCAL:9 = RAND:(LOCAL:8)
+
+	IF DAY == 1 && TIME == 0 && LOCAL:(LOCAL:9 + 4) == FLAG:5
+		;１ターン目のみ、最初の部屋への移動はカット
+		DA:(ARG:0):11 = 2
+		DA:(ARG:0):12 = DA:(ARG:0):4
+		DA:(ARG:0):13 = DA:(ARG:0):4
+	ELSE
+		DA:(ARG:0):12 = DA:(ARG:0):4
+		DA:(ARG:0):13 = LOCAL:(LOCAL:9 + 4)
+	ENDIF
+ENDIF
+
+
+;=================================================
+;触手通路イベント
+;ARG:0 現在地
+;ARG:1 予定移動先部屋番号
+;ARG:2 予定移動パターン
+
+;RESULT:0 移動先部屋番号（1～30）
+;RESULT:1 移動パターン（0：突撃　1：慎重　2：待ち伏せ）
+;=================================================
+@TENTACLE_PATHWAY(ARG:0, ARG:1, ARG:2)
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3	;PTキャラID
+;-MEMO-
+;処理が特殊なので移動パターンとかも変わる
+
+	PTID:0 = 1
+	PTID:1 = FLAG:10
+	PTID:2 = FLAG:11
+
+	PRINTFORML %CALLNAME:(PTID)%%TACHI()%が移動していると通路の途中が大量の触手で埋められ
+	PRINTFORML 膝までの高さしかない穴になっているのを見つけた。
+	PRINTFORML 穴の中には柔らかそうな触手がいくつも蠢いているのが見える。
+	PRINTFORML 隣の部屋に進むにはここを通るしかないようだが……
+	PRINTFORML [1] 触手に攻撃を仕掛ける
+	IF FLAG:6 >= 50
+		PRINTFORML [2] 浄化して進む（浄化力 50 消費）
+	ELSE
+		SETCOLOR 0x333333
+		PRINTFORML [ ] 浄化して進む（浄化力 50 消費）
+		RESETCOLOR
+	ENDIF
+	PRINTFORML [3] 無理矢理進む
+	PRINTFORML [0] 引き返す
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 1
+		PRINTFORML %CALLNAME:(PTID)%%TACHI()%は通路の触手に攻撃を仕掛けた！
+		PRINTFORMW %CALLNAME:(PTID)%%TACHI()%の攻撃によって通路の触手が次々と蹴散らされてゆく！
+		PRINTFORML が、それ以上の触手が次々と壁や天井から湧きだし、
+		PRINTFORMW 通路は完全に触手で埋められてしまった！
+		PRINTFORMW %CALLNAME:(PTID)%%TACHI()%は諦めて来た道を引き返した……
+		
+		;諦めるとの差別化、攻撃したことで敵を引き寄せるイメージなので移動パターンを突撃扱いに
+		RETURN ARG:0, 0
+		
+	ELSEIF RESULT == 2 && FLAG:6 >= 50
+		PRINTFORML %CALLNAME:(PTID)%%TACHI()%は通路の触手を浄化した！
+		PRINTFORMW 通路は元の姿に戻り触手も壁や天井に消えていった！
+		
+		FLAG:6 -= 50
+		
+		;予定通り移動
+		RETURN ARG:1, ARG:2
+		
+	ELSEIF RESULT == 3
+		PRINTFORML %CALLNAME:(PTID)%%TACHI()%は這って触手だらけの穴を進み始めた。
+		FOR LCOUNT, 0, 3
+			IF PTID:(LCOUNT) > 0
+				;対象の名前
+				LOCALS = %CALLNAME:(PTID:(LCOUNT))%
+				LOCAL = PTID:(LCOUNT) ;対象のID
+				
+				FOR LCOUNT:1, 0, 3
+					PRINTFORMW 柔らかい触手が撫でるように%CALLNAME:(PTID)%%TACHI()%の体に触れ絡み付いてくる！
+					TFLAG:63 = RAND:4
+					CALL DAMAGE_COMMON(LOCAL, 2, 3000 + RAND:6000, 10)
+					SELECTCASE GET_BUST(LOCAL)
+						;巨乳以上
+						CASE 1,2
+							SIF LCOUNT:1 == 0
+								PRINTFORML 無理矢理進む%LOCALS%のいやらしく育った乳房が床にこすれて快感をもたらしてくる！
+							TFLAG:63 = 1
+							CALL DAMAGE_COMMON(LOCAL, 2, 1000 + RAND:2000, 10)
+						;超乳以上
+						CASE 3,4
+							SIF LCOUNT:1 == 0
+								PRINTFORML 無理矢理進む%LOCALS%のはしたなく膨れた乳房が床にこすれて快感をもたらしてくる！
+							TFLAG:63 = 1
+							CALL DAMAGE_COMMON(LOCAL, 2, 1500 + RAND:2500, 10)
+						;接地
+						CASE 5
+							SIF LCOUNT:1 == 0
+								PRINTFORML 無理矢理進む%LOCALS%の接地乳房がいやらしく床にこすれて快感を産み出している！
+							TFLAG:63 = 1
+							CALL DAMAGE_COMMON(LOCAL, 2, 2000 + RAND:3000, 10)
+					ENDSELECT
+					;ふたなり or 男
+					IF GET_PENIS(LOCAL)
+						IF LCOUNT:1 == 0
+							IF GET_PENIS(LOCAL) & 4
+								PRINTFORML 必死に前に出る%LOCALS%の陰茎が通路でこすれて快感を与えてくる！
+							ELSE
+								PRINTFORML 必死に前に出る%LOCALS%に寄生した擬似陰茎が通路でこすれて快感を与えてくる！
+							ENDIF
+						ENDIF
+						TFLAG:63 = 2
+						CALL DAMAGE_COMMON(LOCAL, 2, 1000 + RAND:2000, 10)
+					ENDIF
+					IF CFLAG:(LOCAL):29 == 1
+						SIF LCOUNT:1 == 0
+							PRINTFORML 仲間に支えられて進む%LOCALS%の股間にひときわ太い触手が入り込み膣内に白濁液を流しこみ始めた！
+						TFLAG:63 = 3
+						CALL DAMAGE_COMMON(LOCAL, 2, 1000 + RAND:2000, 10)
+						;CALL RANDOM_PARASITE(LOCAL, 0, 1)
+						IF RAND:6 == 0 && CFLAG:(LOCAL):22 == 0
+							CFLAG:(LOCAL):22 = 9 + RAND:9
+							CFLAG:(LOCAL):23 = 4 + RAND:5 + RAND:5 + RAND:3
+							PRINTFORML %LOCALS%は何かに【寄生】されてしまった！
+						ENDIF
+						IF BASE:(LOCAL):3 > 250
+							BASE:(LOCAL):3 -= 250
+							PRINTFORML 動きが鈍い%LOCALS%の服を触手が脱がしていく…
+						ENDIF
+					ENDIF
+				NEXT
+				CALL ADD_ABL_EXP(11,LOCAL, 8 + RAND:5)
+				PRINTFORMW 
+			ELSE
+				BREAK
+			ENDIF
+		NEXT
+		PRINTFORMW %CALLNAME:(PTID)%%TACHI()%はどうにか通路から抜け出せた……
+		
+		;予定通り移動
+		RETURN ARG:1, ARG:2
+		
+	ELSEIF RESULT == 0
+		PRINTFORMW %CALLNAME:(PTID)%%TACHI()%は移動を諦め、来た道を引き返した……
+		
+		;移動パターンはそのままで移動しない
+		RETURN ARG:0, ARG:2
+		
+	ELSE
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP
+	ENDIF
+

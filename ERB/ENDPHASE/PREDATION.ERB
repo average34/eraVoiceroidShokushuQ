@@ -1,0 +1,370 @@
+﻿;捕食処理
+;ARG:0	対象キャラ
+@PREDATION(ARG:0)
+;LOCAL
+;1	捕食側の敵ID
+;2	魔法の拘束具による追加敵ID
+
+IF ARG:0 > CHARANUM - 1
+	RETURN
+ENDIF
+
+IF CFLAG:(ARG:0):10 == 0 && CFLAG:(ARG:0):504 < 2
+	RETURN
+ENDIF
+
+LOCAL:1 = CFLAG:(ARG:0):10
+
+IF LOCAL:1
+	CALL PREDATION_EFFECT(ARG:0, LOCAL:1)
+ENDIF
+
+IF CFLAG:(ARG:0):504 >= 2
+	LOCAL:2 = CFLAG:(ARG:0):504
+ELSE
+	LOCAL:2 = 0
+ENDIF
+
+IF LOCAL:2
+	CALL PREDATION_EFFECT(ARG:0, LOCAL:2)
+ENDIF
+
+
+@PREDATION_EFFECT(ARG:0, ARG:1)
+;ARG:0	対象キャラ
+;ARG:1	敵ID
+;LOCAL
+;0	LOOP
+;2	ドレイン量
+;4	開放時の敵呼び出し
+
+
+;主人公と同じ部屋に居るなら状況描写
+;!!!とりあえず適当に　　後で敵に応じたメッセージに変更＋各種経験値などの追加を加える
+IF ARG:0 == 1
+	FLAG:20 = 0
+	CALL PRINT_MESSAGE(ARG:0, 151, ARG:1, CALLNAME:(ARG:0), SAVESTR:(ARG:1), CFLAG:(ARG:0):21)
+ELSEIF CFLAG:(ARG:0):4 == FLAG:5
+	FLAG:20 = 0
+	CALL PRINT_MESSAGE(ARG:0, 151, ARG:1, CALLNAME:(ARG:0), SAVESTR:(ARG:1), CFLAG:(ARG:0):21)
+ELSE
+	;部屋が違うキャラはメッセージ非表示
+	FLAG:20 = 1
+ENDIF
+
+;v0.06.1より主人公と別の部屋に居るキャラはダメージが50％以下まで抑えられるように
+
+IF BASE:(ARG:0):3 > 0 && (BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3 >= 40 || FLAG:529 == 0)
+	;服が残っていれば服が溶ける
+	IF FLAG:20 == 0
+		BASE:(ARG:0):3 = 0
+		PRINTFORMW %CALLNAME:(ARG:0)%の衣服は全て破られてしまった！
+	ELSE
+		BASE:(ARG:0):3 -= MAXBASE:(ARG:0):3 / 2
+		IF BASE:(ARG:0):3 < 0
+			BASE:(ARG:0):3 = 0
+		ENDIF
+	ENDIF
+	;貞操帯破壊
+	SIF CFLAG:(ARG:0):47 == 1
+		CFLAG:(ARG:0):47 = 0
+ELSEIF BASE:(ARG:0):0 > 0
+	;HPが残っていればHPダメージ
+	IF FLAG:20
+		BASE:(ARG:0):0 -= 400 + RAND:300 + RAND:300
+	ELSE
+		BASE:(ARG:0):0 -= 1000 + RAND:1000 + RAND:1000
+	ENDIF
+	IF BASE:(ARG:0):0 < 0 && CFLAG:(ARG:0):504 == 0
+		BASE:(ARG:0):0 = 0
+	ELSE
+		BASE:(ARG:0):0 = 200
+	ENDIF
+	IF FLAG:20 == 0
+		PRINTFORMW %CALLNAME:(ARG:0)%の残りHP：{BASE:(ARG:0):0}
+	ENDIF
+ELSEIF BASE:(ARG:0):1 > 0
+	;MPが残っていればMPダメージ
+	IF FLAG:20
+		BASE:(ARG:0):1 -= 200 + RAND:200 + RAND:200
+	ELSE
+		BASE:(ARG:0):1 -= 500 + RAND:500 + RAND:500
+	ENDIF
+	IF BASE:(ARG:0):1 < 0
+		BASE:(ARG:0):1 = 0
+		CALL HEART_BREAK(ARG:0)
+	ELSE
+		IF FLAG:20 == 0
+			PRINTFORMW %CALLNAME:(ARG:0)%の残りMP：{BASE:(ARG:0):1}
+		ENDIF
+	ENDIF
+ELSE
+	;それ以外は最大HPドレイン
+	IF FLAG:20
+		LOCAL:2 = 100 + RAND:30 + RAND:30 + RAND:30 + RAND:30
+	ELSE
+		LOCAL:2 = 200 + RAND:100 + RAND:100 + RAND:100 + RAND:100
+	ENDIF
+	MAXBASE:(ARG:0):0 -= LOCAL:2
+	CFLAG:(ARG:0):15 += LOCAL:2
+	IF MAXBASE:(ARG:0):0 < 0
+		CFLAG:(ARG:0):15 += MAXBASE:(ARG:0):0
+		MAXBASE:(ARG:0):0 = 0
+	ENDIF
+	IF FLAG:20 == 0
+		PRINTFORMW %CALLNAME:(ARG:0)%の残り生命力：{MAXBASE:(ARG:0):0}
+	ENDIF
+ENDIF
+
+;増える経験は敵の好み次第
+SIF DA:(ARG:1):89 & 1
+	CALL ADD_ABL_EXP(6, ARG:0, 150 + RAND:100 + RAND:100)
+SIF DA:(ARG:1):89 & 2
+	CALL ADD_ABL_EXP(7, ARG:0, 150 + RAND:100 + RAND:100)
+SIF DA:(ARG:1):89 & 4
+	CALL ADD_ABL_EXP(8, ARG:0, 150 + RAND:100 + RAND:100)
+IF DA:(ARG:1):89 & 8
+	CALL ADD_ABL_EXP(9, ARG:0, 150 + RAND:100 + RAND:100)
+	CALL LOST_VIRGIN(ARG:0, 0, 1, ARG:1)
+ENDIF
+SIF DA:(ARG:1):89 & 32
+	CALL ADD_ABL_EXP(15, ARG:0, 150 + RAND:100 + RAND:100)
+
+IF DA:(ARG:1):85 & 1
+	CALL ADD_ABL_EXP(13, ARG:0, 4 + RAND:12)
+ELSEIF DA:(ARG:1):85 & 128
+	CALL ADD_ABL_EXP(14, ARG:0, 4 + RAND:12)
+ELSE
+	CALL ADD_ABL_EXP(11, ARG:0, 4 + RAND:12)
+ENDIF
+
+
+BASE:(ARG:0):5 += 10
+;侵食追加
+IF RAND:2 == 0
+	IF CFLAG:(ARG:0):80 == 0
+		IF FLAG:20 == 0
+			CALL PRINT_MESSAGE(ARG:0, 445, 0, CALLNAME:(ARG:0), SAVESTR:(ARG:1))
+		ENDIF
+		CFLAG:(ARG:0):80 += 1
+	ELSE
+		CFLAG:(ARG:0):80 += 1 + RAND:3
+	ENDIF
+
+ENDIF
+;刻印追加
+CALL GET_LOSE_MARK(ARG:0, DA:(ARG:1):0)
+
+
+	;************開放パッチ********************	
+;開放パッチ使用かつ戦意喪失中なら低確率で開放
+IF FLAG:524 == 0 && CFLAG:(ARG:0):29 == 1 && DA:(ARG:1):0 >= 5 && RAND:100 < 10
+	IF CFLAG:(ARG:0):22 == 0
+		CALL PARASITE_TYPE(ARG:0, 0, DA:(ARG:1):0, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 0)
+
+		IF FLAG:20 == 0
+			PRINTFORMW %CALLNAME:(ARG:0)%の秘所を貫く触手が一際大きく震えると、大量の白濁液を注ぎ込んだ…
+			PRINTFORMW %SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を散々嬲って満足したのか、%CALLNAME:(ARG:0)%の秘所から触手を引き抜くと
+			PRINTFORMW %CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
+			PRINTFORML  
+			PRINTFORMW ………
+			PRINTFORMW ……
+			PRINTFORMW …
+			PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+		ENDIF
+	ELSE
+		IF FLAG:20 == 0
+			PRINTFORMW %CALLNAME:(ARG:0)%を犯していた%SAVESTR:(ARG:1)%は大きく膨れた%CALLNAME:(ARG:0)%の腹をなでると
+			PRINTFORMW 力なくうなだれている%CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
+			PRINTFORMW どうやら%SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を孕ませて満足したようだ…
+			PRINTFORML  
+			PRINTFORMW ………
+			PRINTFORMW ……
+			PRINTFORMW …
+			PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+		ENDIF
+	ENDIF
+
+
+	CALL STATUS_RENEW_RELEASE(ARG:0)
+	CFLAG:(ARG:0):45 = ARG:1
+	
+	;開放時に勝手に身体を開発する 段々と淫乱を手に入れやすくなる
+	SELECTCASE RAND:10 + CFLAG:(ARG:0):502
+	CASE 0 TO 1
+		BASE:(ARG:0):5 += 300
+		CFLAG:(ARG:0):46 = 1
+		CFLAG:(ARG:0):48 = 1
+		CFLAG:(ARG:0):502 += 1
+	CASE 2 TO 3
+		CALL ADD_ABL_EXP(10,(ARG:0), 50 + RAND:500)
+		CALL ADD_ABL_EXP(11,(ARG:0), 50 + RAND:500)
+		CALL ADD_ABL_EXP(13,(ARG:0), 50 + RAND:500)
+		CFLAG:(ARG:0):502 += 1
+	CASE 4 TO 5
+		FOR LOCAL:0, 0, 100
+			;通常沸きする敵の番号が5～95なのでそこをランダムに指定し敵データ呼び込み　データがなければ戻る
+			LOCAL:4 = 5 + RAND:91
+			
+			;娘とドッペルは処理が特殊なのでパスする
+			SIF LOCAL:4 == 18 || LOCAL:4 == 19
+				CONTINUE
+			TRYCCALLFORM SET_ENEMY_DATA_{LOCAL:4}(FLAG:1)
+			CATCH
+				CONTINUE
+			ENDCATCH
+			
+			;湧かないランク7は弾く
+			IF DA:(FLAG:1):86 == 7
+				CONTINUE
+			;コンフィグ設定している場合は敵の系統で湧き制御
+			ELSEIF FLAG:527 > 0 && (DA:(FLAG:1):85 & FLAG:527) == 0
+				CONTINUE
+			;敵の種類でフィルターを掛けたものを弾く
+			ELSEIF FLAG:536 > 0 && (DA:(FLAG:1):85 & FLAG:536) && FLAG:536 != 63
+				CONTINUE
+			;男もONでなければ弾く
+			ELSEIF (FLAG:512 & 1) == 0 && (DA:(FLAG:1):85 & 128)
+				CONTINUE
+			;個別フィルターを掛けたものを弾く
+			ELSEIF FLAG:(LOCAL:4 + 700) < 0
+				CONTINUE
+			ENDIF
+			IF LOCAL:4
+				CALL CREATE_ENEMY(LOCAL:4, GET_CENTER_ROOM(), FLAG:5)
+			ENDIF
+			BREAK
+		NEXT
+		
+		;後片付け
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+				
+		CFLAG:(ARG:0):502 += 1
+	CASE 6 TO 7
+		CALL ADD_ABL_EXP(6,(ARG:0), RAND:5000)
+		CALL ADD_ABL_EXP(7,(ARG:0), RAND:5000)
+		CALL ADD_ABL_EXP(8,(ARG:0), RAND:5000)
+		CALL ADD_ABL_EXP(9,(ARG:0), RAND:5000)
+		CFLAG:(ARG:0):502 += 1
+	CASE 8 TO 9
+		CALL ADD_ABL_EXP(6,(ARG:0), 3000 + RAND:5000)
+		CALL ADD_ABL_EXP(7,(ARG:0), 3000 + RAND:5000)
+		CALL ADD_ABL_EXP(8,(ARG:0), 3000 + RAND:5000)
+		CALL ADD_ABL_EXP(9,(ARG:0), 3000 + RAND:5000)
+		CFLAG:(ARG:0):502 += 1
+	CASE 10
+		IF TALENT:(ARG:0):76 == 0
+			TALENT:(ARG:0):76 = 1
+			TALENT:(ARG:0):102 = 3
+			CALL ADD_HISTORY(DAY, ARG:0, 1, 10)
+		ENDIF
+		CALL ADD_ABL_EXP(7,(ARG:0), 50000)
+		CFLAG:(ARG:0):502 += 1
+	CASE 11
+		IF TALENT:(ARG:0):77 == 0
+			TALENT:(ARG:0):77 = 1
+			TALENT:(ARG:0):103 = 3
+			CALL ADD_HISTORY(DAY, ARG:0, 2, 10)
+		ENDIF
+		CALL ADD_ABL_EXP(8,(ARG:0), 50000)
+		CFLAG:(ARG:0):502 += 1
+	CASE 12
+		IF TALENT:(ARG:0):75 == 0
+			TALENT:(ARG:0):75 = 1
+			TALENT:(ARG:0):101 = 3
+			CALL ADD_HISTORY(DAY, ARG:0, 0, 10)
+		ENDIF
+		CALL ADD_ABL_EXP(6,(ARG:0), 50000)
+		CFLAG:(ARG:0):502 += 1
+	CASE 13
+		IF TALENT:(ARG:0):78 == 0
+			TALENT:(ARG:0):78 = 1
+			TALENT:(ARG:0):104 = 3
+			CALL ADD_HISTORY(DAY, ARG:0, 3, 10)
+		ENDIF
+		CALL ADD_ABL_EXP(9,(ARG:0), 50000)
+		CFLAG:(ARG:0):502 += 1
+	CASEELSE
+		TALENT:(ARG:0):74 = 1
+		CFLAG:(ARG:0):502 += 1
+	ENDSELECT
+
+	
+
+	IF ARG:0 == 1
+		CFLAG:1:29 = 0
+		BASE:1:1 = 1
+		PRINTFORMW %CALLNAME:(ARG:0)%は残されたわずかな力を振り絞り立ち上がった…
+		IF FLAG:11 && CFLAG:(FLAG:11):10 > 0
+			CALL MEMBER_EXIT(1)
+		ENDIF
+		IF FLAG:10 && CFLAG:(FLAG:10):10 > 0
+			CALL MEMBER_EXIT(0)
+		ENDIF
+	ENDIF
+ENDIF
+	;******************************************
+;メッセージ表示フラグリセット
+FLAG:20 = 0
+
+
+
+;捕食開始処理
+;ARG:0	チェック対象となる敵
+@START_PREDATION(ARG:0)
+;LOCAL
+;0	LOOP
+;1	対象キャラ
+;2	TEMP
+;3	PTメンバーフラグ
+
+;既に誰かを捕食している場合は無視
+IF DA:(ARG:0):10
+	RETURN
+ENDIF
+
+LOCAL:1 = 0
+LOCAL:3 = 0
+
+FOR LOCAL:0, 1, CHARANUM
+	IF CFLAG:(LOCAL:0):2 == 0 && ( (CFLAG:(LOCAL:0):10 == 0 && CFLAG:(LOCAL:0):29) || CFLAG:(LOCAL:0):504 == 1) && CFLAG:(LOCAL:0):4 == DA:(ARG:0):4
+		;同じ部屋にまだ捕まっていない戦意喪失キャラが居れば、それが候補 拘束具があれば喪失でなくても2匹くっつく
+		;ただし、PTメンバーの場合はPTのうち誰かが生きていれば防止
+		IF ARG:0 == CFLAG:(LOCAL:0):45
+			CONTINUE
+		ELSEIF (LOCAL:0 == 1 || LOCAL:0 == FLAG:10 || LOCAL:0 == FLAG:11)
+			IF CFLAG:1:29 == 0 || (FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (FLAG:11 && CFLAG:(FLAG:11):29 == 0)
+				CONTINUE
+			ENDIF
+		ENDIF
+		LOCAL:1 = LOCAL:0
+		BREAK
+	ENDIF
+NEXT
+
+
+IF LOCAL:1
+	;対象キャラが存在する場合、そのキャラの捕食開始
+	IF DA:(ARG:0):4 == FLAG:5
+		CALL PRINT_MESSAGE(LOCAL:1, 150, ARG:0, CALLNAME:(LOCAL:1), SAVESTR:(ARG:0))
+	ENDIF
+	
+	IF CFLAG:(LOCAL:1):10 == 0
+		CFLAG:(LOCAL:1):10 = ARG:0
+		DA:(ARG:0):10 = LOCAL:1
+	;拘束具による追加捕食 クイーンはバグるのでパス
+	ELSEIF CFLAG:(LOCAL:1):504 == 1 && DA:(ARG:0):0 != 1
+		CFLAG:(LOCAL:1):504 = ARG:0
+		DA:(ARG:0):10 = LOCAL:1
+	ENDIF
+	
+	;PTメンバーなら一時離脱
+	IF FLAG:10 == LOCAL:3
+		CALL MEMBER_EXIT(0)
+	ELSEIF FLAG:11 == LOCAL:3
+		CALL MEMBER_EXIT(1)
+	ENDIF
+ENDIF
+

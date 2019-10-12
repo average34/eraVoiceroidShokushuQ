@@ -1,0 +1,55 @@
+﻿
+;=================================================
+;はいてない取得
+;RESULT　処理結果
+;=================================================
+@SET_はいてない(ARG:0)
+#DIM UNKフラグ
+#DIMS UNK_おもらしチェック
+
+	UNKフラグ = 0
+	IF UNK_おもらしチェック(ARG:0, LOCALS) == 1
+		UNKフラグ = 1
+	ENDIF
+
+	;尿意パッチON/OFF
+	SIF FLAG:522 == 2
+		RETURN -1
+
+	;はいてない
+	SIF CFLAG:(ARG:0):44 == 1
+		RETURN -1
+
+	;全裸
+	SIF BASE:(ARG:0):CP <= 0
+		RETURN -1
+
+	;服装効果：はいてない
+	CALL CLOTH_TYPE_EFFECT_2(ARG:0)
+	SIF RESULT:0 == 1 && RESULT:1 == 1
+		RETURN -1
+
+	;触手服or拘束だと脱げない、ただしCPは下がらない 尿やうんがコンフィグでONの場合のみ
+	IF (CFLAG:(ARG:0):40 || CFLAG:(ARG:0):20 )&& FLAG:522 == 1
+		;UNKフラグあるか既にUNKおもらししてると大惨事
+		IF (UNKフラグ || CFLAG:(ARG:0):44 == 3) && FLAG:528 == 1
+			CFLAG:(ARG:0):44 = 4
+		ELSE
+			CFLAG:(ARG:0):44 = 2
+		ENDIF
+	ELSE
+		CFLAG:(ARG:0):44 = 1
+		BASE:(ARG:0):CP = BASE:(ARG:0):CP * 3 / 4
+	ENDIF
+	SIF BASE:(ARG:0):CP <= 0
+		BASE:(ARG:0):CP = 1
+
+RETURN 1
+
+
+
+
+
+
+
+

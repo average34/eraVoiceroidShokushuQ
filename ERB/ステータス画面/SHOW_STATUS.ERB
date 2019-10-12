@@ -1,0 +1,519 @@
+﻿
+;=================================================
+;PT全体の簡易ステータス表示
+;=================================================
+@SHOW_PT_STATUS
+;LOCAL
+;0	LOOP
+;1	TEMP
+
+	;主人公表示
+	CALL SHOW_SIMPLE_STATUS(1)
+	;１人目が居れば表示
+	IF FLAG:10
+		CALL SHOW_SIMPLE_STATUS(FLAG:10)
+	ENDIF
+	;２人目が居れば表示
+	IF FLAG:11
+		CALL SHOW_SIMPLE_STATUS(FLAG:11)
+	ENDIF
+	IF PET:0
+		CALL SHOW_PET_STATUS
+	ENDIF
+	;汚染度拡張パッチ用に、浄化力と汚染度の表示を追加	
+	IF TFLAG:13
+		PRINTFORM 【浄化力】
+		IF FLAG:6 < 100
+			CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("黄"), RESULT:1)
+		ELSEIF FLAG:6 < 200
+			CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("緑"), RESULT:1)
+		ELSEIF FLAG:6 < 300
+			CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("青緑"), RESULT:1)
+		ELSE
+			CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("青"), RESULT:1)
+		ENDIF
+		PRINTFORM  ({FLAG:6,3}/300)
+		PRINTL
+		PRINTFORM 【汚染度】
+		IF FLAG:(50 + FLAG:5) < 10
+			CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("青"), RESULT:1)
+		ELSEIF FLAG:(50 + FLAG:5) < 40
+			CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("緑"), RESULT:1)
+		ELSEIF FLAG:(50 + FLAG:5) < 70
+			CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("黄"), RESULT:1)
+		ELSEIF FLAG:(50 + FLAG:5) < 100
+			CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("紫"), RESULT:1)
+		ELSE
+			CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("赤"), RESULT:1)
+		ENDIF
+		PRINTFORM  ({FLAG:(50 + FLAG:5),3}/100) 
+		CALL PRINT_POLLUTION
+		PRINTL
+	ENDIF
+;=================================================
+;キャラの簡易ステータス表示
+;ARG:0	表示するキャラのID
+;=================================================
+@SHOW_SIMPLE_STATUS(ARG:0)
+#DIM LCOUNT,3  ;ループ用
+
+	;---名前---
+	;行動不能時は文字を暗く
+	SIF TFLAG:13 && !IS_POSSIBLE_ACTION(ARG:0)
+		SETCOLOR 0x505050
+	PRINTFORM %"【"+CALLNAME:(ARG:0)+"】", 15, LEFT% 
+	;---能力---
+	LOCAL = LIMIT (ABL:(ARG:0):98, 0, 9999)
+	LOCAL:1 = LIMIT (ABL:(ARG:0):97, 0, 9999)
+	PRINTFORM (戦闘{LOCAL, 4} / 速度{LOCAL:1, 4}) 
+	RESETCOLOR
+	;---汚れの状況を表示---
+	LOCALS = %""%
+	IF BASE:(ARG:0):5 >= 100
+		SETCOLOR 0xEE1010
+		LOCALS = 強烈な雌の臭いが漂っている…
+	ELSEIF BASE:(ARG:0):5 >= 60
+		SETCOLOR 0xEE10EE
+		LOCALS = 染み付いた体液が甘い香りを放っている…
+	ELSEIF BASE:(ARG:0):5 >= 30
+		SETCOLOR 0xEEEE10
+		LOCALS = 触手の体液や自らの愛液で汚されている…
+	ENDIF
+	PRINTFORM %LOCALS, 39, LEFT%
+	LOCALS = %""%
+	RESETCOLOR
+	;---行動---
+	IF TFLAG:13
+		PRINTFORM 行動：
+		;行動不能状態なら理由を表示
+		;ネガティブな行動時は暗い文字色
+		IF !IS_POSSIBLE_BATTLE_ACTION(ARG:0)
+			SETCOLOR 0x505050
+			
+			;怯み
+			IF CFLAG:(ARG:0):24
+				PRINTFORM 怯み
+				
+			;睡眠
+			ELSEIF CFLAG:(ARG:0):25
+				PRINTFORM 睡眠
+			
+			;戦意喪失
+			ELSEIF CFLAG:(ARG:0):29
+				PRINTFORM 戦意喪失
+			
+			;諦め
+			ELSEIF TFLAG:16 == 2
+				PRINTFORM 諦め
+				
+			;NEXTコマンド決定済み
+			ELSEIF CFLAG:(ARG:0):52 != 0
+				SELECTCASE CFLAG:(ARG:0):52
+				CASE 46
+					PRINTFORM 強制自慰
+				CASE 95
+					PRINTFORM 押し倒され
+				CASE 96
+					PRINTFORM 押し倒し
+				CASEELSE
+					PRINTFORM %SKILLNAME(CFLAG:(ARG:0):52)%
+				ENDSELECT
+				
+			;REPEAT中
+			ELSEIF TFLAG:17 != 0
+				; 非催眠拘束時と通常時は前回選択コマンドの保存場所が別々なので分岐
+				IF (CFLAG:(ARG:0):10 || CFLAG:(ARG:0):20) && !CFLAG:(ARG:0):43
+					PRINTFORM %SKILLNAME(CFLAG:(ARG:0):102)%
+				ELSE
+					PRINTFORM %SKILLNAME(CFLAG:(ARG:0):101)%
+				ENDIF
+			ENDIF
+			RESETCOLOR
+			
+		;AI自動行動中
+		ELSEIF CFLAG:(ARG:0):122
+			PRINTFORM おまかせ
+			
+		;通常行動可能でコマンド入力済みならコマンドを表示
+		ELSEIF CFLAG:(ARG:0):50
+			;アイテム使用時はアイテム名を表示
+			IF CFLAG:(ARG:0):50 == 2
+				PRINTFORM %ITEMNAME:(CFLAG:(ARG:0):54)%
+			;それ以外ならスキル名
+			ELSE
+				PRINTFORM %SKILLNAME(CFLAG:(ARG:0):50)%
+			ENDIF
+		ENDIF
+	ENDIF
+	;------
+	PRINTL
+	
+	;---HP---
+	PRINTFORM HP 
+	CALL PRINT_COLORBAR(BASE:(ARG:0):HP, MAXBASE:(ARG:0):HP, 10, BARCOLORSET("青緑"), RESULT:1)
+	LOCAL = LIMIT (BASE:(ARG:0):HP, 0, 99999)
+	LOCAL:1 = LIMIT (MAXBASE:(ARG:0):HP, 0, 99999)
+	PRINTFORM  ({LOCAL, 5}/{LOCAL:1, 5})  
+	;---EP---
+	PRINTFORM EP 
+	CALL PRINT_COLORBAR(BASE:(ARG:0):2, MAXBASE:(ARG:0):2, 10, BARCOLORSET("紫"), RESULT:1)
+	PRINTFORM  ({BASE:(ARG:0):2, 5}/{MAXBASE:(ARG:0):2, 5})  
+	;---MP---
+	PRINTFORM MP 
+	CALL PRINT_COLORBAR(BASE:(ARG:0):MP, MAXBASE:(ARG:0):MP, 20, BARCOLORSET("緑"), RESULT:1)
+	LOCAL = LIMIT (BASE:(ARG:0):MP, 0, 99999)
+	LOCAL:1 = LIMIT (MAXBASE:(ARG:0):MP, 0, 99999)
+	PRINTFORM  ({LOCAL, 5}/{LOCAL:1, 5})
+	;------
+	PRINTL
+	
+	;---TP---
+	IF MAXBASE:(ARG:0):4 == 0
+		MAXBASE:(ARG:0):4 = 200
+	ENDIF
+	PRINTFORM TP 
+	IF BASE:(ARG:0):4 <= 50
+		LOCAL = BARCOLORSET("青")
+		LOCAL:1 = RESULT:1
+	ELSEIF BASE:(ARG:0):4 <= 80
+		LOCAL = BARCOLORSET("薄青")
+		LOCAL:1 = RESULT:1
+	ELSEIF BASE:(ARG:0):4 >= 150
+		LOCAL = BARCOLORSET("赤")
+		LOCAL:1 = RESULT:1
+	ELSEIF BASE:(ARG:0):4 >= 120
+		LOCAL = BARCOLORSET("薄赤")
+		LOCAL:1 = RESULT:1
+	ELSE
+		LOCAL = BARCOLORSET("白")
+		LOCAL:1 = RESULT:1
+	ENDIF
+	CALL PRINT_COLORBAR(BASE:(ARG:0):4, MAXBASE:(ARG:0):4, 10, LOCAL, LOCAL:1)
+	PRINTFORM  ({BASE:(ARG:0):4,3})
+	PRINTFORM %" ", 10%
+	;★尿意パッチ加筆点★
+	;---NP---
+	IF FLAG:522 == 2
+		PRINTFORM %"",29%
+	ELSE
+		;NP無い時代のセーブデータがバグるので対策
+			MAXBASE:(ARG:0):6 = 100
+		
+		PRINTFORM NP 
+		CALL PRINT_COLORBAR(BASE:(ARG:0):6, MAXBASE:(ARG:0):6, 10, BARCOLORSET("黄"), RESULT:1)
+		PRINTFORM  ({BASE:(ARG:0):6 * 100 / MAXBASE:(ARG:0):6, 3}％
+		CALL PRINT_NYOUI(ARG:0)
+		PRINTFORM )  
+	ENDIF
+	;★ここまで★
+	;---CP---
+	PRINTFORM CP 
+	;触手スーツの有無で色を変える
+	IF CFLAG:(ARG:0):40 > 0
+		LOCAL = 0x990099
+		LOCAL:1 = 0x330066
+	ELSE
+		LOCAL = BARCOLORSET("黄")
+		LOCAL:1 = RESULT:1
+	ENDIF
+	CALL PRINT_COLORBAR(BASE:(ARG:0):CP, MAXBASE:(ARG:0):CP, 20, LOCAL, LOCAL:1)
+	LOCAL = 0
+	LOCAL:1 = 0
+	
+	;PRINTFORM  ({BASE:(ARG:0):3, 5}/{MAXBASE:(ARG:0):3, 5}) 
+	LOCAL = BASE:(ARG:0):CP * 1000 / MAXBASE:(ARG:0):CP
+	IF LOCAL == 0 && BASE:(ARG:0):CP > 0
+		LOCAL = 1
+	ENDIF
+	PRINTFORM  ({LOCAL/10,3}.{LOCAL%10}％
+	CALL PRINT_CLOTH_LEVEL(ARG:0)
+	PRINTFORM )
+	;------
+	PRINTL
+	
+	;---状態異常---
+	PRINTFORM 状態：
+	CALL PRINT_CONDITION(ARG:0)
+	PRINTFORM %" ", 52 - RESULT%
+	;---服装---
+	PRINTFORM 服装：
+	CALL PRINT_CLOTH_TYPE(ARG:0)
+	;------
+	PRINTL
+
+;=================================================
+;=================================================
+;ステータス表示用区切り（縦掛線）
+;=================================================
+@BORDERH
+SETCOLOR 0x555555
+PRINT |
+RESETCOLOR
+
+;=================================================
+;ステータス表示用区切り（横掛線）
+;=================================================
+@BORDERL
+SETCOLOR 0x555555
+DRAWLINE
+RESETCOLOR
+
+;=================================================
+;全キャラステータス表示テンプレ<0>
+;=================================================
+@SHOW_1LINE_STATUS_TEMPLATE_0
+;表示する名前の最大文字数(半角は1、全角は2で数える)
+#DIM LIMIT_NAME_LETTER = 18
+SPLIT "No.,名前,MP,好感度,現,ﾘﾀ,休,戦闘,速度,汚,ＡＢＣＶ肌Ｍ", ",", LOCALS
+
+CALL BORDERL
+;キャラ番号
+PRINTFORM %LOCALS:0,5,LEFT%
+CALL BORDERH
+;名前
+PRINTFORM %LOCALS:1,LIMIT_NAME_LETTER,LEFT%
+CALL BORDERH
+;MP
+PRINTFORM %LOCALS:2,12,LEFT%
+CALL BORDERH
+;好感度
+PRINTFORM %LOCALS:3,6,LEFT%
+CALL BORDERH
+;現在地
+PRINTFORM %LOCALS:4,2,LEFT%
+CALL BORDERH
+;リタイアフラグ
+PRINTFORM %LOCALS:5,2,LEFT%
+CALL BORDERH
+;復活までの残り時間
+PRINTFORM %LOCALS:6,2,LEFT%
+CALL BORDERH
+;戦闘値
+PRINTFORM %LOCALS:7,4,LEFT%
+CALL BORDERH
+;速度
+PRINTFORM %LOCALS:8,4,LEFT%
+CALL BORDERH
+;汚れ
+PRINTFORM %LOCALS:9,2,LEFT%
+CALL BORDERH
+;各部位感度（ＡＢＣＶ肌Ｍ）
+PRINTFORM %LOCALS:10,12,LEFT%
+CALL BORDERH
+PRINTL
+CALL BORDERL
+
+;=================================================
+;全キャラステータス表示テンプレ<1>
+;=================================================
+@SHOW_1LINE_STATUS_TEMPLATE_1
+;表示する名前の最大文字数(半角は1、全角は2で数える)
+#DIM LIMIT_NAME_LETTER = 18
+SPLIT "No.,名前,素質(胸・淫乱陥落系),インプラント,状態異常", ",", LOCALS
+
+CALL BORDERL
+;キャラ番号
+PRINTFORM %LOCALS:0,5,LEFT%
+CALL BORDERH
+;名前
+PRINTFORM %LOCALS:1,LIMIT_NAME_LETTER,LEFT%
+CALL BORDERH
+;素質(胸・淫乱陥落系)
+PRINTFORM %LOCALS:2,20,LEFT%
+CALL BORDERH
+;インプラント
+PRINTFORM %LOCALS:3,18,LEFT%
+CALL BORDERH
+;状態異常
+PRINTFORM %LOCALS:4,30,LEFT%
+PRINTL
+CALL BORDERL
+
+;=================================================
+;全キャラステータス表示テンプレ<2> 妊娠寄生管理用
+;=================================================
+@SHOW_1LINE_STATUS_TEMPLATE_2
+;表示する名前の最大文字数(半角は1、全角は2で数える)
+#DIM LIMIT_NAME_LETTER = 18
+SPLIT "No.,名前,Ｖ寄生／妊娠,Ａ寄生,Ｂ寄生,Ｃ寄生,Ｃ妊娠", ",", LOCALS
+
+CALL BORDERL
+;キャラ番号
+PRINTFORM %LOCALS:0,5,LEFT%
+CALL BORDERH
+;名前
+PRINTFORM %LOCALS:1,LIMIT_NAME_LETTER,LEFT%
+CALL BORDERH
+;V寄生妊娠
+PRINTFORM %LOCALS:2,15,LEFT%
+;A寄生
+PRINTFORM %"",3,LEFT%
+PRINTFORM %LOCALS:3,11,LEFT%
+;B寄生
+PRINTFORM %"",4,LEFT%
+PRINTFORM %LOCALS:4,11,LEFT%
+;C寄生
+PRINTFORM %"",4,LEFT%
+PRINTFORM %LOCALS:5,11,LEFT%
+;C妊娠
+PRINTFORM %"",4,LEFT%
+PRINTFORM %LOCALS:6,11,LEFT%
+PRINTL
+CALL BORDERL
+
+;=================================================
+;キャラの1行ステータス表示<0>
+;ARG:0	表示するキャラのID
+;=================================================
+@SHOW_1LINE_STATUS_0(CHARA_ID)
+#DIM CHARA_ID
+
+	;共通部分(No.+名前)
+	CALL SHOW_1LINE_STATUS_COMMON(CHARA_ID)
+	;---MP---
+	;表示するのは0～99999まで
+	LOCAL:0 = LIMIT(BASE:(CHARA_ID):MP, 0, 99999)
+	LOCAL:1 = LIMIT(MAXBASE:(CHARA_ID):MP, 0, 99999)
+	;MPが0なら赤
+	SIF LOCAL == 0
+		SETCOLOR 0xA00000
+	PRINTFORM {LOCAL, 5}／{LOCAL:1, 5}
+	RESETCOLOR
+	CALL BORDERH
+	;好感度
+	;マイナスなら赤
+	SIF CFLAG:(CHARA_ID):5 < 0
+		SETCOLOR 0xA00000
+	;表示するのは-99999～999999まで
+	LOCAL:0 = LIMIT(CFLAG:(CHARA_ID):5, -99999, 999999)
+	PRINTFORM {LOCAL:0,6}
+	RESETCOLOR
+	CALL BORDERH
+	;---現在地---
+	;隔離部屋に居るなら赤
+	SIF CFLAG:(CHARA_ID):4 == 59
+		SETCOLOR 0xA00000
+	PRINTFORM {CFLAG:(CHARA_ID):4,2}
+	RESETCOLOR
+	CALL BORDERH
+	;---リタイアフラグ---
+	;リタイアしているなら赤い丸を表示、していないなら何も表示しない
+	IF CFLAG:(CHARA_ID):2 > 0
+		SETCOLOR 0xA00000
+		PRINTFORM ●
+	ELSE
+		PRINTFORM %"", 2%
+	ENDIF
+	RESETCOLOR
+	CALL BORDERH
+	;---復活までの残り時間---
+	;復活待ちなら数を表示、生きているなら何も表示しない
+	IF CFLAG:(CHARA_ID):3 > 0
+		PRINTFORM {CFLAG:(CHARA_ID):3,2}
+	ELSE
+		PRINTFORM %"", 2%
+	ENDIF
+	CALL BORDERH
+	;---能力---
+	;表示するのは0～9999まで
+	LOCAL:0 = LIMIT(ABL:(CHARA_ID):98, 0, 9999)
+	LOCAL:1 = LIMIT(ABL:(CHARA_ID):97, 0, 9999)
+	PRINTFORM {LOCAL, 4}
+	CALL BORDERH
+	PRINTFORM {LOCAL:1, 4}
+	CALL BORDERH
+	;---汚れの状況を表示---
+	LOCALS = %""%
+	IF BASE:(CHARA_ID):5 >= 100
+		SETCOLOR 0xEE1010
+		LOCALS = 強
+	ELSEIF BASE:(CHARA_ID):5 >= 60
+		SETCOLOR 0xEE10EE
+		LOCALS = 中
+	ELSEIF BASE:(CHARA_ID):5 >= 30
+		SETCOLOR 0xEEEE10
+		LOCALS = 軽
+	ENDIF
+	PRINTFORM %LOCALS, 2, LEFT%
+;	LOCALS = %""%
+	RESETCOLOR
+	CALL BORDERH
+	;---各部位感度---
+	TRYCALL PRINT_TALENT_SENSITIVITY_S(CHARA_ID)
+	PRINTFORM %"", 12 - RESULT%
+	RESETCOLOR
+	CALL BORDERH
+
+;=================================================
+;キャラの1行ステータス表示<1>
+;ARG:0	表示するキャラのID
+;=================================================
+@SHOW_1LINE_STATUS_1(CHARA_ID)
+#DIM CHARA_ID
+
+	;共通部分(キャラ番号、名前)
+	CALL SHOW_1LINE_STATUS_COMMON(CHARA_ID)
+	;---素質---
+	TRYCALL PRINT_TALENT_S(CHARA_ID)
+	PRINTFORM %"", 20 - RESULT%
+	CALL BORDERH
+	;---インプラント---
+	TRYCALL PRINT_IMPLANT_COMMON_S(CHARA_ID)
+	PRINTFORM %"", 18 - RESULT%
+	CALL BORDERH
+	;---状態異常---
+	CALL PRINT_CONDITION_S(CHARA_ID)
+	PRINTFORM %"", 30 - RESULT%
+;	CALL BORDERH
+
+;=================================================
+
+
+;=================================================
+;キャラの1行ステータス表示(共用する項目)
+;ARG:0	表示するキャラのID
+;=================================================
+@SHOW_1LINE_STATUS_COMMON(CHARA_ID)
+;表示する名前の最大文字数(半角は1、全角は2で数える)
+#DIM LIMIT_NAME_LETTER = 18
+#DIM CHARA_ID
+
+	;---キャラ番号---
+	PRINTFORM [{CHARA_ID, 3}] 
+	;---名前---
+	;PTメンバなら水
+	SIF CHECK_MEMBER_FROM_ID(CHARA_ID)
+		SETCOLOR 0x10CCFF
+	;喪失しているなら赤
+	SIF CFLAG:(CHARA_ID):29 >= 1
+		SETCOLOR 0xA00000
+	;リタイアしているならグレー
+	SIF CFLAG:(CHARA_ID):2 >= 1
+		SETCOLOR 0x555555
+	;復活待ちなら青
+	SIF CFLAG:(CHARA_ID):3 >= 1
+		SETCOLOR 0x2070FF
+	;名前の文字数が最大文字数を超えた場合、全角カナを半角カナに変換する
+	STRLENS CALLNAME:(CHARA_ID)
+	IF RESULT:0 > LIMIT_NAME_LETTER
+		TOHALF CALLNAME:(CHARA_ID)
+		;変換処理後でも最大文字数を超えたなら、はみ出た分だけ末尾を削除する
+		STRLENS RESULTS:0
+		IF RESULT:0 > LIMIT_NAME_LETTER
+			SUBSTRING RESULTS:0, 0, LIMIT_NAME_LETTER
+			;削除後の文字の末尾が全角文字で半角はみ出た場合、さらに1文字削る
+			STRLENS RESULTS:0
+			IF RESULT:0 > LIMIT_NAME_LETTER
+				SUBSTRING RESULTS:0, 0, LIMIT_NAME_LETTER - 1
+				PRINTFORM %RESULTS:0, LIMIT_NAME_LETTER, LEFT%
+			ELSE
+				PRINTFORM %RESULTS:0, LIMIT_NAME_LETTER, LEFT%
+			ENDIF
+		ELSE
+			PRINTFORM %RESULTS:0, LIMIT_NAME_LETTER, LEFT%
+		ENDIF
+	ELSE
+		PRINTFORM %""+CALLNAME:(CHARA_ID)+"", LIMIT_NAME_LETTER, LEFT%
+	ENDIF
+	RESETCOLOR
+	CALL BORDERH

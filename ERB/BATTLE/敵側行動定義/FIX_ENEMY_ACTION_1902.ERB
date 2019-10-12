@@ -1,0 +1,29 @@
+﻿@FIX_ENEMY_ACTION_1902(ENEMY_ID)
+#DIM ENEMY_ID
+;恐怖技
+
+TFLAG:52 = ENEMY_ID
+TFLAG:54 = DA:ENEMY_ID:51
+;攻撃の種別(0：味方の攻撃　1：通常　2：衣服　3：性　4：拘束　5：寄生　6：その他)
+TFLAG:55 = 6
+;戦意喪失キャラに当たるかどうか。０あたらない　１あたる
+TFLAG:60 = 0
+;威力
+TFLAG:57 = DA:ENEMY_ID:5
+;威力その２．
+TFLAG:58 = 100
+;範囲　０　単体　１　全体
+TFLAG:59 = 1
+;命中率
+TFLAG:61 = 100
+
+;特殊効果番号
+TFLAG:99 = 1302
+
+
+;メッセージ　３番目が技番号ぽい.命中時、回避時とかも必要なのか
+CALL ACTION_FILTER(-1, 7, 1902, CALLNAME:(TFLAG:54), SAVESTR:ENEMY_ID, TFLAG:54)
+
+
+
+

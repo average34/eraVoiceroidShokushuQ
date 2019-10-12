@@ -1,0 +1,640 @@
+﻿;衣服攻撃命中時の描写
+@SYSTEM_MESSAGE_13(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;敵のコマンドごとに命中時の描写したり
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_13)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+	CASE 201
+		IF BASE:3 > 0
+			PRINTFORML まともに浴びてしまった%ARGS:0%の服がみるみる内に溶け、柔肌を外気に晒してゆく…
+		ELSE
+			PRINTFORML 液体を浴びてしまった%ARGS:0%の素肌に、甘い疼きがジンジンと響く…
+		ENDIF
+	CASE 204
+		IF BASE:3 > 0
+			PRINTFORML まともに浴びてしまった%ARGS:0%の服がみるみる内に溶け、柔肌を外気に晒してゆく…
+		ELSE
+			PRINTFORML 液体を浴びてしまった%ARGS:0%の素肌に、甘い疼きがジンジンと響く…
+		ENDIF
+	CASE 209
+		IF BASE:3 > 0
+			PRINTFORML 服と身体の間を這う触手は内側から%ARGS:0%の服を引っ張り、衣服を引き裂いてゆく…
+		ELSE
+			IF ARG:2 == 0
+				PRINTFORML 腸壁を触手にチクチクとつつかれ、痛みと奇妙な快感が%ARGS:0%を襲う！
+			ELSEIF ARG:2 == 1
+				PRINTFORML 何重にも巻きついた触手は、突然%ARGS:0%の乳首を痛いほどに引っ張り上げた！
+			ELSEIF ARG:2 == 2
+				IF GET_PENIS(TARGET)
+					PRINTFORML そのままペニスを締め上げられ、痛みすら感じるほどの快感が%ARGS:0%を襲った！
+				ELSE
+					PRINTFORML そのままクリトリスを締め上げられ、痛みすら感じるほどの快感が%ARGS:0%を襲った！
+				ENDIF
+			ELSEIF ARG:2 == 3
+				PRINTFORML ぱっくりと広げられた%ARGS:0%のワレメに、無数の触手が愛撫とも攻撃ともつかない衝撃を与える！
+			ENDIF
+		ENDIF
+	CASE 211
+		IF BASE:3 > 0
+			PRINTFORML 無数のツタによって%ARGS:0%の服が次々と破られてゆく！
+		ENDIF
+	CASE 213
+		IF BASE:3 > 0
+			PRINTFORML 無数のツタによって%ARGS:0%の服が次々と破られてゆく！
+		ENDIF
+	CASE 215
+		IF BASE:3 > 0
+			PRINTFORML 全身に溶解液を浴びてしまった%ARGS:0%の服が次第に溶かされてゆく！
+		ENDIF
+	CASE 217
+		IF BASE:3 > 0
+			PRINTFORML 全身に溶解液を浴びてしまった%ARGS:0%の服が次第に溶かされてゆく！
+		ENDIF
+	CASE 219
+		IF BASE:3 > 0
+			PRINTFORML 吸盤に服を吸い破られた%ARGS:0%が、みるみる裸にされてゆく！
+		ENDIF
+	CASE 221
+		IF BASE:3 > 0
+			PRINTFORML 吸盤に服を吸い破られた%ARGS:0%が、みるみる裸にされてゆく！
+		ENDIF
+	CASE 223
+		IF BASE:3 > 0
+			PRINTFORML %ARGS:0%の服が次々と切り裂かれ、素肌が露出してゆく！
+		ENDIF
+	CASE 225
+		IF BASE:3 > 0
+			PRINTFORML %ARGS:0%の服が次々と切り裂かれ、素肌が露出してゆく！
+		ENDIF
+	CASE 227
+		IF BASE:3 > 0
+			PRINTFORML 溶解液に濡れた%ARGS:0%の服が一瞬にして溶かされてゆく！
+		ELSEIF ARG:2 == 1
+			PRINTFORML 焼けるような痛みと共に、%ARGS:0%の胸を甘い快感が襲う！
+		ENDIF
+	CASE 228
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 体液を浴びた%ARGS:0%の服はあっという間に下着まで溶解し、一糸まとわぬ姿になってしまった…
+			ELSE
+				PRINTFORML 体液を思い切り浴びてしまった%ARGS:0%の服がどろりと溶け出してゆく！
+			ENDIF
+		ELSEIF ARG:2 == 0
+			PRINTFORML %ARGS:0%の尻にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+		ELSEIF ARG:2 == 1
+			PRINTFORML %ARGS:0%の胸にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+		ENDIF
+	CASE 229
+		;二段技なのでメッセージは保留
+	CASE 230
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 体液を浴びた%ARGS:0%の服はあっという間に下着まで溶解し、一糸まとわぬ姿になってしまった…
+			ELSE
+				PRINTFORML 体液を思い切り浴びてしまった%ARGS:0%の服がどろりと溶け出してゆく！
+			ENDIF
+		ELSEIF ARG:2 == 0
+			PRINTFORML %ARGS:0%の尻にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+		ELSEIF ARG:2 == 1
+			PRINTFORML %ARGS:0%の胸にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+		ENDIF
+	CASE 231
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 正気を失った%ARGS:0%は自ら服を脱ぎだし、生まれたままの姿になってしまった…
+			ELSE
+				PRINTFORML 正気を失った%ARGS:0%は突然自ら服を脱ぎ始めた！
+			ENDIF
+		ELSEIF ARG:2 == 2
+			IF GET_PENIS(TARGET)
+				PRINTFORML 動きの鈍った%ARGS:0%の淫茎を、%ARGS:1%は蔓状の触手でしごきあげた！
+			ELSE
+				PRINTFORML 動きの鈍った%ARGS:0%の淫核を、%ARGS:1%は蔓状の触手で何度も弾いた！
+			ENDIF
+		ELSEIF ARG:2 == 3
+			PRINTFORML 動きの鈍った%ARGS:0%に、%ARGS:1%は深々と触手を突き入れた！
+		ENDIF
+	CASE 233
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 正気を失った%ARGS:0%は自ら服を脱ぎだし、生まれたままの姿になってしまった…
+			ELSE
+				PRINTFORML 正気を失った%ARGS:0%は突然自ら服を脱ぎ始めた！
+			ENDIF
+		ELSEIF ARG:2 == 2
+			IF GET_PENIS(TARGET)
+				PRINTFORML 動きの鈍った%ARGS:0%の淫茎を、%ARGS:1%は蔓状の触手でしごきあげた！
+			ELSE
+				PRINTFORML 動きの鈍った%ARGS:0%の淫核を、%ARGS:1%は蔓状の触手で何度も弾いた！
+			ENDIF
+		ELSEIF ARG:2 == 3
+			PRINTFORML 動きの鈍った%ARGS:0%に、%ARGS:1%は深々と触手を突き入れた！
+		ENDIF
+	CASE 235
+		;スキップ
+	CASE 237
+		IF FLAG:507 >= 1 && BASE:3 > 0
+			PRINTFORML 刃の先端が閃き、%ARGS:0%の衣服だけを的確に切り裂いていく…
+		ENDIF
+	CASE 238
+		IF BASE:3 > 0
+			IF FLAG:507 >= 1
+				PRINTFORML 刃の先端が閃き、%ARGS:0%の衣服だけを的確に切り裂いていく…
+			ELSE
+				PRINTFORML 攻撃に掠っただけの%ARGS:0%の服が凄まじい勢いで腐食してゆく！
+			ENDIF
+		ELSE
+			IF FLAG:507 >= 1
+				PRINTFORML 媚毒に濡れた刃の先端が%ARGS:0%の身体を切り裂いていく…
+			ELSE
+				PRINTFORML 攻撃に当たった部分から、強烈な痛みと快感が発せられる！
+			ENDIF
+		ENDIF
+	CASE 240
+		PRINTFORML 避けきれずにかすった角が%ARGS:0%の衣服をむしりとった…
+	CASE 242
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML %ARGS:0%の服は狐火によって、あっという間に燃やし尽くされてしまった…
+			ELSE
+				PRINTFORML 狐火は%ARGS:0%の服だけを器用に燃やしていく！
+			ENDIF
+		ELSEIF ARG:2 == 0
+			PRINTFORML 狐火によって血行を促進され、%ARGS:0%は尻穴が疼くのを感じた…
+		ELSEIF ARG:2 == 1
+			PRINTFORML 狐火によって血行を促進され、%ARGS:0%は胸が疼くのを感じた…
+		ELSEIF ARG:2 == 2
+			IF GET_PENIS(TARGET)
+				PRINTFORML 狐火によって血行を促進され、%ARGS:0%は陰茎が疼くのを感じた…
+			ELSE
+				PRINTFORML 狐火によって血行を促進され、%ARGS:0%は陰核が疼くのを感じた…
+			ENDIF
+		ELSEIF ARG:2 == 3
+			PRINTFORML 狐火によって血行を促進され、%ARGS:0%は膣内が疼くのを感じた…
+		ENDIF
+	CASE 244
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML %ARGS:0%の服は下着に至るまで完全にびしょ濡れになってしまった…
+				PRINTFORML このままでは風邪を引いてしまうと思い、%ARGS:0%は仕方なく服を全部脱いで裸になった…
+			ELSE
+				PRINTFORML %ARGS:0%の着ていた服はびしょ濡れになってしまった…
+				PRINTFORML このままではグショグショで気持ち悪いので、%ARGS:0%は仕方なく服を脱いだ…
+			ENDIF
+		ELSEIF ARG:2 == 1
+			PRINTFORML 水鉄砲が胸に当たり、%ARGS:0%はちょっとだけ快感を感じた…
+		ELSEIF ARG:2 == 2
+			IF GET_PENIS(TARGET)
+				PRINTFORML 水鉄砲が陰茎に当たり、%ARGS:0%はちょっとだけ快感を感じた…
+			ELSE
+				PRINTFORML 水鉄砲が陰核に当たり、%ARGS:0%はちょっとだけ快感を感じた…
+			ENDIF
+		ENDIF
+	CASE 246
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 攻撃をまともに食らった%ARGS:0%は、服を全て引き裂かれてしまった……
+			ELSE
+			ENDIF
+		ELSEIF ARG:2 == 1
+			PRINTFORML 触手は%ARGS:0%の乳房に絡みつき、刺激を与えてくる……
+		ELSEIF ARG:2 == 2
+			IF GET_PENIS(TARGET)
+				PRINTFORML 触手は%ARGS:0%のペニスに絡みつき、ぬめぬめと扱いて愛撫してくる……
+			ELSE
+				PRINTFORML 触手は%ARGS:0%のクリトリスを執拗に責め立ててくる……
+			ENDIF
+		ENDIF
+	CASE 248
+		IF BASE:3 <= 0
+			IF GET_PENIS(TARGET)
+				PRINTFORML そのまま%ARGS:0%の陰茎にしゃぶりつき、暴れ出す！
+			ELSE
+				PRINTFORML そのまま%ARGS:0%の陰核にしゃぶりつき、暴れ出す！
+			ENDIF
+		ELSE
+			PRINTFORML %ARGS:1%は%ARGS:0%の服を引き千切った！
+		ENDIF
+	CASE 250
+		IF BASE:3 <= 0
+			PRINTFORM 小さな手が代わる代わる%ARGS:0%の
+			SELECTCASE TFLAG:63
+				CASE 0
+					PRINTFORML 尻肉を揉みしだく……
+				CASE 1
+					PRINTFORML 両乳房を揉みしだく……
+				CASE 2
+					IF GET_PENIS(TARGET)
+						PRINTFORML 陰茎を扱いていく……
+					ELSE
+						PRINTFORML 陰核を扱いていく……
+					ENDIF
+				CASE 3
+					PRINTFORML 膣穴を蹂躙する……
+			ENDSELECT
+		ENDIF
+	CASE 253
+		IF BASE:3 <= 0
+			PRINTFORML 避けられない%ARGS:0%のあらわになった胸めがけてベトベトの粘液が打ち込まれる！
+		ELSE
+			PRINTFORML %ARGS:1%の粘液が%ARGS:0%の服を溶かしていく！
+		ENDIF
+	CASE 254
+		IF BASE:3 <= 0
+			PRINTFORML %ARGS:0%のあらわになった胸めがけてベトベトの粘液が打ち込まれる！
+		ELSE
+			PRINTFORML %ARGS:1%の粘液が%ARGS:0%の服を溶かしていく！
+		ENDIF
+	CASE 255
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 光を直視し正気を失った%ARGS:0%は自ら服を脱ぎだし、一糸纏わぬ姿になってしまった…
+			ELSE
+				PRINTFORML 光を直視し正気を失った%ARGS:0%は突然自ら服を脱ぎ始めた！
+			ENDIF
+		ELSEIF ARG:2 == 0
+			PRINTFORML %ARGS:1%の放った光を浴びた途端、%ARGS:0%の肛内が疼き始める…
+		ELSEIF ARG:2 == 1
+			PRINTFORML %ARGS:1%の放った光を浴びた途端、%ARGS:0%の乳首が疼き始める…
+		ELSEIF ARG:2 == 2
+			PRINTFORML %ARGS:1%の放った光を浴びた途端、%ARGS:0%の陰唇が疼き始める…
+		ELSEIF ARG:2 == 3
+			PRINTFORML %ARGS:1%の放った光を浴びた途端、%ARGS:0%の膣内が疼き始める…
+		ENDIF
+	CASE 256
+		IF BASE:3 <= 0
+			
+		ELSE
+			PRINTFORML %ARGS:1%の粘液が%ARGS:0%の服を溶かしていく！
+		ENDIF
+	CASE 257
+		IF BASE:3 <= 0
+			PRINTFORML 乳首を痛いほど抓られているのに、%ARGS:0%の体には快感が走りぬける！
+		ELSE
+			IF BASE:3 <= ARG:3
+				PRINTFORML %ARGS:0%の服は全てアームに取り去られてしまった！
+			ELSE
+				PRINTFORML %ARGS:0%の服が引きちぎられ、アームに持っていかれてしまった！
+			ENDIF
+		ENDIF
+	CASE 258
+		IF BASE:3 <= 0
+			IF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:0%のペニスの裏筋を歯ブラシが磨き上げる！
+			ELSE
+				PRINTFORML %ARGS:0%のクリトリスを歯ブラシが磨き上げる！
+			ENDIF
+		ELSE
+			IF BASE:3 <= ARG:3
+				PRINTFORML %ARGS:0%の服はあっという間に切れ端の山と化した！
+			ELSE
+				PRINTFORML %ARGS:0%の服をハサミが滅茶苦茶に裁断していく！
+			ENDIF
+		ENDIF
+	CASE 260
+		IF BASE:3 > 0
+			PRINTFORML 攻撃に掠っただけの%ARGS:0%の服が凄まじい勢いで腐食してゆく！
+		ELSE
+			PRINTFORML 攻撃に当たった部分から、強烈な痛みと快感が発せられる！
+		ENDIF
+	CASE 261
+		IF BASE:3 > 0
+			PRINTFORML 触手達は%ARGS:0%に張り付くと、そのまま服をボロボロに引き千切っていった…
+		ELSE
+			IF ARG:2 == 0
+				PRINTFORML 尻穴を触手にチクチクとつつかれ、痛みと奇妙な快感が%ARGS:0%を襲う！
+			ELSEIF ARG:2 == 1
+				PRINTFORML いきなり巻きついてきた触手は、突然%ARGS:0%の乳首を痛いほどに引っ張り上げた！
+			ELSEIF ARG:2 == 2
+				IF GET_PENIS(TARGET)
+					PRINTFORML ペニスを締め上げられ、痛みすら感じるほどの快感が%ARGS:0%を襲った！
+				ELSE
+					PRINTFORML クリトリスを締め上げられ、痛みすら感じるほどの快感が%ARGS:0%を襲った！
+				ENDIF
+			ELSEIF ARG:2 == 3
+				PRINTFORML %ARGS:0%のワレメに向けて、無数の触手が愛撫とも攻撃ともつかない衝撃を与える！
+			ENDIF
+		ENDIF
+	CASE 262
+		IF BASE:3 > 0
+			PRINTFORML %ARGS:1%と触手達が%ARGS:0%の衣服を破いていく！
+		ELSE
+			PRINTFORML %ARGS:1%の指示に合わせて、触手達が%ARGS:0%の体を愛撫する…
+		ENDIF
+	CASE 263
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 体液を浴びた%ARGS:0%の服はあっという間に下着まで溶解し、一糸まとわぬ姿になってしまった…
+			ELSE
+				PRINTFORML 体液を思い切り浴びてしまった%ARGS:0%の服がどろりと溶け出してゆく！
+			ENDIF
+		ELSEIF ARG:2 == 0
+			PRINTFORML %ARGS:0%の尻にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+		ELSEIF ARG:2 == 1
+			PRINTFORML %ARGS:0%の胸にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+		ENDIF
+	CASE 264
+		IF BASE:3 > 0
+			PRINTFORML %ARGS:1%は器用に爪で%ARGS:0%の服を切り裂いた！
+		ELSE
+			PRINTFORML %ARGS:1%は股間にパンチを入れた！
+		ENDIF
+	CASE 1869
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 体液を浴びた%ARGS:0%の服はあっという間に使い物にならなくなり、裸同然の恰好になってしまった…
+			ELSE
+				PRINTFORML %ARGS:0%は自分の恥かしい部分をなんとか隠そうとしているが、
+				PRINTFORML 液体に濡れ肌に張り付いた服からは、%ARGS:0%の裸がうっすらと透けて見えだした…
+				PRINTFORML …その胸の先端は少しだけ盛り上がり、今のカラダの状態を主張している…
+			ENDIF
+
+		ELSE
+			PRINTFORML %ARGS:0%の胸にかかった液体は、%ARGS:0%に蕩けるような快感を与えてくる…
+			PRINTFORML %ARGS:0%の胸の先端は尖りきっているようだ…
+
+		ENDIF
+	CASE 1876
+		IF BASE:3 > 0
+			IF BASE:3 <= ARG:3
+				;この攻撃で裸になる
+				PRINTFORML 正気を失った%ARGS:0%は自ら服を脱ぎだし、生まれたままの姿になってしまった…
+			ELSEIF RAND:3 > 0
+				PRINTFORML 正気を失った%ARGS:0%は突然自ら服を脱ぎ始めた！
+			ELSE
+				PRINTFORML 鱗粉の当たった部分から%ARGS:0%の服が崩れていく……
+			ENDIF
+		ELSEIF ARG:2 == 2
+			IF GET_PENIS(TARGET)
+				PRINTFORML 動きの鈍った%ARGS:0%の淫茎を弄び、%ARGS:1%はあふれ出る蜜を吸い上げている！
+			ELSE
+				PRINTFORML 動きの鈍った%ARGS:0%の淫核を弄び、%ARGS:1%は極上の蜜を吸い上げている！
+			ENDIF
+			PRINTFORML 力を吸われてゆく%ARGS:0%から、時折甘い声が聞こえてくる……
+		ELSEIF ARG:2 == 1
+			PRINTFORML 動きの鈍った%ARGS:0%の胸に、%ARGS:1%は、やすやすと吸いついてきた！
+			PRINTFORML 力を吸われてゆく%ARGS:0%から、時折甘い声が聞こえてくる……
+		ENDIF
+
+
+	CASE 1886
+		IF BASE:3 > 0
+			PRINTFORML まともに浴びてしまった%ARGS:0%の服がみるみる内に溶け、柔肌を外気に晒してゆく…
+		ELSE
+			PRINTFORML 霧に晒された%ARGS:0%の素肌に、甘い疼きがジンジンと響く……
+		ENDIF
+
+	CASE 2200
+		IF BASE:3 > 0
+
+			IF RAND:2 == 0
+				PRINTFORML 鋭い鉤爪によって、%ARGS:0%の衣服がむしりとられていく…
+			ELSE
+				PRINTFORML 鋭い鉤爪が%ARGS:0%の衣服を引き裂いていく…
+			ENDIF
+	
+		ELSE
+			PRINTFORML 外気に晒された%ARGS:0%の敏感な箇所を、鉤爪が鋭く刺激していく……
+		ENDIF
+
+	CASE 2201
+		IF BASE:3 <= 0
+			IF FLAG:526 == 1
+				PRINTFORML %ARGS:0%は表情をとろけさせながら触手に奉仕している……
+			ELSE
+				PRINTFORML %ARGS:0%は事務的な表情で触手に奉仕している……
+			ENDIF
+		ELSE
+
+			IF RAND:3 == 0
+				PRINTFORML %ARGS:0%は、まるで誰かに見せつけるように着替え始めた！
+			ELSEIF RAND:2 == 0
+				PRINTFORML %ARGS:0%は、衣服を脱ぎ始めた……
+			ELSE
+				PRINTFORML %ARGS:0%は、下着を見せつけはじめた……
+			ENDIF
+
+		ENDIF
+
+
+
+	CASE 2202
+		IF BASE:3 > 0
+
+			IF RAND:2 == 0
+				PRINTFORML %ARGS:1%の鋭い牙によって、%ARGS:0%の衣服がむしりとられていく…
+			ELSE
+				PRINTFORML 噛みついた%ARGS:1%が、%ARGS:0%の衣服を引きちぎっていく…
+			ENDIF
+	
+		ELSE
+
+			IF RAND:2 == 0
+				PRINTFORML あばかれた%ARGS:0%のオンナの聖域を、%ARGS:1%が激しく舐めまわし始めた……
+			ELSE
+				PRINTFORML 隠せなくなった%ARGS:0%の恥部に%ARGS:1%が殺到すると、ベロを使って貪りだした……
+			ENDIF
+		ENDIF
+
+	CASE 2203
+		IF BASE:3 > 0
+			PRINTFORML まともに浴びてしまった%ARGS:0%の服がみるみる内に溶け、柔肌を外気に晒してゆく…
+		ELSEIF ARG:2 == 0
+			PRINTFORML %ARGS:0%の尻にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+		ELSEIF ARG:2 == 1
+			PRINTFORML %ARGS:0%の胸にかかった体液は、%ARGS:0%に焼けるような痛みと蕩けるような快感を与えてくる！
+
+		ENDIF
+
+	CASE 2204
+		IF BASE:3 > 0
+			PRINTFORML 泡のついた%ARGS:0%の服がしだいに溶け出し、柔肌を外気に晒してゆく…
+		ELSEIF ARG:2 == 0
+			PRINTFORML %ARGS:0%の尻にかかった白い泡が、%ARGS:0%に奇妙な痛みと甘い快感を与えながら尻穴に向かっていく…
+		ELSEIF ARG:2 == 1
+			PRINTFORML %ARGS:0%の胸にかかった白い泡が、%ARGS:0%に奇妙な痛みと甘い快感を与えてくる！
+
+		ENDIF
+
+	CASE 2205
+		IF BASE:3 > 0
+			IF RAND:2 == 0
+				PRINTFORML %ARGS:0%の衣服が少しだけ削り取られた！
+			ELSE
+				PRINTFORML %ARGS:0%の衣服が少しずつ濡らされていく！
+			ENDIF
+		ENDIF
+	CASE 2211
+		IF BASE:3 > 0
+			PRINTFORML %ARGS:1%は青白い鬼火を纏うと、そのまま%ARGS:0%を抱きしめてきた。
+			PRINTFORML 鬼火に触れた衣服がいつの間にか灰となり、%ARGS:0%の柔肌を露出させていく……
+
+		ELSE
+
+			PRINTFORML %ARGS:1%は青白い鬼火を纏うと、そのまま%ARGS:0%を抱きしめてきた。
+
+
+
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORML 生気を吸い取る甘い口付けと、衣服をすり抜ける妖艶な指先が、
+					PRINTFORML %ARGS:0%の芯に官能の炎を呼び起こしていく……
+				CASE 1
+					PRINTFORML 生気を吸い取る大人の口付けと、衣服をすり抜ける妖艶な指先が、
+					PRINTFORML %ARGS:0%の心とカラダをゆっくりと溶かしていく……
+				CASE 2
+					PRINTFORML 生気を吸い取る春色の口付けと、霊体が紡ぐ妖艶な指先が、
+					PRINTFORML %ARGS:0%の理性を絡めとっていく………
+				CASE 3
+					PRINTFORML 生気を吸い取る深くて甘い口付けと、霊体が織りなす妖艶な指先が、
+					PRINTFORML %ARGS:0%に秘められた女の悦びを高揚させていく…………
+
+				CASEELSE
+
+			ENDSELECT
+
+
+		ENDIF
+
+
+	CASE 2212
+		IF FLAG:507 >= 1
+			PRINTFORML 咬みついた無数の花が体のあちこちから%ARGS:0%の血液を啜り上げる！
+		ELSE
+			PRINTFORML %ARGS:1%のツタが触れた部分から%ARGS:0%の力が抜けていく…
+		ENDIF
+
+
+
+	CASE 2213
+		IF BASE:3 > 0
+			PRINTFORML %ARGS:0%の衣服を濡れ透けさせる液体には、蛙の幼生型の触手が数匹、混ざりこんでいるのが見える……
+		ELSE
+			PRINTFORML %ARGS:0%の女体を伝う液体を利用し、蛙の幼生触手が数匹、%ARGS:0%のナカに潜りこもうとしていく……
+		ENDIF
+
+
+
+	CASE 2214
+		IF BASE:3 > 0
+
+			PRINTFORML 四肢を触手拘束された%ARGS:0%に%ARGS:1%が近づき、手にした珊瑚で衣服を破き始める！
+
+			IF ARG:2 == 1
+
+				SELECTCASE RAND:8
+					CASE 0
+						PRINTFORML 衣服が、%ARGS:0%の胸の先端が見えるように破かれていく……
+					CASE 1
+						PRINTFORML 衣服が、%ARGS:0%の腹部が見えるように破かれていく……
+					CASE 2
+						PRINTFORML 衣服が、%ARGS:0%の腋が晒されるように破かれていく……
+					CASE 3
+						PRINTFORML 珊瑚から湧き出る白い泡が、%ARGS:0%の衣服を、胸の先端が見えるように溶かしていく……
+					CASE 4
+						PRINTFORML 珊瑚から湧き出る白い泡が、%ARGS:0%の衣服を、腹部が見えるように溶かしていく……
+					CASE 5
+						PRINTFORML 珊瑚から湧き出る白い泡が、%ARGS:0%の衣服を、腋が晒されるように溶かしていく……
+					CASE 6
+						PRINTFORML 衣服が、%ARGS:0%の脇腹が見えるように破かれていく……
+					CASE 7
+						PRINTFORML 珊瑚から湧き出る白い泡が、%ARGS:0%の衣服を、脇腹が見えるように溶かしていく……
+
+					CASEELSE
+	
+				ENDSELECT
+
+			ELSEIF ARG:2 == 2 || ARG:2 == 3
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 衣服が、%ARGS:0%の女の聖域を強調するように破かれていく……
+					CASE 1
+						PRINTFORML 珊瑚から湧き出る白い泡が、%ARGS:0%の衣服を、女の聖域が見えるように溶かしていく……
+
+					CASEELSE
+	
+				ENDSELECT
+
+			ENDIF
+
+
+		ELSE
+
+
+			PRINTFORML 四肢を触手拘束された%ARGS:0%に%ARGS:1%が近づき、手にした珊瑚で嬲り始めた！
+
+			IF ARG:2 == 1
+
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML %ARGS:1%は、%ARGS:0%の胸の先端を珊瑚で突きまわしている……
+					CASE 1
+						PRINTFORML 珊瑚から湧き出る白い泡が、%ARGS:0%の胸に甘い刺激を与えている……
+
+					CASEELSE
+	
+				ENDSELECT
+
+			ELSEIF ARG:2 == 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML %ARGS:1%は、%ARGS:0%の淫核を珊瑚でねぶっている……
+					CASE 1
+						PRINTFORML 珊瑚から湧き出る白い泡が、%ARGS:0%の淫核に甘い刺激を与えている……
+
+					CASEELSE
+
+				ENDSELECT
+
+			ELSEIF ARG:2 == 3
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML %ARGS:1%は、%ARGS:0%の秘所を珊瑚で掻き回している……
+					CASE 1
+						PRINTFORML %ARGS:1%は、%ARGS:0%の秘所を珊瑚で掻き回している……
+					CASEELSE
+				ENDSELECT
+			ENDIF
+		ENDIF
+	CASE 2215
+		IF BASE:3 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 伸びた髪は不規則な動きで%ARGS:0%を追い詰めると、衣服を切り刻み始めた！
+					CASE 1
+						PRINTFORML 髪とは思えない鋭い切れ味の前に、%ARGS:0%の衣服が次々に刻まれていく……
+					CASEELSE
+
+				ENDSELECT
+		ELSE
+			PRINTFORML %ARGS:0%に絡みついた髪は甘い香りを漂わせながら、彼女の霊力を吸い取り始めた……
+		ENDIF
+	CASE 2216
+		IF BASE:3 > 0 && CFLAG:40 < 1
+			PRINTFORML %ARGS:0%は、粘つく糸により身動きが取れなくなる前に、衣服を脱ぎすてた……
+		ELSE
+			PRINTFORML %ARGS:1%が糸を操るたびに、%ARGS:0%の胸が弄ばれてしまう！
+		ENDIF
+	CASE 2217
+		IF BASE:3 > 0 && CFLAG:40 < 1
+			PRINTFORML 多脚を活かした足技の連携が%ARGS:0%の衣服を次々に削ぎ落していく……
+		ELSE
+			PRINTFORML %ARGS:1%は多脚を活かし%ARGS:0%をしっかりと抱え込むと、胸合わせの感触を楽しみ始めた！
+		ENDIF
+
+	CASEELSE
+		;何もなし
+ENDSELECT
+

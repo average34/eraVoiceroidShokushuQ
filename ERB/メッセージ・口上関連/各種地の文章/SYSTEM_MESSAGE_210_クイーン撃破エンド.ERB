@@ -1,0 +1,105 @@
+﻿;エンディング４・クイーン撃破
+@SYSTEM_MESSAGE_210(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+PRINTFORMW 触手の殆どを薙ぎ払われた迷宮の主は、苦しそうに呻いている…
+PRINTFORMW %ARGS:0%は残りの力を振り絞り、満身創痍のクイーンへ向け、渾身の一撃を放った！
+PRINTFORMW それは真っ直ぐにクイーンの身体を貫き、断末魔の悲鳴と共に、全ての触手を打ち砕いた……
+PRINTFORML 
+PRINTFORMW 迷宮の主の死と時を同じくして、にわかに迷宮全体が震え始める
+PRINTFORMW 迷宮が崩壊しているのかと焦る%ARGS:0%だったが、耳を澄ませるとそこら中から少女達の雄叫びと魔物の悲鳴が聞こえてくる
+PRINTFORMW どうやらクイーンの死によって封印されていた能力が使えるようになったらしく、その事に気づいた他の少女達が大暴れしているだけのようだった……
+
+	$INPUT_LOOP
+	PRINTL
+	PRINTFORML [ 0] 後の事は彼女達に任せ、一足先に脱出しよう――
+	PRINTFORML [ 1] まだ逃げ遅れた仲間達がいる。　彼女達を置いてはいけない――(エンドレスモード)
+	;主人公の産んだ数が50匹以上だと選択肢追加
+	IF EXP:22 + EXP:23 >= 50
+		PRINTFORML [ 2] 大切な家族達を置いていけるわけがない――(エンドレスモード)
+	ENDIF
+	IF TALENT:140 == 2
+		PRINTFORML [ 3] 亭主と別れるなんてとんでもない――(エンドレスモード)
+	ENDIF
+	IF TALENT:140 == 3
+		PRINTFORML [ 4] ご主人様とともに生きていく――(エンドレスモード)
+	ENDIF
+
+	INPUT
+	IF RESULT == 0
+		PRINTFORML 
+		PRINTFORMW ………
+		PRINTFORMW ……
+		PRINTFORMW …
+		PRINTFORMW やがて魔物達は完全に殲滅され、出口もあっけなく見つかった
+		PRINTFORMW 脱出した少女達は、協力して、迷宮の出入り口を完全に破壊する
+		PRINTFORMW これでもう、この迷宮による被害者が出ることはないだろう
+		PRINTFORMW %ARGS:0%%TACHI()%はこれから開かれる脱出成功の宴会に参加する為、晴れやかな笑みでその場を後にした……
+		
+	ELSEIF RESULT == 1
+		PRINTFORML 
+		PRINTFORMW ………
+		PRINTFORMW ……
+		PRINTFORMW …
+		PRINTFORMW 迷宮にはまだ多くの知人が彷徨っている。
+		PRINTFORMW 中には触手に襲われ戦意を喪失し自力では脱出できない者や
+		PRINTFORMW 快楽に堕ちて触手の仲間になってしまった者もいるだろう。
+		PRINTFORMW 彼女らを放っておくことはできない。
+		PRINTFORMW %ARGS:0%%TACHI()%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+		PRINTFORML 
+		PRINTFORMW 
+		PRINTFORMW 触手との戦いは、まだ始まったばかりだ……
+	ELSEIF RESULT == 2
+		PRINTFORML 
+		PRINTFORMW ………
+		PRINTFORMW ……
+		PRINTFORMW …
+		PRINTFORMW 迷宮にはまだ多くの知人が彷徨っている。
+		PRINTFORMW そして%ARGS:0%の産んだ娘達も何人も彷徨っている。
+		PRINTFORMW 彼女らを放っておくことはできない。
+		PRINTFORMW そう、彼女らを放っておくことはできないのだ。
+		PRINTFORMW 触手に種付けされた我が子を胎内に抱き、それを産む悦びを
+		PRINTFORMW 忘れられないなどということは決してないのだ。
+		PRINTFORMW %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+		PRINTFORML 
+		PRINTFORMW 
+		PRINTFORMW 触手との子作りは、まだ始まったばかりだ……
+	ELSEIF RESULT == 3
+		PRINTFORML 
+		PRINTFORMW ………
+		PRINTFORMW ……
+		PRINTFORMW …
+		PRINTFORML 外への出口に足を進めようとした%ARGS:0%だったが、その足がぴたりと
+		PRINTFORMW 止まった。
+		PRINTFORMW 彼女の『夫』である%PETNAME%が、その場から動こうとしていなかったのだ。
+		PRINTFORMW 「はい、おおせの通りに……」
+		PRINTFORMW 『夫』の言うことに逆らえるはずがあるだろうか……？
+		PRINTFORMW ―――いや無い。
+		PRINTFORMW なぜなら%ARGS:0%は%PETNAME%の妻なのだから。
+		PRINTFORMW %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+		PRINTFORML
+		PRINTFORMW 
+		PRINTFORMW 触手との性生活は、まだ始まったばかりだ……
+	ELSEIF RESULT == 4
+		PRINTFORML 
+		PRINTFORMW ………
+		PRINTFORMW ……
+		PRINTFORMW …
+		PRINTFORML 
+		PRINTFORMW ご主人様を見る。
+		PRINTFORMW 帰れない。だってご主人様がいるから。
+		PRINTFORMW 外だとご主人様が排斥されうる。
+		PRINTFORML 
+		PRINTFORMW そう
+		PRINTFORMW だからこの迷宮を広げてしまえばいい……
+		PRINTFORMW 外に出られないなら、中を広げればいい……
+		PRINTFORMW 迷宮でなら、たとえご主人様に捨てられても糧となることができるのだから……
+		PRINTFORMW %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+	ELSE
+		GOTO INPUT_LOOP
+	ENDIF
+	FLAG:214 = RESULT
+
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+

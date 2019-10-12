@@ -1,0 +1,277 @@
+﻿@DAUGHTER_RANDOMINPUT(ARG:0)
+
+;性格に合わせて弱気～強気に補正
+;おてんば
+IF CFLAG:(ARG:0):100 == 2 && CFLAG:(ARG:0):12 <= -20
+	CFLAG:(ARG:0):12 += 21
+;くろうにん
+ELSEIF CFLAG:(ARG:0):100 == 6 && CFLAG:(ARG:0):12 >= 20
+	CFLAG:(ARG:0):12 -= 21
+;ねっけつかん
+ELSEIF CFLAG:(ARG:0):100 == 10 && CFLAG:(ARG:0):12 <= -20
+	CFLAG:(ARG:0):12 += 21
+;ひっこみじあん
+ELSEIF CFLAG:(ARG:0):100 == 12 && CFLAG:(ARG:0):12 >= 20
+	CFLAG:(ARG:0):12 -= 21
+;ふつう、のんきものは幅を狭く
+ELSEIF (CFLAG:(ARG:0):100 == 0 || CFLAG:(ARG:0):100 == 11) && CFLAG:(ARG:0):12 <= -20
+	CFLAG:(ARG:0):12 += 11
+ELSEIF (CFLAG:(ARG:0):100 == 0 || CFLAG:(ARG:0):100 == 11) && CFLAG:(ARG:0):12 >= 20
+	CFLAG:(ARG:0):12 -= 11
+ENDIF
+
+
+;臆病⇔気丈　親の素質か娘のテンションで選別
+IF TALENT:(ARG:0):10 == 1 || CFLAG:(ARG:0):12 <= -20
+	IF RAND:2 == 0
+		TALENT:(ARG:0):10 = 1
+		TALENT:(ARG:0):12 = 0
+	ELSE
+		TALENT:(ARG:0):10 = 0
+		TALENT:(ARG:0):12 = 0
+	ENDIF
+ELSEIF TALENT:(ARG:0):12 == 1 || CFLAG:(ARG:0):12 >= 20
+	IF RAND:2 == 0
+		TALENT:(ARG:0):10 = 0
+		TALENT:(ARG:0):12 = 0
+	ELSE
+		TALENT:(ARG:0):10 = 0
+		TALENT:(ARG:0):12 = 1
+	ENDIF
+ELSE
+	IF RAND:6 == 0
+		TALENT:(ARG:0):10 = 1
+		TALENT:(ARG:0):12 = 0
+	ELSEIF RAND:5 == 0
+		TALENT:(ARG:0):10 = 0
+		TALENT:(ARG:0):12 = 1
+	ELSE
+		TALENT:(ARG:0):10 = 0
+		TALENT:(ARG:0):12 = 0
+	ENDIF
+ENDIF
+
+;反抗的⇔素直（あとツンデレ）　親の素質か娘の性格で選別
+IF TALENT:(ARG:0):11 == 1 || CFLAG:(ARG:0):100 == 2 || CFLAG:(ARG:0):100 == 14
+	IF RAND:2 == 0
+		TALENT:(ARG:0):11 = 1
+		TALENT:(ARG:0):13 = 0
+	ELSE
+		TALENT:(ARG:0):11 = 0
+		TALENT:(ARG:0):13 = 0
+		TALENT:(ARG:0):18 = 0
+	ENDIF
+ELSEIF TALENT:(ARG:0):13 == 1 || CFLAG:(ARG:0):100 == 12 || CFLAG:(ARG:0):100 == 13
+	IF RAND:2 == 0
+		TALENT:(ARG:0):11 = 0
+		TALENT:(ARG:0):13 = 0
+		TALENT:(ARG:0):18 = 0
+	ELSE
+		TALENT:(ARG:0):11 = 0
+		TALENT:(ARG:0):13 = 1
+		TALENT:(ARG:0):18 = 0
+	ENDIF
+ELSE
+	IF RAND:3 == 0
+		TALENT:(ARG:0):11 = 1
+		TALENT:(ARG:0):13 = 0
+	ELSEIF RAND:2 == 0
+		TALENT:(ARG:0):11 = 0
+		TALENT:(ARG:0):13 = 1
+		TALENT:(ARG:0):18 = 0
+	ELSE
+		TALENT:(ARG:0):11 = 0
+		TALENT:(ARG:0):13 = 0
+		TALENT:(ARG:0):18 = 0
+	ENDIF
+ENDIF
+
+;プライド高い⇔プライド低い　親の素質か娘の素質（気丈・臆病）で選別
+IF TALENT:(ARG:0):15 == 1 || TALENT:(ARG:0):12 == 1
+	IF RAND:2 == 0
+		TALENT:(ARG:0):15 = 1
+		TALENT:(ARG:0):17 = 0
+	ELSE
+		TALENT:(ARG:0):15 = 0
+		TALENT:(ARG:0):17 = 0
+	ENDIF
+ELSEIF TALENT:(ARG:0):17 == 1 || TALENT:(ARG:0):10 == 1
+	IF RAND:2 == 0
+		TALENT:(ARG:0):15 = 0
+		TALENT:(ARG:0):17 = 0
+	ELSE
+		TALENT:(ARG:0):15 = 0
+		TALENT:(ARG:0):17 = 1
+	ENDIF
+ELSE
+	IF RAND:6 == 0
+		TALENT:(ARG:0):15 = 1
+		TALENT:(ARG:0):17 = 0
+	ELSEIF RAND:5 == 0
+		TALENT:(ARG:0):15 = 0
+		TALENT:(ARG:0):17 = 1
+	ELSE
+		TALENT:(ARG:0):15 = 0
+		TALENT:(ARG:0):17 = 0
+	ENDIF
+ENDIF
+
+;楽観的⇔悲観的　親の素質か娘のテンションで選別
+IF TALENT:(ARG:0):25 == 1 || CFLAG:(ARG:0):12 >= 20
+	IF RAND:2 == 0
+		TALENT:(ARG:0):25 = 1
+		TALENT:(ARG:0):26 = 0
+	ELSE
+		TALENT:(ARG:0):25 = 0
+		TALENT:(ARG:0):26 = 0
+	ENDIF
+ELSEIF TALENT:(ARG:0):26 == 1 || CFLAG:(ARG:0):12 <= -20
+	IF RAND:2 == 0
+		TALENT:(ARG:0):25 = 0
+		TALENT:(ARG:0):26 = 0
+	ELSE
+		TALENT:(ARG:0):25 = 0
+		TALENT:(ARG:0):26 = 1
+	ENDIF
+ELSE
+	IF RAND:6 == 0
+		TALENT:(ARG:0):25 = 1
+		TALENT:(ARG:0):26 = 0
+	ELSEIF RAND:5 == 0
+		TALENT:(ARG:0):25 = 0
+		TALENT:(ARG:0):26 = 1
+	ELSE
+		TALENT:(ARG:0):25 = 0
+		TALENT:(ARG:0):26 = 0
+	ENDIF
+ENDIF
+
+;痛みに弱い、痛みに強い　親の素質で選別
+IF TALENT:(ARG:0):40 == 1
+	IF RAND:2 == 0
+		TALENT:(ARG:0):40 = 1
+		TALENT:(ARG:0):41 = 0
+	ELSE
+		TALENT:(ARG:0):40 = 0
+		TALENT:(ARG:0):41 = 0
+	ENDIF
+ELSEIF TALENT:(ARG:0):41 == 1
+	IF RAND:2 == 0
+		TALENT:(ARG:0):40 = 0
+		TALENT:(ARG:0):41 = 0
+	ELSE
+		TALENT:(ARG:0):40 = 0
+		TALENT:(ARG:0):41 = 1
+	ENDIF
+ELSE
+	IF RAND:3 == 0
+		TALENT:(ARG:0):40 = 1
+		TALENT:(ARG:0):41 = 0
+	ELSEIF RAND:2 == 0
+		TALENT:(ARG:0):40 = 0
+		TALENT:(ARG:0):41 = 1
+	ELSE
+		TALENT:(ARG:0):40 = 0
+		TALENT:(ARG:0):41 = 0
+	ENDIF
+ENDIF
+
+;濡れやすい、濡れにくい　親の素質で選別
+IF TALENT:(ARG:0):42 == 1
+	IF RAND:2 == 0
+		TALENT:(ARG:0):42 = 1
+		TALENT:(ARG:0):43 = 0
+	ELSE
+		TALENT:(ARG:0):42 = 0
+		TALENT:(ARG:0):43 = 0
+	ENDIF
+ELSEIF TALENT:(ARG:0):43 == 1
+	IF RAND:2 == 0
+		TALENT:(ARG:0):42 = 0
+		TALENT:(ARG:0):43 = 0
+	ELSE
+		TALENT:(ARG:0):42 = 0
+		TALENT:(ARG:0):43 = 1
+	ENDIF
+ELSE
+	IF RAND:3 == 0
+		TALENT:(ARG:0):42 = 1
+		TALENT:(ARG:0):43 = 0
+	ELSEIF RAND:2 == 0
+		TALENT:(ARG:0):42 = 0
+		TALENT:(ARG:0):43 = 1
+	ELSE
+		TALENT:(ARG:0):42 = 0
+		TALENT:(ARG:0):43 = 0
+	ENDIF
+ENDIF
+
+;各性格補正
+;テンションの範囲で覚えるかどうか決める場合、それなりの特技は範囲30（25%）、強力な特技は範囲20（16.6%）
+;性格によって強気・弱気を調節している場合は更に10狭める（おてんば・くろうにん・ねっけつかん・ひっこみじあん・ふつう・のんきもの）
+
+;ものすごく普通なふつうは一線越えない
+IF CFLAG:(ARG:0):100 == 0 && CFLAG:(ARG:0):12 >= -5 && CFLAG:(ARG:0):12 <= 5
+		TALENT:(ARG:0):27 = 1
+;超強気なおせっかいには鼓舞
+ELSEIF CFLAG:(ARG:0):100 == 1 && CFLAG:(ARG:0):12 >= 40
+		TALENT:(ARG:0):118 = 1
+;おてんばはランダムで好奇心
+ELSEIF CFLAG:(ARG:0):100 == 2 && RAND:4 == 0
+		TALENT:(ARG:0):23 = 1
+		TALENT:(ARG:0):20 = 0
+		TALENT:(ARG:0):21 = 0
+		TALENT:(ARG:0):22 = 0
+;超強気ながんこものには抵抗
+ELSEIF CFLAG:(ARG:0):100 == 3 && CFLAG:(ARG:0):12 >= 40
+		TALENT:(ARG:0):34 = 1
+		TALENT:(ARG:0):33 = 0
+;がんばりやはランダムで回復早い
+ELSEIF CFLAG:(ARG:0):100 == 4 && RAND:4 == 0
+		TALENT:(ARG:0):111 = 1
+		TALENT:(ARG:0):112 = 0
+;きれものはランダムで習得早い
+ELSEIF CFLAG:(ARG:0):100 == 5 && RAND:4 == 0
+		TALENT:(ARG:0):50 = 1
+		TALENT:(ARG:0):51 = 0
+;超弱気なくろうにんには自制心
+ELSEIF CFLAG:(ARG:0):100 == 6 && CFLAG:(ARG:0):12 <= -40
+		TALENT:(ARG:0):20 = 1
+		TALENT:(ARG:0):23 = 0
+		TALENT:(ARG:0):28 = 0
+;しあわせものはランダムで目立ちたがり
+ELSEIF CFLAG:(ARG:0):100 == 7 && RAND:4 == 0
+		TALENT:(ARG:0):20 = 0
+		TALENT:(ARG:0):21 = 0
+		TALENT:(ARG:0):22 = 0
+		TALENT:(ARG:0):28 = 1
+;セクシーギャルは低確率でデフォ淫乱全種
+ELSEIF CFLAG:(ARG:0):100 == 8 && RAND:10 == 0
+		TALENT:(ARG:0):71 = 0
+		TALENT:(ARG:0):74 = 1
+		TALENT:(ARG:0):75 = 1
+		TALENT:(ARG:0):76 = 1
+		TALENT:(ARG:0):77 = 1
+		TALENT:(ARG:0):78 = 1
+		TALENT:(ARG:0):79 = 1
+;ある程度弱気なぬけめがないは哨戒
+ELSEIF CFLAG:(ARG:0):100 == 9 && CFLAG:(ARG:0):12 <= -30
+		TALENT:(ARG:0):154 = 1
+;ねっけつかんはランダムで炎熱変換
+ELSEIF CFLAG:(ARG:0):100 == 10 && RAND:6 == 0
+		TALENT:(ARG:0):151 = 1
+;ものすごく普通なのんきものは薬毒耐性
+ELSEIF CFLAG:(ARG:0):100 == 11 && CFLAG:(ARG:0):12 >= -5 && CFLAG:(ARG:0):12 <= 5
+		TALENT:(ARG:0):56 = 1
+;かなり超弱気なひっこみじあんは快楽の否定
+ELSEIF CFLAG:(ARG:0):100 == 12 && CFLAG:(ARG:0):12 <= -50
+		TALENT:(ARG:0):71 = 1
+		TALENT:(ARG:0):70 = 0
+		TALENT:(ARG:0):33 = 0
+;やさしいひとはランダムで献身的
+ELSEIF CFLAG:(ARG:0):100 == 13 && RAND:4 == 0
+		TALENT:(ARG:0):63 = 1
+;ある程度強気なわがままには生意気
+ELSEIF CFLAG:(ARG:0):100 == 14 && CFLAG:(ARG:0):12 >= 30
+		TALENT:(ARG:0):16 = 1
+ENDIF

@@ -1,0 +1,156 @@
+﻿@FOOD_TO_PET
+#DIM LCOUNT
+;ペットに餌をくれてやる用関数
+
+;-------------
+;アイテム選択
+;-------------
+
+DRAWLINE
+PRINTFORML 何を与えますか？
+PRINTFORML 現在の満腹度:%PET_STARVE_STR()%
+PRINTFORML [1] 消耗武器
+PRINTFORML [2] 非消耗武器
+PRINTFORML [3] アクセサリ
+PRINTFORML [4] 回復アイテム等
+PRINTFORML [0] 戻る
+$INPUT_LOOP
+INPUT
+;LOCAL～LOCAL:1までの番号のアイテムを表示
+IF RESULT == 0
+	RETURN
+ELSEIF RESULT == 1
+	LOCAL = 1
+	LOCAL:1 = 10
+ELSEIF RESULT == 2
+	LOCAL = 10
+	LOCAL:1 = 20
+ELSEIF RESULT == 3
+	LOCAL = 20
+	LOCAL:1 = 50
+ELSEIF RESULT == 4
+	LOCAL = 50
+	LOCAL:1 = 72
+ELSE
+	REUSELASTLINE 入力値が不正です。再入力してください
+	GOTO INPUT_LOOP
+ENDIF
+$RENDER_LIST
+DRAWLINE
+PRINTFORML
+PRINTFORML 現在の満腹度:%PET_STARVE_STR()%
+DRAWLINE
+FOR LCOUNT, LOCAL, LOCAL:1
+	IF ITEM:LCOUNT
+		PRINTFORML [{LCOUNT}]%ITEMNAME:LCOUNT% 個数:{ITEM:LCOUNT}
+	ELSEIF ITEMNAME:LCOUNT != ""
+		SETCOLOR 0x333333
+		PRINTFORML ------
+		RESETCOLOR
+	ENDIF
+NEXT
+PRINTFORML [0]戻る
+$INPUT_LOOP2
+INPUT
+IF RESULT == 0
+	RESTART
+ELSEIF RESULT < LOCAL || RESULT >= LOCAL:1
+	REUSELASTLINE 入力値が不正です。再入力してください
+	GOTO INPUT_LOOP2
+ELSEIF !ITEM:RESULT
+	REUSELASTLINE それ持ってないです。
+	GOTO INPUT_LOOP2
+ELSE
+	;持っていた場合
+	;効果を取得
+	LOCAL:2 = RESULT
+	SELECTCASE LOCAL:2
+		;ランク低い
+		CASE 1 TO 3, 10 TO 12, 20, 21, 24, 27, 50, 66, 67, 69
+			LOCAL:3 = 5
+			LOCAL:4 = 5
+			STR:101 = ちょっと
+		;ランク普通
+		CASE 4, 5, 8, 13, 14, 22, 28 TO 31, 36 TO 39, 51, 52, 54 TO 56, 58, 59, 72
+			LOCAL:3 = 9
+			LOCAL:4 = 10
+			STR:101 = そこそこ
+		;ランク高い
+		CASE 6, 15, 25, 32 TO 35, 53, 58
+			LOCAL:3 = 15
+			LOCAL:4 = 15
+			STR:101 = たくさん
+		;レア
+		CASE 7, 16, 40
+			LOCAL:3 = 100
+			LOCAL:4 = 50
+			STR:101 = 満腹になるぐらい
+		;種
+		CASE 61 TO 63
+			LOCAL:3 = 15
+			LOCAL:4 = 30
+			STR:101 = 特殊効果付きでたくさん
+		;アオカン
+		CASE 70
+			LOCAL:3 = 40
+			LOCAL:4 = 40
+			STR:101 = いっぱい、しかもおいしく
+		;それ以外　多分★のみ
+		CASEELSE
+			REUSELASTLINE それは食べさせられなさそうだ……
+			GOTO INPUT_LOOP2
+	ENDSELECT
+	PRINTFORML それを与えると、%PETNAME%のお腹と栄養が%STR:101%満たされます
+	PRINTFORML 与えてよろしいですか？
+	PRINTFORML [0] はい
+	PRINTFORML [1] いいえ
+	$INPUT_LOOP3
+	INPUT
+;-------------
+;アイテム選択終わり
+;-------------
+
+;-------------
+;メッセージ表示、ステータス上昇
+;-------------
+	IF RESULT == 0
+		PRINTFORML
+		PRINTFORMW %PETNAME%に%ITEMNAME:(LOCAL:2)%を与えた！
+		IF LOCAL:2 == 61
+			PRINTFORMW %PETNAME%のやる気が上昇した！
+			PET:12 += 5
+		ELSEIF LOCAL:2 == 62
+			PRINTFORMW %PETNAME%の戦闘能力が上昇した！
+			PET:10 += 5
+		ELSEIF LOCAL:2 == 63
+			PRINTFORMW %PETNAME%の速さが上昇した！
+			PET:11 += 5
+		ELSEIF LOCAL:2 == 70
+			PRINTFORMW %PETNAME%の身体に栄養が漲る！
+		ENDIF
+		;満腹度上昇
+		SELECTCASE PET_STARVE()
+			CASE 3
+				PET:20 += LOCAL:3
+			CASE 2
+				PET:20 += LOCAL:3 + RAND:5
+			CASE 1
+				PET:20 += LOCAL:3 + RAND:8
+			CASE 0
+				PET:20 += LOCAL:3 + MAX(RAND:10, 5)
+		ENDSELECT
+		PRINTFORML 現在の満腹度:%PET_STARVE_STR()%
+		;VER1.2から経験値を加算
+		CALL PET_ADD_EXP(LOCAL:4, ITEMNAME:(LOCAL:2))
+		CALL LIMIT_PET_STATUS
+		ITEM:(LOCAL:2) --
+		GOTO RENDER_LIST
+	ELSEIF RESULT == 1
+		GOTO RENDER_LIST
+	ELSE
+		GOTO INPUT_LOOP3
+	ENDIF
+ENDIF
+;-------------
+;おわりまで
+;-------------

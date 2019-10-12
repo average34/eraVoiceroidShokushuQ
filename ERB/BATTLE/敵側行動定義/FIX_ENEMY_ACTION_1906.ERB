@@ -1,0 +1,28 @@
+﻿@FIX_ENEMY_ACTION_1906(ENEMY_ID)
+#DIM ENEMY_ID
+
+TFLAG:52 = ENEMY_ID
+TFLAG:54 = DA:ENEMY_ID:51
+;種別(0：味方の攻撃　1：通常　2：衣服　3：性　4：拘束　5：寄生　6：その他)
+TFLAG:55 = 1
+;戦意喪失キャラを認める(1で喪失でも効果あり)
+TFLAG:60 = 1
+
+;攻撃力　２つ
+TFLAG:57 = DA:ENEMY_ID:5
+
+TFLAG:58 = 100
+
+;対象範囲０　単体　１全体
+TFLAG:59 = 1
+
+;命中
+TFLAG:61 = 70
+;ダメージ倍率
+TFLAG:64 = 65
+TFLAG:89 = 5
+
+CALL ACTION_FILTER(-1, 2, 1906, CALLNAME:(TFLAG:54), SAVESTR:ENEMY_ID, TFLAG:54)
+
+
+

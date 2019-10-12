@@ -1,0 +1,20 @@
+﻿;おねだり
+;CHARA_ID	実行キャラ
+@FIX_PT_ACTION_55(CHARA_ID)
+#DIM CHARA_ID
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+
+CALL PRINT_MESSAGE(CHARA_ID,1,55,CALLNAME:CHARA_ID,"")
+
+;Bおねだり
+IF CFLAG:CHARA_ID:20
+	PRINTFORML %CALLNAME:CHARA_ID%は拘束されながらも、触手に胸を差し出し愛撫をねだっている…
+ELSE
+	IF BASE:CHARA_ID:3 <= 0
+		PRINTFORML %CALLNAME:CHARA_ID%は胸を無防備に晒し、触手の愛撫を待ち望んでいる…
+	ELSE
+		PRINTFORML %CALLNAME:CHARA_ID%は胸を突き出し、触手の愛撫を待ちわびている…
+	ENDIF
+ENDIF

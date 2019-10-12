@@ -1,0 +1,72 @@
+﻿
+
+; ////////////////////////////
+; / ARG:0   18    敵の触手責め攻撃(命中)
+; / ARG:1 1017    コマンドID(汎用 イラマチオ)
+; / ARG:2         部位
+; / ARG:3         MPダメージ
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_18_1017(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+;喪失時
+IF CFLAG:29 > 0
+
+	CALL COMMON_KOJO_DEFAULT_RYONA_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+
+
+
+
+	
+	; important属性付与
+	; 口を封じられた専用口上となる為、他の口上が呼び出されると困る
+	CALL SET_IMPORTANT_FLAG
+	
+	; M感覚LVで分岐
+	SELECTCASE ABL:15
+	; LV0
+	CASE 0
+		CALL ADD_RAND_MESSAGE, @"「うぶ……っ！？　おぶぅっ！？　おﾞえﾞえぇぇっ……！？」"
+		CALL ADD_RAND_MESSAGE, @"「んﾞ～～ッ！！　んﾞんﾞ～～ッ！！」"
+		CALL ADD_RAND_MESSAGE, @"「やだ汚……っ！　うぶうぅぅぅっ！？　んんん～～ッ！？」"
+		CALL ADD_RAND_MESSAGE, @"「そんなもの近づけないで……っ！　や……っ、ひうﾞっ！？　ごぶぅっ！？」"
+		
+	; LV1
+	CASE 1
+		CALL ADD_RAND_MESSAGE, @"「やべへ……っ！　おﾞえﾞえぇ……　抜いへぇぇぇ……」"
+		CALL ADD_RAND_MESSAGE, @"「んﾞぶぅッ！　んﾞッ！　んﾞんﾞんﾞんﾞッ！！」"
+		CALL ADD_RAND_MESSAGE, @"（う、嘘っ！？　喉の奥まで入ってっ！？）"
+		CALL ADD_RAND_MESSAGE, @"「おﾞッ……　んおﾞおﾞッ……　臭いッ……　ぎぼぢわるいぃ……ッ」"
+		
+	; LV2
+	CASE 2
+		CALL ADD_RAND_MESSAGE, @"「ちゅぽっ♪　ちゅぱっ♪　ぢゅるるっ……♪　ぢゅるるるるぅぅ……♪」"
+		CALL ADD_RAND_MESSAGE, @"「おﾞえﾞっ♥　おﾞえﾞえﾞえﾞっ♥　おくち犯されへ感じるぅ！？　なんれぇっ！？」"
+
+	; LV3以上
+	CASEELSE
+		CALL ADD_RAND_MESSAGE, @"（喉の奥まで責められてっ♥　オナホールにされて感じてる……っ♥）"
+		CALL ADD_RAND_MESSAGE, @"「これしゅごぃっ♥　じゅるるっ♥　お口っ♥　じゅぼぼっ♥　きもちいいっ♥」"
+		CALL ADD_RAND_MESSAGE, @"「じゅぽっ♥　じゅるっ♥　じゅるるるるっ♥」"
+		CALL ADD_RAND_MESSAGE, @"「ぢゅるるっ♥　ぢゅるるるるっ♥　んふ～っ♥　酷い臭い♥」"
+	ENDSELECT
+
+RETURN 1
+

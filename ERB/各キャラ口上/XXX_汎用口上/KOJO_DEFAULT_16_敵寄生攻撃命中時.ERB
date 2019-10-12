@@ -1,0 +1,132 @@
+﻿
+; ////////////////////////////
+; / ARG:0   16    敵の寄生攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2         0:寄生攻撃 1～:妊娠攻撃(射精量)
+; / ARG:3         MPダメージ
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_16(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;●睡眠
+IF CFLAG:25 > 0
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+	RETURN 1
+ENDIF
+
+
+;●バリアント分岐
+IF FLAG:600 == 1
+
+	IF ABL:11 > ABL:15
+		LOCAL:0 = ABL:11
+	ELSE
+		LOCAL:0 = ABL:15
+	ENDIF
+	
+	IF ABL:9 > 2
+		LOCAL:0 += 1
+	ENDIF
+	
+	IF LOCAL:0 < 1 && ABL:9 == 2
+		LOCAL:0 = 1
+	ENDIF
+
+ELSE
+
+	LOCAL:0 = ABL:9
+
+ENDIF
+
+
+	; 触手コマンド別口上
+	SELECTCASE ARG:1
+	
+		;メカテンタクルス妊娠攻撃
+		CASE 864
+			; V感覚LV2以上
+			IF LOCAL:0 >= 2
+				CALL ADD_RAND_MESSAGE, @"「あ♥　赤ちゃんの部屋に直接きてる♥♥」"
+				CALL ADD_RAND_MESSAGE, @"「直に♥　注がれちゃってるぅ♥♥」"
+			
+			
+			; V感覚LV0
+			ELSEIF LOCAL:0 >= 0
+				CALL ADD_RAND_MESSAGE, @"「う、うそ……子宮に直接……出して……！」"
+			ENDIF
+			
+		;ジェリーフィッシュ寄生攻撃
+		CASE 857
+			; V感覚LV2以上
+			IF LOCAL:0 >= 2
+				CALL ADD_RAND_MESSAGE, @"「はい……おまんこ広げます……♥\n　はい……大事に育てます……♥」"
+				CALL ADD_RAND_MESSAGE, @"「あぁ……逆らえない……♥　このままじゃ……寄生されちゃうのに……♥」"
+			; V感覚LV0
+			ELSEIF LOCAL:0 >= 0
+				CALL ADD_RAND_MESSAGE, @"「手が……勝手に……\n　……産みつけられた……？」"
+			ENDIF
+	CASEELSE
+		;ENDSELECTは寄生or妊娠攻撃の最後に
+
+
+
+;寄生攻撃と妊娠攻撃の二種類
+
+
+; ////////////////////////////
+; / ARG:0   16    敵の寄生攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2    0    0:寄生攻撃 1～:妊娠攻撃(射精量)
+; / ARG:3         MPダメージ
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前	
+			;寄生or妊娠
+			SELECTCASE ARG:2
+				;寄生攻撃
+				CASE 0
+					; 触手中毒LV3以上 or V感度3以上
+					IF ABL:11 >= 3 || LOCAL:0 >= 3
+						CALL ADD_RAND_MESSAGE, @"「来てっ♥　きてっ♥　子宮の中に精液いっぱいだしてぇ♥♥」"
+						CALL ADD_RAND_MESSAGE, @"（精液びゅーびゅー♥♥　奥にあたってる♥）"
+						CALL ADD_RAND_MESSAGE, @"「ああ……っ♥　触手さんの精液……いっぱい……♥」"
+						CALL ADD_RAND_MESSAGE, @"「出てる……っ♥　膣内にいっぱい出てる……っ♥」"
+					; 触手中毒LV2 or V感度2
+					ELSEIF ABL:11 == 2 || LOCAL:0 == 2
+						CALL ADD_RAND_MESSAGE, @"「だめぇ……っ♥　膣内に射精しちゃ……だめぇ……っ♥」"
+						CALL ADD_RAND_MESSAGE, @"「こ、こんなに出されたら触手の子供孕んじゃう♥」"
+					; 触手中毒LV1 or V感度1
+					ELSEIF ABL:11 == 1 || LOCAL:0 == 1
+						CALL ADD_RAND_MESSAGE, @"「ひっ……！？　だ、出さないでっ……！！」"
+						CALL ADD_RAND_MESSAGE, @"「膣内に……出されて……」"
+					; 触手中毒LV0 or V感度0
+					ELSE
+						CALL ADD_RAND_MESSAGE, @"（お腹の中に、何か入れられた……！？）"
+						CALL ADD_RAND_MESSAGE, @"（な、なによこれ……！）"
+						
+					ENDIF
+					
+				;妊娠攻撃
+				CASEELSE
+					; 精液中毒LV3以上 or V感度3以上
+					;◆◆◆りばーすには精液中毒がなかったのでV感度で代用◆◆◆
+					IF ABL:14 >= 3 || LOCAL:0 >= 3
+						CALL ADD_RAND_MESSAGE, @"「ああ……っ♥　精液……いっぱい……♥」"
+						CALL ADD_RAND_MESSAGE, @"「出てる……っ♥　膣内にいっぱい出てる……っ♥」"
+						CALL ADD_RAND_MESSAGE, @"「こ、こんなにいっぱい♥　にんしんっ♥　にんしんしちゃうぅ♥」"
+						CALL ADD_RAND_MESSAGE, @"「来てっ♥　きてっ♥　子宮の中に精液いっぱいだしてぇ♥♥」"
+					; 精液中毒LV2 or V感度2以上
+					ELSEIF ABL:14 == 2 || LOCAL:0 == 2
+						CALL ADD_RAND_MESSAGE, @"「だめぇ……っ♥　膣内に射精しちゃ……だめぇ……っ♥」"
+						CALL ADD_RAND_MESSAGE, @"「あっ♥　に、妊娠しちゃう♥」"
+					; 精液中毒LV1 or V感度1以上
+					ELSEIF ABL:14 == 1 || LOCAL:0 == 1
+						CALL ADD_RAND_MESSAGE, @"「ひっ……！？　だ、出さないでっ……！！」"
+						CALL ADD_RAND_MESSAGE, @"「膣内に……出されて……」"
+					; 精液中毒LV0 or V感度0以上
+					ELSE
+						CALL ADD_RAND_MESSAGE, @"「嫌ぁ……っ！！　膣内に出され……っ！？」"
+						CALL ADD_RAND_MESSAGE, @"「嘘……！　化け物の子供なんて孕みたくない……！！」"
+					ENDIF
+			ENDSELECT
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,129 @@
+﻿; AI戦闘コマンド アイテム 薬酒
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_2_57(CHARA_ID, TARGET_ID)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+
+	; 戦闘素質の高いキャラが低TPに陥っている場合に使用、発情付与の効果あり
+	; 発情中は行動が勝手に書き換わる為、現在発情中のキャラには使用しない
+
+	VARSET RATE
+	
+	; 使えるアイテムストックがない
+	SIF CHECK_STOCK_ITEM(57) == 0
+		RETURN 0
+	
+	; 対象キャラが存在しない
+	SIF !TARGET_ID
+		RETURN 0
+	
+	; 丸呑み中のキャラにアイテムは届かない
+	SIF CFLAG:TARGET_ID:21
+		RETURN 0
+	
+	; 喪失中のキャラの回復は無意味
+	SIF CFLAG:TARGET_ID:29
+		RETURN 0
+		
+	; ひるみ・睡眠・煙幕・砂煙・速度低下・命中低下・回避低下・ダメージ低下
+	; いずれかのバッドステータスに冒されている時のみ処理
+	; 薬酒で回復する寄生・侵食に関しては戦闘に関係ないので考慮しない
+	SIF GROUPMATCH(0, CFLAG:TARGET_ID:24, CFLAG:TARGET_ID:25, CFLAG:TARGET_ID:26, CFLAG:TARGET_ID:27, CFLAG:TARGET_ID:300, CFLAG:TARGET_ID:301, CFLAG:TARGET_ID:302, CFLAG:TARGET_ID:303) == 8
+		RETURN 0
+
+	; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+	;                超弱気    弱気    普通    強気  超強気
+	DATA_TABLE:10:0 =  2100,   2500,   2900,   3300,   3700  ; 10:ねっけつかん
+	DATA_TABLE:2:0  =  2200,   2600,   3000,   3400,   3800  ; 02:おてんば
+	DATA_TABLE:14:0 =  2300,   2700,   3100,   3500,   3900  ; 14:わがまま
+	DATA_TABLE:3:0  =  2400,   2800,   3200,   3600,   4000  ; 03:がんこもの
+	DATA_TABLE:6:0  =  2500,   2900,   3300,   3700,   4100  ; 06:くろうにん
+	DATA_TABLE:4:0  =  2600,   3000,   3400,   3800,   4200  ; 04:がんばりや
+	DATA_TABLE:5:0  =  2700,   3100,   3500,   3900,   4300  ; 05:きれもの
+	DATA_TABLE:1:0  =  2800,   3200,   3600,   4000,   4400  ; 01:おせっかい
+	DATA_TABLE:0:0  =  2900,   3300,   3700,   4100,   4500  ; 00:ふつう
+	DATA_TABLE:9:0  =  3000,   3400,   3800,   4200,   4600  ; 09:ぬけめがない
+	DATA_TABLE:8:0  =  3100,   3500,   3900,   4300,   4700  ; 08:セクシーギャル
+	DATA_TABLE:7:0  =  3200,   3600,   4000,   4400,   4800  ; 07:しあわせもの
+	DATA_TABLE:11:0 =  3300,   3700,   4100,   4500,   4900  ; 11:のんきもの
+	DATA_TABLE:13:0 =  3400,   3800,   4200,   4600,   5000  ; 13:やさしいひと
+	DATA_TABLE:12:0 =  3300,   3700,   4100,   4500,   4900  ; 12:ひっこみじあん
+	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+	
+	; 薬酒は優先度高め
+	TIMES RATE, 2.0
+	
+	; バッドステータス複数で倍率アップ
+	; ひるみ
+	SIF CFLAG:TARGET_ID:24
+		TIMES RATE, 1.25
+	
+	; 睡眠
+	SIF CFLAG:TARGET_ID:25
+		TIMES RATE, 1.25
+		
+	; 煙幕
+	SIF CFLAG:TARGET_ID:26
+		TIMES RATE, 1.25
+	
+	; 砂煙
+	SIF CFLAG:TARGET_ID:27
+		TIMES RATE, 1.25
+		
+	; 速度低下
+	SIF CFLAG:TARGET_ID:300
+		TIMES RATE, 1.25
+		
+	; 命中低下
+	SIF CFLAG:TARGET_ID:301
+		TIMES RATE, 1.25
+		
+	; 回避低下
+	SIF CFLAG:TARGET_ID:302
+		TIMES RATE, 1.25
+		
+	; ダメージ低下
+	SIF CFLAG:TARGET_ID:303
+		TIMES RATE, 1.25
+	
+	; TPによる補正
+	; 冷静な程まわりが見える
+	SELECTCASE BASE:CHARA_ID:TP
+	CASE IS >= 160
+		TIMES RATE, 0.4
+	CASE IS >= 120
+		TIMES RATE, 0.7
+	CASE IS >= 80
+		TIMES RATE, 1.0
+	CASE IS >= 40
+		TIMES RATE, 1.3
+	CASEELSE
+		TIMES RATE, 1.6
+	ENDSELECT
+	
+	; 戦闘素質による補正
+	SELECTCASE ABL:CHARA_ID:98
+	CASE IS <= 10
+		TIMES RATE, 2.0
+	CASE IS <= 20
+		TIMES RATE, 1.8
+	CASE IS <= 30
+		TIMES RATE, 1.6	
+	CASE IS <= 40
+		TIMES RATE, 1.4
+	CASE IS <= 50
+		TIMES RATE, 1.2
+	CASE IS <= 60
+		TIMES RATE, 1.0
+	CASE IS <= 70
+		TIMES RATE, 0.9
+	CASE IS <= 80
+		TIMES RATE, 0.8
+	CASEELSE
+		TIMES RATE, 0.6
+	ENDSELECT
+	
+RETURN LIMIT(RATE, 0, 10000)

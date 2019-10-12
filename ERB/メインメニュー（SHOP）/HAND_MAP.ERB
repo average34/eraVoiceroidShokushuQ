@@ -1,0 +1,1585 @@
+﻿;手書きマップ処理
+;　PRINT_MAP_INFO をベースに、色々と改造
+
+;=================================================
+;メイン画面
+;=================================================
+@HAND_MAP_MAIN(ARG_ROOMNO = 0)
+#DIM LCOUNT,3  ;ループ用
+#DIM ROOMNO
+#DIM ARG_ROOMNO
+
+	DRAWLINE
+	
+	; 引数で部屋番号が渡されていた場合は表示しない
+	IF ARG_ROOMNO == 0
+		REDRAW 0
+		;23行
+		FOR LCOUNT, 0, 23
+
+			;メイン表示（マップ）
+			CALL PRINT_MAP_INFO_MAIN_HAND(LCOUNT)
+			;サイド表示（情報）
+			CALL PRINT_MAP_INFO_SIDE_HAND(LCOUNT)
+
+		NEXT
+
+		DRAWLINE
+		
+		;UI表示
+		PRINTFORML 探索の記録を自由にメモできます
+		PRINTFORML 色を変更/メモを入力したい部屋をクリックするか、部屋番号を入力してください
+		PRINTFORML [98] 全体メモを記入する
+		PRINTFORML [99] メモ一覧表示
+		PRINTFORML [ 0] 戻る
+		REDRAW 1
+	ENDIF
+		
+	$INPUT_LOOP
+	; 引数で部屋番号が渡されていた場合は直接編集できるようにする
+	IF ARG_ROOMNO == 0
+		INPUT
+	ELSE
+		RESULT = ARG_ROOMNO
+	ENDIF
+	
+	IF RESULT == 0
+		RETURN
+	ELSEIF RESULT >= 1 && RESULT <= 30
+		ROOMNO = RESULT
+		PRINTFORML 【{ROOMNO}の部屋】
+		PRINTFORML %SAVESTR:(300 + ROOMNO)%
+		PRINTL 
+		PRINTFORML [1] 部屋の色を変更する
+		PRINTFORML [2] 部屋のメモを変更する
+		PRINTFORML [0] 戻る
+		
+		$INPUT_LOOP2
+		INPUT
+		
+		IF RESULT == 0
+			; 直接編集モードの場合はRETURN
+			SIF ARG_ROOMNO != 0
+				RETURN
+		ELSEIF RESULT == 1
+			PRINTFORML 手書き地図での部屋の表示色を変更します。何色に変更しますか？
+			SETCOLOR BARCOLORSET("赤")
+			PRINTFORML [1] 赤色
+			SETCOLOR BARCOLORSET("薄赤")
+			PRINTFORML [2] 薄赤色
+			SETCOLOR BARCOLORSET("青")
+			PRINTFORML [3] 青色
+			SETCOLOR BARCOLORSET("薄青")
+			PRINTFORML [4] 薄青色
+			SETCOLOR BARCOLORSET("緑")
+			PRINTFORML [5] 緑色
+			SETCOLOR BARCOLORSET("紫")
+			PRINTFORML [6] 紫色
+			SETCOLOR BARCOLORSET("黄")
+			PRINTFORML [7] 黄色
+			SETCOLOR BARCOLORSET("青緑")
+			PRINTFORML [8] 青緑色
+			SETCOLOR BARCOLORSET("白")
+			PRINTFORML [9] デフォルト色
+			RESETCOLOR
+			PRINTFORML [0] 変更しない
+			
+			$INPUT_LOOP3
+			INPUT
+			
+			IF RESULT == 0
+				RESTART
+			ELSEIF RESULT == 9
+				;デフォルト色は、内部的には0として扱う
+				FLAG:(1000 + ROOMNO) = 0
+				PRINTFORMW 表示色を更新しました
+			ELSEIF RESULT >= 1 && RESULT <= 8
+				FLAG:(1000 + ROOMNO) = RESULT
+				PRINTFORMW 表示色を更新しました
+			ELSE
+				REUSELASTLINE 入力値が不正です。再入力してください
+				GOTO INPUT_LOOP3
+			ENDIF
+		ELSEIF RESULT == 2
+			PRINTFORML 新しく残したいメモの内容を入力してください
+			PRINTFORML メモを消去したい場合、空白を入力してください（何も入力しない場合、メモは変更されません）
+			INPUTS
+			IF RESULTS != ""
+				SAVESTR:(300 + ROOMNO) = %RESULTS%
+				PRINTFORMW メモの内容を更新しました
+			ENDIF
+		ELSE
+			REUSELASTLINE 入力値が不正です。再入力してください
+			GOTO INPUT_LOOP2
+		ENDIF
+	ELSEIF RESULT == 98
+		PRINTFORML 【現在の全体メモ】
+		PRINTFORML %SAVESTR:300%
+		PRINTL 
+		PRINTFORML 新しく残したいメモの内容を入力してください
+		PRINTFORML メモを消去したい場合、空白を入力してください（何も入力しない場合、メモは変更されません）
+		INPUTS
+		IF RESULTS != ""
+			SAVESTR:300 = %RESULTS%
+			PRINTFORMW 全体メモの内容を更新しました
+		ENDIF
+	ELSEIF RESULT == 99
+		CALL SHOW_ALL_MEMO
+	ELSE
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP
+	ENDIF
+	
+	RESTART
+
+;=================================================
+;全てのメモ表示
+;=================================================
+@SHOW_ALL_MEMO
+PRINTFORML 全:%SAVESTR:300%
+FOR LOCAL, 1, 31
+	PRINTFORML {LOCAL,2}:%SAVESTR:(300 + LOCAL)%
+NEXT
+PRINTFORMW 
+
+
+;=================================================
+;部屋色変更処理
+;ARG:0 部屋番号（1～30）
+;=================================================
+@CHANGE_ROOM_COLOR(ARG)
+
+SELECTCASE FLAG:(1000 + ARG)
+	CASE 1
+		SETCOLOR BARCOLORSET("赤")
+	CASE 2
+		SETCOLOR BARCOLORSET("薄赤")
+	CASE 3
+		SETCOLOR BARCOLORSET("青")
+	CASE 4
+		SETCOLOR BARCOLORSET("薄青")
+	CASE 5
+		SETCOLOR BARCOLORSET("緑")
+	CASE 6
+		SETCOLOR BARCOLORSET("紫")
+	CASE 7
+		SETCOLOR BARCOLORSET("黄")
+	CASE 8
+		SETCOLOR BARCOLORSET("青緑")
+	CASEELSE
+		SETCOLOR BARCOLORSET("白")
+ENDSELECT
+
+;=================================================
+;手書きマップ表示
+;ARG:0 行数（0～）
+;=================================================
+@PRINT_MAP_INFO_MAIN_HAND(ARG)
+#DIM LCOUNT,3	;ループ用
+#DIM ROOMNO,5	;部屋番号記憶用
+#DIM ROOMTYPE,5	;部屋枠表示パターン記憶用
+;-MEMO-
+;23行
+
+	;部屋上部の行
+	IF ARG % 4 == 0
+		;横方向
+		FOR LCOUNT, 0, 5
+			;部屋番号
+			ROOMNO:(LCOUNT) = ARG / 4 * 5 + LCOUNT + 1
+			CALL CHECK_PRINT_ROOMWALL(ROOMNO:(LCOUNT))
+			IF RESULT >= 0
+				ROOMTYPE:(LCOUNT) = RESULT
+			ELSE
+				RETURN -1
+			ENDIF
+		NEXT
+	ENDIF
+
+
+	;左部余白
+	PRINT 　
+	;部屋上部
+	IF ARG % 4 == 0
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			CALL CHANGE_ROOM_COLOR(ROOMNO:(LCOUNT))
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),0)
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),1)
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),2)
+			RESETCOLOR
+			;---部屋の間---
+			IF LCOUNT < 4
+				PRINT 　
+			ENDIF
+		NEXT
+	;部屋中部
+	ELSEIF ARG % 4 == 1
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			CALL CHANGE_ROOM_COLOR(ROOMNO:(LCOUNT))
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),3)
+			CALL CHANGE_ROOM_NO_COLOR(ROOMNO:(LCOUNT))
+			PRINTBUTTON @"{ROOMNO:(LCOUNT),2}", ROOMNO:(LCOUNT)
+			RESETCOLOR
+			CALL CHANGE_ROOM_COLOR(ROOMNO:(LCOUNT))
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),4)
+			RESETCOLOR
+			;---部屋の間---
+			IF LCOUNT < 4
+				CALL CHECK_ROUTE_NO(ROOMNO:(LCOUNT), 2)
+				IF RESULT >= 0
+					CALL PRINT_ROUTE(RESULT)
+				ENDIF
+			ENDIF
+		NEXT
+	;部屋下部
+	ELSEIF ARG % 4 == 2
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			CALL CHANGE_ROOM_COLOR(ROOMNO:(LCOUNT))
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),5)
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),6)
+			CALL PRINT_ROOMWALL_HAND(ROOMTYPE:(LCOUNT),7)
+			RESETCOLOR
+			;---部屋の間---
+			IF LCOUNT < 4
+				PRINT 　
+			ENDIF
+		NEXT
+	;部屋の下
+	ELSE
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			PRINT 　
+			CALL CHECK_ROUTE_NO(ROOMNO:(LCOUNT), 3)
+			IF RESULT >= 0
+				CALL PRINT_ROUTE(RESULT)
+			ENDIF
+			PRINT 　
+			;---部屋の間---
+			IF LCOUNT < 4
+				PRINT 　
+			ENDIF
+		NEXT
+	ENDIF
+	;右部余白
+	PRINT 　
+
+
+;=================================================
+;手書き用部屋枠表示
+;色の変更はあらかじめCHANGE_ROOM_COLORを実行されている前提で、そちらに任せる
+;TYPE パターン
+;	～19:細枠
+;	20～:太枠（現在地）
+;PART 部位（0:左上　1:上　2:右上　3:左　4:右　5:左下　6:下　7:右下）
+;=================================================
+@PRINT_ROOMWALL_HAND(TYPE, PART)
+#DIM TYPE
+#DIM PART
+
+	;---表示---
+	SELECTCASE TYPE
+		CASE 0 TO 19
+			IF PART == 0
+				PRINTFORM ┌
+			ELSEIF PART == 1
+				PRINTFORM ─
+			ELSEIF PART == 2
+				PRINTFORM ┐
+			ELSEIF PART == 3
+				PRINTFORM │
+			ELSEIF PART == 4
+				PRINTFORM │
+			ELSEIF PART == 5
+				PRINTFORM └
+			ELSEIF PART == 6
+				PRINTFORM ─
+			ELSEIF PART == 7
+				PRINTFORM ┘
+			ENDIF
+		CASE 20 TO 29
+			IF PART == 0
+				PRINTFORM ┏
+			ELSEIF PART == 1
+				;PRINTFORM ＝
+				PRINTFORM ━
+			ELSEIF PART == 2
+				PRINTFORM ┓
+			ELSEIF PART == 3
+				;PRINTFORM ∥
+				PRINTFORM ┃
+			ELSEIF PART == 4
+				;PRINTFORM ∥
+				PRINTFORM ┃
+			ELSEIF PART == 5
+				PRINTFORM ┗
+			ELSEIF PART == 6
+				;PRINTFORM ＝
+				PRINTFORM ━
+			ELSEIF PART == 7
+				PRINTFORM ┛
+			ENDIF
+	ENDSELECT
+
+
+
+;=================================================
+;手書き用情報表示
+;ARG:0 行数（0～）
+;=================================================
+@PRINT_MAP_INFO_SIDE_HAND(ARG)
+#DIM LCOUNT,3	;ループ用
+#DIMS ROOMINFO,6	;部屋情報 4は現在地用、5は全体用
+#DIM ROOMNO,4	;部屋番号
+
+
+
+;-MEMO-
+;23行
+;40文字くらい？
+
+	IF ARG == 0
+		FOR LCOUNT, 0, 4
+			
+			;---部屋番号取得---
+			CALL CHECK_ROOM_NO(FLAG:5, LCOUNT)
+			IF RESULT >= 1
+				ROOMNO:(LCOUNT) = RESULT
+			ELSE
+				ROOMNO:(LCOUNT) = -1
+			ENDIF
+			
+			;---情報取得---
+			ROOMINFO:(LCOUNT) = %""%
+			IF ROOMNO:(LCOUNT) >= 1
+				ROOMINFO:(LCOUNT) = %SAVESTR:(300 + ROOMNO:(LCOUNT))%
+			ENDIF
+			
+		NEXT
+		ROOMINFO:4 = %SAVESTR:(300 + FLAG:5)%
+		ROOMINFO:5 = %SAVESTR:300%
+		;------
+	ENDIF
+
+
+	;インデント
+	PRINT 　　
+	;表示
+	SELECTCASE ARG
+		CASE 0
+			PRINTFORM 現在 {FLAG:5} の部屋に居ます
+		CASE 1
+			PRINTFORM 
+		CASE 2
+			;---今の部屋の情報を表示---
+			PRINTFORM 【現在地】
+		CASE 3
+			CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:4,50)
+			ROOMINFO:4 = %RESULTS%
+		CASE 4
+			IF ROOMINFO:4 != ""
+				CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:4,48)
+				IF RESULT == 1
+					PRINTFORM ..
+				ENDIF
+			ENDIF
+		CASE 5
+			;---上の部屋の情報を表示---
+			IF ROOMNO:0 >= 1
+				PRINTFORM 【 {ROOMNO:0,2} の部屋（↑）】
+			ENDIF
+		CASE 6
+			IF ROOMNO:0 >= 1
+				CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:0,50)
+				ROOMINFO:0 = %RESULTS%
+			ENDIF
+		CASE 7
+			IF ROOMNO:0 >= 1
+				IF ROOMINFO:0 != ""
+					CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:0,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 8
+			;---左の部屋の情報を表示---
+			IF ROOMNO:1 >= 1
+				PRINTFORM 【 {ROOMNO:1,2} の部屋（←）】
+			ENDIF
+		CASE 9
+			IF ROOMNO:1 >= 1
+				CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:1,50)
+				ROOMINFO:1 = %RESULTS%
+			ENDIF
+		CASE 10
+			IF ROOMNO:1 >= 1
+				IF ROOMINFO:1 != ""
+					CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:1,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 11
+			;---右の部屋の情報を表示---
+			IF ROOMNO:2 >= 1
+				PRINTFORM 【 {ROOMNO:2,2} の部屋（→）】
+			ENDIF
+		CASE 12
+			IF ROOMNO:2 >= 1
+				CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:2,50)
+				ROOMINFO:2 = %RESULTS%
+			ENDIF
+		CASE 13
+			IF ROOMNO:2 >= 1
+				IF ROOMINFO:2 != ""
+					CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:2,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 14
+			;---下の部屋の情報を表示---
+			IF ROOMNO:3 >= 1
+				PRINTFORM 【 {ROOMNO:3,2} の部屋（↓）】
+			ENDIF
+		CASE 15
+			IF ROOMNO:3 >= 1
+				CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:3,50)
+				ROOMINFO:3 = %RESULTS%
+			ENDIF
+		CASE 16
+			IF ROOMNO:3 >= 1
+				IF ROOMINFO:3 != ""
+					CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:3,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 17
+			PRINTFORM 
+		CASE 18
+			PRINTFORM 【全体メモ】
+		CASE 19
+			CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:5,50)
+			ROOMINFO:5 = %RESULTS%
+		CASE 20
+			IF ROOMINFO:5 != ""
+				CALL PRINT_MAP_INFO_SUB_HAND(ROOMINFO:5,48)
+				IF RESULT == 1
+					PRINTFORM ..
+				ENDIF
+			ENDIF
+		CASEELSE
+			PRINTFORM 
+	ENDSELECT
+	PRINTL
+	
+	
+	
+	
+
+;=================================================
+@PRINT_MAP_INFO_SUB_HAND(INFO,MOZIMAX)
+#LOCALSSIZE 300
+
+#DIMS INFO
+#DIM MOZIMAX
+	
+	
+	RESULTS = %""%
+	RESETCOLOR
+		
+	;---文字列情報使用---
+	STRLENS INFO
+	
+	;上限文字数を超えるなら
+	IF RESULT > MOZIMAX
+		;表示できる分は表示
+		SUBSTRING INFO, 0, MOZIMAX
+		PRINTFORM %RESULTS%
+		
+		;できない分は保管
+		SUBSTRING INFO, MOZIMAX, -1
+		RETURN 1
+	ELSE
+		;表示しきれるなら普通に表示
+		PRINTFORM %INFO%
+		RETURN 0
+	ENDIF
+	
+	
+;=================================================
+;部屋番号の色
+;ARG:0 部屋番号
+;=================================================
+@CHANGE_ROOM_NO_COLOR(ARG:0)
+
+;LOCAL
+;0	LOOP
+;1	表示色
+
+;表示色は以下の通り(基本的に値が大きい方が優先順位上　「共有」はちょっと特殊)
+;0	黒灰：未侵入
+;1	白灰：侵入経験あり
+;2	白　：現在位置
+LOCAL:1 = 0
+
+;侵入経験チェック
+IF FLAG:(600 + ARG:0)
+	LOCAL:1 = 1
+ENDIF
+
+;現在地
+IF ARG:0 == FLAG:5
+	LOCAL:1 = 2
+ENDIF
+
+SELECTCASE LOCAL:1
+CASE 1
+	SETCOLOR 0x999999
+CASE 2
+	SETCOLOR 0xffffff
+CASEELSE
+	SETCOLOR 0x333333
+ENDSELECT
+
+;=================================================
+;◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆
+;調書処理とか
+;後々連携させたいから手書きメモのファイルに居候…
+;◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;データ読み・書き
+;調書データを保存する変数を変更したら"ここだけを"書き換える
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@ROOMREPORT_LOADDATA(RDATAS)
+#DIMS REF RDATAS
+
+RDATAS = %SAVESTR:340%
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@ROOMREPORT_SAVEDATA(RDATAS)
+#DIMS REF RDATAS
+
+SAVESTR:340 = %RDATAS%
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;雑談や情報交換からの情報
+;ARG:0	取得したイベント番号
+;	1～99:拘束されてる仲間のID（場所などはIDで調べる）
+;	100～:イベント番号（FLAGの値を100で割った余りが部屋番号）
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@ROOMREPORT_GETINFO(ARG)
+;-MEMO-
+;拘束されてる仲間の情報は削除タイミングがとりづらいのと移動する可能性があるので保留
+#DIM LCOUNT,3	;ループ用
+
+;除外
+SIF ROOMREPORT_TARGET_EVENT(ARG) <= 0
+	RETURN -1
+
+CALL ROOMREPORT_ADDDATA(ARG:0, FLAG:(ARG) % 100, 0)
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;探索からの情報
+;ARG:0	イベント番号
+;	100～299
+;ARG:1	処理
+;	0	ｲﾍﾞﾝﾄ消化（情報消去要請）
+;	1	ｲﾍﾞﾝﾄ成功（深度を"見つけた"に昇格）
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@ROOMREPORT_SEARCH_EVENT(ARG, ARG:1)
+;-MEMO-
+;イベント206は特殊なのでスルー
+#DIM LCOUNT,3	;ループ用
+
+;除外
+SIF ROOMREPORT_TARGET_EVENT(ARG) <= 0
+	RETURN -1
+
+IF ARG:1 == 0
+	CALL ROOMREPORT_DELDATA(ARG:0)
+ELSEIF ARG:1 == 1
+	CALL ROOMREPORT_ADDDATA(ARG:0, FLAG:(ARG) % 100, 1)
+ELSE
+	
+ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;記憶対象イベかどうか
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@ROOMREPORT_TARGET_EVENT(ARG)
+#FUNCTION
+
+SELECTCASE ARG
+	CASE 100 TO 122
+		RETURNF 1
+	CASE 130 TO 154
+		RETURNF 1
+	CASE 160 TO 164
+		RETURNF 1
+	CASE 168 TO 176
+		RETURNF 1
+	CASE 180
+		RETURNF 1
+	CASE 201 TO 205
+		RETURNF 1
+	CASE 207 TO 208
+		RETURNF 1
+ENDSELECT
+RETURNF -1
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;イベ情報追加・更新
+;ARG:0	イベント番号
+;ARG:1	部屋番号
+;ARG:2	調査深度
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@ROOMREPORT_ADDDATA(ARG:0, ARG:1, ARG:2 = 0)
+;既にある場合は更新
+#DIM LCOUNT,3	;ループ用
+#DIMS SAVERDATA
+
+;調書データロード
+CALL ROOMREPORT_LOADDATA(SAVERDATA)
+
+
+;★★★★★★★★★★★
+;PRINTFORMW 調書_ROOMREPORT_ADDDATA_0：{ARG}：%SAVERDATA%
+
+;指定イベ位置を検索
+STRFIND SAVERDATA, @"E/{ARG}/"
+LOCAL = RESULT
+IF LOCAL < 0
+	;---追加処理---
+	SAVERDATA = %SAVERDATA%E/{ARG:0}/R/{ARG:1}/A/{ARG:2}/F/0/
+	
+ELSE
+	;---更新処理---
+	;指定イベ内の深度位置を検索
+	STRFIND SAVERDATA, "A/", LOCAL
+	LOCAL = RESULT + 2
+	STRFIND SAVERDATA, "/", LOCAL
+	LOCAL:1 = RESULT
+	
+	SUBSTRING SAVERDATA, LOCAL, (LOCAL:1 - LOCAL)
+	
+	;★★★★★★★★★★★
+	;PRINTFORMW 調書_ROOMREPORT_ADDDATA_2：%RESULTS%
+	
+	TOINT RESULTS
+	
+	IF ARG:2 > RESULT
+		SUBSTRING SAVERDATA, 0, LOCAL
+		LOCALS = %RESULTS%
+		SUBSTRING SAVERDATA, LOCAL:1, -1
+		LOCALS:1 = %RESULTS%
+		TOSTR ARG:2
+		LOCALS:2 = %RESULTS%
+		
+		SAVERDATA = %LOCALS%%LOCALS:2%%LOCALS:1%
+		
+	ENDIF
+	
+ENDIF
+
+;★★★★★★★★★★★
+;PRINTFORMW 調書_ROOMREPORT_ADDDATA_1：{ARG}：%SAVERDATA%
+
+;調書データセーブ
+CALL ROOMREPORT_SAVEDATA(SAVERDATA)
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;指定イベ情報を削除
+;ARG:0	イベント番号
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@ROOMREPORT_DELDATA(ARG:0)
+;指定イベ情報を削除
+#DIM LCOUNT,3	;ループ用
+#DIMS SAVERDATA
+
+;調書データロード
+CALL ROOMREPORT_LOADDATA(SAVERDATA)
+
+;★★★★★★★★★★★
+;PRINTFORMW 調書_ROOMREPORT_DELDATAT_0：{ARG}：%SAVERDATA%
+
+SIF SAVERDATA == ""
+	RETURN -2
+
+;指定イベ位置を検索
+STRFIND SAVERDATA, @"E/{ARG}/"
+LOCAL = RESULT
+SIF LOCAL < 0
+	RETURN -1
+
+;指定イベの次のイベ位置を検索
+STRFIND SAVERDATA, "E/", LOCAL + 1
+LOCAL:1 = RESULT
+
+;指定イベを抜いたデータを作成
+LOCALS = %""%
+SUBSTRING SAVERDATA, 0, LOCAL
+LOCALS = %RESULTS%
+IF LOCAL:1 > 0
+	SUBSTRING SAVERDATA, LOCAL:1 , -1
+	LOCALS = %LOCALS%%RESULTS%
+ENDIF
+SAVERDATA = %LOCALS%
+
+;★★★★★★★★★★★
+;PRINTFORMW 調書_ROOMREPORT_DELDATAT_1：{ARG}：%SAVERDATA%
+
+;調書データセーブ
+CALL ROOMREPORT_SAVEDATA(SAVERDATA)
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;イベ一覧表示
+;ARG:0	処理
+;	IS<0:操作（値は操作内容）
+;	0～:表示（値は表示行）
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@MAP_INFO_SIDE_ROOMREPORT(ARG:0)
+;-MEMO-
+;タブ位置などはローカル変数で記憶＿ゲーム再起動で初期化される
+
+#LOCALSIZE 300
+#DIM LCOUNT, 3
+#DIM TABN
+#DIM PAGE,2
+#DIM RDATAREFLAG
+
+#DIM RDATA, 100, 4
+#DIM FINDEX, 100
+;E,R,A,F
+
+
+;＝＝＝＝＝内部・操作処理＝＝＝＝＝
+IF ARG < 0
+	SELECTCASE ARG
+		;---内部処理---
+		CASE -1
+			IF RDATAREFLAG == 0
+				;データロード
+				CALL ROOMREPORT_RDATA_LOAD(RDATA)
+				CALL ROOMREPORT_RDATA_FINDEX(RDATA, FINDEX)
+				FOR LCOUNT, 0, 100
+					SIF FINDEX:(LCOUNT) < 0
+						BREAK
+				NEXT
+				PAGE:1 = LCOUNT / 15
+				PAGE:0 = 0
+				TABN = 0
+				RDATAREFLAG = 1
+			ENDIF
+			
+		CASE -2
+			;データセーブ
+			CALL ROOMREPORT_RDATA_SAVE(RDATA)
+		CASE -10
+			RDATAREFLAG = 0
+		
+		;---タブ切り替え---
+		CASE -1001
+			
+			FOR LCOUNT, 0, 100
+				SIF FINDEX:(LCOUNT) < 0
+					BREAK
+			NEXT
+			PAGE:1 = LCOUNT / 15
+			PAGE:0 = 0
+			TABN = 0
+		CASE -1002
+			
+			FOR LCOUNT, 0, 100
+				SIF RDATA:(LCOUNT):0 <= 0
+					BREAK
+			NEXT
+			PAGE:1 = LCOUNT / 15
+			PAGE:0 = 0
+			TABN = 1
+		
+		
+		;---ページ切り替え---
+		CASE -1010
+			IF PAGE:0 <= 0
+				RETURN -1
+			ELSE
+				PAGE:0--
+			ENDIF
+		CASE -1011
+			IF PAGE:0 >= PAGE:1
+				RETURN -1
+			ELSE
+				PAGE:0++
+			ENDIF
+		
+		
+		;---お気に入り変更---
+		CASE -1114 TO -1100
+			
+			
+			IF TABN == 1
+				;---全体表示---
+				;リスト番号
+				LOCAL = 15 * PAGE:0 + (-ARG % 100)
+				SIF RDATA:(LOCAL):0 <= 0
+					RETURN -1
+				
+				IF RDATA:(LOCAL):3
+					RDATA:(LOCAL):3 = 0
+				ELSE
+					RDATA:(LOCAL):3 = 1
+				ENDIF
+			ELSE
+				;---お気に入り---
+				;リスト番号
+				LOCAL = 15 * PAGE:0 + (-ARG % 100)
+				LOCAL = FINDEX:(LOCAL)
+				SIF LOCAL < 0
+					RETURN -1
+				
+				RDATA:(LOCAL):3 = 0
+				
+			ENDIF
+			CALL ROOMREPORT_RDATA_FINDEX(RDATA, FINDEX)
+			CALL ROOMREPORT_RDATA_SAVE(RDATA)
+		
+		;---削除---
+		CASE -1214 TO -1200
+			
+			IF TABN == 1
+				;---全体表示---
+				;リスト番号
+				LOCAL = 15 * PAGE:0 + (-ARG % 100)
+				SIF RDATA:(LOCAL):0 <= 0
+					RETURN -1
+				
+				RDATA:(LOCAL):0 = RDATA:(LOCAL):0 * -1
+			ELSE
+				;---お気に入り---
+				;リスト番号
+				LOCAL = 15 * PAGE:0 + (-ARG % 100)
+				LOCAL = FINDEX:(LOCAL)
+				SIF LOCAL < 0
+					RETURN -1
+				
+				RDATA:(LOCAL):0 = RDATA:(LOCAL):0 * -1
+				
+			ENDIF
+			CALL ROOMREPORT_RDATA_SORT(RDATA)
+			CALL ROOMREPORT_RDATA_FINDEX(RDATA, FINDEX)
+			CALL ROOMREPORT_RDATA_SAVE(RDATA)
+			
+		CASEELSE
+			RETURN -1
+			
+	ENDSELECT
+	RETURN
+ENDIF
+
+;＝＝＝＝＝表示処理＝＝＝＝＝
+SELECTCASE ARG
+	CASE 0
+		;タブ上部
+		PRINTFORM ┌
+		FOR LCOUNT, 0, 2
+			PRINTFORM ────────
+			IF LCOUNT < TABN
+				PRINTFORM ┌
+			ELSE
+				PRINTFORM ┐
+			ENDIF
+		NEXT
+		PRINT 　 
+		PRINTBUTTON "[1000]情報切替 ",1000
+		
+		
+		
+	CASE 1
+		
+		;タブ中部
+		PRINTFORM │
+		FOR LCOUNT, 0, 2
+			SETCOLOR LCOUNT == TABN ? 0xFFFF70 # 0x00FF00
+			SELECTCASE LCOUNT
+			CASE 0
+				PRINTBUTTON "[1001]お気に入り",1001
+			CASE 1
+				PRINTBUTTON "[1002]全　て　　",1002
+			ENDSELECT
+			RESETCOLOR
+			PRINTFORM │
+		NEXT
+		
+	CASE 2
+		
+		;タブ下部
+		PRINTFORM \@TABN == 0?│#├\@
+		FOR LCOUNT, 0, 2
+			PRINTFORM \@LCOUNT == TABN?　　　　　　　　#────────\@
+			IF LCOUNT == TABN
+				PRINTFORM └
+			ELSEIF LCOUNT + 1 == TABN
+				PRINTFORM ┘
+			ELSE
+				PRINTFORM ┴
+			ENDIF
+		NEXT
+		PRINT ──────────
+		
+	CASE 4 TO 18
+		PRINT │
+		LCOUNT = (ARG - 4)
+		
+		;リスト番号
+		LOCAL = 15 * PAGE:0 + LCOUNT
+		
+		IF TABN == 1
+			IF RDATA:(LOCAL):0 > 0
+				;情報出力
+				CALL ROOMREPORT_LISTMESSAGE( RDATA:(LOCAL):0, RDATA:(LOCAL):1, RDATA:(LOCAL):2)
+				IF RESULT
+					PRINTBUTTON @"[{1100 + LCOUNT}]\@RDATA:(LOCAL):3?★#☆\@%RESULTS, 38, LEFT%",1100 + LCOUNT
+					PRINTBUTTON @"[{1200 + LCOUNT}]消",1200 + LCOUNT
+				ENDIF
+			ELSE
+				PRINT ：
+			ENDIF
+		ELSE
+			LOCAL = FINDEX:(LOCAL)
+			IF LOCAL >= 0
+				;情報出力
+				CALL ROOMREPORT_LISTMESSAGE( RDATA:(LOCAL):0, RDATA:(LOCAL):1, RDATA:(LOCAL):2)
+				IF RESULT
+					PRINTBUTTON @"[{1100 + LCOUNT}]\@RDATA:(LOCAL):3?★#☆\@%RESULTS, 38, LEFT%",1100 + LCOUNT
+					PRINTBUTTON @"[{1200 + LCOUNT}]消",1200 + LCOUNT
+				ENDIF
+			ELSE
+				PRINT ：
+			ENDIF
+		ENDIF
+		
+	CASE 19
+		PRINT │	～～～～～～～～～～～～～～～～～～～～～～～
+		
+	CASE 20
+		PRINT │
+		
+	CASE 21
+		;---ページ切り替えボタン---
+		PRINT │　　
+		IF PAGE:0 <= 0
+			SETCOLOR 0x333333
+			PRINT [----]前
+			RESETCOLOR
+		ELSE
+			PRINTBUTTON "[1010]前",1010
+		ENDIF
+		PRINTFORM 　　　- page({PAGE:0 + 1, 2}/{PAGE:1 + 1, 2}) -　　　
+		IF PAGE:0 >= PAGE:1
+			SETCOLOR 0x333333
+			PRINT [----]次
+			RESETCOLOR
+		ELSE
+			PRINTBUTTON "[1011]次",1011
+		ENDIF
+		
+	CASE 22
+		PRINT │
+		
+	CASEELSE
+		PRINT │
+		
+ENDSELECT
+PRINTL
+
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+;※イベ一覧表示用関数
+;お気に入りインデックス作成
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@ROOMREPORT_RDATA_FINDEX(RDATA, FINDEX)
+#DIM LCOUNT,3	;ループ用
+#DIM REF RDATA, 0, 0
+#DIM REF FINDEX, 0
+
+VARSET FINDEX, -1
+LOCAL = 0
+FOR LCOUNT, 0, 100
+	IF RDATA:(LCOUNT):0 > 0 && RDATA:(LCOUNT):3
+		FINDEX:(LOCAL) = LCOUNT
+		LOCAL++
+	ENDIF
+NEXT
+
+RETURN LOCAL
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+;※イベ一覧表示用関数
+;調書データの整理(ソート)
+;ARG:0	処理ID
+;	0:単純整理(空欄前詰め)
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@ROOMREPORT_RDATA_SORT(RDATA, ARG:0 = 0)
+#DIM LCOUNT,3	;ループ用
+#DIM REF RDATA, 0, 0
+
+SELECTCASE ARG
+	CASE 0
+		LOCAL = 0
+		FOR LCOUNT, 0, 100
+			IF RDATA:(LCOUNT):0 <= 0
+				RDATA:(LCOUNT):3 = 0
+				RDATA:(LCOUNT):2 = 0
+				RDATA:(LCOUNT):1 = 0
+				RDATA:(LCOUNT):0 = 0
+				LOCAL++
+			ELSEIF LOCAL > 0
+				RDATA:(LCOUNT - LOCAL):0 = RDATA:(LCOUNT):0
+				RDATA:(LCOUNT):0 = 0
+				RDATA:(LCOUNT - LOCAL):1 = RDATA:(LCOUNT):1
+				RDATA:(LCOUNT):1 = 0
+				RDATA:(LCOUNT - LOCAL):2 = RDATA:(LCOUNT):2
+				RDATA:(LCOUNT):2 = 0
+				RDATA:(LCOUNT - LOCAL):3 = RDATA:(LCOUNT):3
+				RDATA:(LCOUNT):3 = 0
+			ENDIF
+		NEXT
+ENDSELECT
+
+
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+;※イベ一覧表示用関数
+;調書データの展開・格納
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@ROOMREPORT_RDATA_LOAD(RDATA)
+;-MEMO-
+;データ形式　E/{イベント番号}/R/{部屋番号}/A/{調査深度}/F/{お気に入り}/…以降ループ
+#DIM LCOUNT,3	;ループ用
+#DIM REF RDATA, 0, 0
+#DIMS SAVERDATA
+#DIMS NOWRDATA
+;0:残データ
+;1:１データ
+
+VARSET RDATA:0:0
+CALL ROOMREPORT_LOADDATA(SAVERDATA)
+
+FOR LCOUNT, 0, 100
+	;残データ無しなら終了
+	SIF SAVERDATA == ""
+		BREAK
+
+	;E～E(の手前)までを１データとして抜き取る
+	STRFINDU SAVERDATA, "E/", 1
+	LOCAL = RESULT
+	IF LOCAL < 0
+		NOWRDATA = %SAVERDATA%
+		SAVERDATA = %""%
+	ELSE
+		SUBSTRING SAVERDATA, 0, LOCAL
+		NOWRDATA = %RESULTS%
+		SUBSTRING SAVERDATA, LOCAL, -1
+		SAVERDATA = %RESULTS%
+	ENDIF
+
+	;１データを分解
+	VARSET LOCALS
+	SPLIT NOWRDATA, "/", LOCALS
+	;LOCALS　偶数：処理記号　奇数：値
+	
+	FOR LCOUNT:1, 0, 10, 2
+		SIF LOCALS:(LCOUNT:1) == ""
+			BREAK
+		
+		;---処理記号ごとに分岐---
+		LOCAL = TOINT(LOCALS:(LCOUNT:1 + 1))
+		SELECTCASE LOCALS:(LCOUNT:1)
+			CASE "E"
+				RDATA:(LCOUNT):0 = LOCAL
+			
+			CASE "R"
+				RDATA:(LCOUNT):1 = LOCAL
+			
+			CASE "A"
+				RDATA:(LCOUNT):2 = LOCAL
+			
+			CASE "F"
+				RDATA:(LCOUNT):3 = LOCAL
+				
+		ENDSELECT
+	NEXT
+NEXT
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@ROOMREPORT_RDATA_SAVE(RDATA)
+#DIM LCOUNT,3	;ループ用
+#DIM REF RDATA, 0, 0
+#DIMS SAVERDATA
+
+#DIMS CONST HEADS = "E", "R", "A", "F", ""
+
+VARSET SAVERDATA
+FOR LCOUNT, 0, 100
+	SIF RDATA:(LCOUNT):0 <= 0
+		CONTINUE
+		
+	FOR LCOUNT:1, 0, 4
+		SAVERDATA = %SAVERDATA%%HEADS:(LCOUNT:1)%/%TOSTR(RDATA:(LCOUNT):(LCOUNT:1))%/
+	NEXT
+NEXT
+CALL ROOMREPORT_SAVEDATA(SAVERDATA)
+
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+;※イベ一覧表示用関数
+;一覧で表示する文言達
+;ARG:0	イベント番号
+;ARG:1	部屋番号
+;ARG:2	調査深度
+;RESULTS	文言
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@ROOMREPORT_LISTMESSAGE(ARG:0, ARG:1, ARG:2)
+#DIM LCOUNT,3	;ループ用
+
+
+IF ARG:1 < 1 || ARG:1 > 30
+	LOCALS = ﾄﾞｺｶ
+ELSE
+	LOCALS = {ARG:1,2}
+ENDIF
+SELECTCASE ARG:0
+	CASE 108
+		;媚薬
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に媚薬が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に怪しげな薬が落ちてるらしい
+		ENDIF
+	CASE 109
+		;万能薬
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に万能薬が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に何かの薬が落ちてるらしい
+		ENDIF
+		
+	CASE 110
+		;気付け薬
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に気付け薬が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に何かの薬が落ちてるらしい
+		ENDIF
+		
+	CASE 111
+		;大人の玩具
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に大人の玩具が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に怪しげな道具が落ちてるらしい
+		ENDIF
+		
+	CASE 112
+		;不死鳥
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に不死鳥の羽が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に何かの羽が落ちてるらしい
+		ENDIF
+		
+	CASE 113, 114, 115, 116, 117, 118
+		;消耗・非消耗武器
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に武器が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に何か落ちてるらしい
+		ENDIF
+		
+	CASE 119
+		;胡蝶夢丸
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に胡蝶夢丸が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に怪しげな薬が落ちてるらしい
+		ENDIF
+		
+	CASE 120, 121, 122
+		;アクセ
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%にアクセサリーが落ちていた
+		ELSE
+			LOCALS = %LOCALS%に何か落ちてるらしい
+		ENDIF
+		
+	CASE 130, 131, 132
+		;湧き水
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に湧き水があった
+		ELSE
+			LOCALS = %LOCALS%に湧き水があるらしい
+		ENDIF
+
+	CASE 133
+		;澄んだ泉
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に澄んだ泉があった
+		ELSE
+			LOCALS = %LOCALS%に泉があるらしい
+		ENDIF
+
+	CASE 134
+		;白濁泉
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に白濁の泉があった
+		ELSE
+			LOCALS = %LOCALS%に泉があるらしい
+		ENDIF
+
+	CASE 135
+		;不思議な泉
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に七色に光る泉があった
+		ELSE
+			LOCALS = %LOCALS%に泉があるらしい
+		ENDIF
+
+	CASE 136
+		;服溶かしスライム
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に服を狙うスライムがいた
+		ELSE
+			LOCALS = %LOCALS%の天井にスライムがいるらしい
+		ENDIF
+
+	CASE 137
+		;壁触手
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%の壁の触手が身体を弄ってきた
+		ELSE
+			LOCALS = %LOCALS%では壁の触手が襲ってくるらしい
+		ENDIF
+
+	CASE 138
+		;落とし穴＿触手愛撫
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に触手入りの落とし穴があった
+		ELSE
+			LOCALS = %LOCALS%に落とし穴があるらしい
+		ENDIF
+
+	CASE 139
+		;桃色ガス
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%には桃色のガスが充満していた
+		ELSE
+			LOCALS = %LOCALS%には怪しげなガスが充満してるらしい
+		ENDIF
+
+	CASE 140, 141, 171
+		;荷物袋
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に誰かの荷物が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に誰かの荷物が落ちてるらしい
+		ENDIF
+
+	CASE 142
+		;にょろーん
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に喋るﾆｮﾛﾆｮﾛした触手がいた
+		ELSE
+			LOCALS = %LOCALS%に喋れる触手がいるらしい
+		ENDIF
+
+	CASE 143
+		;不思議なガス
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%には不思議なガスが充満していた
+		ELSE
+			LOCALS = %LOCALS%には不思議なガスが充満してるらしい
+		ENDIF
+
+	CASE 144
+		;柔らかい壁
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に周囲と違う壁があった
+		ELSE
+			LOCALS = %LOCALS%の壁がちょっと変らしい
+		ENDIF
+
+	CASE 145
+		;眠気覚ましの薬草
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に眠気覚ましの薬草があった
+		ELSE
+			LOCALS = %LOCALS%に薬草があるらしい
+		ENDIF
+
+	CASE 146
+		;淫蟲A
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%にお尻を狙う淫蟲の巣穴があった
+		ELSE
+			LOCALS = %LOCALS%に淫蟲の巣穴があるらしい
+		ENDIF
+
+	CASE 147
+		;淫蟲B
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に胸を狙う淫蟲の巣穴があった
+		ELSE
+			LOCALS = %LOCALS%に淫蟲の巣穴があるらしい
+		ENDIF
+
+	CASE 148
+		;淫蟲C
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%にクリを狙う淫蟲の巣穴があった
+		ELSE
+			LOCALS = %LOCALS%に淫蟲の巣穴があるらしい
+		ENDIF
+
+	CASE 149
+		;淫蟲V
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に膣口を狙う淫蟲の巣穴があった
+		ELSE
+			LOCALS = %LOCALS%に淫蟲の巣穴があるらしい
+		ENDIF
+
+	CASE 150
+		;落石
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%は落石の危険があるようだ
+		ELSE
+			LOCALS = %LOCALS%は落石の危険があるらしい
+		ENDIF
+
+	CASE 151
+		;不意打ち
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%で敵が待ち伏せしていた
+		ELSE
+			LOCALS = %LOCALS%では敵が待ち伏せてるらしい
+		ENDIF
+
+	CASE 152
+		;淫蟲ふたなり化
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%にクリに吸い付く淫蟲がいた
+		ELSE
+			LOCALS = %LOCALS%に淫蟲の巣穴があるらしい
+		ENDIF
+
+	CASE 153
+		;淫蟲肌
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に肌を狙う淫蟲の巣穴があった
+		ELSE
+			LOCALS = %LOCALS%に淫蟲の巣穴があるらしい
+		ENDIF
+
+	CASE 154
+		;淫蟲M
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に口を狙う淫蟲の巣穴があった
+		ELSE
+			LOCALS = %LOCALS%に淫蟲の巣穴があるらしい
+		ENDIF
+
+	CASE 160
+		;自販機
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に祭壇があった
+		ELSE
+			LOCALS = %LOCALS%に怪しい装置があるらしい
+		ENDIF
+
+	CASE 161
+		;親睦
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%で仲間に押し倒された
+		ELSE
+			LOCALS = %LOCALS%で仲間に押し倒されそうになるらしい
+		ENDIF
+
+	CASE 162
+		;占いオババ
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に占い師がいた
+		ELSE
+			LOCALS = %LOCALS%に占い師がいるらしい
+		ENDIF
+
+	CASE 163
+		;汚物消毒ガス
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%で浄化or悪臭ガスが噴き出していた
+		ELSE
+			LOCALS = %LOCALS%で奇妙なガスが噴き出すらしい
+		ENDIF
+
+	CASE 164
+		;トンカツ
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%にトンカツが落ちていた
+		ELSE
+			LOCALS = %LOCALS%にトンカツが落ちてるらしい
+		ENDIF
+
+	CASE 168
+		;ウォッチャーのメガ
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%にメガネが落ちていた
+		ELSE
+			LOCALS = %LOCALS%にメガネが落ちてるらしい
+		ENDIF
+
+	CASE 169
+		;縮乳薬
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に縮乳薬が落ちていた
+		ELSE
+			LOCALS = %LOCALS%に何かの薬が落ちてるらしい
+		ENDIF
+
+	CASE 170
+		;キュウリ
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%でキュウリが栽培されていた
+		ELSE
+			LOCALS = %LOCALS%に怪しい植物が生えてるらしい
+		ENDIF
+
+	CASE 172
+		;ガチャ
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%にガチャガチャがあった
+		ELSE
+			LOCALS = %LOCALS%に怪しい装置があるらしい
+		ENDIF
+		
+	CASE 173
+		;動物耳
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に茶色い実をつけた木が生えていた
+		ELSE
+			LOCALS = %LOCALS%に怪しい植物が生えてるらしい
+		ENDIF
+		
+	CASE 174
+		;落とし穴＿媚薬風呂
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に媚薬入りの落とし穴があった
+		ELSE
+			LOCALS = %LOCALS%に落とし穴があるらしい
+		ENDIF
+		
+	CASE 175
+		;落とし穴＿白濁風呂
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に白濁泉入りの落とし穴があった
+		ELSE
+			LOCALS = %LOCALS%に落とし穴があるらしい
+		ENDIF
+		
+	CASE 176
+		;壁尻スライム
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%でスライムに上半身を拘束された
+		ELSE
+			LOCALS = %LOCALS%ではスライムに拘束されるらしい
+		ENDIF
+		
+	CASE 180
+		;魔法陣＿入れ替わり
+		IF ARG:2 > 1
+			LOCALS = %LOCALS%に身体入替の魔法陣があった
+		ELSEIF ARG:2 > 0
+			LOCALS = %LOCALS%に魔法陣があった
+		ELSE
+			LOCALS = %LOCALS%に魔法陣があるらしい
+		ENDIF
+		
+	CASE 191 TO 200
+		;遺品
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%で誰かの遺品を見つけた
+		ELSE
+			LOCALS = %LOCALS%に誰かの遺品があるらしい
+		ENDIF
+		
+	CASE 201
+		;石碑＿説明
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に文字が刻まれた石碑があった
+		ELSE
+			LOCALS = %LOCALS%に石碑があるらしい
+		ENDIF
+		
+	CASE 202
+		;石碑＿赤
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に赤色の石碑があった
+		ELSE
+			LOCALS = %LOCALS%に石碑があるらしい
+		ENDIF
+		
+	CASE 203
+		;石碑＿青
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に青色の石碑があった
+		ELSE
+			LOCALS = %LOCALS%に石碑があるらしい
+		ENDIF
+		
+	CASE 204
+		;石碑＿黄
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に黄色の石碑があった
+		ELSE
+			LOCALS = %LOCALS%に石碑があるらしい
+		ENDIF
+		
+	CASE 205
+		;石碑＿緑
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に緑色の石碑があった
+		ELSE
+			LOCALS = %LOCALS%に石碑があるらしい
+		ENDIF
+		
+	CASE 207
+		;統一言語辞書
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%に「統一言語」の辞書があった
+		ELSE
+			LOCALS = %LOCALS%に難しい書物があるらしい
+		ENDIF
+		
+	CASE 208
+		;電波
+		IF ARG:2 > 0
+			LOCALS = %LOCALS%で謎の声を聞いた
+		ELSE
+			LOCALS = %LOCALS%では天の声が聞けるらしい
+		ENDIF
+		
+	CASEELSE
+		IF ARG:2 > 0
+			LOCALS = %LOCALS% に何かあった（未対応イベ）
+		ELSE
+			LOCALS = %LOCALS%に何かあるらしい（未対応イベ）
+		ENDIF
+ENDSELECT
+RESULTS = %LOCALS%
+RETURN 1
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+

@@ -1,0 +1,428 @@
+﻿;通常攻撃命中時の描写
+@SYSTEM_MESSAGE_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;敵のコマンドごとに命中時の描写したり
+
+SELECTCASE ARG:1
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_12)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+	CASE 100
+		;何もなし
+	CASE 101
+		PRINTFORML 身体に突き刺さった触手から何かを注入される度、%ARGS:0%の意識は朦朧としてくる…
+	CASE 102
+		PRINTFORML それを浴びた%ARGS:0%の身体は、重い熱病にかかったように震えだし、呼吸が荒くなってゆく…
+	CASE 103
+		PRINTFORML 鋭い痛みが何度も%ARGS:0%を襲い、苦痛にもだえる声が部屋中に木霊してゆく…
+	CASE 106
+		IF BASE:3 <= 0
+			PRINTFORML 直撃の痛みだけでなく痒み、疼き、焼けつき……粘液毒のもたらす様々な作用が%ARGS:0%を苦しめる…
+		ELSE
+			PRINTFORML かわしきれなかった%ARGS:0%の服に粘液の付いた触手が張り付き、服を引きちぎられてしまった！
+		ENDIF
+	CASE 107
+		;連続メッセージになるのでとりあえずスキップ
+	CASE 108
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML 直撃の痛みだけでなく痒み、疼き、焼けつき……粘液毒のもたらす様々な作用が%ARGS:0%を苦しめる…
+		ELSE
+			PRINTFORML かわしきれなかった%ARGS:0%の服に粘液の付いた触手が張り付き、服を引きちぎられてしまった！
+		ENDIF
+	CASE 109
+		IF (CFLAG:10 || CFLAG:20) && CFLAG:21 == 0
+			PRINTFORML 首元を強く締め付けられ、呼吸のままならない%ARGS:0%は顔を真っ赤にして呻いた…
+		ELSE
+			PRINTFORML 触手を避けきれなかった%ARGS:0%の柔肌に次々と赤い痕が刻まれてゆく！
+		ENDIF
+	CASE 110
+		IF (CFLAG:10 || CFLAG:20) && CFLAG:21 == 0
+			PRINTFORML 首元を強く締め付けられ、呼吸のままならない%ARGS:0%は顔を真っ赤にして呻いた…
+		ELSE
+			PRINTFORML 死角から次々に襲いかかる触手に身体を嬲られ、%ARGS:0%は苦痛の声を漏らした…
+		ENDIF
+	CASE 111
+		IF CFLAG:20 && CFLAG:21 == 0
+			PRINTFORML 身体を縛られ身動きすらまともに取れない%ARGS:0%の身体に無惨な疵痕が増えていく…
+		ELSEIF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML 激しい痛みが襲いかかり、くぐもった叫びが部屋の中に木霊する！
+		ELSE
+			PRINTFORML %ARGS:0%の服の一部が飛び散り、その肌が少しずつ外へ晒されてゆく！
+		ENDIF
+	CASE 113
+		IF CFLAG:20 && CFLAG:21 == 0
+			PRINTFORML 身体を縛られ身動きすらまともに取れない%ARGS:0%の身体に無惨な疵痕が増えていく…
+		ELSEIF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML 激しい痛みが襲いかかり、くぐもった叫びが部屋の中に木霊する！
+		ELSE
+			PRINTFORML %ARGS:0%の服の一部が飛び散り、その肌が少しずつ外へ晒されてゆく！
+		ENDIF
+	CASE 114
+		;連続メッセージになるのでとりあえずスキップ
+	CASE 115
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML %ARGS:0%は腹部に直撃を受け、あまりの衝撃に咳き込んでしまった…
+		ELSE
+			PRINTFORML %ARGS:0%は反応しきれずに直撃を受けてしまい、さらに服の一部を齧り取られてしまった！
+		ENDIF
+	CASE 116
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML %ARGS:0%は腹部に直撃を受け、あまりの衝撃に倒れ込んでしまった…
+		ELSE
+			PRINTFORML %ARGS:0%は反応しきれずに直撃を受けてしまい、さらに服の一部を齧り取られてしまった！
+		ENDIF
+	CASE 117
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML %ARGS:0%は吹き飛ばされた後床にたたきつけられ、全身を襲う痛みに顔をしかめた…
+		ELSE
+			PRINTFORML %ARGS:0%は避けきれずに直撃を受けてしまい、さらに服の一部を齧り取られてしまった！
+		ENDIF
+	CASE 118
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML %ARGS:0%は勢いよく壁にたたきつけられ、全身を襲う痛みに顔をしかめた…
+		ELSE
+			PRINTFORML %ARGS:0%は避けきれずに直撃を受けてしまい、さらに服の一部を齧り取られてしまった！
+		ENDIF
+	CASE 119
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML そのうちの一つが%ARGS:0%に絡みつき、凄まじい怪力で持ち上げると地面に激しくたたき付けた！
+		ELSE
+			PRINTFORML 吸盤が服に吸い付き、離れると同時に服の一部を持ち去ってしまった！
+		ENDIF
+	CASE 120
+		IF BASE:3 <= 0
+			PRINTFORML 力を吸われてゆく%ARGS:0%から、時折甘い声が聞こえてくる…
+		ELSE
+			PRINTFORML 全身を締め上げられた%ARGS:0%から、少しずつ体力が吸われてゆく！
+		ENDIF
+	CASE 121
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML そのうちの一つが%ARGS:0%に絡みつき、凄まじい怪力で持ち上げると地面に激しくたたき付けた！
+		ELSE
+			PRINTFORML 吸盤が服に吸い付き、離れると同時に服の一部を持ち去ってしまった！
+		ENDIF
+	CASE 122
+		IF BASE:3 <= 0
+			PRINTFORML 力を吸われてゆく%ARGS:0%から、時折甘い声が聞こえてくる…
+		ELSE
+			PRINTFORML 全身を締め上げられた%ARGS:0%から、少しずつ体力が吸われてゆく！
+		ENDIF
+	CASE 123
+		IF BASE:3 <= 0
+			PRINTFORML %ARGS:0%は顔を青くして冷や汗をかいている。　どうやらあの体液は毒液のようだ…
+		ELSE
+			PRINTFORML 体液が着弾した部分の服が溶け出し、%ARGS:0%の服が次第に穴だらけにされてゆく…
+		ENDIF
+	CASE 124
+		PRINTFORML 不意を突かれた%ARGS:0%は、大きく吹き飛ばされてしまった！
+	CASE 125
+		IF BASE:3 <= 0
+			PRINTFORML %ARGS:0%は顔を青くして冷や汗をかいている。　どうやらあの体液は毒液のようだ…
+		ELSE
+			PRINTFORML 体液が着弾した部分の服が溶け出し、%ARGS:0%の服が次第に穴だらけにされてゆく…
+		ENDIF
+	CASE 126
+		IF FLAG:507 == 0
+			IF BASE:3 <= 0
+				PRINTFORML %ARGS:0%の素肌に絡みついた触手が、%ARGS:0%の体力を奪ってゆく…
+			ELSE
+				PRINTFORML %ARGS:1%に抱きつかれるような形になった%ARGS:0%から、次々と力が吸われてゆく…
+			ENDIF
+		ELSE
+				PRINTFORML 悲痛な悲鳴を上げる%ARGS:0%に構わず、その触手は%ARGS:0%から血液を吸い取っている…
+		ENDIF
+	CASE 127
+		IF BASE:3 <= 0
+			PRINTFORML 硬度を増した%ARGS:1%の身体に、%ARGS:0%は大きく吹き飛ばされた！
+		ELSE
+			PRINTFORML 束となって襲いかかる触手が、次々に%ARGS:0%を切り裂いてゆく…
+		ENDIF
+	CASE 128
+		;個別描画スキップ
+	CASE 129
+		IF BASE:3 <= 0
+			PRINTFORML 硬度を増した%ARGS:1%の身体に、%ARGS:0%は大きく吹き飛ばされた！
+		ELSE
+			PRINTFORML 束となって襲いかかる触手が、次々に%ARGS:0%を切り裂いてゆく…
+		ENDIF
+	CASE 130
+		;個別描画スキップ
+	CASE 131
+		IF CFLAG:20 && CFLAG:21 == 0
+			PRINTFORML 肌がみるみる内に赤く染まっていき、その耐え難い痛みに%ARGS:0%の目の端に涙が浮かぶ…
+		ELSEIF BASE:3 <= 0
+			PRINTFORML 肌に直接鞭を打たれた%ARGS:0%は、その痛みに悲鳴を上げた！
+		ELSE
+			PRINTFORML 鞭は鋭い風切り音を鳴らしながら%ARGS:0%の服の一部をはじき飛ばした！
+		ENDIF
+	CASE 132
+		;個別描画スキップ
+	CASE 133
+		IF CFLAG:20 && CFLAG:21 == 0
+			PRINTFORML 肌がみるみる内に赤く染まっていき、その耐え難い痛みに%ARGS:0%の目の端に涙が浮かぶ…
+		ELSEIF BASE:3 <= 0
+			PRINTFORML 肌に直接鞭を打たれた%ARGS:0%は、その痛みに悲鳴を上げた！
+		ELSE
+			PRINTFORML 鞭は鋭い風切り音を鳴らしながら%ARGS:0%の服の一部をはじき飛ばした！
+		ENDIF
+	CASE 134
+		;個別描画スキップ
+	CASE 135
+		;個別描画スキップ
+	CASE 136
+		;個別描画スキップ
+	CASE 137
+		IF FLAG:507 >= 1
+			PRINTFORML うなりを上げながら迫る鞭が、%ARGS:0%の身体に次々と痛々しい傷を付けていく…
+		ENDIF
+	CASE 138
+		IF FLAG:507 >= 1
+			PRINTFORML 人間を遙かに超える怪力に身体が締め付けられ、部屋の中に悲鳴が響き渡る…
+		ENDIF
+	CASE 139
+		IF FLAG:507 >= 1
+			PRINTFORML うなりを上げながら迫る鞭が、%ARGS:0%の身体に次々と痛々しい傷を付けていく…
+		ENDIF
+	CASE 140
+		IF FLAG:507 >= 1
+			PRINTFORML 咬みついた無数の花が体のあちこちから%ARGS:0%の血液を啜り上げる！
+		ELSE
+			PRINTFORML %ARGS:1%のツタが触れた部分から%ARGS:0%の力が抜けていく…
+		ENDIF
+	CASE 141
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML %ARGS:0%は身体を斬り裂かれ、あまりの痛みに耐え切れずにその場にうずくまってしまった…
+		ELSE
+			PRINTFORML %ARGS:0%は反応しきれずに直撃を受けてしまい、服ごと身体を斬り裂かれてしまった！
+		ENDIF
+	CASE 142
+
+		IF FLAG:507 >= 1
+
+			IF BASE:3 <= 0
+				PRINTFORML 羽根に染み込んだ鮮血に傷口を溶かされ、あまりの痛みに%ARGS:0%は悲鳴を上げる事すら出来なかった…
+			ELSE
+				PRINTFORML 羽根に染み込んだ粘液と鮮血に服と身体を斬り裂きつつ溶かされ、%ARGS:0%は痛々しい悲鳴を上げた…
+			ENDIF
+		ELSE
+				PRINTFORML 羽根でくすぐられまいと必死になった%ARGS:0%は、激しく体力を消耗してしまった…
+
+		ENDIF
+	CASE 143
+		IF FLAG:507 >= 1
+			PRINTFORML 精液砲弾の直撃を受けた%ARGS:0%は一瞬で壁に叩きつけられ、床にベチャリと落ちた…
+		ELSE
+			PRINTFORML %ARGS:0%に直撃した卵は一瞬で粉々になり、液体と共に床にベチャリと落ちていった…
+		ENDIF
+
+	CASE 144
+		IF FLAG:507 >= 1
+			PRINTFORML 巨大な触手の鞭の直撃を受けた%ARGS:0%は一瞬で壁に叩きつけられ、床に倒れこむように落ちた…
+		ELSE
+			PRINTFORML %ARGS:0%に直撃した巨大な鞭の一部が弾け飛び、周囲の壁を激しく叩いた…
+		ENDIF
+	CASE 145
+		IF FLAG:507 > 0
+			PRINTFORML 両腕を引っ張られて抵抗できない%ARGS:0%の足の間からメリメリと嫌な音が響く…
+		ELSE
+			PRINTFORML 激しい揺れに対処できなかった%ARGS:0%からは全身の力が奪われている…
+		ENDIF
+	CASE 146
+		PRINTFORML 首の動きだけで吹き飛ばされた%ARGS:0%は着地に失敗して数回回転した…
+		
+	CASE 147
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML 尾に捕まってしまった%ARGS:0%はゆっくりと持ち上げられると、何度も床にたたきつけられた！
+			CASE 1
+				PRINTFORML 転倒した%ARGS:0%の背中を、何度も尾がうちつける！
+			CASE 2
+				PRINTFORML %ARGS:0%の首筋に巻きついた尾は、ゆっくりと締め上げる力を強めていく……
+			CASE 3
+				PRINTFORML 転倒した%ARGS:0%の腹部を、何度も尾がうちのめす！
+		ENDSELECT
+	CASE 148
+		IF BASE:3 > 0
+			PRINTFORML 触手が服に触れるたびに不快な音と共にボロボロと生地が傷んでゆく…
+		ELSE
+			PRINTFORML かわしきれなかった%ARGS:0%の身体は軽々と吹き飛ばされてしまった！
+		ENDIF
+	CASE 149
+		IF RAND:3 == 0
+			PRINTFORML 触手を避けきれず、%ARGS:0%の叩かれた部位が赤くなった…
+		ELSE
+			PRINTFORML かわしきれなかった%ARGS:0%の身体は吹き飛ばされた！
+		ENDIF
+	CASE 150
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML とっさに動けない状態にあった%ARGS:0%は体当たりを受け、吹き飛ばされてしまった…
+		ELSE
+			PRINTFORML 予想外の速度に%ARGS:0%は無防備なまま直撃を受け、そのまま吹き飛ばされてしまった…
+		ENDIF
+	CASE 151
+		IF BASE:3 <= 0
+			PRINTFORML 叩きつけられた尻尾の一本一本が、疲労状態にあった%ARGS:0%の意識を刈り取っていく…
+		ELSE
+			PRINTFORML 叩きつけられた尻尾の一本一本が、%ARGS:0%の意識を刈り取っていく…
+		ENDIF
+	CASE 152
+		PRINTFORML %ARGS:1%のアックスボンバーがクリーンヒットし、%ARGS:0%はその場に崩れ落ちた…
+	CASE 153
+		PRINTFORML あまりに不潔な光景を見せつけられ、%ARGS:0%は精神的に大ダメージを受けた…
+	CASE 154
+		IF BASE:0 <= 0 || BASE:3 <= 0
+			PRINTFORML うまく動けない状態にあった%ARGS:0%は%ARGS:1%とぶつかってしまった…
+		ELSE
+			PRINTFORML %ARGS:1%とぶつかってしまった%ARGS:0%はつい、すみませんと頭を下げてしまった…
+		ENDIF
+	CASE 155
+		PRINTFORML %ARGS:1%にとっては攻撃のつもりなのだろうが、当然ながら%ARGS:0%には全く効いていない…
+	CASE 156
+		PRINTFORML %ARGS:1%は%ARGS:0%の足元に不意に現れ体当りした！
+	CASE 157
+		PRINTFORML %ARGS:0%は攻撃をよけきれず膝をついた…
+	CASE 162
+		PRINTFORML %ARGS:0%は潰されてしまった！
+	CASE 167
+		PRINTFORML %ARGS:0%に弾が命中する！
+	CASE 168
+		PRINTFORML %ARGS:1%の体当たりを避けきれなかった%ARGS:0%は大きく跳ね飛ばされた！
+	CASE 169
+		PRINTFORML %ARGS:1%の触手が%ARGS:0%の尻に叩きつけられる！
+	CASE 170, 172
+		IF CFLAG:20
+			PRINTFORML %ARGS:1%のアームが身動きできない%ARGS:0%の腹を容赦なく殴りつけた！
+		ELSE
+			PRINTFORML %ARGS:1%のアームが%ARGS:0%を殴り飛ばした！
+		ENDIF
+	CASE 171
+		;多段のため一応カット
+	CASE 180
+		IF CFLAG:201 == 0
+			PRINTFORML 触手塒の隙間からはみ出していた%ARGS:0%の両腕が在らぬ角度に折れ曲がり、同時に痛々しい悲鳴と粉砕音が鳴り響いた！
+			PRINTFORMW %ARGS:0%は両腕を破壊され、攻撃力が低下してしまった！
+		ELSEIF CFLAG:201 == 1
+			PRINTFORML %ARGS:0%は左右の脚を在らぬ方向に捻じ曲げられ、遂に限界を超えた彼女の股関節は、悲鳴と共に粉砕音を鳴り響かせた！
+			PRINTFORMW %ARGS:0%は股関節を破壊され、速度が低下してしまった！
+		ELSEIF CFLAG:201 == 2
+			PRINTFORML 触手塒の中から顔を出す%ARGS:0%の表情が苦悶に歪み、口から吐血と共にくぐもった悲鳴、そして肋骨の砕ける音が鳴り響く！
+			PRINTFORMW %ARGS:0%の折れた肋骨が、内臓を苛み始めた！
+		ELSEIF CFLAG:201 == 3
+			PRINTFORML ギリギリと収縮する触手塒の中から、%ARGS:0%の壮絶な悲鳴と骨の砕ける音が鳴り響く！
+			PRINTFORMW %ARGS:0%は成す術もなく痛めつけられた！
+		ENDIF
+	CASE 181
+		IF BASE:3 > MAXBASE:3 / 4
+			PRINTFORML 触手の先端に光る鋭い鉤爪が%ARGS:0%の身体を弄り、衣服に真っ赤な染みが広がっていく！
+		ELSEIF BASE:3 <= MAXBASE:3 / 4 && BASE:3 != 0
+			PRINTFORML 触手の先端に光る鋭い鉤爪が、破けた衣服の隙間から覗く%ARGS:0%の肌に次々と食い込み、鮮血を滴らせた！
+		ELSE
+			PRINTFORML 触手の先端に光る鋭い鉤爪が、身を守る服を失った%ARGS:0%の身体に裂傷を刻み込んだ！
+		ENDIF
+	CASE 182
+		IF BASE:1 < MAXBASE:1 / 4 && RAND:2
+			PRINTFORML %ARGS:0%の思考がとろけ生命力を吸いだされるのがどこか気持ちよさを感じていく……
+		ELSEIF CFLAG:43 == 0
+			PRINTFORML %ARGS:0%の体から生命力が吸引されていく……
+		ELSEIF FLAG:526 == 0
+			PRINTFORML %ARGS:0%は抵抗もできず体から生命力を吸われていく……
+		ELSEIF FLAG:526 == 1
+			PRINTFORML %ARGS:0%は%ARGS:1%に養分を吸われることに安心を覚えた……
+		ELSEIF FLAG:526 == 2
+			PRINTFORML %ARGS:0%は『自分から』%ARGS:1%が栄養を吸いやすいように動かないでいる！
+		ENDIF
+	CASE 183
+		IF CFLAG:29 == 1 || CFLAG:20 != 0
+			PRINTFORML 身動きの取れない%ARGS:0%は膨大なザーメンジェットの濁流に飲まれ、強烈な衝撃と脳の奥まで浸透する精臭に呼吸もままならない！
+		ELSE
+			PRINTFORML 回避に失敗した%ARGS:0%は強力なザーメンジェットをもろに食らい、凄まじい衝撃とむせ返る精臭に呻いた！
+		ENDIF
+	CASE 184
+		IF BASE:3 <= 0
+			PRINTFORML %ARGS:1%は%ARGS:0%の股間のあたりを叩いてきた！
+		ELSE
+			PRINTFORML %ARGS:1%は服の上から%ARGS:0%にダメージを与えた！
+		ENDIF
+	CASE 185
+		IF FLAG:507 && RAND:2
+			PRINTFORML %ARGS:1%は%ARGS:0%の顔面を中心に殴りつけていく！
+		ELSEIF FLAG:507
+			PRINTFORML %ARGS:1%は%ARGS:0%の腹に重い一撃を加えた！
+		ENDIF
+	CASE 974
+		IF BASE:3 <= 0
+			PRINTFORML %ARGS:1%は乳首を舐めるように責め立てて粘液まみれにすると電流を流し始めた！
+		ELSE
+			PRINTFORML %ARGS:1%は服の上から乳首を舐めるように責め立てて粘液まみれにすると電流を流し始めた！
+		ENDIF
+		
+	CASE 975
+		IF BASE:3 <= 0
+			IF GET_PENIS(TARGET) & 4
+				PRINTFORML %ARGS:1%はペニスを勃起するまで粘液まみれにすると電流を流し始めた！
+			ELSEIF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:1%は擬似陰茎を勃起するまで粘液まみれにすると電流を流し始めた！
+			ELSE
+				PRINTFORML %ARGS:1%はクリトリスを勃起するまで粘液まみれにすると電流を流し始めた！
+			ENDIF
+		ELSE
+			IF GET_PENIS(TARGET) & 4
+				PRINTFORML %ARGS:1%は服の上からペニスを勃起するまで粘液まみれにすると電流を流し始めた！
+			ELSEIF GET_PENIS(TARGET)
+				PRINTFORML %ARGS:1%は服の上から擬似陰茎を勃起するまで粘液まみれにすると電流を流し始めた！
+			ELSE
+				PRINTFORML %ARGS:1%は服の上からクリトリスを勃起するまで粘液まみれにすると電流を流し始めた！
+			ENDIF
+		ENDIF
+	CASE 976
+		PRINTFORML %ARGS:1%の触手は狙い違わず%ARGS:0%の胸に振り下ろされた！
+
+	CASE 999
+		PRINTFORML %ARGS:1%は触手を喉につきこんで犯し始めた！
+	CASE 1867
+		PRINTFORML %ARGS:0%を焼けつくような蒸気が襲う！
+
+	CASE 1877
+		PRINTFORML 肌がみるみる内に赤く染まっていき、その耐え難い痛みに%ARGS:0%の目の端に涙が浮かぶ……
+
+	CASE 2100
+		PRINTFORML 瘴気を吸い込んでしまった%ARGS:0%は、呼吸が乱れだした……
+	CASE 2101
+		IF RAND:2 == 0
+			PRINTFORML %ARGS:0%の脚を触手が締めあげていく……
+		ELSE
+			PRINTFORML 足に絡みついた触手によって、%ARGS:0%は地面に引きずり倒された……
+		ENDIF
+	CASE 2102
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML %ARGS:1%は、手足を拘束され身動きの取れなくなった%ARGS:0%の腹部に膝をたてた…！
+			CASE 1
+				PRINTFORML %ARGS:1%は、%ARGS:0%を無理やり立たせると、腹部を殴りつけた…！
+			CASE 2
+				PRINTFORML %ARGS:1%は、吊るし上げられた%ARGS:0%の腹部をゆっくりと掌握し始めた…！
+			CASE 3
+				PRINTFORML %ARGS:1%は、身動きの取れなくなった%ARGS:0%の腹部に、つま先をめり込ませた…！
+			CASEELSE
+
+		ENDSELECT
+	CASE 2103
+		PRINTFORML %ARGS:0%の首に触手が巻き付き、しゅるしゅると絞めあげる……
+	CASE 2114
+		PRINTFORML 迫る触手を回避した%ARGS:0%だったが、触手の影が%ARGS:0%を締めつけ始めた！
+
+	CASE 2115
+		PRINTFORML %ARGS:1%は%ARGS:0%の腹部に掌を添えると、一瞬の間をおいた……
+		PRINTFORML 
+		PRINTFORML 次の瞬間、%ARGS:0%の腹部に強烈な攻撃が放たれた！
+
+	CASE 2116
+		PRINTFORML 剃刀ヒトデがかすめる度に、%ARGS:0%の衣装が次々に剥ぎ取られていく……
+
+	CASE 2117
+		PRINTFORML %ARGS:0%の手足や首に絡みついた髪が、絞め上げを強めていく……
+
+	CASEELSE
+		;何もなし
+ENDSELECT
+
+

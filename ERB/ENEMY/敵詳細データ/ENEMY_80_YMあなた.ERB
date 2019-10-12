@@ -1,0 +1,163 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+;YMあなた
+;強靱･無敵･最強！でもない
+
+@SET_ENEMY_DATA_80(ARG:0, ARG:1)
+
+;DA:1-2 体力です。いくら射精しても果てないあなたはこれくらいが最適じゃないかと
+DA:(ARG:0):1 = 15000
+DA:(ARG:0):2 = 15000
+DA:(ARG:0):3 = 1
+;DA:5, 8, 9 恐らくこれくらいが人類の限界ではないかと
+DA:(ARG:0):5 = 85
+DA:(ARG:0):8 = 1
+DA:(ARG:0):9 = 70
+
+;DA:15-17 あわよくば少女を触手宮から横取りしようとしているあなたには慎重などと言う言葉は辞書にないのです
+DA:(ARG:0):15 = 50
+DA:(ARG:0):16 = 0
+DA:(ARG:0):17 = 50
+DA:(ARG:0):18 = 70
+DA:(ARG:0):19 = 5
+;DA:41, 43 人間なので炎には弱い
+DA:(ARG:0):41 = 200
+DA:(ARG:0):43 = 200
+
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 128
+DA:(ARG:0):86 = 6
+DA:(ARG:0):89 = 11
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(80)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_80(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 20
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:3 = RAND:12
+			;素質があればNFも含む
+			IF TALENT:(ARG:1):162 >= 3 && GET_BUST(ARG:1) >= 1
+				LOCAL:3 = RAND:15
+			ENDIF
+			IF LOCAL:3 < 3
+				LOCAL:2 = 721
+				;強V攻撃
+			ELSEIF LOCAL:3 < 6
+				LOCAL:2 = 861
+				;妊娠攻撃
+			ELSEIF LOCAL:3 < 9
+				LOCAL:2 = 722
+				;強A攻撃
+			ELSEIF LOCAL:3 < 11
+				LOCAL:2 = 1020
+				;膣内放尿
+			ELSE
+				LOCAL:2 = 1209
+				;強B攻撃(NF)
+			ENDIF
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:11
+		IF LOCAL:3 < 3
+			LOCAL:2 = 251
+			;ふぉーゆーっ！
+		ELSEIF LOCAL:3 < 5
+			LOCAL:2 = 164
+			;全体鞭攻撃
+		ELSEIF LOCAL:3 < 7
+			LOCAL:2 = 165
+			;腹パン
+		ELSEIF LOCAL:3 < 9
+			LOCAL:2 = 166
+			;触手殴り
+		ELSE
+			LOCAL:2 = 37
+			;自慰見せつけ
+		ENDIF
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;PTには拘束攻撃以外
+	LOCAL:3 = RAND:11
+	IF LOCAL:3 < 3
+		LOCAL:2 = 251
+	ELSEIF LOCAL:3 < 5
+		LOCAL:2 = 164
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 165
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 166
+	ELSE
+		LOCAL:2 = 37
+	ENDIF
+ELSE
+	;通常時
+	;色々
+	LOCAL:3 = RAND:17
+	IF LOCAL:3 < 3
+		LOCAL:2 = 251
+	ELSEIF LOCAL:3 < 5
+		LOCAL:2 = 164
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 165
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 37
+	ELSEIF local:3 < 11
+		LOCAL:2 = 38
+		;料理（回復）
+	ELSEIF LOCAL:3 < 13
+		LOCAL:2 = 166
+	ELSE
+		LOCAL:2 = 560
+		;拘束
+	ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+

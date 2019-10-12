@@ -1,0 +1,27 @@
+﻿;ランダムな敵に寄生される
+;ARG:0	対象キャラ
+;ARG:1	妊娠フラグ
+;ARG:2	処女寄生・処女妊娠許可
+@RANDOM_PARASITE(ARG:0, ARG:1, ARG:2)
+
+SIF ARG:0 == 0
+	RETURN 0
+
+;寄生・妊娠済みなら無視
+SIF CFLAG:(ARG:0):22
+	RETURN 0
+
+;処女なので無視
+SIF TALENT:(ARG:0):0 && ARG:2 == 0
+	RETURN 0
+
+TFLAG:93 = 1
+IF ARG:1 == 0
+	CALL PARASITE_TYPE(ARG:0, 0, 5 + RAND:12, 4 + RAND:5 + RAND:5 + RAND:3, 0)
+ELSE
+	;1/5で流産としておく
+	CALL PARASITE_TYPE(ARG:0, 1, 5 + RAND:12, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2 - (RAND:5 / 4))
+ENDIF
+TFLAG:93 = 0
+
+RETURN 1

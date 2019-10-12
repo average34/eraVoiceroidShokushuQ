@@ -1,0 +1,441 @@
+﻿;ターン実処理終了時の処理（主に状態異常のリフレッシュなど）
+;ARG:0	対象キャラ
+@TURN_FINALIZE(ARG:0)
+#DIM MP_DECREASE_RATE
+;LOCAL
+;0		LOOP
+;1-3	TEMP
+
+SIF ARG:0 == 0
+	RETURN
+
+;丸呑みされているなら汚れ+2
+SIF CFLAG:(ARG:0):21
+	BASE:(ARG:0):5 += 2
+
+;丸呑みされているなら1/3でターン終了時に拘束レベルが進む
+SIF CFLAG:(ARG:0):21 && RAND:3 == 0
+	CALL CAPTURE_LEVEL(ARG:0)
+
+IF CFLAG:(ARG:0):10
+	;戦闘中に捕食されている場合、徐々にHPMPCP減少
+	CALL PRINT_MESSAGE(ARG:0, 59, CFLAG:(ARG:0):10, CALLNAME:(ARG:0), SAVESTR:(CFLAG:(ARG:0):10))
+	CALL DAMAGE_COMMON(ARG:0, 0, MAXBASE:(ARG:0):0 / 20)
+	CALL DAMAGE_COMMON(ARG:0, 1, MAXBASE:(ARG:0):1 / 40)
+	CALL DAMAGE_COMMON(ARG:0, 3, MAXBASE:(ARG:0):3 / 10)
+	;捕食によるHP吸収は上限を超えて回復
+	IF FLAG:4 == 3
+		DA:(CFLAG:(ARG:0):10):1 += DA:(CFLAG:(ARG:0):10):2 / 20
+	ELSE
+		DA:(CFLAG:(ARG:0):10):1 += LIMIT(DA:(CFLAG:(ARG:0):10):2 / 20, 0, 3000)
+	ENDIF
+	SIF BASE:(ARG:0):1 < 0 && CFLAG:(ARG:0):29 == 0
+		BASE:(ARG:0):1 = 1
+ENDIF
+
+;媚薬装備中は発情維持
+CALL GET_EQUIP_BONUS(ARG:0, 39)
+IF RESULT
+	;◆発情レベル０以下なら発情レベル１に
+	SIF CFLAG:(ARG:0):28 < 1
+		CFLAG:(ARG:0):28 = 1
+	;◆◆
+ENDIF
+
+;１ターンで終わる効果は特に何も表示しない
+CFLAG:(ARG:0):24 = 0
+CFLAG:(ARG:0):30 = 0
+CFLAG:(ARG:0):32 = 0
+CFLAG:(ARG:0):33 = 0
+
+;レッサーヒュプノの催眠減衰
+SIF CFLAG:(ARG:0):43 >= 6
+	CFLAG:(ARG:0):43 -= 6
+;ハウンドの包囲フラグ減少
+SIF CFLAG:(ARG:0):200 > 0
+	CFLAG:(ARG:0):200 -= 1
+;溜めてる途中で行動不能になると溜めっぱなしになる可能性があるので、時間経過もチェックしておく
+SIF CFLAG:(ARG:0):31 > 0
+	CFLAG:(ARG:0):31 -= 1
+
+IF CFLAG:(ARG:0):25 == 1 && RAND:10 < 3
+	CFLAG:(ARG:0):25 = 0
+	CALL PRINT_MESSAGE(ARG:0, 43, 0, CALLNAME:(ARG:0), "")
+ELSEIF CFLAG:(ARG:0):25 >= 2 && RAND:100 < 3
+	;昏睡は起きる確率が低い
+	CFLAG:(ARG:0):25 = 0
+	CALL PRINT_MESSAGE(ARG:0, 43, 0, CALLNAME:(ARG:0), "")
+ENDIF
+
+IF CFLAG:(ARG:0):26 && RAND:10 < 4
+	CFLAG:(ARG:0):26 = 0
+	CALL PRINT_MESSAGE(ARG:0, 44, 0, CALLNAME:(ARG:0), "")
+ENDIF
+
+IF CFLAG:(ARG:0):27 && RAND:10 < 3
+	CFLAG:(ARG:0):27 = 0
+	CALL PRINT_MESSAGE(ARG:0, 45, 0, CALLNAME:(ARG:0), "")
+ENDIF
+
+;連続絶頂回数
+IF CFLAG:(ARG:0):99 > 19
+	CFLAG:(ARG:0):99 = 9
+ELSEIF CFLAG:(ARG:0):99 >= 9
+	CFLAG:(ARG:0):99 -= 9
+ELSE
+	CFLAG:(ARG:0):99 = 0
+ENDIF
+
+
+IF CFLAG:(ARG:0):300
+	CFLAG:(ARG:0):300 -= 1
+	SIF CFLAG:(ARG:0):300 == 0
+		PRINTFORML %CALLNAME:(ARG:0)%の速度が戻った！
+ENDIF
+
+IF CFLAG:(ARG:0):301
+	CFLAG:(ARG:0):301 -= 1
+	SIF CFLAG:(ARG:0):301 == 0
+		PRINTFORML %CALLNAME:(ARG:0)%の命中低下が戻った！
+ENDIF
+
+IF CFLAG:(ARG:0):302
+	CFLAG:(ARG:0):302 -= 1
+	SIF CFLAG:(ARG:0):302 == 0
+		PRINTFORML %CALLNAME:(ARG:0)%の回避低下が戻った！
+ENDIF
+
+IF CFLAG:(ARG:0):303
+	CFLAG:(ARG:0):303 -= 1
+	SIF CFLAG:(ARG:0):303 == 0
+		PRINTFORML %CALLNAME:(ARG:0)%のダメージ低下が戻った！
+ENDIF
+
+IF CFLAG:(ARG:0):304
+	CFLAG:(ARG:0):304 -= 1
+	IF CFLAG:(ARG:0):304 == 0
+		PRINTFORML %CALLNAME:(ARG:0)%の幻覚が覚めた！
+	ENDIF
+ENDIF
+
+;焦らし
+IF CFLAG:(ARG:0):306
+;実際にその場所にもらえるまで減少はなし？
+	;CFLAG:(ARG:0):306 -= 1
+	IF CFLAG:(ARG:0):305 == 51
+
+	LOCAL:70 = 1
+		PRINTFORML %CALLNAME:(ARG:0)%の胸を触手が焦らすように責めている……
+	ELSEIF CFLAG:(ARG:0):305 == 52
+
+	LOCAL:70 = 1
+		PRINTFORML %CALLNAME:(ARG:0)%のクリトリスを触手が焦らすように責めている……
+	ELSEIF CFLAG:(ARG:0):305 == 53
+		PRINTFORML %CALLNAME:(ARG:0)%の秘唇を触手が焦らすように責めている……
+
+	LOCAL:70 = 1
+	ENDIF
+ENDIF
+
+IF CFLAG:(ARG:0):25 == 0 && CFLAG:(ARG:0):28 <= 0 && CFLAG:(ARG:0):29 == 0 &&  BASE:(ARG:0):3 - (BASE:(ARG:0):5 * 4) <= 0
+	;◆ターン終了時に裸ならMP微減	↑発情レベルの計算を変更                                     ↑汚れで服が透けるようにする
+	IF TALENT:(ARG:0):167
+		IF TALENT:(ARG:0):35
+			;恥じらいなら２倍
+			LOCAL:1 = MAXBASE:(ARG:0):1 * (5 + RAND:11) / 1000
+		ELSE
+			LOCAL:1 = MAXBASE:(ARG:0):1 * (3 + RAND:5) / 1000
+		ENDIF
+		BASE:(ARG:0):1 += LOCAL:1
+		SIF BASE:(ARG:0):1 >= MAXBASE:(ARG:0):1
+			BASE:(ARG:0):1 = MAXBASE:(ARG:0):1
+		CALL PRINT_MESSAGE(ARG:0, 46, 12, CALLNAME:(ARG:0), "", LOCAL:1)
+	ELSEIF TALENT:(ARG:0):36
+		;恥薄いならダメージなし
+		CALL PRINT_MESSAGE(ARG:0, 46, 0, CALLNAME:(ARG:0), "", 0)
+	ELSEIF TALENT:(ARG:0):35
+		;恥じらいなら２倍
+		LOCAL:1 = MAXBASE:(ARG:0):1 * (5 + RAND:11) / 1000
+		BASE:(ARG:0):1 -= LOCAL:1
+		SIF BASE:(ARG:0):1 <= 0
+			BASE:(ARG:0):1 = 1
+		CALL PRINT_MESSAGE(ARG:0, 46, 2, CALLNAME:(ARG:0), "", LOCAL:1)
+	ELSE
+		LOCAL:1 = MAXBASE:(ARG:0):1 * (3 + RAND:5) / 1000
+		BASE:(ARG:0):1 -= LOCAL:1
+		SIF BASE:(ARG:0):1 <= 0
+			BASE:(ARG:0):1 = 1
+		CALL PRINT_MESSAGE(ARG:0, 46, 1, CALLNAME:(ARG:0), "", LOCAL:1)
+	ENDIF
+ENDIF
+
+;ウォッチャーチェック
+CALL WATCHER(ARG:0)
+
+IF FLAG:(FLAG:5 + 50) >= 100 && CFLAG:(ARG:0):21 == 0
+	;重度汚染の部屋は毎ターンEPダメージ
+	LOCAL:1 = RAND:4
+	LOCAL:2 = 100 + RAND:201
+
+	CALL PRINT_MESSAGE(ARG:0, 47, LOCAL:1, CALLNAME:(ARG:0), "", LOCAL:2)
+	CALL ADD_ABL_EXP(11, ARG:0, 1)
+	CALL ADD_ABL_EXP(LOCAL:1 + 6, ARG:0, 100 + RAND:100)
+	CALL DOUKA_EFFECT_6(ARG:0)
+	IF RESULT > 0
+		MP_DECREASE_RATE = RESULT:1
+	ELSE
+		MP_DECREASE_RATE = 300
+	ENDIF
+	TFLAG:63 = LOCAL:1
+	IF !CFLAG:(ARG:0):35
+		CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:2, MP_DECREASE_RATE, 1)
+	ELSE
+		CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:2, MP_DECREASE_RATE)
+	ENDIF
+
+	;きのこパッチここから
+	;5%の確率で侵食される　丸飲み時回避
+	IF RAND:20 == 0 && CFLAG:(ARG:0):21 == 0
+		CALL PRINT_MESSAGE(ARG:0, 445, 5, CALLNAME:(ARG:0), "")
+		CFLAG:(ARG:0):80 += 1
+	ENDIF
+	;ここまで
+
+ENDIF
+
+;◆↓触手スーツ関係
+IF ( CFLAG:(ARG:0):40 == 1 || CFLAG:(ARG:0):46 == 1 ) && BASE:(ARG:0):3 <= 0
+;触手スーツ消去チェック　包帯もここ
+	CFLAG:(ARG:0):40 = 0
+	CFLAG:(ARG:0):46 = 0
+ENDIF
+
+;触手包帯ダメージ
+IF CFLAG:(ARG:0):46
+	CALL PRINT_MESSAGE(ARG:0, 508,1, CALLNAME:(ARG:0), "")
+	TFLAG:63 = 1
+	CALL DAMAGE_COMMON(ARG:0, 2, 300 + RAND:201, 400)
+ENDIF
+
+;触手スーツを着ている場合は毎ターンEPダメージ
+IF CFLAG:(ARG:0):40
+	LOCAL:1 = RAND:4
+	LOCAL:2 = 100 + RAND:201
+	IF !CFLAG:(ARG:0):35
+		SETCOLOR 0xEE1010
+		PRINTFORML 衣服の内側に蠢く無数の触手が%CALLNAME:(ARG:0)%の柔肌を舐め尽くす！
+		RESETCOLOR
+		CALL ADD_ABL_EXP(LOCAL:1 + 6, ARG:0, 100 + RAND:100)
+		TFLAG:63 = LOCAL:1
+		CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:2, 300, 1)
+	ELSE
+		SETCOLOR 0xEE1010
+		PRINTFORML 衣服の内側に蠢く無数の触手が絶頂に達したばかりの%CALLNAME:(ARG:0)%をさらに責めたてる！
+		RESETCOLOR
+		CALL ADD_ABL_EXP(LOCAL:1 + 6, ARG:0, 100 + RAND:100)
+		TFLAG:63 = LOCAL:1
+		CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:2, 300)
+	ENDIF
+ENDIF
+
+IF CFLAG:(ARG:0):40 == 1 && BASE:(ARG:0):3 > 0
+;触手スーツ自己再生
+	PRINTFORML %CALLNAME:(ARG:0)%の垂れ流す汗と体液を啜り、触手の擬態した生地がよりきつく吸い付き、身体を括り出していく…
+	BASE:(ARG:0):3 += MAXBASE:(ARG:0):3 / 10
+	IF BASE:(ARG:0):3 > MAXBASE:(ARG:0):3
+		BASE:(ARG:0):3 = MAXBASE:(ARG:0):3
+	ENDIF
+ENDIF
+;◆◆↑触手スーツ関係
+
+IF CFLAG:(ARG:0):35
+	;絶頂していた場合、回復と同時にEPも全快
+	BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
+	CFLAG:(ARG:0):35 = 0
+ENDIF
+
+;◆
+
+;ふたなりや男だと射精中毒*5%の確率で発情してしまう　発情レベル3まで
+IF GET_PENIS(ARG:0) > 0 && CFLAG:(ARG:0):28 < 3 && CFLAG:(ARG:0):29 == 0 && ABL:(ARG:0):12
+	LOCAL:1 = ABL:(ARG:0):12 * 5
+
+	IF TALENT:(ARG:0):56
+		LOCAL:1 -= 3
+	ENDIF
+
+	;確率計算
+	IF LOCAL:1 > RAND:100
+		CALL PRINT_MESSAGE(ARG:0, 453, 0, CALLNAME:(ARG:0), "")
+		CFLAG:(ARG:0):28 += 1
+	ENDIF
+ENDIF
+;◆◆
+
+;ターン終了時の自慰発生チェック
+IF ABL:(ARG:0):10 <= 0
+	LOCAL:1 = 15
+ELSEIF ABL:(ARG:0):10 == 1
+	LOCAL:1 = 30
+ELSEIF ABL:(ARG:0):10 == 2
+	LOCAL:1 = 50
+ELSEIF ABL:(ARG:0):10 >= 3
+	LOCAL:1 = 75
+ENDIF
+LOCAL:2 = BASE:(ARG:0):2 * 100 / MAXBASE:(ARG:0):2
+
+IF TALENT:(ARG:0):60
+	LOCAL:1 += 10
+ENDIF
+
+IF (LOCAL:1 > LOCAL:2 || CFLAG:(ARG:0):39) && CFLAG:(ARG:0):20 == 0 && CFLAG:(ARG:0):10 == 0
+	;閾値未満のEPなら自慰発生の可能性あり
+	LOCAL:3 = 15 + 5 * ABL:(ARG:0):10
+	
+	IF CFLAG:(ARG:0):28 < 0
+		LOCAL:3 -= 15
+	ELSEIF CFLAG:(ARG:0):28 > 0
+		LOCAL:3 += 5 + CFLAG:(ARG:0):28 * 10
+	ENDIF
+	IF TALENT:(ARG:0):20
+		LOCAL:3 -= 15
+	ENDIF
+	
+	LOCAL:3 += LIMIT(LIMIT(LOCAL:1 + 15, 20, 50) - LOCAL:2, 0, 50)
+	
+	IF LOCAL:3 > 75
+		LOCAL:3 = 75
+	ENDIF
+	
+	IF RAND:100 < LOCAL:3 || CFLAG:(ARG:0):39
+		CALL PRINT_MESSAGE(ARG:0, 48, 0, CALLNAME:(ARG:0), "")
+		CALL MASTURBATION(ARG:0, 1, 10)
+		
+		IF CFLAG:(ARG:0):35
+			;V0.06から一旦EP50％回復後、絶頂を維持し、次のターンで全快するという形に変更
+			BASE:(ARG:0):2 = MAXBASE:(ARG:0):2 / 2
+			
+			;自慰しやすい持ちか、自慰中毒Lv3持ちの場合、追加でTP+5
+			IF TALENT:(ARG:0):60 || ABL:(ARG:0):10 >= 3
+				CALL ADD_TP(ARG:0, 5)
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;拘束されている場合はターン終了時にTP変化
+IF CFLAG:(ARG:0):21
+	CALL CHANGE_TP(ARG:0, 15)
+ELSEIF CFLAG:(ARG:0):20
+	CALL CHANGE_TP(ARG:0, 14)
+ENDIF
+
+CFLAG:(ARG:0):39 = 0
+
+;◆このタイミングまで発情レベルが-1以下なら、-1まで持っていく
+IF CFLAG:(ARG:0):28 <= -1
+	CFLAG:(ARG:0):28 = -1
+ENDIF
+;◆◆
+
+
+;抱きつき開放チェック
+;LOCAL:1 自分ではないレイプしている側・されている側のキャラID
+LOCAL:1 = 0
+;抱きつかれていた側
+IF CFLAG:(ARG:0):52 == 95
+	IF ARG:0 != 1 && CFLAG:1:50 == 96
+		LOCAL:1 = 1
+	ELSEIF ARG:0 != FLAG:10 && CFLAG:(FLAG:10):50 == 96
+		LOCAL:1 = FLAG:10
+	ELSEIF ARG:0 != FLAG:11 && CFLAG:(FLAG:11):50 == 96
+		LOCAL:1 = FLAG:11
+	ELSE
+		CFLAG:(ARG:0):52 = 0
+	ENDIF
+	
+	;自分が敵によって引き離される
+	IF CFLAG:(ARG:0):20 || CFLAG:(ARG:0):21 && LOCAL:1
+		CFLAG:(ARG:0):52 = 0
+		CFLAG:(LOCAL:1):52 = 0
+		CALL PRINT_MESSAGE(ARG:0, 1, 95, CALLNAME:(ARG:0), CALLNAME:(LOCAL:1), LOCAL:1, 2)
+		
+	;抱きつかれていた側の発情が治まって冷静に抜け出した
+	ELSEIF !CFLAG:(ARG:0):28 && RAND:4 && LOCAL:1
+		CFLAG:(ARG:0):52 = 0
+		CFLAG:(LOCAL:1):52 = 0
+		CALL PRINT_MESSAGE(ARG:0, 1, 95, CALLNAME:(ARG:0), CALLNAME:(LOCAL:1), LOCAL:1, 1)
+	ENDIF
+	
+;抱きついていた側
+ELSEIF CFLAG:(ARG:0):52 == 96
+	IF ARG:0 != 1 && CFLAG:1:50 == 95
+		LOCAL:1 = 1
+	ELSEIF ARG:0 != FLAG:10 && CFLAG:(FLAG:10):50 == 95
+		LOCAL:1 = FLAG:10
+	ELSEIF ARG:0 != FLAG:11 && CFLAG:(FLAG:11):50 == 95
+		LOCAL:1 = FLAG:11
+	ELSE
+		CFLAG:(ARG:0):52 = 0
+	ENDIF
+	
+	;自分が敵によって引き離されるか、行動不能となる
+	IF CFLAG:(ARG:0):20 || CFLAG:(ARG:0):21 || CFLAG:(ARG:0):24 || CFLAG:(ARG:0):25 || CFLAG:(ARG:0):29 || TFLAG:16 == 2 && LOCAL:1
+		CFLAG:(ARG:0):52 = 0
+		CFLAG:(LOCAL:1):52 = 0
+		CALL PRINT_MESSAGE(ARG:0, 1, 95, CALLNAME:(LOCAL:1), CALLNAME:(ARG:0), ARG:0, 2)
+	ENDIF
+ENDIF
+
+
+;ターン実処理終了時の処理_敵用（主に状態異常のリフレッシュなど）
+;ARG:0	対象キャラ
+@TURN_FINALIZE_ENEMY(ARG:0)
+;LOCAL
+;0		LOOP
+;1-3	TEMP
+
+SIF ARG:0 == 0
+	RETURN
+
+SIF DA:(ARG:0):1 <= 0
+	RETURN
+
+;１ターンで終わる効果は特に何も表示しない
+DA:(ARG:0):24 = 0
+DA:(ARG:0):30 = 0
+DA:(ARG:0):32 = 0
+DA:(ARG:0):33 = 0
+SIF DA:(ARG:0):35 > 0
+	DA:(ARG:0):35 -= 1
+
+IF DA:(ARG:0):25 && RAND:10 < 3
+	DA:(ARG:0):25 = 0
+	;敵は口上を呼ぶと面倒なことになるので固定テキスト（そもそも状態異常にならないはずだし）
+	PRINTFORML %SAVESTR:(ARG:0)%は目を覚ました！
+	CALL MSG_WAIT(1)
+ENDIF
+
+IF DA:(ARG:0):26 && RAND:10 < 4
+	DA:(ARG:0):26 = 0
+	;敵は口上を呼ぶと面倒なことになるので固定テキスト（そもそも状態異常にならないはずだし）
+	PRINTFORML %SAVESTR:(ARG:0)%は煙幕を振り払った！
+	CALL MSG_WAIT(1)
+ENDIF
+
+IF DA:(ARG:0):27 && RAND:10 < 3
+	DA:(ARG:0):27 = 0
+	;敵は口上を呼ぶと面倒なことになるので固定テキスト（そもそも状態異常にならないはずだし）
+	PRINTFORML %SAVESTR:(ARG:0)%の周りの砂煙が晴れた！
+	CALL MSG_WAIT(1)
+ENDIF
+
+SIF DA:(ARG:0):53 > 0
+	DA:(ARG:0):53 -= 1
+
+IF DA:(ARG:0):81 > 0
+	DA:(ARG:0):81 = DA:(ARG:0):81 * 9 / 10 - 1
+	SIF DA:(ARG:0):81 < 0
+		DA:(ARG:0):81 = 0
+ENDIF
+

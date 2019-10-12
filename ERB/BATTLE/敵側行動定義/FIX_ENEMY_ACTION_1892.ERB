@@ -1,0 +1,32 @@
+﻿@FIX_ENEMY_ACTION_1892(ENEMY_ID)
+#DIM ENEMY_ID
+
+TFLAG:52 = ENEMY_ID
+TFLAG:54 = DA:ENEMY_ID:51
+;種別　種別(0：味方の攻撃　1：通常　2：衣服　3：性　4：拘束　5：寄生　6：その他)
+TFLAG:55 = 3
+;60気絶キャラへ攻撃可能
+TFLAG:60 = 1
+
+;攻撃２つ
+TFLAG:57 = DA:ENEMY_ID:5
+TFLAG:58 = 80
+;命中率
+TFLAG:61 = 150
+;補助ダメージ２つ
+TFLAG:64 = 0
+TFLAG:65 = 0
+;単体か全体か
+TFLAG:59 = 0
+;絶頂時のダメージ倍率
+TFLAG:90 = 250
+;多段
+TFLAG:91 = 0
+;複合判定（ビット演算　1：A  2：B  4：C  8：V）
+TFLAG:92 = 0
+;属性メイン性属性(0:A　1:B　2:C　3:V)
+TFLAG:63 = 2
+
+CALL ACTION_FILTER(-1, 4, 1892, CALLNAME:(TFLAG:54), SAVESTR:ENEMY_ID, TFLAG:54, TFLAG:63)
+
+

@@ -1,0 +1,264 @@
+﻿@ADD_NPC_ENEMY(ARG:0)
+;ARG:0	敵の番号
+;LOCAL
+;1		NPC化した時のID
+
+;種族の近いキャラを大元にして素質などを加えたり消しているいるだけ
+;種族やイメージには注意しないと娘の種族がおかしくなる
+;ENEMY_19_娘_種族決定.ERB参照
+;名前配置は下で処理
+;CFLAG:701は口上
+
+;大半が淫乱系素質と敏感・貞操無頓着・快感に素直持ちでMPが高い　
+;苗床にされずに頑張っているエリートなので処女多め
+
+;
+LOCAL:1 = CHARANUM
+SELECTCASE ARG:0
+	;サンプル
+	;CASE 敵の番号
+	;	ADDCHARA 元にするキャラ番号
+	;	CFLAG:(LOCAL:1):701 = 使う口上番号（-1ならなし）
+	;これだけでもOK
+
+
+	;アルラウネ 素体が幽香さん
+	;出てくる順番的にお姉さん　調合知識と舌使いをドリアードとともに追加 ドリアードとの差別に尻を弱くする
+	;口敏感とキス魔も両方に
+	CASE 15
+		ADDCHARA 34
+		CFLAG:(LOCAL:1):701 = -1
+		MAXBASE:(LOCAL:1):1 += 2000
+		TALENT:(LOCAL:1):0 = 1
+		TALENT:(LOCAL:1):31 = 1
+		TALENT:(LOCAL:1):36 = 1
+		TALENT:(LOCAL:1):52 = 1
+		TALENT:(LOCAL:1):55 = 1
+		TALENT:(LOCAL:1):56 = 1
+		TALENT:(LOCAL:1):70 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):75 = 1
+		TALENT:(LOCAL:1):79 = 1
+		TALENT:(LOCAL:1):101 = 1
+		TALENT:(LOCAL:1):106 = 1
+		TALENT:(LOCAL:1):115 = 1
+	;ドリアード
+	;妹 アルラウネとの差別化に胸を弱くする 性格がそっち系でムチ使うからなあ……
+	CASE 16
+		ADDCHARA 34
+		CFLAG:(LOCAL:1):701 = -1
+		MAXBASE:(LOCAL:1):1 += 2000
+		TALENT:(LOCAL:1):0 = 1
+		TALENT:(LOCAL:1):31 = 1
+		TALENT:(LOCAL:1):36 = 1
+		TALENT:(LOCAL:1):52 = 1
+		TALENT:(LOCAL:1):55 = 1
+		TALENT:(LOCAL:1):56 = 1
+		TALENT:(LOCAL:1):70 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):76 = 1
+		TALENT:(LOCAL:1):79 = 1
+		TALENT:(LOCAL:1):102 = 1
+		TALENT:(LOCAL:1):106 = 1
+		TALENT:(LOCAL:1):115 = 1
+	;ドッペルゲンガー　素体がルーミア
+	;みかけ名前は宮内部の誰かなのでカオスになる　全部位淫乱とか付加してさらにカオス小柄体型や貧乳は削除　変幻自在持ち
+	CASE 18
+		ADDCHARA 3
+		CFLAG:(LOCAL:1):701 = -1
+		MAXBASE:(LOCAL:1):1 += 2000
+		TALENT:(LOCAL:1):0 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):75 = 1
+		TALENT:(LOCAL:1):76 = 1
+		TALENT:(LOCAL:1):77 = 1
+		TALENT:(LOCAL:1):78 = 1
+		TALENT:(LOCAL:1):79 = 1
+		TALENT:(LOCAL:1):100 = 0
+		TALENT:(LOCAL:1):109 = 0
+		TALENT:(LOCAL:1):132 = 0
+		TALENT:(LOCAL:1):139 = 1
+	;サンドバタフライ　素体リグル
+	;口をひたすら弱くする代わりに哨戒をあげよう
+	CASE 21
+		ADDCHARA 24
+		CFLAG:(LOCAL:1):701 = -1
+		MAXBASE:(LOCAL:1):1 += 500
+		TALENT:(LOCAL:1):36 = 1
+		TALENT:(LOCAL:1):70 = 1
+		TALENT:(LOCAL:1):72 = 1
+		TALENT:(LOCAL:1):75 = 1
+		TALENT:(LOCAL:1):79 = 1
+		TALENT:(LOCAL:1):106 = 2
+		TALENT:(LOCAL:1):154 = 1
+		ABL:(LOCAL:1):98 += 15
+		
+	;エンジェルドーター　素体が天子さん
+	;天使な娘ということでロリさんに　あと大元のキャラが回復系とのことで治療追加
+	CASE 32
+		ADDCHARA 63
+		CFLAG:(LOCAL:1):701 = -1
+		MAXBASE:(LOCAL:1):1 += 2000
+		TALENT:(LOCAL:1):0 = 1
+		TALENT:(LOCAL:1):30 = 0
+		TALENT:(LOCAL:1):31 = 1
+		TALENT:(LOCAL:1):36 = 1
+		TALENT:(LOCAL:1):40 = 1
+		TALENT:(LOCAL:1):60 = 1
+		TALENT:(LOCAL:1):70 = 1
+		TALENT:(LOCAL:1):72 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):75 = 1
+		TALENT:(LOCAL:1):78 = 1
+		TALENT:(LOCAL:1):117 = 1
+		TALENT:(LOCAL:1):150 = 0
+	;スノウガール　素体がレティ
+	;Cだけ敏感他は鈍感なクールビューティー　ただし服がないと恥ずかしがる
+	CASE 38
+		ADDCHARA 12
+		CFLAG:(LOCAL:1):701 = -1
+		MAXBASE:(LOCAL:1):1 += 2000
+		TALENT:(LOCAL:1):0 = 1
+		TALENT:(LOCAL:1):31 = 1
+		TALENT:(LOCAL:1):35 = 1
+		TALENT:(LOCAL:1):60 = 1
+		TALENT:(LOCAL:1):70 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):77 = 1
+		TALENT:(LOCAL:1):101 = -1
+		TALENT:(LOCAL:1):102 = -1
+		TALENT:(LOCAL:1):102 = 2
+		TALENT:(LOCAL:1):104 = -1
+		TALENT:(LOCAL:1):112 = 0
+	;バンシー　大元が阿求
+	;最初から素質がひどいことになっている上自分で自分に魔法の拘束具を使うので役に立たない
+	CASE 40
+		ADDCHARA 48
+		CFLAG:(LOCAL:1):701 = -1
+		CFLAG:(LOCAL:1):504 = 1
+		TALENT:(LOCAL:1):0 = 0
+		TALENT:(LOCAL:1):30 = 0
+		TALENT:(LOCAL:1):31 = 1
+		TALENT:(LOCAL:1):35 = 0
+		TALENT:(LOCAL:1):70 = 1
+		TALENT:(LOCAL:1):72 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):75 = 1
+		TALENT:(LOCAL:1):76 = 1
+		TALENT:(LOCAL:1):77 = 1
+		TALENT:(LOCAL:1):78 = 1
+		TALENT:(LOCAL:1):79 = 1
+		TALENT:(LOCAL:1):101 += 1
+		TALENT:(LOCAL:1):102 += 1
+		TALENT:(LOCAL:1):103 += 1
+		TALENT:(LOCAL:1):104 += 1
+		TALENT:(LOCAL:1):130 = 1
+		TALENT:(LOCAL:1):157 = 1
+		ABL:(LOCAL:1):98 = ABL:(LOCAL:1):98 / 2
+	;サキュバス素体が小悪魔
+	;戦闘素質にマイナス　全部位敏感淫乱という触手勢屈指の苗床候補　おもしろそうなので妖精を付加しておく
+	CASE 41
+		ADDCHARA 7
+		CFLAG:(LOCAL:1):701 = -1
+		BASE:(LOCAL:1):0 -= 1000
+		MAXBASE:(LOCAL:1):0 -= 1000
+		TALENT:(LOCAL:1):0 = 0
+		TALENT:(LOCAL:1):36 = 1
+		TALENT:(LOCAL:1):70 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):75 = 1
+		TALENT:(LOCAL:1):76 = 1
+		TALENT:(LOCAL:1):77 = 1
+		TALENT:(LOCAL:1):78 = 1
+		TALENT:(LOCAL:1):79 = 1
+		TALENT:(LOCAL:1):101 = 1
+		TALENT:(LOCAL:1):102 = 1
+		TALENT:(LOCAL:1):103 = 1
+		TALENT:(LOCAL:1):104 = 1
+		TALENT:(LOCAL:1):105 = 1
+		;エロの妖精というかやられてもいつもの事的な何か
+		TALENT:(LOCAL:1):150 = 1
+	;クリスタルエレメント　素体はカナ（！？）
+	;中をひたすら弱くしたかわりに素質がやたら豪華
+	CASE 86
+		ADDCHARA 68
+		CFLAG:(LOCAL:1):701 = -1
+		CFLAG:(LOCAL:1):12 = 10
+		CFLAG:(LOCAL:1):100 = 5
+		BASE:(LOCAL:1):0 -= 900
+		MAXBASE:(LOCAL:1):0 -= 900
+		MAXBASE:(LOCAL:1):1 += 1400
+		TALENT:(LOCAL:1):0 = 1
+		TALENT:(LOCAL:1):11 = 0
+		TALENT:(LOCAL:1):16 = 0
+		TALENT:(LOCAL:1):23 = 0
+		TALENT:(LOCAL:1):28 = 0
+		TALENT:(LOCAL:1):41 = 1
+		TALENT:(LOCAL:1):42 = 0
+		TALENT:(LOCAL:1):43 = 1
+		TALENT:(LOCAL:1):56 = 1
+		TALENT:(LOCAL:1):74 = 1
+		TALENT:(LOCAL:1):81 = 1
+		TALENT:(LOCAL:1):101 = 2
+		TALENT:(LOCAL:1):102 = 0
+		TALENT:(LOCAL:1):103 = 0
+		TALENT:(LOCAL:1):104 = 2
+		TALENT:(LOCAL:1):105 = 1
+		TALENT:(LOCAL:1):106 = 0
+		TALENT:(LOCAL:1):112 = 1
+		TALENT:(LOCAL:1):117 = 1
+		TALENT:(LOCAL:1):118 = 1
+		TALENT:(LOCAL:1):152 = 1
+		TALENT:(LOCAL:1):154 = 1
+		TALENT:(LOCAL:1):160 = 1
+		;体は飾りらしいです
+		TALENT:(LOCAL:1):139 = 1
+		TALENT:(LOCAL:1):150 = 1
+	;セイレーン　素体ミスティア
+	;キス魔とか自慰しやすいとか追加
+	CASE 93
+		ADDCHARA 25
+		CFLAG:(LOCAL:1):701 = -1
+		MAXBASE:(LOCAL:1):0 += 1000
+		TALENT:(LOCAL:1):0 = 1
+		TALENT:(LOCAL:1):14 = 1
+		TALENT:(LOCAL:1):23 = 1
+		TALENT:(LOCAL:1):60 = 1
+		TALENT:(LOCAL:1):79 = 1
+		TALENT:(LOCAL:1):105 = 1
+	
+	CASEELSE
+		RETURN
+	
+ENDSELECT	
+
+CALLNAME:(LOCAL:1) = %ENEMY_NAME(ARG:0)%
+;位置情報
+CFLAG:(LOCAL:1):4 = FLAG:5
+CFLAG:(LOCAL:1):11 = 2
+CFLAG:(LOCAL:1):13 = FLAG:5
+CFLAG:(LOCAL:1):14 = FLAG:5
+;好感度
+CFLAG:(LOCAL:1):5 += 300
+;共通素質 経験
+IF FLAG:520 == 1 || FLAG:520 == 3
+	TALENT:(LOCAL:1):120 = 1
+	TALENT:(LOCAL:1):121 = 1
+ENDIF
+IF FLAG:531 == 1 || (FLAG:531 == 2 && RAND:2 == 0)
+	TALENT:(LOCAL:1):159 = 1
+ENDIF
+CFLAG:(LOCAL:1):150 = RAND:30
+TALENT:(LOCAL:1):157 = 1
+ABL:(LOCAL:1):13 = 1
+
+;●入れ替わりパッチ追加START
+NAME:(LOCAL:1) = %CALLNAME:(LOCAL:1)%
+CSTR:(LOCAL:1):1 = %NAME:(LOCAL:1)%
+CSTR:(LOCAL:1):2 = %CALLNAME:(LOCAL:1)%
+;●END
+
+;レベルと経験が見合っていない部分を補正
+CALL CHARA_EXP_INIT_SINGLE(LOCAL:1)
+
+

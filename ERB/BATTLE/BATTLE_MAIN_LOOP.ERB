@@ -1,0 +1,210 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;実行動処理（ループ処理）
+;RETURN　0:味方の勝利　1:全滅　2:逃走　3:戦闘継続
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@BATTLE_MAIN_LOOP
+#DIM LCOUNT, 2
+#DIM CHARA_DATA, 14, 3  ;キャラID, キャラタイプ(0:PTメンバー 1:ペット 2:エネミー), 行動速度
+#DIM CHARA_COUNT        ;敵味方の総数
+#DIM TEMP
+
+	VARSET CHARA_DATA
+	VARSET CHARA_COUNT
+	
+	;PTメンバーデータの設定
+	CALL GET_CHARA_BATTLE_SPEED(1)
+	CHARA_DATA:(CHARA_COUNT++):0 = 1, 0, RESULT
+	IF FLAG:10
+		CALL GET_CHARA_BATTLE_SPEED(FLAG:10)
+		CHARA_DATA:(CHARA_COUNT++):0 = FLAG:10, 0, RESULT
+	ENDIF
+	IF FLAG:11
+		CALL GET_CHARA_BATTLE_SPEED(FLAG:11)
+		CHARA_DATA:(CHARA_COUNT++):0 = FLAG:11, 0, RESULT
+	ENDIF
+	
+	;ペットデータの設定
+	IF PET:0
+		CHARA_DATA:(CHARA_COUNT++):0 = PET:0, 1, PET:11
+	ENDIF
+	
+	;敵データの設定
+	FOR LCOUNT:0, 1, TFLAG:15 + 1
+		IF TFLAG:(LCOUNT:0) && DA:(TFLAG:(LCOUNT:0)):1 > 0
+			CHARA_DATA:CHARA_COUNT:0 = TFLAG:(LCOUNT:0), 2, DA:(TFLAG:(LCOUNT:0)):9
+			CHARA_DATA:CHARA_COUNT:2 += RAND:16 - RAND:16
+			SIF DA:(TFLAG:(LCOUNT:0)):20
+				CHARA_DATA:CHARA_COUNT:2 += 50
+			CHARA_DATA:CHARA_COUNT:2 -= DA:(TFLAG:(LCOUNT:0)):80
+			;汚染度補正
+			SELECTCASE BATTLE_POLUTION()
+			CASE 0
+				TIMES CHARA_DATA:CHARA_COUNT:2, 0.7
+			CASE 1
+				TIMES CHARA_DATA:CHARA_COUNT:2, 0.8
+			CASE 3
+				TIMES CHARA_DATA:CHARA_COUNT:2, 1.2
+			CASE 4
+				TIMES CHARA_DATA:CHARA_COUNT:2, 1.3
+			CASE 5
+				TIMES CHARA_DATA:CHARA_COUNT:2, 1.5
+			ENDSELECT
+			;PTメンバーの最優先行動を妨害しないよう、敵の最高速は少しだけ遅くする
+			CHARA_DATA:CHARA_COUNT:2 = LIMIT(CHARA_DATA:CHARA_COUNT:2, BATTLE_SPEED_MIN, BATTLE_SPEED_MAX - 1)
+			CHARA_COUNT++
+		ENDIF
+	NEXT
+
+	;行動順ソート
+	;同速度だった場合はエネミー優先
+	FOR LCOUNT:0, 0, CHARA_COUNT - 1
+		FOR LCOUNT:1, 0, CHARA_COUNT - LCOUNT:0 - 1
+			{
+			IF (CHARA_DATA:(LCOUNT:1):2 < CHARA_DATA:(LCOUNT:1 + 1):2) ||
+			   (CHARA_DATA:(LCOUNT:1):2 == CHARA_DATA:(LCOUNT:1 + 1):2 && CHARA_DATA:(LCOUNT:1):1 != 2 && CHARA_DATA:(LCOUNT:1 + 1):2 == 2)
+			}
+				SWAP CHARA_DATA:(LCOUNT:1):0, CHARA_DATA:(LCOUNT:1 + 1):0
+				SWAP CHARA_DATA:(LCOUNT:1):1, CHARA_DATA:(LCOUNT:1 + 1):1
+				SWAP CHARA_DATA:(LCOUNT:1):2, CHARA_DATA:(LCOUNT:1 + 1):2
+			ENDIF
+		NEXT
+	NEXT
+
+	;速度順に行動開始
+	FOR LCOUNT:0, 0, CHARA_COUNT
+	
+		;TFLAG:50～99は行動ごとにリセット
+		VARSET TFLAG, 0, 50, 100
+		
+		;キャラタイプによって分岐
+		SELECTCASE CHARA_DATA:(LCOUNT:0):1
+		;PTメンバー
+		CASE 0
+			CALL DO_BATTLE_ACTION(CHARA_DATA:(LCOUNT:0):0)
+		;ペット
+		CASE 1
+			CALL PET_DO_BATTLE_ACTION
+		;エネミー
+		CASE 2
+			;指定された回数だけ攻撃
+			FOR LCOUNT:1, 0, LIMIT(DA:(CHARA_DATA:(LCOUNT:0):0):8, 1, 9)
+				CALL DO_BATTLE_ACTION_ENEMY(CHARA_DATA:(LCOUNT:0):0)
+				CALL SELECT_ENEMY_ACTION(CHARA_DATA:(LCOUNT:0):0)
+				VARSET TFLAG, 0, 50, 100
+			NEXT
+		ENDSELECT
+		
+		;戦闘終了チェック 敵が全滅していれば勝利
+		;相打ちは一応勝利扱い。後で他の敵に捕まるだろうけど
+		VARSET TEMP
+		FOR LCOUNT:1, 1, TFLAG:15 + 1
+			SIF DA:(TFLAG:(LCOUNT:1)):1 > 0
+				TEMP = 1
+		NEXT
+		SIF TEMP == 0
+			RETURN 0
+		
+		;戦闘ターンがかかりすぎた場合無限ループ対策に全滅させる
+		IF TFLAG:11 >= 300
+			CFLAG:1:29 = 1
+			IF FLAG:10
+				CFLAG:(FLAG:10):29 = 1
+			ENDIF
+			IF FLAG:11
+				CFLAG:(FLAG:11):29 = 1
+			ENDIF
+		ENDIF
+		
+		;戦闘終了チェック 味方が全滅していれば敗北
+		SIF CFLAG:1:29 && (!FLAG:10 || (FLAG:10 && CFLAG:(FLAG:10):29)) && (!FLAG:11 || (FLAG:11 && CFLAG:(FLAG:11):29))
+			RETURN 1
+		
+
+		;戦闘終了チェック 逃走に成功した
+		SIF TFLAG:12
+			RETURN 2
+	NEXT
+
+	;戦闘継続の場合、抜ける前に念のため掃除しておく
+	VARSET TFLAG, 0, 50, 100
+	VARSET PET, 0, 50, 100
+	
+;最後まで普通に来た場合、戦闘継続
+RETURN 3
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;各種補正値を含めたキャラの戦闘速度を取得する
+@GET_CHARA_BATTLE_SPEED(CHARA_ID)
+#DIM CHARA_ID
+#DIM SPEED
+	
+	SIF !CHARA_ID
+		RETURN 0
+		
+	SPEED = ABL:CHARA_ID:97
+	
+	;■装備品や服装、パラメータ、選択コマンドによる速度補正
+	CALL GET_EQUIP_BONUS(CHARA_ID, 1)
+	SPEED += RESULT
+	CALL CLOTH_TYPE_EFFECT_速度補正(CHARA_ID)
+	SIF RESULT > 0
+		SPEED = SPEED * (100 + RESULT:1) / 100
+	CALL GET_SPEED_BONUS(CHARA_ID)
+	SPEED += RESULT
+	SPEED += CFLAG:CHARA_ID:55
+		
+	;■バッドステータスによる速度補正
+	;戦闘中速度低下フラグON
+	SIF CFLAG:CHARA_ID:300 > 0
+		SPEED /= 2
+		
+	;骨折
+	IF CFLAG:1:201 > 1
+		;アリスの人形と霊夢様は80％(娘は面倒なので対象外)
+		IF NO:1 == 88 || NO:1 == 89 || NO:1 == 299
+			TIMES SPEED, 0.8
+		;種族的に身体が頑丈と思われるキャラは75％(淫ピ仙人は鬼として扱う、娘は面倒なので対象外)
+		ELSEIF NO:1 == 10 || NO:1 == 11 || NO:1 == 23 || NO:1 == 36 || NO:1 == 43 || NO:1 == 44 || NO:1 == 52 || NO:1 == 62 || NO:1 == 63 || NO:1 == 73 || NO:1 == 80 || NO:1 == 85 || NO:1 == 96 || NO:1 == 101
+			TIMES SPEED, 0.75
+		;それ以外でも【痛みに強い】または【気丈】だと70％
+		ELSEIF TALENT:1:12 || TALENT:1:41
+			TIMES SPEED, 0.7
+		;それ以外は65％
+		ELSE
+			TIMES SPEED, 0.65
+		ENDIF
+	ENDIF
+	
+	;■その他速度補正
+	;乱数によるブレ
+	SPEED += (RAND:16 - RAND:16)
+	
+	;汚染度補正
+	SELECTCASE BATTLE_POLUTION()
+	CASE 0
+		TIMES SPEED, 1.5
+	CASE 1
+		TIMES SPEED, 1.2
+	CASE 2
+		;普通なので何もなし
+	CASE 3
+		TIMES SPEED, 0.8
+	CASE 4
+		TIMES SPEED, 0.7
+	CASE 5
+		TIMES SPEED, 0.5
+	ENDSELECT
+	
+	;■例外処理
+	;速度補正値に最大値か最小値が設定されていた場合、優先扱いで補正計算を無効化する
+	SIF CFLAG:CHARA_ID:55 == BATTLE_SPEED_MAX
+		SPEED = BATTLE_SPEED_MAX
+	SIF CFLAG:CHARA_ID:55 == BATTLE_SPEED_MIN
+		SPEED = BATTLE_SPEED_MIN
+		
+	;発情した味方に抱きつかれた場合、確実に抱きつく側よりも速度を遅くする
+	SIF CFLAG:CHARA_ID:50 == 95
+		SPEED = LIMIT(SPEED, BATTLE_SPEED_MIN, BATTLE_SPEED_MAX - 1)
+		
+RETURN LIMIT(SPEED, BATTLE_SPEED_MIN, BATTLE_SPEED_MAX)

@@ -1,0 +1,1591 @@
+﻿;眠気、汚染度、状態異常等の表示
+;デバッグモードでの淫乱系素質や感度の表示
+
+;各種数値を文字列として表示
+
+;=================================================
+;現在の眠気状態表示
+;=================================================
+@PRINT_SLEEPINESS
+
+LOCAL:1 = FLAG:7
+
+IF LOCAL:1 < 3
+	SETCOLOR 0x60EEEE
+	PRINTFORM [元気]
+ELSEIF LOCAL:1 < 7
+	SETCOLOR 0x80FF20
+	PRINTFORM [睡眠可]
+ELSEIF LOCAL:1 < 11
+	SETCOLOR 0xEEEE10
+	PRINTFORM [要睡眠]
+ELSEIF LOCAL:1 < 15
+	SETCOLOR 0xEE1010
+	PRINTFORM [朦朧]
+ELSE
+	SETCOLOR 0xEE1010
+	PRINTFORM [気絶]
+ENDIF
+RESETCOLOR
+
+
+;=================================================
+;現在の汚染度表示
+;=================================================
+@PRINT_POLLUTION
+;バグ対策
+SIF FLAG:(50 + FLAG:5) > 100
+	FLAG:(50 + FLAG:5) = 100
+
+IF FLAG:(50 + FLAG:5) < 10
+	SETCOLOR 0x1060EE
+	PRINTFORM [清浄]
+ELSEIF FLAG:(50 + FLAG:5) < 40
+	RESETCOLOR
+	PRINTFORM [通常]
+ELSEIF FLAG:(50 + FLAG:5) < 70
+	SETCOLOR 0xEEEE10
+	PRINTFORM [軽度汚染]
+ELSEIF FLAG:(50 + FLAG:5) < 100
+	SETCOLOR 0xEE10EE
+	PRINTFORM [中度汚染]
+ELSE
+	SETCOLOR 0xEE1010
+	PRINTFORM [重度汚染]
+ENDIF
+RESETCOLOR
+
+;=================================================
+;CPレベルを表示
+;ARG:0	対象キャラ
+;=================================================
+@PRINT_CLOTH_LEVEL(ARG:0)
+#DIM PERCENT	;値率
+
+	PERCENT = BASE:(ARG:0):CP * 100 / MAXBASE:(ARG:0):CP
+	IF BASE:(ARG:0):CP <= 0
+		SETCOLOR 0xEE1010
+		PRINTFORM [大破]
+	ELSEIF BASE:(ARG:0):CP - (BASE:(ARG:0):5 * 4) <= 0
+		SETCOLOR 0xEE1010
+		PRINTFORM [濡透]
+	ELSE
+		IF PERCENT >= 100
+			SETCOLOR 0x10EEEE
+			PRINTFORM [新品]
+		ELSEIF PERCENT > 66
+			RESETCOLOR
+			PRINTFORM [通常]
+		ELSEIF PERCENT > 33
+			SETCOLOR 0xEEEE10
+			PRINTFORM [損傷]
+		ELSE
+			SETCOLOR 0xEE10EE
+			PRINTFORM [中破]
+		ENDIF
+	ENDIF
+	RESETCOLOR
+
+;=================================================
+;現在の状態異常を表示
+;ARG:0	対象キャラ
+;RESULT:0 使用文字数（全角は一文字2）
+;=================================================
+@PRINT_CONDITION(ARG:0)
+#DIM LCOUNT,3  ;ループ用
+
+;LOCAL:0 使用文字数カウント用
+LOCAL = 0
+FOR LCOUNT,0, 50
+	RESULTS = %""%
+	TRYCALLFORM PRINT_CONDITION_{LCOUNT}(ARG)
+	IF RESULTS != ""
+		IF RESULT > 0
+			SETCOLOR RESULT
+			PRINTFORM %RESULTS% 
+		ELSE
+			PRINTFORMD %RESULTS% 
+		ENDIF
+		STRLENS (RESULTS)
+		LOCAL += RESULT+1
+	ENDIF
+NEXT
+
+RESETCOLOR
+RETURN LOCAL
+;=================================================
+;現在の状態異常を表示(1文字)
+;ARG:0	対象キャラ
+;RESULT:0 使用文字数（全角は一文字2）
+;=================================================
+@PRINT_CONDITION_S(ARG:0)
+#DIM LCOUNT,3  ;ループ用
+
+;LOCAL:0 使用文字数カウント用
+LOCAL = 0
+FOR LCOUNT,0, 50
+	RESULTS = %""%
+	TRYCALLFORM PRINT_CONDITION_{LCOUNT}S(ARG)
+	IF RESULTS != ""
+		IF RESULT > 0
+			SETCOLOR RESULT
+			PRINTFORM %RESULTS%
+		ELSE
+			PRINTFORMD %RESULTS%
+		ENDIF
+		STRLENS (RESULTS)
+		LOCAL += RESULT
+	ENDIF
+NEXT
+
+RESETCOLOR
+RETURN LOCAL
+;=================================================
+;状態異常表示
+;ARG:0	対象キャラ
+;RESULT:0 文字色（0以下:デフォルトカラー　以外:RGB値(0xFFFFFF)）
+;RESULTS:0 表示文字列
+;=======================
+;処女
+;=======================
+@PRINT_CONDITION_0(ARG:0)
+
+IF TALENT:(ARG:0):0 == 1
+	RESULTS = 処女
+	RETURN 0xaae7ff
+ELSEIF TALENT:(ARG:0):0 == 2
+	RESULTS = 処女
+	RETURN 0x00FF00
+ENDIF
+;=======================
+;処女(一文字)
+;=======================
+@PRINT_CONDITION_0S(ARG:0)
+
+IF TALENT:(ARG:0):0 == 1
+	RESULTS = 処
+	RETURN 0xaae7ff
+ELSEIF TALENT:(ARG:0):0 == 2
+	RESULTS = 処
+	RETURN 0x00FF00
+ENDIF
+;=======================
+;捕食
+;=======================
+@PRINT_CONDITION_1(ARG:0)
+
+IF CFLAG:(ARG:0):10
+	RESULTS = 捕食
+	RETURN 0xEE1010
+ENDIF
+	
+;=======================
+;捕食(一文字)
+;=======================
+@PRINT_CONDITION_1S(ARG:0)
+
+IF CFLAG:(ARG:0):10
+	RESULTS = 捕
+	RETURN 0xEE1010
+ENDIF
+	
+;=======================
+;拘束
+;=======================
+@PRINT_CONDITION_2(ARG:0)
+
+;◆抱き着きによる拘束
+IF CFLAG:(ARG:0):50 == 95
+	RESULTS = 拘束
+	RETURN 0xEE1010
+;◆
+ELSEIF CFLAG:(ARG:0):38 == 5
+	RESULTS = 拘束
+	RETURN 0xEE1010
+ELSEIF CFLAG:(ARG:0):38 > 4
+	RESULTS = 拘束
+	RETURN 0xEE10EE
+ELSEIF CFLAG:(ARG:0):38 > 2
+	RESULTS = 拘束
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):20
+	RESULTS = 拘束
+ENDIF
+	
+;=======================
+;拘束(1文字)
+;=======================
+@PRINT_CONDITION_2S(ARG:0)
+
+;◆抱き着きによる拘束
+IF CFLAG:(ARG:0):50 == 95
+	RESULTS = 拘
+	RETURN 0xEE1010
+;◆
+ELSEIF CFLAG:(ARG:0):38 == 5
+	RESULTS = 拘
+	RETURN 0xEE1010
+ELSEIF CFLAG:(ARG:0):38 > 4
+	RESULTS = 拘
+	RETURN 0xEE10EE
+ELSEIF CFLAG:(ARG:0):38 > 2
+	RESULTS = 拘
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):20
+	RESULTS = 拘
+ENDIF
+	
+;=======================
+;丸呑
+;=======================
+@PRINT_CONDITION_3(ARG:0)
+
+IF CFLAG:(ARG:0):21
+	RESULTS = 丸呑
+ENDIF
+;=======================
+;丸呑(1文字)
+;=======================
+@PRINT_CONDITION_3S(ARG:0)
+
+IF CFLAG:(ARG:0):21
+	RESULTS = 呑
+ENDIF
+
+;=======================
+;寄生・妊娠・排卵・抱卵・乳卵
+;2014/09/08　排卵日や危険日を口上側で判別しやすいようにCFLAG:159に記憶　排卵日=1　危険日=2　その他=0
+;=======================
+@PRINT_CONDITION_4(ARG:0)
+;LOCAL:1	月経周期何日目か
+LOCAL:1 = (DAY % 30) - CFLAG:(ARG:0):150
+SIF LOCAL:1 < 0
+	LOCAL:1 += 30
+
+IF CFLAG:(ARG:0):22 && CFLAG:(ARG:0):36 == 0
+	IF CFLAG:(ARG:0):23  >= 8
+		RESULTS = 寄生
+	ELSEIF CFLAG:(ARG:0):23 >= 4
+		RESULTS = 寄生
+		RETURN 0xEEEE10
+	ELSEIF CFLAG:(ARG:0):23 >= 1
+		RESULTS = 寄生
+		RETURN 0xEE1010
+	ENDIF
+	;お腹に寄生体いる時はCFLAG:(ARG:0):159を念のためリセット
+	CFLAG:(ARG:0):159 = 0
+ELSEIF CFLAG:(ARG:0):36 >= 3
+	IF CFLAG:(ARG:0):23 >= 5
+		RESULTS = 妊娠
+	ELSEIF CFLAG:(ARG:0):23 >= 3
+		RESULTS = 妊娠
+		RETURN 0xEEEE10
+	ELSEIF CFLAG:(ARG:0):23 >= 1
+		RESULTS = 妊娠
+		RETURN 0xEE1010
+	ENDIF
+	;お腹に赤ちゃんいる時はCFLAG:(ARG:0):159を念のためリセット
+	CFLAG:(ARG:0):159 = 0
+ELSEIF LOCAL:1 >= 0
+	IF FLAG:535 == 1 && TALENT:(ARG:0):137 == 1 && TALENT:(ARG:0):122 == 0
+		IF LOCAL:1 >= 11 && LOCAL:1 <= 14
+			RESULTS = 危険日
+			RETURN 0xEE0066
+			CFLAG:(ARG:0):159 = 2
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 17
+			RESULTS = 排卵
+			RETURN 0xEE60EE
+			CFLAG:(ARG:0):159 = 1
+		ELSEIF LOCAL:1 == 0
+			RESULTS = 月経
+			CFLAG:(ARG:0):159 = 3
+		;「中に誰もいませんよ」で危険日でも排卵日でもないので安全日として記憶
+		ELSE
+			CFLAG:(ARG:0):159 = 0
+		ENDIF
+	ELSEIF FLAG:535 == 1 && TALENT:(ARG:0):137 == 2 && TALENT:(ARG:0):122 == 0
+		IF LOCAL:1 >= 10 && LOCAL:1 <= 14
+			RESULTS = 危険日
+			RETURN 0xEE0066
+			CFLAG:(ARG:0):159 = 2
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 18
+			RESULTS = 排卵
+			RETURN 0xEE60EE
+			CFLAG:(ARG:0):159 = 1
+		ELSEIF LOCAL:1 == 0
+			RESULTS = 月経
+			CFLAG:(ARG:0):159 = 3
+		;「中に誰もいませんよ」で危険日でも排卵日でもないので安全日として記憶
+		ELSE
+			CFLAG:(ARG:0):159 = 0
+		ENDIF
+	ELSEIF FLAG:535 == 1 && TALENT:(ARG:0):137 == 3 && TALENT:(ARG:0):122 == 0
+		RESULTS = 排卵
+		RETURN 0xEE0066
+		CFLAG:(ARG:0):159 = 1
+	ELSEIF ((FLAG:535 == 1 && TALENT:(ARG:0):137 == 0) || FLAG:535 == 0) && TALENT:(ARG:0):122 == 0
+		IF LOCAL:1 >= 12 && LOCAL:1 <= 14
+			RESULTS = 危険日
+			RETURN 0xEE0066
+			CFLAG:(ARG:0):159 = 2
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 17
+			RESULTS = 排卵
+			RETURN 0xEE60EE
+			CFLAG:(ARG:0):159 = 1
+		ELSEIF LOCAL:1 == 0
+			RESULTS = 月経
+			CFLAG:(ARG:0):159 = 3
+		;「中に誰もいませんよ」で危険日でも排卵日でもないので安全日として記憶
+		ELSE
+			CFLAG:(ARG:0):159 = 0
+		ENDIF
+	ENDIF
+ENDIF
+@PRINT_CONDITION_5(ARG:0)
+IF CFLAG:(ARG:0):152 >= 8
+	RESULTS = 抱卵
+ELSEIF CFLAG:(ARG:0):152 >= 4
+	RESULTS = 抱卵
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):152 >= 1
+	RESULTS = 抱卵
+	RETURN 0xEE1010
+ENDIF
+
+
+@PRINT_CONDITION_6(ARG:0)
+IF CFLAG:(ARG:0):162 >= 8
+	RESULTS = 乳卵
+ELSEIF CFLAG:(ARG:0):162 >= 4
+	RESULTS = 乳卵
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):162 >= 1
+	RESULTS = 乳卵
+	RETURN 0xEE1010
+ENDIF
+
+
+@PRINT_CONDITION_7(ARG:0)
+IF CFLAG:(ARG:0):172 >= 8
+	RESULTS = 睾卵
+ELSEIF CFLAG:(ARG:0):172 >= 4
+	RESULTS = 睾卵
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):172 >= 1
+	RESULTS = 睾卵
+	RETURN 0xEE1010
+ENDIF
+
+@PRINT_CONDITION_8(ARG:0)
+IF CFLAG:(ARG:0):174 >= 8
+	RESULTS = 睾妊
+ELSEIF CFLAG:(ARG:0):174 >= 4
+	RESULTS = 睾妊
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):174 >= 1
+	RESULTS = 睾妊
+	RETURN 0xEE1010
+ENDIF
+
+
+;=======================
+;寄生・妊娠・排卵・抱卵・乳卵(1文字)
+;=======================
+@PRINT_CONDITION_4S(ARG:0)
+;LOCAL:1	月経周期何日目か
+LOCAL:1 = (DAY % 30) - CFLAG:(ARG:0):150
+SIF LOCAL:1 < 0
+	LOCAL:1 += 30
+
+IF CFLAG:(ARG:0):22 && CFLAG:(ARG:0):36 == 0
+	IF CFLAG:(ARG:0):23  >= 8
+		RESULTS = 寄
+	ELSEIF CFLAG:(ARG:0):23 >= 4
+		RESULTS = 寄
+		RETURN 0xEEEE10
+	ELSEIF CFLAG:(ARG:0):23 >= 1
+		RESULTS = 寄
+		RETURN 0xEE1010
+	ENDIF
+ELSEIF CFLAG:(ARG:0):36 >= 3
+	IF CFLAG:(ARG:0):23 >= 5
+		RESULTS = 妊
+	ELSEIF CFLAG:(ARG:0):23 >= 3
+		RESULTS = 妊
+		RETURN 0xEEEE10
+	ELSEIF CFLAG:(ARG:0):23 >= 1
+		RESULTS = 妊
+		RETURN 0xEE1010
+	ENDIF
+ELSEIF LOCAL:1 >= 0
+	IF FLAG:535 == 1 && TALENT:(ARG:0):137 == 1
+		IF LOCAL:1 >= 11 && LOCAL:1 <= 14
+			RESULTS = 危
+			RETURN 0xEE0066
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 17
+			RESULTS = 排
+			RETURN 0xEE60EE
+		ELSEIF LOCAL:1 == 0
+			RESULTS = 月
+		ENDIF
+	ELSEIF FLAG:535 == 1 && TALENT:(ARG:0):137 == 2
+		IF LOCAL:1 >= 10 && LOCAL:1 <= 14
+			RESULTS = 危
+			RETURN 0xEE0066
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 18
+			RESULTS = 排
+			RETURN 0xEE60EE
+		ELSEIF LOCAL:1 == 0
+			RESULTS = 月
+		ENDIF
+	ELSEIF FLAG:535 == 1 && TALENT:(ARG:0):137 == 3
+		RESULTS = 排
+		RETURN 0xEE0066
+	ELSEIF (FLAG:535 == 1 && TALENT:(ARG:0):137 == 0) || FLAG:535 == 0
+		IF LOCAL:1 >= 12 && LOCAL:1 <= 14
+			RESULTS = 危
+			RETURN 0xEE0066
+		ELSEIF LOCAL:1 >= 15 && LOCAL:1 <= 17
+			RESULTS = 排
+			RETURN 0xEE60EE
+		ELSEIF LOCAL:1 == 0
+			RESULTS = 月
+		ENDIF
+	ENDIF
+ENDIF
+
+@PRINT_CONDITION_5S(ARG:0)
+IF CFLAG:(ARG:0):152 >= 8
+	RESULTS = 卵
+ELSEIF CFLAG:(ARG:0):152 >= 4
+	RESULTS = 卵
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):152 >= 1
+	RESULTS = 卵
+	RETURN 0xEE1010
+ENDIF
+
+@PRINT_CONDITION_6S(ARG:0)
+IF CFLAG:(ARG:0):162 >= 8
+	RESULTS = 孚
+ELSEIF CFLAG:(ARG:0):162 >= 4
+	RESULTS = 孚
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):162 >= 1
+	RESULTS = 孚
+	RETURN 0xEE1010
+ENDIF
+
+
+@PRINT_CONDITION_7S(ARG:0)
+IF CFLAG:(ARG:0):172 >= 8
+	RESULTS = 睾
+ELSEIF CFLAG:(ARG:0):172 >= 4
+	RESULTS = 睾
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):172 >= 1
+	RESULTS = 睾
+	RETURN 0xEE1010
+ENDIF
+
+@PRINT_CONDITION_8S(ARG:0)
+IF CFLAG:(ARG:0):174 >= 8
+	RESULTS = 玉
+ELSEIF CFLAG:(ARG:0):174 >= 4
+	RESULTS = 玉
+	RETURN 0xEEEE10
+ELSEIF CFLAG:(ARG:0):174 >= 1
+	RESULTS = 玉
+	RETURN 0xEE1010
+ENDIF
+
+;=======================
+;怯み
+;=======================
+@PRINT_CONDITION_9(ARG:0)
+
+IF CFLAG:(ARG:0):24
+	RESULTS = 怯み
+ENDIF
+
+;=======================
+;怯み(1文字)
+;=======================
+@PRINT_CONDITION_9S(ARG:0)
+
+IF CFLAG:(ARG:0):24
+	RESULTS = 怯
+ENDIF
+
+;=======================
+;睡眠
+;=======================
+@PRINT_CONDITION_10(ARG:0)
+
+IF CFLAG:(ARG:0):25 >= 2
+	RESULTS = 昏睡
+ELSEIF CFLAG:(ARG:0):25 >= 1
+	RESULTS = 睡眠
+ENDIF
+
+;=======================
+;睡眠(1文字)
+;=======================
+@PRINT_CONDITION_10S(ARG:0)
+
+IF CFLAG:(ARG:0):25 >= 2
+	RESULTS = 昏
+ELSEIF CFLAG:(ARG:0):25 >= 1
+	RESULTS = 眠
+ENDIF
+
+;=======================
+;煙幕
+;=======================
+@PRINT_CONDITION_11(ARG:0)
+
+IF CFLAG:(ARG:0):26
+	RESULTS = 煙幕
+ENDIF
+
+;=======================
+;煙幕1文字 
+;=======================
+@PRINT_CONDITION_11S(ARG:0)
+
+IF CFLAG:(ARG:0):26
+	RESULTS = 煙
+ENDIF
+
+;=======================
+;砂煙
+;=======================
+@PRINT_CONDITION_12(ARG:0)
+
+IF CFLAG:(ARG:0):27
+	RESULTS = 砂煙
+ENDIF
+
+;=======================
+;砂煙(1文字)
+;=======================
+@PRINT_CONDITION_12S(ARG:0)
+
+IF CFLAG:(ARG:0):27
+	RESULTS = 砂
+ENDIF
+
+;=======================
+;発情
+;=======================
+@PRINT_CONDITION_13(ARG:0)
+
+;◆発情レベルによって色を変える
+IF CFLAG:(ARG:0):28 < 0
+	RESULTS = 発情
+	RETURN 0x606060
+ELSEIF CFLAG:(ARG:0):28 == 1
+	RESULTS = 発情
+ELSEIF CFLAG:(ARG:0):28 == 2
+	RESULTS = 発情
+	RETURN 0xF07090
+ELSEIF CFLAG:(ARG:0):28 == 3
+	RESULTS = 発情
+	RETURN 0xE02020
+ELSEIF CFLAG:(ARG:0):28 == 4
+	RESULTS = 発情
+	RETURN 0xFF70FF
+ELSEIF CFLAG:(ARG:0):28 >= 5
+	RESULTS = 発情
+	RETURN 0x2070FF
+ENDIF
+
+;=======================
+;発情(1文字)
+;=======================
+@PRINT_CONDITION_13S(ARG:0)
+
+;◆発情レベルによって色を変える
+IF CFLAG:(ARG:0):28 < 0
+	RESULTS = Ｈ
+	RETURN 0x606060
+ELSEIF CFLAG:(ARG:0):28 == 1
+	RESULTS = Ｈ
+ELSEIF CFLAG:(ARG:0):28 == 2
+	RESULTS = Ｈ
+	RETURN 0xF07090
+ELSEIF CFLAG:(ARG:0):28 == 3
+	RESULTS = Ｈ
+	RETURN 0xE02020
+ELSEIF CFLAG:(ARG:0):28 == 4
+	RESULTS = Ｈ
+	RETURN 0xFF70FF
+ELSEIF CFLAG:(ARG:0):28 >= 5
+	RESULTS = Ｈ
+	RETURN 0x2070FF
+ENDIF
+
+;=======================
+;喪失
+;=======================
+@PRINT_CONDITION_14(ARG:0)
+
+IF CFLAG:(ARG:0):29
+	RESULTS = 喪失
+ENDIF
+
+;=======================
+;喪失（1文字）
+;=======================
+@PRINT_CONDITION_14S(ARG:0)
+
+IF CFLAG:(ARG:0):29
+	RESULTS = 喪
+ENDIF
+
+;=======================
+;防御
+;=======================
+@PRINT_CONDITION_15(ARG:0)
+
+IF CFLAG:(ARG:0):30
+	RESULTS = 防御
+ENDIF
+
+;=======================
+;防御（1文字）
+;=======================
+@PRINT_CONDITION_15S(ARG:0)
+
+IF CFLAG:(ARG:0):30
+	RESULTS = 防
+ENDIF
+
+;=======================
+;溜め 
+;=======================
+@PRINT_CONDITION_16(ARG:0)
+
+IF CFLAG:(ARG:0):31
+	RESULTS = 溜め
+ENDIF
+
+;=======================
+;溜め （1文字）
+;=======================
+@PRINT_CONDITION_16S(ARG:0)
+
+IF CFLAG:(ARG:0):31
+	RESULTS = 溜
+ENDIF
+
+;=======================
+;集中
+;=======================
+@PRINT_CONDITION_17(ARG:0)
+
+IF CFLAG:(ARG:0):32
+	RESULTS = 集中
+ENDIF
+
+;=======================
+;集中(1文字)
+;=======================
+@PRINT_CONDITION_17S(ARG:0)
+
+IF CFLAG:(ARG:0):32
+	RESULTS = 集
+ENDIF
+
+;=======================
+;反撃
+;=======================
+@PRINT_CONDITION_18(ARG:0)
+
+IF CFLAG:(ARG:0):33
+	RESULTS = 反撃
+ENDIF
+
+;=======================
+;反撃（1文字）
+;=======================
+@PRINT_CONDITION_18S(ARG:0)
+
+IF CFLAG:(ARG:0):33
+	RESULTS = 反
+ENDIF
+
+;=======================
+;前進
+;=======================
+@PRINT_CONDITION_19(ARG:0)
+
+IF CFLAG:(ARG:0):34
+	RESULTS = 前進
+ENDIF
+
+;=======================
+;前進(1文字)
+;=======================
+@PRINT_CONDITION_19S(ARG:0)
+
+IF CFLAG:(ARG:0):34
+	RESULTS = 前
+ENDIF
+
+;=======================
+;絶頂
+;=======================
+@PRINT_CONDITION_20(ARG:0)
+
+IF CFLAG:(ARG:0):35
+	RESULTS = 絶頂
+ENDIF
+
+;=======================
+;絶頂(1文字)
+;=======================
+@PRINT_CONDITION_20S(ARG:0)
+
+IF CFLAG:(ARG:0):35
+	RESULTS = イ
+ENDIF
+
+;=======================
+;触装 触包 粘装
+;=======================
+@PRINT_CONDITION_21(ARG:0)
+
+IF CFLAG:(ARG:0):40
+	RESULTS = 触装
+ENDIF
+
+@PRINT_CONDITION_22(ARG:0)
+IF CFLAG:(ARG:0):46
+	RESULTS = 触包
+ENDIF
+
+@PRINT_CONDITION_23(ARG:0)
+IF CFLAG:(ARG:0):48
+	RESULTS = 粘装
+ENDIF
+
+;=======================
+;触装 触包 粘装（1文字）
+;=======================
+@PRINT_CONDITION_21S(ARG:0)
+
+IF CFLAG:(ARG:0):40
+	RESULTS = 触
+ENDIF
+
+@PRINT_CONDITION_22S(ARG:0)
+IF CFLAG:(ARG:0):46
+	RESULTS = 包
+ENDIF
+
+@PRINT_CONDITION_23S(ARG:0)
+IF CFLAG:(ARG:0):48
+	RESULTS = 粘
+ENDIF
+
+;=======================
+;催眠
+;=======================
+@PRINT_CONDITION_24(ARG:0)
+
+IF CFLAG:(ARG:0):43
+	RESULTS = 催眠
+ENDIF
+
+;=======================
+;催眠(1文字)
+;=======================
+@PRINT_CONDITION_24S(ARG:0)
+
+IF CFLAG:(ARG:0):43
+	RESULTS = 催
+ENDIF
+
+;=======================
+;はいてない ★尿意パッチ加筆点★
+;おもらし（小） おもらし（大） おもらし（小・大）
+;=======================
+@PRINT_CONDITION_25(ARG:0)
+
+IF CFLAG:(ARG:0):44 == 4 && FLAG:522 == 1 && FLAG:528 == 1
+	RESULTS = おもらし（小・大）
+ELSEIF CFLAG:(ARG:0):44 == 3 && FLAG:528 == 1
+	RESULTS = おもらし（大）
+ELSEIF CFLAG:(ARG:0):44 == 2 && FLAG:522 == 1
+	RESULTS = おもらし（小）
+ELSEIF CFLAG:(ARG:0):44 >= 1
+	RESULTS = はいてない
+ENDIF
+
+;=======================
+;はいてない ★尿意パッチ加筆点★（１文字）
+;おもらし（小） おもらし（大） おもらし（小・大）
+;=======================
+@PRINT_CONDITION_25S(ARG:0)
+
+IF CFLAG:(ARG:0):44 == 4 && FLAG:522 == 1 && FLAG:528 == 1
+	RESULTS = 尖
+ELSEIF CFLAG:(ARG:0):44 == 3 && FLAG:528 == 1
+	RESULTS = 大
+ELSEIF CFLAG:(ARG:0):44 == 2 && FLAG:522 == 1
+	RESULTS = 小
+ELSEIF CFLAG:(ARG:0):44 >= 1
+	RESULTS = は
+ENDIF
+
+;=======================
+;双成
+;=======================
+@PRINT_CONDITION_26(ARG:0)
+
+;◆素質が入ると赤くする
+IF TALENT:(ARG:0):121
+	RESULTS = 双成
+	RETURN 0xE02020
+ELSEIF GET_PENIS(ARG:0) == 1
+	RESULTS = 双成
+ENDIF
+
+;=======================
+;双成(1文字)
+;=======================
+@PRINT_CONDITION_26S(ARG:0)
+
+;◆素質が入ると赤くする
+IF TALENT:(ARG:0):121
+	RESULTS = 双
+	RETURN 0xE02020
+ELSEIF GET_PENIS(ARG:0) == 1
+	RESULTS = 双
+ENDIF
+
+;=======================
+;抱擁
+;=======================
+@PRINT_CONDITION_27(ARG:0)
+
+;◆◆無理やり抱き着きを表示してみる
+IF CFLAG:(ARG:0):50 == 96
+	RESULTS = 抱擁
+ENDIF
+
+;=======================
+;抱擁（１文字）
+;=======================
+@PRINT_CONDITION_27S(ARG:0)
+
+;◆◆無理やり抱き着きを表示してみる
+IF CFLAG:(ARG:0):50 == 96
+	RESULTS = 擁
+ENDIF
+
+;=======================
+;便意
+;=======================
+@PRINT_CONDITION_28(ARG:0)
+;◆レベルによって色を変える
+IF CFLAG:(ARG:0):49 < 0
+	RESULTS = 便意
+	RETURN 0x606060
+ELSEIF CFLAG:(ARG:0):49 == 1
+	RESULTS = 便意
+ELSEIF CFLAG:(ARG:0):49 == 2
+	RESULTS = 便意
+	RETURN 0xF07090
+ELSEIF CFLAG:(ARG:0):49 == 3
+	RESULTS = 便意
+	RETURN 0xE02020
+ELSEIF CFLAG:(ARG:0):49 == 4
+	RESULTS = 便意
+	RETURN 0xFF70FF
+ELSEIF CFLAG:(ARG:0):49 >= 5
+	RESULTS = 便意
+	RETURN 0x2070FF
+ENDIF
+;=======================
+;便意（１文字）
+;=======================
+@PRINT_CONDITION_28S(ARG:0)
+;◆レベルによって色を変える
+IF CFLAG:(ARG:0):49 < 0
+	RESULTS = 便
+	RETURN 0x606060
+ELSEIF CFLAG:(ARG:0):49 == 1
+	RESULTS = 便
+ELSEIF CFLAG:(ARG:0):49 == 2
+	RESULTS = 便
+	RETURN 0xF07090
+ELSEIF CFLAG:(ARG:0):49 == 3
+	RESULTS = 便
+	RETURN 0xE02020
+ELSEIF CFLAG:(ARG:0):49 == 4
+	RESULTS = 便
+	RETURN 0xFF70FF
+ELSEIF CFLAG:(ARG:0):49 >= 5
+	RESULTS = 便
+	RETURN 0x2070FF
+ENDIF
+;=======================
+;包囲
+;=======================
+@PRINT_CONDITION_29(ARG:0)
+SIF CFLAG:(ARG:0):200 > 0
+	RESULTS = 包囲
+;=======================
+;包囲(1文字)
+;=======================
+@PRINT_CONDITION_29S(ARG:0)
+SIF CFLAG:(ARG:0):200 > 0
+	RESULTS = 囲
+;=======================
+;陥没乳頭勃起
+;=======================
+@PRINT_CONDITION_30(ARG:0)
+SIF TALENT:(ARG:0):159 && GET_ERECTION_STATE_B(ARG:0)
+	RESULTS = 乳勃
+;=======================
+;陥没乳頭勃起（１文字）
+;=======================
+@PRINT_CONDITION_30S(ARG:0)
+SIF TALENT:(ARG:0):159 && GET_ERECTION_STATE_B(ARG:0)
+	RESULTS = 陥
+
+;=======================
+;りばーすの各種デバフ
+;=======================
+@PRINT_CONDITION_31(ARG:0)
+SIF CFLAG:(ARG:0):300 > 0
+	RESULTS = 速↓({CFLAG:(ARG:0):300})
+@PRINT_CONDITION_32(ARG:0)
+SIF CFLAG:(ARG:0):301 > 0
+	RESULTS = 命↓({CFLAG:(ARG:0):301})
+@PRINT_CONDITION_33(ARG:0)
+SIF CFLAG:(ARG:0):302 > 0
+	RESULTS = 回↓({CFLAG:(ARG:0):302})
+@PRINT_CONDITION_34(ARG:0)
+SIF CFLAG:(ARG:0):303 > 0
+	RESULTS = ダ↓({CFLAG:(ARG:0):303})
+
+;=======================
+;魔法の拘束具
+;=======================
+@PRINT_CONDITION_35(ARG:0)
+SIF CFLAG:(ARG:0):504 >= 1
+	RESULTS = 拘束具
+
+;=======================
+;魔法の拘束具(１文字）
+;=======================
+@PRINT_CONDITION_35S(ARG:0)
+SIF CFLAG:(ARG:0):504 >= 1
+	RESULTS = 具
+
+;=======================
+;侵食寄生
+;=======================
+@PRINT_CONDITION_36(ARG:0)
+IF CFLAG:(ARG:0):80 >= 20
+	RESULTS = 侵食
+	RETURN 0xFF70FF
+ELSEIF CFLAG:(ARG:0):80 >= 15
+	RESULTS = 侵食
+	RETURN 0xE02020
+ELSEIF CFLAG:(ARG:0):80 >= 10
+	RESULTS = 侵食
+	RETURN 0xF07090
+ELSEIF CFLAG:(ARG:0):80 >= 5
+	RESULTS = 侵食
+ELSEIF CFLAG:(ARG:0):80 >= 1
+	RESULTS = 侵食
+	RETURN 0x606060
+ENDIF
+
+;=======================
+;寄生侵食(１文字）
+;=======================
+@PRINT_CONDITION_36S(ARG:0)
+IF CFLAG:(ARG:0):80 >= 20
+	RESULTS = 侵
+	RETURN 0xFF70FF
+ELSEIF CFLAG:(ARG:0):80 >= 15
+	RESULTS = 侵
+	RETURN 0xE02020
+ELSEIF CFLAG:(ARG:0):80 >= 10
+	RESULTS = 侵
+	RETURN 0xF07090
+ELSEIF CFLAG:(ARG:0):80 >= 5
+	RESULTS = 侵
+ELSEIF CFLAG:(ARG:0):80 >= 1
+	RESULTS = 侵
+	RETURN 0x606060
+ENDIF
+;=======================
+;媚薬爆弾 強度がわからないようにする
+;=======================
+@PRINT_CONDITION_37(ARG:0)
+IF CFLAG:(ARG:0):158
+	RESULTS = 爆弾
+ENDIF
+;=======================
+;媚薬爆弾
+;=======================
+@PRINT_CONDITION_37S(ARG:0)
+IF CFLAG:(ARG:0):158
+	RESULTS = 炸
+ENDIF
+;=======================
+;骨折
+;=======================
+@PRINT_CONDITION_38(ARG:0)
+IF CFLAG:(ARG:0):201 >= 3
+	RESULTS = 骨折
+	RETURN 0xEE1010
+ELSEIF CFLAG:(ARG:0):201 >= 2
+	RESULTS = 骨折
+ELSEIF CFLAG:(ARG:0):201 >= 1
+	RESULTS = 骨折
+	RETURN 0x606060
+ENDIF
+
+;=======================
+;骨折(１文字）
+;=======================
+@PRINT_CONDITION_38S(ARG:0)
+IF CFLAG:(ARG:0):201 >= 3
+	RESULTS = 折
+	RETURN 0xEE1010
+ELSEIF CFLAG:(ARG:0):201 >= 2
+	RESULTS = 折
+ELSEIF CFLAG:(ARG:0):201 >= 1
+	RESULTS = 折
+	RETURN 0x606060
+ENDIF
+;=======================
+;肉盾
+;=======================
+@PRINT_CONDITION_39(ARG:0)
+IF CFLAG:(ARG:0):202
+	RESULTS = 捕虜
+ENDIF
+;=======================
+;肉盾
+;=======================
+@PRINT_CONDITION_39S(ARG:0)
+IF CFLAG:(ARG:0):202
+	RESULTS = 虜
+ENDIF
+;=================================================
+;現在の尿意を表示 ★尿意パッチ加筆点★
+;ARG:0	対象キャラ
+;=================================================
+@PRINT_NYOUI(ARG:0)
+
+MAXBASE:(ARG:0):6 = 100
+LOCAL:1 = BASE:(ARG:0):6
+
+IF LOCAL:1 <= 60
+	RESETCOLOR
+	PRINTFORM [正常]
+ELSEIF LOCAL:1 <= 80
+	SETCOLOR 0xEEEE10
+	PRINTFORM [尿意]
+ELSEIF LOCAL:1 <= 90
+	SETCOLOR 0xEE10EE
+	PRINTFORM [限界]
+ELSE
+	SETCOLOR 0xEE1010
+	PRINTFORM [決壊]
+ENDIF
+RESETCOLOR
+;=================================================
+
+
+;=================================================
+;現在の素質を表示(1文字)
+;ARG:0	対象キャラ
+;RESULT:0 使用文字数（全角は一文字2）
+;=================================================
+@PRINT_TALENT_S(ARG:0)
+#DIM LCOUNT,3  ;ループ用
+
+;LOCAL:0 使用文字数カウント用
+LOCAL = 0
+FOR LCOUNT,0, 50
+	RESULTS = %""%
+	TRYCALLFORM PRINT_TALENT_{LCOUNT}S(ARG)
+	IF RESULTS != ""
+		IF RESULT > 0
+			SETCOLOR RESULT
+			PRINTFORM %RESULTS%
+		ELSE
+			PRINTFORMD %RESULTS%
+		ENDIF
+		STRLENS (RESULTS)
+		LOCAL += RESULT
+	ENDIF
+NEXT
+
+RESETCOLOR
+RETURN LOCAL
+
+;=================================================
+;現在の感度を表示(1文字)
+;ARG:0	対象キャラ
+;RESULT:0 使用文字数（全角は一文字2）
+;=================================================
+@PRINT_TALENT_SENSITIVITY_S(ARG:0)
+#DIM LCOUNT,3  ;ループ用
+
+;LOCAL:0 使用文字数カウント用
+LOCAL = 0
+FOR LCOUNT,0, 50
+	RESULTS = %""%
+	TRYCALLFORM PRINT_TALENT_SENSITIVITY_{LCOUNT}S(ARG)
+	IF RESULTS != ""
+		IF RESULT > 0
+			SETCOLOR RESULT
+			PRINTFORM %RESULTS%
+		ELSE
+			PRINTFORMD %RESULTS%
+		ENDIF
+		STRLENS (RESULTS)
+		LOCAL += RESULT
+	ENDIF
+NEXT
+
+RESETCOLOR
+RETURN LOCAL
+
+;=======================
+;Ａ感度
+;鈍感→青・普通→無・敏感→白・過敏→ピンク・異常過敏→赤
+;=======================
+@PRINT_TALENT_SENSITIVITY_0S(ARG:0)
+;◆レベルによって色を変える
+IF TALENT:(ARG:0):101 == -1
+	RESULTS = 鈍
+	RETURN 0x2070FF
+ELSEIF TALENT:(ARG:0):101 == 0
+	RESULTS = 　
+ELSEIF TALENT:(ARG:0):101 == 1
+	RESULTS = 敏
+ELSEIF TALENT:(ARG:0):101 == 2
+	RESULTS = 過
+	RETURN 0xD022D0
+ELSEIF TALENT:(ARG:0):101 >= 3
+	RESULTS = 異
+	RETURN 0xA00000
+ENDIF
+
+;=======================
+;Ｂ感度
+;鈍感→青・普通→無・敏感→白・過敏→ピンク・異常過敏→赤
+;=======================
+@PRINT_TALENT_SENSITIVITY_1S(ARG:0)
+;◆レベルによって色を変える
+IF TALENT:(ARG:0):102 == -1
+	RESULTS = 鈍
+	RETURN 0x2070FF
+ELSEIF TALENT:(ARG:0):102 == 0
+	RESULTS = 　
+ELSEIF TALENT:(ARG:0):102 == 1
+	RESULTS = 敏
+ELSEIF TALENT:(ARG:0):102 == 2
+	RESULTS = 過
+	RETURN 0xD022D0
+ELSEIF TALENT:(ARG:0):102 >= 3
+	RESULTS = 異
+	RETURN 0xA00000
+ENDIF
+
+;=======================
+;Ｃ感度
+;鈍感→青・普通→無・敏感→白・過敏→ピンク・異常過敏→赤
+;=======================
+@PRINT_TALENT_SENSITIVITY_2S(ARG:0)
+;◆レベルによって色を変える
+IF TALENT:(ARG:0):103 == -1
+	RESULTS = 鈍
+	RETURN 0x2070FF
+ELSEIF TALENT:(ARG:0):103 == 0
+	RESULTS = 　
+ELSEIF TALENT:(ARG:0):103 == 1
+	RESULTS = 敏
+ELSEIF TALENT:(ARG:0):103 == 2
+	RESULTS = 過
+	RETURN 0xD022D0
+ELSEIF TALENT:(ARG:0):103 >= 3
+	RESULTS = 異
+	RETURN 0xA00000
+ENDIF
+
+;=======================
+;Ｖ感度
+;鈍感→青・普通→無・敏感→白・過敏→ピンク・異常過敏→赤
+;=======================
+@PRINT_TALENT_SENSITIVITY_3S(ARG:0)
+;◆レベルによって色を変える
+IF TALENT:(ARG:0):104 == -1
+	RESULTS = 鈍
+	RETURN 0x2070FF
+ELSEIF TALENT:(ARG:0):104 == 0
+	RESULTS = 　
+ELSEIF TALENT:(ARG:0):104 == 1
+	RESULTS = 敏
+ELSEIF TALENT:(ARG:0):104 == 2
+	RESULTS = 過
+	RETURN 0xD022D0
+ELSEIF TALENT:(ARG:0):104 >= 3
+	RESULTS = 異
+	RETURN 0xA00000
+ENDIF
+
+;=======================
+;肌感度
+;鈍感→青・普通→無・敏感→白・過敏→ピンク・異常過敏→赤
+;=======================
+@PRINT_TALENT_SENSITIVITY_4S(ARG:0)
+;◆レベルによって色を変える
+IF TALENT:(ARG:0):105 == -1
+	RESULTS = 鈍
+	RETURN 0x2070FF
+ELSEIF TALENT:(ARG:0):105 == 0
+	RESULTS = 　
+ELSEIF TALENT:(ARG:0):105 == 1
+	RESULTS = 敏
+ELSEIF TALENT:(ARG:0):105 == 2
+	RESULTS = 過
+	RETURN 0xD022D0
+ELSEIF TALENT:(ARG:0):105 >= 3
+	RESULTS = 異
+	RETURN 0xA00000
+ENDIF
+
+;=======================
+;Ｍ感度
+;鈍感→青・普通→無・敏感→白・過敏→ピンク・異常過敏→赤
+;=======================
+@PRINT_TALENT_SENSITIVITY_5S(ARG:0)
+;◆レベルによって色を変える
+IF TALENT:(ARG:0):106 == -1
+	RESULTS = 鈍
+	RETURN 0x2070FF
+ELSEIF TALENT:(ARG:0):106 == 0
+	RESULTS = 　
+ELSEIF TALENT:(ARG:0):106 == 1
+	RESULTS = 敏
+ELSEIF TALENT:(ARG:0):106 == 2
+	RESULTS = 過
+	RETURN 0xD022D0
+ELSEIF TALENT:(ARG:0):106 >= 3
+	RESULTS = 異
+	RETURN 0xA00000
+ENDIF
+
+;=======================
+;胸の素質 乳の大きさ(1文字)
+;=======================
+@PRINT_TALENT_0S(ARG:0)
+;超乳以降はGET_BUSTのランクによって色を変える
+SELECTCASE GET_BUST(ARG:0)
+	CASE IS <= -2
+		RESULTS = 壁
+	CASE -1
+		RESULTS = 貧
+	CASE 0
+		RESULTS = 並
+	CASE 1
+		RESULTS = 巨
+	CASE 2
+		RESULTS = 爆
+	CASE 3
+		RESULTS = 超
+	CASE 4
+		RESULTS = 超
+		RETURN 0xF07090
+	CASE IS >= 5
+		RESULTS = 超
+		RETURN 0xA00000
+	CASEELSE
+ENDSELECT
+
+;=======================
+;胸の素質 母乳粘度(1文字)
+;=======================
+@PRINT_TALENT_1S(ARG:0)
+;◆レベルによって色を変える
+SELECTCASE TALENT:(ARG:0):220
+	CASE 1
+		RESULTS = 濃
+	CASE 2 TO 3
+		RESULTS = 濃
+		RETURN 0xF07090
+	CASE 4 TO 5
+		RESULTS = 濃
+		RETURN 0xD022D0
+	CASE IS >= 6
+		RESULTS = 濃
+		RETURN 0xA00000
+	CASEELSE
+ENDSELECT
+
+;=======================
+;胸の素質 母乳体質(1文字)
+;母乳体質→白・母乳分泌過多→ピンク・母乳異常分泌以上→赤
+;=======================
+@PRINT_TALENT_2S(ARG:0)
+;◆レベルによって色を変える
+SELECTCASE TALENT:(ARG:0):130
+	CASE 1
+		RESULTS = 乳
+	CASE 2 TO 3
+		RESULTS = 乳
+		RETURN 0xF07090
+	CASE 4 TO 5
+		RESULTS = 乳
+		RETURN 0xD022D0
+	CASE IS >= 6
+		RESULTS = 乳
+		RETURN 0xA00000
+	CASEELSE
+ENDSELECT
+
+;=======================
+;胸の素質 拡張乳腺(1文字)
+;=======================
+@PRINT_TALENT_3S(ARG:0)
+;◆レベルによって色を変える
+SELECTCASE TALENT:(ARG:0):162
+	CASE 1
+		RESULTS = 腺
+	CASE 2
+		RESULTS = 腺
+		RETURN 0xF07090
+	CASE 3
+		RESULTS = 腺
+		RETURN 0xD022D0
+	CASE IS >= 4
+		RESULTS = 腺
+		RETURN 0xA00000
+	CASEELSE
+ENDSELECT
+
+;=======================
+;淫乱系素質
+;=======================
+;淫乱
+@PRINT_TALENT_4S(ARG:0)
+SIF TALENT:(ARG:0):74
+	RESULTS = 淫
+
+;複合(尻穴狂い＋淫乳＋淫核＋淫壷)
+@PRINT_TALENT_5S(ARG:0)
+SIF TALENT:(ARG:0):75 && TALENT:(ARG:0):76 && TALENT:(ARG:0):77 && TALENT:(ARG:0):78
+	RESULTS = 乱
+
+
+;淫乱持ちなら各部位は表示しない
+;尻穴狂い
+@PRINT_TALENT_6S(ARG:0)
+IF TALENT:(ARG:0):75
+	;複合の条件を満たすなら表示しない
+	IF TALENT:(ARG:0):76 && TALENT:(ARG:0):77 && TALENT:(ARG:0):78
+	ELSE
+		RESULTS = 尻
+	ENDIF
+ENDIF
+;淫乳
+@PRINT_TALENT_7S(ARG:0)
+IF TALENT:(ARG:0):76
+	;複合の条件を満たすなら表示しない
+	IF TALENT:(ARG:0):75 && TALENT:(ARG:0):77 && TALENT:(ARG:0):78
+	ELSE
+		RESULTS = 胸
+	ENDIF
+ENDIF
+;淫核/淫茎
+@PRINT_TALENT_8S(ARG:0)
+IF TALENT:(ARG:0):77
+	;複合の条件を満たすなら表示しない
+	IF TALENT:(ARG:0):75 && TALENT:(ARG:0):76 && TALENT:(ARG:0):78
+	ELSE
+		IF GET_PENIS(ARG:0) > 0
+			RESULTS = 茎
+		ELSE
+			RESULTS = 豆
+		ENDIF
+	ENDIF
+ENDIF
+;淫壷
+@PRINT_TALENT_9S(ARG:0)
+IF TALENT:(ARG:0):78
+	;複合の条件を満たすなら表示しない
+	IF TALENT:(ARG:0):75 && TALENT:(ARG:0):76 && TALENT:(ARG:0):77
+	ELSE
+		RESULTS = 膣
+	ENDIF
+ENDIF
+
+
+;キス魔
+@PRINT_TALENT_10S(ARG:0)
+SIF TALENT:(ARG:0):79
+	RESULTS = ｷｽ
+
+;悪堕ち
+@PRINT_TALENT_11S(ARG:0)
+SIF TALENT:(ARG:0):73
+	RESULTS = 悪
+
+;淫魔
+@PRINT_TALENT_12S(ARG:0)
+SIF TALENT:(ARG:0):156
+	RESULTS = 魔
+
+;ペット
+@PRINT_TALENT_13S(ARG:0)
+IF TALENT:(ARG:0):140 == 1
+	RESULTS = Ｐ
+ELSEIF TALENT:(ARG:0):140 == 2
+	RESULTS = 嫁
+ELSEIF TALENT:(ARG:0):140 >= 3
+	RESULTS = Ｐ
+	RETURN 0xA00000
+ENDIF
+
+
+
+;=================================================
+;現在のインプラント状況を表示(1文字)
+;CFLAG:81のビットを取得して表示する。1ビット目と8ビット目は今のところ使われていないので省略
+;ARG:0	対象キャラ
+;RESULT:0 使用文字数（半角は1、全角は2で数える）
+;=================================================
+@PRINT_IMPLANT_COMMON_S(ARG:0)
+#DIM LCOUNT,3  ;ループ用
+
+;LOCAL:0 使用文字数カウント用
+LOCAL = 0
+FOR LCOUNT,0, 15
+	RESULTS = %""%
+	TRYCALLFORM PRINT_IMPLANT_{LCOUNT}S(ARG)
+	IF RESULTS != ""
+		IF RESULT > 0
+			SETCOLOR RESULT
+			PRINTFORM %RESULTS%
+		ELSE
+			PRINTFORMD %RESULTS%
+		ENDIF
+		STRLENS (RESULTS)
+		LOCAL += RESULT
+	ENDIF
+NEXT
+
+RESETCOLOR
+RETURN LOCAL
+
+;=======================
+;インプラント状況1_直腸(1文字)
+;=======================
+@PRINT_IMPLANT_1S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,1) == 1
+	RESULTS = Ａ
+ELSE
+	RESULTS = Ａ
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況2_乳房(1文字)
+;=======================
+@PRINT_IMPLANT_2S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,2) == 1
+	RESULTS = Ｂ
+ELSE
+	RESULTS = Ｂ
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況3_クリトリス(1文字)
+;=======================
+@PRINT_IMPLANT_3S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,3) == 1
+	RESULTS = Ｃ
+ELSE
+	RESULTS = Ｃ
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況4_子宮(1文字)
+;=======================
+@PRINT_IMPLANT_4S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,4) == 1
+	RESULTS = Ｖ
+ELSE
+	RESULTS = Ｖ
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況5_脊髄(1文字)
+;=======================
+@PRINT_IMPLANT_5S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,5) == 1
+	RESULTS = 背
+ELSE
+	RESULTS = 背
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況6_頭(1文字)
+;=======================
+@PRINT_IMPLANT_6S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,6) == 1
+	RESULTS = 額
+ELSE
+	RESULTS = 額
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況2_唇(1文字)
+;=======================
+@PRINT_IMPLANT_8S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,8) == 1
+	RESULTS = 唇
+ELSE
+	RESULTS = 唇
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況2_卵巣(1文字)
+;=======================
+@PRINT_IMPLANT_9S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,9) == 1
+	RESULTS = 卵
+ELSE
+	RESULTS = 卵
+	RETURN 0x222222
+ENDIF
+
+;=======================
+;インプラント状況2_舌根(1文字)
+;=======================
+@PRINT_IMPLANT_10S(ARG:0)
+IF GETBIT(CFLAG:(ARG:0):81,10) == 1
+	RESULTS = 舌
+ELSE
+	RESULTS = 舌
+	RETURN 0x222222
+ENDIF
+

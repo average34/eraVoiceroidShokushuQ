@@ -1,0 +1,203 @@
+﻿@MINIGAME
+;基本的に使い回し、敵の攻撃を使えるミニゲーム
+;これは胸のみだけど別の部位もありかもしれない
+;LOCAL:0	ループ用
+;LOCAL:1	ループ用
+	
+	PRINTFORML [1] Easy    		対象部位B、HPMPEPCPTP
+	PRINTFORML [2] Normal  		対象部位V、MPEPTP
+	PRINTFORML [3] Hard  		対象部位A、MPEPTP
+	IF FLAG:520 == 1 || FLAG:520 == 3
+		PRINTFORML [4] Lunatic  		対象部位C、HPEPTP
+	ENDIF
+	
+
+	$INPUT_LOOP_DIF
+	INPUT
+	IF RESULT >= 1 && RESULT <= 4
+		FLAG:4 = RESULT - 1
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP_DIF
+	ENDIF
+
+	;--- 初期処理開始 ------------------
+	;キャラ登録番号メモ
+	;0		「あなた」が入っているが、使わない
+	;1		主人公　このキャラを操作する
+	;2～10	その他の仲間
+	;敵データは配列DAにて管理する
+
+	TARGET = -1
+	ASSI = -1
+
+	CALL START_CHARA_SELECT
+	
+	PRINTFORML 主人公以外のキャラをどうしますか？
+	PRINTFORML [1] ランダムでキャラを選ぶ（ゲーム開始まで誰になるか不明）
+	PRINTFORML [2] 口上のあるキャラからランダムで選ぶ（ゲーム開始まで誰になるか不明）
+	INPUT
+	IF RESULT == 2
+		;@START_CHARA_SELECTの流用
+		FOR LOCAL:0, 2, 5
+			IF FLAG:(LOCAL:0 + 20) == 0
+				$RANDOM_PARTNER_START
+				FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
+				TARGET = 0
+				TRYCCALLFORM KOJO_{FLAG:(LOCAL:0 + 20)}_0(0, 0)
+					;口上本体がある場合、決定
+				CATCH
+					;口上本体が無い場合、再抽選
+					GOTO RANDOM_PARTNER_START
+				ENDCATCH
+				ADDCHARA FLAG:(LOCAL:0 + 20)
+				FLAG:0 += 1
+				CALL CHARA_INITIALIZE_SINGLE(CHARANUM - 1)
+			ENDIF
+		NEXT
+	ELSE
+		;主人公以外をランダムで埋める
+		FOR LOCAL:0, 1, 5
+			SIF FLAG:(LOCAL:0 + 20) == 0
+				FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
+			ADDCHARA FLAG:(LOCAL:0 + 20)
+			FLAG:0 += 1
+			CALL CHARA_INITIALIZE_SINGLE(CHARANUM - 1)
+		NEXT
+	ENDIF
+
+	;ミニゲーム用特殊設定
+	FLAG:5 = 1
+	FOR LOCAL:0, 1, CHARANUM
+		;全員の配置を1の部屋に
+		CFLAG:(LOCAL:0):4 = 4
+		
+		;主人公以外キャラの名前をごまかす
+		SIF LOCAL:0 != 1
+			CALLNAME:(LOCAL:0) = {LOCAL:0}
+	NEXT
+	
+	PRINTL 
+	PRINTL 口上があるキャラの口上を使いますか？（難易度が下がります）
+	PRINTL 
+		PRINTFORML [0] 使う
+		PRINTFORML [1] 口上全OFF
+		INPUT
+	IF RESULT == 1
+		FOR LOCAL:0, 1, CHARANUM
+			CFLAG:(LOCAL:0):701 = -1
+		NEXT
+		PRINTFORML 口上をすべてOFFに設定しました
+	ELSE
+		PRINTFORML 設定しました
+	ENDIF
+	PRINTFORML 
+
+	;初期素質調整
+	;胸の大きさ
+	IF FLAG:521 == 0 || FLAG:521 == 2
+		PRINTFORML 全キャラを爆乳化させることができます
+		PRINTFORML 
+		PRINTFORML [0] 触手のせいで全員爆乳になっている
+		PRINTFORML [1] 触手のせいで全員爆乳の母乳体質になっている
+	ENDIF
+	PRINTFORML 全キャラの体質を変化させることができます
+	PRINTFORML [2] 全キャラを全部位異常過敏にする
+	PRINTFORML [3] 全キャラを小柄体型にする
+	PRINTFORML 
+	PRINTFORML [100] 次へ
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		FOR LOCAL:1, 1, CHARANUM
+			TALENT:(LOCAL:1):107 = 0
+			TALENT:(LOCAL:1):108 = 1
+			TALENT:(LOCAL:1):109 = 0
+			TALENT:(LOCAL:1):110 = 0
+		NEXT
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 1
+		FOR LOCAL:1, 1, CHARANUM
+			TALENT:(LOCAL:1):107 = 0
+			TALENT:(LOCAL:1):108 = 1
+			TALENT:(LOCAL:1):109 = 0
+			TALENT:(LOCAL:1):110 = 0
+			TALENT:(LOCAL:1):130 = 1
+		NEXT
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 2
+		FOR LOCAL:1, 1, CHARANUM
+			TALENT:(LOCAL:1):101 = 3
+			TALENT:(LOCAL:1):102 = 3
+			TALENT:(LOCAL:1):103 = 3
+			TALENT:(LOCAL:1):104 = 3
+			TALENT:(LOCAL:1):105 = 3
+			TALENT:(LOCAL:1):106 = 3
+		NEXT
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 3
+		FOR LOCAL:1, 1, CHARANUM
+			TALENT:(LOCAL:1):100 = 1
+		NEXT
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 100
+	
+	ELSE
+		GOTO INPUT_LOOP
+	ENDIF
+	IF FLAG:520 > 0 && FLAG:997 != 81
+		CALL FUTANARI_CUSTOMIZE
+	ENDIF
+
+PRINTFORML 初期設定を確認しますか？（開始後コンフィグで設定可能）
+	PRINTFORML [0] 個別に行う　　：個別に設定してからスタート
+	PRINTFORML [1] そのまま　　　：デフォルトのまま、もしくは以前設定したままにします
+	$INPUT_LOOP_STARTSET
+	INPUT
+IF RESULT == 0
+	CALL CONFIGURE_FIRST_1
+	CALL SET_CONFIGURE_4_8(1)
+ELSEIF RESULT == 1
+;空
+ELSE
+	GOTO INPUT_LOOP_STARTSET
+ENDIF
+	CALL CREATE_ENEMY(99, 0, FLAG:5)
+	;陥没乳首入手処理
+	IF FLAG:531 == 1
+		FOR LOCAL:1, 1, CHARANUM
+			TALENT:(LOCAL:1):159 = 1
+		NEXT
+	ELSEIF FLAG:531 == 2
+		FOR LOCAL:1, 1, CHARANUM
+			SIF RAND:2 == 0
+				TALENT:(LOCAL:1):159 = 1
+		NEXT
+	ENDIF
+	;服装処理
+	FOR LOCAL:1, 1, CHARANUM
+		CALL CLOTH_TYPE_SELECT_RAND(LOCAL:1)
+	NEXT
+	IF FLAG:520 == 1 || FLAG:520 == 3
+		FOR LOCAL:1, 1, CHARANUM
+			TALENT:(LOCAL:1):121 = 1
+		NEXT
+	ENDIF
+	;ふたなりカスタマイズ
+	FOR LOCAL:0, 1, CHARANUM
+		IF FLAG:590 == 1
+			CALL FUTANARI_RANDOM_GET_2(LOCAL:0)
+		ELSE
+			CALL FUTANARI_CUSTOMIZE_GET_2(LOCAL:0)
+		ENDIF
+	NEXT
+		
+	PRINTL
+	PRINTL
+	PRINTL ミニゲームです
+	PRINTL キャラクターに攻撃を当てて誰なのか当ててください
+	PRINTL 外すとお仕置きされます
+	PRINTL 
+
+	JUMP MINIGAME_SHOP

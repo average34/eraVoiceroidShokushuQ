@@ -1,0 +1,103 @@
+﻿;石版チェック
+@CHECK_PLATE_DATA
+;LOCAL
+;0	LOOP
+;1	答えあわせ（0：間違い　1：正解）
+
+LOCAL:1 = 0
+
+SELECTCASE FLAG:40
+	CASE 0
+		IF FLAG:41 == 1 && FLAG:42 == 2 && FLAG:43 == 3
+			LOCAL:1 = 1
+		ENDIF
+	CASE 1
+		IF FLAG:41 == 1 && FLAG:42 == 3 && FLAG:43 == 2
+			LOCAL:1 = 1
+		ENDIF
+	CASE 2
+		IF FLAG:41 == 2 && FLAG:42 == 1 && FLAG:43 == 3
+			LOCAL:1 = 1
+		ENDIF
+	CASE 3
+		IF FLAG:41 == 2 && FLAG:42 == 3 && FLAG:43 == 1
+			LOCAL:1 = 1
+		ENDIF
+	CASE 4
+		IF FLAG:41 == 3 && FLAG:42 == 1 && FLAG:43 == 2
+			LOCAL:1 = 1
+		ENDIF
+	CASEELSE
+		IF FLAG:41 == 3 && FLAG:42 == 2 && FLAG:43 == 1
+			LOCAL:1 = 1
+		ENDIF
+ENDSELECT
+
+;答えあわせが終わったらフラグリセット
+FLAG:41 = 0
+FLAG:42 = 0
+FLAG:43 = 0
+
+
+PRINTFORMW 呪文を唱え終わった%CALLNAME:1%%TACHI()%の前に光り輝く渦が現れた！
+PRINTFORML 渦の中に飛び込んでみますか？
+CALL ASK_YN
+IF RESULT == 0
+	IF LOCAL:1 || FLAG:999
+		;正解の場合かEXモードの場合
+		CALL GAMEOVER(3)
+	ELSE
+		;間違いの場合
+		PRINTFORMW 果たしてあの石碑に書かれていた内容は真実なのか…
+		PRINTFORMW そう疑問に思いつつも、ここまで来たのだからと意を決して%CALLNAME:1%%TACHI()%は光の渦に飛び込んだ！
+		PRINTFORML 
+		IF RAND:3 == 0
+			;ボス部屋に飛ばされる
+			PRINTFORML %CALLNAME:1%%TACHI()%が目を開けると、そこには巨大な魔物が立ちふさがっていた
+			PRINTFORML どうやら呪文を唱える順番を間違えたため、親玉の居る部屋まで飛ばされてしまったらしい…
+			PRINTFORML 幸いまだこちらには気づいていないようなので、早めに逃げ出した方が良いだろう…
+			LOCAL:2 = DA:1:4
+			FLAG:5 = LOCAL:2
+			FLAG:(600 + FLAG:5) = 1
+			FOR LOCAL:0, 0, 3
+				IF GET_MEMBER(LOCAL:0)
+					CALL PRINT_MESSAGE(GET_MEMBER(LOCAL:0), 213, 0, CALLNAME:1)
+					CFLAG:(GET_MEMBER(LOCAL:0)):4 = LOCAL:2
+					CFLAG:(GET_MEMBER(LOCAL:0)):13 = LOCAL:2
+					CFLAG:(GET_MEMBER(LOCAL:0)):14 = LOCAL:2
+				ENDIF
+			NEXT
+		ELSE
+			;触手の巣に飛ばされる
+			PRINTFORML 全身を覆う奇妙な感覚に、%CALLNAME:1%%TACHI()%は目を開ける
+			PRINTFORML どうやら呪文を唱える順番を間違えたため、触手達の巣穴に飛ばされてしまったらしい…
+			PRINTFORML 急にご馳走が降ってきたとばかりに、周囲の触手が一斉に%CALLNAME:1%%TACHI()%へと襲いかかる！
+			LOCAL:2 = RAND:30 + 1
+			FLAG:5 = LOCAL:2
+			FLAG:(600 + FLAG:5) = 1
+			FOR LOCAL:0, 0, 3
+				IF GET_MEMBER(LOCAL:0)
+					CALL PRINT_MESSAGE(GET_MEMBER(LOCAL:0), 214, 0, CALLNAME:1)
+					LOCAL:5 = 7 + RAND:3 + RAND:3
+					FOR LOCAL:1, 0, LOCAL:5
+						LOCAL:6 = RAND:4
+						IF LOCAL:6 == 3
+							CALL LOST_VIRGIN(GET_MEMBER(LOCAL:0), 1, 4)
+						ENDIF
+						CALL EXTASY(GET_MEMBER(LOCAL:0), LOCAL:6, 50 + RAND:50, 100)
+					NEXT
+					CFLAG:(GET_MEMBER(LOCAL:0)):4 = LOCAL:2
+					CFLAG:(GET_MEMBER(LOCAL:0)):13 = LOCAL:2
+					CFLAG:(GET_MEMBER(LOCAL:0)):14 = LOCAL:2
+					WAIT
+				ENDIF
+			NEXT
+			PRINTFORML 気が遠くなるほどの凌辱を受けながらも、%CALLNAME:1%%TACHI()%は何とかその場を抜け出した！
+		ENDIF
+		WAIT
+	ENDIF
+	RETURN 0
+ENDIF
+
+RETURN 1
+

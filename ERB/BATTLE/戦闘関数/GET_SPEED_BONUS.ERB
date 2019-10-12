@@ -1,0 +1,31 @@
+﻿;行動速度ボーナス計算
+;ARG:0	対象キャラ
+@GET_SPEED_BONUS(ARG:0)
+;LOCAL
+;0	LOOP
+;1	RETURN
+;2	TEMP
+
+;今の所TPによる補正のみ
+
+
+IF ARG:0 == 0
+	RETURN 0
+ENDIF
+
+LOCAL:1 = 0
+
+IF BASE:(ARG:0):4 < 20
+	LOCAL:1 += (100 - BASE:(ARG:0):4) * 5 / 10
+ELSEIF BASE:(ARG:0):4 < 50
+	LOCAL:1 += (100 - BASE:(ARG:0):4) * 4 / 10
+ELSEIF BASE:(ARG:0):4 < 80
+	LOCAL:1 += (100 - BASE:(ARG:0):4) * 3 / 10
+ELSE
+	LOCAL:1 += (100 - BASE:(ARG:0):4) * 2 / 10
+ENDIF
+
+
+
+RETURN LOCAL:1
+

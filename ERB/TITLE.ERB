@@ -1,0 +1,85 @@
+﻿;[ライセンス]パブリックドメイン
+;本ファイルに係る著作権を放棄する。
+;本ファイルに係る著作人格権は行使しない。
+;2009/6/13 MinorShift(Emuera作者)
+
+;独自のタイトル画面の例（Emuera ver 1.700以降対象）
+;LOADGAME_EXが定義されていることが前提なので、SAVELOAD.ERBと同時に使用してください。
+;SAVELOAD.ERBを使用しない場合、CALL LOADGAME_EXをLOADGAMEに置き換えてください。
+;なお、SYSTEM_TITLEが定義されているとTITLE_LOADGAMEは呼ばれなくなります。
+;使用している命令、変数の詳細についてはEmueraの拡張文法.txtを参照してください。
+
+@SYSTEM_TITLE
+;@SYSTEM_TITLEが定義されていると、標準のタイトル画面の代わりにSYSTEM_TITLEが呼ばれる。
+
+;このタイミングでグローバル変数を読んでおけば取りこぼしが無くなる。
+;GLOBALはRESETDATAやLOADDATAによって初期化・上書きされない。
+;必要に応じてコメントアウトを解除すること。
+;LOADGLOBAL
+
+;ツールチップの表示時間を設定
+;signed 16bitの最大値が設定上限の為、実値で設定
+TOOLTIP_SETDURATION 32767
+
+;バージョン表記をLOCALS:0に作成。
+;1001なら1.001、1100なら1.10と表示されるように。
+;ここで使用した変数はRESETDATAかLOADDATAによってクリアされるのでローカル変数を使わなくてもよい。
+LOCAL:0 = GAMEBASE_VERSION / 1000
+LOCAL:1 = GAMEBASE_VERSION % 1000 / 10
+LOCAL:2 = GAMEBASE_VERSION % 10
+STRLENFORM {LOCAL:1}
+LOCALS:1 = %"0" * (2 - RESULT:0)%{LOCAL:1}
+LOCALS:0 = v{LOCAL:0}.%LOCALS:1%
+SIF LOCAL:2 != 0
+	LOCALS:0 = %LOCALS:0%.{LOCAL:2}
+
+; タイトル表示前にGLOBALSAVEを読み込んでおく
+; セーブデータの参照ページ確認で使う
+LOADGLOBAL
+
+;タイトル表示。
+DRAWLINE 
+
+
+FOR LOCAL:3, 0, 28
+	HTML_PRINT "<p align='center'><img src='rev" + "000" + TOSTR(LOCAL:3, "00") + "'></p>"
+NEXT
+
+DRAWLINE 
+
+ALIGNMENT CENTER
+PRINTFORML %GAMEBASE_TITLE%
+PRINTFORML %LOCALS:0%
+PRINTFORML %GAMEBASE_AUTHOR%
+PRINTFORML (%GAMEBASE_YEAR%)
+PRINTL 
+PRINTFORML %GAMEBASE_INFO%
+ALIGNMENT LEFT
+
+DRAWLINE 
+
+;選択肢表示。_Rename.csvで指定した値を読むことはできないのでここで指定する必要がある。
+$TITLE_SELECT
+PRINTL [0] 最初からはじめる
+PRINTL [1] ロードしてはじめる
+
+$TITLE_INPUT
+INPUT
+IF RESULT == 0
+	RESETDATA
+	ADDCHARA 0
+	SIF GAMEBASE_DEFAULTCHARA >= 0
+		ADDCHARA GAMEBASE_DEFAULTCHARA
+	BEGIN FIRST
+	RETURN
+ELSEIF RESULT == 1
+	CALL LOADGAME_EX
+	RESTART
+	;LOADGAME_EXでLOADを行わずに戻ってきた場合、もう一度選択しなおす。
+ELSE
+	REUSELASTLINE 無効な値です
+	GOTO TITLE_INPUT
+ENDIF
+
+;SYSTEM_TITLE中でRETURNすると次に実行する行が無くなり、エラーになる。
+;必ずBEGIN命令かLOADGAMEを行うこと。

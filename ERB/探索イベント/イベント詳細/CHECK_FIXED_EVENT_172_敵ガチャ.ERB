@@ -1,0 +1,95 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_172
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+;必ず発見する系のイベントなのでもうGET_SEARCH_RATEいいよね……
+;経験値が入るのは最初だけ
+PRINTFORML
+IF FLAG:172 < 100
+	CALL ADD_ABL_EXP_PT(0, 300)
+	FLAG:172 += 100
+	PRINTFORML 奇妙な部屋にでくわした
+	PRINTFORML なにやら壁に大きな穴が開いている……
+	PRINTFORML 何事かと思って近づくと、穴の横に看板が立ててある
+	PRINTFORML
+	PRINTFORML 「がちゃがちゃ　こーなー」
+	PRINTFORML 「おだいは　じょうかりょく」
+	PRINTFORML
+	PRINTFORMW いかにも怪しげだ……
+ELSE
+	PRINTFORML 「がちゃがちゃ　こーなー」
+	PRINTFORML 「おだいは　じょうかりょく」
+	PRINTFORMW 前回はろくな目に合わなかったのだが……
+ENDIF
+PRINTFORML どうしますか？
+PRINTFORML [ 1] - やってみる （必要浄化力:50）
+PRINTFORML [ 0] - やめとく
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	PRINTFORML 明らかに怪しいものには関わりたくない……
+	PRINTFORMW その場を立ち去ることにした
+	RETURN
+ELSEIF RESULT == 1 && FLAG:6 < 50
+	PRINTFORML しかし浄化力が足りていない……
+	PRINTFORMW しかたなく、今回は諦めることにした
+	RETURN
+ELSEIF RESULT != 1
+	GOTO INPUT_LOOP
+ENDIF
+
+FLAG:6 -= 50
+
+SIF FLAG:172 < 200
+	FLAG:172 += 100
+
+IF RAND:10
+	CALL REPOP_SELECT(0)
+	PRINTFORML 明らかに怪しいが、好奇心に負けて浄化力を使ってみた……
+	PRINTFORML すると、敵が穴から飛び出し、襲いかかってきた！
+	PRINTFORMW ガチャガチャの景品はこいつのようだ……！
+	IF FLAG:98
+		PRINTFORML だが、結界に阻まれて手出しできなかったようだ……
+		RETURN 1
+	ENDIF
+	CALL PRE_BATTLE(4)
+	RETURN 2
+ELSE
+	;こっちパターンはイベント削除
+	FLAG:171 = 0
+	PRINTFORML 明らかに怪しいが、好奇心に負けて浄化力を使ってみた……
+	PRINTFORML しかし、うっかりして浄化力を注ぎすぎてしまった！
+	PRINTFORML するとどうだろう、ガチャガチャの奥から凄まじい悲鳴が聞こえてきた……
+	
+	
+	IF (FLAG:512 & 1) == 1
+		PRINTFORML どうやら、穴の奥に潜む触手たちを浄化してしまったようだ
+		PRINTFORML しばらくして、ガチャガチャの穴からたくさんの小人たちが飛び出した
+		PRINTFORML どうやら彼らが、穴の奥から触手を送り込んでいたらしい
+		PRINTFORML 彼らは%CALLNAME:1%%TACHI()%を見ると、棲家をめちゃくちゃにされた怒りのままに襲いかかってきた！
+		PRINTFORMW 
+		CALL CREATE_ENEMY(61, FLAG:5, 0)
+		CALL CREATE_ENEMY(61, FLAG:5, 0)
+		CALL CREATE_ENEMY(61, FLAG:5, 0)
+		CALL CREATE_ENEMY(61, FLAG:5, 0)
+		CALL CREATE_ENEMY(61, FLAG:5, 0)
+		IF FLAG:98
+			PRINTFORML だが、結界に阻まれて手出しできなかったようだ……
+			RETURN 1
+		ENDIF
+		CALL PRE_BATTLE(4)
+		RETURN 2
+	ELSE
+		PRINTFORML 奥から何かが壊れる音と何かが動きまわる音が聞こえて……
+		PRINTFORML それっきり何の反応もなくなってしまった
+		;何も起こらないのもあれなのでランク2のわきフラグ5匹分増加
+		FLAG:657 += 500
+	ENDIF
+ENDIF
+
+RETURN 0

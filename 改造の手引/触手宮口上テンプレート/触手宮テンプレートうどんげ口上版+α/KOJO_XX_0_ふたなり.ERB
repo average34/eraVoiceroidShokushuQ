@@ -1,0 +1,368 @@
+﻿;こっちもXXをキャラのNoに置き換えること。YYは口上のキャラと絡ませたいキャラのNoを入れる
+;ふたなりの管理。趣味じゃない人はXXとYYを置き換えたら後は放置でおk
+;ちなみにデフォルトだとふたなり系は戦意喪失時は458を除いて来ない
+@FUTANARI_XX_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+SELECTCASE ARG:0
+	;射精　CFLAG:805 == 3で自慰の判別可能　ARG:1はHP減少量
+	CASE 451
+		;射精中毒２以上
+		IF ABL:12 > 1
+			SELECTCASE RAND:2
+				CASE 0
+		;			PRINTFORMW 
+				CASE 1
+		;			PRINTFORMW 
+			ENDSELECT
+		ELSE
+			;初射精
+			IF EXP:12 == 0
+	;			PRINTFORMW 
+			ELSE
+	;			PRINTFORMW 
+			ENDIF
+		ENDIF
+
+		;HP0にいかない時はここで自慰フラグ洗浄、6/10版はここに欠陥があった
+		SIF (BASE:HP <= 0 || BASE:HP > ARG:1) && CFLAG:805 == 3
+			CFLAG:805 = 0
+
+	;ふたなり終了
+	CASE 452
+		;射精中毒２以上
+		IF ABL:12 > 1
+	;		PRINTFORMW 
+		ELSE
+	;		PRINTFORMW 
+		ENDIF
+	;ふたなり時、戦闘中に発情　発情確率は射精中毒×５％
+	CASE 453
+		;射精中毒２以上
+		IF ABL:12 > 1
+	;		PRINTFORMW 
+		ELSE
+	;		PRINTFORMW 
+		ENDIF
+	;ふたなり永久化　必ず射精中毒３
+	CASE 454
+
+	;性欲発散（最初に襲った）
+	CASE 455
+		SELECTCASE NO:(ARG:3)
+			;YYのキャラを襲う
+			CASE YY
+				;面倒な人は分岐を削ってまとめましょう
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0, 1
+	;					PRINTFORMW 
+					;胸で
+					CASE 5, 6
+	;					PRINTFORMW 
+					;巨乳で
+					CASE 7, 8
+	;					PRINTFORMW 
+					;尻で
+					CASE 10, 11
+	;					PRINTFORMW 
+					;口で
+					CASE 15, 16
+	;					PRINTFORMW 
+				ENDSELECT
+			CASEELSE
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0, 1
+	;					PRINTFORMW 
+					;胸で
+					CASE 5, 6
+	;					PRINTFORMW 
+					;巨乳で
+					CASE 7, 8
+	;					PRINTFORMW 
+					;尻で
+					CASE 10, 11
+	;					PRINTFORMW 
+					;口で
+					CASE 15, 16
+	;					PRINTFORMW 
+				ENDSELECT
+			ENDSELECT
+	;性欲発散（便乗して襲いかかった）
+	CASE 456
+		SELECTCASE NO:(ARG:3)
+			;YYのキャラを襲う
+			CASE YY
+				;面倒な人は分岐を削ってまとめましょう
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0, 1
+	;					PRINTFORMW 
+					;胸で
+					CASE 5, 6
+	;					PRINTFORMW 
+					;尻で
+					CASE 10, 11
+	;					PRINTFORMW 
+					;口で
+					CASE 15, 16
+	;					PRINTFORMW 
+				ENDSELECT
+			CASEELSE
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0, 1
+	;					PRINTFORMW 
+					;胸で
+					CASE 5, 6
+	;					PRINTFORMW 
+					;尻で
+					CASE 10, 11
+	;					PRINTFORMW 
+					;口で
+					CASE 15, 16
+	;					PRINTFORMW 
+				ENDSELECT
+			ENDSELECT
+	;性欲発散（相手が催眠状態）
+	CASE 457
+		SELECTCASE NO:(ARG:3)
+			;YYのキャラを襲う
+			CASE YY
+				;面倒な人は分岐を削ってまとめましょう
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+	;					PRINTFORMW 
+					;胸で
+					CASE 5
+	;					PRINTFORMW 
+					;尻で
+					CASE 10
+	;					PRINTFORMW 
+					;口で
+					CASE 15
+	;					PRINTFORMW 
+				ENDSELECT
+			CASEELSE
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+	;					PRINTFORMW 
+					;胸で
+					CASE 5
+	;					PRINTFORMW 
+					;尻で
+					CASE 10
+	;					PRINTFORMW 
+					;口で
+					CASE 15
+	;					PRINTFORMW 
+				ENDSELECT
+		ENDSELECT
+	;性欲発散される　全員からされ終わった時に一言だけ
+	CASE 458
+		;このキャラが主人公＝性欲発散しているのは仲間
+		;このIF構文は省略しないように
+		IF TARGET == 1
+			SELECTCASE NO:(FLAG:10)
+				;YYのキャラに襲われた
+				CASE YY
+					;面倒な人は分岐を削ってまとめましょう
+					SELECTCASE ARG:1
+						;膣で
+						CASE 0
+	;						PRINTFORMW 
+						;胸で
+						CASE 1
+	;						PRINTFORMW 
+						;尻で
+						CASE 2
+	;						PRINTFORMW 
+						;口で
+						CASE 3
+	;						PRINTFORMW 
+						;手で
+						CASE 4
+	;						PRINTFORMW 
+					ENDSELECT
+				;それ以外のキャラ
+				CASEELSE
+					;面倒な人は分岐を削ってまとめましょう
+					SELECTCASE ARG:1
+						;膣で
+						CASE 0
+	;						PRINTFORMW 
+						;胸で
+						CASE 1
+	;						PRINTFORMW 
+						;尻で
+						CASE 2
+	;						PRINTFORMW 
+						;口で
+						CASE 3
+	;						PRINTFORMW 
+						;手で
+						CASE 4
+	;						PRINTFORMW 
+					ENDSELECT
+			ENDSELECT
+		;このキャラが主人公ではない＝性欲発散しているのは主人公（とその仲間）
+		;条件の関係上分けているだけなので上と同じ内容にしても問題ない
+		ELSE
+			SELECTCASE NO:1
+				;YYのキャラに襲われた
+				CASE YY
+					;面倒な人は分岐を削ってまとめましょう
+					SELECTCASE ARG:1
+						;膣で
+						CASE 0
+	;						PRINTFORMW 
+						;胸で
+						CASE 1
+	;						PRINTFORMW 
+						;尻で
+						CASE 2
+	;						PRINTFORMW 
+						;口で
+						CASE 3
+	;						PRINTFORMW 
+						;手で
+						CASE 4
+	;						PRINTFORMW 
+					ENDSELECT
+				;それ以外
+				CASEELSE
+					;面倒な人は分岐を削ってまとめましょう
+					SELECTCASE ARG:1
+						;膣で
+						CASE 0
+	;						PRINTFORMW 
+						;胸で
+						CASE 1
+	;						PRINTFORMW 
+						;尻で
+						CASE 2
+	;						PRINTFORMW 
+						;口で
+						CASE 3
+	;						PRINTFORMW 
+						;手で
+						CASE 4
+	;						PRINTFORMW 
+					ENDSELECT
+			ENDSELECT
+		ENDIF
+	;ふたなり治療される
+	CASE 459
+		SELECTCASE NO:1
+			;YYのキャラに治療される
+			CASE YY
+				;面倒な人は分岐を削ってまとめましょう
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+	;					PRINTFORMW 
+					;胸で
+					CASE 1
+	;					PRINTFORMW 
+					;尻で
+					CASE 2
+	;					PRINTFORMW 
+					;口で
+					CASE 3
+	;					PRINTFORMW 
+					;手で
+					CASE 4
+	;					PRINTFORMW 
+				ENDSELECT
+			CASEELSE
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+	;					PRINTFORMW 
+					;胸で
+					CASE 1
+	;					PRINTFORMW 
+					;尻で
+					CASE 2
+	;					PRINTFORMW 
+					;口で
+					CASE 3
+	;					PRINTFORMW 
+					;手で
+					CASE 4
+	;					PRINTFORMW 
+				ENDSELECT
+		ENDSELECT
+	;ふたなりで触手モンスターをおしおきする
+	CASE 460
+
+			SELECTCASE ARG:1
+				;スルー
+				CASE 0
+	;				PRINTFORMW 
+				;逃がさない
+				CASE -1
+	;				PRINTFORMW 
+				;膣で
+				CASE 1
+	;				PRINTFORMW 
+				;胸で
+				CASE 2
+	;				PRINTFORMW 
+				;尻で
+				CASE 3
+	;				PRINTFORMW 
+				;口で
+				CASE 4
+	;				PRINTFORMW 
+				;触手で
+				CASE 5
+	;				PRINTFORMW 
+
+			ENDSELECT
+	;ふたなり治療する
+	CASE 461
+		SELECTCASE NO:(ARG:2)
+			;YYのキャラを治療
+			CASE YY
+				;面倒な人は分岐を削ってまとめましょう
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+	;					PRINTFORMW 
+					;胸で
+					CASE 1
+	;					PRINTFORMW 
+					;尻で
+					CASE 2
+	;					PRINTFORMW 
+					;口で
+					CASE 3
+	;					PRINTFORMW 
+					;手で
+					CASE 4
+	;					PRINTFORMW 
+				ENDSELECT
+			CASEELSE
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+	;					PRINTFORMW 
+					;胸で
+					CASE 1
+	;					PRINTFORMW 
+					;尻で
+					CASE 2
+	;					PRINTFORMW 
+					;口で
+					CASE 3
+	;					PRINTFORMW 
+					;手で
+					CASE 4
+	;					PRINTFORMW 
+				ENDSELECT
+		ENDSELECT
+ENDSELECT
+	
+RETURN

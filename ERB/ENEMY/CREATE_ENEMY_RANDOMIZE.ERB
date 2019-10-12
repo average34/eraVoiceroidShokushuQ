@@ -1,0 +1,437 @@
+﻿
+;接頭語強度		Mobの接頭語の強度を入れる変数です。
+;				現在要素数は6、順に「HP」「戦闘素質」「速さ」「行動回数」「耐性」「HP,戦闘素質,速さ」の接頭語の強度が入ります。
+;　				中に入れる数字は0~6、2がデフォの強さで、それより小さいと弱化、大きいと強化です。
+;適用フラグ		難易度に応じ、強化接頭語の数を制限する処理で使います。「この接頭語が適用されますよー」って目印です。
+;適用乱数		適用フラグと併せて使う、接頭語選出用の変数です。各要素は接頭語強度の各要素と対応します。
+
+;☆接頭語の「働き」（HPが増えるとか）の追加のしかた！☆
+;接頭語強度、適用フラグ、適用乱数の要素を増やします。
+;強度決定作業のループ数を増やし、難易度に基づいた強度分布の分岐をシコシコ書きます。
+;強化接頭語カット処理のところのループを増やします。
+;接頭語命名処理のところのループを増やして、値に応じた名前をぶち込みます（単純に出てくる語のバリエーション増やしたいならここいじればいいです）。
+;接頭語ステータス処理のところのループを増やして、値に応じた処理をぶち込みます。
+;おわり
+
+;たとえば賑やかしでダミー接頭語入れたいなら、
+;強度は全難易度0-2、命名処理の分岐だけ書く
+;とかすればいいです。
+
+@CREATE_ENEMY_RANDOMIZE()
+#DIM DYNAMIC 接頭語強度,6
+#DIM DYNAMIC 適用フラグ,6
+#DIM DYNAMIC 適用乱数,6
+#DIM DYNAMIC LCOUNT,2
+VARSET LOCAL
+
+;ランク7は接頭語つかない
+IF DA:(FLAG:1):86 == 7
+	RETURN
+ENDIF
+;--強度決定作業　ここから--
+;難易度(FLAG:4)にもとづき、接頭語強度が決定されます。
+;この時点では実際に適用されるかは未定です（強化接頭語が多すぎる場合、後のカット処理に引っかかるため）。
+;割りとゴリ押ししてますが、誰かもっとスマートな方法知ってたらおせーてください。
+FOR LCOUNT, 0, 6
+	;HP~耐性
+	SELECTCASE LCOUNT
+		CASE 1 TO 4
+			SELECTCASE FLAG:4
+				CASE 0
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 85
+							接頭語強度:LCOUNT = 2
+						CASE IS <= 88
+							接頭語強度:LCOUNT = 0
+						CASE IS <= 92
+							接頭語強度:LCOUNT = 1
+						CASE IS <= 97
+							接頭語強度:LCOUNT = 3
+						CASE IS <= 100
+							接頭語強度:LCOUNT = 4
+					ENDSELECT
+				CASE 1
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 85
+							接頭語強度:LCOUNT = 2
+						CASE IS <= 90
+							接頭語強度:LCOUNT = 1
+						CASE IS <= 95
+							接頭語強度:LCOUNT = 3
+						CASE IS <= 98
+							接頭語強度:LCOUNT = 4
+						CASE IS <= 100
+							接頭語強度:LCOUNT = 5
+					ENDSELECT
+				CASE 2
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 80
+							接頭語強度:LCOUNT = 2
+						CASE IS <= 85
+							接頭語強度:LCOUNT = 1
+						CASE IS <= 89
+							接頭語強度:LCOUNT = 3
+						CASE IS <= 94
+							接頭語強度:LCOUNT = 4
+						CASE IS <= 97
+							接頭語強度:LCOUNT = 5
+						CASE IS <= 100
+							接頭語強度:LCOUNT = 6
+					ENDSELECT
+				CASE 3
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 80
+							接頭語強度:LCOUNT = 2
+						CASE IS <= 89
+							接頭語強度:LCOUNT = 3
+						CASE IS <= 94
+							接頭語強度:LCOUNT = 4
+						CASE IS <= 96
+							接頭語強度:LCOUNT = 5
+						CASE IS <= 100
+							接頭語強度:LCOUNT = 6
+						ENDSELECT
+			ENDSELECT
+		;複合系は特殊分布
+		CASE 5
+			SELECTCASE FLAG:4
+				CASE 0
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 90
+							接頭語強度:LCOUNT = 2
+					CASE IS <= 95
+							接頭語強度:LCOUNT = 0
+					CASE IS <= 98
+						接頭語強度:LCOUNT = 1
+							CASE IS <= 100
+							接頭語強度:LCOUNT = 3
+					ENDSELECT
+				CASE 1
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 90
+							接頭語強度:LCOUNT = 2
+						CASE IS <= 94
+							接頭語強度:LCOUNT = 1
+						CASE IS <= 97
+							接頭語強度:LCOUNT = 3
+						CASE IS <= 99
+							接頭語強度:LCOUNT = 4
+						CASE IS <= 100
+							接頭語強度:LCOUNT = 5
+					ENDSELECT
+				CASE 2
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 90
+							接頭語強度:LCOUNT = 2
+						CASE IS <= 94
+							接頭語強度:LCOUNT = 1
+						CASE IS <= 96
+							接頭語強度:LCOUNT = 3
+						CASE IS <= 97
+							接頭語強度:LCOUNT = 4
+						CASE IS <= 99
+							接頭語強度:LCOUNT = 5
+						CASE IS <= 100
+							接頭語強度:LCOUNT = 6
+					ENDSELECT
+				CASE 3
+					SELECTCASE RAND:100 + 1
+						CASE IS <= 90
+							接頭語強度:LCOUNT = 2
+						CASE IS <= 94
+							接頭語強度:LCOUNT = 3
+						CASE IS <= 97
+							接頭語強度:LCOUNT = 4
+						CASE IS <= 98
+							接頭語強度:LCOUNT = 5
+						CASE IS <= 100
+							接頭語強度:LCOUNT = 6
+					ENDSELECT
+			ENDSELECT
+	ENDSELECT
+NEXT
+
+;--強化接頭語のリミット処理--
+;強化接頭語の数が難易度+2以上の時、リミットをかけていきます。
+;難易度+2より少ない場合、全部の強化接頭語が下記のリミット作業を通過していきます。
+;適用乱数・適用フラグの各要素は接頭語強度の各要素と対応します。
+FOR LCOUNT,0, FLAG:4 + 2
+	FOR LCOUNT:1, 0, 6
+		適用乱数:(LCOUNT:1) = RAND:100
+		;既に適用されることが決まっているorそもそも強化接頭語じゃない場合はスルーさせる
+		SIF 接頭語強度:(LCOUNT:1) <= 2 || 適用フラグ:(LCOUNT:1)
+			適用乱数:(LCOUNT:1) = -1
+	NEXT
+	;各乱数の中からテッペンとった奴が適用フラグを得る
+	MAX 適用乱数:0, 適用乱数:1, 適用乱数:2, 適用乱数:3, 適用乱数:4, 適用乱数:5
+	FOR LCOUNT:1, 0, 6
+		SIF RESULT == 適用乱数:(LCOUNT:1)
+			適用フラグ:(LCOUNT:1) = 1
+	NEXT
+NEXT
+;選出作業終了。
+;適用フラグのない強化接頭語は消えるさだめ
+FOR LCOUNT,0, 6
+	SIF !適用フラグ:LCOUNT || 接頭語強度 <= 2
+		接頭語強度:LCOUNT = 2
+NEXT
+
+;名前をぶちこんでいく
+FOR LCOUNT, 0, 6
+	SELECTCASE LCOUNT
+		;HP
+		CASE 0
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					SAVESTR:(FLAG:1) = ヒョロヒョロの%SAVESTR:(FLAG:1)%
+				CASE 1
+					SAVESTR:(FLAG:1) = もやしの%SAVESTR:(FLAG:1)%
+				CASE 3
+					SAVESTR:(FLAG:1) = 体力自慢の%SAVESTR:(FLAG:1)%
+				CASE 4
+					SAVESTR:(FLAG:1) = タフな%SAVESTR:(FLAG:1)%
+				CASE 5
+					SAVESTR:(FLAG:1) = 不倒の%SAVESTR:(FLAG:1)%
+				CASE 6
+					SAVESTR:(FLAG:1) = 不沈艦の%SAVESTR:(FLAG:1)%
+			ENDSELECT
+		;戦闘素質
+		CASE 1
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					SAVESTR:(FLAG:1) = 貧弱な%SAVESTR:(FLAG:1)%
+				CASE 1
+					SAVESTR:(FLAG:1) = 非力な%SAVESTR:(FLAG:1)%
+				CASE 3
+					SAVESTR:(FLAG:1) = 力自慢の%SAVESTR:(FLAG:1)%
+				CASE 4
+					SAVESTR:(FLAG:1) = 強靭な%SAVESTR:(FLAG:1)%
+				CASE 5
+					SAVESTR:(FLAG:1) = 勇猛な%SAVESTR:(FLAG:1)%
+				CASE 6
+					SAVESTR:(FLAG:1) = 破壊者の%SAVESTR:(FLAG:1)%
+			ENDSELECT
+		;あし
+		CASE 2
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					SAVESTR:(FLAG:1) = 鈍重な%SAVESTR:(FLAG:1)%
+				CASE 1
+					SAVESTR:(FLAG:1) = ずっしりした%SAVESTR:(FLAG:1)%
+				CASE 3
+					SAVESTR:(FLAG:1) = すばしっこい%SAVESTR:(FLAG:1)%
+				CASE 4
+					SAVESTR:(FLAG:1) = 素早い%SAVESTR:(FLAG:1)%
+				CASE 5
+					SAVESTR:(FLAG:1) = 目にも留まらぬ%SAVESTR:(FLAG:1)%
+				CASE 6
+					SAVESTR:(FLAG:1) = 神風の%SAVESTR:(FLAG:1)%
+			ENDSELECT
+		;耐性
+		CASE 3
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					SAVESTR:(FLAG:1) = 脆い%SAVESTR:(FLAG:1)%
+				CASE 1
+					SAVESTR:(FLAG:1) = なよなよした%SAVESTR:(FLAG:1)%
+				CASE 3
+					SAVESTR:(FLAG:1) = 頑丈な%SAVESTR:(FLAG:1)%
+				CASE 4
+					SAVESTR:(FLAG:1) = 硬い%SAVESTR:(FLAG:1)%
+				CASE 5
+					SAVESTR:(FLAG:1) = 鉄壁の%SAVESTR:(FLAG:1)%
+				CASE 6
+					SAVESTR:(FLAG:1) = 要塞の%SAVESTR:(FLAG:1)%
+			ENDSELECT
+		;行動回数
+		CASE 4
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 3, 4
+					SAVESTR:(FLAG:1) = 元気な%SAVESTR:(FLAG:1)%
+				CASE 5, 6
+					SAVESTR:(FLAG:1) = よく動く%SAVESTR:(FLAG:1)%
+			ENDSELECT
+		;総合
+		CASE 5
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					SAVESTR:(FLAG:1) = カモの%SAVESTR:(FLAG:1)%
+				CASE 1
+					SAVESTR:(FLAG:1) = 弱い%SAVESTR:(FLAG:1)%
+				CASE 3
+					SAVESTR:(FLAG:1) = 強い%SAVESTR:(FLAG:1)%
+				CASE 4
+					SAVESTR:(FLAG:1) = 恐るべき%SAVESTR:(FLAG:1)%
+				CASE 5
+					SAVESTR:(FLAG:1) = 凶悪な%SAVESTR:(FLAG:1)%
+				CASE 6
+					SAVESTR:(FLAG:1) = 神のごとき%SAVESTR:(FLAG:1)%
+			ENDSELECT
+	ENDSELECT
+NEXT
+
+;ステータスをいじる
+FOR LCOUNT, 0, 6
+	SELECTCASE LCOUNT
+		CASE 0
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					DA:(FLAG:1):2 = MAX(DA:(FLAG:1):2 * 60 / 100, DA:(FLAG:1):2 - 6000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+				CASE 1
+					DA:(FLAG:1):2 = MAX(DA:(FLAG:1):2 * 80 / 100, DA:(FLAG:1):2 - 8000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+				CASE 3
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 120 / 100, DA:(FLAG:1):2 + 2000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+				CASE 4
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 135 / 100, DA:(FLAG:1):2 + 3500)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+				CASE 5
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 150 / 100, DA:(FLAG:1):2 + 5000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+				CASE 6
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 200 / 100, DA:(FLAG:1):2 + 10000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+			ENDSELECT
+		CASE 1
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					DA:(FLAG:1):5 = MAX(DA:(FLAG:1):5 * 70 / 100, DA:(FLAG:1):5 - 30)
+				CASE 1
+					DA:(FLAG:1):5 = MAX(DA:(FLAG:1):5 * 85 / 100, DA:(FLAG:1):5 - 15)
+				CASE 3
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 120 / 100, DA:(FLAG:1):5 + 20)
+				CASE 4
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 135 / 100, DA:(FLAG:1):5 + 35)
+				CASE 5
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 150 / 100, DA:(FLAG:1):5 + 50)
+				CASE 6
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 200 / 100, DA:(FLAG:1):5 + 100)
+			ENDSELECT
+		CASE 2
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					DA:(FLAG:1):9 = MAX(DA:(FLAG:1):9 * 70 / 100, DA:(FLAG:1):9 - 30)
+				CASE 1
+					DA:(FLAG:1):9 = MAX(DA:(FLAG:1):9 * 85 / 100, DA:(FLAG:1):9 - 15)
+				CASE 3
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 120 / 100, DA:(FLAG:1):9 + 20)
+				CASE 4
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 135 / 100, DA:(FLAG:1):9 + 35)
+				CASE 5
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 150 / 100, DA:(FLAG:1):9 + 50)
+				CASE 6
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 200 / 100, DA:(FLAG:1):9 + 100)
+			ENDSELECT
+		CASE 3
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					DA:(FLAG:1):40 = MIN(DA:(FLAG:1):40 * 150 / 100, DA:(FLAG:1):40 + 50)
+					DA:(FLAG:1):41 = MIN(DA:(FLAG:1):41 * 150 / 100, DA:(FLAG:1):41 + 50)
+					DA:(FLAG:1):42 = MIN(DA:(FLAG:1):42 * 150 / 100, DA:(FLAG:1):42 + 50)
+					DA:(FLAG:1):43 = MIN(DA:(FLAG:1):43 * 150 / 100, DA:(FLAG:1):43 + 50)
+					DA:(FLAG:1):44 = MIN(DA:(FLAG:1):44 * 150 / 100, DA:(FLAG:1):44 + 50)
+				CASE 1
+					DA:(FLAG:1):40 = MIN(DA:(FLAG:1):40 * 130 / 100, DA:(FLAG:1):40 + 30)
+					DA:(FLAG:1):41 = MIN(DA:(FLAG:1):41 * 130 / 100, DA:(FLAG:1):41 + 30)
+					DA:(FLAG:1):42 = MIN(DA:(FLAG:1):42 * 130 / 100, DA:(FLAG:1):42 + 30)
+					DA:(FLAG:1):43 = MIN(DA:(FLAG:1):43 * 130 / 100, DA:(FLAG:1):43 + 30)
+					DA:(FLAG:1):44 = MIN(DA:(FLAG:1):44 * 130 / 100, DA:(FLAG:1):44 + 30)
+				CASE 3
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 80 / 100, DA:(FLAG:1):40 - 20)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 80 / 100, DA:(FLAG:1):41 - 20)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 80 / 100, DA:(FLAG:1):42 - 20)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 80 / 100, DA:(FLAG:1):43 - 20)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 80 / 100, DA:(FLAG:1):44 - 20)
+				CASE 4
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 70 / 100, DA:(FLAG:1):40 - 30)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 70 / 100, DA:(FLAG:1):41 - 30)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 70 / 100, DA:(FLAG:1):42 - 30)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 70 / 100, DA:(FLAG:1):43 - 30)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 70 / 100, DA:(FLAG:1):44 - 30)
+				CASE 5
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 60 / 100, DA:(FLAG:1):40 - 40)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 60 / 100, DA:(FLAG:1):41 - 40)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 60 / 100, DA:(FLAG:1):42 - 40)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 60 / 100, DA:(FLAG:1):43 - 40)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 60 / 100, DA:(FLAG:1):44 - 40)
+				CASE 6
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 50 / 100, DA:(FLAG:1):40 - 50)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 50 / 100, DA:(FLAG:1):41 - 50)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 50 / 100, DA:(FLAG:1):42 - 50)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 50 / 100, DA:(FLAG:1):43 - 50)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 50 / 100, DA:(FLAG:1):44 - 50)
+			ENDSELECT
+		CASE 4
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 3,4
+					DA:(FLAG:1):8 ++
+				CASE 5,6
+					DA:(FLAG:1):8 += 2
+			ENDSELECT
+		CASE 5
+			SELECTCASE 接頭語強度:LCOUNT
+				CASE 0
+					DA:(FLAG:1):2 = MAX(DA:(FLAG:1):2 * 80 / 100, DA:(FLAG:1):2 - 2000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+					DA:(FLAG:1):5 = MAX(DA:(FLAG:1):5 * 80 / 100, DA:(FLAG:1):5 - 20)
+					DA:(FLAG:1):9 = MAX(DA:(FLAG:1):9 * 80 / 100, DA:(FLAG:1):9 - 20)
+					DA:(FLAG:1):40 = MIN(DA:(FLAG:1):40 * 130 / 100, DA:(FLAG:1):40 + 30)
+					DA:(FLAG:1):41 = MIN(DA:(FLAG:1):41 * 130 / 100, DA:(FLAG:1):41 + 30)
+					DA:(FLAG:1):42 = MIN(DA:(FLAG:1):42 * 130 / 100, DA:(FLAG:1):42 + 30)
+					DA:(FLAG:1):43 = MIN(DA:(FLAG:1):43 * 130 / 100, DA:(FLAG:1):43 + 30)
+					DA:(FLAG:1):44 = MIN(DA:(FLAG:1):44 * 130 / 100, DA:(FLAG:1):44 + 30)
+				CASE 1
+					DA:(FLAG:1):2 = MAX(DA:(FLAG:1):2 * 90 / 100, DA:(FLAG:1):2 - 9000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+					DA:(FLAG:1):5 = MAX(DA:(FLAG:1):5 * 90 / 100, DA:(FLAG:1):5 - 10)
+					DA:(FLAG:1):9 = MAX(DA:(FLAG:1):9 * 90 / 100, DA:(FLAG:1):9 - 10)
+					DA:(FLAG:1):40 = MIN(DA:(FLAG:1):40 * 115 / 100, DA:(FLAG:1):40 + 15)
+					DA:(FLAG:1):41 = MIN(DA:(FLAG:1):41 * 115 / 100, DA:(FLAG:1):41 + 15)
+					DA:(FLAG:1):42 = MIN(DA:(FLAG:1):42 * 115 / 100, DA:(FLAG:1):42 + 15)
+					DA:(FLAG:1):43 = MIN(DA:(FLAG:1):43 * 115 / 100, DA:(FLAG:1):43 + 15)
+					DA:(FLAG:1):44 = MIN(DA:(FLAG:1):44 * 115 / 100, DA:(FLAG:1):44 + 15)
+				CASE 3
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 120 / 100, DA:(FLAG:1):2 + 2000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 120 / 100, DA:(FLAG:1):5 + 20)
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 120 / 100, DA:(FLAG:1):9 + 20)
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 90 / 100, DA:(FLAG:1):40 - 10)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 90 / 100, DA:(FLAG:1):41 - 10)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 90 / 100, DA:(FLAG:1):42 - 10)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 90 / 100, DA:(FLAG:1):43 - 10)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 90 / 100, DA:(FLAG:1):44 - 10)
+				CASE 4
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 130 / 100, DA:(FLAG:1):2 + 3000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 130 / 100, DA:(FLAG:1):5 + 30)
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 130 / 100, DA:(FLAG:1):9 + 30)
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 80 / 100, DA:(FLAG:1):40 - 20)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 80 / 100, DA:(FLAG:1):41 - 20)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 80 / 100, DA:(FLAG:1):42 - 20)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 80 / 100, DA:(FLAG:1):43 - 20)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 80 / 100, DA:(FLAG:1):44 - 20)
+				CASE 5
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 140 / 100, DA:(FLAG:1):2 + 4000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 140 / 100, DA:(FLAG:1):5 + 4000)
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 140 / 100, DA:(FLAG:1):9 + 40)
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 70 / 100, DA:(FLAG:1):40 - 30)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 70 / 100, DA:(FLAG:1):41 - 30)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 70 / 100, DA:(FLAG:1):42 - 30)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 70 / 100, DA:(FLAG:1):43 - 30)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 70 / 100, DA:(FLAG:1):44 - 30)
+				CASE 6
+					DA:(FLAG:1):2 = MIN(DA:(FLAG:1):2 * 150 / 100, DA:(FLAG:1):2 + 5000)
+					DA:(FLAG:1):1 = DA:(FLAG:1):2
+					DA:(FLAG:1):5 = MIN(DA:(FLAG:1):5 * 150 / 100, DA:(FLAG:1):5 + 50)
+					DA:(FLAG:1):9 = MIN(DA:(FLAG:1):9 * 150 / 100, DA:(FLAG:1):9 + 50)
+					DA:(FLAG:1):40 = MAX(DA:(FLAG:1):40 * 60 / 100, DA:(FLAG:1):40 - 40)
+					DA:(FLAG:1):41 = MAX(DA:(FLAG:1):41 * 60 / 100, DA:(FLAG:1):41 - 40)
+					DA:(FLAG:1):42 = MAX(DA:(FLAG:1):42 * 60 / 100, DA:(FLAG:1):42 - 40)
+					DA:(FLAG:1):43 = MAX(DA:(FLAG:1):43 * 60 / 100, DA:(FLAG:1):43 - 40)
+					DA:(FLAG:1):44 = MAX(DA:(FLAG:1):44 * 60 / 100, DA:(FLAG:1):44 - 40)
+			ENDSELECT
+	ENDSELECT
+NEXT

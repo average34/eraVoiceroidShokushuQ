@@ -1,0 +1,137 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_7(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 2500
+DA:(ARG:0):2 = 2500
+DA:(ARG:0):3 = 0
+DA:(ARG:0):5 = 60
+DA:(ARG:0):9 = 60
+
+DA:(ARG:0):15 = 80
+DA:(ARG:0):16 = 0
+DA:(ARG:0):17 = 20
+DA:(ARG:0):18 = 60
+DA:(ARG:0):19 = 10
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 12
+DA:(ARG:0):86 = 1
+DA:(ARG:0):89 = 21
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(7)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_7(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 20
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:3 = RAND:14
+			IF LOCAL:3 < 4
+				LOCAL:2 = 628
+			ELSEIF LOCAL:3 < 8
+				LOCAL:2 = 629
+			ELSEIF LOCAL:3 < 10
+				LOCAL:2 = 815
+			ELSEIF LOCAL:3 < 11
+				LOCAL:2 = 996
+			ELSEIF LOCAL:3 < 12
+				LOCAL:2 = 997
+			ELSE
+				LOCAL:2 = 1000
+			ENDIF
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:10
+		IF LOCAL:3 < 3
+			LOCAL:2 = 115
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 116
+		ELSEIF LOCAL:3 < 8
+			LOCAL:2 = 215
+		ELSEIF LOCAL:3 < 9
+			LOCAL:2 = 328
+		ELSE
+			LOCAL:2 = 329
+		ENDIF
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;PTには拘束攻撃以外
+	LOCAL:3 = RAND:10
+	IF LOCAL:3 < 3
+		LOCAL:2 = 115
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 116
+	ELSEIF LOCAL:3 < 8
+		LOCAL:2 = 215
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 328
+	ELSE
+		LOCAL:2 = 329
+	ENDIF
+ELSE
+	;通常時
+	;色々
+	LOCAL:3 = RAND:13
+	IF LOCAL:3 < 3
+		LOCAL:2 = 115
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 116
+	ELSEIF LOCAL:3 < 8
+		LOCAL:2 = 215
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 328
+	ELSEIF LOCAL:3 < 10
+		LOCAL:2 = 329
+	ELSE
+		LOCAL:2 = 515
+	ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

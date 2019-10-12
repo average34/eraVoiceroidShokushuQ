@@ -1,0 +1,67 @@
+﻿; AI戦闘コマンド フェラチオ
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_85(CHARA_ID, TARGET_ID, SUPPORT_VALUE)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM SUPPORT_VALUE ; Reserved
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+
+	VARSET RATE
+	
+	; ターゲットが存在しないか、HP0以下による対象不適正
+	SIF TARGET_ID == 0 || !MATCH(TFLAG, TARGET_ID, 1, 11) || DA:TARGET_ID:1 <= 0
+		RETURN 0
+		
+	; 催眠状態
+	IF CFLAG:CHARA_ID:43
+		; 催眠中コマンドは完全ランダム
+		RATE = RAND:10001
+	
+	; 通常時は性攻撃
+	ELSE
+		; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+		;                超弱気    弱気    普通    強気  超強気
+		DATA_TABLE:10:0 =  3200,   3600,   4000,   3600,   3200  ; 10:ねっけつかん
+		DATA_TABLE:2:0  =  3300,   3700,   4100,   3700,   3300  ; 02:おてんば
+		DATA_TABLE:14:0 =  3400,   3800,   4200,   3800,   3400  ; 14:わがまま
+		DATA_TABLE:3:0  =  3500,   3900,   4300,   3900,   3500  ; 03:がんこもの
+		DATA_TABLE:6:0  =  3600,   4000,   4400,   4000,   3600  ; 06:くろうにん
+		DATA_TABLE:4:0  =  3700,   4100,   4500,   4100,   3700  ; 04:がんばりや
+		DATA_TABLE:5:0  =  3800,   4200,   4600,   4200,   3800  ; 05:きれもの
+		DATA_TABLE:1:0  =  3900,   4300,   4700,   4300,   3900  ; 01:おせっかい
+		DATA_TABLE:0:0  =  4000,   4400,   4800,   4400,   4000  ; 00:ふつう
+		DATA_TABLE:9:0  =  4100,   4500,   4900,   4500,   4100  ; 09:ぬけめがない
+		DATA_TABLE:8:0  =  4200,   4600,   5000,   4600,   4200  ; 08:セクシーギャル
+		DATA_TABLE:7:0  =  4100,   4500,   4900,   4500,   4100  ; 07:しあわせもの
+		DATA_TABLE:11:0 =  4000,   4400,   4800,   4400,   4000  ; 11:のんきもの
+		DATA_TABLE:13:0 =  3900,   4300,   4700,   4300,   3900  ; 13:やさしいひと
+		DATA_TABLE:12:0 =  3800,   4200,   4600,   4200,   3800  ; 12:ひっこみじあん
+		RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+		
+		; 絶頂中は賢者タイムによる大マイナス補正
+		SIF CFLAG:CHARA_ID:35
+			TIMES RATE, 0.5
+		
+		; EPによる補正
+		SELECTCASE BASE:CHARA_ID:EP
+		; 75%以上
+		CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 75)
+			TIMES RATE, 0.1
+		; 50%以上
+		CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 50)
+			TIMES RATE, 0.6
+		; 25%以上
+		CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 25)
+			TIMES RATE, 1.0
+		; 5%以上
+		CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 5)
+			TIMES RATE, 1.5
+		; 寸止め
+		CASE 1
+			TIMES RATE, 1.7
+		ENDSELECT
+	ENDIF
+
+RETURN LIMIT(RATE, 0, 10000)

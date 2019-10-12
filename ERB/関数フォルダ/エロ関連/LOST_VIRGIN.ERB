@@ -1,0 +1,217 @@
+﻿;処女喪失処理
+;ARG:0	対象キャラ
+;ARG:1	特殊回避条件指定（0：指定なし　1：HP満タンで回避可能　2：出産のため回避不可）
+;ARG:2	喪失理由(1:敵 2:味方合意 3:味方無理矢理 4:罠 5:バイブ自慰 6:出産)
+;ARG:3	相手ID（喪失理由１，２，３の場合のみ）
+@LOST_VIRGIN(ARG:0, ARG:1 = 0, ARG:2, ARG:3)
+;LOCAL
+;0	LOOP
+;1	喪失MP
+;2	倍率
+;3	回避キャンセル
+;4	娘判定用
+
+IF ARG:0 == 0
+	RETURN
+ENDIF
+
+IF TALENT:(ARG:0):0 == 0
+	RETURN
+ENDIF
+
+;貞操帯による処女喪失回避
+IF CFLAG:(ARG:0):47 == 1
+	PRINTFORML 貞操帯の鍵穴に触手が入り込み女性器の代わりに犯されている……
+	PRINTFORMW どういうわけか異物を挿入されている感覚が自分の体内にもリンクしているようだ……
+	RETURN
+ENDIF
+
+LOCAL:3 = 0
+LOCAL:5 = 0
+
+;HPが最大値だと回避可能
+IF ARG:1 == 1
+	IF BASE:(ARG:0):0 != MAXBASE:(ARG:0):0
+		LOCAL:3 = 1
+	ENDIF
+ENDIF
+
+;敵が相手ならHPが多かったり戦闘素質の差が大きいと回避可能
+IF ARG:2 == 1
+	;HPが最大値
+	IF BASE:(ARG:0):0 != MAXBASE:(ARG:0):0
+		LOCAL:3 = 1
+	ENDIF
+	;相手が敵ならHPが1/3以上で確立回避
+	IF BASE:(ARG:0):0 < RAND:(MAXBASE:(ARG:0):0) && BASE:(ARG:0):0 * 3 >= MAXBASE:(ARG:0):0
+		LOCAL:3 = 1
+	ENDIF
+	;相手が敵なら戦闘素質が奪う側より1割以上高いと確率で回避、戦闘力の差の半分が固定補正
+	IF ABL:(ARG:0):98 > DA:(ARG:3):5 * 11 / 10
+		LOCAL:5 = 1
+		IF DA:(ARG:3):5 > RAND:(ABL:(ARG:0):98) + ((ABL:(ARG:0):98 - DA:(ARG:3):5) / 2)
+			LOCAL:3 = 1
+		ENDIF
+	ENDIF
+ENDIF
+
+IF FLAG:20 == 0 && ARG:1 != 2
+	IF CFLAG:(ARG:0):24 || CFLAG:(ARG:0):25 || CFLAG:(ARG:0):29 || (CFLAG:(ARG:0):50 >= 54 && CFLAG:(ARG:0):50 <= 58)
+		CALL PRINT_MESSAGE(ARG:0, 136, 0, CALLNAME:(ARG:0), "", 0, 1)
+	ELSEIF (CFLAG:(ARG:0):50 == 53 && !CFLAG:(ARG:0):35) || (CFLAG:(ARG:0):20 == 0 && !CFLAG:(ARG:0):35) || LOCAL:3 == 0
+		CALL PRINT_MESSAGE(ARG:0, 136, 0, CALLNAME:(ARG:0), "", 0, 2)
+		IF LOCAL:5
+			CALL PRINT_MESSAGE(ARG:0, 136, 0, CALLNAME:(ARG:0), "", 0, 4)
+		ENDIF
+		RETURN
+	ELSE
+		CALL PRINT_MESSAGE(ARG:0, 136, 0, CALLNAME:(ARG:0), "", 0, 1)
+	ENDIF
+	IF LOCAL:5
+		CALL PRINT_MESSAGE(ARG:0, 136, 0, CALLNAME:(ARG:0), "", 0, 3)
+	ENDIF
+ENDIF
+
+;基本MPダメージ
+LOCAL:1 = 1000
+
+;貞操観念
+IF TALENT:(ARG:0):30
+	LOCAL:1 = LOCAL:1 * 3 / 2
+ENDIF
+IF TALENT:(ARG:0):31
+	LOCAL:1 = LOCAL:1 / 2
+ENDIF
+
+
+;発情or絶頂中は少し軽減
+IF CFLAG:(ARG:0):28 || CFLAG:(ARG:0):35
+	LOCAL:1 = LOCAL:1 * 8 / 10
+ENDIF
+
+
+;PTメンバー以外はこっそり軽減
+IF CHECK_MEMBER_FROM_ID(ARG:0) == 0
+	LOCAL:1 /= 3
+ENDIF
+
+;戦闘素質差による増減
+IF LOCAL:5
+	LOCAL:1 += ABL:(ARG:0):98 * 100 / DA:(ARG:3):5
+ENDIF
+
+;触手中毒による軽減
+IF ABL:(ARG:0):11 == 0
+	LOCAL:2 = 100
+ELSEIF ABL:(ARG:0):11 == 1
+	LOCAL:2 = 90
+ELSEIF ABL:(ARG:0):11 == 2
+	LOCAL:2 = 75
+ELSE
+	LOCAL:2 = 50
+ENDIF
+
+;TPによる軽減
+IF BASE:(ARG:0):4 <= 25
+	LOCAL:2 -= 15
+ELSEIF BASE:(ARG:0):4 <= 50
+	LOCAL:2 -= 10
+ELSEIF BASE:(ARG:0):4 <= 75
+	LOCAL:2 -= 5
+ENDIF
+
+LOCAL:1 = LOCAL:1 * LOCAL:2 / 100
+
+
+IF FLAG:20 == 0
+	IF ARG:1 == 2
+		CALL PRINT_MESSAGE(ARG:0, 136, 2, CALLNAME:(ARG:0), "", LOCAL:1)
+	ELSE
+		CALL PRINT_MESSAGE(ARG:0, 136, 0, CALLNAME:(ARG:0), "", LOCAL:1)
+	ENDIF
+	
+	LOCAL:4 = CFLAG:(ARG:0):104
+	IF LOCAL:4
+		;子孫が処女喪失した場合、先祖が同じPTに居たらMPダメージ
+		CALL LOST_VIRGIN_OFFSPRING(1, NO:(ARG:0), LOCAL:4)
+		CALL LOST_VIRGIN_OFFSPRING(FLAG:10, NO:(ARG:0), LOCAL:4)
+		CALL LOST_VIRGIN_OFFSPRING(FLAG:11, NO:(ARG:0), LOCAL:4)
+	ENDIF
+	;屈服刻印追加
+	IF TALENT:(ARG:0):0 == 1
+		CALL GET_VIRGIN_MARK(ARG:0, DA:(ARG:3):0)
+	ENDIF
+ENDIF
+
+;口上で処女膜が再生物か判定するので喪失タイミングは後
+TALENT:(ARG:0):0 = 0
+
+IF CHECK_MEMBER_FROM_ID(ARG:0)
+	CALL ADD_FEELING(ARG:0, -20)
+ENDIF
+
+IF CFLAG:(ARG:0):29 == 0
+	BASE:(ARG:0):1 -= LOCAL:1
+	IF BASE:(ARG:0):1 <= 0
+		CALL HEART_BREAK(ARG:0)
+	ENDIF
+ENDIF
+
+;ED用記録
+IF ARG:2 == 1
+	CALL ADD_HISTORY(DAY, ARG:0,, 2, ARG:2, @"%SAVESTR:(ARG:3)%")
+ELSE
+	CALL ADD_HISTORY(DAY, ARG:0, ARG:3, 2, ARG:2)
+ENDIF
+
+;処女喪失の条件を満たすかどうかだけ確認する
+;ARG:0	対象キャラ
+;ARG:1	EPダメージがある場合、ダメージを指定
+@LOST_VIRGIN_CHECK(ARG:0, ARG:1, ARG:2, ARG:3)
+#FUNCTION
+
+IF ARG:0 == 0
+	RETURNF 0
+ENDIF
+
+IF TALENT:(ARG:0):0 == 0
+	RETURNF 0
+ENDIF
+
+IF CFLAG:(ARG:0):24 || CFLAG:(ARG:0):25 || CFLAG:(ARG:0):29
+	LOCAL:3 = 1
+ELSEIF (CFLAG:(ARG:0):50 == 53 || CFLAG:(ARG:0):20 == 0) && !CFLAG:(ARG:0):35 && BASE:(ARG:0):2 > ARG:1
+	LOCAL:3 = 0
+ELSE
+	LOCAL:3 = 1
+ENDIF
+
+RETURNF LOCAL:3
+
+
+;子孫の処女喪失
+;ARG:0	チェック対象キャラ
+;ARG:1	キャラNO
+;ARG:2	喪失キャラが何代目か
+@LOST_VIRGIN_OFFSPRING(ARG:0, ARG:1, ARG:2)
+
+IF ARG:0 == 0
+	RETURN
+ENDIF
+
+IF NO:(ARG:0) != ARG:1
+	;他所の子は気にならない（ということにしておく）
+	RETURN
+ENDIF
+
+IF CFLAG:(ARG:0):104 >= ARG:2
+	;自分、またはおかーさんの処女喪失は計算しない
+	RETURN
+ENDIF
+
+;MPダメージ計算
+;100を基準にし、１世代離れるごとに減少
+LOCAL:1 = 100 / (ARG:2 - CFLAG:(ARG:0):104)
+
+CALL DAMAGE_COMMON(ARG:0, 1, LOCAL:1)
+

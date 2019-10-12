@@ -1,0 +1,61 @@
+﻿;おもちゃにできる喪失キャラをランダム取得
+;敵の攻撃2302番で使用
+;ARG:0	　部屋番号
+@CHECK_GANGU_IRU(ARG:0, ARG:1)
+
+;local:0　一時的
+;local:2　リターン
+;local:3 何人あてはまるか
+
+
+LOCAL:2 = 0
+LOCAL:3 = 0
+
+
+;
+FOR LOCAL:0, 1, CHARANUM
+
+	IF CFLAG:(LOCAL:0):4 == ARG:0 && CFLAG:(LOCAL:0):10 == 0 && CFLAG:(LOCAL:0):29 > 0 && CFLAG:(LOCAL:0):20 == 0 && CFLAG:(LOCAL:0):21 == 0 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+
+		LOCAL:3 += 1
+	ENDIF
+
+NEXT
+
+
+
+
+IF LOCAL:3 > 0
+
+	FOR LOCAL:0, 1, CHARANUM
+		IF RAND:(LOCAL:3) == 0 && CFLAG:(LOCAL:0):4 == ARG:0 && CFLAG:(LOCAL:0):10 == 0 && CFLAG:(LOCAL:0):29 > 0 && CFLAG:(LOCAL:0):20 == 0 && CFLAG:(LOCAL:0):21 == 0 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+
+			LOCAL:2 = LOCAL:0
+
+			BREAK
+
+
+
+		ELSEIF CFLAG:(LOCAL:0):4 == ARG:0 && CFLAG:(LOCAL:0):10 == 0 && CFLAG:(LOCAL:0):29 > 0 && CFLAG:(LOCAL:0):20 == 0 && CFLAG:(LOCAL:0):21 == 0 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+			IF LOCAL:3 > 1
+				LOCAL:3 -= 1
+
+			ENDIF
+
+		ENDIF
+
+	NEXT
+
+ELSE
+
+	LOCAL:2 = 0
+
+ENDIF
+
+
+
+
+RETURN LOCAL:2
+
+
+

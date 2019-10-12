@@ -1,0 +1,473 @@
+﻿;火炎放射等消耗武器の口上
+;弱、中、強、節約、みだれうち、集中の６種類
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   20    コマンドID(消耗　弱攻撃)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_20(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	;
+	IF CFLAG:35 > 0
+		CALL ADD_RAND_MESSAGE, @"「あっ、あてるくらいなら……」"
+		CALL ADD_RAND_MESSAGE, @"「今、さわられたら……」"
+		
+	; 通常
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「せめて、どこかに当たって！」"
+		CALL ADD_RAND_MESSAGE, @"「ここはホーミングで！」"
+		CALL ADD_RAND_MESSAGE, @"「こんな時こそ、冷静に」"
+		CALL ADD_RAND_MESSAGE, @"「落ち着けば、当てられないほどの動きじゃないはず……」"
+
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「さっさと倒れなさいよ！」"
+			CALL ADD_RAND_MESSAGE, @"「迅速に片づけましょう」"
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「当たるまで、撃ちまくるっ！」"
+
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「速い……　でも、それだけでは！」"
+			CALL ADD_RAND_MESSAGE, @"「迅速に片づけましょう」"
+		CASE 性格_がんばりや
+			CALL ADD_RAND_MESSAGE, @"「速い……　でも、それだけでは！」"
+			CALL ADD_RAND_MESSAGE, @"「つかまえた……！　いけっ！」"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「さっさと倒れなさいよ！」"
+			CALL ADD_RAND_MESSAGE, @"「迅速に片づけましょう」"
+			CALL ADD_RAND_MESSAGE, @"「こんなとこで、グズグズしてられないのよ！」"
+			CALL ADD_RAND_MESSAGE, @"「攻めに夢中な奴ほど、狙いやすいものはないわ」"
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「私だってこれくらいならっ！」"
+			CALL ADD_RAND_MESSAGE, @"「おねがい、あたって！」"
+
+		CASE 性格_セクシーギャル
+
+			CALL ADD_RAND_MESSAGE, @"「それそれそれそれぇ！」"
+			CALL ADD_RAND_MESSAGE, @"「ほらほらほらほらぁ！」"
+			CALL ADD_RAND_MESSAGE, @"「もう飽きてきてしまいました」"
+			CALL ADD_RAND_MESSAGE, @"「簡単には逝かないでくださいね」"
+			CALL ADD_RAND_MESSAGE, @"「糸を引くように追い詰めましょうか」"
+			CALL ADD_RAND_MESSAGE, @"「少しの時間だけ、目を閉じててくださいね」"
+
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「さっさと倒れなさいよ！」"
+			CALL ADD_RAND_MESSAGE, @"「迅速に片づけましょう」"
+			CALL ADD_RAND_MESSAGE, @"「こんなとこで、グズグズしてられないのよ！」"
+			CALL ADD_RAND_MESSAGE, @"「攻めに夢中な奴ほど、狙いやすいものはないわ」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「当たるまで、撃ちまくるっ！」"
+
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「私だってこれくらいならっ！」"
+			CALL ADD_RAND_MESSAGE, @"「おねがい、あたって！」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「私だってこれくらいならっ！」"
+			CALL ADD_RAND_MESSAGE, @"「おねがい、あたって！」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「さっさと倒れなさいよ！」"
+			CALL ADD_RAND_MESSAGE, @"「こうも潰したい敵ばかりだと、照準がいらないわねっ！」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   21    コマンドID(消耗　中攻撃)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_21(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	;
+	IF CFLAG:35 > 0
+
+		CALL COMMON_KOJO_DEFAULT_NOW_H_AT_TEST(0)
+
+
+	; 通常
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「足りない力は武器で補わないと」"
+		CALL ADD_RAND_MESSAGE, @"「しっかり狙うわよ」"
+		CALL ADD_RAND_MESSAGE, @"「この武器が通用するといいんだけど」"
+		CALL ADD_RAND_MESSAGE, @"「狙いをつけて……シュート！」"
+		CALL ADD_RAND_MESSAGE, @"「甘く見ないことね」"
+		CALL ADD_RAND_MESSAGE, @"「そう簡単には、近づけさせない！」"
+		CALL ADD_RAND_MESSAGE, @"「右！？いや、正面！とらえた！」"
+		CALL ADD_RAND_MESSAGE, @"「左から！？いや、正面ね！」"
+
+
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「泣き事なんて言ってられないわね……」"
+			CALL ADD_RAND_MESSAGE, @"「この武器ならどうかしら！」"
+			CALL ADD_RAND_MESSAGE, @"「ありがたく使わせてもらうわ！」"
+			CALL ADD_RAND_MESSAGE, @"「この際だもの。使えるものはなんだって使うわよ！」"
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「考えるよりも、まずは撃つ！」"
+			CALL ADD_RAND_MESSAGE, @"「やってやる！」"
+
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「この武器ならどうかしら！」"
+			CALL ADD_RAND_MESSAGE, @"「ありがたく使わせてもらうわ！」"
+			CALL ADD_RAND_MESSAGE, @"「この際だもの。使えるものはなんだって使うわよ！」"
+		CASE 性格_がんばりや
+			CALL ADD_RAND_MESSAGE, @"「私がやるしかないんだ、私が……！」"
+			CALL ADD_RAND_MESSAGE, @"「最後まで戦い抜く！守りたいものがあるから……」"
+			CALL ADD_RAND_MESSAGE, @"「泣き事なんて言ってられないわね……」"
+
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「この武器ならどうかしら！」"
+			CALL ADD_RAND_MESSAGE, @"「ありがたく使わせてもらうわ！」"
+			CALL ADD_RAND_MESSAGE, @"「引き際を見極めながら……」"
+			CALL ADD_RAND_MESSAGE, @"「倒すことよりも生き延びることを優先……」"
+			CALL ADD_RAND_MESSAGE, @"「この際だもの。使えるものはなんだって使うわよ！」"
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「ちゃんと効くのかな……」"
+			CALL ADD_RAND_MESSAGE, @"「もう帰れないのかな。……ううん、そんなこと言ってられない！」"
+
+
+		CASE 性格_セクシーギャル
+
+			CALL ADD_RAND_MESSAGE, @"「さあ、踊りましょうか」"
+
+
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「この武器ならどうかしら！」"
+			CALL ADD_RAND_MESSAGE, @"「ありがたく使わせてもらうわ！」"
+			CALL ADD_RAND_MESSAGE, @"「引き際を見極めながら……」"
+			CALL ADD_RAND_MESSAGE, @"「倒すことよりも生き延びることを優先……」"
+			CALL ADD_RAND_MESSAGE, @"「この際だもの。使えるものはなんだって使うわよ！」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「考えるよりも、まずは撃つ！」"
+			CALL ADD_RAND_MESSAGE, @"「やってやる！」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「ちゃんと効くのかな……」"
+			CALL ADD_RAND_MESSAGE, @"「もう帰れないのかな。……ううん、そんなこと言ってられない！」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「ちゃんと効くのかな……」"
+			CALL ADD_RAND_MESSAGE, @"「もう帰れないのかな。……ううん、そんなこと言ってられない！」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「何度でも撃ちこんであげる」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   22    コマンドID(消耗　強攻撃)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_22(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	;
+	IF CFLAG:35 > 0
+
+		CALL COMMON_KOJO_DEFAULT_NOW_H_AT_TEST(0)
+
+
+	; 通常
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「たっぷり喰らって！」"
+		CALL ADD_RAND_MESSAGE, @"「残弾なんて気にしてられないの！」"
+		CALL ADD_RAND_MESSAGE, @"「今は弱気になっちゃダメ……」"
+		CALL ADD_RAND_MESSAGE, @"「これ、全部あげる！」"
+		CALL ADD_RAND_MESSAGE, @"「ここは威力を重視して……」"
+		CALL ADD_RAND_MESSAGE, @"「今なら当たるかも！」"
+		CALL ADD_RAND_MESSAGE, @"「当たれば効くはず！」"
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「遠慮せずに消し飛んで！」"
+
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「根絶やしにしてやるっ！」"
+
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「絶対に負けませんから！」"
+
+		CASE 性格_がんばりや
+			CALL ADD_RAND_MESSAGE, @"「来るな、来るな、来るなー！」"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「道具の威力までは吸い取れないのでしょう？」"
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「来るな、来るな、来るなー！」"
+
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「しっかりと受け止めてくださいね」"
+			CALL ADD_RAND_MESSAGE, @"「どこまで耐えられるかしら」"
+			CALL ADD_RAND_MESSAGE, @"「女の敵は許しませんよ？」"
+
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「説明書ならさっき読んだし……」"
+			CALL ADD_RAND_MESSAGE, @"「道具の威力までは吸い取れないのでしょう？」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「根絶やしにしてやるっ！」"
+			CALL ADD_RAND_MESSAGE, @"「どちらかが倒れるまで、やるだけだぁっ！」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「来ないで、来ないで、来ないでぇー！」"
+			CALL ADD_RAND_MESSAGE, @"「きゃあああっ！こっち、来ないでぇぇっ！やぁぁん！」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「来ないで、来ないで、来ないでぇー！」"
+			CALL ADD_RAND_MESSAGE, @"「きゃあああっ！こっち、来ないでぇぇっ！やぁぁん！」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「根絶やしにしてやるっ！」"
+			CALL ADD_RAND_MESSAGE, @"「道具の威力までは吸い取れないのでしょう？」"
+			CALL ADD_RAND_MESSAGE, @"「始末してあげる！！」"
+
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   23    コマンドID(消耗　節約、効率の良い攻撃)　残弾のないりばーすでは防御しながら攻める印象にする。
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_23(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	;
+	IF CFLAG:35 > 0
+
+
+		CALL COMMON_KOJO_DEFAULT_NOW_H_AT_TEST(0)
+
+		
+	; 通常
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「今は牽制に徹するべき」"
+		CALL ADD_RAND_MESSAGE, @"「ここは様子を見ないと……」"
+		CALL ADD_RAND_MESSAGE, @"「今のうちに体勢を……」"
+		CALL ADD_RAND_MESSAGE, @"「少しだけ時間を稼ぐ……」"
+		CALL ADD_RAND_MESSAGE, @"「なるべく距離を稼ぎながら撃たないと」"
+		CALL ADD_RAND_MESSAGE, @"「残弾を詰めなおさないと……！」"
+		CALL ADD_RAND_MESSAGE, @"「この武器の役目はここまでね」"
+
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「うかつに手は出せないわね……」"
+			CALL ADD_RAND_MESSAGE, @"「こちらの様子を見ているのかしら……」"
+		CASE 性格_おてんば
+
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「うかつに手は出せないわね……」"
+			CALL ADD_RAND_MESSAGE, @"「こちらの様子を見ているのかしら……」"
+			CALL ADD_RAND_MESSAGE, @"「敵の狙いは……」"
+		CASE 性格_きれもの
+
+			CALL ADD_RAND_MESSAGE, @"「うかつに手は出せないわね……」"
+			CALL ADD_RAND_MESSAGE, @"「こちらの様子を見ているのかしら……」"
+			CALL ADD_RAND_MESSAGE, @"「まるで悪夢ね……」"
+			CALL ADD_RAND_MESSAGE, @"「肝心な時に弾切れにならないようにね」"
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「肝心な時に弾切れにならないように……」"
+			CALL ADD_RAND_MESSAGE, @"「ここからどうしよう……」"
+
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「少し休みましょうか……」"
+
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「うかつに手は出せないわね……」"
+			CALL ADD_RAND_MESSAGE, @"「こちらの様子を見ているのかしら……」"
+			CALL ADD_RAND_MESSAGE, @"「まるで悪夢ね……」"
+			CALL ADD_RAND_MESSAGE, @"「肝心な時に弾切れにならないようにね」"
+		CASE 性格_ねっけつかん
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「ここからどうしよう……」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「ここからどうしよう……」"
+		CASE 性格_わがまま
+
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   24    コマンドID(消耗　全体攻撃　みだれうち)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_24(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+		CALL ADD_RAND_MESSAGE, @"「ここは連射あるのみ！」"
+		CALL ADD_RAND_MESSAGE, @"「散弾状にも使えるんだから！」"
+		CALL ADD_RAND_MESSAGE, @"「反射角を利用して、えいっ！」"
+		CALL ADD_RAND_MESSAGE, @"「潜んでいる敵もろとも！」"
+		CALL ADD_RAND_MESSAGE, @"「あわてないで、やれることを確実に」"
+		CALL ADD_RAND_MESSAGE, @"「これだけ撃てば……！」"
+		CALL ADD_RAND_MESSAGE, @"「これだけの残弾があれば！」"
+
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+
+
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「早めにカタをつけないと……」"
+			CALL ADD_RAND_MESSAGE, @"「撃って撃って、撃ちまくってやるわ！」"
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「これだけ叩きこめば！」"
+			CALL ADD_RAND_MESSAGE, @"「撃って撃って、撃ちまくってやるわ！」"
+
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「反撃をさせてもらうわ！」"
+			CALL ADD_RAND_MESSAGE, @"「ここから、活路を見いだすのよ！」"
+			CALL ADD_RAND_MESSAGE, @"「どこかを崩せれば！」"
+
+		CASE 性格_がんばりや
+			CALL ADD_RAND_MESSAGE, @"「早めにカタをつけないと……」"
+			CALL ADD_RAND_MESSAGE, @"「ここが、正念場……！」"
+			CALL ADD_RAND_MESSAGE, @"「撃って撃って、撃ちまくってやるわ！」"
+			CALL ADD_RAND_MESSAGE, @"「できる時に少しでもダメージを与えておかないと…！」"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「反撃をさせてもらうわ！」"
+			CALL ADD_RAND_MESSAGE, @"「まだよ、まだ残弾は持つはず！」"
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「とにかく今は攻撃を張らないと！」"
+
+			CALL ADD_RAND_MESSAGE, @"「悪い夢なら早く覚めてぇー！」"
+		CASE 性格_しあわせもの
+			CALL ADD_RAND_MESSAGE, @"「弾が尽きてもまた拾うから！」"
+
+		CASE 性格_セクシーギャル
+
+			CALL ADD_RAND_MESSAGE, @"「女心はいつも欲張りなのよ？」"
+			CALL ADD_RAND_MESSAGE, @"「刹那！五月雨撃ち！」"
+
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「反撃をさせてもらうわ！」"
+			CALL ADD_RAND_MESSAGE, @"「まだよ、まだ残弾は持つはず！」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「ここが、正念場……！」"
+			CALL ADD_RAND_MESSAGE, @"「撃って撃って、撃ちまくってやるわ！」"
+			CALL ADD_RAND_MESSAGE, @"「ここから、活路を見いだす！」"
+			CALL ADD_RAND_MESSAGE, @"「これだけ叩きこめば！」"
+		CASE 性格_のんきもの
+			CALL ADD_RAND_MESSAGE, @"「弾が尽きてもまた拾うから！」"
+
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「とにかく今は攻撃を張らないと！」"
+			CALL ADD_RAND_MESSAGE, @"「悪い夢なら早く覚めてぇー！」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「とにかく今は攻撃を張らないと！」"
+			CALL ADD_RAND_MESSAGE, @"「悪い夢なら早く覚めてぇー！」"
+
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「撃って撃って、撃ちまくってやるわ！」"
+			CALL ADD_RAND_MESSAGE, @"「まだよ、まだ残弾は持つはず！」"
+			CALL ADD_RAND_MESSAGE, @"「反撃をさせてもらうわ！」"
+		ENDSELECT
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   25    コマンドID(消耗　集中)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_25(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+		CALL ADD_RAND_MESSAGE, @"「再生なんてさせない！」"
+		CALL ADD_RAND_MESSAGE, @"「一気に畳みかけないと！」"
+		CALL ADD_RAND_MESSAGE, @"「とどめっ！」"
+		CALL ADD_RAND_MESSAGE, @"「ギリギリまで引き付けて……撃つ！」"
+		CALL ADD_RAND_MESSAGE, @"「一点に狙いを絞れば！」"
+		CALL ADD_RAND_MESSAGE, @"「傷跡を狙えば！」"
+
+		CALL ADD_RAND_MESSAGE, @"「これで決着を！」"
+		CALL ADD_RAND_MESSAGE, @"「ここで攻撃の手を緩めるわけには！」"
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+
+
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「やられてばっかじゃいられないわ！」"
+			CALL ADD_RAND_MESSAGE, @"「並の攻撃では通用しないようだけど……！」"
+			CALL ADD_RAND_MESSAGE, @"「これで終わらせる……！」"
+
+			CALL ADD_RAND_MESSAGE, @"「武器のリミッターを解除！」"
+		CASE 性格_おてんば
+
+			CALL ADD_RAND_MESSAGE, @"「最大パワー！」"
+			CALL ADD_RAND_MESSAGE, @"「一撃、ひっさーつ！」"
+
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「今は防御よりも攻撃に集中しないと！」"
+		CASE 性格_がんばりや
+
+			CALL ADD_RAND_MESSAGE, @"「武器のリミッターを解除！」"
+			CALL ADD_RAND_MESSAGE, @"「ここで仕掛けます！」"
+
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「火線を集中、一点突破！」"
+			CALL ADD_RAND_MESSAGE, @"「やられてばっかじゃいられないわ！」"
+			CALL ADD_RAND_MESSAGE, @"「並の攻撃では通用しないようだけど……！」"
+			CALL ADD_RAND_MESSAGE, @"「射線軸を確保……決めてみせる！」"
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「これで終わってー！」"
+			CALL ADD_RAND_MESSAGE, @"「どうか決まってー！」"
+
+
+		CASE 性格_セクシーギャル
+
+			CALL ADD_RAND_MESSAGE, @"「悪い子にはお仕置き」"
+			CALL ADD_RAND_MESSAGE, @"「サービス期間は終わりなの」"
+			CALL ADD_RAND_MESSAGE, @"「飴と鞭ってやつです！」"
+			CALL ADD_RAND_MESSAGE, @"「気持ち良くしてくれたご褒美」"
+			CALL ADD_RAND_MESSAGE, @"「悪魔のように優しく、天使のように残酷に」"
+			CALL ADD_RAND_MESSAGE, @"「ハートを射抜きましょう」"
+			CALL ADD_RAND_MESSAGE, @"「これでイチコロのはず」"
+			CALL ADD_RAND_MESSAGE, @"「そんなに私に落とされたいのかしら？」"
+			CALL ADD_RAND_MESSAGE, @"「この責めに耐えられるかしら？」"
+			CALL ADD_RAND_MESSAGE, @"「私をその気にさせたわね？」"
+			CALL ADD_RAND_MESSAGE, @"「あなたの命をください。ねえ、いいでしょう？」"
+			CALL ADD_RAND_MESSAGE, @"「あなたにとって、私が最後の女になってあげる」"
+
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「火線を集中、一点突破！」"
+			CALL ADD_RAND_MESSAGE, @"「並の攻撃では通用しないようだけど……！」"
+			CALL ADD_RAND_MESSAGE, @"「やられてばっかじゃいられないわ！」"
+			CALL ADD_RAND_MESSAGE, @"「射線軸を確保……決めてみせる！」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「道は、この手で切り開く！」"
+			CALL ADD_RAND_MESSAGE, @"「こいつで決めるッ！」"
+
+		CASE 性格_ひっこみじあん
+
+			CALL ADD_RAND_MESSAGE, @"「これで終わってー！」"
+			CALL ADD_RAND_MESSAGE, @"「どうか決まってー！」"
+			CALL ADD_RAND_MESSAGE, @"「私に撃たせないでぇー！」"
+			CALL ADD_RAND_MESSAGE, @"「お願いですから、もう消し飛んでください！」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「これで終わってー！」"
+			CALL ADD_RAND_MESSAGE, @"「どうか決まってー！」"
+
+			CALL ADD_RAND_MESSAGE, @"「私に撃たせないでぇー！」"
+			CALL ADD_RAND_MESSAGE, @"「お願いですから、もう消し飛んでください！」"
+
+			CALL ADD_RAND_MESSAGE, @"「私に撃たせないでぇー！」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「やられてばっかじゃいられないわ！」"
+			CALL ADD_RAND_MESSAGE, @"「風穴を開けてあげる！」"
+		ENDSELECT
+
+
+
+RETURN 1
+
+

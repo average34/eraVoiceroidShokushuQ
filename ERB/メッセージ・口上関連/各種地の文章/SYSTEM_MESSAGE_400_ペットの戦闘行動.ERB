@@ -1,0 +1,150 @@
+﻿@SYSTEM_MESSAGE_400(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+SETCOLOR 0x10EEEE
+
+SELECTCASE PET:50
+	;何もしない
+	CASE 0
+		SELECTCASE RAND:12
+			CASE 0 TO 5
+				PRINTFORML %PETNAME%はなにもしていない……
+			CASE 6
+				PRINTFORML %PETNAME%は事態を静観している……
+			CASE 7
+				PRINTFORML %PETNAME%はぼーっとしている……
+			CASE 8
+				PRINTFORML %PETNAME%は%CALLNAME:1%%TACHI()%を応援している……
+			CASE 9
+				PRINTFORML %PETNAME%は踊っている……
+			CASE 10
+				PRINTFORML %PETNAME%はあくびをしている……
+			CASE 11
+				PRINTFORML %PETNAME%はおろおろしている……
+		ENDSELECT
+
+	;汎用攻撃
+	CASE 100, 120, 140
+		PRINTFORML %PETNAME%は命中を重視して攻撃した！
+	CASE 101, 121, 141
+		PRINTFORML %PETNAME%はバランスを重視して攻撃をした！
+	CASE 102, 122, 142
+		PRINTFORML %PETNAME%は威力を重視して攻撃した！
+	CASE 105, 125, 145
+		PRINTFORML %PETNAME%は相手の足元を狙って攻撃した！
+	CASE 106, 126, 146
+		PRINTFORML %PETNAME%は敵の行動を制限するように攻撃した！
+	CASE 107, 127, 147
+		PRINTFORML %PETNAME%は相手の急所を狙って攻撃した！
+	CASE 108, 128, 148
+		PRINTFORML %PETNAME%は連続して攻撃した！
+	CASE 109, 129, 149
+		PRINTFORML %PETNAME%は敵全体に攻撃した！
+
+	;固有スキル
+	CASE 200
+		PRINTFORML %PETNAME%は%SAVESTR:(PET:51)%に触手を殺到させる！
+	CASE 201
+		PRINTFORML %PETNAME%は%SAVESTR:(PET:51)%に齧りついた！
+	CASE 202
+		PRINTFORML %PETNAME%はどこからか津波を呼び寄せた！
+	CASE 203
+		PRINTFORML %PETNAME%は%SAVESTR:(PET:51)%に覆いかぶさった！
+		PRINTFORML そのままじわじわと力を奪いにかかる……！
+	CASE 204
+		PRINTFORML %PETNAME%は妖しげな香りを放ち、敵を誘った！
+	CASE 205
+		PRINTFORML %PETNAME%は癒しの効果のある胞子を放った！
+	CASE 206
+		PRINTFORML %PETNAME%は%SAVESTR:(PET:51)%の視界を潰しにかかった！
+	CASE 207
+		PRINTFORML %PETNAME%は糸を作り出し、それで%SAVESTR:(PET:51)%の急所を切断しにかかった！
+	CASE 208
+		PRINTFORML %PETNAME%は聴くもおぞましい叫び声をあげた！
+	CASE 209
+		PRINTFORML %PETNAME%は精液をマシンガンのように撃ちだした！
+	CASE 210
+		PRINTFORML %PETNAME%は触手を振り回し、こびりつく恥垢を大砲のように撃ちだした！
+	CASE 211
+		PRINTFORML %PETNAME%は素早い連続攻撃を繰り出した！
+	CASE 212
+		PRINTFORML %PETNAME%は巨体を活かし、敵を押しつぶしにかかる！
+	CASE 213
+		PRINTFORML %PETNAME%は今まで%CALLNAME:1%%TACHI()%が受けた陵辱の記録をまざまざと映しだした！
+	CASE 214
+		PRINTFORML %PETNAME%は%CALLNAME:1%%TACHI()%に催眠をかけた！
+	CASE 215
+		PRINTFORML %PETNAME%は%SAVESTR:(PET:51)%の体力を吸収しにかかった！
+	CASE 216
+		PRINTFORML %PETNAME%は謎の攻撃を放った！
+		PRINTFORML %PETNAME%の　こうげきの　しょうたいが　つかめない！
+	CASE 217
+		PRINTFORML %PETNAME%はなんともやる気を失わせるような踊りを踊り始めた！
+	CASE 218
+		PRINTFORML %PETNAME%はラッパを取り出し、勇ましく、かつ淫靡なメロディを吹き鳴らした！
+	CASE 219
+		PRINTFORML %PETNAME%は雷をそこかしこに落としはじめた！
+	CASE 220
+		PRINTFORML %PETNAME%は清らかなメロディを歌い始めた！
+		PRINTFORML なんだか部屋まで綺麗になっていく気がする……
+	CASE 221
+		PRINTFORML %PETNAME%は大量の狐火を放った！
+	CASE 222
+		PRINTFORML %PETNAME%は大量の凍気を送り、%SAVESTR:(PET:51)%を凍りづけにした！
+	CASE 223
+		PRINTFORML %PETNAME%は数の利を活かし、%SAVESTR:(PET:51)%に襲いかかった！
+	;小悪魔追加
+	CASE 224
+		PRINTFORM %PETNAME%は
+		IF NO:1 == 8
+			LOCAL = 1
+		ELSEIF NO:(FLAG:10) == 8
+			LOCAL = FLAG:10
+		ELSEIF NO:(FLAG:10) == 8
+			LOCAL = FLAG:11
+		ELSE
+			LOCAL = 1
+		ENDIF
+		PRINTFORML %CALLNAME:LOCAL%を援護するように攻撃を放った！
+	;YMあなた追加
+	CASE 225
+		PRINTFORML %PETNAME%はどこからともなく色々なおもちゃを取り出すと
+		PRINTFORML %SAVESTR:(PET:51)%を手当たりしだい開発しにかかった！
+	;回復系
+	CASE 300, 301, 302, 320, 321, 322, 340, 341, 342
+		PRINTFORML %PETNAME%は%CALLNAME:(PET:51)%を回復させた！
+	;回復弁当
+	CASE 343
+		PRINTFORMW %PETNAME%は自分で料理を作った！
+		PRINTL さて……折角の料理だ。
+		PRINTW 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		PRINTL （どうする？）
+		DRAWLINE
+		PRINTL [0] - 折角だから自分で食べる
+		PRINTFORML [1] - とりあえず%CALLNAME:(PET:51)%に食べさせる
+		PRINTL [2] - 料理を売る
+		DRAWLINE
+		PRINTL 1
+		PRINTFORMW %CALLNAME:(PET:51)%の体力が回復した！
+	CASE 344
+		PRINTFORMW %PETNAME%は自分で料理を作った！
+		PRINTL さて……折角の料理だ。
+		PRINTW 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		PRINTL （どうする？）
+		DRAWLINE
+		PRINTL [0] - 折角だから自分で食べる
+		PRINTFORML [1] - とりあえず%CALLNAME:(PET:51)%に食べさせる
+		PRINTL [2] - 料理を売る
+		DRAWLINE
+		PRINTL 1
+		PRINTFORMW 口にした途端、%CALLNAME:(PET:51)%の身体が急激に火照り始めた！
+		PRINTFORMW %CALLNAME:(PET:51)%の体力が回復した……
+		;◆発情レベル追加
+		IF CFLAG:(PET:51):28 < 3
+			CFLAG:(PET:51):28 += 1
+		ENDIF
+		;◆◆
+		
+	;例外出ちゃった
+	CASEELSE
+		PRINTFORML あれれ？　ありえない技IDが指定されてる
+ENDSELECT
+RESETCOLOR

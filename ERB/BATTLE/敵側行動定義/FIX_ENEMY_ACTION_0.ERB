@@ -1,0 +1,24 @@
+﻿@FIX_ENEMY_ACTION_0(ENEMY_ID)
+#DIM ENEMY_ID
+
+TFLAG:52 = ENEMY_ID
+TFLAG:53 = 1
+TFLAG:54 = DA:ENEMY_ID:51
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+
+CALL PRINT_MESSAGE(-1, 7, 0, "", SAVESTR:ENEMY_ID)
+
+
+;念のためこっちも指定しておく
+@FIX_ENEMY_ACTION_45(ENEMY_ID)
+#DIM ENEMY_ID
+
+;全部こちらで処理するのでメイン処理不要
+TFLAG:66 = 1
+
+CALL PRINT_MESSAGE(-1, 7, 0, "", SAVESTR:ENEMY_ID)
+
+
+

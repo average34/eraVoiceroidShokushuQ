@@ -1,0 +1,97 @@
+﻿;チュートリアル一覧表示
+@SHOW_TUTORIAL_WIKI
+;LOCAL
+;0	ループ用
+;
+
+	DRAWLINE
+	PRINTFORML どのチュートリアルを見ますか？
+	FOR LOCAL:0, 1, 23
+			PRINTFORM [{LOCAL:0,3}] %TUTORIAL_NAME(LOCAL:0),18,LEFT%
+			LOCAL:1 += 1
+			;2つ表示するごとに改行
+			SIF (LOCAL:1 % 3) == 0 && LOCAL:1 > 0
+				PRINTL  
+	NEXT
+	LOCAL:1 = 0
+	PRINTL
+	PRINTL [  0] キャンセル
+
+	$INPUT_LOOP
+	INPUT
+	
+	IF RESULT == 0
+		RETURN
+	ELSEIF RESULT > 0 && RESULT < 23
+		DRAWLINE
+		SETCOLOR 0xF2A0A1
+
+		TRYCCALLFORM TUTORIAL_{RESULT-1}
+		CATCH
+			;該当するチュートリアルが未実装の場合、何もしない
+			RESETCOLOR
+			RETURN 0
+		ENDCATCH
+
+		RESETCOLOR
+		CALL SHOW_TUTORIAL_WIKI
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+
+@TUTORIAL_NAME(ARG:0)
+#FUNCTIONS
+
+SELECTCASE ARG:0
+	CASE 1
+		RETURNF "オープニング"
+	CASE 2
+		RETURNF "仲間選択"
+	CASE 3
+		RETURNF "能力説明"
+	CASE 4
+		RETURNF "気性・性格"
+	CASE 5
+		RETURNF "基本について"
+	CASE 6
+		RETURNF "移動について"
+	CASE 7
+		RETURNF "浄化について"
+	CASE 8
+		RETURNF "汚染度について"
+	CASE 9
+		RETURNF "睡眠について"
+	CASE 10
+		RETURNF "戦闘について"
+	CASE 11
+		RETURNF "ボスについて"
+	CASE 12
+		RETURNF "HPについて"
+	CASE 13
+		RETURNF "MPについて"
+	CASE 14
+		RETURNF "EPについて"
+	CASE 15
+		RETURNF "CPについて"
+	CASE 16
+		RETURNF "拘束について"
+	CASE 17
+		RETURNF "NPについて"
+	CASE 18
+		RETURNF "ふたなりについて"
+	CASE 19
+		RETURNF "図鑑について"
+	CASE 20
+		RETURNF "母乳について"
+	CASE 21
+		RETURNF "寄生攻撃について"
+	CASE 22
+		RETURNF "触手服について"
+	CASE 23
+		RETURNF "攻撃方法について"
+	CASEELSE
+		RETURNF "存在しないチュートリアル"
+ENDSELECT

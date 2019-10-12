@@ -1,0 +1,105 @@
+﻿; AI戦闘コマンド 非消耗武器 カウンター
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_35(CHARA_ID, TARGET_ID, SUPPORT_VALUE)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM SUPPORT_VALUE ; 装備部位の情報が付与されたままのコマンド番号 装備品1:コマンド番号+100 装備品2:コマンド番号+200
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+#DIM DAMAGE
+
+	VARSET RATE
+	
+	; 想定攻撃力を取得
+	CALL CHECK_ATTACKED_DAMAGE(CHARA_ID, SUPPORT_VALUE, TARGET_ID)
+	DAMAGE = RESULT
+		
+	; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+	;                超弱気    弱気    普通    強気  超強気
+	DATA_TABLE:10:0 =  3700,   3300,   3700,   4100,   3700  ; 10:ねっけつかん
+	DATA_TABLE:2:0  =  3800,   3400,   3800,   4200,   3800  ; 02:おてんば
+	DATA_TABLE:14:0 =  3900,   3500,   3900,   4300,   3900  ; 14:わがまま
+	DATA_TABLE:3:0  =  4000,   3600,   4000,   4400,   4000  ; 03:がんこもの
+	DATA_TABLE:6:0  =  4100,   3700,   4100,   4500,   4100  ; 06:くろうにん
+	DATA_TABLE:4:0  =  4200,   3800,   4200,   4600,   4200  ; 04:がんばりや
+	DATA_TABLE:5:0  =  4300,   3900,   4300,   4700,   4300  ; 05:きれもの
+	DATA_TABLE:1:0  =  4400,   4000,   4400,   4800,   4400  ; 01:おせっかい
+	DATA_TABLE:0:0  =  4500,   4100,   4500,   4900,   4500  ; 00:ふつう
+	DATA_TABLE:9:0  =  4600,   4200,   4600,   5000,   4600  ; 09:ぬけめがない
+	DATA_TABLE:8:0  =  4500,   4100,   4500,   4900,   4500  ; 08:セクシーギャル
+	DATA_TABLE:7:0  =  4400,   4000,   4400,   4800,   4400  ; 07:しあわせもの
+	DATA_TABLE:11:0 =  4300,   3900,   4300,   4700,   4300  ; 11:のんきもの
+	DATA_TABLE:13:0 =  4200,   3800,   4200,   4600,   4200  ; 13:やさしいひと
+	DATA_TABLE:12:0 =  4100,   3700,   4100,   4500,   4100  ; 12:ひっこみじあん
+	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+	
+	; 速度の遅いキャラはカウンターを好む
+	SELECTCASE ABL:CHARA_ID:97
+	CASE IS <= 25
+		RATE += 800
+	CASE IS <= 50
+		RATE += 300
+	CASE IS <= 75
+		; 補正なし
+	CASEELSE
+		RATE -= 800
+	ENDSELECT
+	
+	; テンションの高いときはカウンター待ちなんてしない
+	SELECTCASE BASE:CHARA_ID:TP
+	CASE IS <= (MAXBASE:CHARA_ID:TP / 100 * 25)
+		RATE += 500
+	CASE IS <= (MAXBASE:CHARA_ID:TP / 100 * 50)
+		; 補正なし
+	CASE IS <= (MAXBASE:CHARA_ID:TP / 100 * 75)
+		RATE -= 500
+	CASEELSE
+		RATE -= 1000
+	ENDSELECT
+	
+	; 前に出ているなら狙われやすいので発動率上昇
+	SIF CFLAG:CHARA_ID:34
+		RATE += 500
+		
+	; PT人数が1人なら確実に狙われるので発動率大幅上昇
+	SIF GET_MEMBER_SUM() == 1
+		RATE += 1500
+		
+	; 残りMPによって変動補正 少ないほど守りに入る
+	SELECTCASE BASE:CHARA_ID:MP
+	CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 20)
+		TIMES RATE, 1.5
+	CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 40)
+		TIMES RATE, 1.2
+	CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 60)
+		; 補正なし
+	CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 80)
+		TIMES RATE, 0.8
+	CASEELSE
+		TIMES RATE, 0.5
+	ENDSELECT
+	
+	; 戦闘素質による補正
+	SELECTCASE ABL:CHARA_ID:98
+	CASE IS <= 10
+		TIMES RATE, 2.0
+	CASE IS <= 20
+		TIMES RATE, 1.8
+	CASE IS <= 30
+		TIMES RATE, 1.6	
+	CASE IS <= 40
+		TIMES RATE, 1.4
+	CASE IS <= 50
+		TIMES RATE, 1.2
+	CASE IS <= 60
+		TIMES RATE, 1.0
+	CASE IS <= 70
+		TIMES RATE, 0.9
+	CASE IS <= 80
+		TIMES RATE, 0.8
+	CASEELSE
+		TIMES RATE, 0.6
+	ENDSELECT
+
+RETURN LIMIT(RATE, 0, 10000)

@@ -1,0 +1,143 @@
+﻿;状態異常一覧表示
+@SHOW_DEBUFF_WIKI
+;LOCAL
+;0	ループ用
+;2	直前に選択した番号
+;3	状態異常詳細を見た
+;10	行削除用カウント1(計算用)
+;11	行削除用カウント2(計算用)
+;12	行削除用カウント3(項目の改行数)
+;13	行削除用カウント4(計算用)
+;14	行削除用カウント5(計算用)
+;15	行削除用カウント6(詳細の改行数)
+
+	$START
+	REDRAW 0
+	LOCAL:10 = LINECOUNT
+
+	LOCAL:1 = 0
+	DRAWLINE
+	PRINTFORML どの状態異常を見ますか？
+	FOR LOCAL:0, 1, 32
+			PRINTFORM [{LOCAL:0,3}] %DEBUFF_NAME(LOCAL:0),15,LEFT%
+			LOCAL:1 += 1
+			;3つ表示するごとに改行
+			SIF (LOCAL:1 % 3) == 0 && LOCAL:1 > 0
+				PRINTL
+	NEXT
+	PRINTL
+	PRINTL
+	PRINTL [  0] キャンセル
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL:11 = LINECOUNT
+	;項目表示の改行数を記録
+	LOCAL:12 = LOCAL:11 - LOCAL:10
+
+	IF RESULT == 0
+		REDRAW 1
+		LOCAL:3 = 0
+		RETURN
+	ELSEIF RESULT > 0 && RESULT < 32
+		;行削除(初回)
+		IF LOCAL:3 == 0
+			CLEARLINE LOCAL:12
+		;行削除(2回目～)
+		ELSEIF LOCAL:3 == 1 && LOCAL:2 != RESULT
+			CLEARLINE LOCAL:15 + LOCAL:12 + 3
+		;連打のログ流れ防止
+		ELSEIF LOCAL:2 == RESULT
+			CLEARLINE 1
+			GOTO INPUT_LOOP
+		ENDIF
+		LOCAL:2 = RESULT
+		DRAWLINE
+		SETCOLOR 0x60C0FF
+		PRINTFORML >> %DEBUFF_NAME(RESULT),15,LEFT%
+		RESETCOLOR
+		LOCAL:13 = LINECOUNT
+		CALL PRINT_MESSAGE(-1, 513, RESULT, CALLNAME:1, "")
+		LOCAL:14 = LINECOUNT
+		;説明表示の改行数を記録
+		LOCAL:15 = LOCAL:14 - LOCAL:13
+		PRINTL
+		LOCAL:3 = 1
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+
+@DEBUFF_NAME(ARG:0)
+#FUNCTIONS
+
+SELECTCASE ARG:0
+	CASE 1
+		RETURNF "要睡眠"
+	CASE 2
+		RETURNF "朦朧"
+	CASE 3
+		RETURNF "中破"
+	CASE 4
+		RETURNF "大破"
+	CASE 5
+		RETURNF "濡透"
+	CASE 6
+		RETURNF "捕食"
+	CASE 7
+		RETURNF "拘束"
+	CASE 8
+		RETURNF "丸呑"
+	CASE 9
+		RETURNF "寄生"
+	CASE 10
+		RETURNF "妊娠"
+	CASE 11
+		RETURNF "危険日"
+	CASE 12
+		RETURNF "排卵"
+	CASE 13
+		RETURNF "抱卵"
+	CASE 14
+		RETURNF "怯み"
+	CASE 15
+		RETURNF "昏睡"
+	CASE 16
+		RETURNF "睡眠"
+	CASE 17
+		RETURNF "煙幕"
+	CASE 18
+		RETURNF "砂煙"
+	CASE 19
+		RETURNF "発情"
+	CASE 20
+		RETURNF "喪失"
+	CASE 21
+		RETURNF "触装"
+	CASE 22
+		RETURNF "触包"
+	CASE 23
+		RETURNF "粘装"
+	CASE 24
+		RETURNF "催眠"
+	CASE 25
+		RETURNF "はいてない"
+	CASE 26
+		RETURNF "双成"
+	CASE 27
+		RETURNF "包囲"
+	CASE 28
+		RETURNF "乳勃"
+	CASE 29
+		RETURNF "侵食"
+	CASE 30
+		RETURNF "骨折"
+	CASE 31
+		RETURNF "捕虜"
+	CASEELSE
+		RETURNF "存在しない状態異常"
+ENDSELECT

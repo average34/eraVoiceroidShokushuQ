@@ -1,0 +1,215 @@
+﻿;遺品を見つけるパッチ
+;CFLAG:41	遺品が落ちている場所。死んでなければ、または拾っていると0
+;
+;LOCAL
+;0	ループ
+
+@FIND_RELIC
+LOCAL:0 = 0
+
+FOR LOCAL:0, 0, CHARANUM
+	IF CFLAG:(LOCAL:0):41 == FLAG:5
+		;入れ子が深くなりすぎて見づらいのでメッセージは関数で
+		CALL FIND_RELIC_MESSAGE(LOCAL:0)
+		CFLAG:(LOCAL:0):41 = 0
+		CALL ADD_HISTORY(DAY,, LOCAL:0, 11)
+	ENDIF
+NEXT
+
+RETURN 0
+
+
+;遺品発見時のメッセージ
+;ARG:0	見つかった人
+;
+@FIND_RELIC_MESSAGE(ARG:0)
+
+	;遺品ではなく何かあった痕跡
+	PRINTL 
+	PRINTFORMW ……
+	PRINTL
+
+SELECTCASE RAND:3
+	CASE 0
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 壁や床におびただしい量の粘液がこびり付いている……
+				PRINTFORML 一体ここで何が起こったのだろうか？
+				PRINTFORML 今となっては不幸な被害者は無事ではないだろう……
+			CASE 1
+				PRINTFORML それなりの大きさの「何か」が引きずられたような跡がある
+				PRINTFORML ぬらぬらと不気味に光を反射する粘液の道標は部屋の奥へ奥へと続いている
+			CASE 2
+				PRINTFORML 部屋に白濁液と血と布きれが混じった水溜りが広がっていた
+				PRINTFORML 獲物は相当激しく抵抗したのかよく見ると千切れた正体不明の肉片も落ちている
+				PRINTFORML だが被害者は白濁液の量から察するにもう……
+		ENDSELECT
+
+	;身体的特徴、アクセサリー
+	CASE 1
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORM 部屋の一角に
+			CASE 1
+				PRINTFORM 部屋の隅にひっそりと
+			CASE 2
+				PRINTFORM 粘液の水溜りの中に
+			CASE 3
+				PRINTFORM 物陰に隠れるように
+		ENDSELECT
+		
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORM 汚れきった
+			CASE 1
+				PRINTFORM 血の滲んだ
+			CASE 2
+				PRINTFORM 白濁液で汚れた
+		ENDSELECT
+		
+		SELECTCASE NO:(ARG:0)
+			;羽		(大ちゃん、チルノ、こぁ、れみりゃ、フラン、リリーＷ、リグル、みすちー、文、サニー、ルナ、スター
+			;		リリーＢ、うにゅほ、朱鷺子、ぬえ、はたて、ひーちゃん、)
+			CASE 4, 5, 7, 10 ,11, 15, 24, 25, 32, 45, 46, 47, 56, 83, 86, 97, 98, 99
+				PRINTFORML 羽が散らばっている……
+				PRINTFORML 察するに%CALLNAME:(ARG:0)%のものだろう
+				PRINTFORML 恐らく彼女はもう……
+			;陰陽球	（霊夢）
+			CASE 1
+				PRINTFORML 陰陽球が転がっていた
+				PRINTFORML 持ち主が持ち主なので大丈夫だとは思うが……
+			;ほうき	（まりさ、きょうこ）
+			CASE 2, 100
+				PRINTFORML 折れた箒が打ち捨てられていた
+				PRINTFORML 持ち主の心もこの箒のように折れてしまったのだろうか？
+			;本		(パチュ）
+			CASE 8
+				PRINTFORML ボロボロの本が広がっていた
+				PRINTFORML どういうわけか中身は全て白紙のようだ
+			;時計	（さくや）
+			CASE 9
+				PRINTFORML 止まった時計が落ちている
+				PRINTFORML この時計はもう二度と動かない。
+				PRINTFORML なぜかそんな気がした
+			;人形	(アリス)
+			CASE 14
+				PRINTFORML 寂しげな人形が佇んでいる……
+				PRINTFORML その瞳には涙が浮かんでいるように見えた
+			;楽器	(虹川共)
+			CASE 16, 17, 18
+				PRINTFORML 壊れた楽器が打ち捨てられている
+				PRINTFORML 奏者を失った楽器はまるで置物のようだ
+			;刀		（みょん）	
+			CASE 19
+				PRINTFORML 折れた刀が刺さっていた
+				PRINTFORML その刃は汚れ、曇っている……
+			;扇子	(ゆゆさま、紫)
+			CASE 20, 22
+				PRINTFORML 扇子が落ちている
+				PRINTFORML これが持ち主の回りくどいメッセージであることを願いたい
+			;傘		（ゆうかりん）
+			CASE 34
+				PRINTFORML チェック模様の可愛らしい傘が落ちていた
+				PRINTFORML どこか悔しそうなその傘はなんだか近づき辛い
+			;はっぱ	（静葉おねーちゃん）
+			CASE 37
+				PRINTFORML 紅葉が散らばっている
+				PRINTFORML 彼女の命もこの紅葉のように今頃……
+			;羽衣	(ｷｬｰｲｸｻｰﾝ)
+			CASE 62
+				PRINTFORML 羽衣が忘れられていた
+				PRINTFORML 持ち主が空気を読んでひょっこり現れることももうないだろう…
+			;緋想の剣(てんこちゃん)
+			CASE 63
+				PRINTFORML 緋想の剣が残されていた
+				PRINTFORML 辺りの地面はひび割れ砕けた要石が散らばっている様子からかなり抵抗したのだろう
+			;本体	（こがさ）
+			CASE 92
+				PRINTFORML 小傘の本体が置き去りにされていた
+				PRINTFORML 本体は光を失った瞳で悲しげに自分を忘れていった小傘を待ち続けている……
+			;エア巻物(ひじりん)
+			CASE 96
+				PRINTFORML 中身のない不思議な巻物が転がっている
+			;汎用
+			CASEELSE
+				PRINTFORML ボロボロのぬのきれが落ちている
+				PRINTFORML 恐らく%CALLNAME:(ARG:0)%の服の一部だろう
+				PRINTFORML 服の持ち主はこの様子ではもう……
+		ENDSELECT
+	
+	;髪飾や帽子
+	CASE 2
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORM 部屋の一角に
+			CASE 1
+				PRINTFORM 部屋の隅にひっそりと
+			CASE 2
+				PRINTFORM 粘液の水溜りの中に
+			CASE 3
+				PRINTFORM 物陰に隠れるように
+		ENDSELECT
+
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORM 血の滲んだ
+			CASE 1
+				PRINTFORM 白濁液で汚れた
+			CASE 2
+				PRINTFORM ボロボロの
+			CASE 3
+				PRINTFORM 見るも無残な
+		ENDSELECT
+
+		SELECTCASE NO:(ARG:0)
+			;リボン	（霊夢、大ちゃん、チルノちゃん、あえてフランちゃん、妖夢、すいか、メディ子、雛、サニー、スター、
+			;		おりん、うにゅほ、上海、ﾎｰﾗｲ、ありす）
+			CASE 1, 4, 5, 11, 19, 23, 33, 39, 45, 47, 78, 82, 83, 88, 89, 90
+				PRINTFORML 破れたリボンが残されていた……
+				PRINTFORML 恐らく%CALLNAME:(ARG:0)%がいつも身に着けていたものだろう
+				PRINTFORML 何かの拍子にほどけたのだろうか？
+				PRINTFORML その何かがどんなことか、この状況では想像に難くない……
+			;帽子	（まりさ、めーりん、ぱちゅ、れみりゃ、レティ、ちぇん、リリー、虹川、ゆゆさま、らんしゃま、紫
+			;		みすちー、けーね、えーき様、穣子、にとり、けろちゃん、ルナチャ、メリー×蓮子、黒リリー、ｷｬｰｲｸｻｰﾝ、天子ちゃん、
+			;		こいし、ムラサ、星、とじこ、ふと）
+			CASE 2, 6, 8, 10, 12, 13, 15, 16, 17, 18, 20, 21, 22, 25, 26, 36, 38, 40, 44, 46, 49, 50, 56, 62, 63, 84, 94, 95, 103, 104
+				PRINTFORML 帽子が残されていた……
+				PRINTFORML 恐らく%CALLNAME:(ARG:0)%が身に着けていたものだろう
+				PRINTFORML そんなものが落ちているということはもう……
+			;髪留め	（もこたん、小町、静葉、早苗、かなこ、キスメ）
+			CASE 31, 35, 37, 42, 43, 77,
+				PRINTFORML 千切れた髪留めが残されていた……
+				PRINTFORML %CALLNAME:(ARG:0)%が身に着けていたもので間違いないだろう
+				PRINTFORML 持ち主は一体どこへいってしまったのか……
+			;髪飾り	（さくや、アリス、あきゅん、さとりん、かせん）
+			CASE 9, 14, 48, 81, 85, 102
+				PRINTFORML 壊れた髪飾りが残されていた……
+				PRINTFORML %CALLNAME:(ARG:0)%が普段から身に着けていたものだろう
+				PRINTFORML だが辺りに持ち主の気配はない……
+			;リボン特殊	（るみゃー）
+			CASE 3
+				PRINTFORML ちぎれたルーミアのものらしきリボンが残されていた……
+				PRINTFORML 自分で触れることもできないリボンが落ちているということは……
+			;カメラ	（文、はたて）
+			CASE 32, 98
+				PRINTFORML カメラが残されていた……
+				PRINTFORML %CALLNAME:(ARG:0)%が普段から愛用していたものだろう
+				PRINTFORML 何があっても手放そうにないというのにどうしてこんなものが……
+			;ひまわり	（ひーちゃん）
+			CASE 99
+				PRINTFORML 枯れたひまわりが残されていた……
+				PRINTFORML 今頃このひまわりの持ち主の身も心も同じように枯れてしまっているのだろうか……
+			CASEELSE
+				PRINTFORML 服の切れ端らしいものが残されていた……
+				PRINTFORML %CALLNAME:(ARG:0)%の服の一部だろうか？
+				PRINTFORML 持ち主が無事だとは状況的に考えづらい……
+		ENDSELECT
+ENDSELECT
+	
+PRINTFORMW 
+RETURN 0
+
+
+
+
+

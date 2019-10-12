@@ -1,0 +1,26 @@
+﻿
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1    2    コマンドID(アイテム)
+; / ARG:2         アイテムID
+; / ARG:3         使用対象キャラのID
+; / ARGS:0        自分の名前
+; / ARGS:1        使用アイテムの名前
+@KOJO_DEFAULT_1_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 自分に対してアイテムを利用
+		CALL ADD_RAND_MESSAGE, @"「えっと……確かこの辺に……あった！」"
+		
+	IF TARGET == ARG:3
+	; 他人に対してアイテムを利用
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「これを使って！」"
+		CALL ADD_RAND_MESSAGE, @"「えっと……確かこの辺に……あった！」"
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「よ、よかったら使ってください」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+

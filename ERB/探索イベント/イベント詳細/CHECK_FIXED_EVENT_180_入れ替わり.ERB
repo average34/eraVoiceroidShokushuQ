@@ -1,0 +1,971 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@CHECK_FIXED_EVENT_180
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 200
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+IF LOCAL:2 >= LOCAL:1
+	;一人でもこっそり経験値加わる
+	CALL ADD_ABL_EXP_PT(0, 500)
+	
+	;仲間がいると発動
+	IF FLAG:10
+		;危機回避と術式知識が高いと避けられる
+		IF (ABL:1:5 + TALENT:1:164 + RAND:2 > 2) || (FLAG:10 && ABL:(FLAG:10):5 + TALENT:(FLAG:10):164 + RAND:2 > 2) || (FLAG:11 && ABL:(FLAG:11):5 + TALENT:(FLAG:11):164 + RAND:2 > 2)
+			PRINTFORML 起動していない魔法陣を見つけた
+			IF TALENT:1:164 == 2 || (FLAG:10 && TALENT:(FLAG:10):164 == 2) || (FLAG:11 && TALENT:(FLAG:11):164 == 2)
+				PRINTFORM どうやら身体入れ替えの魔法陣のようだが
+			ENDIF
+			PRINTFORML 入りますか？
+			CALL ASK_YN
+			;入らなければスルー
+			IF RESULT == 0
+				CALL BODY_CHANGE(GET_MEMBER_SUM())
+				;TODO:ここでこう呼び出しても入れ替わり周りの情報が渡されないからそこら辺どうにかできないだろうか
+				CALL PRINT_MESSAGE(1, 200, 180, CALLNAME:1, "", 2)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 180, CALLNAME:1, "", 2)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 180, CALLNAME:1, "", 2)
+			ENDIF
+		;仲間がいると発動
+		ELSE
+			CALL BODY_CHANGE(GET_MEMBER_SUM())
+			;TODO:ここでこう呼び出しても入れ替わり周りの情報が渡されないからそこら辺どうにかできないだろうか
+			CALL PRINT_MESSAGE(1, 200, 180, CALLNAME:1, "", 2)
+			CALL PRINT_MESSAGE(FLAG:10, 200, 180, CALLNAME:1, "", 2)
+			CALL PRINT_MESSAGE(FLAG:11, 200, 180, CALLNAME:1, "", 2)
+		ENDIF
+	ENDIF
+
+	;イベントを別の場所に移動
+	FLAG:180 = RAND:30 + 1
+	WAIT
+	
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;入れ替わり処理の幹線
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@BODY_CHANGE(ARG:0)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0 = 主人公陣営の人数
+;LOCAL
+;	0　loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SIF ARG:0 < 2
+	THROW 引数が小さすぎます@BODY_CHANGE
+
+;ステータスを一度コピーする
+FOR LOCAL:0, ARG:0, 0, -1
+	ADDCOPYCHARA GET_MEMBER(LOCAL:0 - 1)
+NEXT
+
+
+;ＰＴメンバーへの移植
+SELECTCASE ARG:0
+	CASE 2
+		CALL SET_STATUS(0, 1)
+		CALL SET_STATUS(1, 0)
+		;メッセージ関連表示
+		CALL EVENT_MES_180(ARG:0, 1, 0)
+	CASE 3
+		IF RAND:2
+			CALL SET_STATUS(0, 1)
+			CALL SET_STATUS(1, 2)
+			CALL SET_STATUS(2, 0)
+			;メッセージ関連表示
+			CALL EVENT_MES_180(ARG:0, 1, 2, 0)
+		ELSE
+			CALL SET_STATUS(0, 2)
+			CALL SET_STATUS(1, 0)
+			CALL SET_STATUS(2, 1)
+			;メッセージ関連表示
+			CALL EVENT_MES_180(ARG:0, 2, 0, 1)
+		ENDIF
+	CASEELSE
+		THROW 引数に対応する処理が未実装です@BODY_CHANGE
+ENDSELECT
+
+;主人公との友好度を再設定する
+CALL SET_FRIEND()
+
+;ダミーの削除
+FOR LOCAL:0, 0, ARG:0
+	DELCHARA CHARANUM - 1
+NEXT
+
+;入れ替わり経験追加
+FOR LOCAL:0, 0, ARG:0
+	CFLAG:GET_MEMBER(LOCAL:0):119 += 1
+NEXT
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ＰＴメンバーに対するダミーからの移植処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_STATUS(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;ＢＡＳＥ移植
+CALL SET_BASE(ARG:0, ARG:1)
+
+;CFLAG移植処理
+CALL SET_CFLAG(ARG:0, ARG:1)
+
+;TALENT移植
+CALL SET_TALENT(ARG:0, ARG:1)
+
+;経験値／能力移植
+CALL SET_ABL_EXP(ARG:0, ARG:1)
+
+;入れ替わり相手の名前保存
+CALL SET_CSTR(ARG:0, ARG:1)
+
+;体／世代情報処理
+CALL BODY_AND_GENERATION(ARG:0, ARG:1)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;体力等ベース移植
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;移植する内容
+;0　ＨＰ
+;2　ＥＰ
+;3　ＣＰ
+;5　ＤＰ
+;6　ＮＰ
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_BASE(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;LOCAL
+;	0　loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;一応BASE追加はあり得るけどそのままだと移植されないように
+FOR LOCAL:0, 0, 7
+	;MPとTPはそのまま
+	SIF GROUPMATCH(LOCAL:0, 1, 4)
+		CONTINUE
+	;それ以外は入れ替わる
+	MAXBASE:GET_MEMBER(ARG:0):(LOCAL:0) = MAXBASE:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+	   BASE:GET_MEMBER(ARG:0):(LOCAL:0) =    BASE:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+;心神喪失による処理がBASEに補正をかけるのでここで呼び出す
+CALL SET_INSANITY(ARG:0, ARG:1)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;心神喪失による補正
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;心神喪失の場合特殊な処理を行う BASEに補正をかけるのでSET_BASEの処理の後に呼び出すこと
+;喪失関連のメッセージ表示はここでやってしまう。他のメッセージ作成時は順番に注意
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_INSANITY(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;入れ替わり先が喪失（グロッキーに）
+IF CFLAG:GET_DUMMY_CHARA(ARG:0):29 == 0 && CFLAG:GET_DUMMY_CHARA(ARG:1):29
+	BASE:GET_MEMBER(ARG:0):1 /= 10
+
+	;ついでにテンション大幅ダウン
+	SIF BASE:GET_DUMMY_CHARA(ARG:0):4 > 0
+		BASE:GET_MEMBER(ARG:0):4 /= 5
+
+;入れ替わり元が喪失（回復）
+ELSEIF CFLAG:GET_DUMMY_CHARA(ARG:0):29 && CFLAG:GET_DUMMY_CHARA(ARG:1):29 == 0
+	;入れ替わり先が健常だった場合回復する
+	CFLAG:GET_MEMBER(ARG:0):29 = 0
+	BASE:GET_MEMBER(ARG:0):4 = 1
+	;もしMPが無い場合回復する
+	IF BASE:GET_DUMMY_CHARA(ARG:0):1 == 0
+		;元の体に戻ると回復量高い
+		IF IS_ORIGINAL_BODY(GET_DUMMY_CHARA(ARG:0), GET_DUMMY_CHARA(ARG:1))
+			BASE:GET_MEMBER(ARG:0):1 = MAXBASE:GET_DUMMY_CHARA(ARG:0):1 / 20
+		;そうでない場合回復するけど量低い
+		ELSE
+			BASE:GET_MEMBER(ARG:0):1 = 1
+		ENDIF
+	ENDIF
+
+;喪失to喪失
+ELSEIF CFLAG:GET_DUMMY_CHARA(ARG:0):29 && CFLAG:GET_DUMMY_CHARA(ARG:1):29
+	;元の体に戻った時のみ回復
+	IF IS_ORIGINAL_BODY(GET_DUMMY_CHARA(ARG:0), GET_DUMMY_CHARA(ARG:1))
+		CFLAG:GET_MEMBER(ARG:0):29 = 0
+		;もしMPが無い場合回復する
+		SIF BASE:GET_DUMMY_CHARA(ARG:0):1 == 0
+			BASE:GET_MEMBER(ARG:0):1 = MAXBASE:GET_DUMMY_CHARA(ARG:0):1 / 20
+		BASE:GET_MEMBER(ARG:0):4 = 1
+	ENDIF
+ENDIF
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;CFLAG移植処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;移植する内容
+;1補正済み戦闘素質
+;4現在位置
+;7～9装備品
+;10非戦闘被拘束フラグ（一応）
+;13今回の移動前位置（一応）
+;14今回の移動後位置（一応）
+;15最大ＨＰ一時減少量（一応）
+;17～19装備品の残弾
+;20～21拘束、丸呑み（一応）
+;22寄生
+;23孵化残り時間
+;25睡眠（一応）
+;26～27煙幕、砂煙（一応）
+;28発情
+;35絶頂
+;36妊娠
+;37触手服
+;38拘束レベル（一応）
+;40触手スーツパッチ
+;41遺品のある部屋
+;42ふたなりパッチ
+;103トドメさされた（一応）
+;104何代目か（移行処理はこことは別で行う）
+;107種族
+;109竿親
+;110～119体＆世代情報（移行処理はこことは別で行う）
+;150月経日
+;151抱卵
+;152A寄生タイムリミット
+;153規制封じの札
+;154卵破壊の札
+;155母乳止めの札
+;156強制自慰フラグ
+;157ミニゲーム用出産回数
+;158媚薬爆弾タイムリミット
+;159月経状態
+;161乳卵
+;162B寄生タイムリミット
+;163触手同化率
+;171玉寄生
+;172C寄生タイムリミット
+;201骨折
+;401ペットのレイプ妊娠判定
+;500足装備
+;501服装
+;502捕食解放時の開発レベル
+;503使い魔
+;504魔法の拘束具
+;505放置プレイ
+;506超乳化フラグ
+;507このターン何が有ったか
+;508排卵パッチで使用
+;509排卵パッチで使用
+;510排卵パッチで使用
+;511排卵パッチで使用
+;512乳姦パッチで使用
+;515ふたなりカスタマイズ済
+;600最後にランダム発情した日
+;700口上色（紛らわしいけど体変わったら声も変わるだろうって事で）
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_CFLAG(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;LOCAL
+;	0　loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+FOR LOCAL:0, 1, 110
+	;リタイアフラグ、復活までの残り時間、友好度、PTメンバーフラグ、今回の移動パターン、性格基準値、共有状態、遺品のある部屋　は交換しない
+	SIF GROUPMATCH(LOCAL:0, 2, 3, 5, 6, 11, 12, 16, 41)
+		CONTINUE
+	;戦闘中の処理は交換しない
+	SIF INRANGE(LOCAL:0, 50, 99)
+		CONTINUE
+	;性格、とどめを刺された相手、目的地を交換する
+	SIF GROUPMATCH(LOCAL:0, 100, 103, 105)
+		CONTINUE
+	;何代目の娘かはここ以外で引き継ぐ
+	SIF GROUPMATCH(LOCAL:0, 104)
+		CONTINUE
+	;喪失周りは別の場所で処理する
+	SIF LOCAL:0 == 29
+		CONTINUE
+	CFLAG:GET_MEMBER(ARG:0):(LOCAL:0) = CFLAG:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+FOR LOCAL:0, 150, 164
+	;悪堕ちは交換しない
+	SIF GROUPMATCH(LOCAL:0, 160)
+		CONTINUE
+	CFLAG:GET_MEMBER(ARG:0):(LOCAL:0) = CFLAG:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+CFLAG:GET_MEMBER(ARG:0):171 = CFLAG:GET_DUMMY_CHARA(ARG:1):171
+CFLAG:GET_MEMBER(ARG:0):172 = CFLAG:GET_DUMMY_CHARA(ARG:1):172
+CFLAG:GET_MEMBER(ARG:0):201 = CFLAG:GET_DUMMY_CHARA(ARG:1):201
+CFLAG:GET_MEMBER(ARG:0):401 = CFLAG:GET_DUMMY_CHARA(ARG:1):401
+FOR LOCAL:0, 500, 513
+	CFLAG:GET_MEMBER(ARG:0):(LOCAL:0) = CFLAG:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+CFLAG:GET_MEMBER(ARG:0):515 = CFLAG:GET_DUMMY_CHARA(ARG:1):515
+CFLAG:GET_MEMBER(ARG:0):600 = CFLAG:GET_DUMMY_CHARA(ARG:1):600
+CFLAG:GET_MEMBER(ARG:0):700 = CFLAG:GET_DUMMY_CHARA(ARG:1):700
+;口上がシステムカラーだとアホ程見づらいので、全力ホワイトに変換しておく
+IF CFLAG:(ARG:0):700 == 12632256
+	CFLAG:GET_MEMBER(ARG:0):700 = CONVERT_RGB(255, 255, 255)
+ENDIF
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;素質の設定処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;無条件の移植項目
+;0処女
+;40～43体質絡み
+;56薬毒耐性
+;57おもらし癖
+;61～62汚臭耐性
+;75～79部位陥落
+;100～110体型絡み
+;111～116体質絡み
+;120,不思議な根
+;121ふたなり
+;122男の娘
+;124動物耳
+;128蓬莱人
+;130母乳体質
+;135卵生
+;136産卵体質
+;137排卵異常
+;140ペット
+;150妖精
+;151炎熱変換
+;154哨戒
+;155異形耐性
+;156淫魔
+;157エネミー
+;158超乳
+;159,陥没乳首
+;162,拡張乳腺
+;170～190ふたなり関連
+;213羽
+;214角
+;215しっぽ
+;220母乳粘度
+;222超々乳
+;223接地乳房
+;
+;条件付き移植項目
+;50～51習得
+;53針さばき
+;60自慰しやすい
+;70～71快感耐性
+;72中毒しやすい
+;74淫乱　淫乱
+;132　幼稚
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_TALENT(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;LOCAL
+;	0　loop
+;	1　temp
+;	2　temp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;無条件
+TALENT:GET_MEMBER(ARG:0):0 = TALENT:GET_DUMMY_CHARA(ARG:1):0
+TALENT:GET_MEMBER(ARG:0):40 = TALENT:GET_DUMMY_CHARA(ARG:1):40
+TALENT:GET_MEMBER(ARG:0):41 = TALENT:GET_DUMMY_CHARA(ARG:1):41
+TALENT:GET_MEMBER(ARG:0):42 = TALENT:GET_DUMMY_CHARA(ARG:1):42
+TALENT:GET_MEMBER(ARG:0):43 = TALENT:GET_DUMMY_CHARA(ARG:1):43
+TALENT:GET_MEMBER(ARG:0):56 = TALENT:GET_DUMMY_CHARA(ARG:1):56
+TALENT:GET_MEMBER(ARG:0):57 = TALENT:GET_DUMMY_CHARA(ARG:1):57
+TALENT:GET_MEMBER(ARG:0):61 = TALENT:GET_DUMMY_CHARA(ARG:1):61
+TALENT:GET_MEMBER(ARG:0):62 = TALENT:GET_DUMMY_CHARA(ARG:1):62
+FOR LOCAL:0, 75, 80
+	TALENT:GET_MEMBER(ARG:0):(LOCAL:0) = TALENT:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+FOR LOCAL:0, 100, 111
+	TALENT:GET_MEMBER(ARG:0):(LOCAL:0) = TALENT:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+FOR LOCAL:0, 111, 117
+	SIF LOCAL:0 == 113
+		CONTINUE
+	TALENT:GET_MEMBER(ARG:0):(LOCAL:0) = TALENT:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+TALENT:GET_MEMBER(ARG:0):120 = TALENT:GET_DUMMY_CHARA(ARG:1):120
+TALENT:GET_MEMBER(ARG:0):121 = TALENT:GET_DUMMY_CHARA(ARG:1):121
+TALENT:GET_MEMBER(ARG:0):122 = TALENT:GET_DUMMY_CHARA(ARG:1):122
+TALENT:GET_MEMBER(ARG:0):124 = TALENT:GET_DUMMY_CHARA(ARG:1):124
+TALENT:GET_MEMBER(ARG:0):128 = TALENT:GET_DUMMY_CHARA(ARG:1):128
+TALENT:GET_MEMBER(ARG:0):130 = TALENT:GET_DUMMY_CHARA(ARG:1):130
+TALENT:GET_MEMBER(ARG:0):135 = TALENT:GET_DUMMY_CHARA(ARG:1):135
+TALENT:GET_MEMBER(ARG:0):136 = TALENT:GET_DUMMY_CHARA(ARG:1):136
+TALENT:GET_MEMBER(ARG:0):137 = TALENT:GET_DUMMY_CHARA(ARG:1):137
+TALENT:GET_MEMBER(ARG:0):140 = TALENT:GET_DUMMY_CHARA(ARG:1):140
+TALENT:GET_MEMBER(ARG:0):150 = TALENT:GET_DUMMY_CHARA(ARG:1):150
+TALENT:GET_MEMBER(ARG:0):151 = TALENT:GET_DUMMY_CHARA(ARG:1):151
+TALENT:GET_MEMBER(ARG:0):154 = TALENT:GET_DUMMY_CHARA(ARG:1):154
+TALENT:GET_MEMBER(ARG:0):155 = TALENT:GET_DUMMY_CHARA(ARG:1):155
+TALENT:GET_MEMBER(ARG:0):156 = TALENT:GET_DUMMY_CHARA(ARG:1):156
+TALENT:GET_MEMBER(ARG:0):157 = TALENT:GET_DUMMY_CHARA(ARG:1):157
+TALENT:GET_MEMBER(ARG:0):158 = TALENT:GET_DUMMY_CHARA(ARG:1):158
+TALENT:GET_MEMBER(ARG:0):159 = TALENT:GET_DUMMY_CHARA(ARG:1):159
+TALENT:GET_MEMBER(ARG:0):162 = TALENT:GET_DUMMY_CHARA(ARG:1):162
+FOR LOCAL:0, 170, 179
+	TALENT:GET_MEMBER(ARG:0):(LOCAL:0) = TALENT:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+TALENT:GET_MEMBER(ARG:0):180 = TALENT:GET_DUMMY_CHARA(ARG:1):180
+TALENT:GET_MEMBER(ARG:0):181 = TALENT:GET_DUMMY_CHARA(ARG:1):181
+TALENT:GET_MEMBER(ARG:0):185 = TALENT:GET_DUMMY_CHARA(ARG:1):185
+TALENT:GET_MEMBER(ARG:0):186 = TALENT:GET_DUMMY_CHARA(ARG:1):186
+TALENT:GET_MEMBER(ARG:0):187 = TALENT:GET_DUMMY_CHARA(ARG:1):187
+TALENT:GET_MEMBER(ARG:0):188 = TALENT:GET_DUMMY_CHARA(ARG:1):188
+TALENT:GET_MEMBER(ARG:0):213 = TALENT:GET_DUMMY_CHARA(ARG:1):213
+TALENT:GET_MEMBER(ARG:0):214 = TALENT:GET_DUMMY_CHARA(ARG:1):214
+TALENT:GET_MEMBER(ARG:0):215 = TALENT:GET_DUMMY_CHARA(ARG:1):215
+TALENT:GET_MEMBER(ARG:0):220 = TALENT:GET_DUMMY_CHARA(ARG:1):220
+TALENT:GET_MEMBER(ARG:0):222 = TALENT:GET_DUMMY_CHARA(ARG:1):222
+TALENT:GET_MEMBER(ARG:0):223 = TALENT:GET_DUMMY_CHARA(ARG:1):223
+
+
+;条件付き
+
+;50:習得早い
+;単純に1/20で移植
+IF TALENT:GET_DUMMY_CHARA(ARG:0):50 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):50 && RAND:20 < 1
+	TALENT:GET_MEMBER(ARG:0):50 = 1
+ELSEIF TALENT:GET_MEMBER(ARG:0):50 && TALENT:GET_DUMMY_CHARA(ARG:1):50 == 0 && RAND:20 < 1
+	TALENT:GET_MEMBER(ARG:0):50 = 0
+ENDIF
+
+;51:習得遅い
+;単純に1/20で移植
+IF TALENT:GET_DUMMY_CHARA(ARG:0):51 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):51 && RAND:20 < 1
+	TALENT:GET_MEMBER(ARG:0):51 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):51 && TALENT:GET_DUMMY_CHARA(ARG:1):51 == 0 && RAND:20 < 1
+	TALENT:GET_MEMBER(ARG:0):51 = 0
+ENDIF
+
+;相殺
+IF TALENT:GET_MEMBER(ARG:0):50 && TALENT:GET_MEMBER(ARG:0):51
+	TALENT:GET_MEMBER(ARG:0):50 = 0
+	TALENT:GET_MEMBER(ARG:0):51 = 0
+ENDIF
+
+;53:針さばき
+;習得早い／遅いの有無と確率1/20で移植
+IF TALENT:GET_DUMMY_CHARA(ARG:0):53 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):53 && TALENT:GET_DUMMY_CHARA(ARG:1):50 && RAND:20 < 1
+	TALENT:GET_MEMBER(ARG:0):53 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):53 && TALENT:GET_DUMMY_CHARA(ARG:1):53 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):51 && RAND:20 < 1
+	TALENT:GET_MEMBER(ARG:0):53 = 0
+ENDIF
+
+;60:自慰しやすい
+;自慰経験必要と身体がムズムズしているか心がムズムズしているかで半々
+IF TALENT:GET_DUMMY_CHARA(ARG:0):60 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):60 && EXP:GET_DUMMY_CHARA(ARG:0):10 > 500 && RAND:2 == 0
+	TALENT:GET_MEMBER(ARG:0):60 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):60 && TALENT:GET_DUMMY_CHARA(ARG:1):60 == 0 && EXP:GET_DUMMY_CHARA(ARG:0):10 <= 500 && RAND:2 == 0
+	TALENT:GET_MEMBER(ARG:0):60 = 0
+ENDIF
+
+;70:快感に素直
+;絶頂経験と淫乱による乱数で移植
+;淫乱の処理はここより上にはしないこと。
+LOCAL:1 = MIN(15, EXP:GET_DUMMY_CHARA(ARG:0):20 / 20 + TALENT:GET_DUMMY_CHARA(ARG:1):74)
+LOCAL:2 = MAX(10, 40 - EXP:GET_DUMMY_CHARA(ARG:0):20 / 10 - TALENT:GET_DUMMY_CHARA(ARG:1):74)
+IF TALENT:GET_DUMMY_CHARA(ARG:0):70 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):70 && RAND:30 < LOCAL:1
+	TALENT:GET_MEMBER(ARG:0):70 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):70 && TALENT:GET_DUMMY_CHARA(ARG:1):70 == 0 && RAND:30 < LOCAL:2
+	TALENT:GET_MEMBER(ARG:0):70 = 0
+ENDIF
+
+;71:快感の否定
+;絶頂経験と淫乱による乱数で移植
+;淫乱の処理はここより上にはしないこと。
+LOCAL:1 = MAX(5, 30 - EXP:GET_DUMMY_CHARA(ARG:0):20 / 20 - TALENT:GET_DUMMY_CHARA(ARG:1):74)
+LOCAL:2 = MIN(10, (EXP:GET_DUMMY_CHARA(ARG:0):20 / 10) + TALENT:GET_DUMMY_CHARA(ARG:1):74)
+IF TALENT:GET_DUMMY_CHARA(ARG:0):70 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):70 && RAND:30 < LOCAL:1
+	TALENT:GET_MEMBER(ARG:0):70 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):70 && TALENT:GET_DUMMY_CHARA(ARG:1):70 == 0 && RAND:30 < LOCAL:2
+	TALENT:GET_MEMBER(ARG:0):70 = 0
+ENDIF
+
+;相殺
+IF TALENT:GET_MEMBER(ARG:0):70 && TALENT:GET_MEMBER(ARG:0):71
+	TALENT:GET_MEMBER(ARG:0):70 = 0
+	TALENT:GET_MEMBER(ARG:0):71 = 0
+ENDIF
+
+;72:中毒しやすい
+;各種中毒レベルによる乱数で移植
+;共に平均レベルが４以下ｏｒ移植される側が既に全中毒ＬＶ３の場合何もしない
+LOCAL:1 = SUM_ADDICTION(GET_DUMMY_CHARA(ARG:0))
+LOCAL:2 = SUM_ADDICTION(GET_DUMMY_CHARA(ARG:1))
+IF LOCAL:1 <= 5 && LOCAL:2 <= 5
+	;何もしない
+ELSEIF LOCAL:1 == 15
+	;何もしない
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):72 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):72 && RAND:20 < LOCAL:1 + LOCAL:2
+	TALENT:GET_MEMBER(ARG:0):72 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):72 && TALENT:GET_DUMMY_CHARA(ARG:1):72 == 0 && RAND:30 < LOCAL:1 + LOCAL:2
+	TALENT:GET_MEMBER(ARG:0):72 = 0
+ENDIF
+
+;74:淫乱
+;発情状態と部位陥落素質による乱数で移植
+IF TALENT:GET_DUMMY_CHARA(ARG:0):74 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):74 && RAND:10 < (CFLAG:GET_DUMMY_CHARA(ARG:1):28 + SUM_FALL(GET_DUMMY_CHARA(ARG:1)))
+	TALENT:GET_MEMBER(ARG:0):74 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):74 && TALENT:GET_DUMMY_CHARA(ARG:1):74 == 0 && RAND:10 < (CFLAG:GET_DUMMY_CHARA(ARG:0):28 + SUM_FALL(GET_DUMMY_CHARA(ARG:0))) * 2
+	TALENT:GET_MEMBER(ARG:0):74 = 0
+ENDIF
+
+;132:幼稚
+;自分の子孫と入れ替わる場合、娘の出産経験による乱数で移植
+;それ以外の場合、単純に50%で移植
+;世代差
+LOCAL:2 = LIMIT((80 - EXP:GET_DUMMY_CHARA(ARG:1):22 * 5), 1, 80)
+IF TALENT:GET_DUMMY_CHARA(ARG:1):132 && CFLAG:GET_DUMMY_CHARA(ARG:0):110 == CFLAG:GET_DUMMY_CHARA(ARG:1):110&& CFLAG:GET_DUMMY_CHARA(ARG:0):111 < CFLAG:GET_DUMMY_CHARA(ARG:1):104 && RAND:100 < LOCAL:2
+	TALENT:GET_MEMBER(ARG:0):132 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):132 == 0 && TALENT:GET_DUMMY_CHARA(ARG:1):132 && RAND:2 == 0
+	TALENT:GET_MEMBER(ARG:0):132 = 1
+ELSEIF TALENT:GET_DUMMY_CHARA(ARG:0):132 && TALENT:GET_DUMMY_CHARA(ARG:1):132 == 0 && RAND:2 == 0
+	TALENT:GET_MEMBER(ARG:0):132 = 0
+ENDIF
+
+;中毒のレベルの合計値を出す
+@SUM_ADDICTION(ARG:0)
+#FUNCTION
+RETURNF ABL:(ARG:0):10 + ABL:(ARG:0):11 + ABL:(ARG:0):12 + ABL:(ARG:0):13 + ABL:(ARG:0):14
+;部位陥落素質の状態を合計する
+@SUM_FALL(ARG:0)
+#FUNCTION
+RETURNF TALENT:(ARG:0):75 + TALENT:(ARG:0):76 + TALENT:(ARG:0):77 + TALENT:(ARG:0):78  + TALENT:(ARG:0):79
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;経験値／能力の設定処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;移植内容
+;1気配察知
+;3攻撃戦闘
+;4道具戦闘
+;5危機回避
+;6～9部位感覚
+;↑ここまでＡＢＬとＥＸＰで共有
+;EXP21おもらし経験
+;↑出産経験は微妙。記憶と肉体両方とも持ってそうだし。ひとまず魂側に残す方針で。
+;ABL97～98　戦闘関連素質
+;部位感覚とおもらし経験以外は入れ替わり元と先によって移植した後に修正を加える
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_ABL_EXP(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;LOCAL
+;	0　loop
+;	1　tmp
+;	2　tmp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+LOCAL:1 = GET_BODY_COMPATIBILITY(GET_DUMMY_CHARA(ARG:0), GET_DUMMY_CHARA(ARG:1))
+SELECTCASE LOCAL:1
+	CASE IS < 0
+		LOCAL:2 = 3
+	CASE IS < 6
+		LOCAL:2 = 4
+	CASEELSE
+		LOCAL:2 = 0
+ENDSELECT
+FOR LOCAL:0, 1, 6
+	SIF LOCAL:0 == 2
+		CONTINUE
+	ABL:GET_MEMBER(ARG:0):(LOCAL:0) = ABL:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+	EXP:GET_MEMBER(ARG:0):(LOCAL:0) = EXP:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+	IF LOCAL:2 > 0
+		IF RAND:(LOCAL:2)
+			ABL:GET_MEMBER(ARG:0):(LOCAL:0) = MAX(0, ABL:GET_MEMBER(ARG:0):(LOCAL:0)  - 1)
+			CALLFORM GET_NEED_EXP_{LOCAL:2}(ABL:GET_MEMBER(ARG:0):(LOCAL:0))
+			EXP:GET_MEMBER(ARG:0):(LOCAL:0) = MIN(RESULT, EXP:GET_MEMBER(ARG:0):(LOCAL:0))
+		ENDIF
+	ENDIF
+NEXT
+
+FOR LOCAL:0, 6, 16
+	SIF INRANGE(LOCAL:0, 10, 14)
+		CONTINUE
+	ABL:GET_MEMBER(ARG:0):(LOCAL:0) = ABL:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+	EXP:GET_MEMBER(ARG:0):(LOCAL:0) = EXP:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+
+FOR LOCAL:0, 10, 15
+	ABL:GET_MEMBER(ARG:0):(LOCAL:0) = ABL:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+	EXP:GET_MEMBER(ARG:0):(LOCAL:0) = EXP:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+NEXT
+
+EXP:GET_MEMBER(ARG:0):21 = EXP:GET_DUMMY_CHARA(ARG:1):21
+
+;相性に合わせて上昇、劣化する倍率を%で出す
+;TODO:量適当に決めた
+SELECTCASE LOCAL:1
+	CASE 12
+		LOCAL:2 = 115
+	CASE 11
+		LOCAL:2 = 112
+	CASE 10
+		LOCAL:2 = 110
+	CASE 9
+		LOCAL:2 = 107
+	CASE 8
+		LOCAL:2 = 105
+	CASE 7
+		LOCAL:2 = 102
+	CASE 6
+		LOCAL:2 = 101
+	CASE IS >= 0
+		LOCAL:2 = 97
+	CASE -1
+		LOCAL:2 = 95
+	CASE -2
+		LOCAL:2 = 92
+	CASE -3
+		LOCAL:2 = 90
+ENDSELECT
+FOR LOCAL:0, 97, 99
+	ABL:GET_MEMBER(ARG:0):(LOCAL:0) = ABL:GET_DUMMY_CHARA(ARG:1):(LOCAL:0)
+	;体の相性に応じた能力の上昇、劣化処理
+	;前の体の数字が300より大きかった場合上昇は発生しない
+	;TODO:何で前の体？
+	SIF LOCAL:2 > 100 && ABL:GET_DUMMY_CHARA(ARG:0):(LOCAL:0) > 300
+		CONTINUE
+	;前の体が本来の能力の40%を下回っていた場合劣化させない
+	;TODO:何で前の体？
+	SIF LOCAL:2 < 100 && ABL:GET_DUMMY_CHARA(ARG:0):(LOCAL:0) < CSVABL(CFLAG:GET_DUMMY_CHARA(ARG:0):114, LOCAL:0) * 2 / 5
+		CONTINUE
+	ABL:GET_MEMBER(ARG:0):(LOCAL:0) = ABL:GET_MEMBER(ARG:0):(LOCAL:0) * LOCAL:2 / 100
+	IF ABL:GET_MEMBER(ARG:0):(LOCAL:0) < 0
+		ABL:GET_MEMBER(ARG:0):(LOCAL:0) = 0
+	ENDIF
+NEXT
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;体の適合度を返す関数 暫定
+;TODO:何で体の適合度が体と中身のRELATIONで出てるんだろう・・・
+;触手宮はこんな環境なので通常の環境よりも姉妹、母子の血のつながりが特殊なものとする　スカーレット姉妹や秋姉妹みたいな姉妹キャラを特別扱いしない言い訳
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@GET_BODY_COMPATIBILITY(ARG:0, ARG:1)
+#FUNCTION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラ
+;	1　体の元の持ち主
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;入れ替わり経験ありで自分の元々の体に戻る
+;ひょっとしたら姉妹かもしれないけどまあ似たようなもの()
+IF IS_ORIGINAL_BODY(ARG:0, ARG:1)
+	;前回が自分の体
+	;一応相性普通と入れ替わった時基準で作成。
+	IF IS_ONE_BEFORE_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):116 == CFLAG:(ARG:1):104
+		RETURNF 12
+	;前々回が自分の体
+	ELSEIF IS_TWO_BEFORE_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):115 == CFLAG:(ARG:1):104
+		RETURNF 11
+	;自分が他人の体を渡り歩いて久しい
+	ELSE
+		RETURNF 10
+	ENDIF
+;入れ替わり先が本来の体の母親の体
+;実は叔母だった？知らね
+ELSEIF IS_ORIGINAL_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):111 - CFLAG:(ARG:1):104 == 1
+	RETURNF 9
+;入れ替わり先が本来の体の娘ｏｒ姉妹の体
+ELSEIF IS_ORIGINAL_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):111 - CFLAG:(ARG:1):104 == -1
+	RETURNF 8
+;相性かなり良い
+;TODO:体の相性で調べるのに中では中身がオリジナルかどうかを調べてる　よくわかんない
+ELSEIF RELATION:(ARG:0):(CFLAG:(ARG:1):114) >= 200
+	;自分と相手の中身がオリジナル（相性が直結）
+	IF CFLAG:(ARG:0):111 == 0 && CFLAG:(ARG:1):111 == 0
+		RETURNF 7
+	;自分もしくは入れ替わり先が子孫
+	;親の相性をそのまま引き継いでるからやや効果を低下させる
+	ELSE
+		RETURNF 6
+	ENDIF
+;相性やや良い
+ELSEIF RELATION:(ARG:0):(CFLAG:(ARG:1):114) > 100
+	;自分と相手がオリジナル（相性が直結）
+	IF CFLAG:(ARG:0):111 == 0 && CFLAG:(ARG:1):111 == 0
+		RETURNF 5
+	;自分もしくは相手が子孫
+	;親の相性をそのまま引き継いでるからやや効果を低下させる
+	ELSE
+		RETURNF 4
+	ENDIF
+;入れ替わり経験あり、自分の元々の家系
+ELSEIF IS_ORIGINAL_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):119
+	RETURNF 3
+;TODO:後で今使ってる体の家系についてここら辺に差し込んでこの関数使ってる処理修正する
+;入れ替わり経験あり、直前に使った家系
+ELSEIF IS_ONE_BEFORE_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):119
+	RETURNF 2
+;入れ替わり経験あり、前々回に使った家系
+ELSEIF IS_TWO_BEFORE_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):119
+	RETURNF 1
+;相性普通（CSV好感度0は100に読み替える）
+ELSEIF RELATION:(ARG:0):(CFLAG:(ARG:1):114) == 100 || RELATION:(ARG:0):(CFLAG:(ARG:1):114) == 0
+	RETURNF 0
+;相性悪い
+ELSEIF RELATION:(ARG:0):(CFLAG:(ARG:1):114) < 100
+	;自分と相手がオリジナル
+	;発生すると致命的。
+	IF CFLAG:(ARG:0):111 == 0 && CFLAG:(ARG:1):111 == 0
+		RETURNF -2
+	;自分もしくは相手が子孫
+	;相性悪い／憎しみ量軽減
+	ELSE
+		RETURNF -1
+	ENDIF
+;その他。致命的。
+ELSE
+	RETURNF -3
+ENDIF
+
+;元の体
+@IS_ORIGINAL_BODY(ARG:0, ARG:1)
+#FUNCTION
+RETURNF IS_ORIGINAL_BODY_FAMILY(ARG:0, ARG:1) && CFLAG:(ARG:0):111 == CFLAG:(ARG:1):104
+;元の体の家系
+@IS_ORIGINAL_BODY_FAMILY(ARG:0, ARG:1)
+#FUNCTION
+RETURNF CFLAG:(ARG:0):110 == CFLAG:(ARG:1):114
+;一つ前の体の家系
+@IS_ONE_BEFORE_BODY_FAMILY(ARG:0, ARG:1)
+#FUNCTION
+RETURNF CFLAG:(ARG:0):113 == CFLAG:(ARG:1):114
+;二つ前の体の家系
+@IS_TWO_BEFORE_BODY_FAMILY(ARG:0, ARG:1)
+#FUNCTION
+RETURNF CFLAG:(ARG:0):112 == CFLAG:(ARG:1):114
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;身体の名前の設定処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;移植内容
+;1体のNAME
+;2体のCALLNAME
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_CSTR(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+CSTR:GET_MEMBER(ARG:0):1 = %CSTR:GET_DUMMY_CHARA(ARG:1):1%
+CSTR:GET_MEMBER(ARG:0):2 = %CSTR:GET_DUMMY_CHARA(ARG:1):2%
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;体と世代の設定処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@BODY_AND_GENERATION(ARG:0, ARG:1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　中身に入るキャラのパーティ番号
+;	1　体の元の持ち主のパーティ番号
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+CFLAG:GET_MEMBER(ARG:0):104 = CFLAG:GET_DUMMY_CHARA(ARG:1):104
+CFLAG:GET_MEMBER(ARG:0):112 = CFLAG:GET_DUMMY_CHARA(ARG:0):113
+CFLAG:GET_MEMBER(ARG:0):113 = CFLAG:GET_DUMMY_CHARA(ARG:0):114
+CFLAG:GET_MEMBER(ARG:0):114 = CFLAG:GET_DUMMY_CHARA(ARG:1):114
+CFLAG:GET_MEMBER(ARG:0):115 = CFLAG:GET_DUMMY_CHARA(ARG:0):116
+CFLAG:GET_MEMBER(ARG:0):116 = CFLAG:GET_DUMMY_CHARA(ARG:0):104
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;友好度の設定処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ＮＰＣを含め、入れ替わり時に同じ部屋に居ると事情を知ってるので変動しない、
+;事情を知らない者は次に会った時、まず外見だけで判断して違和感を覚えるため一度リセットされるって感じで。
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@SET_FRIEND()
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FOR LOCAL:0, 1, CHARANUM
+	SIF LOCAL:0 == 1
+		CONTINUE
+	SIF CFLAG:1:4 == CFLAG:(LOCAL:0):4
+		CONTINUE
+	CFLAG:(LOCAL:0):5 = RELATION:(LOCAL:0):(CFLAG:1:114)
+	IF CFLAG:(LOCAL:0):5 > 200
+		CFLAG:(LOCAL:0):5 = 120
+	ELSEIF CFLAG:(LOCAL:0):5 > 100
+		CFLAG:(LOCAL:0):5 = 105
+	ELSEIF CFLAG:(LOCAL:0):5 == 0
+		CFLAG:(LOCAL:0):5 = 100
+	ELSEIF CFLAG:(LOCAL:0):5 < 60
+		CFLAG:(LOCAL:0):5 = 80
+	ELSEIF CFLAG:(LOCAL:0):5 < 80
+		CFLAG:(LOCAL:0):5 = 90
+	ELSEIF CFLAG:(LOCAL:0):5 < 100
+		CFLAG:(LOCAL:0):5 = 95
+	ENDIF
+NEXT
+
+;退避したキャラの元データを返す関数
+@GET_DUMMY_CHARA(ARG:0)
+#FUNCTION
+RETURNF CHARANUM - 1 - ARG:0
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;メッセージ表示処理
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+@EVENT_MES_180(ARG:0, ARG:1, ARG:2, ARG:3 = -1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;ARG
+;	0　今回巻き込まれた人数
+;	1　主人公の入れ替わり相手
+;	1　二人目の仲間の入れ替わり相手
+;	2　（いれば）三人目の仲間の入れ替わり相手
+;LOCAL
+;	0　loop
+;	1　入れ替わる中身の番号
+;	2　入れ替わる体の番号
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;開始時の固定メッセージ
+;喪失状態で「○○達」の○○を変えようかと思ったけど、喪失していてもトラップ回避するくらいだから別に良いか
+PRINTFORML 急に周囲が光に包まれた！
+PRINTFORML 周囲を見ると、魔方陣らしき模様が光を放っていて、%CALLNAME:1%%TACHI()%は目を開けているのも困難になった！
+PRINTFORML 危険を察知し脱出しようにも、魔方陣の力で体が動かない！
+WAIT
+PRINTFORMW 光が収まり始め、%CALLNAME:1%は体に違和感を覚えた……
+WAIT
+FOR LOCAL:0, 0, ARG:0
+	LOCAL:1 = GET_DUMMY_CHARA(LOCAL:0)
+	LOCAL:2 = GET_DUMMY_CHARA(ARG:(LOCAL:0 + 1))
+	;入れ替わり先が喪失
+	IF CFLAG:(LOCAL:1):29 == 0 && CFLAG:(LOCAL:2):29
+
+		;主人公
+		IF LOCAL:0 == 0
+			PRINTFORML 自分が横になっている事に気づいた%CALLNAME:1%は、
+			PRINTFORML 体を起こすことすら困難なくらいに全身が疲れ果てている事を理解し、どうにか目を開いた。
+			IF CFLAG:1:110 == CFLAG:(LOCAL:2):114 && CFLAG:1:111 == CFLAG:(LOCAL:2):104
+				PRINTFORML 目に映った自分の姿は、力尽きてこそいるが、紛れも無い本来の自分の体だった……
+				PRINTFORML 何とか力を振り絞って周りを見ると、仲間が挙動不審だ。
+			ELSE
+				PRINTFORML 目に映った自分は自分ではなく、心身ともに力尽きていた%CSTR:(LOCAL:2):2%の体だった……
+				PRINTFORML 何とか力を振り絞って周りを見ると、\@(ARG:0 > 2) ? 周囲の仲間 # 自分の体 \@が妙な挙動をしていた。
+			ENDIF
+			PRINTFORMW どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+		ELSE
+			IF CFLAG:(LOCAL:1):110 == CFLAG:(LOCAL:2):114 && CFLAG:(LOCAL:1):111 == CFLAG:(LOCAL:2):104
+				PRINTFORML 力尽きてこそいるが、本来の体に戻った%CALLNAME:(LOCAL:1)%は、
+				PRINTFORMW 辛そうながらもどこか安堵の表情を浮かべている……
+			ELSE
+				PRINTFORML 心身ともに力尽きていた%CSTR:(LOCAL:2):2%の体になった%CALLNAME:(LOCAL:1)%は、
+				PRINTFORMW 今にも倒れてしまいそうなくらいに辛そうだ……
+			ENDIF
+		ENDIF
+			
+	;入れ替わり元が喪失
+	ELSEIF CFLAG:(LOCAL:1):29 && CFLAG:(LOCAL:2):29 == 0
+				
+		;主人公
+		IF LOCAL:0 == 0
+			PRINTFORML %CALLNAME:(LOCAL:1)%は体が少し楽になった事に気付いた。
+			PRINTFORML 目を開けてみると、何かがおかしい。
+			IF CFLAG:1:110 == CFLAG:(LOCAL:2):114 && CFLAG:1:111 == CFLAG:(LOCAL:2):104
+				PRINTFORML 目に映った自分の姿は、紛れも無い本来の自分の体だった……
+				PRINTFORML 力を振り絞って起き上がると、仲間が挙動不審だ。
+			ELSE
+				PRINTFORML どうやら自分の体が%CSTR:(LOCAL:2):2%になってしまったらしい。
+				PRINTFORML 周りを見ると、自分の体が横になっていて\@(ARG:0 > 2) ? 、もう一人の仲間も挙動不審だ。 # 動かない……\@
+			ENDIF
+			PRINTFORMW どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+		ELSE
+			IF CFLAG:(LOCAL:1):110 == CFLAG:(LOCAL:2):114 && CFLAG:(LOCAL:1):111 == CFLAG:(LOCAL:2):104
+				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の瞳に光が宿り、辛そうながらも上体を起こした。
+				PRINTFORML どうやら中身も%CALLNAME:(LOCAL:1)%に戻ったらしく、
+				PRINTFORMW 本来のの体に戻った事で精神が多少回復したようだ……
+			ELSE
+				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の瞳に光が宿り、辛そうながらも上体を起こした。
+				PRINTFORML どうやら中身は%CALLNAME:(LOCAL:1)%のようだが、
+				PRINTFORMW %CSTR:(LOCAL:2):2%の体になった事で精神が多少回復したようだ……
+			ENDIF
+		ENDIF
+		
+	;入れ替わり元、入れ替わり先共に喪失
+	ELSEIF CFLAG:(LOCAL:1):29 && CFLAG:(LOCAL:2):29
+
+		;主人公
+		IF LOCAL:0 == 0
+			PRINTFORM 虚ろな目で自分の体を見ると、
+			IF CFLAG:1:110 == CFLAG:(LOCAL:2):114 && CFLAG:1:111 == CFLAG:(LOCAL:2):104
+				PRINTFORML 目に映った自分の姿は、紛れも無い本来の自分の体だった。
+				PRINTFORMW 体が元の自分に戻った事で、%CALLNAME:1%に僅かだが力が湧いてきた！
+			ELSE
+				PRINTFORML どうやら自分の体が%CSTR:(LOCAL:2):2%になってしまったらしい。
+				PRINTFORML 周りも何やら様子がおかしいが、それ以上何かする気力など残っていなかった……
+			ENDIF
+			PRINTFORMW どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+		ELSE
+			IF CFLAG:(LOCAL:1):110 == CFLAG:(LOCAL:2):114 && CFLAG:(LOCAL:1):111 == CFLAG:(LOCAL:2):104
+				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の瞳に光が宿り、辛そうながらも上体を起こした。
+				PRINTFORML どうやら中身も%CALLNAME:(LOCAL:1)%に戻ったらしく、
+				PRINTFORMW 本来のの体に戻った事で精神が多少回復したようだ……
+			ELSE
+				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の体が一瞬だけ動いたが、そこまでだった。
+				PRINTFORML どうやら中身は力尽きた%CALLNAME:(LOCAL:1)%のようだ……
+			ENDIF
+		ENDIF
+	ELSE
+
+		;主人公の時のみメッセージ表示のみ行う
+		IF LOCAL:0 == 0
+			PRINTFORML %CALLNAME:1%が恐る恐る目を開くと、視界が何かおかしい。
+			PRINTFORML 辺りを見回してみると、何と自分がそこにいるではないか！
+			IF CFLAG:1:110 == CFLAG:(LOCAL:2):114 && CFLAG:1:111 == CFLAG:(LOCAL:2):104
+				PRINTFORML 自分の体を確認した%CALLNAME:1%は、そこでようやく自分が元の体に戻っている事に気付いた。
+			ELSE
+				PRINTFORML 自分の体を確認した%CALLNAME:1%は、そこでようやく自分が%CSTR:(LOCAL:2):2%になっている事に気付いた。
+			ENDIF
+			PRINTFORMW どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+
+		;何もしない
+		ELSE
+		ENDIF
+	ENDIF
+NEXT
+PRINTFORMW 暫くすると、魔方陣は消えてしまった……
+

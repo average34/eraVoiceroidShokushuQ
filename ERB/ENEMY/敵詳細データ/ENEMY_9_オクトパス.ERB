@@ -1,0 +1,195 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_9(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 5000
+DA:(ARG:0):2 = 5000
+DA:(ARG:0):3 = 0
+DA:(ARG:0):5 = 70
+DA:(ARG:0):9 = 10
+
+DA:(ARG:0):15 = 20
+DA:(ARG:0):16 = 40
+DA:(ARG:0):17 = 40
+DA:(ARG:0):18 = 110
+DA:(ARG:0):19 = 10
+
+DA:(ARG:0):14 = 10
+DA:(ARG:0):43 = 80
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 16
+DA:(ARG:0):86 = 3
+DA:(ARG:0):89 = 6
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(9)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_9(ARG:0, ARG:1)
+#DIM 拘束NF,100	;変数番号→拘束後にNFされたキャラID、格納数→NF進行度
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0
+	;前ターンでNFされ、今ターン開始時点でNFされた敵に拘束されたまま
+	IF DA:(ARG:0):50 == 1203 && DA:(ARG:0):20 == LOCAL:1
+		ARG:1 = LOCAL:1
+		拘束NF:(ARG:0) = 2
+	ELSE
+		拘束NF:(ARG:0) = 0
+	ENDIF
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 40
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:3 = RAND:14
+			IF LOCAL:3 < 2
+				LOCAL:2 = 634
+			ELSEIF LOCAL:3 < 4
+				LOCAL:2 = 635
+			ELSEIF LOCAL:3 < 7
+				TRYCALL CALC_NIPPLE_FUCK(ARG:1, 3)
+				IF RESULT:0 == 1
+					LOCAL:2 = 1203
+					;B寄生攻撃は拡張乳腺+以上が必要
+					IF FLAG:516 > 0 && TALENT:(ARG:1):162 > 1
+						SIF 拘束NF:(ARG:1) == 0
+							拘束NF:(ARG:1) = 1
+					ENDIF
+				ELSE
+					LOCAL:2 = 636
+				ENDIF
+			ELSEIF LOCAL:3 < 10
+				LOCAL:2 = 637
+			ELSEIF LOCAL:3 < 11
+				LOCAL:2 = 1000
+			ELSEIF LOCAL:3 < 12
+				LOCAL:2 = 1011
+			ELSEIF LOCAL:3 < 13
+				LOCAL:2 = 1025
+			ELSE
+				LOCAL:2 = 819
+			ENDIF
+		ENDIF
+		;B寄生攻撃フラグ
+		IF 拘束NF:(ARG:0) == 2
+			LOCAL:2 = 1204
+			拘束NF:(ARG:0) = 0
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:14
+		IF LOCAL:3 < 2
+			LOCAL:2 = 119
+		ELSEIF LOCAL:3 < 4
+			LOCAL:2 = 120
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 219
+		ELSEIF LOCAL:3 < 7
+			LOCAL:2 = 334
+		ELSEIF LOCAL:3 < 8
+			LOCAL:2 = 335
+		ELSEIF LOCAL:3 < 10
+			LOCAL:2 = 336
+		ELSEIF LOCAL:3 < 12
+			LOCAL:2 = 337
+		ELSE
+			LOCAL:2 = 11
+		ENDIF
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;PTには拘束攻撃以外
+	LOCAL:3 = RAND:14
+	IF LOCAL:3 < 2
+		LOCAL:2 = 119
+	ELSEIF LOCAL:3 < 4
+		LOCAL:2 = 120
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 219
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 334
+	ELSEIF LOCAL:3 < 8
+		LOCAL:2 = 335
+	ELSEIF LOCAL:3 < 10
+		LOCAL:2 = 336
+	ELSEIF LOCAL:3 < 12
+		LOCAL:2 = 337
+	ELSE
+		LOCAL:2 = 11
+	ENDIF
+ELSE
+	;通常時
+	;色々
+	IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+		LOCAL:3 = RAND:14
+	ELSE
+		IF BASE:(ARG:1):0 < MAXBASE:(ARG:1):0 / 2 || BASE:(ARG:1):2 < MAXBASE:(ARG:1):2 * 2 / 3
+			LOCAL:3 = RAND:21
+		ELSE
+			LOCAL:3 = RAND:17
+		ENDIF
+	ENDIF
+	
+	IF LOCAL:3 < 2
+		LOCAL:2 = 119
+	ELSEIF LOCAL:3 < 4
+		LOCAL:2 = 120
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 219
+	ELSEIF LOCAL:3 < 7
+		LOCAL:2 = 334
+	ELSEIF LOCAL:3 < 8
+		LOCAL:2 = 335
+	ELSEIF LOCAL:3 < 10
+		LOCAL:2 = 336
+	ELSEIF LOCAL:3 < 12
+		LOCAL:2 = 337
+	ELSEIF LOCAL:3 < 14
+		LOCAL:2 = 11
+	ELSE
+		LOCAL:2 = 519
+	ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+
+

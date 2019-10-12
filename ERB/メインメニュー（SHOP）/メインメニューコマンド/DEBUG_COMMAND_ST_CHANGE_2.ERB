@@ -1,0 +1,1476 @@
+﻿;=================================================
+;キャラステータス変更2
+;=================================================
+@DEBUG_COMMAND_キャラステータス変更2
+#DIM LCOUNT,2
+#DIM 未改心ID, DEBUG_NPC_MAX
+#DIM 入力
+
+
+VARSET 未改心ID
+
+;○○の娘のDA:48に格納している未改心IDのチェック
+FOR LCOUNT, 1, CHARANUM
+	FOR LCOUNT:1, 1, FLAG:1
+		IF DA:(LCOUNT:1):48 == LCOUNT
+			;未改心ID:(キャラID)に、対応する敵IDを格納
+			未改心ID:(LCOUNT) = LCOUNT:1
+		ENDIF
+	NEXT
+NEXT
+
+WHILE 1
+	DRAWLINE
+	PRINTFORML [{-1, 3}] 共通
+	FOR LCOUNT, 1, CHARANUM
+		CALL DRAW_CHARASUMMARY(LCOUNT, 未改心ID:(LCOUNT))
+	NEXT
+	PRINTL
+	PRINTL [ 0] 戻る
+
+	$INPUT_LOOP
+	INPUT
+	入力 = RESULT
+
+	IF 入力 == 0
+		RETURN
+	ELSEIF 入力 == -1
+		PRINTL
+		PRINTFORML 変更対象を指定してください。
+		PRINTFORML [  6] %"浄化力",15,LEFT%現在の値：{FLAG:6}
+		PRINTFORML [  7] %"眠気",15,LEFT%現在の値：{FLAG:7}
+		PRINTL
+		PRINTL [ 0] 戻る
+		
+		INPUT
+		入力 = RESULT
+		
+		IF 入力 == 0
+			
+		ELSEIF 入力 == 6
+			PRINTFORML 現在の値：{FLAG:(入力)}
+			PRINTL 変更後の値(0～300)を入力してください。
+			PRINTL [  0] [100] [200] [300]
+			INPUT
+			LOCAL:0 = LIMIT(RESULT,0,300)
+			FLAG:(入力) = LOCAL:0
+		ELSEIF 入力 == 7
+			PRINTFORML 現在の値：{FLAG:(入力)}
+			PRINTL 変更後の値(0～15)を入力してください。
+			PRINTL [ 0] [ 5] [10] [15]
+			INPUT
+			LOCAL:0 = LIMIT(RESULT,0,15)
+			FLAG:(入力) = LOCAL:0
+		ENDIF
+		CONTINUE
+	ELSEIF 入力 > 0 && 入力 < CHARANUM
+		
+		CALL DEBUG_COMMAND_キャラステータス変更_SUB2(入力)
+		
+		CONTINUE
+	ENDIF
+	CLEARLINE 1
+	REUSELASTLINE 入力が不正です！
+	GOTO INPUT_LOOP
+WEND
+
+
+
+;=================================================
+@DEBUG_COMMAND_下段メニュー(ARG)
+SPLIT "BASE変更/CFLAG変更/ABL変更/EXP変更/TALENT変更","/",LOCALS
+
+DRAWLINE
+PRINT [   0] 戻る        
+
+
+IF ARG <= 1
+	SETCOLOR 0x555555
+	PRINTPLAIN [----] 前のキャラ  
+	RESETCOLOR
+ELSE
+	PRINT [1001] 前のキャラ  
+ENDIF
+IF ARG == CHARANUM - 1
+	SETCOLOR 0x555555
+	PRINTPLAIN [----] 次のキャラ  
+	RESETCOLOR
+ELSE
+	PRINT [1002] 次のキャラ  
+ENDIF
+PRINTL [1003] 能力確認
+PRINTFORM [1011] %LOCALS:0,10,LEFT%  
+PRINTFORM [1012] %LOCALS:1,10,LEFT%  
+PRINTFORM [1013] %LOCALS:2,10,LEFT%  
+PRINTFORM [1014] %LOCALS:3,10,LEFT%  
+PRINTFORM [1015] %LOCALS:4,10,LEFT%  
+PRINTL
+
+
+
+;=================================================
+@DEBUG_COMMAND_キャラステータス変更_SUB2(キャラID)
+#DIM キャラID
+#DIM 入力
+#DIM 改行,3
+#DIM 変更種類
+#DIM 入力種類
+#DIM 前値
+#DIM 後値
+
+変更種類 = 0
+
+WHILE 1
+	$LOOP_SHOW_BASE
+	改行:0 = LINECOUNT
+	;まずBASE変更を呼ぶ
+	SELECTCASE 変更種類
+	CASE -1
+		CALL DEBUG_COMMAND_能力確認(キャラID)
+	CASE 0
+		CALL DEBUG_COMMAND_BASE変更(キャラID)
+	CASE 1
+		CALL DEBUG_COMMAND_CFLAG変更(キャラID)
+	CASE 2
+		CALL DEBUG_COMMAND_ABL変更(キャラID)
+	CASE 3
+		CALL DEBUG_COMMAND_EXP変更(キャラID)
+	CASE 4
+		CALL DEBUG_COMMAND_TALENT変更(キャラID)
+	ENDSELECT
+	CALL DEBUG_COMMAND_下段メニュー(キャラID)
+	
+	$INPUT_MAIN
+	INPUT
+	入力 = RESULT
+	
+	IF 入力 == 0
+		RETURN
+	;BASE変更入力
+	ELSEIF 変更種類 == 0 && INRANGE(入力,1,1000)
+		SELECTCASE 入力
+		CASE 200 TO 206,300 TO 306,400 TO 404,406
+			;各パラメータの現在値と最大値を弄る
+		CASE 405
+			;MAXDP入力(％)でのゼロ除算防止
+			IF MAXBASE:(キャラID):5 == 0
+				CLEARLINE 1
+				REUSELASTLINE
+				GOTO INPUT_MAIN
+			ENDIF
+		CASE 800
+			;悪堕ち用
+		CASEELSE
+			;上記CASE以外の値は入力やり直し
+			CLEARLINE 1
+			REUSELASTLINE
+			GOTO INPUT_MAIN
+		ENDSELECT
+		CALL DEBUG_COMMAND_BASE入力(キャラID,入力)
+		入力種類 = 1
+	;CFLAG変更入力
+	ELSEIF 変更種類 == 1 && INRANGE(入力,1,1000)
+		CALL DEBUG_COMMAND_CFLAG入力(キャラID,入力)
+		入力種類 = 2
+	;ABL変更入力
+	ELSEIF 変更種類 == 2 && INRANGE(入力,1,1000)
+		CALL DEBUG_COMMAND_ABL入力(キャラID,入力)
+		入力種類 = 3
+	;EXP変更入力
+	ELSEIF 変更種類 == 3 && INRANGE(入力,1,1000)
+		CALL DEBUG_COMMAND_EXP入力(キャラID,入力)
+		入力種類 = 4
+	;TALENT変更入力
+	ELSEIF 変更種類 == 4 && INRANGE(入力,1,1000)
+		CALL DEBUG_COMMAND_TALENT入力(キャラID,入力-1)
+		入力種類 = 5
+		入力 = RESULT:0
+	;前のキャラ
+	ELSEIF 入力 == 1001
+		SIF キャラID > 1
+			キャラID -= 1
+	;次のキャラ
+	ELSEIF 入力 == 1002
+		SIF キャラID < CHARANUM-1
+			キャラID += 1
+	;能力確認する
+	ELSEIF 変更種類 != -1 && 入力 == 1003
+		変更種類 = -1
+	;BASE変更を呼ぶ
+	ELSEIF 変更種類 != 0 && 入力 == 1011
+		変更種類 = 0
+	;CFLAG変更を呼ぶ
+	ELSEIF 変更種類 != 1 && 入力 == 1012
+		変更種類 = 1
+	;ABL変更を呼ぶ
+	ELSEIF 変更種類 != 2 && 入力 == 1013
+		変更種類 = 2
+	;EXP変更を呼ぶ
+	ELSEIF 変更種類 != 3 && 入力 == 1014
+		変更種類 = 3
+	;TALENT変更を呼ぶ
+	ELSEIF 変更種類 != 4 && 入力 == 1015
+		変更種類 = 4
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_MAIN
+	ENDIF
+	
+	改行:1 = LINECOUNT
+	改行:2 = 改行:1 - 改行:0
+	CLEARLINE 改行:2
+	
+	前値 = RESULT:1
+	後値 = RESULT:0
+
+	IF 入力種類 > 0
+		SETCOLOR 0xDD0000
+		PRINTFORM DEBUG >>  
+		RESETCOLOR
+	ENDIF
+	IF 入力種類 == 1 && (INRANGE(入力,200,299) || INRANGE(入力,400,499))
+		SIF 前値 > 後値
+			SETCOLOR 0x666666
+		PRINTFORM %"BASE変更",11,LEFT%
+		STRLENS CALLNAME:(キャラID)
+		IF RESULT:0 > 16
+			TOHALF CALLNAME:(キャラID)
+			LOCALS:0 = %RESULTS:0%
+		ELSE
+			LOCALS:0 = %CALLNAME:(キャラID)%
+		ENDIF
+		PRINTPLAINFORM [{キャラID,3}] %LOCALS:0,16,LEFT% 
+		IF RESULT:2 == 1
+			PRINTFORML BASE:{入力 % 100,5,LEFT} %BASENAME:(入力 % 100),12,LEFT% {前値,3}％ → {後値,3}％ 
+		ELSE
+			PRINTFORML BASE:{入力 % 100,5,LEFT} %BASENAME:(入力 % 100),12,LEFT% {前値,5} → {後値,5} 
+		ENDIF
+		RESETCOLOR
+	ELSEIF 入力種類 == 1 && 入力 == 800
+		;悪堕ちさせる
+		CALL DEBUG_COMMAND_AKUOCHI(キャラID)
+	ELSEIF 入力種類 == 1
+		SIF 前値 > 後値
+			SETCOLOR 0x666666
+		PRINTFORM %"BASE変更",11,LEFT%
+		PRINTPLAINFORM [{キャラID,3}] %CALLNAME:(キャラID),16,LEFT% 
+		PRINTFORML MAXBASE:{入力 % 100,2,LEFT} %"MAX"+BASENAME:(入力 % 100),12,LEFT% {前値,5} → {後値,5} 
+		RESETCOLOR
+	ELSEIF 入力種類 == 2
+		SIF 前値 > 後値
+			SETCOLOR 0x666666
+		PRINTFORM %"CFLAG変更",11,LEFT%
+		PRINTPLAINFORM [{キャラID,3}] %CALLNAME:(キャラID),16,LEFT% 
+		PRINTFORML CFLAG:{入力,4,LEFT} %CFLAGNAME:(入力),12,LEFT% {前値,5} → {後値,5} 
+		RESETCOLOR
+	ELSEIF 入力種類 == 3
+		SIF 前値 > 後値
+			SETCOLOR 0x666666
+		PRINTFORM %"ABL変更",11,LEFT%
+		PRINTPLAINFORM [{キャラID,3}] %CALLNAME:(キャラID),16,LEFT% 
+		PRINTFORML ABL:{入力,6,LEFT} %ABLNAME:(入力-1),12,LEFT% {前値,5} → {後値,5} 
+		RESETCOLOR
+	ELSEIF 入力種類 == 4
+		SIF 前値 > 後値
+			SETCOLOR 0x666666
+		PRINTFORM %"EXP変更",11,LEFT%
+		PRINTPLAINFORM [{キャラID,3}] %CALLNAME:(キャラID),16,LEFT% 
+		PRINTFORML EXP:{入力,6,LEFT} %ABLNAME:(入力-1),12,LEFT% {前値,5} → {後値,5} 
+		RESETCOLOR
+	ELSEIF 入力種類 == 5
+		IF TALENT:(キャラID):(入力) == 0
+			SETCOLOR 0x666666
+			PRINTFORM %"TALENT変更",11,LEFT%
+			PRINTPLAINFORM [{キャラID,3}] %CALLNAME:(キャラID),16,LEFT% 
+			PRINTFORM TALENT:{入力,3,LEFT} %"["+TALENTNAME:(入力)+"]",15,LEFT%
+			PRINTPLAINFORM を消失
+			RESETCOLOR
+			PRINTL
+		ELSE
+			PRINTFORM %"TALENT変更",11,LEFT%
+			PRINTPLAINFORM [{キャラID,3}] %CALLNAME:(キャラID),16,LEFT% 
+			PRINTFORM TALENT:{入力,3,LEFT} 
+			CALL PERSONAL_TALENT(キャラID, 入力)
+			PRINTFORM %RESULTS,15,LEFT%
+			PRINTPLAINFORM を付与
+			PRINTL
+		ENDIF
+	ENDIF
+	入力種類 = 0
+WEND
+
+
+
+;=================================================
+@DEBUG_COMMAND_能力確認(キャラID)
+#DIM キャラID
+DRAWLINE
+PRINTPLAINFORM [{キャラID,3}] 
+CALL SHOW_PERSONAL_STATUS_OLD(キャラID)
+
+
+
+;=================================================
+@DEBUG_COMMAND_BASE変更(キャラID)
+#DIM LCOUNT
+#DIM キャラID
+
+DRAWLINE
+PRINT ■ BASE ■  
+PRINTPLAINFORM [{キャラID,3}] 
+PRINTFORM %"【"+CALLNAME:(キャラID)+"】", 15, LEFT% 
+SIF CHECK_MEMBER_FROM_ID(キャラID)
+	PRINT PTメンバ
+PRINTL
+PRINTL
+PRINT 状態：
+CALL PRINT_CONDITION(キャラID)
+PRINTL
+PRINTL
+PRINTFORML 変更対象を指定してください。
+
+PRINTL
+
+FOR LCOUNT, 0, 9
+	IF BASENAME:(LCOUNT) != ""
+		PRINTFORM %BASENAME:(LCOUNT),4% 
+		SELECTCASE LCOUNT
+			;HP
+			CASE 0
+				LOCAL:0 = BARCOLORSET("青緑")
+				LOCAL:1 = RESULT:1
+			;MP
+			CASE 1
+				LOCAL:0 = BARCOLORSET("緑")
+				LOCAL:1 = RESULT:1
+			;EP
+			CASE 2
+				LOCAL:0 = BARCOLORSET("紫")
+				LOCAL:1 = RESULT:1
+			;CP
+			CASE 3
+				LOCAL:0 = BARCOLORSET("黄")
+				LOCAL:1 = RESULT:1
+			;TP
+			CASE 4
+				LOCAL:0 = BARCOLORSET("白")
+				LOCAL:1 = RESULT:1
+			;DP
+			CASE 5
+				LOCAL:0 = BARCOLORSET("青")
+				LOCAL:1 = RESULT:1
+			;NP
+			CASE 6
+				LOCAL:0 = BARCOLORSET("黄")
+				LOCAL:1 = RESULT:1
+			CASEELSE
+				LOCAL:0 = BARCOLORSET("白")
+				LOCAL:1 = RESULT:1
+		ENDSELECT
+		IF MAXBASE:(キャラID):(LCOUNT) < 1
+			PRINTFORM %"-"*20%
+		ELSE
+			CALL PRINT_COLORBAR(BASE:(キャラID):(LCOUNT), MAXBASE:(キャラID):(LCOUNT), 20, LOCAL:0, LOCAL:1)
+		ENDIF
+		PRINT 　
+		;％表示
+		IF MAXBASE:(キャラID):(LCOUNT) > 0
+			IF BASE:(キャラID):(LCOUNT) < POWER(10,15) && MAXBASE:(キャラID):(LCOUNT) < POWER(10,15)
+				LOCAL:10 = BASE:(キャラID):(LCOUNT) * 100
+				LOCAL:10 = LOCAL:10 / MAXBASE:(キャラID):(LCOUNT)
+			ELSE
+				LOCAL:10 = BASE:(キャラID):(LCOUNT) / MAXBASE:(キャラID):(LCOUNT)
+			ENDIF
+		ELSE
+			LOCAL:10 = 0
+		ENDIF
+		IF MAXBASE:(キャラID):(LCOUNT) == 0
+			PRINTFORM %"---",3%％
+		ELSE
+			PRINTBUTTON @"{LOCAL:10,3}％", 200 + LCOUNT + 200
+		ENDIF
+		LOCAL:10 = 0
+		
+		PRINT 　(
+		PRINTBUTTON @"{BASE:(キャラID):(LCOUNT),5}", 200 + LCOUNT
+		PRINT /
+		PRINTBUTTON @"{MAXBASE:(キャラID):(LCOUNT),5}", 300 + LCOUNT
+		PRINT )
+		PRINTL
+	ENDIF
+NEXT
+PRINTL
+PRINTL [800] 悪堕ちさせる
+PRINTL
+
+
+
+;=================================================
+@DEBUG_COMMAND_BASE入力(キャラID,入力)
+#DIM キャラID
+#DIM 入力
+#DIM 前値
+
+
+LOCAL:11 = 0
+LOCAL:12 = 0
+
+IF INRANGE(入力,200,299) || INRANGE(入力,400,499)
+	入力 -= 200
+	IF 入力 >= 200
+		LOCAL:11 = 1
+		入力 -= 200
+	ENDIF
+	IF BASENAME:(入力) != ""
+		PRINTL
+		IF LOCAL:11 == 0
+			前値 = BASE:(キャラID):(入力)
+			PRINTFORML 現在の値：{BASE:(キャラID):(入力)}
+			PRINTL 変更後の値を入力してください。
+		ELSE
+			前値 = BASE:(キャラID):(入力) * 100 / MAXBASE:(キャラID):(入力)
+			PRINTFORML 現在の値：{BASE:(キャラID):(入力) * 100 / MAXBASE:(キャラID):(入力)}％
+			PRINTL 変更後の値を入力してください。(0～100％)
+		ENDIF
+		$INPUT_BASE
+		INPUT
+		
+		IF LOCAL:11 == 0
+			BASE:(キャラID):(入力) = RESULT
+		;百分率で入れる
+		ELSE
+			IF RESULT <= 0
+				BASE:(キャラID):(入力) = 0
+;			ELSEIF RESULT >= 100
+;				BASE:(キャラID):(入力) = MAXBASE:(キャラID):(入力)
+			ELSE
+				IF MAXBASE:(キャラID):(入力) < 9223 * POWER(10,13)
+					LOCAL:12 = MAXBASE:(キャラID):(入力) * RESULT
+					BASE:(キャラID):(入力) = LOCAL:12 / 100
+				ELSE
+					BASE:(キャラID):(入力) = MAXBASE:(キャラID):(入力) / 100 * RESULT
+				ENDIF
+				;最大値が奇数なら1足す
+				SIF MAXBASE:(キャラID):(入力) % 2 != 0
+					BASE:(キャラID):(入力) += 1
+			ENDIF
+		ENDIF
+	ENDIF
+;MAXBASEの変更
+ELSEIF INRANGE(入力,300,399)
+	入力 -= 300
+	IF BASENAME:(入力) != ""
+		前値 = MAXBASE:(キャラID):(入力)
+		PRINTL
+		PRINTFORML 現在の値：{MAXBASE:(キャラID):(入力)}
+		PRINTL 変更後の値を入力してください。
+		
+		$INPUT_MAXBASE
+		INPUT
+		
+		
+		MAXBASE:(キャラID):(入力) = RESULT
+		
+		
+	ENDIF
+ENDIF
+RETURN RESULT,前値,LOCAL:11
+
+
+
+;=================================================
+@DEBUG_COMMAND_CFLAG変更(キャラID)
+#DIM キャラID
+
+DRAWLINE
+PRINT ■ CFLAG ■  
+PRINTPLAINFORM [{キャラID,3}] 
+PRINTFORM %"【"+CALLNAME:(キャラID)+"】", 15, LEFT% 
+SIF CHECK_MEMBER_FROM_ID(キャラID)
+	PRINT PTメンバ
+PRINTL
+PRINTL
+PRINT 状態：
+CALL PRINT_CONDITION(キャラID)
+PRINTL
+PRINTL
+PRINTFORML 変更対象を指定してください。
+PRINTFORML [  4] %"現在位置",30,LEFT%現在の値：{CFLAG:(キャラID):(4)}
+PRINTFORML [  5] %"好感度",30,LEFT%現在の値：{CFLAG:(キャラID):(5)}
+PRINTFORML [ 25] %"睡眠",30,LEFT%現在の値：{CFLAG:(キャラID):(25)}
+PRINTFORML [ 28] %"発情",30,LEFT%現在の値：{CFLAG:(キャラID):(28)}
+PRINTFORML [ 29] %"戦意喪失",30,LEFT%現在の値：{CFLAG:(キャラID):(29)}
+PRINTFORML [ 40] %"触装",30,LEFT%現在の値：{CFLAG:(キャラID):(40)}
+PRINTFORML [ 42] %"ふたなり",30,LEFT%現在の値：{CFLAG:(キャラID):(42)}
+PRINTFORML [ 43] %"催眠",30,LEFT%現在の値：{CFLAG:(キャラID):(43)}
+PRINTFORML [ 44] %"はいてない",30,LEFT%現在の値：{CFLAG:(キャラID):(44)}
+PRINTFORML [ 46] %"触手包帯",30,LEFT%現在の値：{CFLAG:(キャラID):(46)}
+PRINTFORML [ 48] %"粘装",30,LEFT%現在の値：{CFLAG:(キャラID):(48)}
+SIF FLAG:528
+	PRINTFORML [ 49] %"便意",30,LEFT%現在の値：{CFLAG:(キャラID):(49)}
+PRINTFORML [ 80] %"侵食",30,LEFT%現在の値：{CFLAG:(キャラID):(80)}
+PRINTFORM [ 81] %"インプラント",30,LEFT%
+CALL DEBUG_COMMAND_インプラント表示(キャラID)
+PRINTFORML   現在の値：{CFLAG:(キャラID):(81)}
+PRINTFORML [150] %"月経日",30,LEFT%現在の値：{CFLAG:(キャラID):(150)}
+PRINTFORML [500] %"足の装備",30,LEFT%現在の値：{CFLAG:(キャラID):(500)}
+PRINTFORML [501] %"服装",30,LEFT%現在の値：{CFLAG:(キャラID):(501)}
+PRINTFORML [504] %"魔法の拘束具",30,LEFT%現在の値：{CFLAG:(キャラID):(504)}
+PRINTL
+
+
+;=================================================
+@DEBUG_COMMAND_CFLAG入力(キャラID,入力)
+#DIM キャラID
+#DIM 入力
+#DIM 前値
+#DIM LCOUNT
+前値 = CFLAG:(キャラID):(入力)
+IF 入力 == 81
+	$LOOP_CFLAG_081
+	PRINTFORML 現在の値：{CFLAG:(キャラID):(入力)}
+	PRINTL 変更後の値(ビット)を入力してください。
+	CALL DEBUG_COMMAND_インプラント入力(キャラID)
+	SELECTCASE RESULT
+		CASE -1
+		;オーバーフロー防止
+		CASE 64 TO 997, IS >= 1000 ,IS <= -2
+			CLEARLINE 7
+			GOTO LOOP_CFLAG_081
+		CASE 998
+			FOR LCOUNT, 1, 11
+				SETBIT CFLAG:(キャラID):81, LCOUNT
+			NEXT
+			CLEARLINE 7
+			GOTO LOOP_CFLAG_081
+		CASE 999
+			CFLAG:(キャラID):81 = 0
+			CLEARLINE 7
+			GOTO LOOP_CFLAG_081
+		CASEELSE
+			INVERTBIT CFLAG:(キャラID):81, RESULT
+			CLEARLINE 7
+			GOTO LOOP_CFLAG_081
+	ENDSELECT
+ELSE
+	PRINTFORML 現在の値：{CFLAG:(キャラID):(入力)}
+	PRINTL 変更後の値を入力してください。
+	
+	$INPUT_CFLAG_VAR
+	INPUT
+	
+	CFLAG:(キャラID):(入力) = RESULT
+ENDIF
+
+IF 入力 == 81
+	RETURN CFLAG:(キャラID):入力,前値
+ELSE
+	RETURN RESULT,前値
+ENDIF
+
+
+
+;=================================================
+@DEBUG_COMMAND_ABL変更(キャラID)
+#DIM LCOUNT
+#DIM キャラID
+DRAWLINE
+PRINT ■ ABL ■  
+PRINTPLAINFORM [{キャラID,3}] 
+PRINTFORM %"【"+CALLNAME:(キャラID)+"】", 15, LEFT% 
+SIF CHECK_MEMBER_FROM_ID(キャラID)
+	PRINT PTメンバ
+PRINTL
+PRINTL
+PRINT 状態：
+CALL PRINT_CONDITION(キャラID)
+PRINTL
+PRINTL
+PRINTFORML 変更対象を指定してください。
+FOR LCOUNT, 0, 100
+	IF ABLNAME:(LCOUNT) != ""
+		IF LCOUNT == 97 || LCOUNT == 98
+			PRINTFORML [{LCOUNT+1,3}] %ABLNAME:(LCOUNT),15,LEFT%現在の値：{ABL:(キャラID):(LCOUNT)}
+		ELSE
+			PRINTFORML [{LCOUNT+1,3}] %ABLNAME:(LCOUNT),15,LEFT%現在の値：Lv{ABL:(キャラID):(LCOUNT)}
+		ENDIF
+	ENDIF
+NEXT
+PRINTL
+
+
+
+;=================================================
+@DEBUG_COMMAND_ABL入力(キャラID,入力)
+#DIM キャラID
+#DIM 入力
+#DIM 前値
+前値 = ABL:(キャラID):(入力-1)
+PRINTFORML 現在の値：{ABL:(キャラID):(入力-1)}
+PRINTL 変更後の値を入力してください。
+$INPUT_ABL_VAR
+INPUT
+
+ABL:(キャラID):(入力-1) = RESULT
+RETURN RESULT,前値
+
+
+
+;=================================================
+@DEBUG_COMMAND_EXP変更(キャラID)
+#DIM LCOUNT,3
+#DIM キャラID
+
+$LOOP_SHOW_EXP
+DRAWLINE
+PRINT ■ EXP ■  
+PRINTPLAINFORM [{キャラID,3}] 
+PRINTFORM %"【"+CALLNAME:(キャラID)+"】", 15, LEFT% 
+SIF CHECK_MEMBER_FROM_ID(キャラID)
+	PRINT PTメンバ
+PRINTL
+PRINTL
+PRINT 状態：
+CALL PRINT_CONDITION(キャラID)
+PRINTL
+PRINTL
+PRINTFORML 変更対象を指定してください。
+FOR LCOUNT, 0, 100
+	IF EXPNAME:(LCOUNT) != ""
+		PRINTFORML [{LCOUNT+1,3}] %EXPNAME:(LCOUNT),15,LEFT%現在の値：{EXP:(キャラID):(LCOUNT)}
+	ENDIF
+NEXT
+PRINTL
+
+
+
+;=================================================
+@DEBUG_COMMAND_EXP入力(キャラID,入力)
+#DIM キャラID
+#DIM 入力
+#DIM 前値
+前値 = EXP:(キャラID):(入力-1)
+PRINTFORML 現在の値：{EXP:(キャラID):(入力-1)}
+PRINTL 変更後の値を入力してください。
+
+$INPUT_EXP_VAR
+INPUT
+
+EXP:(キャラID):(入力-1) = RESULT
+RETURN RESULT,前値
+
+
+
+;=================================================
+@DEBUG_COMMAND_TALENT変更(キャラID)
+#DIM LCOUNT
+#DIM キャラID
+
+$LOOP_SHOW_TALENT
+LOCAL:10 = 0
+DRAWLINE
+PRINT ■ TALENT ■  
+PRINTPLAINFORM [{キャラID,3}] 
+PRINTFORM %"【"+CALLNAME:(キャラID)+"】", 15, LEFT% 
+SIF CHECK_MEMBER_FROM_ID(キャラID)
+	PRINT PTメンバ
+PRINTL
+PRINTL
+PRINT 状態：
+CALL PRINT_CONDITION(キャラID)
+PRINTL
+PRINTL
+PRINTFORML 変更対象を指定してください。
+
+FOR LCOUNT, 0, 301
+	IF TALENTNAME:(LCOUNT) != ""
+		PRINTFORM [{LCOUNT+1,3}] 
+		SIF TALENT:(キャラID):(LCOUNT) == 0
+			SETCOLOR 0x555555
+		PRINTFORM %TALENTNAME:(LCOUNT),13,LEFT% 
+		SELECTCASE LCOUNT
+			CASE 0
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"処",4,LEFT%
+					CASE 2
+						PRINTFORM %"再",4,LEFT%
+					CASE 0
+						PRINTFORM %"無",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 100
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"柄",4,LEFT%
+					CASE 2
+						PRINTFORM %"人",4,LEFT%
+					CASE 0
+						PRINTFORM %"×",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 101 TO 106
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE -1
+						PRINTFORM %"鈍",4,LEFT%
+					CASE 1
+						PRINTFORM %"敏",4,LEFT%
+					CASE 2
+						PRINTFORM %"過",4,LEFT%
+					CASE 3
+						PRINTFORM %"異",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 137
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE -1
+						PRINTFORM %"未",4,LEFT%
+					CASE 1
+						PRINTFORM %"異",4,LEFT%
+					CASE 2
+						PRINTFORM %"肥",4,LEFT%
+					CASE 3
+						PRINTFORM %"苗",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 140
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"ペ",4,LEFT%
+					CASE 2
+						PRINTFORM %"嫁",4,LEFT%
+					CASE 3
+						PRINTFORM %"僕",4,LEFT%
+					CASE 0
+						PRINTFORM %"×",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 160
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"浄",4,LEFT%
+					CASE 2
+						PRINTFORM %"結",4,LEFT%
+					CASE 0
+						PRINTFORM %"無",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 161
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"体",4,LEFT%
+					CASE 2
+						PRINTFORM %"剣",4,LEFT%
+					CASE 0
+						PRINTFORM %"無",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 164
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"波",4,LEFT%
+					CASE 2
+						PRINTFORM %"術",4,LEFT%
+					CASE 0
+						PRINTFORM %"無",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 170
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE -1
+						PRINTFORM %"小",4,LEFT%
+					CASE 1
+						PRINTFORM %"巨",4,LEFT%
+					CASE 2
+						PRINTFORM %"爆",4,LEFT%
+					CASE 3
+						PRINTFORM %"超",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 172
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE -1
+						PRINTFORM %"薄",4,LEFT%
+					CASE 1
+						PRINTFORM %"濃",4,LEFT%
+					CASE 2
+						PRINTFORM %"超",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 173
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"剥",4,LEFT%
+					CASE 2
+						PRINTFORM %"仮",4,LEFT%
+					CASE 3
+						PRINTFORM %"真",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 176
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"先",4,LEFT%
+					CASE 2
+						PRINTFORM %"後",4,LEFT%
+					CASE 0
+						PRINTFORM %"無",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 178
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE -1
+						PRINTFORM %"遅",4,LEFT%
+					CASE 1
+						PRINTFORM %"早",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 180
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"玉",4,LEFT%
+					CASE 2
+						PRINTFORM %"巨",4,LEFT%
+					CASE 3
+						PRINTFORM %"爆",4,LEFT%
+					CASE 4
+						PRINTFORM %"超",4,LEFT%
+					CASE 0
+						PRINTFORM %"無",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 181
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"毛",4,LEFT%
+					CASE 2
+						PRINTFORM %"剛",4,LEFT%
+					CASE 0
+						PRINTFORM %"無",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 185
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE -1
+						PRINTFORM %"少",4,LEFT%
+					CASE 1
+						PRINTFORM %"大",4,LEFT%
+					CASE 2
+						PRINTFORM %"超",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 186
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE -1
+						PRINTFORM %"薄",4,LEFT%
+					CASE 1
+						PRINTFORM %"濃",4,LEFT%
+					CASE 2
+						PRINTFORM %"特",4,LEFT%
+					CASE 0
+						PRINTFORM %"普",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			CASE 213
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 1
+						PRINTFORM %"羽",4,LEFT%
+					CASE 2
+						PRINTFORM %"翼",4,LEFT%
+					CASE 0
+						PRINTFORM %"×",4,LEFT%
+					CASEELSE
+						PRINTFORM %"??",4,LEFT%
+				ENDSELECT
+			;数値表示
+			CASE 124, 158, 215, 220, 222, 223
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 0
+						PRINTFORM %"×",4,LEFT%
+					CASE 1 to 99, -1 to -9
+						PRINTFORM {TALENT:(キャラID):(LCOUNT),2,RIGHT}%"",2%
+					;半角3文字以上は?表記
+					CASE is >= 100
+						PRINTFORM %"+?",4,LEFT%
+					CASE is <= -10
+						PRINTFORM %"-?",4,LEFT%
+					CASEELSE
+						PRINTFORM {TALENT:(キャラID):(LCOUNT),2,RIGHT}%"",2%
+				ENDSELECT
+			;数値表示(1～9に+が付く)
+			CASE 130, 159, 162
+				SELECTCASE TALENT:キャラID:LCOUNT
+					CASE 0
+						PRINTFORM %"×",4,LEFT%
+					CASE 1 to 9
+						PRINTFORM +
+						PRINTFORM {TALENT:(キャラID):(LCOUNT)}%"",2%
+					CASE 10 to 99, -1 to -9
+						PRINTFORM {TALENT:(キャラID):(LCOUNT),2,RIGHT}%"",2%
+					;半角3文字以上は?表記
+					CASE is >= 100
+						PRINTFORM %"+?",4,LEFT%
+					CASE is <= -10
+						PRINTFORM %"-?",4,LEFT%
+					CASEELSE
+						PRINTFORM {TALENT:(キャラID):(LCOUNT),2,RIGHT}%"",2%
+				ENDSELECT
+			CASEELSE
+				SELECTCASE TALENT:(キャラID):(LCOUNT)
+					CASE 0
+						PRINTFORM %"×",4,LEFT%
+					CASE 1
+						PRINTFORM %"○",4,LEFT%
+					CASEELSE
+						PRINTFORM {TALENT:(キャラID):(LCOUNT),2,RIGHT}%"",2%
+				ENDSELECT
+		ENDSELECT
+		LOCAL:10 ++
+		IF LOCAL:10 % 4 == 0
+			PRINTL
+			LOCAL:10 = 0
+		ENDIF
+		IF LCOUNT == 200
+			PRINTL
+			LOCAL:10 = 0
+		ENDIF
+		SIF TALENT:(キャラID):(LCOUNT) == 0
+			RESETCOLOR
+	ENDIF
+NEXT
+PRINTL
+
+
+
+;=================================================
+@DEBUG_COMMAND_TALENT入力(キャラID,入力)
+#DIM キャラID
+#DIM 入力
+#DIM 表示
+
+SELECTCASE 入力
+	;処女
+	CASE 0
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;臆病
+	CASE 10
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):12 = 0
+	;気丈
+	CASE 12
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):10 = 0
+	;反抗的
+	CASE 11
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):13 = 0
+	;素直
+	CASE 13
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):11 = 0
+	;大人しい
+	CASE 14
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):16 = 0
+	;生意気
+	CASE 16
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):14 = 0
+	;プライド高い
+	CASE 15
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):17 = 0
+	;プライド低い
+	CASE 17
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):15 = 0
+	;好奇心
+	CASE 23
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):24 = 0
+	;保守的
+	CASE 24
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):23 = 0
+	;楽観的
+	CASE 25
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):26 = 0
+	;悲観的
+	CASE 26
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):25 = 0
+	;貞操観念
+	CASE 30
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):31 = 0
+	;貞操無頓着
+	CASE 31
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):30 = 0
+	;解放
+	CASE 32
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):33 = 0
+	;抑圧
+	CASE 33
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):32 = 0
+	;恥じらい
+	CASE 35
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):36 = 0
+	;恥薄い
+	CASE 36
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):35 = 0
+	;痛みに強い
+	CASE 40
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):41 = 0
+	;痛みに弱い
+	CASE 41
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):40 = 0
+	;濡れやすい
+	CASE 42
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):43 = 0
+	;濡れにくい
+	CASE 43
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):42 = 0
+	;習得早い
+	CASE 50
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):51 = 0
+	;習得遅い
+	CASE 51
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):50 = 0
+	;汚臭鈍感
+	CASE 61
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):62 = 0
+	;汚臭敏感
+	CASE 62
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):61 = 0
+	;快感に素直
+	CASE 70
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):71 = 0
+	;快感の否定
+	CASE 71
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):70 = 0
+	;小柄体型
+	CASE 100
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;各部位感度
+	CASE 101 TO 106
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 3
+				TALENT:(キャラID):(入力) = -1
+	;絶壁
+	CASE 107
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):108 = 0
+		TALENT:(キャラID):109 = 0
+		TALENT:(キャラID):110 = 0
+		TALENT:(キャラID):158 = 0
+		TALENT:(キャラID):222 = 0
+		TALENT:(キャラID):223 = 0
+	;爆乳
+	CASE 108
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):107 = 0
+		TALENT:(キャラID):109 = 0
+		TALENT:(キャラID):110 = 0
+		TALENT:(キャラID):158 = 0
+		TALENT:(キャラID):222 = 0
+		TALENT:(キャラID):223 = 0
+	;貧乳
+	CASE 109
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):107 = 0
+		TALENT:(キャラID):108 = 0
+		TALENT:(キャラID):110 = 0
+		TALENT:(キャラID):158 = 0
+		TALENT:(キャラID):222 = 0
+		TALENT:(キャラID):223 = 0
+	;巨乳
+	CASE 110
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):107 = 0
+		TALENT:(キャラID):108 = 0
+		TALENT:(キャラID):109 = 0
+		TALENT:(キャラID):158 = 0
+		TALENT:(キャラID):222 = 0
+		TALENT:(キャラID):223 = 0
+	;回復早い
+	CASE 111
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):112 = 0
+	;回復遅い
+	CASE 112
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) != 1
+				TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):111 = 0
+	;動物耳
+	CASE 124
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;母乳体質
+	CASE 130
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 7
+				TALENT:(キャラID):(入力) = 0
+	;排卵異常
+	CASE 137
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 3
+				TALENT:(キャラID):(入力) = -1
+	;ペット
+	CASE 140
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 3
+				TALENT:(キャラID):(入力) = 0
+	;超乳
+	CASE 158
+		TALENT:(キャラID):(入力) ++
+		SIF	TALENT:(キャラID):(入力) > PLUS_HB1
+			TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):107 = 0
+		TALENT:(キャラID):108 = 0
+		TALENT:(キャラID):109 = 0
+		TALENT:(キャラID):110 = 0
+		TALENT:(キャラID):222 = 0
+		TALENT:(キャラID):223 = 0
+	;陥没乳首
+	CASE 159
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;浄化知識
+	CASE 160
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;体術習熟
+	CASE 161
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;拡張乳腺
+	CASE 162
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 4
+				TALENT:(キャラID):(入力) = 0
+	;術式知識
+	CASE 164
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;竿の長さ
+	CASE 170
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 3
+				TALENT:(キャラID):(入力) = -1
+	;精力
+	CASE 172
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = -1
+	;包茎
+	CASE 173
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 3
+				TALENT:(キャラID):(入力) = 0
+	;先天的
+	CASE 176
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;早漏
+	CASE 178
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 1
+				TALENT:(キャラID):(入力) = -1
+	;玉
+	CASE 180
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 4
+				TALENT:(キャラID):(入力) = 0
+	;毛
+	CASE 181
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;液量、濃度
+	CASE 185 TO 186
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = -1
+	;羽
+	CASE 213
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 2
+				TALENT:(キャラID):(入力) = 0
+	;尻尾
+	CASE 215
+			SIF TALENT:(キャラID):(入力) == 2
+				TALENT:(キャラID):(入力) = 10
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 12
+				TALENT:(キャラID):(入力) = 0
+	;母乳粘度
+	CASE 220
+		TALENT:(キャラID):(入力) ++
+			SIF TALENT:(キャラID):(入力) > 6
+				TALENT:(キャラID):(入力) = 0
+	;超々乳
+	CASE 222
+		TALENT:(キャラID):(入力) ++
+		SIF	TALENT:(キャラID):(入力) > PLUS_HB2
+			TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):107 = 0
+		TALENT:(キャラID):108 = 0
+		TALENT:(キャラID):109 = 0
+		TALENT:(キャラID):110 = 0
+		TALENT:(キャラID):158 = 0
+		TALENT:(キャラID):223 = 0
+	;接地乳房
+	CASE 223
+		TALENT:(キャラID):(入力) ++
+		SIF TALENT:(キャラID):(入力) > PLUS_HB3
+			TALENT:(キャラID):(入力) = 0
+		TALENT:(キャラID):107 = 0
+		TALENT:(キャラID):108 = 0
+		TALENT:(キャラID):109 = 0
+		TALENT:(キャラID):110 = 0
+		TALENT:(キャラID):158 = 0
+		TALENT:(キャラID):222 = 0
+	CASEELSE
+		IF TALENT:(キャラID):(入力)
+			TALENT:(キャラID):(入力) = 0
+		ELSE
+			TALENT:(キャラID):(入力) = 1
+		ENDIF
+ENDSELECT
+
+RETURN 入力
+
+
+
+;=================================================
+@DEBUG_COMMAND_インプラント表示(ARG:0)
+#DIM LCOUNT
+SPLIT "/Ａ/Ｂ/Ｃ/Ｖ/背/額/精/唇/卵/Ｍ/","/",LOCALS
+
+FOR LCOUNT, 1, 11
+	GETBIT CFLAG:(ARG:0):81, LCOUNT
+	IF RESULT == 0
+		SETCOLOR 0x555555
+		PRINTFORM %LOCALS:LCOUNT%
+		RESETCOLOR
+	ELSE
+		PRINTFORM %LOCALS:LCOUNT%
+	ENDIF
+NEXT
+
+
+
+;=================================================
+@DEBUG_COMMAND_インプラント入力(ARG:0)
+#DIM LCOUNT
+SPLIT "/Ａ/Ｂ/Ｃ/Ｖ/背/額/精/唇/卵/Ｍ/","/",LOCALS
+
+FOR LCOUNT, 1, 11
+	GETBIT CFLAG:(ARG:0):81, LCOUNT
+	IF RESULT == 0
+		SETCOLOR 0x555555
+		PRINTFORM %LOCALS:(LCOUNT)%
+		RESETCOLOR
+	ELSE
+		PRINTFORM %LOCALS:(LCOUNT)%
+	ENDIF
+NEXT
+PRINT 　　　ｵﾝｵﾌ
+PRINTL
+FOR LCOUNT, 1, 11
+	GETBIT CFLAG:(ARG:0):81, LCOUNT
+	IF RESULT == 0
+		SETCOLOR 0x555555
+		PRINTBUTTON "○",LCOUNT
+		RESETCOLOR
+	ELSE
+		PRINTBUTTON "●",LCOUNT
+	ENDIF
+NEXT
+PRINT 　　　
+PRINTBUTTON "■",998
+PRINTBUTTON "□",999
+PRINTL
+PRINTL
+PRINTL [ -1] 戻る
+INPUT
+RETURN RESULT
+
+
+;=================================================
+@SHOW_PERSONAL_STATUS_OLD(ARG:0)
+;個人の能力表示
+;ARG:0	対象のID
+;LOCAL
+;0	LOOP
+;1	TEMP
+
+CALL SHOW_SIMPLE_STATUS(ARG:0)
+DRAWLINE
+CALL SHOW_PERSONALITY(ARG:0)
+IF BASE:(ARG:0):5 < 30
+	PRINTFORML 汚れ：清潔な状態だ
+ELSEIF BASE:(ARG:0):5 < 60
+	SETCOLOR 0xEEEE10
+	PRINTFORML 汚れ：触手の体液や自らの愛液で汚されている…
+ELSEIF BASE:(ARG:0):5 < 100
+	SETCOLOR 0xEE10EE
+	PRINTFORML 汚れ：染み付いた体液が甘い香りを放っている…
+ELSE
+	SETCOLOR 0xEE1010
+	PRINTFORML 汚れ：強烈な雌の臭いが漂っている…
+ENDIF
+RESETCOLOR
+;●入れ替わりパッチ加筆START
+IF CFLAG:(ARG:0):119 > 0
+	;名前（呼び名ではない）が異なっていれば入れ替わっている理論、表示する名前は呼び名
+	SIF NAME:(ARG:0) != CSTR:(ARG:0):1
+		PRINTFORML 体：%CSTR:(ARG:0):2%
+ENDIF
+;●END
+DRAWLINE
+CALL SHOW_EQUIP_LIST(ARG:0)
+DRAWLINE
+CALL SHOW_ABL_LIST(ARG:0)
+LOCALS:0 = 迷宮内での絶頂回数：{EXP:(ARG:0):20}回
+PRINTFORM %LOCALS:0,32,LEFT% 
+;★尿意パッチ加筆点★
+LOCALS:0 = 迷宮内でのおもらし回数：{EXP:(ARG:0):21}回
+PRINTFORM %LOCALS:0,32,LEFT% 
+;★ここまで★
+PRINTFORML 迷宮内でのキス回数：{EXP:(ARG:0):24}回
+LOCALS:0 = 迷宮内での出産回数：{EXP:(ARG:0):22}回
+PRINTFORM %LOCALS:0,32,LEFT% 
+PRINTFORML 迷宮内での産卵回数：{EXP:(ARG:0):23}回
+
+IF CFLAG:(ARG:0):107
+	CALL SHOW_FAMILY_LIST(ARG:0) 
+ENDIF
+DRAWLINE
+CALL SHOW_TALENT_LIST(ARG:0)
+

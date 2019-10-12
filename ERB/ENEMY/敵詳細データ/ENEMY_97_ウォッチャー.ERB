@@ -1,0 +1,70 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_97(ARG:0, ARG:1)
+
+
+DA:(ARG:0):1 = 5000
+DA:(ARG:0):2 = 5000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 50
+DA:(ARG:0):9 = 120
+
+DA:(ARG:0):15 = 0
+DA:(ARG:0):16 = 50
+DA:(ARG:0):17 = 50
+DA:(ARG:0):18 = 80
+DA:(ARG:0):19 = 20
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 288
+DA:(ARG:0):86 = 3
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(97)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_97(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+;4	拘束フラグ２
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+;通常時
+IF LOCAL:1 != 0
+	LOCAL:2 = 1
+ELSEIF RAND:(3 + FLAG:4) == 0
+	LOCAL:2 = 0
+ELSE
+	LOCAL:2 = 24
+ENDIF
+
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

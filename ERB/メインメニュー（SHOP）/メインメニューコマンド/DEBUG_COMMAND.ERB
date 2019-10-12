@@ -1,0 +1,3989 @@
+﻿
+
+;=================================================
+;デバッグ用のコマンド
+;=================================================
+@DEBUG_COMMAND
+
+;デバッグコマンド中は常時REDRAW 0
+REDRAW 0
+WHILE 1
+	DRAWLINE
+	PRINTL
+	PRINTL [ 1] 全キャラステータス表示
+	PRINTL     [21] 全キャラステータス表示(一行)
+	PRINTL [ 2] ザコ一掃
+	PRINTL [ 3] 敵指定召喚
+	PRINTL [ 4] 敵指定削除
+	PRINTL [ 5] 敵一覧
+	PRINTL [ 6] 所持アイテム変更
+	PRINTL [ 7] キャラステータス変更
+	PRINTL     [27] キャラステータス変更2
+	PRINTL [ 8] イベント配置一覧
+	PRINTL [ 9] フラグ情報表示管理
+	PRINTL [10] 全員のBASE、喪失回復
+	PRINTL [11] 全キャラ召喚
+	PRINTL [12] 部屋移動
+	PRINTL [13] 部屋汚染度操作
+	PRINTL [14] キャラ追加
+	PRINTL [15] キャラ削除
+	PRINTL [16] キャラ入れ替え
+	PRINTL [17] ペット追加・編集・削除
+	PRINTL [18] 乳サイズ変更テスト
+	PRINTL [19] 妊娠と寄生の管理
+	;石ころ帽子着用
+	PRINTL
+	PRINTL [ 0] 戻る
+	
+	$INPUT_LOOP
+	INPUT
+	
+	IF RESULT == 0
+		RETURN
+	ELSEIF RESULT == 1
+		CALL DEBUG_COMMAND_ALL_STATUS
+	ELSEIF RESULT == 21
+		CALL DEBUG_COMMAND_ALL_STATUS2
+	ELSEIF RESULT == 2
+		CALL DEBUG_COMMAND_ザコ一掃
+	ELSEIF RESULT == 3
+		CALL DEBUG_COMMAND_敵生成
+	ELSEIF RESULT == 4
+		CALL DEBUG_COMMAND_敵指定削除
+	ELSEIF RESULT == 5
+		CALL DEBUG_COMMAND_敵一覧
+	ELSEIF RESULT == 6
+		CALL DEBUG_COMMAND_アイテム操作
+	ELSEIF RESULT == 7
+		CALL DEBUG_COMMAND_キャラステータス変更
+	ELSEIF RESULT == 27
+		CALL DEBUG_COMMAND_キャラステータス変更2
+	ELSEIF RESULT == 8
+		CALL DEBUG_COMMAND_イベント配置一覧
+	ELSEIF RESULT == 9
+		CALL DEBUG_COMMAND_フラグ情報表示管理
+	ELSEIF RESULT == 10
+		CALL DEBUG_COMMAND_全回復
+	ELSEIF RESULT == 11
+		CALL DEBUG_COMMAND_全キャラ召喚
+	ELSEIF RESULT == 12
+		CALL DEBUG_COMMAND_部屋移動
+	ELSEIF RESULT == 13
+		CALL DEBUG_COMMAND_部屋汚染度操作
+	ELSEIF RESULT == 14
+		CALL DEBUG_COMMAND_キャラ追加
+	ELSEIF RESULT == 15
+		CALL DEBUG_COMMAND_キャラ削除
+	ELSEIF RESULT == 16
+		CALL DEBUG_COMMAND_キャラ入れ替え
+	ELSEIF RESULT == 17
+		CALL DEBUG_COMMAND_ペット追加
+	ELSEIF RESULT == 18
+		CALL DEBUG_COMMAND_乳サイズ変更テスト
+	ELSEIF RESULT == 19
+		CALL DEBUG_COMMAND_妊娠と寄生の管理
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+WEND
+REDRAW 1
+
+;=================================================
+;全キャラステータス表示
+;=================================================
+@DEBUG_COMMAND_ALL_STATUS
+#DIM LCOUNT
+
+	DRAWLINE
+	FOR LCOUNT, 1, CHARANUM
+		CALL SHOW_SIMPLE_STATUS(LCOUNT)
+		PRINTFORML 現在地：{CFLAG:(LCOUNT):4}　リタイア：{CFLAG:(LCOUNT):2}　一回休み：{CFLAG:(LCOUNT):3}
+		PRINTFORML 
+		IF LCOUNT % 5 == 0
+			IF LCOUNT != CHARANUM - 1
+				DRAWLINE
+				;FORCEWAIT
+				WAIT
+			ENDIF
+		ENDIF
+	NEXT
+	PRINTFORMW 以上{CHARANUM - 1}名
+
+;=================================================
+;全キャラステータス表示2
+;=================================================
+@DEBUG_COMMAND_ALL_STATUS2
+#DIM LCOUNT
+#DIM DEL_LINE , 2
+#DIM DEL_TRIG
+#DIM PAGE
+#DIM ARTICLE
+#DIM LIST_NUM = 20
+;DIM
+;LCOUNT		ループ制御
+;DEL_LINE	削除する行数を記憶
+;DEL_TRIG	行削除用トリガ(選択1回目の表示は行削除しない)
+;PAGE		ページ部分制御
+;ARTICLE	表示項目の変更制御
+;LIST_NUM	1ページに表示する人数
+
+DEL_TRIG = 0
+PAGE = 0
+ARTICLE = 0
+
+$START
+DEL_LINE = LINECOUNT
+CALLFORM SHOW_1LINE_STATUS_TEMPLATE_{ARTICLE}
+FOR LCOUNT, (1+LIST_NUM*PAGE), ((1+LIST_NUM)+LIST_NUM*PAGE)
+	;CHARANUMをLIST_NUMで割って余りが出た場合、余りの数だけ追加で灰色表示で改行する
+	IF LCOUNT < CHARANUM
+		CALLFORM SHOW_1LINE_STATUS_{ARTICLE}(LCOUNT)
+	ELSE
+		;灰色表示
+		LOCALS:0 = ？？？
+		SETCOLOR 0x333333
+		PRINTPLAINFORM [{LCOUNT,3}]    %LOCALS:0, 40, LEFT%
+		RESETCOLOR
+	ENDIF
+	
+	;改行処理
+	IF LCOUNT % LIST_NUM != 0
+		PRINTL
+	ENDIF
+NEXT
+PRINTL
+CALL BORDERL
+PRINTLC [7777] 前のページ
+PRINTFORMLC           Page({PAGE+1}/{MAX((CHARANUM-2) / LIST_NUM+1, 0)})
+PRINTC [9999] 次のページ
+PRINTL
+PRINTFORML [8888] 表示項目切り替え ({ARTICLE+1}/2)
+PRINTL
+PRINTFORML キャラを選択で能力確認 (キャラ数：{CHARANUM-1}名)
+PRINTL 
+PRINTL [ 0] 戻る
+
+	$INPUT_LOOP
+	INPUT
+	
+	IF RESULT == 0
+		RETURN
+	ELSEIF RESULT >= 1 && RESULT <= CHARANUM
+		CLEARLINE LINECOUNT - DEL_LINE
+		SIF DEL_TRIG == 1
+			CLEARLINE DEL_LINE:1
+		DEL_LINE:1 = LINECOUNT
+		CALL DEBUG_COMMAND_能力確認(RESULT)
+		DEL_LINE:1 = LINECOUNT - DEL_LINE:1
+		WAIT
+		DEL_TRIG = 1
+		GOTO START
+	ELSEIF RESULT == 7777
+		;前ページへ
+		PAGE -= 1
+		SIF PAGE < 0
+			PAGE = MAX((CHARANUM-2) / LIST_NUM, 0)
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ELSEIF RESULT == 9999
+		;次ページへ
+		PAGE += 1
+		SIF PAGE > (CHARANUM-2) / LIST_NUM
+			PAGE = 0
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ELSEIF RESULT == 8888
+		;表示切り替え
+		ARTICLE += 1
+		SIF ARTICLE > 1
+			ARTICLE = 0
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+
+;=================================================
+;ザコ一掃
+;=================================================
+@DEBUG_COMMAND_ザコ一掃
+#DIM LCOUNT,2
+
+
+
+	LOCAL:0 = 0
+	FOR LCOUNT, 1, FLAG:1
+		SIF DA:(LCOUNT):0 == 99
+			CONTINUE
+		SIF DA:(LCOUNT):0 == 1
+			CONTINUE
+		SIF DA:(LCOUNT):0 == 2
+			CONTINUE
+		SIF DA:(LCOUNT):0 == 3
+			CONTINUE
+		LOCAL:0 = LCOUNT
+		BREAK
+	NEXT
+	
+	SIF LOCAL:0 == 0
+		RETURN
+
+	FOR LCOUNT, 1, CHARANUM
+		IF CFLAG:(LCOUNT):10 >= LOCAL:0 || CFLAG:(LCOUNT):20 >= LOCAL:0
+
+			;被拘束
+			CFLAG:(LCOUNT):10 = 0
+			;拘束
+			CFLAG:(LCOUNT):20 = 0
+			;丸呑み
+			CFLAG:(LCOUNT):21 = 0
+			;拘束レベル
+			CFLAG:(LCOUNT):38 = 0
+
+		ENDIF
+	NEXT
+
+	FOR LCOUNT, LOCAL:0, FLAG:1
+		FOR LCOUNT:1, 0, VARSIZE("DA", 1)
+			DA:(LCOUNT):(LCOUNT:1) = 0
+		NEXT
+	NEXT
+
+	;敵の数を減らす
+	FLAG:1 = LOCAL:0
+	
+	PRINTFORMW ザコを一掃した！
+
+;=================================================
+;敵生成
+;=================================================
+@DEBUG_COMMAND_敵生成
+#DIM LCOUNT,2
+#DIM DEL_LINE
+#DIM PAGE
+#DIM LAST_ENEMY_NUM
+#DIM LAST_PAGE
+#DIM CONST LIST_NUM = 50
+#DIM SUMMON_ENEMY_ID
+;DIM
+;LCOUNT          ループ制御用
+;DEL_LINE        行削除用
+;PAGE            ページ部分制御
+;LAST_ENEMY_NUM  最後の敵番号
+;LAST_PAGE       最後の敵番号があるページ数
+;LIST_NUM        1ページに表示する敵の種類
+;SUMMON_ENEMY_ID 召喚する敵のID
+
+;LOCAL
+;1  召喚部屋指定
+;2  召喚部屋指定(ランダムの場合)
+;LOCALS
+;0  敵の名前
+;1  召喚位置
+
+PAGE = 0
+LOCAL:1 = FLAG:5
+LOCAL:2 = FLAG:5
+LOCALS:1 = {FLAG:5}
+
+$START
+DEL_LINE = LINECOUNT
+
+;敵リスト呼び出し
+CALL DEBUG_OUTPUT_ENEMY_LIST(PAGE, LIST_NUM, 0)
+LAST_PAGE = RESULT:0
+LAST_ENEMY_NUM = RESULT:1
+
+
+PRINT [1000] 召喚部屋選択　　
+PRINTFORML 召喚位置：%LOCALS:1, 8, LEFT%
+PRINTL [1001] ランダム召喚 (ボス・特殊系を除く)
+PRINTL 
+PRINTFORML 敵の数：{FLAG:1, 2, RIGHT} ／ {ENEMY_MAX}
+PRINTL 召喚する対象を選んでください。
+PRINTL 
+PRINTL [ 0] キャンセル
+
+	$INPUT_LOOP
+	INPUT
+	
+	IF RESULT == 0
+		RETURN
+	ELSEIF ENEMY_NAME(RESULT) != "バグ触手" && INRANGE(RESULT, 1, LAST_ENEMY_NUM) && !IS_EXTRA_ENEMY(RESULT)
+		SUMMON_ENEMY_ID = RESULT
+	ELSEIF RESULT == 777
+		;前ページへ
+		PAGE -= 1
+		SIF PAGE < 0
+			PAGE = LAST_PAGE
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ELSEIF RESULT == 999
+		;次ページへ
+		PAGE += 1
+		SIF PAGE > LAST_PAGE
+			PAGE = 0
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ELSEIF RESULT == 1000
+		;召喚部屋選択　デフォルトは現在位置
+		PRINTL 召喚する部屋を選択してください。
+		PRINTL 
+		PRINTL [ 1] [ 2] [ 3] [ 4] [ 5]
+		PRINTL [ 6] [ 7] [ 8] [ 9] [10]
+		PRINTL [11] [12] [13] [14] [15]
+		PRINTL [16] [17] [18] [19] [20]
+		PRINTL [21] [22] [23] [24] [25]
+		PRINT [26] [27] [28] [29] [30]   
+		PRINTBUTTON "[ランダム]", 100
+		PRINTL
+		PRINTL
+		PRINTL [ 0] キャンセル
+		
+		$INPUT_LOOP2
+		INPUT
+		SELECTCASE RESULT
+		CASE 0
+		CASE 1 TO 30
+			LOCAL:1 = RESULT
+			LOCALS:1 = {RESULT}
+		CASE 100
+			LOCAL:1 = RESULT
+			LOCALS:1 = ランダム
+		CASEELSE
+			CLEARLINE 1
+			REUSELASTLINE 入力が不正です！
+			GOTO INPUT_LOOP2
+		ENDSELECT
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ELSEIF RESULT == 1001
+		$SUMMON_LOOP
+		SUMMON_ENEMY_ID = RAND:LAST_ENEMY_NUM + 1
+		;ボス、特殊系の敵IDが出たらやりなおし
+		SIF IS_EXTRA_ENEMY(SUMMON_ENEMY_ID)
+			GOTO SUMMON_LOOP
+		;未実装の敵IDが出てもやりなおし
+		TRYCCALLFORM SET_ENEMY_DATA_{SUMMON_ENEMY_ID}(FLAG:1)
+		CATCH
+			GOTO SUMMON_LOOP
+		ENDCATCH
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+	
+	DA:(FLAG:1):0 = SUMMON_ENEMY_ID
+	SELECTCASE LOCAL:1
+	CASE 1 TO 30
+		DA:(FLAG:1):4 = LOCAL:1
+	CASE 100
+		LOCAL:2 = 1 + RAND:30
+		DA:(FLAG:1):4 = LOCAL:2
+	ENDSELECT
+	
+	IF FLAG:1 >= ENEMY_MAX
+		CLEARLINE 1
+		REUSELASTLINE 満員のため召喚できません
+		GOTO INPUT_LOOP
+	ELSE
+		TRYCCALLFORM SET_ENEMY_DATA_{SUMMON_ENEMY_ID}(FLAG:1)
+		CATCH
+			PRINTFORMW (CREATE_ENEMY) 未実装の敵(ID:{SUMMON_ENEMY_ID})のため、処理できません
+			GOTO START
+		ENDCATCH
+	ENDIF
+	FLAG:1++
+	CLEARLINE LINECOUNT - DEL_LINE
+
+	PRINTFORM %ENEMY_NAME(SUMMON_ENEMY_ID),32,LEFT%
+	IF LOCAL:1 == 100
+		PRINTFORML を部屋 {LOCAL:2,2} に召喚した！
+	ELSE
+		PRINTFORML を部屋 {LOCAL:1,2} に召喚した！
+	ENDIF
+	GOTO START
+	
+;敵生成内で使うチェック用関数、特殊敵か否かを返す
+;未実装の敵は生成処理内で弾く
+@IS_EXTRA_ENEMY(ENEMY_ID)
+#FUNCTION
+#DIM ENEMY_ID
+	; 1:クイーン  2:クイ～ン  3:ガーディアン  19:○○の娘  99:触手  100:淫虫
+	; 101:悪堕ちキャラ  102:触手姫  103:アルラウネ化キャラ  104:スライム化キャラ  105:ラミア化キャラ
+	SIF GROUPMATCH(ENEMY_ID, 1, 2, 3, 19, 99, 100, 101, 102, 103, 104, 105)
+		RETURNF 1
+RETURNF 0
+
+;=================================================
+;敵指定削除
+;=================================================
+@DEBUG_COMMAND_敵指定削除
+#DIM LCOUNT
+#DIM DEL_LINE 
+
+$START
+DEL_LINE = LINECOUNT
+
+DRAWLINE
+FOR LCOUNT, 1, FLAG:1
+	IF FLAG:1 <= 5
+		PRINTFORMW ※※ザコは居ません※※
+		RETURN
+	ENDIF
+	SIF DA:(LCOUNT):0 <= 3 || DA:(LCOUNT):0 == 99
+		CONTINUE
+	TOHALF ENEMY_NAME(DA:(LCOUNT):0)
+	LOCALS:1 = %RESULTS%
+	PRINTFORM [{LCOUNT, 2}] 
+	PRINTFORM %SAVESTR:LCOUNT,32,LEFT%
+	PRINTFORM %"["+LOCALS:1+"]",26,LEFT%
+	PRINTFORM 現在地：{DA:(LCOUNT):4,2}　
+	PRINTFORM HP:{DA:(LCOUNT):1,8}／{DA:(LCOUNT):2,8}　
+	IF DA:(LCOUNT):20 > 0 || DA:(LCOUNT):10 > 0
+		PRINTL
+		PRINT 　　　
+		IF DA:(LCOUNT):20 > 0
+			PRINTFORM 拘束：%CALLNAME:(DA:(LCOUNT):20)%　
+		ENDIF
+		IF DA:(LCOUNT):10 > 0
+			PRINTFORM 捕食：%CALLNAME:(DA:(LCOUNT):10)%　
+		ENDIF
+	ENDIF
+	PRINTL
+NEXT
+
+DRAWLINE
+PRINTL 削除する敵を選択してください。
+PRINTL
+PRINTL [ 0] 戻る
+$INPUT_LOOP
+INPUT
+
+
+IF RESULT == 0
+	RETURN
+ELSEIF RESULT != 0
+	IF RESULT >= 5 && RESULT < LCOUNT
+		CLEARLINE LINECOUNT - DEL_LINE
+		PRINTFORM %SAVESTR:RESULT,32,LEFT%は
+		PRINTDATA
+			DATAFORM 家出しました。
+			DATAFORM 出荷されました。
+			DATAFORM 出稼ぎに行きました。
+			DATAFORM 修行の旅に出ました。
+			DATAFORM 旅行に出かけました。
+			DATAFORM 勧誘のために外出しました。
+			DATAFORM 外回りの営業に回されました。
+			DATAFORM 触手宮から独り立ちしました。
+			DATAFORM ボッシュートされました。
+			DATAFORM ××××されました。
+			DATAFORM ○○○○されました。
+		ENDDATA
+		PRINTL
+		CALL DELETE_ENEMY(RESULT)
+	ELSE
+		PRINTL 　（入力が不正です）
+		GOTO INPUT_LOOP
+	ENDIF
+ENDIF
+
+
+GOTO START
+
+;=================================================
+;敵一覧
+;=================================================
+@DEBUG_COMMAND_敵一覧
+#DIM LCOUNT
+
+	DRAWLINE
+	FOR LCOUNT, 0, FLAG:1
+	
+		PRINTFORM {LCOUNT, 2}：
+		PRINTFORM %SAVESTR:LCOUNT,32,LEFT%
+		TOHALF ENEMY_NAME(DA:(LCOUNT):0)
+		PRINTFORM %"["+RESULTS+"]",26,LEFT%
+		PRINTFORM 現在地：{DA:(LCOUNT):4,2}　
+		PRINTFORM HP:{DA:(LCOUNT):1,8}／{DA:(LCOUNT):2,8}　
+		IF DA:(LCOUNT):20 > 0 || DA:(LCOUNT):10 > 0
+			PRINTL
+			PRINT 　　　
+			IF DA:(LCOUNT):20 > 0
+				PRINTFORM 拘束：%CALLNAME:(DA:(LCOUNT):20)%　
+			ENDIF
+			IF DA:(LCOUNT):10 > 0
+				PRINTFORM 捕食：%CALLNAME:(DA:(LCOUNT):10)%　
+			ENDIF
+		ENDIF
+		PRINTL
+	NEXT
+	PRINTFORMW 以上{FLAG:1}体
+
+;=================================================
+;アイテム操作
+;=================================================
+@DEBUG_COMMAND_アイテム操作
+#DIM LCOUNT
+#DIM ITEMID
+#DIM ITEMCATNO,5
+#DIM DEL_LINE 
+
+VARSET ITEMCATNO
+;各カテゴリのアイテム種類をカウント
+FOR LCOUNT, 1, 9
+	SIF ITEMNAME:(LCOUNT) != ""
+		ITEMCATNO:0 ++
+NEXT
+FOR LCOUNT, 10, 19
+	SIF ITEMNAME:(LCOUNT) != ""
+		ITEMCATNO:1 ++
+NEXT
+FOR LCOUNT, 20, 49
+	SIF ITEMNAME:(LCOUNT) != ""
+		ITEMCATNO:2 ++
+NEXT
+FOR LCOUNT, 50, 79
+	SIF ITEMNAME:(LCOUNT) != ""
+		ITEMCATNO:3 ++
+NEXT
+FOR LCOUNT, 80, 100
+	SIF ITEMNAME:(LCOUNT) != ""
+		ITEMCATNO:4 ++
+NEXT
+
+
+$LOOP_SHOW_ITEM
+DEL_LINE = LINECOUNT
+VARSET LOCAL
+
+DRAWLINE
+PRINTL 所持数を変更するアイテムを選択して下さい
+PRINTL 
+
+
+	FOR LCOUNT, 1, 100
+		IF LCOUNT == 1
+			SETCOLOR 0x9999FF
+			PRINTL ---<   消耗武器   >---
+			RESETCOLOR
+		ELSEIF LCOUNT == 10
+			SETCOLOR 0x9999FF
+			PRINTL ---<  非消耗武器  >---
+			RESETCOLOR
+		ELSEIF LCOUNT == 20
+			SETCOLOR 0x9999FF
+			PRINTL ---< アクセサリー >---
+			RESETCOLOR
+		ELSEIF LCOUNT == 50
+			SETCOLOR 0x9999FF
+			PRINTL ---<    その他    >---
+			RESETCOLOR
+		ELSEIF LCOUNT == 80
+			SETCOLOR 0x9999FF
+			PRINTL ---< 消耗武器の弾 >---
+			RESETCOLOR
+		ENDIF
+		IF ITEMNAME:(LCOUNT) != ""
+			SIF ITEM:(LCOUNT) == 0
+				SETCOLOR 0x505050
+			PRINTFORM [{LCOUNT, 2}] 
+			STRLENS ITEMNAME:(LCOUNT)
+			IF RESULT >= 18
+				TOHALF ITEMNAME:(LCOUNT)
+				PRINTFORM %RESULTS:0, 19, LEFT%
+			ELSE
+				PRINTFORM %ITEMNAME:(LCOUNT), 19, LEFT%
+			ENDIF
+			PRINTFORM :{ITEM:(LCOUNT), 4, RIGHT}    
+			RESETCOLOR
+			SELECTCASE LCOUNT
+			CASE 1 TO 9
+				LOCAL:10 += 1
+				IF LOCAL:10 % 3 == 0 || LOCAL:10 == ITEMCATNO:0
+					PRINTL
+				ENDIF
+			CASE 10 TO 19
+				LOCAL:11 += 1
+				IF LOCAL:11 % 3 == 0 || LOCAL:11 == ITEMCATNO:1
+					PRINTL
+				ENDIF
+			CASE 20 TO 49
+				LOCAL:12 += 1
+				IF LOCAL:12 % 3 == 0 || LOCAL:12 == ITEMCATNO:2
+					PRINTL
+				ENDIF
+			CASE 50 TO 79
+				LOCAL:13 += 1
+				IF LOCAL:13 % 3 == 0 || LOCAL:13 == ITEMCATNO:3
+					PRINTL
+				ENDIF
+			CASE 80 TO 100
+				LOCAL:14 += 1
+				IF LOCAL:14 % 3 == 0 || LOCAL:14 == ITEMCATNO:4
+					PRINTL
+				ENDIF
+			ENDSELECT
+		ENDIF
+		SELECTCASE LCOUNT
+		CASE 10-1, 20-1, 50-1, 80-1
+			LINEISEMPTY
+			IF RESULT == 1
+				PRINTL
+			ELSE
+				PRINTL
+				PRINTL
+			ENDIF
+		ENDSELECT
+	NEXT
+	PRINTL
+	PRINTL
+	PRINTL [ 0] キャンセル
+
+	$INPUT_LOOP
+	INPUT
+
+	IF RESULT == 0
+		RETURN
+	ELSEIF RESULT > 0 && ITEMNAME:(RESULT) != ""
+		ITEMID = RESULT
+		LOCAL:0 = ITEM:ITEMID
+		
+		PRINTL 変更後の所持数を入力して下さい
+		INPUT
+		
+		LOCAL:0 = RESULT - LOCAL:0
+		
+		CLEARLINE LINECOUNT - DEL_LINE
+		CALL ADD_ITEM(ITEMID, LOCAL:0, 1)
+		GOTO LOOP_SHOW_ITEM
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+	
+;=================================================
+;キャラステータス変更
+;=================================================
+@DEBUG_COMMAND_キャラステータス変更
+#DIM LCOUNT,2
+#DIM 未改心ID, DEBUG_NPC_MAX
+#DIM 入力
+
+
+VARSET 未改心ID
+
+;○○の娘のDA:48に格納している未改心IDのチェック
+FOR LCOUNT, 1, CHARANUM
+	FOR LCOUNT:1, 1, FLAG:1
+		IF DA:(LCOUNT:1):48 == LCOUNT
+			;未改心ID:(キャラID)に、対応する敵IDを格納
+			未改心ID:(LCOUNT) = LCOUNT:1
+		ENDIF
+	NEXT
+NEXT
+
+WHILE 1
+	DRAWLINE
+	PRINTFORML [{-1, 3}] 共通
+	FOR LCOUNT, 1, CHARANUM
+		CALL DRAW_CHARASUMMARY(LCOUNT, 未改心ID:(LCOUNT))
+	NEXT
+	PRINTL
+	PRINTL [ 0] 戻る
+
+	$INPUT_LOOP
+	INPUT
+	入力 = RESULT
+
+	IF 入力 == 0
+		RETURN
+	ELSEIF 入力 == -1
+		PRINTL
+		PRINTFORML 変更対象を指定してください。
+		PRINTFORML [  6] %"浄化力",15,LEFT%現在の値：{FLAG:6}
+		PRINTFORML [  7] %"眠気",15,LEFT%現在の値：{FLAG:7}
+		PRINTL
+		PRINTL [ 0] 戻る
+		
+		INPUT
+		入力 = RESULT
+		
+		IF 入力 == 0
+			
+		ELSEIF 入力 == 6
+			PRINTFORML 現在の値：{FLAG:(入力)}
+			PRINTL 変更後の値(0～300)を入力してください。
+			PRINTL [  0] [100] [200] [300]
+			INPUT
+			LOCAL:0 = LIMIT(RESULT,0,300)
+			FLAG:(入力) = LOCAL:0
+		ELSEIF 入力 == 7
+			PRINTFORML 現在の値：{FLAG:(入力)}
+			PRINTL 変更後の値(0～15)を入力してください。
+			PRINTL [ 0] [ 5] [10] [15]
+			INPUT
+			LOCAL:0 = LIMIT(RESULT,0,15)
+			FLAG:(入力) = LOCAL:0
+		ENDIF
+		CONTINUE
+	ELSEIF 入力 > 0 && 入力 < CHARANUM
+		
+		CALL DEBUG_COMMAND_キャラステータス変更_SUB(入力)
+		
+		CONTINUE
+	ENDIF
+	CLEARLINE 1
+	REUSELASTLINE 入力が不正です！
+	GOTO INPUT_LOOP
+WEND
+
+;=================================================
+@DEBUG_COMMAND_キャラステータス変更_SUB(キャラID)
+#DIM LCOUNT
+#DIM キャラID
+#DIM 入力
+#DIM DEL_LINE 
+#DIM 改行
+
+
+WHILE 1
+	DEL_LINE = LINECOUNT
+	DRAWLINE
+	PRINTFORM %"【"+CALLNAME:(キャラID)+"】", 15, LEFT% 
+	PRINTL
+	
+	
+	PRINTL
+	
+	FOR LCOUNT, 0, 9
+		IF BASENAME:(LCOUNT) != ""
+			PRINTFORM %BASENAME:(LCOUNT),4% 
+			SELECTCASE LCOUNT
+				;HP
+				CASE 0
+					LOCAL:0 = BARCOLORSET("青緑")
+					LOCAL:1 = RESULT:1
+				;MP
+				CASE 1
+					LOCAL:0 = BARCOLORSET("緑")
+					LOCAL:1 = RESULT:1
+				;EP
+				CASE 2
+					LOCAL:0 = BARCOLORSET("紫")
+					LOCAL:1 = RESULT:1
+				;CP
+				CASE 3
+					LOCAL:0 = BARCOLORSET("黄")
+					LOCAL:1 = RESULT:1
+				;TP
+				CASE 4
+					LOCAL:0 = BARCOLORSET("白")
+					LOCAL:1 = RESULT:1
+				;DP
+				CASE 5
+					LOCAL:0 = BARCOLORSET("青")
+					LOCAL:1 = RESULT:1
+				;NP
+				CASE 6
+					LOCAL:0 = BARCOLORSET("黄")
+					LOCAL:1 = RESULT:1
+				CASEELSE
+					LOCAL:0 = BARCOLORSET("白")
+					LOCAL:1 = RESULT:1
+			ENDSELECT
+			IF MAXBASE:(キャラID):(LCOUNT) < 1
+				PRINTFORM %"-"*20%
+			ELSE
+				CALL PRINT_COLORBAR(BASE:(キャラID):(LCOUNT), MAXBASE:(キャラID):(LCOUNT), 20, LOCAL:0, LOCAL:1)
+			ENDIF
+			PRINT 　(
+			PRINTBUTTON @"{BASE:(キャラID):(LCOUNT),5}", 200 + LCOUNT
+			PRINT /
+			PRINTBUTTON @"{MAXBASE:(キャラID):(LCOUNT),5}", 300 + LCOUNT
+			PRINT )
+			
+			PRINTL
+		ENDIF
+	NEXT
+	PRINTL
+	
+	PRINT 状態：
+	CALL PRINT_CONDITION(キャラID)
+	PRINTL
+	PRINTL
+	
+	PRINTL [400] CFLAG変更
+	PRINTL [500] ABL変更
+	PRINTL [600] EXP変更
+	PRINTL [700] TALENT変更
+	PRINTL [800] 悪堕ちさせる
+	
+	PRINTL
+	PRINTL [ 0] 戻る
+	
+	
+	$INPUT_MAIN
+	INPUT
+	入力 = RESULT
+
+	IF 入力 == 0
+		RETURN
+	;BASEの変更
+	ELSEIF 入力 >= 200 && 入力 < 300
+		入力 -= 200
+		IF BASENAME:(入力) != ""
+			PRINTL
+			PRINTFORML 現在の値：{BASE:(キャラID):(入力)}
+			PRINTL 変更後の値を入力してください。
+			
+			$INPUT_BASE
+			INPUT
+			
+			
+			BASE:(キャラID):(入力) = RESULT
+			
+			
+			CONTINUE
+		ENDIF
+
+	;MAXBASEの変更
+	ELSEIF 入力 >= 300 && 入力 < 400
+		入力 -= 300
+		IF BASENAME:(入力) != ""
+			PRINTL
+			PRINTFORML 現在の値：{MAXBASE:(キャラID):(入力)}
+			PRINTL 変更後の値を入力してください。
+			
+			$INPUT_MAXBASE
+			INPUT
+			
+			
+			MAXBASE:(キャラID):(入力) = RESULT
+			
+			
+			CONTINUE
+		ENDIF
+		
+	;CFLAG変更
+	ELSEIF 入力 == 400
+		$LOOP_CFLAG_ABL
+		PRINTL
+		PRINTFORML 変更対象を指定してください。
+		PRINTFORML [ 5] %"好感度",30,LEFT%現在の値：{CFLAG:(キャラID):(5)}
+		PRINTFORML [28] %"発情",30,LEFT%現在の値：{CFLAG:(キャラID):(28)}
+		PRINTFORML [29] %"戦意喪失",30,LEFT%現在の値：{CFLAG:(キャラID):(29)}
+		PRINTFORML [40] %"触装",30,LEFT%現在の値：{CFLAG:(キャラID):(40)}
+		PRINTFORML [42] %"ふたなり",30,LEFT%現在の値：{CFLAG:(キャラID):(42)}
+		PRINTFORML [44] %"はいてない",30,LEFT%現在の値：{CFLAG:(キャラID):(44)}
+		PRINTFORML [46] %"触手包帯",30,LEFT%現在の値：{CFLAG:(キャラID):(46)}
+		PRINTFORML [48] %"粘装",30,LEFT%現在の値：{CFLAG:(キャラID):(48)}
+		SIF FLAG:528
+			PRINTFORML [49] %"便意",30,LEFT%現在の値：{CFLAG:(キャラID):(49)}
+		PRINTFORML [150] %"月経日",30,LEFT%現在の値：{CFLAG:(キャラID):(150)}
+		PRINTL
+		PRINTL [ 0] 戻る
+		
+		$INPUT_CFLAG
+		INPUT
+		入力 = RESULT
+		
+		IF 入力 == 0
+			CONTINUE
+		ELSEIF 入力 > 0
+			PRINTFORML 現在の値：{CFLAG:(キャラID):(入力)}
+			PRINTL 変更後の値を入力してください。
+			
+			$INPUT_CFLAG_VAR
+			INPUT
+			
+			CFLAG:(キャラID):(入力) = RESULT
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO LOOP_CFLAG_ABL
+		ENDIF
+		CONTINUE
+		
+	;ABL変更
+	ELSEIF 入力 == 500
+		$LOOP_SHOW_ABL
+		PRINTFORML 変更対象を指定してください。
+		FOR LCOUNT, 0, 100
+			IF ABLNAME:(LCOUNT) != ""
+				PRINTFORML [{LCOUNT+1,3}] %ABLNAME:(LCOUNT),15,LEFT%現在の値：{ABL:(キャラID):(LCOUNT)}
+			ENDIF
+		NEXT
+		PRINTL
+		PRINTL [ 0] 戻る
+		
+		$INPUT_ABL
+		INPUT
+		入力 = RESULT-1
+		
+		IF 入力 == -1
+			CONTINUE
+		ELSEIF 入力 > -1 && ABLNAME:(入力) != ""
+			PRINTFORML 現在の値：{ABL:(キャラID):(入力)}
+			PRINTL 変更後の値を入力してください。
+			$INPUT_ABL_VAR
+			INPUT
+			
+			ABL:(キャラID):(入力) = RESULT
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO LOOP_SHOW_ABL
+		ELSE
+			REUSELASTLINE 不正入力です。
+			GOTO INPUT_ABL
+		ENDIF
+		
+		
+	;EXP変更
+	ELSEIF 入力 == 600
+		$LOOP_SHOW_EXP
+		PRINTFORML 変更対象を指定してください。
+		FOR LCOUNT, 0, 100
+			IF EXPNAME:(LCOUNT) != ""
+				PRINTFORML [{LCOUNT+1,3}] %EXPNAME:(LCOUNT),15,LEFT%現在の値：{EXP:(キャラID):(LCOUNT)}
+			ENDIF
+		NEXT
+		PRINTL
+		PRINTL [ 0] 戻る
+		
+		$INPUT_EXP
+		INPUT
+		入力 = RESULT-1
+		
+		IF 入力 == -1
+			CONTINUE
+		ELSEIF 入力 > -1
+			PRINTFORML 現在の値：{EXP:(キャラID):(入力)}
+			PRINTL 変更後の値を入力してください。
+			
+			$INPUT_EXP_VAR
+			INPUT
+			
+			EXP:(キャラID):(入力) = RESULT
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO LOOP_SHOW_EXP
+		ELSE
+			REUSELASTLINE 不正入力です。
+			GOTO INPUT_EXP
+		ENDIF
+		CONTINUE
+		
+	;TALENT変更
+	ELSEIF 入力 == 700
+		$LOOP_SHOW_TALENT
+		PRINTFORML 変更対象を指定してください。
+		FOR LCOUNT, 0, 201
+			IF TALENTNAME:(LCOUNT) != ""
+				PRINTFORM [{LCOUNT+1,3}] %TALENTNAME:(LCOUNT),13,LEFT%現在の値：
+				SELECTCASE LCOUNT
+					CASE 0
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"処",4,LEFT%
+							CASE 2
+								PRINTFORM %"再",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 100
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"柄",4,LEFT%
+							CASE 2
+								PRINTFORM %"人",4,LEFT%
+							CASE 0
+								PRINTFORM %"×",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 101 TO 106
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"鈍",4,LEFT%
+							CASE 1
+								PRINTFORM %"敏",4,LEFT%
+							CASE 2
+								PRINTFORM %"過",4,LEFT%
+							CASE 3
+								PRINTFORM %"異",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 130
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"乳",4,LEFT%
+							CASE 2
+								PRINTFORM %"多",4,LEFT%
+							CASE 3
+								PRINTFORM %"異",4,LEFT%
+							CASE 4
+								PRINTFORM %"造",4,LEFT%
+							CASE 5
+								PRINTFORM %"泉",4,LEFT%
+							CASE 6
+								PRINTFORM %"火",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 137
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"未",4,LEFT%
+							CASE 1
+								PRINTFORM %"異",4,LEFT%
+							CASE 2
+								PRINTFORM %"肥",4,LEFT%
+							CASE 3
+								PRINTFORM %"苗",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 140
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"ペ",4,LEFT%
+							CASE 2
+								PRINTFORM %"嫁",4,LEFT%
+							CASE 3
+								PRINTFORM %"僕",4,LEFT%
+							CASE 0
+								PRINTFORM %"×",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 158
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"+1",4,LEFT%
+							CASE 2
+								PRINTFORM %"+2",4,LEFT%
+							CASE 3
+								PRINTFORM %"+3",4,LEFT%
+							CASE 4
+								PRINTFORM %"+4",4,LEFT%
+							CASE 5
+								PRINTFORM %"+5",4,LEFT%
+							CASE 6
+								PRINTFORM %"+6",4,LEFT%
+							CASE 7
+								PRINTFORM %"+7",4,LEFT%
+							CASE 8
+								PRINTFORM %"+8",4,LEFT%
+							CASE 0
+								PRINTFORM %"×",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 159
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"+1",4,LEFT%
+							CASE 2
+								PRINTFORM %"+2",4,LEFT%
+							CASE 0
+								PRINTFORM %"×",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 160
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"浄",4,LEFT%
+							CASE 2
+								PRINTFORM %"結",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 161
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"体",4,LEFT%
+							CASE 2
+								PRINTFORM %"剣",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 162
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"+1",4,LEFT%
+							CASE 2
+								PRINTFORM %"+2",4,LEFT%
+							CASE 3
+								PRINTFORM %"+3",4,LEFT%
+							CASE 4
+								PRINTFORM %"+4",4,LEFT%
+							CASE 0
+								PRINTFORM %"×",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 164
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"波",4,LEFT%
+							CASE 2
+								PRINTFORM %"術",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 168
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"神",4,LEFT%
+							CASE 2
+								PRINTFORM %"血",4,LEFT%
+							CASE 0
+								PRINTFORM %"×",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 170
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"小",4,LEFT%
+							CASE 1
+								PRINTFORM %"巨",4,LEFT%
+							CASE 2
+								PRINTFORM %"爆",4,LEFT%
+							CASE 3
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 172
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"薄",4,LEFT%
+							CASE 1
+								PRINTFORM %"濃",4,LEFT%
+							CASE 2
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 173
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"剥",4,LEFT%
+							CASE 2
+								PRINTFORM %"仮",4,LEFT%
+							CASE 3
+								PRINTFORM %"真",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 176
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"先",4,LEFT%
+							CASE 2
+								PRINTFORM %"後",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 180
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"玉",4,LEFT%
+							CASE 2
+								PRINTFORM %"巨",4,LEFT%
+							CASE 3
+								PRINTFORM %"爆",4,LEFT%
+							CASE 4
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 181
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"毛",4,LEFT%
+							CASE 2
+								PRINTFORM %"剛",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 185
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"少",4,LEFT%
+							CASE 1
+								PRINTFORM %"大",4,LEFT%
+							CASE 2
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 186
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"薄",4,LEFT%
+							CASE 1
+								PRINTFORM %"濃",4,LEFT%
+							CASE 2
+								PRINTFORM %"特",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASEELSE
+						SELECTCASE TALENT:(キャラID):(LCOUNT)
+							CASE 1
+								PRINTFORM %"○",4,LEFT%
+							CASEELSE
+								PRINTFORM %"×",4,LEFT%
+						ENDSELECT
+				ENDSELECT
+				改行 ++
+				IF 改行 == PRINTCPERLINE()
+					PRINTL
+					改行 = 0
+				ENDIF
+			ENDIF
+		NEXT
+		PRINTL
+		PRINTL [ 0] 戻る
+		
+		$INPUT_TALENT
+		INPUT
+		入力 = RESULT-1
+		
+		IF 入力 == -1
+			CONTINUE
+		ELSEIF 入力 > -1
+			SELECTCASE 入力
+				CASE 0
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 100
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) > 2
+							TALENT:(キャラID):(入力) = 0
+				CASE 101 TO 106
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) >= 4
+							TALENT:(キャラID):(入力) = -1
+				CASE 107
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):110 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 108
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):110 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 109
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):110 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 110
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 130
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 7
+							TALENT:(キャラID):(入力) = 0
+				CASE 137
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = -1
+				CASE 140
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) > 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 158
+					TALENT:(キャラID):(入力) ++
+					SIF	TALENT:(キャラID):(入力) > 8
+						TALENT:(キャラID):(入力) = 0
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):110 = 0
+				CASE 160
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 161
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) > 2
+							TALENT:(キャラID):(入力) = 0
+				CASE 162
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) > 4
+							TALENT:(キャラID):(入力) = 0
+				CASE 164
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) > 2
+							TALENT:(キャラID):(入力) = 0
+				CASE 168
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) > 2
+							TALENT:(キャラID):(入力) = 0
+				CASE 170
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = -1
+				CASE 172
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = -1
+				CASE 173
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = 0
+				CASE 176
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 180
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 5
+							TALENT:(キャラID):(入力) = 0
+				CASE 181
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 185 TO 186
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = -1
+				CASEELSE
+					IF TALENT:(キャラID):(入力)
+						TALENT:(キャラID):(入力) = 0
+					ELSE
+						TALENT:(キャラID):(入力) = 1
+					ENDIF
+			ENDSELECT
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO LOOP_SHOW_TALENT
+		ELSE
+			REUSELASTLINE 不正入力です。
+			GOTO INPUT_TALENT
+		ENDIF
+		CONTINUE
+		
+	;悪堕ちさせる
+	ELSEIF 入力 == 800
+		CALL DEBUG_COMMAND_AKUOCHI(キャラID)
+	ENDIF
+WEND
+
+
+
+
+;=================================================
+;イベント配置一覧
+;=================================================
+@DEBUG_COMMAND_イベント配置一覧
+#DIM LCOUNT
+
+
+
+	DRAWLINE
+	FOR LCOUNT, 100, 300
+		LOCALS = %""%
+		SELECTCASE LCOUNT
+			CASE 100
+				LOCALS = こんぼう入手
+			CASE 101
+				LOCALS = 白狼刀入手
+			CASE 102
+				LOCALS = 陰陽玉入手
+			CASE 103
+				LOCALS = 火炎放射器入手
+			CASE 104
+				LOCALS = 博麗の御札入手
+			CASE 105
+				LOCALS = 簡易魔法陣入手
+			CASE 106
+				LOCALS = 使い魔入手
+			CASE 107
+				LOCALS = 咲夜の時計入手
+			CASE 108
+				LOCALS = 媚薬入手
+			CASE 109
+				LOCALS = 万能薬入手
+			CASE 110
+				LOCALS = 気付け薬入手
+			CASE 111
+				LOCALS = 大人の玩具入手
+			CASE 112
+				LOCALS = 不死鳥の羽入手
+			CASE 113
+				LOCALS = 消耗武器入手
+			CASE 114
+				LOCALS = 消耗武器入手
+			CASE 115
+				LOCALS = 良消耗武器入手
+			CASE 116
+				LOCALS = 非消耗武器入手
+			CASE 117
+				LOCALS = 非消耗武器入手
+			CASE 118
+				LOCALS = 良非消耗武器入手
+			CASE 119
+				LOCALS = 胡蝶夢丸入手
+			CASE 120
+				LOCALS = 能力強化アクセサリ入手
+			CASE 121
+				LOCALS = 回復・軽減アクセサリ入手
+			CASE 122
+				LOCALS = 特殊アクセサリ入手
+			CASE 130
+				LOCALS = 全快湧き水
+			CASE 131
+				LOCALS = 発情湧き水
+			CASE 132
+				LOCALS = ステUP湧き水
+			CASE 133
+				LOCALS = ☆澄んだ泉
+			CASE 134
+				LOCALS = ☆白濁泉
+			CASE 135
+				LOCALS = 不思議な泉
+			CASE 136
+				LOCALS = スライム
+			CASE 137
+				LOCALS = 壁触手
+			CASE 138
+				LOCALS = 落とし穴
+			CASE 139
+				LOCALS = ☆桃色ガス
+			CASE 140
+				LOCALS = 荷物袋
+			CASE 141
+				LOCALS = 荷物袋トラップ
+			CASE 142
+				LOCALS = ☆にょろーん
+			CASE 143
+				LOCALS = 不思議なガス
+			CASE 144
+				LOCALS = 柔らかい壁
+			CASE 145
+				LOCALS = 眠気覚まし
+			CASE 146
+				LOCALS = 淫蟲A
+			CASE 147
+				LOCALS = 淫蟲B
+			CASE 148
+				LOCALS = 淫蟲C
+			CASE 149
+				LOCALS = 淫蟲V
+			CASE 150
+				LOCALS = 落石
+			CASE 151
+				LOCALS = 不意打ち
+			CASE 152
+				LOCALS = 淫蟲ふたなり化
+			CASE 153
+				LOCALS = 淫蟲肌
+			CASE 154
+				LOCALS = 淫蟲M
+			CASE 160
+				LOCALS = ☆自販機
+			CASE 161
+				LOCALS = 親睦
+			CASE 162
+				LOCALS = 占いオババ
+			CASE 163
+				LOCALS = 汚物消毒ガス
+			CASE 164
+				LOCALS = とんかつ
+			CASE 168
+				LOCALS = ウォッチャーのメガネ入手
+			CASE 169
+				LOCALS = 縮乳薬入手
+			CASE 170
+				LOCALS = ☆キュウリ畑
+			CASE 171
+				LOCALS = 荷物袋トラップヒュプノ
+			CASE 172
+				LOCALS = ☆敵ガチャ
+			CASE 173
+				LOCALS = ☆動物耳
+			CASE 174
+				LOCALS = 媚薬風呂
+			CASE 175
+				LOCALS = 白濁風呂
+			CASE 176
+				LOCALS = 壁尻スライム
+			CASE 177
+				LOCALS = ☆淫蟲ふたなり化
+			CASE 178
+				LOCALS = ☆親睦
+			CASE 179
+				LOCALS = ☆結婚式場
+			CASE 180
+				LOCALS = 入れ替わり
+			CASE 181
+				LOCALS = 女体化
+			CASE 182
+				LOCALS = 完全回復
+			CASE 191 TO 200
+				LOCALS = 遺品
+			CASE 201
+				LOCALS = 石碑
+			CASE 202
+				LOCALS = 石版赤
+			CASE 203
+				LOCALS = 石版青
+			CASE 204
+				LOCALS = 石版黄
+			CASE 205
+				LOCALS = 石版緑
+			CASE 206
+				LOCALS = 隠しチェックポイント
+			CASE 207
+				LOCALS = 統一言語辞書
+			CASE 208
+				LOCALS = 電波
+		ENDSELECT
+		IF LOCALS != ""
+			PRINTFORM %LOCALS,30,LEFT% 
+			IF FLAG:(LCOUNT) == 0
+				PRINTFORM 済
+			ELSE
+				PRINTFORM 部屋：{(FLAG:(LCOUNT))%100,2}　値：{(FLAG:(LCOUNT))/100}
+			ENDIF
+			PRINTL
+		ENDIF
+	NEXT
+	WAIT
+
+
+
+;=================================================
+;フラグ情報表示管理
+;=================================================
+@DEBUG_COMMAND_フラグ情報表示管理
+;LOCAL
+;0		LOOP
+;100	INPUT RESULT用
+;LOCALS	PTメンバ用装飾
+
+WHILE 1
+	DRAWLINE
+	PRINTFORML ここでフラグ情報表示の表示・非表示を切り替えられます
+	PRINTL
+	
+	PRINTFORML [ 0] %"システムメッセージ",40,LEFT%\@(FLAG:550) ? 表示する # 表示しない \@
+	FOR LOCAL:0, 1, CHARANUM
+		; PTメンバはメンバ表示
+		LOCALS = \@(CHECK_MEMBER_FROM_ID(LOCAL:0)) ? %CALLNAME:(LOCAL:0)%（PTメンバ） # %CALLNAME:(LOCAL:0)% \@
+		PRINTFORML [{LOCAL:0, 2}] %LOCALS,40,LEFT%\@(CFLAG:(LOCAL:0):750) ? 表示する # 表示しない \@
+	NEXT
+	
+	PRINTL
+	PRINTFORML [100]決定　[101]全て表示しない　[102]全て表示する
+		
+	$INPUT_LOOP
+	INPUT
+	LOCAL:100 = RESULT
+	
+	; 決定
+	IF LOCAL:100 == 100
+		RETURN
+	; 全て表示しない
+	ELSEIF LOCAL:100 == 101
+		FLAG:550 = 0
+		FOR LOCAL:0, 1, CHARANUM
+			CFLAG:(LOCAL:0):750 = 0
+		NEXT
+	; 全て表示する
+	ELSEIF LOCAL:100 == 102
+		FLAG:550 = 1
+		FOR LOCAL:0, 1, CHARANUM
+			CFLAG:(LOCAL:0):750 = 1
+		NEXT
+	; システムメッセージ
+	ELSEIF LOCAL:100 == 0
+		FLAG:550 = (FLAG:550) ? 0 # 1
+	; キャラクタ
+	ELSEIF LOCAL:100 >= 1 && LOCAL:100 <= CHARANUM
+		CFLAG:(LOCAL:100):750 = (CFLAG:(LOCAL:100):750) ? 0 # 1
+	ENDIF
+WEND
+
+;=================================================
+;全回復
+;=================================================
+@DEBUG_COMMAND_全回復
+#DIM LCOUNT
+	FOR LCOUNT, 1, CHARANUM
+		BASE:LCOUNT:0 = MAXBASE:LCOUNT:0
+		BASE:LCOUNT:1 = MAXBASE:LCOUNT:1
+		BASE:LCOUNT:2 = MAXBASE:LCOUNT:2
+		BASE:LCOUNT:3 = MAXBASE:LCOUNT:3
+		BASE:LCOUNT:4 = 100
+		BASE:LCOUNT:5 = 0
+		BASE:LCOUNT:6 = 0
+		CFLAG:LCOUNT:29 = 0
+	NEXT
+	PRINTFORML 全員回復しました。
+	RETURN
+;=================================================
+;全員召喚
+;=================================================
+@DEBUG_COMMAND_全キャラ召喚
+#DIM LCOUNT
+	FOR LCOUNT, 1, CHARANUM
+		CFLAG:LCOUNT:4 = CFLAG:1:4
+		CFLAG:LCOUNT:20 = 0
+		CFLAG:LCOUNT:21 = 0
+	NEXT
+	FOR LCOUNT, 1, FLAG:1
+		DA:(FLAG:1):20 = 0
+		DA:(FLAG:1):21 = 0
+	NEXT
+	PRINTFORML 部屋 {CFLAG:1:4} に全員を呼びました。
+	RETURN
+;=================================================
+;部屋移動
+;=================================================
+@DEBUG_COMMAND_部屋移動
+	$INPUT_LOOP
+	PRINTFORML 現在位置：{FLAG:5} 
+	PRINTL 移動先(1～30)を入力してください。
+	PRINTL
+	PRINTL [ 1] [ 2] [ 3] [ 4] [ 5]
+	PRINTL [ 6] [ 7] [ 8] [ 9] [10]
+	PRINTL [11] [12] [13] [14] [15]
+	PRINTL [16] [17] [18] [19] [20]
+	PRINTL [21] [22] [23] [24] [25]
+	PRINTL [26] [27] [28] [29] [30]
+	PRINTL
+	PRINTL [ 0] 戻る
+
+	INPUT
+	IF RESULT != 0
+		PRINTL
+		PRINTL 　おおっと！　　テレポーター
+		IF RESULT >= 1 && RESULT <= 30
+			FLAG:5 = RESULT
+			CFLAG:1:4 = RESULT
+			CFLAG:1:13 = RESULT
+			CFLAG:1:14 = RESULT
+			IF FLAG:10
+				CFLAG:(FLAG:10):4 = RESULT
+				CFLAG:(FLAG:10):13 = RESULT
+				CFLAG:(FLAG:10):14 = RESULT
+			ENDIF
+			IF FLAG:11
+				CFLAG:(FLAG:11):4 = RESULT
+				CFLAG:(FLAG:11):13 = RESULT
+				CFLAG:(FLAG:11):14 = RESULT
+			ENDIF
+			PRINTFORML 　パーティは {FLAG:5} にいます。
+			PRINTL
+		ELSE
+			PRINTL
+			PRINTL 　いしのなかにいる！
+			PRINTL 　（入力が不正です）
+			PRINTL
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+		
+	RETURN
+;=================================================
+;部屋汚染度操作
+;=================================================
+@DEBUG_COMMAND_部屋汚染度操作
+#DIM LCOUNT
+#DIM DEL_LINE 
+;LOCAL
+;0		全部屋の汚染度
+;1		現在地の汚染度
+;2		部屋指定
+
+VARSET LOCAL
+
+$START
+	DEL_LINE = LINECOUNT
+	DRAWLINE
+	PRINTL 部屋の汚染度を変更します。
+	PRINTL 
+	FOR LCOUNT ,0 ,30
+		SELECTCASE FLAG:(51 + LCOUNT)
+			CASE 0 TO 9
+				SETCOLOR 0x1060EE
+			CASE 10 TO 39
+			CASE 40 TO 69
+				SETCOLOR 0xEEEE10
+			CASE 70 TO 99
+				SETCOLOR 0xEE10EE
+				CASE 100
+				SETCOLOR 0xEE1010
+		ENDSELECT
+		PRINTPLAINFORM <{LCOUNT + 1,2}> 
+		RESETCOLOR
+		IF (LCOUNT + 1) % 5 == 0
+			PRINTL
+		ENDIF
+	NEXT
+	PRINTL 
+	PRINTL 全部屋の汚染度 (一括)
+	PRINTL [  0] 清浄　[ 10] 通常　[ 40] 軽度　[ 70] 中度　[100] 重度
+	PRINTL 
+	PRINT 現在地の汚染度 
+	PRINTFORML (現在位置：{FLAG:5})
+	PRINTL [200] 清浄　[210] 通常　[240] 軽度　[270] 中度　[300] 重度
+	PRINTL 
+	PRINTL [999] 部屋指定
+	PRINTL [ -1] 戻る
+	$INPUT_LOOP
+	INPUT
+
+
+
+	IF RESULT != -1
+		CLEARLINE LINECOUNT - DEL_LINE
+		SELECTCASE RESULT
+			CASE 0 TO 9
+				PRINTL おぶつはしょうどくだー！
+			CASE 10 TO 39
+				PRINTL そこそこふつう
+			CASE 40 TO 69
+				PRINTL よごれちゃうなぁ
+			CASE 70 TO 99
+				PRINTL すごく…きたないです…
+			CASE 100
+				PRINTL ばいおはざーど！
+		ENDSELECT
+		;全部屋一括変更
+		IF RESULT >= 0 && RESULT <= 100
+			LOCAL:0 = RESULT
+			FOR LCOUNT,0, 30
+				FLAG:(51 + LCOUNT) = LOCAL:0
+			NEXT
+		;現在地のみ変更
+		ELSEIF RESULT >= 200 && RESULT <= 300
+			LOCAL:1 = RESULT - 200
+			FLAG:(FLAG:5 + 50) = LOCAL:1
+			PRINTFORML 部屋{FLAG:5}の汚染度を{LOCAL:1}に設定しました。
+		;部屋指定変更(ペイント風)
+		ELSEIF RESULT == 999
+			$START2
+			DEL_LINE = LINECOUNT
+			PRINTFORML 汚染度(100～200)を入力後、適用したい部屋(1～30)を入力してください。 
+			PRINT 適用汚染度：
+			SELECTCASE LOCAL:10
+				CASE 0 TO 9
+					PRINTFORM {LOCAL:10,3} 
+					SETCOLOR 0x1060EE
+					PRINTFORM %"[清浄]",10,LEFT%
+				CASE 10 TO 39
+					PRINTFORM {LOCAL:10,3} 
+					PRINTFORM %"[通常]",10,LEFT%
+				CASE 40 TO 69
+					PRINTFORM {LOCAL:10,3} 
+					SETCOLOR 0xEEEE10
+					PRINTFORM %"[軽度汚染]",10,LEFT%
+				CASE 70 TO 99
+					PRINTFORM {LOCAL:10,3} 
+					SETCOLOR 0xEE10EE
+					PRINTFORM %"[中度汚染]",10,LEFT%
+				CASE 100
+					PRINTFORM {LOCAL:10,3} 
+					SETCOLOR 0xEE1010
+					PRINTFORM %"[重度汚染]",10,LEFT%
+			ENDSELECT
+			RESETCOLOR
+			PRINTFORML      (現在位置：{FLAG:5,2})
+			PRINTL
+			FOR LCOUNT ,0 ,30
+				SELECTCASE FLAG:(51 + LCOUNT)
+				CASE 0 TO 9
+					SETCOLOR 0x1060EE
+				CASE 10 TO 39
+				CASE 40 TO 69
+					SETCOLOR 0xEEEE10
+				CASE 70 TO 99
+					SETCOLOR 0xEE10EE
+				CASE 100
+					SETCOLOR 0xEE1010
+				ENDSELECT
+				PRINTFORM [{LCOUNT + 1,2}] 
+				RESETCOLOR
+				IF (LCOUNT + 1) % 5 == 0
+					PRINTL
+				ENDIF
+			NEXT
+			PRINTL
+			PRINTL [100] 清浄　[110] 通常　[140] 軽度　[170] 中度　[200] 重度
+			PRINTL
+			PRINTL [ 0] 戻る
+			$INPUT_LOOP2
+			INPUT
+			
+			
+			SELECTCASE RESULT
+				CASE 0
+					GOTO START
+				CASE 1 TO 30
+					FLAG:(51 + RESULT - 1) = LOCAL:10
+					CLEARLINE LINECOUNT - DEL_LINE
+					PRINTFORML 部屋{RESULT,2}の汚染度を{FLAG:(51 + RESULT - 1),3}に設定しました。
+					GOTO START2
+				CASE 100 TO 200
+					LOCAL:10 = RESULT - 100
+					LOCAL:11 = RESULT
+					CLEARLINE LINECOUNT - DEL_LINE
+					GOTO START2
+				CASEELSE
+					CLEARLINE 1
+					REUSELASTLINE 入力が不正です！
+					GOTO INPUT_LOOP2
+			ENDSELECT
+		ELSE
+			CLEARLINE 2
+			REUSELASTLINE 入力が不正です！
+			GOTO INPUT_LOOP
+		ENDIF
+		GOTO START
+	ENDIF
+
+
+;=================================================
+;キャラ追加操作
+;=================================================
+@DEBUG_COMMAND_キャラ追加
+#DIM SELECT_CHARA
+
+CALL CHARA_SELECT
+SELECT_CHARA = RESULT
+
+IF RESULT == 0
+	RETURN
+	
+ELSE
+	PRINTFORMDL %CSVNAME(SELECT_CHARA)%を追加しますか？
+	CALL ASK_YN
+	IF RESULT == 0
+		ADDCHARA SELECT_CHARA
+		FLAG:0 += 1
+		CALL CHARA_INITIALIZE_SINGLE(CHARANUM - 1)
+		PRINTFORMDL %CSVNAME(SELECT_CHARA)%を追加しました
+		CALL PRINT_MESSAGE((CHARANUM - 1), 159, 0, CALLNAME:(CHARANUM - 1), "")
+	ENDIF
+ENDIF
+
+RESTART
+
+;=================================================
+;キャラ削除
+;=================================================
+@DEBUG_COMMAND_キャラ削除
+#DIM LCOUNT,2
+#DIM 未改心ID, DEBUG_NPC_MAX
+#DIM 未改心ID_SIGN, DEBUG_NPC_MAX
+#DIM 入力
+#DIM DEL_LINE 
+;LOCAL
+;0		PTメンバ（ID順1番目）
+;1		PTメンバ（ID順2番目）
+;2		PTメンバの順番判定
+;10		未改心の仲間IDの最小値
+;11		未改心の仲間IDの最大値
+;12		未改心の仲間IDを削除したかの判定
+;13		未改心の仲間の削除と同時に削除された敵側のID
+
+;未改心のキャラは敵としても存在し、DA:(○○の娘のID):48に、対応する仲間IDの数値が入っている
+;DA:(○○の娘のID):48の数値が、キャラ番号の範囲外だったり○○の娘以外のIDだったりすると、
+;仲間に引き込む時に、倒した娘ではないキャラが仲間になったりエラーを吐いたりするので、
+;敵IDが表示されているキャラを削除した場合、該当するIDの敵も一緒に削除する
+
+$START
+
+VARSET 未改心ID
+VARSET 未改心ID_SIGN
+VARSET LOCAL
+
+WHILE 1
+	DEL_LINE = LINECOUNT
+	DRAWLINE
+	;(DA:(○○の娘ID):48)に格納している未改心IDを記録
+	FOR LCOUNT, 1, CHARANUM
+		FOR LCOUNT:1, 1, FLAG:1
+			;出産した娘がまだ仲間になっていない場合
+			IF DA:(LCOUNT:1):48 == LCOUNT
+				;未改心IDに、対応する敵IDを格納　　未改心ID_SIGNに数値の存在判定を格納
+				未改心ID:(LCOUNT) = LCOUNT:1
+				未改心ID_SIGN:(LCOUNT) = 1
+				;未改心の仲間ID最小値を記録
+				SIF LOCAL:10 == 0
+					LOCAL:10 = LCOUNT
+				;未改心の仲間ID最大値を記録
+				LOCAL:11 = LCOUNT
+			ENDIF
+		NEXT
+	NEXT
+	;キャラ一覧
+	FOR LCOUNT, 1, CHARANUM
+		;PTメンバ
+		IF CHECK_MEMBER_FROM_ID(LCOUNT)
+			SETCOLOR 0x666666
+			CALL DRAW_CHARASUMMARY_NG(LCOUNT, 未改心ID:(LCOUNT))
+			RESETCOLOR
+		ELSE
+			CALL DRAW_CHARASUMMARY(LCOUNT, 未改心ID:(LCOUNT))
+		ENDIF
+	NEXT
+	
+	;PTメンバの順番判定
+	IF FLAG:10 < FLAG:11
+		LOCAL:0 = FLAG:10
+		LOCAL:1 = FLAG:11
+		LOCAL:2 = 0
+	ELSE
+		LOCAL:0 = FLAG:11
+		LOCAL:1 = FLAG:10
+		LOCAL:2 = 1
+	ENDIF
+	
+	PRINTL
+	PRINTL 削除するキャラクターを選択してください。
+	PRINTL
+	
+	PRINTL [ 0] 戻る
+
+	$INPUT_LOOP
+	INPUT
+	入力 = RESULT
+
+	IF 入力 == 0
+		RETURN
+	;PTメンバの直接削除は不可
+	ELSEIF CHECK_MEMBER_FROM_ID(入力)
+		CLEARLINE 1
+		REUSELASTLINE PTメンバは削除できません
+		GOTO INPUT_LOOP
+	ELSEIF 1 < 入力 && 入力 < CHARANUM
+		PRINTL
+		CLEARLINE LINECOUNT - DEL_LINE
+		;削除対象キャラIDが素質[エネミー]有りの場合
+		IF TALENT:(入力):157
+			;敵としても存在する場合は敵IDも削除する　ここでDA:48の格納キャラIDにズレが発生
+			IF 未改心ID:入力 > 0
+				CALL DELETE_ENEMY(未改心ID:入力)
+				LOCAL:12 = 1
+			ENDIF
+		ENDIF
+		PRINTFORM %CALLNAME:入力,20,LEFT%を追い出しました。
+		IF LOCAL:12 == 1
+			PRINTFORM  (敵ID:{未改心ID:入力,2}を削除しました)
+			;削除した敵側のIDを格納
+			LOCAL:13 = 未改心ID:入力
+		ENDIF
+		LOCAL:12 = 0
+		PRINTL
+		
+		;隔離部屋に居るキャラ以外を削除した場合は生存人数を減らす
+		SIF CFLAG:入力:4 != 59
+			FLAG:0 -= 1
+		
+		;主人公IDと2番目のPTメンバIDとの間のキャラIDを削除した
+		IF 入力 < LOCAL:0
+			FLAG:10 -= 1
+			FLAG:11 -= 1
+			DELCHARA 入力
+		;2番めと3番目のPTメンバの間のIDのキャラIDを削除した
+		ELSEIF 入力 < LOCAL:1
+			;2番目PTメンバのIDが3番目PTメンバのIDより若い場合
+			IF LOCAL:2 == 0
+				FLAG:11 -= 1
+				DELCHARA 入力
+			ELSE
+				FLAG:10 -= 1
+				DELCHARA 入力
+			ENDIF
+		ELSE
+			DELCHARA 入力
+		ENDIF
+		
+		;DA:48のIDズレを補正する処理
+		;未改心仲間ID(最小値)よりも低いIDを削除した
+		IF 入力 < LOCAL:10
+			;敵の数だけ繰り返す
+			FOR LCOUNT, 0, FLAG:1
+				;DA:48が格納されている敵が居れば、DA:48を-1する
+				SIF DA:(LCOUNT):48 > 0
+					DA:(LCOUNT):48 -= 1
+			NEXT
+			
+		;未改心仲間ID(最小値)を削除した
+		ELSEIF LOCAL:10 == 入力
+			未改心ID:入力 = 0
+			;敵の数だけ繰り返す
+			FOR LCOUNT, 0, FLAG:1
+				;DA:48が格納されている敵が居れば、DA:48を-1する
+				SIF DA:(LCOUNT):48 > 0
+					DA:(LCOUNT):48 -= 1
+			NEXT
+			;未改心仲間IDの新しい最小値を格納する
+			FOR LCOUNT, 入力, LOCAL:11
+				IF 未改心ID:(LCOUNT) > 0
+					LOCAL:10 = LCOUNT
+					;一回更新されたらループ終了
+					BREAK
+				ENDIF
+			NEXT
+			
+		;未改心仲間ID(最小値)と(最大値)の間のIDを削除した
+		ELSEIF LOCAL:10 < 入力 && 入力 < LOCAL:11
+			未改心ID:入力 = 0
+			未改心ID_SIGN:入力 = 0
+			
+			;DA:48の値を格納していたキャラIDを削除した場合
+			IF LOCAL:13 > 0
+				;削除した敵のID以上の敵のDA:48を-1する
+				FOR LCOUNT, LOCAL:13, FLAG:1
+					SIF DA:(LCOUNT):48 > 0
+						DA:(LCOUNT):48 -= 1
+				NEXT
+				LOCAL:13 = 0
+			;それ以外のキャラIDを削除した場合
+			ELSE
+				;入力した値の配列番号よりも高く、かつ、最も近い配列番号を検索
+				FINDELEMENT 未改心ID_SIGN, 1, 入力
+				;検索した配列番号に格納されている数値以降の敵IDのDA:48を-1する
+				FOR LCOUNT, 未改心ID:RESULT, FLAG:1
+					SIF DA:(LCOUNT):48 > 0
+						DA:(LCOUNT):48 -= 1
+				NEXT
+			ENDIF
+			
+		;未改心仲間ID(最大値)を削除した
+		ELSEIF LOCAL:11 == 入力
+			未改心ID:(入力) = 0
+		ENDIF
+		
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+WEND
+
+
+;=================================================
+;キャラ入れ替え
+;=================================================
+@DEBUG_COMMAND_キャラ入れ替え
+#DIM LCOUNT,2
+#DIM 未改心ID, DEBUG_NPC_MAX
+#DIM 入力
+#DIM DEL_LINE 
+;LOCAL
+;0	入れ替えキャラ(1)
+;1	入れ替えキャラ(2)
+
+$START
+
+VARSET LOCAL
+VARSET 未改心ID
+
+WHILE 1
+	DEL_LINE = LINECOUNT
+	DRAWLINE
+	;○○の娘のDA:48に格納している未改心IDのチェック
+	FOR LCOUNT, 1, CHARANUM
+		FOR LCOUNT:1, 1, FLAG:1
+			IF DA:(LCOUNT:1):48 == LCOUNT
+				;未改心ID:(キャラID)に、対応する敵IDを格納
+				未改心ID:(LCOUNT) = LCOUNT:1
+			ENDIF
+		NEXT
+	NEXT
+	
+	FOR LCOUNT, 1, CHARANUM
+		;○○の娘のDA:48から参照されているIDは選択不可
+		IF 未改心ID:LCOUNT > 0
+			SETCOLOR 0x666666
+			CALL DRAW_CHARASUMMARY_NG(LCOUNT, 未改心ID:(LCOUNT))
+			RESETCOLOR
+;		;1人目がPTメンバなら拘束キャラ選択不可、1人目が拘束キャラならPTメンバ選択不可
+;		ELSEIF (CHECK_MEMBER_FROM_ID(LOCAL:0) && CFLAG:(LCOUNT):504 >= 1) || (CHECK_MEMBER_FROM_ID(LCOUNT) && CFLAG:(LOCAL:0):504 >= 1)
+;			SETCOLOR 0x666666
+;			CALL DRAW_CHARASUMMARY_NG(LCOUNT, 未改心ID:(LCOUNT))
+;			RESETCOLOR
+		;1人目で選択したキャラは青表示
+		ELSEIF LCOUNT == LOCAL:0
+			SETCOLOR 0x9999FF
+			CALL DRAW_CHARASUMMARY(LCOUNT, 未改心ID:(LCOUNT))
+			RESETCOLOR
+		ELSE
+			CALL DRAW_CHARASUMMARY(LCOUNT, 未改心ID:(LCOUNT))
+		ENDIF
+	NEXT
+	PRINTL
+	IF LOCAL:0 == 0
+		PRINTL 入れ替えするキャラクター(1人目)を選択してください。
+	ELSE
+		PRINTL 入れ替えするキャラクター(2人目)を選択してください。
+	ENDIF
+	PRINTL
+	
+	PRINTL [ 0] 戻る
+
+	$INPUT_LOOP
+	INPUT
+	入力 = RESULT
+
+	IF 入力 == 0
+		RETURN
+	;1人目と2人目で同じIDを選択した場合はやり直し
+	ELSEIF 入力 == LOCAL:0
+		LOCAL:0 = 0
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ELSEIF 1 <= 入力 && 入力 < CHARANUM
+		;○○の娘のDA:48から参照されているキャラIDを検索
+		FINDELEMENT 未改心ID, 未改心ID:入力, 0
+		;該当した場合は選択不可
+		IF RESULT > 0
+			CLEARLINE 1
+			REUSELASTLINE 未改心のキャラIDは選択できません
+			GOTO INPUT_LOOP
+		ENDIF
+		IF LOCAL:0 == 0
+			LOCAL:0 = 入力
+			CLEARLINE LINECOUNT - DEL_LINE
+		ELSE
+			LOCAL:1 = 入力
+		ENDIF
+		IF LOCAL:0 > 0 && LOCAL:1 > 0
+			CLEARLINE LINECOUNT - DEL_LINE
+			SWAPCHARA LOCAL:0, LOCAL:1
+			PRINTPLAINFORM [{LOCAL:0,3}] %CALLNAME:(LOCAL:0),18,LEFT%と [{LOCAL:1,3}] %CALLNAME:(LOCAL:1),18,LEFT%のキャラクターIDを入れ替えました。
+			PRINTL
+			GOTO START
+		ENDIF
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+WEND
+
+
+;=================================================
+;ペット追加・編集・削除操作
+;=================================================
+@DEBUG_COMMAND_ペット追加
+#DIM LCOUNT
+#DIM DEL_LINE
+#DIM PAGE
+#DIM LAST_ENEMY_NUM
+#DIM LAST_PAGE
+#DIM LIST_NUM = 20
+#DIM USAGE
+;DIM
+;LCOUNT			ループ制御用
+;DEL_LINE		行削除用
+;PAGE			ページ部分制御
+;LAST_ENEMY_NUM	最後の敵番号
+;LAST_PAGE		最後の敵番号があるページ数
+;LIST_NUM		1ページに表示するペットの種類
+;USAGE			敵呼び出しリストの切り替え
+;
+;LOCAL
+;2	図鑑番号記録用
+
+PRINTL
+;図鑑処理流用
+PAGE = 0
+USAGE = 1
+
+IF PET:0
+	PRINTFORML すでにペットがいます
+	CALL SHOW_PET_STATUS
+	GOTO START
+ENDIF
+
+$START
+DEL_LINE = LINECOUNT
+
+;敵リスト呼び出し
+CALL DEBUG_OUTPUT_ENEMY_LIST(PAGE, LIST_NUM, USAGE)
+LAST_PAGE = RESULT:0
+LAST_ENEMY_NUM = RESULT:1
+DRAWLINE
+
+IF PET:0 == 0
+	SETCOLOR 0x333333
+	PRINTL [----] ペットの能力を編集する
+	RESETCOLOR
+ELSE
+	PRINTL [1000] ペットの能力を編集する
+ENDIF
+
+
+IF PET:0 == 0
+	SETCOLOR 0x333333
+	PRINTL [----] ペットとさよならする（強制）
+	RESETCOLOR
+ELSE
+	PRINTL [1001] ペットとさよならする（強制）
+ENDIF
+PRINTFORM [1002] ペット不可の敵もペット可にする 
+IF USAGE == 1
+	PRINTL ○
+ELSE
+	PRINTL ●
+ENDIF
+PRINTL
+PRINTL [ 0] キャンセル
+$INPUT_LOOP
+INPUT
+
+IF RESULT == 0
+	RETURN
+ELSEIF ENEMY_NAME(RESULT) != "バグ触手" && RESULT > 0 && RESULT != 20 && RESULT <= LAST_ENEMY_NUM
+	LOCAL:2 = RESULT
+	PRINTFORML [ 1] %ENEMY_NAME(LOCAL:2)%で確定
+	PRINTFORML 
+	PRINTL [ 0] キャンセル
+	$INPUT_LOOP_2
+	INPUT
+	IF RESULT == 1
+		CALL PET_INVITE_2(LOCAL:2)
+		PRINTFORML 
+		GOTO START
+	ELSE
+		GOTO START
+	ENDIF
+
+ELSEIF RESULT == 777
+	;前ページへ
+	PAGE -= 1
+	SIF PAGE < 0
+		PAGE = LAST_PAGE
+	CLEARLINE LINECOUNT - DEL_LINE
+ELSEIF RESULT == 1000 && PET:0
+	CALL EDIT_PET
+ELSEIF RESULT == 1001 && PET:0
+	CALL BYEBYE_PET(1)
+ELSEIF RESULT == 1002
+	IF USAGE == 1
+		USAGE = 2
+	ELSE
+		USAGE = 1
+	ENDIF
+	CLEARLINE LINECOUNT - DEL_LINE
+ELSEIF RESULT == 999
+	;次ページへ
+	PAGE += 1
+	SIF PAGE > LAST_PAGE
+		PAGE = 0
+	CLEARLINE LINECOUNT - DEL_LINE
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 入力が不正です！
+	GOTO INPUT_LOOP
+ENDIF
+
+GOTO START
+
+
+;-----------------------------------
+;ペット編集用関数デバッグモード
+;-----------------------------------
+@EDIT_PET
+#DIM LCOUNT
+#DIM DEL_LINE 
+#DIM 入力
+;LOCAL
+;0	前値
+;1	キャラID
+;2	変更する変数
+
+$START
+DEL_LINE = LINECOUNT
+DRAWLINE
+CALL SHOW_PET_STATUS
+PRINTFORML 変更対象を指定してください。
+PRINTFORML 
+PRINTFORML [-1] %"ペットの名前",30,LEFT% 現在の値：%PETNAME%
+PRINTFORML [ 0] %"ペットの種類",30,LEFT% 現在の値：{PET:0}
+PRINTFORML [ 1] %"ペットのランク",30,LEFT% 現在の値：{PET:1}
+PRINTFORML [ 2] %"ペットのレベル",30,LEFT% 現在の値：{PET:2}
+PRINTFORML [10] %"ペットの戦闘能力",30,LEFT% 現在の値：{PET:10}
+PRINTFORML [11] %"ペットの速さ",30,LEFT% 現在の値：{PET:11}
+PRINTFORML [12] %"ペットの行動補正（やる気）",30,LEFT% 現在の値：{PET:12}
+PRINTFORML [13] %"クリティカル補正（カッコよさ）",30,LEFT% 現在の値：{PET:13}
+PRINTFORML [20] %"ペットの満腹度",30,LEFT% 現在の値：{PET:20}
+PRINTFORML [21] %"ペットの栄養度",30,LEFT% 現在の値：{PET:21}
+PRINTFORML [22] %"ペットの好感度",30,LEFT% 現在の値：{PET:22}
+PRINTFORML [90] 屈服度1%"（"+CALLNAME:1+"）",23,LEFT% 現在の値：{CFLAG:1:400,3,LEFT} （%PET_SUBMISSION_STR(1)%）
+SIF FLAG:10
+	PRINTFORML [91] 屈服度2%"（"+CALLNAME:(FLAG:10)+"）",23,LEFT% 現在の値：{CFLAG:(FLAG:10):400,3,LEFT} （%PET_SUBMISSION_STR(FLAG:10)%）
+SIF FLAG:11
+	PRINTFORML [92] 屈服度3%"（"+CALLNAME:(FLAG:11)+"）",23,LEFT% 現在の値：{CFLAG:(FLAG:11):400,3,LEFT} （%PET_SUBMISSION_STR(FLAG:11)%）
+PRINTFORML 
+PRINTL [-2] 戻る
+
+$INPUT_LOOP
+INPUT
+
+SELECTCASE RESULT
+CASE 0
+	LOCALS = ペットの種類
+CASE 1
+	LOCALS = ペットのランク
+CASE 2
+	LOCALS = ペットのレベル
+CASE 10
+	LOCALS = ペットの戦闘能力
+CASE 11
+	LOCALS = ペットの速さ
+CASE 12
+	LOCALS = ペットのやる気
+CASE 13
+	LOCALS = ペットのカッコよさ
+CASE 20
+	LOCALS = ペットの満腹度
+CASE 21
+	LOCALS = ペットの栄養度
+CASE 22
+	LOCALS = ペットの好感度
+CASEELSE
+	LOCALS = ""
+ENDSELECT
+
+SELECTCASE RESULT
+CASE -2
+	RETURN
+CASE -1
+	CALL RENAME_PET
+	GOTO START
+CASE 0, 1, 2, 10 to 13, 20 to 22
+	入力 = RESULT
+	LOCAL:0 = PET:(RESULT)
+	PRINTFORML 現在の値：{PET:(RESULT)}
+	PRINTL 変更後の値を入力してください。(マイナスの場合はキャンセル)
+	$INPUT_LOOP2
+	INPUT
+	
+	SELECTCASE RESULT
+	CASE is < 0
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	CASEELSE
+		IF 入力 == 0 && RESULT == 0
+			CLEARLINE 1
+			REUSELASTLINE ペットの種類を0にすることはできません
+			GOTO INPUT_LOOP2
+		ENDIF
+		PET:入力 = RESULT
+		CLEARLINE LINECOUNT - DEL_LINE
+		
+		SETCOLOR 0xDD0000
+		PRINTFORM DEBUG >>  
+		RESETCOLOR
+		SIF LOCAL:0 > RESULT
+			SETCOLOR 0x555555
+		PRINTFORML PET:{入力,2,LEFT} %LOCALS,18,LEFT% {LOCAL:0,5} → {RESULT,5}  に変更
+		RESETCOLOR
+		GOTO START
+	ENDSELECT
+CASE 90 to 92
+	入力 = RESULT
+	;仲間が居ないなら無効
+	IF (入力 == 91 && FLAG:10 == 0) || (入力 == 92 && FLAG:11 == 0)
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ENDIF
+	IF RESULT == 90
+		LOCAL:0 = CFLAG:1:400
+		LOCAL:1 = 1
+	ELSEIF RESULT == 91
+		LOCAL:0 = CFLAG:(FLAG:10):400
+		LOCAL:1 = FLAG:10
+	ELSE
+		LOCAL:0 = CFLAG:(FLAG:11):400
+		LOCAL:1 = FLAG:11
+	ENDIF
+	LOCAL:2 = 400
+	PRINTFORML 現在の値：{LOCAL:0}
+	PRINTL 変更後の値を入力してください。(マイナスの場合はキャンセル)
+	$INPUT_LOOP3
+	INPUT
+	
+	SELECTCASE RESULT
+	CASE is < 0
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	CASEELSE
+		IF 入力 == 90
+			CFLAG:1:400 = RESULT
+		ELSEIF 入力 == 91
+			CFLAG:(FLAG:10):400 = RESULT
+		ELSE
+			CFLAG:(FLAG:11):400 = RESULT
+		ENDIF
+		
+		CLEARLINE LINECOUNT - DEL_LINE
+		
+		SETCOLOR 0xDD0000
+		PRINTFORM DEBUG >>  
+		RESETCOLOR
+		SIF LOCAL:0 > RESULT
+			SETCOLOR 0x555555
+		PRINTPLAINFORM CFLAG変更  [{LOCAL:1,3}] %CALLNAME:(LOCAL:1),16,LEFT% 
+		PRINTFORML CFLAG:{LOCAL:2,4,LEFT} %CFLAGNAME:(400),12,LEFT% {LOCAL:0,5} → {RESULT,5}
+		RESETCOLOR
+		GOTO START
+	ENDSELECT
+CASEELSE
+	CLEARLINE 1
+	REUSELASTLINE 入力が不正です！
+	GOTO INPUT_LOOP
+ENDSELECT
+
+
+
+
+;=================================================
+;乳サイズ変更テスト
+;=================================================
+@DEBUG_COMMAND_乳サイズ変更テスト
+#DIM LCOUNT,2
+#DIM 未改心ID, DEBUG_NPC_MAX
+#DIM DEL_LINE
+#DIM 入力,2
+
+VARSET 未改心ID
+
+;○○の娘のDA:48に格納している未改心IDのチェック
+FOR LCOUNT, 1, CHARANUM
+	FOR LCOUNT:1, 1, FLAG:1
+		IF DA:(LCOUNT:1):48 == LCOUNT
+			;未改心ID:(キャラID)に、対応する敵IDを格納
+			未改心ID:(LCOUNT) = LCOUNT:1
+		ENDIF
+	NEXT
+NEXT
+
+$START
+
+WHILE 1
+	DRAWLINE
+	PRINTFORML [{-1, 3}] 共通
+	FOR LCOUNT, 1, CHARANUM
+		CALL DRAW_CHARASUMMARY(LCOUNT, 未改心ID:(LCOUNT))
+	NEXT
+	PRINTL 
+	PRINTL [ 0] 戻る
+
+	$INPUT_LOOP
+	INPUT
+	入力 = RESULT
+
+	IF 入力 == 0
+		RETURN
+	ELSEIF 入力 <= -1
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ELSEIF 入力 > 0 && 入力 < CHARANUM
+		$START2
+		DEL_LINE = LINECOUNT
+		DRAWLINE
+		PRINTFORM [{入力,3}] %CALLNAME:入力% の現在のバストサイズ：
+		FOR LCOUNT, 0, 300
+			SELECTCASE LCOUNT
+			CASE 107, 108, 109, 110, 158, 222 ,223
+				CALL PERSONAL_TALENT(入力, LCOUNT)
+				PRINTFORM %RESULTS%
+			ENDSELECT
+		NEXT
+		PRINTL  
+		PRINTFORM ランク:{GET_BUST(入力),2,RIGHT} ／ 
+		PRINTFORM RAW値:{GET_RAWBUST(入力),2,RIGHT}
+		IF GET_RAWBUST(入力) == 2 + PLUS_HB_MAX
+			PRINT  (上限値)
+		ELSEIF GET_RAWBUST(入力) == -2
+			PRINT  (下限値)
+		ENDIF
+		PRINTL
+		PRINTL
+		PRINTFORML バストサイズ(RAW値)をどれだけ変動させますか？
+		PRINTFORML [-1] [-2] [-3] [-4] [-5] 
+		PRINTFORML [+1] [+2] [+3] [+4] [+5] 
+		PRINTL
+		PRINT [1001] 前のキャラ  
+		PRINTL [1002] 次のキャラ  
+		PRINTL [   0] 戻る
+		
+		$INPUT_LOOP2
+		INPUT
+		入力:1 = RESULT
+		
+		IF 入力:1 == 0
+			CONTINUE
+		ELSEIF 入力:1 == 1001
+			入力 -= 1
+			SIF 入力 < 1
+				入力 = CHARANUM-1
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO START2
+		ELSEIF 入力:1 == 1002
+			入力 += 1
+			SIF 入力 > CHARANUM-1
+				入力 = 1
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO START2
+		ELSEIF 入力:1 != 0
+			IF GET_RAWBUST(入力) == 2 + PLUS_HB_MAX && 入力:1 > 0
+				CLEARLINE 1
+				GOTO INPUT_LOOP2
+			ELSEIF GET_RAWBUST(入力) == -2 && 入力:1 < 0
+				CLEARLINE 1
+				GOTO INPUT_LOOP2
+			ELSE
+			ENDIF
+			LOCAL:1 = 0
+			CLEARLINE LINECOUNT - DEL_LINE
+			CALL ADD_BUST(入力,入力:1,5)
+			GOTO START2
+		ENDIF
+		CONTINUE
+	ENDIF
+	CLEARLINE 1
+	REUSELASTLINE 入力が不正です！
+	GOTO INPUT_LOOP
+WEND
+
+
+;=================================================
+;妊娠と寄生の管理
+;=================================================
+@DEBUG_COMMAND_妊娠と寄生の管理
+;DIM
+;LCOUNT			ループ制御
+;DEL_LINE		削除する行数を記憶
+;PAGE			ページ数
+;LAST_ENEMY_NUM	最後の敵番号
+;LAST_PAGE		最後の敵番号があるページ数
+;LIST_NUM		1ページに表示する人数
+;ARTICLE		表示項目の変更制御
+;入力			INPUTの保存
+;PARA_CATE		Ｖ妊娠or寄生の種別と寄生部位の制御
+;NINSIN_FLG		Ｖの妊娠種類を変えるスイッチ　0:寄生 1:流産する妊娠 2:妊娠(発覚前) 3:妊娠(発覚後)
+;PREGNUM		妊娠寄生チェック用。格納するのは各部位の妊娠寄生CFLAG番号。　:0…Ｖ(妊娠or寄生)　:1…Ａ寄生　:2…Ｂ寄生　:3…Ｃ寄生　:4…Ｃ妊娠　:5…媚薬爆弾
+;PREGLIMIT_SW	BとCの寄生に必要な素質が無くても寄生可能にするスイッチ
+;TEMP_PLACE		プレイヤーと位置が違うと出産描写が省略されるのを防ぐ変数。 :0…スイッチ :1…キャラの現在位置を一時的に保存する
+#DIM LCOUNT, 2
+#DIM DEL_LINE , 2
+#DIM PAGE, 2
+#DIM LAST_ENEMY_NUM
+#DIM LAST_PAGE, 2
+#DIM LIST_NUM, 2
+#DIM ARTICLE
+#DIM 入力, 3
+#DIM PARA_CATE, 2
+#DIM NINSIN_FLG
+#DIM PREGNUM, 6
+#DIM PREGLIMIT_SW
+#DIM TEMP_PLACE, 2
+
+PREGNUM:0 = 22
+PREGNUM:1 = 151
+PREGNUM:2 = 161
+PREGNUM:3 = 171
+PREGNUM:4 = 173
+PREGNUM:5 = 158
+LIST_NUM:0 = 20
+LIST_NUM:1 = 50
+PAGE = 0
+ARTICLE = 0
+
+$START
+DEL_LINE = LINECOUNT
+CALL SHOW_1LINE_STATUS_TEMPLATE_2
+FOR LCOUNT, (1+LIST_NUM*PAGE), ((1+LIST_NUM)+LIST_NUM*PAGE)
+	;CHARANUMをLIST_NUMで割って余りが出た場合、余りの数だけ追加で灰色表示で改行する
+	IF LCOUNT < CHARANUM
+		TRYCALLFORM DRAW_CHARASUMMARY_PREGNANCY_{ARTICLE}(LCOUNT, PREGLIMIT_SW)
+	ELSE
+		;灰色表示
+		LOCALS:0 = ？？？
+		SETCOLOR 0x333333
+		PRINTPLAINFORM [{LCOUNT,3}]    %LOCALS:0, 40, LEFT%
+		RESETCOLOR
+	ENDIF
+	
+	;改行処理
+	IF LCOUNT % LIST_NUM != 0
+		PRINTL
+	ENDIF
+NEXT
+PRINTL
+CALL BORDERL
+PRINTLC [7777] 前のページ
+PRINTFORMLC           Page({PAGE+1}/{MAX((CHARANUM-2) / LIST_NUM+1, 0)})
+PRINTC [9999] 次のページ
+PRINTL
+;PRINTFORML [8888] 表示項目切り替え ({ARTICLE+1}/2)
+PRINTL
+PRINT [5000] 全キャラ全箇所に触手を入れる(ランダム)
+PRINTPLAINFORM %"",3%
+PRINTPLAINFORM %"全キャラ操作：",%
+PRINTBUTTON "[-]",5001
+PRINTBUTTON "[+]",5002
+PRINTFORM %"",1%
+PRINTBUTTON "[1]",5003
+PRINTBUTTON "[5]",5004
+PRINTBUTTON "[10]",5005
+PRINTFORM %"",1%
+PRINTBUTTON "[Check]",5010
+PRINTBUTTON "[産む]",5006
+PRINTBUTTON "[堕胎]",5007
+PRINTL
+PRINT [6000] ＢとＣを全員寄生可能にする(素質制限を無視)
+IF GETBIT(PREGLIMIT_SW, 0) == 1
+	PRINTL ●
+ELSE
+	PRINTL ○
+ENDIF
+PRINT [7000] 仲間以外のキャラのメッセージも見る
+IF GETBIT(TEMP_PLACE:0, 0) == 1
+	PRINTL ●
+ELSE
+	PRINTL ○
+ENDIF
+PRINTL
+PRINTFORML キャラを選択で妊娠寄生の管理 (キャラ数：{CHARANUM-1}名)
+PRINTL 
+PRINTL [ 0] 戻る
+$INPUT_LOOP
+INPUT
+
+入力 = RESULT
+IF 入力 == 0
+	RETURN
+;キャラの詳細に移動
+ELSEIF 入力 >= 1 && 入力 <= CHARANUM
+	CLEARLINE LINECOUNT - DEL_LINE
+	$START2
+	DEL_LINE = LINECOUNT
+	DRAWLINE
+	PRINTPLAINFORM ■ [{入力,3}] %CALLNAME:(入力)% の妊娠と寄生の状況を編集します。
+	PRINTL
+	PRINTL
+	PRINT 状態：
+	CALL PRINT_CONDITION(入力)
+	PRINTL
+	PRINTL
+	PRINTFORML %CALLNAME:(入力)% の中に棲んでいる触手
+	LOCAL:21 = 10
+	LOCAL:22 = 0
+	FOR LCOUNT,0 ,6
+		SELECTCASE LCOUNT
+			CASE 0
+				PRINTFORM Ｖ　：
+			CASE 1
+				PRINTFORM Ａ　：
+			CASE 2
+				PRINTFORM Ｂ　：
+			CASE 3
+				PRINTFORM Ｃ寄：
+			CASE 4
+				PRINTFORM Ｃ妊：
+			CASE 5
+				PRINTFORM 爆弾：
+		ENDSELECT	
+		IF CFLAG:(入力):(PREGNUM:LCOUNT) == 0 && LCOUNT < 5 && PREGLIMIT_SW == 0 && ((TALENT:(入力):162 == 0 && LCOUNT == 2) || (TALENT:(入力):121 == 0 && LCOUNT == 3) || (TALENT:(入力):121 == 0 && LCOUNT == 4))
+			SETCOLOR 0x333333
+			IF LCOUNT == 4
+				PRINTPLAINFORM %"妊娠不可",30,LEFT%
+			ELSE
+				PRINTPLAINFORM %"寄生不可",30,LEFT%
+			ENDIF
+			PRINTL
+			RESETCOLOR
+		ELSEIF CFLAG:(入力):(PREGNUM:LCOUNT) == 0 && LCOUNT < 5
+			SETCOLOR 0x333333
+			PRINTBUTTON @"%"－－－",30,LEFT%", 1+LCOUNT
+			PRINTL
+			RESETCOLOR
+		ELSE
+			IF LCOUNT < 5
+				PRINTBUTTON @"[{CFLAG:(入力):(PREGNUM:LCOUNT),2}] %ENEMY_NAME(CFLAG:(入力):(PREGNUM:LCOUNT)),32,LEFT%", 1+LCOUNT
+				PRINTBUTTON @"[-]" , LOCAL:21 + 1
+				PRINTBUTTON @"[+]" , LOCAL:21 + 2
+			ELSEIF LCOUNT == 5
+				IF CFLAG:(入力):158 > 0 
+					PRINTBUTTON @"%"[設置する]",32,LEFT%", 61
+				ELSE
+					SETCOLOR 0x333333
+					PRINTBUTTON @"%"[設置する]",32,LEFT%", 61
+					RESETCOLOR
+				ENDIF
+				PRINTFORM %"",11%
+			ENDIF
+			PRINTFORM %"",0% 
+			IF LCOUNT < 5
+				PRINTFORM 出産迄：{CFLAG:(入力):(PREGNUM:LCOUNT+1),2} 
+				PRINTBUTTON @"[-]" , LOCAL:21 + 3
+				PRINTBUTTON @"[+]" , LOCAL:21 + 4
+				PRINTFORM %"",0% 
+				PRINTBUTTON @"[1]" , LOCAL:21 + 7
+				PRINTBUTTON @"[5]" , LOCAL:21 + 8
+				PRINTBUTTON @"[10]" , LOCAL:21 + 9
+				PRINTFORM %"",1% 
+				PRINTBUTTON @"[Check]" , LOCAL:21 + 10
+				PRINTBUTTON @"[産む]" , LOCAL:21 + 5
+				PRINTBUTTON @"[堕胎]" , LOCAL:21 + 6
+			ELSEIF CFLAG:(入力):158 > 0
+				PRINTFORM 爆発迄：{CFLAG:(入力):158,2} 
+				PRINTBUTTON @"[-]" , LOCAL:21 + 3
+				PRINTBUTTON @"[+]" , LOCAL:21 + 4
+				PRINTFORM %"",0% 
+				PRINTBUTTON @"[1]" , LOCAL:21 + 7
+				PRINTBUTTON @"[5]" , LOCAL:21 + 8
+				PRINTBUTTON @"[10]" , LOCAL:21 + 9
+				PRINTFORM %"",1% 
+				PRINTBUTTON @"[Check]" , LOCAL:21 + 10
+				PRINTBUTTON @"[起爆]" , LOCAL:21 + 5
+				PRINTBUTTON @"[除去]" , LOCAL:21 + 6
+			ENDIF
+			PRINTL
+		ENDIF
+		LOCAL:21 += 10
+		LOCAL:22 += 1
+	NEXT
+	PRINTL
+	PRINT 適用Ｖ種別：
+	SIF NINSIN_FLG != 0
+		SETCOLOR 0x444444
+	PRINTBUTTON "[寄生]", 96
+	RESETCOLOR
+	SIF NINSIN_FLG != 1
+		SETCOLOR 0x444444
+	PRINTBUTTON "[流産妊娠]", 97
+	RESETCOLOR
+	SIF NINSIN_FLG != 2
+		SETCOLOR 0x444444
+	PRINTBUTTON "[ｽﾃﾙｽ妊娠]", 98
+	RESETCOLOR
+	SIF NINSIN_FLG != 3
+		SETCOLOR 0x444444
+	PRINTBUTTON "[妊娠発覚]", 99
+	RESETCOLOR
+	IF CFLAG:(入力):23 == 0 && ALLSAMES(CFLAG:(入力):23,CFLAG:(入力):152,CFLAG:(入力):158,CFLAG:(入力):162,CFLAG:(入力):172,CFLAG:(入力):174)
+	ELSE
+		PRINTFORM %"",2%
+		PRINT 全期間操作 
+		PRINTBUTTON "[-]", 81
+		PRINTBUTTON "[+]", 82
+		PRINTFORM %"",0% 
+		PRINTBUTTON "[1]", 83
+		PRINTBUTTON "[5]", 84
+		PRINTBUTTON "[10]", 85
+	ENDIF
+	PRINTL
+	PRINTL
+	PRINTL [100] 全ての寄生可能箇所に触手を入れる(ランダム寄生)
+	IF CFLAG:(入力):23 == 0 && ALLSAMES(CFLAG:(入力):23,CFLAG:(入力):152,CFLAG:(入力):158,CFLAG:(入力):162,CFLAG:(入力):172,CFLAG:(入力):174)
+		SETCOLOR 0x444444
+		PRINTPLAINFORM [200] 全箇所の触手寄生進行チェック(爆弾も含む)
+		RESETCOLOR
+		PRINTL
+	ELSE
+		PRINTL [200] 全箇所の触手寄生進行チェック(爆弾も含む)
+	ENDIF
+	IF CFLAG:(入力):23 == 0 && ALLSAMES(CFLAG:(入力):23,CFLAG:(入力):152,CFLAG:(入力):158,CFLAG:(入力):162,CFLAG:(入力):172,CFLAG:(入力):174)
+		SETCOLOR 0x444444
+		PRINTPLAINFORM [300] 全箇所の触手を出産(爆弾もあれば起爆)
+		RESETCOLOR
+		PRINTL
+	ELSE
+		PRINTL [300] 全箇所の触手を出産(爆弾もあれば起爆)
+	ENDIF
+	IF CFLAG:(入力):23 == 0 && ALLSAMES(CFLAG:(入力):23,CFLAG:(入力):152,CFLAG:(入力):158,CFLAG:(入力):162,CFLAG:(入力):172,CFLAG:(入力):174)
+		SETCOLOR 0x444444
+		PRINTPLAINFORM [400] 全箇所の触手を堕ろす(爆弾も除去する)
+		RESETCOLOR
+		PRINTL
+	ELSE
+		PRINTFORML [400] 全箇所の触手を堕ろす(爆弾も除去する)
+	ENDIF
+	PRINTL
+	PRINT [   0] 戻る        
+	PRINT [1001] 前のキャラ  
+	PRINTL [1002] 次のキャラ  
+	$INPUT_LOOP2
+	INPUT
+
+	入力:1 = RESULT
+	SELECTCASE 入力:1
+		CASE 0
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO START
+		CASE 1 TO 5
+			IF PREGLIMIT_SW == 0 && (入力:1 >= 3 && 入力:1 <= 5)
+				IF 入力:1 == 3 && TALENT:(入力):162 == 0
+					CLEARLINE 1
+					REUSELASTLINE Ｂ寄生させるための素質がありません
+					GOTO INPUT_LOOP2
+				ELSEIF 入力:1 == 4 && TALENT:(入力):121 == 0
+					CLEARLINE 1
+					REUSELASTLINE Ｃ寄生させるための素質がありません
+					GOTO INPUT_LOOP2
+				ELSEIF 入力:1 == 5 && TALENT:(入力):121 == 0
+					CLEARLINE 1
+					REUSELASTLINE Ｃ妊娠させるための素質がありません
+					GOTO INPUT_LOOP2
+				ENDIF
+			ENDIF
+			;各所に触手を入れる
+			$START3
+			CLEARLINE LINECOUNT - DEL_LINE
+			DEL_LINE:1 = LINECOUNT
+			CALL DEBUG_OUTPUT_ENEMY_LIST(PAGE:1, LIST_NUM:1, 3)
+			LAST_PAGE:1 = RESULT:0
+			LAST_ENEMY_NUM = RESULT:1
+			
+			PRINTFORM %CALLNAME:(入力)% の
+			SELECTCASE 入力:1
+				CASE 1
+					PRINT Ｖに入れる
+				CASE 2
+					PRINT Ａに入れる
+				CASE 3
+					PRINT Ｂに入れる
+				CASE 4
+					PRINT Ｃに寄生させる
+				CASE 5
+					PRINT Ｃに妊娠させる
+			ENDSELECT
+			PRINTL 触手を選んでください。
+			IF 入力:1 == 1
+				PRINTL
+				PRINT 適用Ｖ種別：
+				SIF NINSIN_FLG != 0
+					SETCOLOR 0x444444
+				PRINTBUTTON "[寄生]", 1096
+				RESETCOLOR
+				SIF NINSIN_FLG != 1
+					SETCOLOR 0x444444
+				PRINTBUTTON "[流産妊娠]", 1097
+				RESETCOLOR
+				SIF NINSIN_FLG != 2
+					SETCOLOR 0x444444
+				PRINTBUTTON "[ｽﾃﾙｽ妊娠]", 1098
+				RESETCOLOR
+				SIF NINSIN_FLG != 3
+					SETCOLOR 0x444444
+				PRINTBUTTON "[妊娠発覚]", 1099
+				RESETCOLOR
+			ENDIF
+			PRINTL
+			PRINTL
+			PRINTL [ 0] キャンセル
+
+			$INPUT_LOOP3
+			INPUT
+
+			入力:2 = RESULT
+			IF 入力:2 == 0 && LOCAL:97 == 1
+				CLEARLINE LINECOUNT - DEL_LINE - (DEL_LINE:1 - DEL_LINE)
+				GOTO DIRECT_EDIT
+			ELSEIF 入力:2 == 0
+				CLEARLINE LINECOUNT - DEL_LINE - (DEL_LINE:1 - DEL_LINE)
+				GOTO START2
+			ELSEIF ENEMY_NAME(入力:2) != "バグ触手" && 入力:2 > 3 && 入力:2 < 99 && 入力:2 != 19 && 入力:2 != 20
+				SELECTCASE 入力:1
+					CASE 1
+						IF NINSIN_FLG > 0
+							;妊娠
+							PARA_CATE:0 = 1
+							PARA_CATE:1 = NINSIN_FLG
+						ELSE
+							;寄生
+							PARA_CATE:0 = 0
+							PARA_CATE:1 = 0
+						ENDIF
+						入力:1 = 22
+					CASE 2
+						PARA_CATE:0 = 2
+						PARA_CATE:1 = 0
+						入力:1 = 151
+					CASE 3
+						PARA_CATE:0 = 3
+						PARA_CATE:1 = 0
+						入力:1 = 161
+					CASE 4
+						PARA_CATE:0 = 5
+						PARA_CATE:1 = 0
+						入力:1 = 171
+					CASE 5
+						PARA_CATE:0 = 6
+						PARA_CATE:1 = 0
+						入力:1 = 173
+				ENDSELECT
+				;お客が居るときは種類を変えるだけ
+				IF CFLAG:(入力):(入力:1) > 0
+					CFLAG:(入力):(入力:1) = 入力:2
+				;居ない時は寄生処理
+				ELSE
+					CFLAG:(入力):(入力:1) = 入力:2
+					CFLAG:(入力):(入力:1+1) = 4 + RAND:5 + RAND:5 + RAND:3
+					SIF 入力:1 == 22
+						CFLAG:(入力):36 = PARA_CATE:1
+				ENDIF
+				CLEARLINE LINECOUNT - DEL_LINE - (DEL_LINE:1 - DEL_LINE)
+				PRINTFORM %CALLNAME:(入力)% の
+				SELECTCASE 入力:1
+					CASE 22
+						PRINTFORM 子宮
+					CASE 151
+						PRINTFORM 腸内
+					CASE 161
+						PRINTFORM 乳腺
+					CASE 171, 173
+						PRINTFORM 睾丸
+				ENDSELECT
+				PRINTFORML に %ENEMY_NAME(入力:2)% が棲み着きました
+				LOCAL:0 = 入力:2
+			ELSEIF 入力:2 == 777
+				;前ページへ
+				PAGE:1 -= 1
+				SIF PAGE:1 < 0
+					PAGE:1 = LAST_PAGE:1
+				CLEARLINE LINECOUNT - DEL_LINE - (DEL_LINE:1 - DEL_LINE)
+				GOTO START3
+			ELSEIF 入力:2 == 999
+				;次ページへ
+				PAGE:1 += 1
+				SIF PAGE:1 > LAST_PAGE:1
+					PAGE:1 = 0
+				CLEARLINE LINECOUNT - DEL_LINE - (DEL_LINE:1 - DEL_LINE)
+				GOTO START3
+			ELSEIF 入力:2 >= 1096 && 入力:2 <= 1099
+				;寄生妊娠の切り替え
+				SELECTCASE 入力:2
+					CASE 1096
+						SIF CFLAG:(入力):22 > 0
+							CFLAG:(入力):36 = 0
+						NINSIN_FLG = 0
+					CASE 1097
+						SIF CFLAG:(入力):22 > 0
+							CFLAG:(入力):36 = 1
+						NINSIN_FLG = 1
+					CASE 1098
+						SIF CFLAG:(入力):22 > 0
+							CFLAG:(入力):36 = 2
+						NINSIN_FLG = 2
+					CASE 1099
+						SIF CFLAG:(入力):22 > 0
+							CFLAG:(入力):36 = 3
+						NINSIN_FLG = 3
+				ENDSELECT
+				CLEARLINE LINECOUNT - DEL_LINE
+				GOTO START3
+			ENDIF
+			IF LOCAL:97 > 0
+				GOTO DIRECT_EDIT
+			ENDIF
+			GOTO START2
+		CASE 11 TO 20
+			;V
+			SELECTCASE 入力:1
+				CASE 11
+					CALL VARY_AVOID_NG_ENEMY(入力, 22, 0)
+				CASE 12
+					CALL VARY_AVOID_NG_ENEMY(入力, 22, 1)
+				CASE 13
+					CFLAG:(入力):23 --
+					SIF	CFLAG:(入力):23 < 1
+						CFLAG:(入力):23 = 1
+				CASE 14
+					CFLAG:(入力):23 ++
+					SIF	CFLAG:(入力):23 > 15
+						CFLAG:(入力):23 = 15
+				CASE 15, 20
+					;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(入力):4 != CFLAG:1:4
+						TEMP_PLACE:1 = CFLAG:(入力):4
+						CFLAG:(入力):4 = CFLAG:1:4
+					ENDIF
+					SIF 入力:1 == 15
+						CFLAG:(入力):23 = 0
+					IF CFLAG:(入力):36 == 0
+						CALL CHECK_PARASITE(入力)
+					ELSE
+						CALL CHECK_NINSHIN(入力)
+					ENDIF
+					;書き換えた現在位置を元に戻す
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+						CFLAG:(入力):4 = TEMP_PLACE:1
+						TEMP_PLACE:1 = 0
+					ENDIF
+				CASE 16
+					CFLAG:(入力):22 = 0
+					CFLAG:(入力):23 = 0
+					CFLAG:(入力):36 = 0
+				CASE 17
+					CFLAG:(入力):23 = 1
+				CASE 18
+					CFLAG:(入力):23 = 5
+				CASE 19
+					CFLAG:(入力):23 = 10
+			ENDSELECT
+			SIF 入力:1 != 15 && 入力:1 != 20
+				CLEARLINE LINECOUNT - DEL_LINE
+			SIF 入力:1 == 16
+				PRINTFORML %CALLNAME:(入力)% の子宮に棲む触手を堕ろしました
+			GOTO START2
+		CASE 21 TO 30
+			;A
+			SELECTCASE 入力:1
+				CASE 21
+					CALL VARY_AVOID_NG_ENEMY(入力, 151, 0)
+				CASE 22
+					CALL VARY_AVOID_NG_ENEMY(入力, 151, 1)
+				CASE 23
+					CFLAG:(入力):152 --
+					SIF	CFLAG:(入力):152 < 1
+						CFLAG:(入力):152 = 1
+				CASE 24
+					CFLAG:(入力):152 ++
+					SIF	CFLAG:(入力):152 > 15
+						CFLAG:(入力):152 = 15
+				CASE 25, 30
+					;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(入力):4 != CFLAG:1:4
+						TEMP_PLACE:1 = CFLAG:(入力):4
+						CFLAG:(入力):4 = CFLAG:1:4
+					ENDIF
+					SIF 入力:1 == 25
+						CFLAG:(入力):152 = 0
+					CALL CHECK_A_PARASITE(入力)
+					;書き換えた現在位置を元に戻す
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+						CFLAG:(入力):4 = TEMP_PLACE:1
+						TEMP_PLACE:1 = 0
+					ENDIF
+				CASE 26
+					CFLAG:(入力):151 = 0
+					CFLAG:(入力):152 = 0
+				CASE 27
+					CFLAG:(入力):152 = 1
+				CASE 28
+					CFLAG:(入力):152 = 5
+				CASE 29
+					CFLAG:(入力):152 = 10
+			ENDSELECT
+			SIF 入力:1 != 25 && 入力:1 != 30
+				CLEARLINE LINECOUNT - DEL_LINE
+			SIF 入力:1 == 26
+				PRINTFORML %CALLNAME:(入力)% の腸内に棲む触手を堕ろしました
+			GOTO START2
+		CASE 31 TO 40
+			;B
+			SELECTCASE 入力:1
+				CASE 31
+					CALL VARY_AVOID_NG_ENEMY(入力, 161, 0)
+				CASE 32
+					CALL VARY_AVOID_NG_ENEMY(入力, 161, 1)
+				CASE 33
+					CFLAG:(入力):162 --
+					SIF	CFLAG:(入力):162 < 1
+						CFLAG:(入力):162 = 1
+				CASE 34
+					CFLAG:(入力):162 ++
+					SIF	CFLAG:(入力):162 > 15
+						CFLAG:(入力):162 = 15
+				CASE 35, 40
+					;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(入力):4 != CFLAG:1:4
+						TEMP_PLACE:1 = CFLAG:(入力):4
+						CFLAG:(入力):4 = CFLAG:1:4
+					ENDIF
+					SIF 入力:1 == 35
+						CFLAG:(入力):162 = 0
+					CALL CHECK_B_PARASITE(入力)
+					;書き換えた現在位置を元に戻す
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+						CFLAG:(入力):4 = TEMP_PLACE:1
+						TEMP_PLACE:1 = 0
+					ENDIF
+				CASE 36
+					CFLAG:(入力):161 = 0
+					CFLAG:(入力):162 = 0
+				CASE 37
+					CFLAG:(入力):162 = 1
+				CASE 38
+					CFLAG:(入力):162 = 5
+				CASE 39
+					CFLAG:(入力):162 = 10
+			ENDSELECT
+			SIF 入力:1 != 35 && 入力:1 != 40
+				CLEARLINE LINECOUNT - DEL_LINE
+			SIF 入力:1 == 36
+				PRINTFORML %CALLNAME:(入力)% の乳腺に棲む触手を堕ろしました
+			GOTO START2
+		CASE 41 TO 50
+			;C寄
+			SELECTCASE 入力:1
+				CASE 41
+					CALL VARY_AVOID_NG_ENEMY(入力, 171, 0)
+				CASE 42
+					CALL VARY_AVOID_NG_ENEMY(入力, 171, 1)
+				CASE 43
+					CFLAG:(入力):172 --
+					SIF	CFLAG:(入力):172 < 1
+						CFLAG:(入力):172 = 1
+				CASE 44
+					CFLAG:(入力):172 ++
+					SIF	CFLAG:(入力):172 > 15
+						CFLAG:(入力):172 = 15
+				CASE 45, 50
+					;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(入力):4 != CFLAG:1:4
+						TEMP_PLACE:1 = CFLAG:(入力):4
+						CFLAG:(入力):4 = CFLAG:1:4
+					ENDIF
+					SIF 入力:1 == 45
+						CFLAG:(入力):172 = 0
+					CALL CHECK_C_PARASITE(入力)
+					;書き換えた現在位置を元に戻す
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+						CFLAG:(入力):4 = TEMP_PLACE:1
+						TEMP_PLACE:1 = 0
+					ENDIF
+				CASE 46
+					CFLAG:(入力):171 = 0
+					CFLAG:(入力):172 = 0
+				CASE 47
+					CFLAG:(入力):172 = 1
+				CASE 48
+					CFLAG:(入力):172 = 5
+				CASE 49
+					CFLAG:(入力):172 = 10
+			ENDSELECT
+			SIF 入力:1 != 45 && 入力:1 != 50
+				CLEARLINE LINECOUNT - DEL_LINE
+			SIF 入力:1 == 46
+				PRINTFORML %CALLNAME:(入力)% の睾丸に寄生していた触手を堕ろしました
+			GOTO START2
+		CASE 51 TO 60
+			;C妊
+			SELECTCASE 入力:1
+				CASE 51
+					CALL VARY_AVOID_NG_ENEMY(入力, 173, 0)
+				CASE 52
+					CALL VARY_AVOID_NG_ENEMY(入力, 173, 1)
+				CASE 53
+					CFLAG:(入力):174 --
+					SIF	CFLAG:(入力):174 < 1
+						CFLAG:(入力):174 = 1
+				CASE 54
+					CFLAG:(入力):174 ++
+					SIF	CFLAG:(入力):174 > 15
+						CFLAG:(入力):174 = 15
+				CASE 55, 60
+					;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(入力):4 != CFLAG:1:4
+						TEMP_PLACE:1 = CFLAG:(入力):4
+						CFLAG:(入力):4 = CFLAG:1:4
+					ENDIF
+					SIF 入力:1 == 55
+						CFLAG:(入力):174 = 0
+					CALL CHECK_C_NINSIN(入力)
+					;書き換えた現在位置を元に戻す
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+						CFLAG:(入力):4 = TEMP_PLACE:1
+						TEMP_PLACE:1 = 0
+					ENDIF
+				CASE 56
+					CFLAG:(入力):173 = 0
+					CFLAG:(入力):174 = 0
+				CASE 57
+					CFLAG:(入力):174 = 1
+				CASE 58
+					CFLAG:(入力):174 = 5
+				CASE 59
+					CFLAG:(入力):174 = 10
+			ENDSELECT
+			SIF 入力:1 != 55 && 入力:1 != 60
+				CLEARLINE LINECOUNT - DEL_LINE
+			SIF 入力:1 == 56
+				PRINTFORML %CALLNAME:(入力)% の睾丸に妊娠していた触手を堕ろしました
+			GOTO START2
+		CASE 61 TO 70
+			;媚薬爆弾
+			SELECTCASE 入力:1
+				CASE 61
+					CFLAG:(入力):158 = (8 + RAND:5)
+				CASE 63
+					CFLAG:(入力):158 --
+					SIF	CFLAG:(入力):158 < 1
+						CFLAG:(入力):158 = 1
+				CASE 64
+					CFLAG:(入力):158 ++
+					SIF	CFLAG:(入力):158 > 15
+						CFLAG:(入力):158 = 15
+				CASE 65, 70
+					;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(入力):4 != CFLAG:1:4
+						TEMP_PLACE:1 = CFLAG:(入力):4
+						CFLAG:(入力):4 = CFLAG:1:4
+					ENDIF
+					SIF 入力:1 == 65
+						CFLAG:(入力):158 = 1
+					CALL CHECK_PARASITE_BOMB(入力)
+					;書き換えた現在位置を元に戻す
+					IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+						CFLAG:(入力):4 = TEMP_PLACE:1
+						TEMP_PLACE:1 = 0
+					ENDIF
+				CASE 66
+					CFLAG:(入力):158 = 0
+				CASE 67
+					CFLAG:(入力):158 = 1
+				CASE 68
+					CFLAG:(入力):158 = 5
+				CASE 69
+					CFLAG:(入力):158 = 10
+			ENDSELECT
+			SIF 入力:1 != 65 && 入力:1 != 70
+				CLEARLINE LINECOUNT - DEL_LINE
+			SIF 入力:1 == 61
+				PRINTFORML %CALLNAME:(入力)% の体内に媚薬爆弾を設置しました
+			SIF 入力:1 == 66
+				PRINTFORML %CALLNAME:(入力)% の体内の媚薬爆弾を除去しました
+			GOTO START2
+		CASE 81 TO 89
+			;全寄生中の部位のタイムリミット操作
+			SELECTCASE 入力:1
+				CASE 81
+					FOR LCOUNT, 0, 6
+						IF CFLAG:(入力):(PREGNUM:LCOUNT) > 0
+							IF LCOUNT < 5
+								CFLAG:(入力):(PREGNUM:LCOUNT+1) --
+								SIF CFLAG:(入力):(PREGNUM:LCOUNT+1) < 1
+									CFLAG:(入力):(PREGNUM:LCOUNT+1) = 1
+							ELSEIF LCOUNT == 5
+								CFLAG:(入力):(PREGNUM:LCOUNT) --
+								SIF CFLAG:(入力):(PREGNUM:LCOUNT) < 1
+									CFLAG:(入力):(PREGNUM:LCOUNT) = 1
+							ENDIF
+						ENDIF
+					NEXT
+				CASE 82
+					FOR LCOUNT, 0, 6
+						IF CFLAG:(入力):(PREGNUM:LCOUNT) > 0
+							IF LCOUNT < 5
+								CFLAG:(入力):(PREGNUM:LCOUNT+1) ++
+								SIF CFLAG:(入力):(PREGNUM:LCOUNT+1) > 15
+									CFLAG:(入力):(PREGNUM:LCOUNT+1) = 15
+							ELSEIF LCOUNT == 5
+								CFLAG:(入力):(PREGNUM:LCOUNT) ++
+								SIF CFLAG:(入力):(PREGNUM:LCOUNT) > 15
+									CFLAG:(入力):(PREGNUM:LCOUNT) = 15
+							ENDIF
+						ENDIF
+					NEXT
+				CASE 83 TO 85
+					SELECTCASE 入力:1
+						CASE 83
+							LOCAL:0 = 1
+						CASE 84
+							LOCAL:0 = 5
+						CASE 85
+							LOCAL:0 = 10
+					ENDSELECT
+					FOR LCOUNT, 0, 6
+						IF CFLAG:(入力):(PREGNUM:LCOUNT) > 0
+							IF LCOUNT < 5
+								CFLAG:(入力):(PREGNUM:LCOUNT+1) = LOCAL:0
+							ELSEIF LCOUNT == 5
+								CFLAG:(入力):(PREGNUM:LCOUNT) = LOCAL:0
+							ENDIF
+						ENDIF
+					NEXT
+			ENDSELECT
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO START2
+		CASE 96 TO 99
+			;寄生妊娠の切り替え
+			SELECTCASE 入力:1
+				CASE 96
+					SIF CFLAG:(入力):22 > 0
+						CFLAG:(入力):36 = 0
+					NINSIN_FLG = 0
+				CASE 97
+					SIF CFLAG:(入力):22 > 0
+						CFLAG:(入力):36 = 1
+					NINSIN_FLG = 1
+				CASE 98
+					SIF CFLAG:(入力):22 > 0
+						CFLAG:(入力):36 = 2
+					NINSIN_FLG = 2
+				CASE 99
+					SIF CFLAG:(入力):22 > 0
+						CFLAG:(入力):36 = 3
+					NINSIN_FLG = 3
+			ENDSELECT
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO START2
+		CASE 100
+			;全箇所に妊娠or寄生(種類はランダム)
+			TFLAG:93 = 1
+			IF NINSIN_FLG > 0
+				PARA_CATE:0 = 1
+				PARA_CATE:1 = NINSIN_FLG
+			ELSE
+				PARA_CATE:0 = 0
+				PARA_CATE:1 = 0
+			ENDIF	
+			CALL PARASITE_TYPE(入力, PARA_CATE:0, 19, 8, PARA_CATE:1,, PREGLIMIT_SW)
+			CALL PARASITE_TYPE(入力, 2, 19, 8, 2,, PREGLIMIT_SW)
+			SIF !(TALENT:(入力):162 == 0 && PREGLIMIT_SW == 0)
+				CALL PARASITE_TYPE(入力, 3, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+			SIF !(TALENT:(入力):121 == 0 && PREGLIMIT_SW == 0)
+				CALL PARASITE_TYPE(入力, 5, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+			SIF !(TALENT:(入力):121 == 0 && PREGLIMIT_SW == 0)
+				CALL PARASITE_TYPE(入力, 6, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+			TFLAG:93 = 0
+			CLEARLINE LINECOUNT - DEL_LINE
+			PRINTFORML %CALLNAME:(入力)% の体内に触手が棲み着きました…
+			GOTO START2
+		CASE 200, 300
+			;全てチェックor全て出産
+			;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+			IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(入力):4 != CFLAG:1:4
+				TEMP_PLACE:1 = CFLAG:(入力):4
+				CFLAG:(入力):4 = CFLAG:1:4
+			ENDIF
+			IF 入力:1 == 300
+				CFLAG:(入力):23 = 0
+				CFLAG:(入力):152 = 0
+				CFLAG:(入力):162 = 0
+				CFLAG:(入力):172 = 0
+				CFLAG:(入力):174 = 0
+				SIF	CFLAG:(入力):158 > 0
+					CFLAG:(入力):158 = 1
+			ENDIF
+			IF CFLAG:(入力):36 == 0
+				CALL CHECK_PARASITE(入力)
+			ELSE
+				CALL CHECK_NINSHIN(入力)
+			ENDIF
+			CALL CHECK_A_PARASITE(入力)
+			CALL CHECK_B_PARASITE(入力)
+			CALL CHECK_C_PARASITE(入力)
+			CALL CHECK_C_NINSIN(入力)
+			CALL CHECK_PARASITE_BOMB(入力)
+			;書き換えた現在位置を元に戻す
+			IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+				CFLAG:(入力):4 = TEMP_PLACE:1
+				TEMP_PLACE:1 = 0
+			ENDIF
+			GOTO START2
+		CASE 400
+			;全て堕ろす
+			CFLAG:(入力):22 = 0
+			CFLAG:(入力):23 = 0
+			CFLAG:(入力):36 = 0
+			CFLAG:(入力):151 = 0
+			CFLAG:(入力):152 = 0
+			CFLAG:(入力):158 = 0
+			CFLAG:(入力):161 = 0
+			CFLAG:(入力):162 = 0
+			CFLAG:(入力):171 = 0
+			CFLAG:(入力):172 = 0
+			CFLAG:(入力):173 = 0
+			CFLAG:(入力):174 = 0
+			CLEARLINE LINECOUNT - DEL_LINE
+			PRINTFORML %CALLNAME:(入力)% の中に居る全ての触手を堕ろしました(媚薬爆弾も除去しました)
+			GOTO START2
+		CASE 1001
+			入力 -= 1
+			SIF 入力 < 1
+				入力 = CHARANUM-1
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO START2
+		CASE 1002
+			入力 += 1
+			SIF 入力 > CHARANUM-1
+				入力 = 1
+			CLEARLINE LINECOUNT - DEL_LINE
+			GOTO START2
+	ENDSELECT
+	GOTO START
+ELSEIF 入力 == 5000
+	TFLAG:93 = 1
+	FOR LCOUNT, 1, CHARANUM
+		CALL PARASITE_TYPE(LCOUNT, RAND:2, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+		CALL PARASITE_TYPE(LCOUNT, 2, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+		SIF !(TALENT:LCOUNT:162 == 0 && PREGLIMIT_SW == 0)
+			CALL PARASITE_TYPE(LCOUNT, 3, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+		SIF !(TALENT:LCOUNT:121 == 0 && PREGLIMIT_SW == 0)
+			CALL PARASITE_TYPE(LCOUNT, 5, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+		SIF !(TALENT:LCOUNT:121 == 0 && PREGLIMIT_SW == 0)
+			CALL PARASITE_TYPE(LCOUNT, 6, 19, 8+RAND:3, 2,, PREGLIMIT_SW)
+	NEXT
+	TFLAG:93 = 0
+	CLEARLINE LINECOUNT - DEL_LINE
+	PRINTL 全キャラの至る所に触手が棲み着きました
+	GOTO START
+ELSEIF 入力 >= 5001 && 入力 <= 5010
+	;全員の全箇所の寄生とタイムリミットをまとめて弄る
+	IF 入力 == 5001
+		LOCAL:99 = -1
+	ELSEIF 入力 == 5002
+		LOCAL:99 = 1
+	ELSEIF 入力 == 5003
+		LOCAL:99 = 1
+	ELSEIF 入力 == 5004
+		LOCAL:99 = 5
+	ELSEIF 入力 == 5005
+		LOCAL:99 = 10
+	ENDIF
+	;キャラ番号のループ
+	FOR LCOUNT:0, 1, CHARANUM
+		IF 入力 >= 5001 && 入力 <= 5005
+			;PREGNUMのループ
+			FOR LCOUNT:1, 0, 6
+				IF CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)) > 0
+					;寄生各種
+					IF LCOUNT:1 < 5
+						IF 入力 >= 5001 && 入力 <= 5002
+							CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)+1) += LOCAL:99
+						ELSEIF 入力 >= 5003 && 入力 <= 5005
+							CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)+1) = LOCAL:99
+						ENDIF
+					;媚薬爆弾
+					ELSEIF LCOUNT:1 == 5
+						IF 入力 >= 5001 && 入力 <= 5002
+							CFLAG:(LCOUNT:0):158 += LOCAL:99
+						ELSEIF 入力 >= 5003 && 入力 <= 5005
+							CFLAG:(LCOUNT:0):158 = LOCAL:99
+						ENDIF
+					ENDIF
+				ENDIF
+				;補正 寄生各種
+				IF LCOUNT:1 < 5 && CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)) > 0
+					SIF CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)+1) < 1
+						CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)+1) = 1
+					SIF CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)+1) > 15
+						CFLAG:(LCOUNT:0):(PREGNUM:(LCOUNT:1)+1) = 15
+				;補正 媚薬爆弾
+				ELSEIF LCOUNT:1 == 5 && CFLAG:(LCOUNT:0):158 > 0
+					SIF CFLAG:(LCOUNT:0):158 < 1
+						CFLAG:(LCOUNT:0):158 = 1
+					SIF CFLAG:(LCOUNT:0):158 > 15
+						CFLAG:(LCOUNT:0):158 = 15
+				ENDIF
+			NEXT
+		ELSEIF 入力 == 5006 || 入力 == 5010
+			;主人公と場所が違う場合は一時的に同じ部屋に居ることにする
+			IF GETBIT(TEMP_PLACE:0, 0) == 1 && CFLAG:(LCOUNT:0):4 != CFLAG:1:4
+				TEMP_PLACE:1 = CFLAG:(LCOUNT:0):4
+				CFLAG:(LCOUNT:0):4 = CFLAG:1:4
+			ENDIF
+			IF 入力 == 5006
+				CFLAG:(LCOUNT:0):23 = 0
+				CFLAG:(LCOUNT:0):152 = 0
+				CFLAG:(LCOUNT:0):162 = 0
+				CFLAG:(LCOUNT:0):172 = 0
+				CFLAG:(LCOUNT:0):174 = 0
+				SIF CFLAG:(LCOUNT:0):158 > 0
+					CFLAG:(LCOUNT:0):158 = 1
+			ENDIF
+			CALL CHECK_PARASITE(LCOUNT:0)
+			CALL CHECK_NINSHIN(LCOUNT:0)
+			CALL CHECK_A_PARASITE(LCOUNT:0)
+			CALL CHECK_B_PARASITE(LCOUNT:0)
+			CALL CHECK_C_PARASITE(LCOUNT:0)
+			CALL CHECK_C_NINSIN(LCOUNT:0)
+			CALL CHECK_PARASITE_BOMB(LCOUNT:0)
+			;書き換えた現在位置を元に戻す
+			IF GETBIT(TEMP_PLACE:0, 0) == 1 && TEMP_PLACE:1 > 0
+				CFLAG:(LCOUNT:0):4 = TEMP_PLACE:1
+				TEMP_PLACE:1 = 0
+			ENDIF
+		ELSEIF 入力 == 5007
+			CFLAG:(LCOUNT:0):22 = 0
+			CFLAG:(LCOUNT:0):23 = 0
+			CFLAG:(LCOUNT:0):36 = 0
+			CFLAG:(LCOUNT:0):151 = 0
+			CFLAG:(LCOUNT:0):152 = 0
+			CFLAG:(LCOUNT:0):161 = 0
+			CFLAG:(LCOUNT:0):162 = 0
+			CFLAG:(LCOUNT:0):171 = 0
+			CFLAG:(LCOUNT:0):172 = 0
+			CFLAG:(LCOUNT:0):173 = 0
+			CFLAG:(LCOUNT:0):174 = 0
+			CFLAG:(LCOUNT:0):158 = 0
+		ENDIF
+	NEXT
+	SIF 入力 != 5006 && 入力 != 5010
+		CLEARLINE LINECOUNT - DEL_LINE
+	SIF 入力 == 5007
+		PRINTL 全員の体内から触手が居なくなりました
+	GOTO START
+ELSEIF 入力 == 6000
+	;素質の有無に関わらずBとCを寄生可能にする
+	INVERTBIT PREGLIMIT_SW, 0
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START
+ELSEIF 入力 == 7000
+	;仲間以外のキャラの出産描写を見る(同じ部屋に居ることにする)
+	INVERTBIT TEMP_PLACE, 0
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START
+ELSEIF 入力 == 7777
+	;前ページへ
+	PAGE -= 1
+	SIF PAGE < 0
+		PAGE = MAX((CHARANUM-2) / LIST_NUM, 0)
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START
+ELSEIF 入力 == 9999
+	;次ページへ
+	PAGE += 1
+	SIF PAGE > (CHARANUM-2) / LIST_NUM
+		PAGE = 0
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START
+ELSEIF 入力 == 8888
+	;表示切り替え
+	ARTICLE += 1
+	SIF ARTICLE > 1
+		ARTICLE = 0
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START
+;キャラの各箇所をキャラ選択メニュー直接弄る
+ELSEIF 入力 >= POWER(10,1)*22 + POWER(10,5)*1 && 入力 <= POWER(10,5)*173 + POWER(10,5)*(CHARANUM-1)
+	;RESULTからキャラ番号とCFLAGを取り出す
+	LOCAL:98 = 入力 / POWER(10,5)
+	LOCAL:99 = 入力 % POWER(10,5) / 10
+	SELECTCASE LOCAL:99
+		CASE 22
+			入力:1 = 1
+		CASE 151
+			入力:1 = 2
+		CASE 161
+			入力:1 = 3
+		CASE 171
+			入力:1 = 4
+		CASE 173
+			入力:1 = 5
+		;上記以外は入力やり直し
+		CASEELSE
+			CLEARLINE 1
+			REUSELASTLINE 入力が不正です！
+			GOTO INPUT_LOOP
+	ENDSELECT
+	入力 = LOCAL:98
+	LOCAL:97 = 1
+	IF PREGLIMIT_SW == 0
+		IF LOCAL:99 == 161 && TALENT:(LOCAL:98):162 == 0
+			CLEARLINE 1
+			REUSELASTLINE Ｂ寄生させるための素質がありません
+			GOTO INPUT_LOOP
+		ELSEIF LOCAL:99 == 171 && TALENT:(LOCAL:98):121 == 0
+			CLEARLINE 1
+			REUSELASTLINE Ｃ寄生させるための素質がありません
+			GOTO INPUT_LOOP
+		ELSEIF LOCAL:99 == 173 && TALENT:(LOCAL:98):121 == 0
+			CLEARLINE 1
+			REUSELASTLINE Ｃ妊娠させるための素質がありません
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+	GOTO START3
+	$DIRECT_EDIT
+	LOCAL:97 = 0
+	GOTO START
+ENDIF
+
+
+;---------------------------------
+;妊娠と寄生の管理用関数
+;ボス系などの特殊な敵を孕ませないようにする
+;---------------------------------
+@VARY_AVOID_NG_ENEMY(ARG:0, ARG:1, ARG:2)
+#DIM LCOUNT
+;ARG:0	対象キャラ
+;ARG:1	CFLAG指定
+;ARG:2	0:減少, 1:増加
+IF ARG:2 == 0
+	CFLAG:(ARG:0):(ARG:1) --
+ELSE
+	CFLAG:(ARG:0):(ARG:1) ++
+ENDIF
+FOR LCOUNT, 0, 10
+	SELECTCASE CFLAG:(ARG:0):(ARG:1)
+		CASE 19, 20, 49, 67 TO 68, 71 TO 72, 91, 96
+			IF ARG:2 == 0
+				CFLAG:(ARG:0):(ARG:1) --
+			ELSE
+				CFLAG:(ARG:0):(ARG:1) ++
+			ENDIF
+		CASE IS < 0, IS > 100
+			BREAK
+		CASEELSE
+			BREAK
+	ENDSELECT
+NEXT
+IF	CFLAG:(ARG:0):(ARG:1) > 98
+	CFLAG:(ARG:0):(ARG:1) = 98
+ELSEIF CFLAG:(ARG:0):(ARG:1) < 4
+	CFLAG:(ARG:0):(ARG:1) = 4
+ENDIF
+RETURN
+;---------------------------------
+
+
+;=================================================
+;ターン送り　※バグにより封印中
+;=================================================
+@DEBUG_COMMAND_NEXT_TURN
+
+FLAG:98 = CFLAG:1:4
+FLAG:7 = 0
+
+CFLAG:1:11 = 2
+CFLAG:1:13 = 0
+CFLAG:1:14 = 0
+CALL MAIN_PHASE
+
+DRAWLINE
+FOR LOCAL:0, 1, CHARANUM
+	CALL SHOW_SIMPLE_STATUS(LOCAL:0)
+	PRINTFORML 現在地：{CFLAG:(LOCAL:0):4}  リタイア・一回休み：{CFLAG:(LOCAL:0):2}-{CFLAG:(LOCAL:0):3}
+	PRINTFORML 
+	IF LOCAL:0 == 5
+		DRAWLINE
+		;FORCEWAIT
+		WAIT
+	ENDIF
+NEXT
+DRAWLINE
+;FORCEWAIT
+WAIT
+
+;=================================================
+
+;---------------------------------
+;キャラを悪堕ちさせるコマンド
+;---------------------------------
+@DEBUG_COMMAND_AKUOCHI(キャラID)
+#DIM キャラID
+
+TALENT:(キャラID):73 = 101
+CALL CREATE_ENEMY(101, CFLAG:(キャラID):4, 0, キャラID)
+CFLAG:(キャラID):29 = 1
+CFLAG:(キャラID):48 = 0
+CFLAG:(キャラID):37 = 0
+BASE:(キャラID):3 = 0
+CFLAG:(キャラID):2 = 1
+FLAG:0 -= 1
+;敵に男なしなら悪堕ち男の娘は女の子に、リタイアから復活手段がまだないのでTSでいいか
+IF FLAG:512 == 2
+	TALENT:(キャラID):122 = 0
+ENDIF
+PRINTFORML [{キャラID,3}] %CALLNAME:キャラID,18,LEFT%は悪堕ちしました… (部屋 {CFLAG:(キャラID):4,2} に悪堕ちキャラが出現しました)
+
+;---------------------------------
+;ID毎のキャラ呼び出し用
+;---------------------------------
+@DRAW_CHARASUMMARY(ARG:0, ARG:1)
+;ARG:0	対象キャラ
+;ARG:1	○○の娘のDA:48から参照されているID
+PRINTFORM [{ARG:0, 3}] %CALLNAME:(ARG:0), 16, LEFT%　
+PRINTFORM 現在地：{CFLAG:(ARG:0):4,2}　
+PRINTFORM 好感度：{CFLAG:(ARG:0):5,5}　
+SIF CHECK_MEMBER_FROM_ID(ARG:0)
+	PRINT PTメンバ　
+SIF CFLAG:(ARG:0):504 >= 1
+	PRINT 拘束　
+IF CFLAG:(ARG:0):4 == 59
+	SETCOLOR 0xAA6666
+	PRINT 隔離部屋　
+	RESETCOLOR
+ENDIF
+SIF ARG:1 > 0
+	PRINTFORM 敵ID:{ARG:1,2}
+PRINTL
+
+;---------------------------------
+;ID毎のキャラ呼び出し用(呼ぶだけで選択不可)
+;---------------------------------
+@DRAW_CHARASUMMARY_NG(ARG:0, ARG:1)
+;ARG:0	対象キャラ
+;ARG:1	○○の娘のDA:48から参照されているID
+PRINTPLAINFORM [{ARG:0, 3}] %CALLNAME:(ARG:0), 16, LEFT%　
+PRINTFORM 現在地：{CFLAG:(ARG:0):4,2}　
+PRINTFORM 好感度：{CFLAG:(ARG:0):5,5}　
+SIF CHECK_MEMBER_FROM_ID(ARG:0)
+	PRINT PTメンバ　
+SIF CFLAG:(ARG:0):504 >= 1
+	PRINT 拘束　
+IF CFLAG:(ARG:0):4 == 59
+	PRINT 隔離部屋　
+ENDIF
+SIF ARG:1 > 0
+	PRINTFORM 敵ID:{ARG:1,2}
+PRINTL
+
+;---------------------------------
+
+
+;---------------------------------
+;ID毎のキャラ呼び出し用0(妊娠と寄生確認用)
+;---------------------------------
+@DRAW_CHARASUMMARY_PREGNANCY_0(キャラID, PREGLIMIT_SW)
+#DIM キャラID
+#DIM LCOUNT
+#DIM PREGNUM, 6
+#DIM TEMPFLG
+#DIM PREGLIMIT_SW
+#DIM LETTER_NUM = 11
+;PREGNUM	妊娠寄生チェック用のCFLAG番号　0:Ｖ(妊娠or寄生) 1:Ａ寄生 2:Ｂ寄生 3:Ｃ寄生 4:Ｃ妊娠 5:媚薬爆弾
+PREGNUM:0 = 22
+PREGNUM:1 = 151
+PREGNUM:2 = 161
+PREGNUM:3 = 171
+PREGNUM:4 = 173
+PREGNUM:5 = 158
+
+;PTメンバなら水
+SIF CHECK_MEMBER_FROM_ID(キャラID)
+	SETCOLOR 0x10CCFF
+PRINTFORM [{キャラID, 3}] %CALLNAME:(キャラID), 16, LEFT%　
+RESETCOLOR
+;フラグ情報を保存してから一時的に書き換え
+TEMPFLG = FLAG:513
+FLAG:513 = 1
+
+;ループ管理
+FOR LCOUNT, 0, 5
+	IF CFLAG:キャラID:(PREGNUM:LCOUNT)
+		IF CFLAG:キャラID:(PREGNUM:LCOUNT+1) >= 8
+		ELSEIF CFLAG:キャラID:(PREGNUM:LCOUNT+1) >= 4
+			SETCOLOR 0xBBBB10
+		ELSEIF CFLAG:キャラID:(PREGNUM:LCOUNT+1) >= 1
+			SETCOLOR 0xEE1010
+		ENDIF
+		LOCALS:0 = %ENEMY_NAME(CFLAG:キャラID:(PREGNUM:LCOUNT))%
+		IF LOCALS:0 == "ギガヴォジャノーイ"
+			LOCALS:0 = Ｇヴォジャノーイ
+		ELSEIF LOCALS:0 == "ドッペルゲンガー"
+			LOCALS:0 = ドッペルゲンガ
+		ENDIF
+		IF LOCALS:0 != ""
+			LOCALS:1 = 
+			LOCALS:1 += TOSTR(CFLAG:キャラID:(PREGNUM:LCOUNT+1))
+		ELSE
+			LOCALS:1 = 
+		ENDIF
+		STRLENS LOCALS:0
+		IF RESULT:0 > LETTER_NUM
+			TOHALF LOCALS:0
+			PRINTBUTTON @"[%RESULTS,LETTER_NUM,LEFT%%LOCALS:1,2,RIGHT%]", PREGNUM:LCOUNT*POWER(10,1) + キャラID*POWER(10,5)
+		ELSE
+			PRINTBUTTON @"[%LOCALS:0,LETTER_NUM,LEFT%%LOCALS:1,2,RIGHT%]", PREGNUM:LCOUNT*POWER(10,1) + キャラID*POWER(10,5)
+		ENDIF
+	ELSE
+		IF PREGNUM:LCOUNT == 161 && TALENT:キャラID:162 == 0 && CFLAG:キャラID:(PREGNUM:LCOUNT) == 0 && PREGLIMIT_SW == 0
+			SETCOLOR 0x222222
+			PRINTPLAINFORM [%"寄生不可",LETTER_NUM,LEFT%%"",2%]
+		ELSEIF PREGNUM:LCOUNT == 171 && TALENT:キャラID:121 == 0 && CFLAG:キャラID:(PREGNUM:LCOUNT) == 0 && PREGLIMIT_SW == 0
+			SETCOLOR 0x222222
+			PRINTPLAINFORM [%"寄生不可",LETTER_NUM,LEFT%%"",2%]
+		ELSEIF PREGNUM:LCOUNT == 173 && TALENT:キャラID:121 == 0 && CFLAG:キャラID:(PREGNUM:LCOUNT) == 0 && PREGLIMIT_SW == 0
+			SETCOLOR 0x222222
+			PRINTPLAINFORM [%"妊娠不可",LETTER_NUM,LEFT%%"",2%]
+		ELSE
+			SETCOLOR 0x222222
+			PRINTBUTTON @"[%"",LETTER_NUM,LEFT%%"",2%]", PREGNUM:LCOUNT*POWER(10,1) + キャラID*POWER(10,5)
+		ENDIF
+	ENDIF
+	RESETCOLOR
+NEXT
+
+;フラグ情報を元に戻す
+FLAG:513 = TEMPFLG
+
+
+;---------------------------------
+;敵の番号と名前をリスト出力する処理
+;RETURN 0:最後のページ数 1:最後の敵番号
+;---------------------------------
+@DEBUG_OUTPUT_ENEMY_LIST(PAGE, LIST_NUM, USAGE)
+#DIM LCOUNT,2
+#DIM PAGE
+#DIM LAST_ENEMY_NUM
+#DIM LAST_PAGE
+#DIM LIST_NUM
+#DIM USAGE
+;DIM
+;LCOUNT			ループ制御用
+;PAGE			ページ部分制御
+;LAST_ENEMY_NUM	最後の敵番号
+;LAST_PAGE		最後の敵番号があるページ数
+;LIST_NUM		1ページに表示する敵の種類
+;USAGE			リストの用途 0:敵生成 1:ペット追加 2:ペット追加(制限なし) 3:妊娠と寄生の管理
+;
+;LOCAL
+;0	リスト最終要素1 要素カウント
+;1	リスト最終要素2 連続か否かの判断
+;2	リスト最終要素3 カウントロック
+;LOCALS
+;0	敵の名前
+
+LOCAL:0 = 0
+LOCAL:2 = 0
+
+;最後の敵番号の確認用ループ
+FOR LCOUNT, 98, 500
+	;ロックがかかっていない場合
+	IF LOCAL:2 == 0
+		;敵データ呼び出し
+		TRYCCALLFORM SET_ENEMY_DATA_{LCOUNT}(FLAG:1)
+		CATCH
+		ENDCATCH
+		LOCALS:0 = %ENEMY_NAME(LCOUNT)%
+		;連続でバグ触手だったら1加算。そうでないなら0に戻す
+		IF ENEMY_NAME(LCOUNT) == "バグ触手" && LOCAL:1 + 1 == LCOUNT && LOCAL:2 == 0
+			LOCAL:0 += 1
+		ELSE
+			LOCAL:0 = 0
+		ENDIF
+		;10回バグ触手が続いたら以降リストするものなしと見なして、最後の要素だった番号を記録。以降はカウントしない
+		IF LOCAL:0 == 10
+			LAST_ENEMY_NUM = LCOUNT - 10
+			LOCAL:0 = 0
+			;ロック
+			LOCAL:2 = 1
+		ENDIF
+		LOCAL:1 = LCOUNT
+
+		;処理が終わったら後始末
+		FOR LCOUNT:1, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LCOUNT:1) = 0
+		NEXT
+	;ロックならループ終了
+	ELSEIF LOCAL:2 == 1
+		BREAK
+	ENDIF
+NEXT
+
+DRAWLINE
+;リスト部分を表示
+FOR LCOUNT, (1+LIST_NUM*PAGE), ((1+LIST_NUM)+LIST_NUM*PAGE)
+	;敵データ呼び出し
+	TRYCCALLFORM SET_ENEMY_DATA_{LCOUNT}(FLAG:1)
+	CATCH
+	ENDCATCH
+	LOCALS:0 = %ENEMY_NAME(LCOUNT)%
+	;敵生成用　表示条件を満たした敵は選択肢表示　満たしていない部分は？？？表示　ボス等の特定の敵は選択不能に
+	IF (USAGE == 0 || USAGE == 3) && (LCOUNT < 4 || LCOUNT == 19 || (LCOUNT >= 99 && LCOUNT <= 105))
+		SETCOLOR 0x555555
+		PRINTPLAINFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
+		RESETCOLOR
+	;ペット追加用1 通常ペットにできない種類は選択不能
+	ELSEIF USAGE == 1 && ENEMY_NAME(LCOUNT) != "バグ触手" && DA:(FLAG:1):88 == 1
+		SETCOLOR 0x555555
+		PRINTPLAINFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
+		RESETCOLOR
+	;ペット追加用2 バグ触手以外はどれでもペット可にする
+	ELSEIF USAGE == 2 && ENEMY_NAME(LCOUNT) != "バグ触手"
+		PRINTFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
+	ELSEIF ENEMY_NAME(LCOUNT) != "バグ触手"
+		PRINTFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
+	ELSE
+		;灰色表示
+		LOCALS:0 = ？？？
+
+		SETCOLOR 0x333333
+		PRINTPLAINFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
+		RESETCOLOR
+	ENDIF
+	
+	;処理が終わったら後始末
+	FOR LCOUNT:1, 0, VARSIZE("DA", 1)
+		DA:(FLAG:1):(LCOUNT:1) = 0
+	NEXT
+	
+	
+	;改行処理
+	IF LCOUNT % 2 == 0
+		PRINTL
+	ENDIF
+	;IF LCOUNT >= 98
+	;	;扱うのは98匹目まで
+	;	BREAK
+	;ENDIF
+NEXT
+
+;最後の要素があるページ数を出す
+LAST_PAGE = LAST_ENEMY_NUM / LIST_NUM
+
+DRAWLINE
+PRINTLC [777] 前のページ
+PRINTFORMLC           Page({PAGE + 1}/{LAST_PAGE + 1})
+PRINTC [999] 次のページ
+PRINTL 
+;最終ページと最後の敵番号を返す
+RETURN LAST_PAGE, LAST_ENEMY_NUM
+
+;---------------------------------

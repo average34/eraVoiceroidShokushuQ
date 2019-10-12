@@ -1,0 +1,254 @@
+﻿
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   42    コマンドID(脱出を試みる)
+; / ARG:2    0    丸呑みフラグ 0:拘束 1:丸呑み
+; / ARG:3    0    状況 0:脱出開始
+; / ARG:4         拘束している敵のID
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_42_0_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;絶頂時
+IF CFLAG:35 > 0
+
+	CALL ADD_RAND_MESSAGE, @"「は、はやく振りほどかないといけないのにぃ……」"
+	CALL ADD_RAND_MESSAGE, @"「ち、力がはいらないけどぉ……」"
+	CALL ADD_RAND_MESSAGE, @"「い、いつまでも好き勝手にぃ……ひぅ……」"
+	CALL ADD_RAND_MESSAGE, @"「い、いい加減に……ひぃ……」"
+	CALL ADD_RAND_MESSAGE, @"「イかされたせいで、うまく力がぁ……あッ」"
+	CALL ADD_RAND_MESSAGE, @"「お、落ち着いて抜け出さないとぉ……」"
+	CALL ADD_RAND_MESSAGE, @"「ぬ、抜けださないとぉ……」"
+
+	CALL ADD_RAND_MESSAGE, @"「き、気持ち良くなんかぁ……なってな……ひッ……」"
+	CALL ADD_RAND_MESSAGE, @"「こ、こんな事され続けたらぁ……」"
+	CALL ADD_RAND_MESSAGE, @"「は、離してぇ……はぅッ」"
+
+	CALL ADD_RAND_MESSAGE, @"「よ、よくも、こんな……あッ」"
+
+	CALL ADD_RAND_MESSAGE, @"「ま、まだ……する気……なんてぇ……」"
+
+	CALL ADD_RAND_MESSAGE, @"「も、もう……じゅうぶん……でッ…しょ……」"
+
+	RETURN 1
+ENDIF
+
+
+
+
+	CALL ADD_RAND_MESSAGE, @"「上手くいくといいけど！」"
+	CALL ADD_RAND_MESSAGE, @"「早く振りほどかないと！」"
+	CALL ADD_RAND_MESSAGE, @"「思い通りには……」"
+	CALL ADD_RAND_MESSAGE, @"「いつまでも好き勝手に……」"
+	CALL ADD_RAND_MESSAGE, @"「これ以上は……」"
+	CALL ADD_RAND_MESSAGE, @"「手遅れになる前に……」"
+	CALL ADD_RAND_MESSAGE, @"「浄化の力をかき集めるしか……」"
+
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「これ以上の辱めを受ける前に……」"
+			CALL ADD_RAND_MESSAGE, @"「自由に動く部分は……」"
+			CALL ADD_RAND_MESSAGE, @"「いつまでも通用するとは、思わないでよ……」"
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「こうなったら力づくで……」"
+		CASE 性格_がんばりや
+			CALL ADD_RAND_MESSAGE, @"「これ以上の辱めを受ける前に……」"
+			CALL ADD_RAND_MESSAGE, @"「まだ、まだ終わったわけじゃ……！」"
+			CALL ADD_RAND_MESSAGE, @"「いつまでも通用するとは、思わないでよ……」"
+			CALL ADD_RAND_MESSAGE, @"「このまま黙ってやられるわけには……」"
+			CALL ADD_RAND_MESSAGE, @"「たとえ悪あがきだとしても……！」"
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「こんなことくらいで！」"
+			CALL ADD_RAND_MESSAGE, @"「これ以上の辱めを受ける前に……」"
+			CALL ADD_RAND_MESSAGE, @"「いつまでも通用するとは、思わないでよ……」"
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「これ以上の辱めを受ける前に……」"
+			CALL ADD_RAND_MESSAGE, @"「落ち着いて。大切なのはここから……」"
+			CALL ADD_RAND_MESSAGE, @"「自由に動く部分は……」"
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「お願い、うまくいって！」"
+			CALL ADD_RAND_MESSAGE, @"「どうしよう、このままじゃ……」"
+			CALL ADD_RAND_MESSAGE, @"「このまま黙ってやられるわけには……」"
+
+
+		CASE 性格_セクシーギャル
+
+			CALL ADD_RAND_MESSAGE, @"「抱いてほしいなんて女の口から言えるわけないでしょ？」"
+			CALL ADD_RAND_MESSAGE, @"「女心は複雑なのよ？」"
+			CALL ADD_RAND_MESSAGE, @"「あなたが私を好きにできる器だとは、とても思えないわ」"
+			CALL ADD_RAND_MESSAGE, @"「残念だけど、これでチェックアウトよ！」"
+			CALL ADD_RAND_MESSAGE, @"「演技力には自信があるけど……」"
+			CALL ADD_RAND_MESSAGE, @"「稀にしか会えない方が燃えるんじゃないかしら？」"
+			CALL ADD_RAND_MESSAGE, @"「別れのフライトね。大人しく見送ってね」"
+
+		CASE 性格_しあわせもの
+			CALL ADD_RAND_MESSAGE, @"「こうなったら、一か八か！」"
+			CALL ADD_RAND_MESSAGE, @"「なんとかなるはず！」"
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「機会が大切……今ね！」"
+			CALL ADD_RAND_MESSAGE, @"「落ち着いて。大切なのはここから……」"
+			CALL ADD_RAND_MESSAGE, @"「自由に動く部分は……」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「こうなったら力づくで……」"
+			CALL ADD_RAND_MESSAGE, @"「この程度でいい気にならないでよ……」"
+		CASE 性格_のんきもの
+			CALL ADD_RAND_MESSAGE, @"「余計な手間を！」"
+			CALL ADD_RAND_MESSAGE, @"「こうなったら、一か八か！」"
+			CALL ADD_RAND_MESSAGE, @"「ちょ、ちょっと離しなさいっての！」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「お願い、うまくいって！」"
+			CALL ADD_RAND_MESSAGE, @"「どうしよう、このままじゃ……」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「お願い、うまくいって！」"
+			CALL ADD_RAND_MESSAGE, @"「どうしよう、このままじゃ……」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「この程度でいい気にならないでよ……」"
+			CALL ADD_RAND_MESSAGE, @"「こうなったら力づくで……」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   42    コマンドID(脱出を試みる)
+; / ARG:2    0    丸呑みフラグ 0:拘束 1:丸呑み
+; / ARG:3    4    状況 0:脱出失敗
+; / ARG:4         拘束している敵のID
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_42_0_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL ADD_RAND_MESSAGE, @"「体の自由が……」"
+	CALL ADD_RAND_MESSAGE, @"「このままじゃいけない……けど……」"
+	CALL ADD_RAND_MESSAGE, @"「く、苦しい……」"
+	CALL ADD_RAND_MESSAGE, @"「き、キツイ……」"
+	CALL ADD_RAND_MESSAGE, @"「い、今ので抜けられないなんて……」"
+	CALL ADD_RAND_MESSAGE, @"「そんな、どうして！？」"
+	CALL ADD_RAND_MESSAGE, @"「ま、不味いわ……」"
+	CALL ADD_RAND_MESSAGE, @"「読まれていたの！？」"
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+
+	CASE 性格_おせっかい
+
+		CALL ADD_RAND_MESSAGE, @"「敵も必死ね……」"
+		CALL ADD_RAND_MESSAGE, @"「簡単にいくわけはないか……」"
+		CALL ADD_RAND_MESSAGE, @"「獲物を簡単に手放すわけはないか……」"
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「ふ、ふりほどけないー！」"
+		CALL ADD_RAND_MESSAGE, @"「自信あったんだけどなぁ」"
+		CALL ADD_RAND_MESSAGE, @"「ええっ……　そんなことって……」"
+
+	CASE 性格_がんばりや
+
+		CALL ADD_RAND_MESSAGE, @"「失敗は成功のもとなんだから……！」"
+		CALL ADD_RAND_MESSAGE, @"「っ……　この失敗を次に活かさないと……」"
+
+
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「次の手を考えないと……」"
+		CALL ADD_RAND_MESSAGE, @"「この方法じゃ駄目ね」"
+		CALL ADD_RAND_MESSAGE, @"「予想以上の対応力ね……」"
+
+		CALL ADD_RAND_MESSAGE, @"「敵も必死ね……」"
+		CALL ADD_RAND_MESSAGE, @"「簡単にいくわけはないか……」"
+		CALL ADD_RAND_MESSAGE, @"「獲物を簡単に手放すわけはないか……」"
+
+
+	CASE 性格_くろうにん
+		CALL ADD_RAND_MESSAGE, @"「やっぱりダメだった……」"
+
+
+	CASE 性格_セクシーギャル
+
+		CALL ADD_RAND_MESSAGE, @"「……無理にこんなことしても、別れがつらくなるだけよ？」"
+		CALL ADD_RAND_MESSAGE, @"「あら、延長戦をご希望なのね……　でもちょっと無神経すぎるかしら」"
+		CALL ADD_RAND_MESSAGE, @"「……興奮させすぎたかしら」"
+		CALL ADD_RAND_MESSAGE, @"「……一度別れて、お互いの気持ちを整理したほうがいいと思うけど」"
+		CALL ADD_RAND_MESSAGE, @"「……私の演技を見抜くなんて」"
+		CALL ADD_RAND_MESSAGE, @"「つまり、まだ贈り物があるのね。　……泣き虫になりそうだわ」"
+		CALL ADD_RAND_MESSAGE, @"「……愛し合う時間は永遠ってわけね」"
+		CALL ADD_RAND_MESSAGE, @"「……恋の舞台は練習通りになんていかないものよね」"
+		CALL ADD_RAND_MESSAGE, @"「……すねた顔がもっと見たいの？」"
+
+
+	CASE 性格_ぬけめがない
+
+		CALL ADD_RAND_MESSAGE, @"「予想以上の対応力ね……」"
+		CALL ADD_RAND_MESSAGE, @"「次の手を考えないと……」"
+		CALL ADD_RAND_MESSAGE, @"「この方法じゃ駄目ね」"
+
+		CALL ADD_RAND_MESSAGE, @"「敵も必死ね……」"
+		CALL ADD_RAND_MESSAGE, @"「簡単にいくわけはないか……」"
+		CALL ADD_RAND_MESSAGE, @"「獲物を簡単に手放すわけはないか……」"
+
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「くぅ、手強い」"
+		CALL ADD_RAND_MESSAGE, @"「ええぃ、やってくれる！」"
+
+	CASE 性格_ひっこみじあん
+
+		CALL ADD_RAND_MESSAGE, @"「やっぱりダメだった……」"
+		CALL ADD_RAND_MESSAGE, @"「ううっ、離してよぉ……」"
+
+	CASE 性格_やさしいひと
+
+		CALL ADD_RAND_MESSAGE, @"「やっぱりダメだった……」"
+		CALL ADD_RAND_MESSAGE, @"「ううっ、離してよぉ……」"
+	ENDSELECT
+RETURN 1
+
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   42    コマンドID(脱出を試みる)
+; / ARG:2    1    丸呑みフラグ 0:拘束 1:丸呑み
+; / ARG:3    0    状況 0:脱出開始
+; / ARG:4         拘束している敵のID
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_42_1_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL ADD_RAND_MESSAGE, @"「ここから早く出ないと！」"
+	CALL ADD_RAND_MESSAGE, @"「ちょ、ちょっとここから出してよぉ」"
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「いやー、これはちょっと洒落になってないんじゃ……」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「このままじゃ……　食べられちゃう……」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   42    コマンドID(脱出を試みる)
+; / ARG:2    1    丸呑みフラグ 0:拘束 1:丸呑み
+; / ARG:3    4    状況 0:脱出失敗
+; / ARG:4         拘束している敵のID
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_42_1_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL ADD_RAND_MESSAGE, @"「どうやったら出られるのよ……」"
+	CALL ADD_RAND_MESSAGE, @"「このままじゃいけない……けど……」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「出せー！　ここから出せー！」"
+		CALL ADD_RAND_MESSAGE, @"「ど、どうやって出るんだよこれー！」"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「この方法じゃ駄目ね」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「本当に食べられちゃうよぉ……」"
+		CALL ADD_RAND_MESSAGE, @"「やっぱりダメだった……」"
+		CALL ADD_RAND_MESSAGE, @"「ううっ、出してよぉ……」"
+	ENDSELECT
+RETURN 1
+
+
+
+

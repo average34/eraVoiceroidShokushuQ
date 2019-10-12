@@ -1,0 +1,152 @@
+﻿;体調・状態一覧表示
+@SHOW_STATUS_WIKI
+;LOCAL
+;0	ループ用
+;1	改行用
+;2	直前に選択した番号
+;3	体調・状態詳細を見た
+;10	行削除用カウント1(計算用)
+;11	行削除用カウント2(計算用)
+;12	行削除用カウント3(項目の改行数)
+;13	行削除用カウント4(計算用)
+;14	行削除用カウント5(計算用)
+;15	行削除用カウント6(詳細の改行数)
+
+	$START
+	REDRAW 0
+	LOCAL:10 = LINECOUNT
+
+	LOCAL:1 = 0
+	DRAWLINE
+	PRINTFORML どの項目を見ますか？
+	
+	FOR LOCAL:0 , 1 , 32
+		PRINTFORM [{LOCAL:0,2}] %STATUS_NAME(LOCAL:0),14,LEFT%
+		LOCAL:1 += 1
+		;4つ表示するごとに改行
+		SIF (LOCAL:1 % 4) == 0 && LOCAL:1 > 0
+			PRINTL
+	NEXT
+	PRINTL
+	PRINTL
+	PRINTL [ 0] キャンセル
+
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL:11 = LINECOUNT
+	;項目表示の改行数を記録
+	LOCAL:12 = LOCAL:11 - LOCAL:10
+
+	IF RESULT == 0
+		REDRAW 1
+		LOCAL:3 = 0
+		RETURN
+	ELSEIF RESULT > 0 && RESULT <= 32
+		;行削除(初回)
+		IF LOCAL:3 == 0
+			CLEARLINE LOCAL:12
+		;行削除(2回目～)
+		ELSEIF LOCAL:3 == 1 && LOCAL:2 != RESULT
+			CLEARLINE LOCAL:12 + LOCAL:15 + 3
+		;連打のログ流れ防止
+		ELSEIF LOCAL:2 == RESULT
+			CLEARLINE 1
+			GOTO INPUT_LOOP
+		ENDIF
+		LOCAL:2 = RESULT
+		DRAWLINE
+		SETCOLOR 0x60C0FF
+		PRINTFORML >> %STATUS_NAME(RESULT)%
+		RESETCOLOR
+		LOCAL:13 = LINECOUNT
+		CALL PRINT_MESSAGE(-1, 515, RESULT, CALLNAME:1, "")
+		LOCAL:14 = LINECOUNT
+		;説明表示の改行数を記録
+		LOCAL:15 = LOCAL:14 - LOCAL:13
+		PRINTFORML 
+		LOCAL:3 = 1
+		GOTO START
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 入力が不正です！
+		GOTO INPUT_LOOP
+	ENDIF
+
+
+
+@STATUS_NAME(ARG:0)
+#FUNCTIONS
+
+SELECTCASE ARG:0
+	CASE 1
+		RETURNF "HP"
+	CASE 2
+		RETURNF "MP"
+	CASE 3
+		RETURNF "EP"
+	CASE 4
+		RETURNF "CP"
+	CASE 5
+		RETURNF "TP"
+	CASE 6
+		RETURNF "汚れ"
+	CASE 7
+		RETURNF "NP"
+	CASE 8
+		RETURNF "探索技能"
+	CASE 9
+		RETURNF "気配察知"
+	CASE 10
+		RETURNF "話術"
+	CASE 11
+		RETURNF "通常戦闘"
+	CASE 12
+		RETURNF "道具戦闘"
+	CASE 13
+		RETURNF "危機回避"
+	CASE 14
+		RETURNF "Ａ感覚"
+	CASE 15
+		RETURNF "Ｂ感覚"
+	CASE 16
+		RETURNF "Ｃ感覚"
+	CASE 17
+		RETURNF "Ｖ感覚"
+	CASE 18
+		RETURNF "自慰中毒"
+	CASE 19
+		RETURNF "触手中毒"
+	CASE 20
+		RETURNF "射精中毒"
+	CASE 21
+		RETURNF "レズ中毒"
+	CASE 22
+		RETURNF "精液中毒"
+	CASE 23
+		RETURNF "Ｍ感覚"
+	CASE 24
+		RETURNF "噴乳中毒"
+	CASE 25
+		RETURNF "戦闘素質"
+	CASE 26
+		RETURNF "速度"
+	CASE 27
+		RETURNF "お漏らし経験"
+	CASE 28
+		RETURNF "出産回数"
+	CASE 29
+		RETURNF "産卵回数"
+	CASE 30
+		RETURNF "キス経験"
+	CASE 31
+		RETURNF "眠気"
+	CASE 32
+		RETURNF "汚染度"
+	CASE 33
+		RETURNF "浄化力"
+	CASEELSE
+		RETURNF "存在しない体調・状態"
+ENDSELECT
+

@@ -1,0 +1,103 @@
+﻿パッチの変更場所
+行数は面倒なのでかきません。探すヒントになる部分入れておきます。
+
+ファイル名
+説明
+
+の順
+
+
+-酒
+Item			
+csvファイル　万能薬→薬酒にして酒イベントを発生させやすく
+
+SHOW_HEAL_ITEM_LIST	
+文章呼び出し4箇所ほど（3種の酒アイテムそれぞれとその統括）	;偽酒
+
+SYSTEM_MESSAGE		
+文章呼び出しの中間	CASE502
+
+SYSTEM_MESSAGE_502_偽酒	
+イベント文章　口上作るのに条件分けするならSHOW_HEAL_ITEM_LISTの統括部分に変数使って分けるのがいいか（←完了）
+
+-酒（NPC）
+TALK			
+酒系アイテムを渡した際の効果に文章呼び出し用のIF		;アイテム譲渡
+喪失に気付けと一緒に渡せる	RESULT == 3
+上の選択肢の表示		[3]　
+NPCに日本酒を渡せるMPも軽減	MAXBASE:(ARG:0):1 / 2
+
+-乳搾り
+TALK
+通常・喪失・ドッペルそれぞれに
+選択肢表示3箇所			喪失は [6]		他は [13]
+結果処理3箇所			喪失は RESULT == 6	他は RESULT == 13
+
+SYSTEM_MESSAGE
+
+
+-縮乳薬
+Item			
+csvファイル	番号69
+
+SHOW_HEAL_ITEM_LIST
+アイテム表示	(RESULT >= 1) && (RESULT <= 17)
+状態説明	[17]	
+効果		CASE 17
+
+CHECK_RANDOM_EVENT
+縮乳薬発見イベント発生	LOCAL:7 = 69
+
+CHECK_FIXED_EVENT_169_縮乳薬入手
+縮乳薬発見イベント
+
+SYSTEM_MESSAGE_36_アイテム使用
+縮乳薬の文章		小さいファイルなので見ればわかると思います
+
+-ふたなり系
+
+SET_CONFIGURE
+コンフィグにふたなりONOFF（2箇所）	FLAG:520 = 1
+
+CHECK_FIXED_EVENT_134_白濁泉
+CHECK_FIXED_EVENT_148_淫蟲C
+CHECK_FIXED_EVENT_152_C寄生淫蟲
+CHECK_FIXED_EVENT_160_自販機
+
+コンフィグでふたなり化をONOFF	FLAG:520 == 1
+
+SHOW_HEAL_ITEM_LIST
+鎮静剤・興奮剤でふたなり鎮静・強化	;ふたなり外し	;ふたなり強化
+
+SYSTEM_MESSAGE_36_アイテム使用
+鎮静剤・興奮剤の文章微変更		小さいファイルなので見ればわかると思います
+
+
+-粘液攻撃
+FIX_ENEMY_ACTION_950
+FIX_ENEMY_ACTION_951
+FIX_ENEMY_ACTION_952
+FIX_ENEMY_ACTION_953
+
+攻撃の処理
+
+ENEMY_5_リビングバイン
+ENEMY_6_スカーレットバイン
+ENEMY_11_イソツビ
+ENEMY_12_アクティニア
+
+粘液攻撃を追加された敵			LOCAL:2 = 950 or 951 , 952 , 953 他確率も変更 
+
+SYSTEM_MESSAGE_7_敵特殊攻撃発動時
+SYSTEM_MESSAGE_17_敵特殊攻撃命中時
+SYSTEM_MESSAGE_27_敵特殊攻撃回避時
+
+粘液攻撃の文章				小さいファイルなので見ればわかると思います
+
+-使い魔触手化
+SLEEP
+使い魔に見張りを頼める+使い魔が触手で襲ってくる処理
+
+SYSTEM_MESSAGE
+メッセージ表示
+

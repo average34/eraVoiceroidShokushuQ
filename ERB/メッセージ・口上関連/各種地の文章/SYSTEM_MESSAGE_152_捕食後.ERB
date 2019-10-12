@@ -1,0 +1,28 @@
+﻿;捕食された後の描写
+@SYSTEM_MESSAGE_152(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+IF TARGET == 1
+	;主人公本人＝主観描写
+	SELECTCASE ARG:1
+		CASE 0
+			PRINTFORMW (SYSTEM_MESSAGE_152)敵のIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+		CASEELSE
+			IF ARG:2
+				PRINTFORMW %ARGS:0%は%ARGS:1%に完全に呑みこまれてしまった…
+			ELSE
+				PRINTFORMW %ARGS:0%は%ARGS:1%に全てを吸い尽くされてしまった…
+			ENDIF
+	ENDSELECT
+ELSE
+	;主人公以外＝客観描写
+	SELECTCASE ARG:1
+		CASE 0
+			PRINTFORMW (SYSTEM_MESSAGE_152)敵のIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+		CASEELSE
+			IF ARG:2
+				PRINTFORMW %ARGS:0%は%ARGS:1%に完全に呑みこまれてしまった…
+			ELSE
+				PRINTFORMW %ARGS:0%は%ARGS:1%に全てを吸い尽くされてしまった…
+			ENDIF
+	ENDSELECT
+ENDIF

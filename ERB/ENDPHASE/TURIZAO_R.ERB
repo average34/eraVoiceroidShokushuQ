@@ -1,0 +1,192 @@
+﻿;つりざおR喚く版
+;元パッチだと一人旅などが難しくなっていたため改修。
+;主に追加判定のところを弄っています。
+
+@TURIZAO_R
+;LOCAL
+;1	追加されるキャラのNO
+;2	追加されるキャラのID
+
+
+#DIM LCOUNT
+VARSET LOCAL
+
+;--------
+;ランダムでの追加　ここから
+;---------
+;コンフィグ弾き
+SIF !GETBIT(FLAG:532, 1)
+	GOTO RETIRE_COUNT
+
+;追加される確率は最大で10%　ただし生存人数が多いほど逆補正）
+IF FLAG:47 / 2 - FLAG:0 < RAND:200
+	FLAG:47 = MIN(FLAG:47 + 1, 20)
+	GOTO RETIRE_COUNT
+ENDIF
+
+GOTO ADD_NEWCHARA
+;--------
+;ランダムでの追加　ここまで
+;---------
+
+
+
+;--------
+;リタイア人数基準での追加　ここから
+;---------
+$RETIRE_COUNT
+;コンフィグ弾き
+SIF !GETBIT(FLAG:532, 2)
+	RETURN
+
+;リタイア人数をカウント
+;元パッチだとCHECK_FINEを用いていたが、その場合戦意喪失などになっただけで判定されてしまうため、リタイアフラグを使用
+FOR LCOUNT, 1, CHARANUM
+	SIF CFLAG:LCOUNT:2
+		LOCAL ++
+NEXT
+;リタイア者が居ない、またはリタイア者の人数が追加人数以下である場合は無視
+SIF LOCAL == 0 ||  LOCAL <= FLAG:46
+	RETURN
+	
+
+
+;最大で20%の確率で追加される
+IF FLAG:47 < RAND:100
+	;ランダム追加しない場合のみ、経過時刻追加
+	SIF !GETBIT(FLAG:532, 1)
+		FLAG:47 = MIN(FLAG:47 + 1, 20)
+	RETURN
+ENDIF
+;--------
+;リタイア人数基準での追加　ここまで
+;---------
+
+
+;以下、追加処理
+;LOCALの番号直した以外はあまり変化なし
+$ADD_NEWCHARA
+FLAG:46 ++
+FLAG:47 = 0
+
+;抽選
+;SELECT_RANDOM_CHARAはEXIST_CHARAを経由し、既に居るキャラをはじくので、キャラが存在するかの処理はオミット
+;元パッチだとADDCHARAしてからCALLNAMEを利用して既に居るか判断し、居たらDELCHARAしていた
+;そのやり方だと、「追加されたキャラをＰＴに加え、かつ愛称変更を行っていた場合」に不具合が出る
+;EXIST_CHARAがあったので、発動しない爆弾で済んでいたが……
+LOCAL:1 = SELECT_RANDOM_CHARA()
+ADDCHARA LOCAL:1
+
+FLAG:0 += 1
+LOCAL:2 = CHARANUM - 1
+
+	IF RELATION:(LOCAL:2):(NO:1) >= 1
+		IF RELATION:(LOCAL:2):(NO:1) < 100
+			PRINTFORML %CSVNAME(LOCAL:2, 0),14,LEFT%は寂しそうな仕草で、%CALLNAME:1,14,LEFT%を探している……
+		ELSE
+			PRINTFORML %CSVNAME(LOCAL:2, 0),14,LEFT%は%CALLNAME:1, 14,LEFT%を心配して探している……
+		ENDIF
+	ENDIF
+
+;●口上選択？
+	TRYCCALLFORM KOJO_{LOCAL:20}_0(0, 0)
+		;口上本体がある場合、決定
+		CALL KOJO_SELECT
+		CALL INIT_KOJO_DEFAULT_COLOR
+		CALL PRINT_MESSAGE(LOCAL:2, 159, 0, CALLNAME:(LOCAL:2), "")
+	CATCH
+
+	ENDCATCH
+	
+
+	CALL CHARA_INITIALIZE_SINGLE(LOCAL:2)
+	
+	;共通素質
+	;爆乳化
+	IF FLAG:545 == 1 && (FLAG:521 == 0 || FLAG:521 == 3)
+		IF FLAG:521 == 0 || (FLAG:521 == 3 && TALENT:(LOCAL:2):122 == 0)
+			TALENT:(LOCAL:2):107 = 0
+			TALENT:(LOCAL:2):108 = 1
+			TALENT:(LOCAL:2):109 = 0
+			TALENT:(LOCAL:2):110 = 0
+		ENDIF
+	ELSEIF FLAG:545 == 2 && (FLAG:521 == 0 || FLAG:521 == 3)
+		IF FLAG:521 == 0 || (FLAG:521 == 3 && TALENT:(LOCAL:2):122 == 0)
+			TALENT:(LOCAL:2):107 = 0
+			TALENT:(LOCAL:2):108 = 1
+			TALENT:(LOCAL:2):109 = 0
+			TALENT:(LOCAL:2):110 = 0
+			TALENT:(LOCAL:2):130 = 1
+		ENDIF
+	ENDIF
+
+	;ふたなり化
+	IF FLAG:546 == 1 && FLAG:520 > 0
+	IF FLAG:520 == 1
+		CFLAG:(LOCAL:2):42 += 100
+	ELSEIF FLAG:520 == 2
+		CFLAG:1:42 += 100
+	ELSEIF FLAG:520 == 3
+		CFLAG:(LOCAL:2):42 += 100
+	ENDIF
+	ELSEIF FLAG:546 == 2 && FLAG:520 > 0
+	IF FLAG:520 == 1
+		TALENT:(LOCAL:2):121 = 1
+	ELSEIF FLAG:520 == 2
+		TALENT:1:121 = 1
+	ELSEIF FLAG:520 == 3
+			TALENT:(LOCAL:2):121 = 1
+	ENDIF
+	ENDIF
+	;全部位過敏
+	IF FLAG:547 == 1
+		TALENT:(LOCAL:2):101 = 3
+		TALENT:(LOCAL:2):102 = 3
+		TALENT:(LOCAL:2):103 = 3
+		TALENT:(LOCAL:2):104 = 3
+		TALENT:(LOCAL:2):105 = 3
+		TALENT:(LOCAL:2):106 = 3
+	ENDIF
+	;小柄体型
+	IF FLAG:548 == 1
+		TALENT:(LOCAL:2):100 = 1
+	ENDIF
+	;ふたなり細分化素質
+	IF FLAG:520 > 0 && FLAG:997 != 81
+		IF !FLAG:590
+			CALL FUTANARI_CUSTOMIZE_GET_2(LOCAL:2)
+		ELSEIF FLAG:590 == 2
+			CALL FUTANARI_RANDOM_GET_2(LOCAL:2)
+		ENDIF
+	ENDIF
+	;陥没乳首入手処理
+	IF FLAG:531 == 1
+		TALENT:(LOCAL:2):159 = 1
+	ELSEIF FLAG:531 == 2
+		SIF RAND:2 == 0
+			TALENT:(LOCAL:2):159 = 1
+	ENDIF
+	;排卵日処理
+	CFLAG:(LOCAL:2):150 = RAND:30
+	[SKIPSTART]
+	;ふたなりカスタマイズ
+	IF FLAG:590 == 2
+		CALL FUTANARI_RANDOM_GET_2(LOCAL:0)
+	ELSEIF FLAG:590 == 1
+		
+	ELSE
+		CALL FUTANARI_CUSTOMIZE_GET_2(LOCAL:0)
+	ENDIF
+	[SKIPEND]
+
+
+
+	;ABL87と88に謎の代入が行われていたので削除
+
+
+		CFLAG:(LOCAL:2):701 = 0
+		CALL GET_KOJO_DEFAULT_COLOR(LOCAL:2)
+		CFLAG:(LOCAL:2):700 = RESULT
+	SETCOLOR 0x33FFFF
+	PRINTFORMW %CSVNAME(NO:(LOCAL:2), 0),14,LEFT%が迷宮に迷い込んだようだ！
+	RESETCOLOR

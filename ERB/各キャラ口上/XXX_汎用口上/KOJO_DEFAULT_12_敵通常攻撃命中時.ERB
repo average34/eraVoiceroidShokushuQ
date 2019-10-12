@@ -1,0 +1,208 @@
+﻿
+; ////////////////////////////
+; / ARG:0   12    敵の通常攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2         HPダメージ
+; / ARG:3         CPダメージ
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+	
+	; 喪失中
+	IF CFLAG:29
+		CALL ADD_RAND_MESSAGE, @"「うあぁ……」"
+		CALL ADD_RAND_MESSAGE, @"「あぐ……っ……」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「くそぉ……、嬲るか……」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「いたいよぉ……　いたいよぉ……」"
+			CALL ADD_RAND_MESSAGE, @"「ごめんなさい……　ごめんなさい……　ごめんなさい……」"
+			CALL ADD_RAND_MESSAGE, @"「ひっ……！？　やめて……っ！？」"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	CALL ADD_RAND_MESSAGE, @"「もう、痛いわね！」"
+	CALL ADD_RAND_MESSAGE, @"「くあ……っ！」"
+	CALL ADD_RAND_MESSAGE, @"「くぅ……っ！」"
+		
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「いたた……　痣にでもなったらどうするの」"
+	CASE 性格_ぬけめがない
+		CALL ADD_RAND_MESSAGE, @"「もう……　痣になったらどうするのよ」"
+		CALL ADD_RAND_MESSAGE, @"「いったぁ……　手加減してよ」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「うう……　痛いよぉ……」"
+		CALL ADD_RAND_MESSAGE, @"「ぶ、ぶたないでぇ……」"
+		CALL ADD_RAND_MESSAGE, @"「あうっ……！」"
+	ENDSELECT
+	
+	; 選択コマンドによる追加口上
+	SELECTCASE CFLAG:50
+	; 防御
+	CASE 1
+		CALL ADD_RAND_MESSAGE, @"「身を守ってて正解だった」"
+		CALL ADD_RAND_MESSAGE, @"「よし、持ちこたえた！」"
+	ENDSELECT
+	
+	;通常攻撃の属性による追加口上
+	SELECTCASE TFLAG:89
+	; 鞭
+	CASE 0
+		CALL ADD_RAND_MESSAGE, @"「んぎっ……」"
+		CALL ADD_RAND_MESSAGE, @"「ひぃっ……」"
+	;吸収
+	CASE 1
+		CALL ADD_RAND_MESSAGE, @"「す、吸われて……」"
+		CALL ADD_RAND_MESSAGE, @"「う、うそ……何してるのよ……」"
+	;毒
+	CASE 2
+		CALL ADD_RAND_MESSAGE, @"「何……毒……？」"
+		CALL ADD_RAND_MESSAGE, @"「まさか……毒……！？」"
+	;関節技
+	CASE 3
+		CALL ADD_RAND_MESSAGE, @"「ちょ、お、折れる折れる」"
+		CALL ADD_RAND_MESSAGE, @"「い、痛い！　痛いってばぁ！」"
+	;首絞め
+	CASE 4
+		CALL ADD_RAND_MESSAGE, @"「い……き……が」"
+		CALL ADD_RAND_MESSAGE, @"「く、くるし……」"
+	;電撃
+	CASE 5
+		CALL ADD_RAND_MESSAGE, @"「びりって……」"
+		CALL ADD_RAND_MESSAGE, @"「痕残ったりしないよね……？」"
+	;打撃
+	CASE 6
+		CALL ADD_RAND_MESSAGE, @"「かはっ……」"
+		CALL ADD_RAND_MESSAGE, @"「いっ……たぁ……」"
+	;斬撃
+	CASE 7
+		CALL ADD_RAND_MESSAGE, @"「うう……血が……」"
+		CALL ADD_RAND_MESSAGE, @"「ちょっと……さすがにこれは……」"
+	;疲労
+	CASE 8
+		CALL ADD_RAND_MESSAGE, @"「気持ち悪い……」"
+		CALL ADD_RAND_MESSAGE, @"「うぅ……」"
+	ENDSELECT
+	
+	
+	
+	; ダメージ計算後 残HPによる追加口上
+	SELECTCASE (BASE:0 - ARG:2)
+	; 75%以上
+	CASE IS >= (MAXBASE:0 / 4 * 3)
+		CALL ADD_RAND_MESSAGE, @"「そんな攻撃効かないわ」"
+		CALL ADD_RAND_MESSAGE, @"「あれっ？　そんなものなの？」"
+	
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「何その攻撃？　やる気あるの？」"
+			CALL ADD_RAND_MESSAGE, @"「蚊に刺された程度のダメージって奴ね」"
+		ENDSELECT
+		
+	; 50%以上
+	CASE IS >= (MAXBASE:0 / 4 * 2)
+	
+	; 25%以上
+	CASE IS >= (MAXBASE:0 / 4 * 1)
+		
+	; それ未満
+	CASEELSE
+		CALL ADD_RAND_MESSAGE, @"「く……　あっ……」"
+		CALL ADD_RAND_MESSAGE, @"「か……はっ……」"
+		CALL ADD_RAND_MESSAGE, @"「もう……　やめて……」"
+	ENDSELECT
+RETURN 1
+
+
+
+
+;以下特定の攻撃に対応する専用口上
+
+
+
+
+; ////////////////////////////
+; / ARG:0   12    敵の通常攻撃(命中)
+; / ARG:1   40    コマンドID 幻惑の光
+; / ARG:2         HPダメージ
+; / ARG:3         CPダメージ
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_12_40(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+
+	
+	; important属性付与
+	CALL SET_IMPORTANT_FLAG
+	
+	CALL ADD_RAND_MESSAGE, @"（何故――！？　目が離せない――！？）"
+	CALL ADD_RAND_MESSAGE, @"（見ちゃ駄目……！　目を閉じないと……！）"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   12    敵の通常攻撃(命中)
+; / ARG:1  167    コマンドID ゲルシューター 通常
+; / ARG:2         HPダメージ
+; / ARG:3         CPダメージ
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_12_167(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+
+
+
+	
+	; 喪失中
+	SIF CFLAG:29
+		RETURN 0
+	
+	CALL ADD_RAND_MESSAGE, @"「弾が多すぎる！　避けきれない！」"
+	CALL ADD_RAND_MESSAGE, @"「ちょ、ちょ、ちょ……っとこれは無理ぃー！」"
+RETURN 1
+
+
+
+
+
+
+

@@ -1,0 +1,211 @@
+﻿;フェイズごとのスライム服暴走チェック
+;ARG:0	対象キャラ
+@CHECK_SLIMESUIT(ARG:0)
+;LOCAL
+;0	LOOP
+;1	メッセージ表示フラグ
+;2	対象部位
+;3	ダメージ乱数
+;4	ふたなり確認
+;5	条件分岐用
+;6	便意ありA攻撃分岐
+;7	NFダメージ計算
+
+SIF CFLAG:(ARG:0):48 == 0
+	RETURN
+;リタイアしてるなら黙る
+SIF CFLAG:(ARG:0):2
+	RETURN
+
+
+;主人公と場所が違うかチェック
+IF CFLAG:(ARG:0):4 != CFLAG:1:4
+	LOCAL:1 = 0
+ELSE
+	LOCAL:1 = 1
+ENDIF
+
+IF LOCAL:1
+	LOCAL:5 = RAND:15
+	;便意ありの場合はA攻撃の確率が上がる
+	SIF RAND:15 < CFLAG:(ARG:0):49
+		LOCAL:5 = 0
+
+	SELECTCASE LOCAL:5
+		CASE 0
+		;A攻撃
+			CALL PRINT_MESSAGE(ARG:0, 444, 0, CALLNAME:(ARG:0), "")
+			;便意ありの場合は腸内洗浄
+			IF CFLAG:(ARG:0):49
+				LOCAL:6 = CFLAG:(ARG:0):49
+				CALL PRINT_MESSAGE(ARG:0, 444, 12, CALLNAME:(ARG:0), "")
+				CFLAG:(ARG:0):49 = 0
+			ENDIF
+			FOR LOCAL:0, 0, 7
+				TFLAG:63 = 0
+				LOCAL:3 = RAND:3
+				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+			NEXT
+			
+			;便意が3以上の場合はスライムおもらし
+			IF LOCAL:6 >= 3
+				CALL PRINT_MESSAGE(ARG:0, 444, 13, CALLNAME:(ARG:0), "")
+				;排泄物はスライムに消化されてるのでお漏らししても汚くないよ　ビューティー的な何かだよ　下着も脱がないよ
+				IF ABL:(ARG:0):6 > 1 && EXP:(ARG:0):21 >= 10
+					CALL PRINT_MESSAGE(ARG:0, 444, 14, CALLNAME:(ARG:0), "")
+					TFLAG:63 = 0
+					LOCAL:6 = CALC_SENSITIVITY((ARG:0), TFLAG:63, 40)
+					CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:6 * 2 * (TALENT:(ARG:0):101 + 2) * (TALENT:(ARG:0):75 + 1) * EXP:(ARG:0):21, 5)
+				ENDIF
+				EXP:(ARG:0):21 += 1
+			ENDIF
+			LOCAL:6 = 0
+
+		CASE 1
+		;B攻撃
+			CALL PRINT_MESSAGE(ARG:0, 444, 1, CALLNAME:(ARG:0), "")
+			FOR LOCAL:0, 0, 7
+				TFLAG:63 = 1
+				LOCAL:3 = RAND:3
+				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+			NEXT
+			LOCAL:2 = 0
+
+		CASE 2
+		;乳腺開発　開発済みならダメージ 確率でNF＋ダメージ
+			;NF判定
+			TRYCALL CALC_NIPPLE_FUCK(ARG:0, 2)
+			IF RESULT:0 == 1
+				CALL PRINT_MESSAGE(ARG:0, 444, 15, CALLNAME:(ARG:0), "")
+				CALL PRINT_MESSAGE(ARG:0, 444, 16, CALLNAME:(ARG:0), "")
+				;素質LVまたは乳姦回数によるダメージ補正
+				LOCAL:7 = 30 + CALC_NF_DAMAGE(ARG:0, 3)
+				FOR LOCAL:0, 0, 7
+					TFLAG:63 = 1
+					LOCAL:3 = RAND:3
+					CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:7*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+				NEXT
+				CALL PRINT_MESSAGE(ARG:0, 444, 17, CALLNAME:(ARG:0), "")
+				CALL MILK_COME(ARG:0, 1, 1)
+				CALL MILK_ADJUST(ARG:0, 0)
+				CALL PRINT_MESSAGE(ARG:0, 444, 3, CALLNAME:(ARG:0), "")
+				CALL PRINT_MESSAGE(ARG:0, 444, 18, CALLNAME:(ARG:0), "")
+				TFLAG:63 = 1
+				LOCAL:3 = RAND:3
+				CALL DAMAGE_COMMON(ARG:0, 2, LOCAL:7*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2)* 3 / 2, 5)
+				
+				CALL PRINT_MESSAGE(ARG:0, 444, 19, CALLNAME:(ARG:0), "")
+				SIF TALENT:(ARG:0):130 >= 3
+					CFLAG:(ARG:0):506 += TALENT:(ARG:0):130 * 5
+				CFLAG:(ARG:0):512 += 1
+				TRYCALL CHECK_NIPPLE_EXTEND(ARG:0)
+			;通常
+			ELSE
+				CALL PRINT_MESSAGE(ARG:0, 444, 2, CALLNAME:(ARG:0), "")
+				IF TALENT:(ARG:0):130 < 3
+					CALL MILK_COME(ARG:0, 1, 1)
+					CALL PRINT_MESSAGE(ARG:0, 444, 3, CALLNAME:(ARG:0), "")
+					CALL MILK_ADJUST(ARG:0, 0)
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 444, 4, CALLNAME:(ARG:0), "")
+					FOR LOCAL:0, 0, 7
+						TFLAG:63 = 1
+						LOCAL:3 = RAND:3
+						CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+					NEXT
+				ENDIF
+			ENDIF
+		
+		CASE 3
+		;胸肥大化　超乳以上ならダメージ
+			CALL PRINT_MESSAGE(ARG:0, 444, 5, CALLNAME:(ARG:0), "")
+			IF FLAG:521 == 1
+				;豊乳化OFF設定なら無効
+			ELSEIF FLAG:521 == 3 && TALENT:(ARG:0):122 > 0
+				;男の娘のみOFF設定かつ男の娘なら無効
+			ELSE
+				;絶壁
+				IF GET_BUST(ARG:0) <= -2
+					SIF LOCAL:1
+						CALL PRINT_MESSAGE(ARG:0, 427, 5, CALLNAME:(ARG:0), "")
+					CALL ADD_BUST(ARG:0,1,2)
+				;貧乳
+				ELSEIF GET_BUST(ARG:0) == -1
+					SIF LOCAL:1
+						CALL PRINT_MESSAGE(ARG:0, 427, 0, CALLNAME:(ARG:0), "")
+					CALL ADD_BUST(ARG:0,1,2)
+				;普通
+				ELSEIF GET_BUST(ARG:0) == 0
+					SIF LOCAL:1
+						CALL PRINT_MESSAGE(ARG:0, 427, 1, CALLNAME:(ARG:0), "")
+					CALL ADD_BUST(ARG:0,1,2)
+				;巨乳
+				ELSEIF GET_BUST(ARG:0) == 1
+					SIF LOCAL:1
+						CALL PRINT_MESSAGE(ARG:0, 427, 2, CALLNAME:(ARG:0), "")
+					CALL ADD_BUST(ARG:0,1,2)
+				;爆乳(追加)
+				ELSEIF GET_BUST(ARG:0) == 2
+					SIF LOCAL:1
+						CALL PRINT_MESSAGE(ARG:0, 427, 3, CALLNAME:(ARG:0), "")
+					;爆乳でも育つ
+					CALL ADD_BUST(ARG:0,1,2)
+;				;超乳(追加)
+;				ELSEIF GET_BUST(ARG:0) == 3
+;					SIF LOCAL:1
+;						CALL PRINT_MESSAGE(ARG:0, 427, 6, CALLNAME:(ARG:0), "")
+;					;超乳が8より小さければ育つ
+;					SIF TALENT:(ARG:0):158 < 8
+;						CALL ADD_BUST(ARG:0,1,2)
+;					FOR LOCAL:0, 0, 7
+;						TFLAG:63 = 1
+;						LOCAL:3 = RAND:3
+;						CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+;					NEXT
+				ELSE
+					CALL PRINT_MESSAGE(ARG:0, 444, 6, CALLNAME:(ARG:0), "")
+					FOR LOCAL:0, 0, 7
+						TFLAG:63 = 1
+						LOCAL:3 = RAND:3
+						CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+					NEXT
+				ENDIF
+			ENDIF
+		
+		CASE 4
+		;精力増強
+			CALL PRINT_MESSAGE(ARG:0, 444, 7, CALLNAME:(ARG:0), "")
+			IF CFLAG:(ARG:0):42 > 0
+				CALL PRINT_MESSAGE(ARG:0, 444, 8, CALLNAME:(ARG:0), "")
+				CFLAG:(ARG:0):42 += RAND:6 + 5
+			ELSE
+				CALL PRINT_MESSAGE(ARG:0, 444, 9, CALLNAME:(ARG:0), "")
+				FOR LOCAL:0, 0, 7
+					TFLAG:63 = 2
+					LOCAL:3 = RAND:3
+					CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
+				NEXT
+				IF CFLAG:(ARG:0):171 == 0 && FLAG:518 == 1 && GET_PENIS(ARG:0) > 1
+					IF RAND:3 == 0
+						TFLAG:93 = 1
+						CALL PARASITE_TYPE(ARG:0, 5, 4, 10+RAND:8, 0)
+						CALL PRINT_MESSAGE(ARG:0, 444, 20, CALLNAME:(ARG:0), "")
+						TFLAG:93 = 0
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 5
+		;尿道攻め
+			CALL PRINT_MESSAGE(ARG:0, 444, 10, CALLNAME:(ARG:0), "")
+			SIF FLAG:522 > 0
+				BASE:(ARG:0):6 += RAND:6 + 5
+		CASEELSE
+		;スライムによる服侵蝕
+			CALL PRINT_MESSAGE(ARG:0, 444, 11, CALLNAME:(ARG:0), "")
+			BASE:(ARG:0):5 += RAND:60 + 50
+			
+	ENDSELECT
+	PRINTL
+ENDIF
+
+

@@ -1,0 +1,404 @@
+﻿
+; ==========================================================
+;  東方触手宮 汎用口上呼び出し関数
+; ==========================================================
+
+; ////////////////////////////
+; ■ 概要
+;
+;	・この関数は下記の形をした汎用口上の呼び出しを行います
+;	  @KOJO_DEFAULT_{ARG:0}_{ARG:1}_{ARG:2}_{ARG:3}_{ARG:4}_{ARG:5}_{ARG:6} ※ARG:1～ARG:6は省略可
+
+;	・引数は常に(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)となります
+;
+;	・呼び出し先関数で余計なIFやSELECTCASE、多重ネストを防ぎ
+;	  エラーの発生を防ぐ事を目的としています
+
+;	・汎用口上を利用するかどうかの判定にFLAG:595を利用しています
+;	  ※判定自体はKOJO_DEFAULT.ERBではなくPRINT_MESSAGE.ERBで行っています
+;	    (判定の有無にかかわらず、キャラ別口上ファイルからKOJO_DEFAULT.ERBを直接呼び出す可能性がある為)
+
+
+; ////////////////////////////
+; ■ 呼び出し先関数仕様
+;
+;	◆ 引数完全一致呼び出し ----------------------------------------------------
+;		@KOJO_DEFAULT_160        MAP表示時
+;		@KOJO_DEFAULT_1_10       通常攻撃 弱攻撃
+;		@KOJO_DEFAULT_14_314     敵の性攻撃(命中) ガーディアンV
+	
+;		@KOJO_DEFAULT の後にアンダーバーを付け、ARG:0から順番に並べます
+;		上記例の様にARG:1以降の指定を行う事で、分岐判定を行わずに直接目的の口上を書くことが出来ます
+
+;	◆ 不定数を利用した呼び出し ------------------------------------------------
+;		@KOJO_DEFAULT_136_X_X_0  処女喪失 喪失
+;		@KOJO_DEFAULT_136_X_X_1  処女喪失 喪失の直前
+;		@KOJO_DEFAULT_136_X_X_2  処女喪失 喪失回避
+
+;		不定数としてXを指定することで、特定箇所の引数をマスクする事が出来ます
+;		この場合ARG:1に喪失原因、ARG:2にMPダメージが格納されていますが
+;		不要な引数情報を無視して関数呼び出しが行われます
+
+;		@KOJO_DEFAULT_136_0_X_0  処女喪失 敵の攻撃で喪失
+;		上記記述のようにARG:2のみを無視、さらに詳細な呼び出しを行う事も出来ます
+
+;	◆ 不定数利用呼び出しでの注意点 --------------------------------------------
+;		@KOJO_DEFAULT_160_X
+;		ARG:1を不定数としていますが、ARG:0のみを参照した場合と結果が同じになります
+;		不定数を関数の最後に付けることは出来ません
+;		不定数を最後に付けた関数を記述しても呼び出しは行われないので注意してください
+
+;		@KOJO_DEFAULT_X_1
+;		触手宮の状況判断は全てARG:0を基準に行われる為、ARG:0を不定数にする事は出来ません
+
+
+; ////////////////////////////
+; ■ 口上記述の方法
+;	当汎用口上では、呼び出し可能な関数(上記記載)を全て呼び出すという形を取ります
+;	汎用口上を書く場合は全てADD_RAND_MESSAGE関数を使用してください
+;	この関数経由で記述された口上は一度ストックされ、そのうち一つがランダムで表示されます
+
+
+; ////////////////////////////
+; ■ 汎用口上用エスケープ文字一覧
+;	\d システム色表示 \d以降の文章、又は\d～\dで囲われた範囲がシステム標準色で表示されます
+;	\n 改行           元々FORM展開で利用出来る物と同一
+;	♥ ハートマーク   自動で色が付きます
+
+; ////////////////////////////
+; ■ important属性
+;
+;	◆ important属性とは -------------------------------------------------------
+;		当汎用口上は呼び出し可能な口上を全て呼び出し、内一つをランダムで選出します
+;		ただしこの方法では困るケースが存在します
+
+;		『ゲーム中で一度しか表示タイミングがなく、確実に特定口上を表示したい』
+;		『汎用文では特定の表現に対応出来ない為、確実に専用口上を利用したい』
+
+;		上記のような問題を解決する為、口上関数にimportant属性を付与します
+;		important属性を付与すると、その関数内部で定義した口上のみが呼び出されるようになります
+
+;	◆ important属性付与方法 ---------------------------------------------------
+;		口上関数の先頭部で下記のようにSET_IMPORTANT_FLAG関数を呼び出してください
+
+;		CALL SET_IMPORTANT_FLAG
+
+;		SET_IMPORTANT_FLAGを呼び出した時点で
+;		『登録済み口上を削除・以降の口上関数呼び出しを停止』という処理が行われます
+;		もし口上登録後、同関数内でimportant属性を付与した場合
+;		登録済みの口上も削除される事になります
+
+;		SET_IMPORTANT_FLAG(0)の様に、0を引数に与えると一度付与したimportant属性を解除出来ます
+
+;	◆ important属性に関しての注意点 -------------------------------------------
+;		複数関数でimportant属性を定義した場合
+;		一番最初に読み込まれた属性定義済の関数以外は読み込まれなくなります
+
+
+; ////////////////////////////
+; ■ コーディング規約・注意点
+;	・呼び出し先関数内でARGを利用した分岐を基本的には行わないでください
+;	  分岐が必要な場合は冗長的な記述になっても関数を分けてください
+;	  エラー防止並びに、どこに何が書いてあるか判らなくなるのを防ぐ為です
+;	  ※ARGで口上の成否を判定している場合、例外的にARGでの分岐が必要になります
+;	    (アイテムIDやキャラID、コマンドID等での判定に例外が用いられている可能性があります)
+
+;	・出来るだけコメントは書きましょう
+;	  読めば判るような内容でも、将来的にわざわざ変数表を確認する羽目になるかもしれません
+
+
+; ======================================
+; 汎用口上エントリポイント
+@KOJO_DEFAULT(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 初期化
+	CALL KOJO_DEFAULT_INIT()
+
+	; 対応口上の読み込み
+	CALL KOJO_DEFAULT_DEPLOY(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 表示処理を行う
+	CALL KOJO_DEFAULT_PRINT()
+
+; 汎用口上は常に RETURN 1
+RETURN 1
+
+
+; ======================================
+; 汎用口上 初期化処理
+@KOJO_DEFAULT_INIT()
+	VARSET KOJO_DEFAULT_STOCK_MESSAGE_ARRAY
+	VARSET KOJO_DEFAULT_STOCK_MESSAGE_COUNT
+	VARSET KOJO_DEFAULT_IMPORTANT_FLAG
+RETURN 1
+
+
+; ======================================
+; 汎用口上 important属性設定
+@SET_IMPORTANT_FLAG(IMPORTANT_FLAG = 1)
+#DIM IMPORTANT_FLAG
+	CALL KOJO_DEFAULT_INIT()
+	KOJO_DEFAULT_IMPORTANT_FLAG = IMPORTANT_FLAG
+RETURN 1
+
+
+; ======================================
+; 汎用口上 口上読み込み
+@KOJO_DEFAULT_DEPLOY(R_ARG:0, R_ARG:1, R_ARGS:0, R_ARGS:1, R_ARG:2, R_ARG:3, R_ARG:4, R_ARG:5, R_ARG:6, RANK = 0, BASE_STR = "")
+#DIM  DYNAMIC R_ARG, 7
+#DIMS DYNAMIC R_ARGS, 2
+#DIM  DYNAMIC RANK
+#DIMS DYNAMIC BASE_STR
+
+	; 階層が配列の範囲外、基礎文字列が不適格
+	SIF RANK > 6 || BASE_STR == "X_"
+		RETURN 0
+		
+	; 対応口上の呼び出し(important属性未適用時のみ)
+	SIF !KOJO_DEFAULT_IMPORTANT_FLAG
+		TRYCALLFORM KOJO_DEFAULT_%BASE_STR%%TOSTR(R_ARG:RANK)%(R_ARG:0, R_ARG:1, R_ARGS:0, R_ARGS:1, R_ARG:2, R_ARG:3, R_ARG:4, R_ARG:5, R_ARG:6)
+	
+	;下の階層へ
+	CALLFORM KOJO_DEFAULT_DEPLOY(R_ARG:0, R_ARG:1, R_ARGS:0, R_ARGS:1, R_ARG:2, R_ARG:3, R_ARG:4, R_ARG:5, R_ARG:6, RANK + 1, @"%BASE_STR%%TOSTR(R_ARG:RANK)%_")
+	CALLFORM KOJO_DEFAULT_DEPLOY(R_ARG:0, R_ARG:1, R_ARGS:0, R_ARGS:1, R_ARG:2, R_ARG:3, R_ARG:4, R_ARG:5, R_ARG:6, RANK + 1, @"%BASE_STR%X_")
+RETURN 1
+
+
+; ======================================
+; 汎用口上 口上追加
+; 汎用口上では凝った表示は無いという判断のもと簡略化しています
+; 全て口上色での表示を行う為システムメッセージの表示は出来ません
+; 文中で改行を行いたい場合\nのエスケープシーケンスを利用してください
+@ADD_RAND_MESSAGE(ARGS:0)
+	KOJO_DEFAULT_STOCK_MESSAGE_ARRAY:(KOJO_DEFAULT_STOCK_MESSAGE_COUNT++) = %ARGS:0%
+RETURN 1
+
+
+; ======================================
+; 汎用口上 口上選出・表示処理
+@KOJO_DEFAULT_PRINT()
+#DIM  LCOUNT, 2                                                     ; ループ用
+#DIM  FIND_ARRAY_COUNT, VARSIZE("KOJO_DEFAULT_STOCK_MESSAGE_ARRAY") ; ストック別適合数
+#DIM  MESSAGE_BOX_COUNT                                             ; ランダム選出用の箱に利用
+#DIMS MESSAGE_BOX, 500                                              ; ランダム選出用の箱
+#DIM  TEMP
+#DIM  TEMP_REDRAW
+
+	; ストックが空ならなにもしないで帰る
+	SIF KOJO_DEFAULT_STOCK_MESSAGE_COUNT == 0
+		RETURN 0
+	
+	; 初期化
+	VARSET FIND_ARRAY_COUNT
+	VARSET MESSAGE_BOX_COUNT
+	VARSET MESSAGE_BOX
+		
+	; 過去ログとストック口上を比較
+	; 過去に表示された口上の数をカウント
+	FOR LCOUNT:0, 0, VARSIZE("KOJO_DEFAULT_MESSAGE_LOG")
+		FOR LCOUNT:1, 0, KOJO_DEFAULT_STOCK_MESSAGE_COUNT
+			SIF KOJO_DEFAULT_STOCK_MESSAGE_ARRAY:(LCOUNT:1) == KOJO_DEFAULT_MESSAGE_LOG:(LCOUNT:0)
+				FIND_ARRAY_COUNT:(LCOUNT:1)++
+		NEXT
+	NEXT
+	
+	; 口上ランダム選出用の箱を作る
+	; 箱の中身はストックを過去ログと照らし合わせて比率調整した口上の詰め合わせ
+	TEMP = 0
+	WHILE (MESSAGE_BOX_COUNT != VARSIZE("MESSAGE_BOX"))
+		; 1 / (適合回数 + 1)の確率でBOXに登録
+		; つまり1度呼び出された口上は1/2, 2度呼び出された口上は1/3のように登録確率が下がっていく
+		; ただしストックに一種類の口上しか入っていない場合は判定なしで登録(1/VARSIZE("MESSAGE_BOX")) * VARSIZE("MESSAGE_BOX"))を無駄に行う事になる為)
+		IF !(RAND:(FIND_ARRAY_COUNT:TEMP + 1)) || KOJO_DEFAULT_STOCK_MESSAGE_COUNT == 1
+			MESSAGE_BOX:MESSAGE_BOX_COUNT = %KOJO_DEFAULT_STOCK_MESSAGE_ARRAY:TEMP%
+			MESSAGE_BOX_COUNT++
+		ENDIF
+		
+		; 口上ストックインクリメント ストック数を超えたらリセット
+		TEMP++
+		SIF TEMP == KOJO_DEFAULT_STOCK_MESSAGE_COUNT
+			TEMP = 0
+	WEND
+	
+	; ランダム口上のうち一つを確定&表示 + 確定した口上をログに保存する
+	TEMP = RAND:VARSIZE("MESSAGE_BOX")
+	CURRENTREDRAW
+	TEMP_REDRAW = RESULT
+	REDRAW 0
+	CALL KOJO_DEFAULT_PRINT_ESCAPE(MESSAGE_BOX:TEMP)
+	REDRAW TEMP_REDRAW
+	PRINTFORML 
+	ARRAYSHIFT KOJO_DEFAULT_MESSAGE_LOG, 1, ""
+	KOJO_DEFAULT_MESSAGE_LOG:0 = %MESSAGE_BOX:TEMP%
+
+	RESETCOLOR
+		
+	; 表示確定後口上ストックは一応空にしておく
+	CALL KOJO_DEFAULT_INIT()
+RETURN 1
+
+
+; ======================================
+; 汎用口上 口上色決定処理
+@SET_KOJO_DEFAULT_COLOR()
+#DIM RED
+#DIM GREEN
+#DIM BLUE
+	
+	VARSET RED
+	VARSET GREEN
+	VARSET BLUE
+	
+	; 口上色がシステム標準色から変更されている場合、変更後の値を利用する
+	; 自動着色OFFの場合もこっち
+	IF CFLAG:700 != 0xC0C0C0 || FLAG:596 == -1
+		SETCOLOR CFLAG:700
+		RETURN 1
+	ENDIF
+	
+	; 性格から色を設定する 変化する色は緑
+	; 癒やし感が高いと思えるほど緑
+	SELECTCASE CFLAG:100
+	; ふつう
+	CASE 0
+		GREEN = 167
+	; おせっかい
+	CASE 1
+		GREEN = 195
+	; おてんば
+	CASE 2
+		GREEN = 69
+	; がんこもの
+	CASE 3
+		GREEN = 237
+	; がんばりや
+	CASE 4
+		GREEN = 125
+	; きれもの
+	CASE 5
+		GREEN = 111
+	; くろうにん
+	CASE 6
+		GREEN = 223
+	; しあわせもの
+	CASE 7
+		GREEN = 181
+	; セクシーギャル
+	CASE 8
+		GREEN = 139
+	; ぬけめがない
+	CASE 9
+		GREEN = 83
+	; ねっけつかん
+	CASE 10
+		GREEN = 97
+	; のんきもの
+	CASE 11
+		GREEN = 153
+	; ひっこみじあん
+	CASE 12
+		GREEN = 209
+	; やさしいひと
+	CASE 13
+		GREEN = 255
+	; わがまま
+	CASE 14
+		GREEN = 55
+	ENDSELECT
+	
+	; 気性から色を設定する(弱気) 変化する色は青
+	BLUE = 255 - (255 / 80 * LIMIT((CFLAG:12 + 40), 0, 255))
+	
+	; 気性から色を設定する(強気) 変化する色は赤
+	RED = 255 / 80 * LIMIT((CFLAG:12 + 40), 0, 255)
+	
+	; RGBの値が一定値を超えない場合、色が暗すぎると判断して補正
+	WHILE 1
+		RED = LIMIT(RED, 4, 255)
+		GREEN = LIMIT(GREEN, 4, 255)
+		BLUE = LIMIT(BLUE, 4, 255)
+		
+		SIF RED >= 192 || GREEN >= 192 || BLUE >= 192
+			BREAK
+			
+		TIMES RED, 1.25
+		TIMES GREEN, 1.25
+		TIMES BLUE, 1.25
+	WEND
+	
+	SETCOLOR RGBCOLOR(RED, GREEN, BLUE)
+RETURN 1
+
+
+; ======================================
+; 汎用口上 口上エスケープシーケンス処理・表示
+@KOJO_DEFAULT_PRINT_ESCAPE(MESSAGE_VALUE, FONT_COLOR = -1)
+#DIM  DYNAMIC SPLIT_COUNT
+#DIM  DYNAMIC LCOUNT
+#DIM  DYNAMIC FONT_COLOR
+#DIMS DYNAMIC MESSAGE_VALUE
+#DIMS DYNAMIC MESSAGE_ARRAY, 100
+
+	VARSET MESSAGE_ARRAY
+	
+	; メッセージ中で\d
+	; \d～\dの間、又は\d(単独)以降の文字列をシステム標準色で表示する
+	SPLIT MESSAGE_VALUE, "\d", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; \dに挟まれた内容のみシステム標準色で表示
+			IF LCOUNT % 2 == 1
+				GETDEFCOLOR
+				CALL KOJO_DEFAULT_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), RESULT)
+			; 通常文字色で描画
+			ELSE
+				CALL KOJO_DEFAULT_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+			ENDIF
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; メッセージ中で\n
+	SPLIT MESSAGE_VALUE, "\n", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			CALL KOJO_DEFAULT_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+		
+			; 改行処理
+			SIF LCOUNT != (SPLIT_COUNT - 1)
+				PRINTFORML 
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; メッセージ中で♥
+	SPLIT MESSAGE_VALUE, "♥", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			CALL KOJO_DEFAULT_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+		
+			; ハート表示
+			SIF LCOUNT != (SPLIT_COUNT - 1)
+				CALL HEARTCB(0xD02830)
+		NEXT
+		RETURN 1
+	ENDIF
+
+	; フォントカラー指定
+	; 未指定ならキャラクタ文字色で描画
+	IF FONT_COLOR == -1
+		CALL SET_KOJO_DEFAULT_COLOR()
+	; 指定されているならその色に
+	ELSE
+		SETCOLOR FONT_COLOR
+	ENDIF
+	
+	; 既に平文
+	PRINTFORM %MESSAGE_VALUE%
+	
+	; 文字色をリセット
+	RESETCOLOR
+RETURN 1

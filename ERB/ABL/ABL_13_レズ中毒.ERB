@@ -1,0 +1,111 @@
+﻿;レズ中毒
+
+;指定されたレベルに必要な経験取得
+;ARG:0	調べたいレベル（要するに１～３を指定することになる）
+@GET_NEED_EXP_13(ARG:0)
+LOCAL:0 = 0
+
+IF ARG:0 == 1
+	LOCAL:0 = 200
+ELSEIF ARG:0 == 2
+	LOCAL:0 = 600
+ELSEIF ARG:0 == 3
+	LOCAL:0 = 3000
+ELSEIF ARG:0 > 3
+	LOCAL:0 = -1
+ENDIF
+
+IF LOCAL:0 > 0
+	;素質などによる補正
+ENDIF
+
+RETURN LOCAL:0
+
+
+
+;経験値獲得
+;ARG:0	獲得したキャラ（IDを指定　つまり1～10）
+;ARG:1	獲得量
+@ADD_ABL_EXP_13(ARG:0, ARG:1)
+LOCAL:0 = ARG:1
+;ソースコード変更量を抑えるために、ABLNOを入れておく
+LOCAL:1 = 13
+
+;素質などによる補正
+
+;男の娘は増えない
+IF TALENT:(ARG:0):122
+	LOCAL:0 = 0
+	RETURN
+ENDIF
+;一線超えない
+IF TALENT:(ARG:0):27 && ABL:(ARG:0):13 == 1
+	LOCAL:0 = LOCAL:0 * 8 / 10
+ELSEIF TALENT:(ARG:0):27 && ABL:(ARG:0):13 == 2
+	LOCAL:0 = LOCAL:0 * 5 / 10
+ENDIF
+;中毒しやすい
+IF TALENT:(ARG:0):72
+	LOCAL:0 = LOCAL:0 * 15 / 10
+ENDIF
+;両刀
+IF TALENT:(ARG:0):81
+	LOCAL:0 = LOCAL:0 * 20 / 10
+ENDIF
+;中毒レベルが高いと加速
+IF ABL:(ARG:0):13 >= 3
+	LOCAL:0 = LOCAL:0 * 25 / 10 + 3
+ELSEIF ABL:(ARG:0):13 >= 2
+	LOCAL:0 = LOCAL:0 * 20 / 10 + 2
+ELSEIF ABL:(ARG:0):13 >= 1
+	LOCAL:0 = LOCAL:0 * 15 / 10 + 1
+ENDIF
+
+;インプラント
+IF CFLAG:(ARG:0):80 >= 20 && GETBIT(CFLAG:(ARG:0):81,8)
+	LOCAL:0 = LOCAL:0 * 15 / 10
+ELSEIF CFLAG:(ARG:0):80 && GETBIT(CFLAG:(ARG:0):81,8)
+	LOCAL:0 = LOCAL:0 * 12 / 10
+ENDIF
+
+IF FLAG:501 == 0 && FLAG:20 == 0 && CFLAG:(ARG:0):4 == CFLAG:1:4
+	PRINTFORML %CALLNAME:(ARG:0), 10, LEFT%：%EXPNAME:(LOCAL:1), 8, LEFT% EXP +{LOCAL:0}
+ENDIF
+
+EXP:(ARG:0):(LOCAL:1) += LOCAL:0
+
+CALLFORM GET_NEED_EXP_{LOCAL:1}(ABL:(ARG:0):(LOCAL:1) + 1)
+LOCAL:2 = RESULT
+IF (RESULT > 0) && (EXP:(ARG:0):(LOCAL:1) >= RESULT)
+	ABL:(ARG:0):(LOCAL:1) += 1
+	IF FLAG:20 == 0
+		PRINTFORML %CALLNAME:(ARG:0)%の%ABLNAME:(LOCAL:1)%がLv{ABL:(ARG:0):(LOCAL:1)}になった！
+	ENDIF
+ENDIF
+
+;経験値獲得チェック
+;ARG:0-3	キャラID
+;LOCAL:0	LOOP
+;LOCAL:1	男でないキャラの人数 ふたり以上居なければレズ中毒が増えない
+;結果が0だと正常（女性キャラ二人以上）に処理
+@CHACK_ADD_ABL_EXP_13(ARG:0, ARG:1, ARG:2, ARG:3)
+#FUNCTION
+LOCAL:1 = 0
+IF TALENT:(ARG:0):122 == 0
+	LOCAL:1 += 1
+ENDIF
+IF TALENT:(ARG:1):122 == 0 && ARG:1 > 0
+	LOCAL:1 += 1
+ENDIF
+IF TALENT:(ARG:2):122 == 0 && ARG:2 > 0
+	LOCAL:1 += 1
+ENDIF
+IF TALENT:(ARG:3):122 == 0 && ARG:2 > 0
+	LOCAL:1 += 1
+ENDIF
+IF LOCAL:1 >1
+	RETURNF 0
+ELSE
+	RETURNF 1
+ENDIF
+

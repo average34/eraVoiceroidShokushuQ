@@ -1,0 +1,243 @@
+﻿;リタイア処理
+;ARG:0	対象キャラ
+@RETIRE(ARG:0)
+;LOCAL
+;0	LOOP
+;1	捕食側の敵ID
+;2	復活可能フラグ
+;3	TEMP1
+;4	TEMP2
+;5	復活した
+;6	悪堕ちした
+;7	悪堕ちの処理
+
+SIF ARG:0 > CHARANUM - 1
+	RETURN
+
+;既にリタイアしているか、MAXHPがまだあるならチェック不要
+SIF CFLAG:(ARG:0):2 || MAXBASE:(ARG:0):0 > 0
+	RETURN
+
+LOCAL:1 = CFLAG:(ARG:0):10
+
+IF LOCAL:1 <= 0
+	;誰にも捕食されていない場合（トラップなどでMPが0になった場合など）は、1で生き残る
+	MAXBASE:(ARG:0):0 = 1
+	RETURN
+ENDIF
+
+;主人公と同じ部屋に居るなら状況描写
+;!!!とりあえず適当に　　後で敵に応じたメッセージに変更＋各種経験値などの追加を加える
+IF ARG:0 == 1
+	FLAG:20 = 0
+	CALL PRINT_MESSAGE(ARG:0, 152, LOCAL:1, CALLNAME:(ARG:0), SAVESTR:(LOCAL:1), CFLAG:(ARG:0):21)
+ELSEIF CFLAG:(ARG:0):4 == FLAG:5
+	FLAG:20 = 0
+	CALL PRINT_MESSAGE(ARG:0, 152, LOCAL:1, CALLNAME:(ARG:0), SAVESTR:(LOCAL:1), CFLAG:(ARG:0):21)
+ELSE
+	;部屋が違うキャラはメッセージ非表示
+	FLAG:20 = 1
+ENDIF
+
+;対象キャラ解放
+CFLAG:(ARG:0):103 = DA:(CFLAG:(ARG:0):10):0
+CALL STATUS_RENEW_RELEASE(ARG:0)
+
+;敵のランクアップ処理
+IF DA:(LOCAL:1):3 || (FLAG:4 <= 0 && DA:(LOCAL:1):0 == 4)
+	;既にランクアップ済みの敵なら、全回復
+	DA:(LOCAL:1):1 = DA:(LOCAL:1):2
+ELSE
+	;ランクアップがまだの場合、敵を入れ替える
+	IF DA:(LOCAL:1):4 == FLAG:5
+		CALL PRINT_MESSAGE(-1, 156, DA:(LOCAL:1):0, CALLNAME:(ARG:0), SAVESTR:(LOCAL:1))
+	ENDIF
+	;バイオプラントかつ難易度がノーマル以上ならプラントもランクアップ
+	IF DA:(LOCAL:1):0 == 4 && FLAG:4
+		LOCAL:3 = 43
+	ELSEIF DA:(LOCAL:1):0 < 4
+		LOCAL:3 = 4
+	ELSE
+		LOCAL:3 = DA:(LOCAL:1):0 + 1
+	ENDIF
+	LOCAL:4 = DA:(LOCAL:1):4
+	CALL DELETE_ENEMY(LOCAL:1)
+	CALL CREATE_ENEMY(LOCAL:3, LOCAL:4, 0)
+ENDIF
+
+;復活判定
+IF LOCAL:1 == 1 || LOCAL:1 == 2 || LOCAL:1 == 3 || DA:(LOCAL:1):0 == 31 || DA:(LOCAL:1):0 == 43
+	;固定敵に捕まった場合、復活不可能
+	LOCAL:2 = 0
+ELSE
+	;それ以外なら蓬莱人・妖精は復活可能
+	LOCAL:2 = 1
+ENDIF
+IF ARG:0 == 1
+	;主人公はとりあえず蓬莱人・妖精の影響を受けない（不死身モードのみ影響）
+	IF FLAG:503 == 1 || FLAG:503 == 2
+		;不死身なら何事も無かったかのように復活
+		CFLAG:(ARG:0):29 = 0
+		LOCAL:5 = 1
+		
+		;とりあえず全回復としておく でも服はそのまま
+		BASE:(ARG:0):0 = MAXBASE:(ARG:0):0
+		BASE:(ARG:0):1 = MAXBASE:(ARG:0):1
+		BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
+	ELSE
+		CALL GAMEOVER(4)
+		RETURN 1
+	ENDIF
+ELSE
+	;不死身などの判定
+	IF FLAG:503 == 2 || FLAG:503 == 3
+		;不死身なら何事も無かったかのように復活
+		CFLAG:(ARG:0):29 = 0
+		LOCAL:5 = 1
+		
+		;とりあえず全回復としておく でも服はそのまま
+		BASE:(ARG:0):0 = MAXBASE:(ARG:0):0
+		BASE:(ARG:0):1 = MAXBASE:(ARG:0):1
+		BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
+		CALL PRINT_MESSAGE(ARG:0, 155, 0, CALLNAME:(ARG:0), "")
+	ELSEIF TALENT:(ARG:0):128 && LOCAL:2 == 1
+		;蓬莱人ならその場で復活
+		CFLAG:(ARG:0):29 = 0
+		LOCAL:5 = 1
+		
+		;とりあえず50％回復としておく でも服はそのまま
+		BASE:(ARG:0):0 = MAXBASE:(ARG:0):0 / 2
+		BASE:(ARG:0):1 = MAXBASE:(ARG:0):1 / 2
+		BASE:(ARG:0):2 = MAXBASE:(ARG:0):2 / 2
+		
+		IF FLAG:20 == 0
+			CALL PRINT_MESSAGE(ARG:0, 153, 0, CALLNAME:(ARG:0), "")
+		ENDIF
+	ELSEIF TALENT:(ARG:0):150 && LOCAL:2 == 1
+		;妖精なら一定時間後復活（回復処理などだけは行っておいて、キャラを隠しておく）
+		CFLAG:(ARG:0):29 = 0
+		LOCAL:5 = 1
+		
+		;とりあえず50％回復としておく でも服はそのまま
+		BASE:(ARG:0):0 = MAXBASE:(ARG:0):0 / 2
+		BASE:(ARG:0):1 = MAXBASE:(ARG:0):1 / 2
+		BASE:(ARG:0):2 = MAXBASE:(ARG:0):2 / 2
+		
+		;一回休みの長さを決定
+		CFLAG:(ARG:0):3 = 5 + RAND:5
+		
+		SIF FLAG:20 == 0
+			CALL PRINT_MESSAGE(ARG:0, 154, 0, CALLNAME:(ARG:0), "")
+		;PTメンバーなら一時離脱
+		IF FLAG:10 == ARG:0
+			CALL MEMBER_EXIT(0)
+		ELSEIF FLAG:11 == ARG:0
+			CALL MEMBER_EXIT(1)
+		ENDIF
+	ELSE
+
+		;★EXモードではバイオプラント・悪堕ちは発生しない
+		IF FLAG:999 == 0
+			;悪堕ち判別
+			LOCAL:7 = 0
+
+			;スライム、ブロブ、ゲルスライム、レッドプリン、ゲルシューター、スライム化キャラ
+			;条件が敵オンリーなので一番上に
+			IF FLAG:538 > 1 && (DA:(LOCAL:1):0 == 13 || DA:(LOCAL:1):0 == 14 || DA:(LOCAL:1):0 == 27 || DA:(LOCAL:1):0 == 28 || DA:(LOCAL:1):0 == 84 || DA:(LOCAL:1):0 == 104)
+				LOCAL:7 = 3
+			;Cワンプ、Cアナコンダ、ラミア、ラミア化キャラ
+			;もしくは早苗か神奈子
+			ELSEIF FLAG:538 > 1 && (DA:(LOCAL:1):0 == 59 || DA:(LOCAL:1):0 == 60 || DA:(LOCAL:1):0 == 95 || DA:(LOCAL:1):0 == 105 || ((NO:(ARG:0) == 42 || NO:(ARG:0) == 43) && RAND:2))
+				LOCAL:7 = 4
+			;アルラウネ、ドリアード、レイニーバイン、スコールバイン、アルラウネ化キャラ
+			;もしくは幽香・秋姉妹
+			ELSEIF FLAG:538 > 1 && (DA:(LOCAL:1):0 == 15 || DA:(LOCAL:1):0 == 16|| DA:(LOCAL:1):0 == 87 || DA:(LOCAL:1):0 == 88  || DA:(LOCAL:1):0 == 103 || ((NO:(ARG:0) == 34 || NO:(ARG:0) == 37 || NO:(ARG:0) == 38) && RAND:2))
+				LOCAL:7 = 2
+			;ドッペルゲンガー、娘、スモークミスト、ダークアイ、ミステリードール、エンジェルドーター、ワイアーゴースト、スノウガール、サキュバス、レッサーヒュプノ、ナインテイルズ、YMあなた、ヒュプノ、通常悪堕ちキャラ
+			;通常悪堕ちは一番下に
+			ELSEIF DA:(LOCAL:1):0 == 18 || DA:(LOCAL:1):0 == 19 || DA:(LOCAL:1):0 == 22 || DA:(LOCAL:1):0 == 25 || DA:(LOCAL:1):0 == 26 || DA:(LOCAL:1):0 == 32 || DA:(LOCAL:1):0 == 37 || DA:(LOCAL:1):0 == 38 || DA:(LOCAL:1):0 == 41 || DA:(LOCAL:1):0 == 44 || DA:(LOCAL:1):0 == 50 || DA:(LOCAL:1):0 == 80 || DA:(LOCAL:1):0 == 98 || DA:(LOCAL:1):0 == 101
+				LOCAL:7 = 1
+			ENDIF
+
+			;娘、及び悪堕ちパッチがオフの時は強制オフ
+			SIF CFLAG:(ARG:0):104 || FLAG:538 == 0
+				LOCAL:7 = 0
+
+			;悪堕ち処理
+			IF LOCAL:7
+
+				IF FLAG:20 == 0
+					PRINTFORML %CALLNAME:(ARG:0)%は解放されたようだ…
+					PRINTFORMW だが、様子がおかしい…
+				ENDIF
+
+				IF LOCAL:7 == 4
+					;判別用の悪堕ち素質
+					TALENT:(ARG:0):73 = 105
+					CALL CREATE_ENEMY(105, CFLAG:(ARG:0):4, 0, ARG:0)
+				ELSEIF LOCAL:7 == 3
+					TALENT:(ARG:0):73 = 104
+					CALL CREATE_ENEMY(104, CFLAG:(ARG:0):4, 0, ARG:0)
+				ELSEIF LOCAL:7 == 2
+					TALENT:(ARG:0):73 = 103
+					CALL CREATE_ENEMY(103, CFLAG:(ARG:0):4, 0, ARG:0)
+				ELSE
+					;戦闘素質が高いキャラ、もしくはパチュリーえーりんせーがは一定確率で触手姫
+					;まあえーりんは現段階（二回目）じゃここ来ないけどさ
+					IF (ABL:(ARG:0):98 >= 75 || NO:(ARG:0) == 8 || NO:(ARG:0) == 29 || NO:(ARG:0) == 102)  && RAND:2
+						TALENT:(ARG:0):73 = 102
+						CALL CREATE_ENEMY(102, CFLAG:(ARG:0):4, 0, ARG:0)
+					ELSE
+						TALENT:(ARG:0):73 = 101
+						CALL CREATE_ENEMY(101, CFLAG:(ARG:0):4, 0, ARG:0)
+					ENDIF
+
+				ENDIF
+
+				;リタイアしているはずなのにスライムスーツが喋ったので対策を追加、在り得ないが念のため触手服も
+				CFLAG:(ARG:0):48 = 0
+				CFLAG:(ARG:0):37 = 0
+
+				;悪堕ち用のED追加
+				CALL ADD_HISTORY(DAY, ARG:0,, 16)
+				LOCAL:6 = 1
+			ELSE
+				;復活できないならリタイア＋バイオプラント追加
+				SIF FLAG:20 == 0
+					PRINTFORMW %CALLNAME:(ARG:0)%を糧として、新たなバイオプラントが発生した…
+				CALL CREATE_ENEMY(4, CFLAG:(ARG:0):4, 0, ARG:0)
+
+
+				;ED追加
+				CALL ADD_HISTORY(DAY, ARG:0, CFLAG:(ARG:0):103, 1)
+			ENDIF
+		ENDIF
+		;EXモードここまで
+
+		;PTメンバーなら離脱
+		IF FLAG:10 == ARG:0
+			CALL MEMBER_EXIT(0)
+		ELSEIF FLAG:11 == ARG:0
+			CALL MEMBER_EXIT(1)
+		ENDIF
+		
+		CFLAG:(ARG:0):2 = 1
+		FLAG:0 -= 1
+	ENDIF
+ENDIF
+
+;復活してもしなくても遺品は残る
+;遺品のフラグに吸収された場所を格納
+;悪堕ちイベント時無効
+IF LOCAL:6 == 0
+	CFLAG:(ARG:0):41 = CFLAG:(ARG:0):4
+	;服の残骸入手イベント追加（とりあえず着替えセットが手に入るだけ）
+	SIF ARG:0 <= 10 && LOCAL:5 == 0
+		FLAG:(190 + ARG:0) = CFLAG:(ARG:0):4
+
+ENDIF
+
+;メッセージ表示フラグと悪堕ちイベント経験リセット
+FLAG:20 = 0
+LOCAL:6 = 0
+

@@ -1,0 +1,554 @@
+﻿;命中率を取得(味方側)
+;ARG:0	攻撃側キャラ
+;ARG:1	防御側キャラ
+;ARG:2	攻撃属性(参照するABL)
+;RETURN	命中率
+@GET_HIT_RATE_PT(ARG:0, ARG:1, ARG:2)
+;LOCAL
+;0	LOOP
+;1	RETURN
+;2	TEMP
+
+;防御側が特定の状態異常の場合、必ず当たる（攻撃側が煙幕でも100％）
+SIF DA:(ARG:1):24 || DA:(ARG:1):25
+	RETURN 100
+
+LOCAL:1 = TFLAG:61
+
+;難易度補正
+IF FLAG:4 <= 0
+	LOCAL:1 += 10
+ELSEIF FLAG:4 == 2
+	LOCAL:1 -= 5
+ELSEIF FLAG:4 == 3
+	LOCAL:1 -= 15
+ENDIF
+
+;攻撃側TPによるボーナス・ペナルティ
+;V1.00 より、低TPも命中にボーナスが入るように変更
+;また、威力が上がらない分低TPによるボーナスの方が大きい
+IF BASE:(ARG:0):4 >= 100
+	LOCAL:1 += LIMIT((BASE:(ARG:0):4 - 100) / 3, 0, 20)
+ELSE
+	LOCAL:1 += LIMIT((100 - BASE:(ARG:0):4) / 2, 0, 40)
+ENDIF
+
+
+;対応スキルによるボーナス
+IF ABL:(ARG:0):(ARG:2) == 0
+	LOCAL:1 += 0
+ELSEIF ABL:(ARG:0):(ARG:2) == 1
+	LOCAL:1 += 5
+ELSEIF ABL:(ARG:0):(ARG:2) == 2
+	LOCAL:1 += 10
+ELSE
+	LOCAL:1 += 15
+ENDIF
+
+
+;防御側の回避率低下によるボーナス
+LOCAL:1 += DA:(ARG:1):81
+
+
+;残りEPによるペナルティ
+LOCAL:2 = BASE:(ARG:0):2 * 100 / MAXBASE:(ARG:0):2
+SIF LOCAL:2 < 50
+	LOCAL:1 -= 10 - (LOCAL:2 / 5)
+
+
+;残りCPによるペナルティ
+LOCAL:2 = BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3
+IF LOCAL:2 <= 0
+	IF TALENT:(ARG:0):35
+		LOCAL:1 += 10
+	ELSE
+		LOCAL:1 -= 10
+	ENDIF
+ELSEIF LOCAL:2 <= 33
+	LOCAL:1 -= 5
+ENDIF
+
+
+;状態異常によるペナルティ
+SIF CFLAG:(ARG:0):27
+	LOCAL:1 -= 20
+SIF CFLAG:(ARG:0):35
+	LOCAL:1 -= 10
+SIF CFLAG:(ARG:0):26
+	LOCAL:1 /= 2
+SIF CFLAG:(ARG:0):301
+	LOCAL:1 -= 40
+
+;妊娠によるペナルティ
+IF CFLAG:(ARG:0):36 >= 5
+	LOCAL:1 -= 10
+ELSEIF CFLAG:(ARG:0):36 >= 4
+	LOCAL:1 -= 5
+ENDIF
+
+;眠気ペナルティ
+IF ARG:0 != FLAG:15 && ARG:0 != FLAG:16
+	;ブラックコーヒーでペナルティ回避
+	CALL GET_EQUIP_BONUS(ARG:0, 37)
+	IF RESULT == 0
+		IF FLAG:7 >= 11
+			LOCAL:1 = LOCAL:1 * 6 / 10 - 10
+		ELSEIF FLAG:7 >= 7
+			LOCAL:1 = LOCAL:1 * 8 / 10 - 5
+		ENDIF
+	ENDIF
+ENDIF
+
+;－－－－－服装補正－－－－－
+CALL CLOTH_TYPE_EFFECT_命中補正(ARG)
+IF RESULT > 0
+	LOCAL:1 += RESULT:1
+ENDIF
+;－－－－－－－－－－
+
+;汚染度補正
+SELECTCASE FLAG:4
+	CASE -1, 0
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 13 / 10 + 5
+			CASE 2
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 5
+			CASE 3
+				LOCAL:1 = LOCAL:1 * 11 / 10
+		ENDSELECT
+	CASE 1
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 5
+			CASE 3
+				LOCAL:1 = LOCAL:1 - 3
+			CASE 4
+				LOCAL:1 = LOCAL:1 - 6
+			CASE 5
+					LOCAL:1 = LOCAL:1 - 12
+		ENDSELECT
+	CASE 2, 3
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 5
+			CASE 3
+				LOCAL:1 = LOCAL:1 - 3
+			CASE 4
+				LOCAL:1 = LOCAL:1 * 9 / 10 - 3
+			CASE 5
+				LOCAL:1 = LOCAL:1 * 8 / 10 - 3
+		ENDSELECT
+ENDSELECT
+
+;最低20％は保証する
+SIF LOCAL:1 < 20
+	LOCAL:1 = 20
+
+RETURN LOCAL:1
+
+
+
+;命中率を取得(敵側)
+;ARG:0	攻撃側キャラ
+;ARG:1	防御側キャラ
+;ARG:2	攻撃属性(基本的にTFLAG:55と同一　TPによる変動量などに影響)
+;RETURN	命中率
+@GET_HIT_RATE_ENEMY(ARG:0, ARG:1, ARG:2)
+;LOCAL
+;0	LOOP
+;1	RETURN
+;2	TEMP
+
+;防御側が特定の状態異常の場合、必ず当たる（攻撃側が煙幕でも100％）
+;状態異常じゃないけどついでにおねだりも一緒に処理
+IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || CFLAG:(ARG:1):24 || CFLAG:(ARG:1):25 || CFLAG:(ARG:1):29 || (CFLAG:(ARG:1):50 >= 54 && CFLAG:(ARG:1):50 <= 58) || TFLAG:16 == 2
+	RETURN 100
+ENDIF
+
+
+LOCAL:1 = TFLAG:61
+
+LOCAL:1 = LOCAL:1 * DA:(ARG:0):18 / 100
+
+;●リバース用
+SIF CFLAG:(ARG:1):302
+	LOCAL:1 += 25
+
+
+;残りHPによるボーナス
+LOCAL:2 = BASE:(ARG:1):0 * 100 / MAXBASE:(ARG:1):0
+IF LOCAL:2 <= 0
+	IF ARG:2 == 4
+		LOCAL:1 += 40
+	ELSE
+		LOCAL:1 += 15
+	ENDIF
+ELSEIF LOCAL:2 < 50
+	IF ARG:2 == 4
+		LOCAL:1 += 20 - (LOCAL:2 / 5)
+	ELSE
+		LOCAL:1 += 10 - (LOCAL:2 / 5)
+	ENDIF
+ENDIF
+
+
+;残りEPによるボーナス
+LOCAL:2 = BASE:(ARG:1):2 * 100 / MAXBASE:(ARG:1):2
+IF LOCAL:2 <= 1
+	LOCAL:1 += 60
+ELSEIF LOCAL:2 < 10
+	LOCAL:1 += 35
+ELSEIF LOCAL:2 < 50
+	LOCAL:1 += 35 - (LOCAL:2 / 3)
+ELSE
+	LOCAL:1 += 25 - (LOCAL:2 / 4)
+ENDIF
+
+
+;残りCPによるペナルティ（裸だと必死で逃げられる）
+LOCAL:2 = BASE:(ARG:1):3 * 100 / MAXBASE:(ARG:1):3
+IF LOCAL:2 <= 0
+	LOCAL:1 -= 10
+ELSEIF LOCAL:2 <= 33
+	LOCAL:1 -= 5
+ELSEIF LOCAL:2 <= 66
+	LOCAL:1 -= 2
+ENDIF
+
+
+;TPによるボーナス・ペナルティ
+;高TPは通常攻撃を避けやすい
+;低TPは衣服・拘束攻撃を避けやすい
+LOCAL:2 = LIMIT((BASE:(ARG:1):4 - 100) / 5, -10, 10)
+IF ARG:2 == 1
+	LOCAL:1 -= LOCAL:2
+ELSEIF ARG:2 == 2 || ARG:2 == 4
+	LOCAL:1 += LOCAL:2
+ENDIF
+
+
+;状態異常によるボーナス・ペナルティ
+IF CFLAG:(ARG:1):27
+	LOCAL:1 += 20
+ENDIF
+IF CFLAG:(ARG:1):30
+	LOCAL:1 -= 10
+ENDIF
+IF CFLAG:(ARG:1):31
+	LOCAL:1 += 20
+ENDIF
+IF CFLAG:(ARG:1):32
+	LOCAL:1 += 15
+ENDIF
+IF CFLAG:(ARG:1):33
+	LOCAL:1 -= 30
+ENDIF
+IF CFLAG:(ARG:1):34 && TALENT:(ARG:1):63 == 0
+	LOCAL:1 += 10
+ENDIF
+
+
+;妊娠によるボーナス
+IF CFLAG:(ARG:1):36 >= 5
+	LOCAL:1 += 20
+ELSEIF CFLAG:(ARG:1):36 >= 4
+	LOCAL:1 += 10
+ELSEIF CFLAG:(ARG:1):36 >= 3
+	LOCAL:1 += 5
+ENDIF
+
+
+;身代わり人形補正
+CALL GET_EQUIP_BONUS(ARG:1, 27)
+IF RESULT
+	LOCAL:1 -= 15
+ENDIF
+
+;レズ中毒によるペナルティ
+IF DA:(ARG:0):85 & 1
+	LOCAL:1 += ABL:(ARG:1):13 * 2
+ENDIF
+
+;眠気ボーナス
+IF ARG:1 != FLAG:15 && ARG:1 != FLAG:16
+	;ブラックコーヒーでペナルティ回避
+	CALL GET_EQUIP_BONUS(ARG:1, 37)
+	IF RESULT == 0
+		IF FLAG:7 >= 11
+			LOCAL:1 = LOCAL:1 * 20 / 10 + 10
+		ELSEIF FLAG:7 >= 7
+			LOCAL:1 = LOCAL:1 * 15 / 10 + 5
+		ENDIF
+	ENDIF
+ENDIF
+
+;素質補正
+IF TALENT:(ARG:1):100 == 2
+	LOCAL:1 -= 10
+ELSEIF TALENT:(ARG:1):100
+	LOCAL:1 -= 5
+ENDIF
+IF TALENT:(ARG:1):213
+	LOCAL:1 -= 3 - (2 * TALENT:(ARG:1):105)
+ENDIF
+
+
+;汚染度補正
+SELECTCASE FLAG:4
+	CASE -1, 0
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 7 / 10 - 5
+			CASE 2
+				LOCAL:1 = LOCAL:1 * 8 / 10 - 3
+			CASE 3
+				LOCAL:1 = LOCAL:1 * 9 / 10
+		ENDSELECT
+	CASE 1
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 8 / 10 - 3
+			CASE 3
+				LOCAL:1 = LOCAL:1 + 3
+			CASE 4
+				LOCAL:1 = LOCAL:1 * 11 / 10 + 3
+			CASE 5
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 5
+		ENDSELECT
+	CASE 2, 3
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 9 / 10
+			CASE 3
+				LOCAL:1 = LOCAL:1 * 11 / 10
+			CASE 4
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 3
+			CASE 5
+				LOCAL:1 = LOCAL:1 * 13 / 10 + 10
+		ENDSELECT
+ENDSELECT
+
+
+
+
+;最低10％は保証する
+IF LOCAL:1 < 10
+	LOCAL:1 = 10
+ENDIF
+
+IF CFLAG:(ARG:1):33
+	IF CFLAG:(ARG:1):35
+		;絶頂中カウンターは効果が下がる
+		IF LOCAL:1 <= 50
+			LOCAL:1 -= 20
+			;カウンター時のみ最低保証を変更
+			IF LOCAL:1 < 7
+				LOCAL:1 = 7
+			ENDIF
+		ELSEIF LOCAL:1 <= 100
+			LOCAL:1 -= LOCAL:1 / 3
+		ELSE
+			LOCAL:1 = 85
+		ENDIF
+	ELSE
+		IF LOCAL:1 <= 50
+			LOCAL:1 -= 40
+			;カウンター時のみ最低保証を変更
+			IF LOCAL:1 < -20
+				LOCAL:1 = 3
+			ELSEIF LOCAL:1 < 5
+				LOCAL:1 = 5
+			ENDIF
+		ELSEIF LOCAL:1 <= 100
+			LOCAL:1 -= LOCAL:1 / 2 + 10
+		ELSE
+			LOCAL:1 = 66
+		ENDIF
+	ENDIF
+ENDIF
+
+
+RETURN LOCAL:1
+
+
+
+;命中率を取得(コマンド選択時用)
+;ARG:0	攻撃側キャラ
+;ARG:1	コマンドID
+;ARG:2	攻撃属性(参照するABL)
+;RETURN	命中率
+@GET_HIT_RATE_TEMP(ARG:0, ARG:1, ARG:2)
+#FUNCTIONS
+;LOCAL
+;0	LOOP
+;1	RETURN
+;2	TEMP
+
+
+SELECTCASE ARG:1
+	CASE 10
+		LOCAL:1 = 120
+	CASE 11
+		LOCAL:1 = 80
+	CASE 12
+		LOCAL:1 = 60
+	CASE 13
+		LOCAL:1 = 80
+	CASE 14
+		LOCAL:1 = 75
+	CASE 15
+		LOCAL:1 = 70
+	CASE 20
+		LOCAL:1 = 120
+	CASE 21
+		LOCAL:1 = 80
+	CASE 22
+		LOCAL:1 = 60
+	CASE 23
+		LOCAL:1 = 90
+	CASE 24
+		LOCAL:1 = 110
+	CASE 25
+		LOCAL:1 = 80
+	CASE 30
+		LOCAL:1 = 120
+	CASE 31
+		LOCAL:1 = 80
+	CASE 32
+		LOCAL:1 = 60
+	CASE 33
+		LOCAL:1 = 80
+	CASE 34
+		LOCAL:1 = 65
+	CASEELSE
+		RETURNF "---"
+ENDSELECT
+
+
+;難易度補正
+IF FLAG:4 <= 0
+	LOCAL:1 += 10
+ELSEIF FLAG:4 == 2
+	LOCAL:1 -= 5
+ELSEIF FLAG:4 == 3
+	LOCAL:1 -= 15
+ENDIF
+
+;攻撃側TPによるボーナス・ペナルティ
+;V1.00 より、低TPも命中にボーナスが入るように変更
+;また、威力が上がらない分低TPによるボーナスの方が大きい
+IF BASE:(ARG:0):4 >= 100
+	LOCAL:1 += LIMIT((BASE:(ARG:0):4 - 100) / 3, 0, 20)
+ELSE
+	LOCAL:1 += LIMIT((100 - BASE:(ARG:0):4) / 2, 0, 40)
+ENDIF
+
+
+;対応スキルによるボーナス
+IF ABL:(ARG:0):(ARG:2) == 0
+	LOCAL:1 += 0
+ELSEIF ABL:(ARG:0):(ARG:2) == 1
+	LOCAL:1 += 5
+ELSEIF ABL:(ARG:0):(ARG:2) == 2
+	LOCAL:1 += 10
+ELSE
+	LOCAL:1 += 15
+ENDIF
+
+
+;残りEPによるペナルティ
+LOCAL:2 = BASE:(ARG:0):2 * 100 / MAXBASE:(ARG:0):2
+IF LOCAL:2 < 50
+	LOCAL:1 -= 10 - (LOCAL:2 / 5)
+ENDIF
+
+
+;残りCPによるペナルティ
+LOCAL:2 = BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3
+IF LOCAL:2 <= 0
+	IF TALENT:(ARG:0):35
+		LOCAL:1 += 10
+	ELSE
+		LOCAL:1 -= 10
+	ENDIF
+ELSEIF LOCAL:2 <= 33
+	LOCAL:1 -= 5
+ENDIF
+
+
+;状態異常によるペナルティ
+IF CFLAG:(ARG:0):27
+	LOCAL:1 -= 20
+ENDIF
+IF CFLAG:(ARG:0):35
+	LOCAL:1 -= 10
+ENDIF
+IF CFLAG:(ARG:0):26
+	LOCAL:1 /= 2
+ENDIF
+
+
+;妊娠によるペナルティ
+IF CFLAG:(ARG:0):36 >= 5
+	LOCAL:1 -= 10
+ELSEIF CFLAG:(ARG:0):36 >= 4
+	LOCAL:1 -= 5
+ENDIF
+
+;眠気ペナルティ
+IF ARG:0 != FLAG:15 && ARG:0 != FLAG:16 && (CFLAG:(ARG:0):7 != 37 && CFLAG:(ARG:0):8 != 37 && CFLAG:(ARG:0):9 != 37)
+	IF FLAG:7 >= 11
+		LOCAL:1 = LOCAL:1 * 6 / 10 - 10
+	ELSEIF FLAG:7 >= 7
+		LOCAL:1 = LOCAL:1 * 8 / 10 - 5
+	ENDIF
+ENDIF
+
+SELECTCASE FLAG:4
+	CASE -1, 0
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 13 / 10 + 5
+			CASE 2
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 5
+			CASE 3
+				LOCAL:1 = LOCAL:1 * 11 / 10
+		ENDSELECT
+	CASE 1
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 5
+			CASE 3
+				LOCAL:1 = LOCAL:1 * 9 / 10
+			CASE 4
+				LOCAL:1 = LOCAL:1 * 8 / 10
+			CASE 5
+				LOCAL:1 = LOCAL:1 * 7 / 10
+		ENDSELECT
+	CASE 2, 3
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0, 1
+				LOCAL:1 = LOCAL:1 * 12 / 10 + 5
+			CASE 3
+				LOCAL:1 = LOCAL:1 * 9 / 10 - 3
+			CASE 4
+				LOCAL:1 = LOCAL:1 * 8 / 10 - 6
+			CASE 5
+				LOCAL:1 = LOCAL:1 * 7 / 10 - 10
+		ENDSELECT
+ENDSELECT
+
+;最低20％は保証する
+IF LOCAL:1 < 20
+	LOCAL:1 = 20
+ENDIF
+
+LOCALS:0 = {LOCAL:1, 3}
+
+RETURNF LOCALS:0
+
+
+
+
+

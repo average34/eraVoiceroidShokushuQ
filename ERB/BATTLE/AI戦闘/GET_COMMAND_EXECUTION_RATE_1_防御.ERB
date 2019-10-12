@@ -1,0 +1,108 @@
+﻿; AI戦闘コマンド 防御
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_1(CHARA_ID, TARGET_ID, SUPPORT_VALUE)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM SUPPORT_VALUE ; Reserved
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+
+	VARSET RATE
+	
+	; PTメンバーが1人の場合誰も助けてくれないので防御はしない
+	SIF GET_MEMBER_SUM() == 1
+		RETURN 0
+	
+	; 助け出してくれるキャラが居ないなら防御しても無駄
+	{
+	SIF (CHARA_ID == 1 && (FLAG:10 && (!IS_POSSIBLE_ACTION(FLAG:10) || CFLAG:(FLAG:10):43 || CFLAG:(FLAG:10):10 || CFLAG:(FLAG:10):20)) && (FLAG:11 && (!IS_POSSIBLE_ACTION(FLAG:11) || CFLAG:(FLAG:11):43 || CFLAG:(FLAG:11):10 || CFLAG:(FLAG:11):20))) ||
+	    (CHARA_ID == FLAG:10 && (!IS_POSSIBLE_ACTION(1) || CFLAG:1:43 || CFLAG:1:10 || CFLAG:1:20) && (FLAG:11 && (!IS_POSSIBLE_ACTION(FLAG:11) || CFLAG:(FLAG:11):43 || CFLAG:(FLAG:11):10 || CFLAG:(FLAG:11):20))) ||
+	    (CHARA_ID == FLAG:11 && (!IS_POSSIBLE_ACTION(1) || CFLAG:1:43 || CFLAG:1:10 || CFLAG:1:20) && (FLAG:10 && (!IS_POSSIBLE_ACTION(FLAG:10) || CFLAG:(FLAG:10):43 || CFLAG:(FLAG:10):10 || CFLAG:(FLAG:10):20)))
+	}
+		RETURN 0
+		
+	; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+	;                超弱気    弱気    普通    強気  超強気
+	DATA_TABLE:10:0 =  3600,   3200,   2800,   2400,   2000  ; 10:ねっけつかん
+	DATA_TABLE:2:0  =  3700,   3300,   2900,   2500,   2100  ; 02:おてんば
+	DATA_TABLE:14:0 =  3800,   3400,   3000,   2600,   2200  ; 14:わがまま
+	DATA_TABLE:3:0  =  3900,   3500,   3100,   2700,   2300  ; 03:がんこもの
+	DATA_TABLE:6:0  =  4000,   3600,   3200,   2800,   2400  ; 06:くろうにん
+	DATA_TABLE:4:0  =  4100,   3700,   3300,   2900,   2500  ; 04:がんばりや
+	DATA_TABLE:5:0  =  4200,   3800,   3400,   3000,   2600  ; 05:きれもの
+	DATA_TABLE:1:0  =  4300,   3900,   3500,   3100,   2700  ; 01:おせっかい
+	DATA_TABLE:0:0  =  4400,   4000,   3600,   3200,   2800  ; 00:ふつう
+	DATA_TABLE:9:0  =  4500,   4100,   3700,   3300,   2900  ; 09:ぬけめがない
+	DATA_TABLE:8:0  =  4600,   4200,   3800,   3400,   3000  ; 08:セクシーギャル
+	DATA_TABLE:7:0  =  4700,   4300,   3900,   3500,   3100  ; 07:しあわせもの
+	DATA_TABLE:11:0 =  4800,   4400,   4000,   3600,   3200  ; 11:のんきもの
+	DATA_TABLE:13:0 =  4900,   4500,   4100,   3700,   3300  ; 13:やさしいひと
+	DATA_TABLE:12:0 =  5000,   4600,   4200,   3800,   3400  ; 12:ひっこみじあん
+	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+	
+	; 拘束状態
+	IF CFLAG:CHARA_ID:10 || CFLAG:CHARA_ID:20
+		; 脱出成功率で補正
+		; 成功率が高いなら防御するより逃げた方がいい 低いなら身を守る方がいい
+		CALL GET_RELEASE_RATE(CHARA_ID)
+		SELECTCASE RESULT
+		; 75%以上
+		CASE IS >= 80
+			TIMES RATE, 0.2
+		; 50%以上
+		CASE IS >= 50
+			TIMES RATE, 0.5
+		; 25%以上
+		CASE IS >= 25
+			TIMES RATE, 1.2
+		; 0%以上
+		CASE IS >= 0
+			TIMES RATE, 1.5
+		ENDSELECT
+		
+	; 通常状態
+	ELSE
+		; 残りMPによって補正
+		SELECTCASE BASE:CHARA_ID:MP
+		; 残り10%以下
+		CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 10)
+			TIMES RATE, 1.5
+		; 残り25%以下
+		CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 25)
+			TIMES RATE, 1.0
+		; 残り50%以下
+		CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 50)
+			TIMES RATE, 0.5
+		; 残り75%以下
+		CASE IS <= (MAXBASE:CHARA_ID:MP / 100 * 75)
+			TIMES RATE, 0.25
+		; それ以上
+		CASEELSE
+			TIMES RATE, 0.1
+		ENDSELECT
+	ENDIF
+	
+	; 戦闘素質による補正
+	SELECTCASE ABL:CHARA_ID:98
+	CASE IS <= 10
+		TIMES RATE, 2.0
+	CASE IS <= 20
+		TIMES RATE, 1.8
+	CASE IS <= 30
+		TIMES RATE, 1.6	
+	CASE IS <= 40
+		TIMES RATE, 1.4
+	CASE IS <= 50
+		TIMES RATE, 1.2
+	CASE IS <= 60
+		TIMES RATE, 1.0
+	CASE IS <= 70
+		TIMES RATE, 0.9
+	CASE IS <= 80
+		TIMES RATE, 0.8
+	CASEELSE
+		TIMES RATE, 0.6
+	ENDSELECT
+	
+RETURN LIMIT(RATE, 0, 10000)

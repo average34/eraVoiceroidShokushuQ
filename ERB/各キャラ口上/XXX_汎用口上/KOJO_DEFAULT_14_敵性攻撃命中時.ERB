@@ -1,0 +1,859 @@
+﻿
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+	
+	; 催眠中
+	IF CFLAG:43
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL ADD_RAND_MESSAGE, @"「触らないで！　ううっ、身体……動かない……っ！」"
+			CALL ADD_RAND_MESSAGE, @"「何で……　抵抗できないのよ……っ……」"
+			CALL ADD_RAND_MESSAGE, @"（くうっ……　う、動けない……）"
+			CALL ADD_RAND_MESSAGE, @"「ううっ……　身体が勝手に動く……っ」"
+			
+			; 性格別追加口上
+			SELECTCASE CFLAG:100
+			CASE 性格_ねっけつかん
+				CALL ADD_RAND_MESSAGE, @"「クソ……っ！　身体の自由を……返せ！」"
+			CASE 性格_ひっこみじあん
+				CALL ADD_RAND_MESSAGE, @"（もうイヤ……　誰か助けて……）"
+			CASE 性格_わがまま
+				CALL ADD_RAND_MESSAGE, @"「こいつ、何てことさせるの……！？」"
+				CALL ADD_RAND_MESSAGE, @"「もう！　いい加減にしてよ！」"
+			ENDSELECT
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL ADD_RAND_MESSAGE, @"「あ……っ♥　これ、好きですっ♥」"
+			CALL ADD_RAND_MESSAGE, @"「もっと、もっと気持ちよくしてください♥」"
+			CALL ADD_RAND_MESSAGE, @"「そこ…いいっ♥　気持ちいいですっ♥」"
+				
+			; 性格別追加口上
+			SELECTCASE CFLAG:100
+			CASE 性格_ひっこみじあん
+				CALL ADD_RAND_MESSAGE, @"「――ッ♥　――ッッ♥♥」"
+				CALL ADD_RAND_MESSAGE, @"（えっちな声……♥　漏れちゃいそう……♥）"
+			ENDSELECT
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL ADD_RAND_MESSAGE, @"「はい……　私の身体を好きにしてください……」"
+			CALL ADD_RAND_MESSAGE, @"（なんだか……　身体に違和感が？）"
+				
+			; 性格別追加口上
+			SELECTCASE CFLAG:100
+			CASE 性格_ひっこみじあん
+				CALL ADD_RAND_MESSAGE, @"「も、もっとしても……　いいよ……」"
+				CALL ADD_RAND_MESSAGE, @"（これ、ご奉仕したほうがいいのかな？）"
+			ENDSELECT
+		ENDSELECT
+		
+	; 通常時
+	ELSE
+		; 触手中毒LV3以上 or [淫乱]所持
+		IF ABL:11 >= 3 || TALENT:74
+			CALL ADD_RAND_MESSAGE, @"「んおおぉ……っ♥　あひっ♥　あああぁぁぁっ♥」"
+			CALL ADD_RAND_MESSAGE, @"（気持ちいい♥　気持ちいいっ♥）"
+			CALL ADD_RAND_MESSAGE, @"「んあぁ……っ♥♥　あひっ♥　あぁ♥♥　ああぁぁぁっ♥♥♥」"
+			CALL ADD_RAND_MESSAGE, @"（気持ちいい♥♥　きもちいっ♥♥　いひっ♥♥）"
+			CALL ADD_RAND_MESSAGE, @"「もっと♥　もっとしてぇっ♥」"
+			CALL ADD_RAND_MESSAGE, @"「あっ♥♥　あっ♥♥　いい♥　すごひぃ♥　もっと♥♥　もっとぉ♥♥♥」"
+			CALL ADD_RAND_MESSAGE, @"「んひぃ♥　あぁ♥　ふぁ♥♥　ああぁあぁぁぁぁん♥♥♥♥」"
+			CALL ADD_RAND_MESSAGE, @"「あぁ♥♥　これすごっ♥♥　すごイっ♥♥　ひぃ♥♥♥♥」"
+			CALL ADD_RAND_MESSAGE, @"「あ♥　ぁ♥　ぅあ♥♥　あっ♥　あっ♥　　ああ♥♥♥」"
+		; 触手中毒LV2
+		ELSEIF ABL:11 == 2
+			CALL ADD_RAND_MESSAGE, @"（熱いっ！　触れられた所が熱いっ！）"
+			CALL ADD_RAND_MESSAGE, @"（身体が勝手に反応してっ♥）"
+			CALL ADD_RAND_MESSAGE, @"（これ以上されたら、戻れなくなる♥）"
+			CALL ADD_RAND_MESSAGE, @"（あぁっ♥　これ♥　きもち……いっ♥）"
+			CALL ADD_RAND_MESSAGE, @"（か、身体が勝手に反応してるっ♥）\n\d%CALLNAME:TARGET%の身体が触手を迎え入れる準備を始めた……\d"
+			CALL ADD_RAND_MESSAGE, @"（こ、これ以上されたら……も、もどれ♥　なくぅ♥）"
+			CALL ADD_RAND_MESSAGE, @"「触っちゃ……っ♥　触っちゃダメぇ……♥」"
+		; 触手中毒LV1
+		ELSEIF ABL:11 == 1
+			CALL ADD_RAND_MESSAGE, @"「やめな……さいっ！　触らないで……っ！」"
+			CALL ADD_RAND_MESSAGE, @"（ダメよ……　こんなので感じちゃ……っ）"
+			CALL ADD_RAND_MESSAGE, @"（気持ち悪い筈なのに！？）"
+		; 触手中毒LV0
+		ELSEIF ABL:11 == 0
+			CALL ADD_RAND_MESSAGE, @"「んんっ！！」"
+			CALL ADD_RAND_MESSAGE, @"「や、やめなさい！！」"
+			CALL ADD_RAND_MESSAGE, @"「ど、どこ触ってるのよ！？」"
+				
+			; 性格別 追加口上
+			SELECTCASE CFLAG:100
+			CASE 性格_のんきもの
+				CALL ADD_RAND_MESSAGE, @"「そんなとこ触って楽しい？」"
+				CALL ADD_RAND_MESSAGE, @"「もう、どこ触ってるのよ」"
+			CASE 性格_ひっこみじあん
+				CALL ADD_RAND_MESSAGE, @"「や、やめてよお……」"
+				CALL ADD_RAND_MESSAGE, @"「そんなとこ触らないでぇ……」"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  361    コマンドID 361:性攻撃 アルラウネ 複合+自慰誘発
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_361(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+	
+	CALL ADD_RAND_MESSAGE, @"「このキス……　頭おかしくなる……っ！」"
+	CALL ADD_RAND_MESSAGE, @"「何これ……っ！？　熱い！　身体が熱い……っ！？」"
+	CALL ADD_RAND_MESSAGE, @"「ん……んちゅ……ぷあ……あ……ちゅ……ん……」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"（なにか、ふわふわする……　もっと……気持ちよくなりたい……）"
+	CASE 性格_がんこもの
+		CALL ADD_RAND_MESSAGE, @"（ち、違う……♥　これは自分の意思じゃ……っ♥　したい……っ♥　今すぐ……自慰っ♥）"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"（瞬間的に性欲を増大させる薬か……っ♥　油断したぁ……っ♥）"
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「んはぁ……♥　欲しくなっちゃうじゃない……♥」"
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「く……っ、変なもの飲ませ……っ……」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「オナニーしたくなるキスとか……♥　ずるいでしょぉ……♥」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「あうぅぅんっ♥　させてぇっ♥　今すぐオナニーさせてえぇぇっ♥」"
+		CALL ADD_RAND_MESSAGE, @"（やあぁ……　したい……　えっちな事したいよぉ……）"
+	CASE 性格_やさしいひと
+		CALL ADD_RAND_MESSAGE, @"「何をしたん……ですか……っ！？　身体が疼い……て……っ！？」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  385    コマンドID 385:性攻撃 ヒュプノ 全体B+
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_385(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+
+	; 催眠中
+	IF CFLAG:43
+		; important属性付与
+		; 暗示を掛けられて自発的に動く、受け身の汎用口上と相性が悪いので専用口上
+		; 今のところ催眠中のみの指定、通常時は汎用口上が利用される
+		CALL SET_IMPORTANT_FLAG
+		
+		SELECTCASE CFLAG:43
+		; 催眠強度1
+		CASE 1
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"「ひ、人の胸をおもちゃにしないで！」"
+				CALL ADD_RAND_MESSAGE, @"「やめて！　何て事させるの！」"
+				
+				; 素質[淫乳]所持時 or B感度3以上 追加口上
+				IF TALENT:76 || ABL:7 >= 3
+					CALL ADD_RAND_MESSAGE, @"「ひいぃっ……！　胸！　胸は駄目っ！　感じすぎるからぁぁぁっ！！」"
+					CALL ADD_RAND_MESSAGE, @"「や、やめ……おっぱいは弱いのに……あぁ♥♥」"
+				ENDIF
+				
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"「おっぱいでしてあげるね」"
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"「よくわからないけど、こうしなきゃいけない気がする……」"
+			ENDSELECT
+
+		; 催眠強度2
+		CASE 2
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"「ううっ……　胸が……　胸がぁ……」"
+				
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"「興奮したいらやしい胸でご奉仕させていただきますっ♥」"
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"（おっぱいでご奉仕……　おっぱいでご奉仕しなきゃ……）"
+				
+				; 素質[淫乳]所持時 or B感度3以上 追加口上
+				IF TALENT:76 || ABL:7 >= 3
+					CALL ADD_RAND_MESSAGE, @"（こういう時のために、敏感おっぱい開発してもらったんだから……　ちゃんと使わなきゃ……）"
+				ENDIF
+			ENDSELECT
+			
+		; 催眠強度最大、又はレッサーヒュプノの減衰あり催眠
+		CASEELSE
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"（もうやだぁ……　ああっ、そんなに胸突き出して……　乳首擦れてぇ……）"
+				
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"「発情おっぱい、もう我慢できませんっ♥　パイズリっ、パイズリオナニーしますっ♥」"
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"「どうっ……ですかぁ……　%CALLNAME:TARGET%の胸は気持ちいいですかぁ……」"
+				
+				; 素質[淫乳]所持時 or B感度3以上 追加口上
+				IF TALENT:76 || ABL:7 >= 3
+					CALL ADD_RAND_MESSAGE, @"「すぐにイッちゃう%CALLNAME:TARGET%の淫乱おっぱい、堪能してくださいね……」"
+				ENDIF
+			ENDSELECT
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1   388   コマンドID フコウノトリ全体V
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_388(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+
+
+
+
+
+		IF ABL:9 >= 3 || TALENT:77
+			CALL ADD_RAND_MESSAGE, @"（うそ……♥　見ただけで子宮降りてきちゃった……♥）"
+			CALL ADD_RAND_MESSAGE, @"（ほしい……♥　ほしい……♥　おまんこが……アレほしがってる……♥♥）"
+			CALL ADD_RAND_MESSAGE, @"（あんなのにおまんこ突かれたら……あっ♥　想像しただけでイキそう♥♥）"
+		ELSE
+			CALL ADD_RAND_MESSAGE, @"（本能が……アレを欲しがってる……♥）"
+			CALL ADD_RAND_MESSAGE, @"（す、すごい……あんなの……雌になっちゃう♥）"
+		ENDIF
+
+RETURN 1
+
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  405    コマンドID 405:性攻撃 フレッシュゴーレム A全体
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_405(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+	CALL ADD_RAND_MESSAGE, @"「そ、そんな所入らないで！」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  407    コマンドID 407:C性攻撃 Cワンプ、Cアナコンダ 特殊効果163
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_407(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+
+
+
+
+
+
+; 鱗状の体を陰唇に擦り付けながら股下を通り抜けていく
+	; C感覚LV3以上 or [淫核]所持
+	IF ABL:8 >= 3 || TALENT:77
+		CALL ADD_RAND_MESSAGE, @"クリ♥　ずっとこりこりされて♥♥　これすきぃ♥」"
+		
+		
+	; C感覚LV2
+	ELSEIF ABL:8 == 2
+		CALL ADD_RAND_MESSAGE, @"「鱗……ずっとクリこすって……あぁ♥」"
+		
+	; C感覚LV1
+	ELSEIF ABL:8 == 1
+		CALL ADD_RAND_MESSAGE, @"「ひあぁ……こ、こんなの……」"
+		
+		
+	; C感覚LV0
+	ELSEIF ABL:8 == 0
+	CALL ADD_RAND_MESSAGE, @"「鱗がこすれて……！」"
+		
+
+	ENDIF
+
+RETURN 1
+
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  416    コマンドID(クリスタルエレメント 肌)
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_416(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+
+
+
+
+
+	; important属性付与
+	CALL SET_IMPORTANT_FLAG
+	
+	CALL ADD_RAND_MESSAGE, @"（触られていないのに、身体を撫で回されているみたいな……）"
+	CALL ADD_RAND_MESSAGE, @"「何よこの光――！？」"
+	CALL ADD_RAND_MESSAGE, @"「気持ち悪い光……」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  691    コマンドID 692:性攻撃(強) ヴォジャノーイ 三段A
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_691(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+	CALL ADD_RAND_MESSAGE, @"「そんなとこ舐めないで！　ううっ、気持ち悪い！」"
+	CALL ADD_RAND_MESSAGE, @"「お尻の穴にカエルの舌がぁっ！？　ひいぃぃっ！？」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  692    コマンドID 692:性攻撃(強) ヴォジャノーイ A
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_692(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+
+	; テキスト表現の残酷さ NORMAL以下
+	IF FLAG:507 < 1
+		CALL ADD_RAND_MESSAGE, @"「う……ぐっ……　お腹がぁ……」"
+	; テキスト表現の残酷さ HARD以上
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「いやああぁぁぁっ！！　お腹の中で何か動いてるっ！？」"
+		CALL ADD_RAND_MESSAGE, @"「な、なんてもの入れるのよ！？　うあぁぁぁっ！？　気持ち悪いっ！！」"
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  980    コマンドID(発情キス攻撃)
+; / ARG:2         対象キャラID
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_980(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+	
+	; important属性付与
+	CALL SET_IMPORTANT_FLAG
+	CALL ADD_RAND_MESSAGE, @"（飲んじゃだめなの流しこまれてるのに……飲むの気持ちいいよう……）"
+	CALL ADD_RAND_MESSAGE, @"（口の中敏感に……何この液体……）"
+	CALL ADD_RAND_MESSAGE, @"「ん……んちゅ……ぷあ……あ……ちゅ……ん……」"
+	;キス魔+M感覚Lv3
+	IF TALENT:79 || ABL:15 >= 3
+		CALL ADD_RAND_MESSAGE, @"（気持ち良すぎて……口からあふれちゃうの……もったいにゃい……）"
+		CALL ADD_RAND_MESSAGE, @"「ちゅ♥　んむ♥　ちゅる♥　んっ♥んっ♥　ちゅぱ♥♥　ぷぁ……♥」"
+	ENDIF
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"（これは……ハッカか何か？）"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  981    コマンドID(吸収キス攻撃)
+; / ARG:2         対象キャラID
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_981(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+	
+	; important属性付与
+	CALL SET_IMPORTANT_FLAG
+	CALL ADD_RAND_MESSAGE, @"「じゅぷ、ちゅぷちゅぷ…んちゅぷ」"
+	CALL ADD_RAND_MESSAGE, @"（つばといっしょに……なにか吸われちゃってる……）"
+	;キス魔+M感覚Lv3
+	IF TALENT:79 || ABL:15 >= 3
+		CALL ADD_RAND_MESSAGE, @"（吸われひゃってるのに……ひもちいい……）"
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  994    コマンドID(耳の裏攻撃)
+; / ARG:2         対象キャラID
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_994(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+	
+	; important属性付与
+	CALL SET_IMPORTANT_FLAG
+	CALL ADD_RAND_MESSAGE, @"「ひゃぁっ！　く、くすぐったいよぉ……」"
+	CALL ADD_RAND_MESSAGE, @"「なんで耳の裏なんか……」"
+	;触手中毒Lv3
+	IF ABL:11 >= 3
+		CALL ADD_RAND_MESSAGE, @"「んあっやっ……んっ」"
+		CALL ADD_RAND_MESSAGE, @"「そんなとこっ……なめないで……」"
+	ENDIF
+	SELECTCASE CFLAG:100
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「耳の裏なんてやめてよぉ」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1  1018   コマンドID 1018:性攻撃 汎用 尻尾こき
+; / ARG:2         部位
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_1018(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+	CALL ADD_RAND_MESSAGE, @"「そんな、尻尾でなんて……」"
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2    0    部位 0:A
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+	; A感覚LV3以上 or [尻穴狂い]所持
+	IF ABL:6 >= 3 || TALENT:75
+		CALL ADD_RAND_MESSAGE, @"「お尻っ！　お尻が熱い……っ！！」"
+		CALL ADD_RAND_MESSAGE, @"「気持ちいいっ……　お尻気持ちいいよぉ……」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「ひぃぃっ♥　そっちの穴、感じすぎるぅっ♥」"
+			CALL ADD_RAND_MESSAGE, @"（あああぁっ♥　お尻の穴でこんなに感じるなんて屈辱っ♥）"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「いいですよ♥　好きなだけお尻ズポズポしてください♥」"
+		ENDSELECT
+		
+	; A感覚LV2
+	ELSEIF ABL:6 == 2
+		CALL ADD_RAND_MESSAGE, @"（何で！？　なんでお尻なんか気持ちいいの……！？）"
+		CALL ADD_RAND_MESSAGE, @"（何で！？　なんでお尻で♥　こんなにぃ♥♥）"
+		CALL ADD_RAND_MESSAGE, @"「や……ぁ……　さわらないで、よぉ……」"
+		CALL ADD_RAND_MESSAGE, @"「なんで、こんな場所で感じちゃうの！？」"
+		CALL ADD_RAND_MESSAGE, @"「なんで、こんな場所で感じちゃうの……　あぁん♥♥」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"（お尻の穴、完全におかしくなって……っ　責められると疼く……っ）"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「ああっ♥　お尻で気持ちよくなるの、覚えちゃったぁ♥」"
+		ENDSELECT
+		
+	; A感覚LV1
+	ELSEIF ABL:6 == 1
+		CALL ADD_RAND_MESSAGE, @"「そこは挿入れるところじゃないでしょ！？」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「抜きなさい！　そんな場所で感じる筈が……！」"
+			CALL ADD_RAND_MESSAGE, @"（こいつ、尻を性感帯に作り替える気！？）"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「そんなにお尻、開発したいんですかぁ？」"
+		ENDSELECT
+		
+	; A感覚LV0
+	ELSEIF ABL:6 == 0
+		CALL ADD_RAND_MESSAGE, @"「お、お尻なんて触らないで！」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_きれもの
+			CALL ADD_RAND_MESSAGE, @"「ぐっ……！？　何が目的でお尻なんか……っ！？」"
+			CALL ADD_RAND_MESSAGE, @"（何で後ろを？　繁殖が目的ではないの？）"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「そっちの趣味は無いんですけど……」"
+		CASE 性格_ねっけつかん
+			CALL ADD_RAND_MESSAGE, @"「くっ……　この、変態めっ！！」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「ああぁ……っ、お尻に挿入ってくるぅ……っ」"
+		CASE 性格_わがまま
+			CALL ADD_RAND_MESSAGE, @"「放しなさい！　この下衆！」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2    1    部位 1:B
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+	; B感覚LV3以上 or [淫乳]所持
+	IF ABL:7 >= 3 || TALENT:76
+		CALL ADD_RAND_MESSAGE, @"「うひぃ……っ♥　む、胸ぇ……♥」"
+		CALL ADD_RAND_MESSAGE, @"「ああぁっ♥　おっぱい感じちゃう♥　スゴイよお……っ♥」"
+		CALL ADD_RAND_MESSAGE, @"「気持ちいいっ……♥　おっぱい気持ちいいよぉ……♥」"
+		
+		;母乳体質
+		IF TALENT:130
+		CALL ADD_RAND_MESSAGE, @"「あ♥　だめ♥　おっぱい出ちゃう出ちゃうぅ～♥♥」"
+		CALL ADD_RAND_MESSAGE, @"「おっぱいとまらない♥♥　飲んで♥♥　%CALLNAME:TARGET%のミルクいっぱい飲んで♥♥」"
+		ENDIF
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「うあっ♥　む、胸で感じ……っ♥　だめっ♥　胸があぁぁぁ♥♥」"
+		ENDSELECT
+		
+	; B感覚LV2
+	ELSEIF ABL:7 == 2
+		CALL ADD_RAND_MESSAGE, @"「なんで……っ、おっぱいでこんなに気持ちよくなっちゃうのよぉ……っ♥」"
+		CALL ADD_RAND_MESSAGE, @"「だめぇっ♥　おっぱい……いじめるの止めてぇっ♥」"
+		CALL ADD_RAND_MESSAGE, @"「や……ぁ……　胸が、ぞわぞわするっ……」"
+			
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"（胸で感じたりしない……♥　絶対に胸で感じたりしないっ……♥♥）"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「あんっ♥　おっぱいの虐め方、じょうず……っ♥」"
+		ENDSELECT
+		
+	; B感覚LV1
+	ELSEIF ABL:7 == 1
+		CALL ADD_RAND_MESSAGE, @"「くうっ……　胸ばっかり弄らないでよ……」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「んんっ！　くすぐったいだけじゃなくて……　何かムズムズする……」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「いやぁ……　おっぱい弄るのやめてぇ……」"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「もっとイヤらしく責めないと、感じる物も感じませんよ」"
+		ENDSELECT
+		
+	; B感覚LV0
+	ELSEIF ABL:7 == 0
+		CALL ADD_RAND_MESSAGE, @"「胸なんて弄って何が楽しいんだか……」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_おてんば
+			CALL ADD_RAND_MESSAGE, @"「あはははは！　やめて！　くすぐったいよぉ！」"
+		CASE 性格_セクシーギャル
+			CALL ADD_RAND_MESSAGE, @"「何がしたいかはわかるんですけど、胸って余り感じないんですよね」"
+			CALL ADD_RAND_MESSAGE, @"「その程度の責めじゃ悦んだりしませんよ」"
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「そんなとこ弄って楽しい？」"
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「な、何でおっぱいなんか弄るの！？」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2    2    部位 2:C
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+
+	; C感覚LV3以上 or [淫核]所持
+	IF ABL:8 >= 3 || TALENT:77
+		CALL ADD_RAND_MESSAGE, @"「や♥　やぁ♥　クリいい♥♥　気持ちいいのぉ♥♥♥」"
+		CALL ADD_RAND_MESSAGE, @"「わたしのえっちなお豆♥　ぐりぐりって♥♥　もっとぐりぐりしてぇ♥♥♥」"
+		CALL ADD_RAND_MESSAGE, @"「そこ♥　そこすき♥♥　クリトリスすき♥　すきぃ♥♥」"
+		CALL ADD_RAND_MESSAGE, @"「クリ♥♥　いじられたら♥♥　すぐイっちゃ♥♥　イっちゃうからぁ♥♥」"
+		
+	; C感覚LV2
+	ELSEIF ABL:8 == 2
+		CALL ADD_RAND_MESSAGE, @"「あ♥　そ、そこはぁ♥　だめぇ♥」"
+		CALL ADD_RAND_MESSAGE, @"（クリ……勝手におっきくなっちゃぅ♥）"
+		CALL ADD_RAND_MESSAGE, @"「だ、だめ♥　クリトリスはよわいってぇ♥」"
+		
+	; C感覚LV1
+	ELSEIF ABL:8 == 1
+		CALL ADD_RAND_MESSAGE, @"「ちょ、クリはだめぇ！　ダメ……だってば……」"
+		CALL ADD_RAND_MESSAGE, @"「ひゃぁ！　敏感なんだから優しく……あんっ」"
+		
+	; C感覚LV0
+	ELSEIF ABL:8 == 0
+		CALL ADD_RAND_MESSAGE, @"「そ、そこは敏感だからぁ！」"
+		CALL ADD_RAND_MESSAGE, @"「いたっ！　やめてよ！」"
+		CALL ADD_RAND_MESSAGE, @"「ひ、ひゃぁっ！」"
+		
+
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0   14    敵の性攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2    3    部位 3:V
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_14_X_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(1)
+
+	RETURN 1
+ENDIF
+
+
+;●バリアント分岐
+IF FLAG:600 == 1
+	IF ABL:11 > ABL:15
+		LOCAL:0 = ABL:11
+	ELSE
+		LOCAL:0 = ABL:15
+	ENDIF
+	
+	IF ABL:9 > 2
+		LOCAL:0 += 1
+	ENDIF
+	IF LOCAL:0 < 1 && ABL:9 == 2
+		LOCAL:0 = 1
+	ENDIF
+	
+ELSE
+	LOCAL:0 = ABL:9
+ENDIF
+
+	; V感覚LV3以上 or [淫壷]所持
+	IF LOCAL:0 >= 3 || TALENT:77
+		CALL ADD_RAND_MESSAGE, @"「もっとぉ♥　もっと奥ぅ♥♥　赤ちゃんの部屋まできてぇ♥♥♥」"
+		CALL ADD_RAND_MESSAGE, @"「こんな♥　すごいの知っちゃったら♥　もう♥　もどれないよお♥♥　ぉ♥」"
+		CALL ADD_RAND_MESSAGE, @"「おまんこ♥　じゅぼじゅぼ♥　されてぇ♥　えっちなお汁とまらなくなっちゃっ♥♥　あ♥　あぁ♥♥」\n\d淫らな愛液がとめどなく溢れている……\d"
+		CALL ADD_RAND_MESSAGE, @"「すき♥♥　おまんこすき♥♥　もっと♥　もっとぉ♥♥」"
+		
+	; V感覚LV2
+	ELSEIF LOCAL:0 == 2
+		CALL ADD_RAND_MESSAGE, @"「そこは♥　赤ちゃんの部屋なのぉ♥」"
+		CALL ADD_RAND_MESSAGE, @"（子宮口コツコツされるの好き♥　好きぃ♥）"
+		CALL ADD_RAND_MESSAGE, @"（もっと奥……あっ♥　あ♥　そこ突いて♥　もっと突いて♥）"
+		CALL ADD_RAND_MESSAGE, @"「おっきいのが♥　一番気持ちいいとこ♥　こすって♥　るぅ♥」"
+		
+	; V感覚LV1
+	ELSEIF LOCAL:0 == 1
+		CALL ADD_RAND_MESSAGE, @"「あぁ……っ　そんなにゴリゴリしたら……ひぁっ」"
+		CALL ADD_RAND_MESSAGE, @"「ひゃぁ！　敏感なんだから優しく……あんっ」"
+		
+	; V感覚LV0
+	ELSEIF LOCAL:0 == 0
+		CALL ADD_RAND_MESSAGE, @"「うあぁ……！　膣内……ごりごりってぇ……！」"
+		CALL ADD_RAND_MESSAGE, @"「こんな大きいの……くるしい……だけ……！」"
+		
+
+	ENDIF
+RETURN 1
+
+
+
+

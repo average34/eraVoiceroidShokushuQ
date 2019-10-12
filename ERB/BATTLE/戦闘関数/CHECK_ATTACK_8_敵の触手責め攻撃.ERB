@@ -1,0 +1,101 @@
+﻿;攻撃（分類8＝敵の口責め攻撃）を処理
+;ARG:0	攻撃側キャラ
+;ARG:1	防御側キャラ
+;RESULT:0	当たったかどうか（1で命中）
+;RESULT:1	ダメージ
+@CHECK_ATTACK_8(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	当たったかどうか
+;2	ダメージ
+;3	攻撃力(今の所未使用)
+;4	防御力(今の所未使用)
+;5	属性倍率
+;6	命中率
+;7	TEMP
+;8	TEMP2
+
+
+VARSET LOCAL, 0, 1, 9
+
+;----- 攻撃力計算 -----
+;基本値
+LOCAL:2 = TFLAG:57 * TFLAG:58
+
+
+
+
+
+;防御側TP倍率
+LOCAL:7 = 0
+IF BASE:(ARG:1):4 >= 100
+	LOCAL:7 = 100
+ELSE
+	LOCAL:7 = LIMIT(100 - (100 - BASE:(ARG:1):4) / 2, 50, 100)
+ENDIF
+LOCAL:2 = LOCAL:2 * LOCAL:7 / 100
+
+
+
+
+
+
+
+
+
+;触手中毒による軽減
+IF ABL:(ARG:1):11 == 0
+	LOCAL:7 = 100
+ELSEIF ABL:(ARG:1):11 == 1
+	LOCAL:7 = 90
+ELSEIF ABL:(ARG:1):11 == 2
+	LOCAL:7 = 75
+ELSE
+	LOCAL:7 = 50
+ENDIF
+LOCAL:2 = LOCAL:2 * LOCAL:7 / 100
+
+;防御中は威力0.5倍
+IF CFLAG:(ARG:1):30
+	LOCAL:2 = LOCAL:2 * 5 / 10
+ENDIF
+
+;溜め中は威力1.5倍
+IF CFLAG:(ARG:1):31
+	LOCAL:2 = LOCAL:2 * 15 / 10
+ENDIF
+
+;集中時は威力1.5倍
+IF CFLAG:(ARG:1):32
+	LOCAL:2 = LOCAL:2 * 15 / 10
+ENDIF
+
+
+
+
+;乱数加算および桁補正
+LOCAL:2 = LOCAL:2 * (90 + RAND:11 + RAND:11) / 1000
+
+
+;口責め攻撃に属性は無い
+LOCAL:5 = 100
+
+
+;命中率チェック　通常攻撃依存の命中率
+CALL GET_HIT_RATE_ENEMY(ARG:0, ARG:1, 1)
+LOCAL:6 = RESULT
+
+PRINTFORML 命中率：{LOCAL:6}％
+
+IF RAND:100 < LOCAL:6
+	LOCAL:1 = 1
+ENDIF
+
+IF LOCAL:1
+	LOCAL:2 = LOCAL:2 * LOCAL:5 / 100
+ELSE
+	LOCAL:2 = 0
+ENDIF
+
+RETURN LOCAL:1, LOCAL:2
+

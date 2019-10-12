@@ -1,0 +1,46 @@
+﻿;※eraMegaten からお借りしました
+;-------------------------------------------------------------------------------
+;    BARの色違え版
+;-------------------------------------------------------------------------------
+;ARG:0	現在値
+;ARG:1	最大値
+;ARG:2	目盛数
+;ARG:3	バー色
+;ARG:4	バー背景色
+;ARGS:0	バー文字（省略時 UNICODE(0x2586)）
+;ARGS:1	バー背景文字（省略時 UNICODE(0x2585)）
+;===============================================================================
+@PRINT_COLORBAR(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4, ARGS:0 = "", ARGS:1 = "")
+#LOCALSIZE 5
+VARSET LOCAL
+;文字省略時、UNICODEに読み替える
+IF ARGS:0 == ""
+	ARGS:0 = %UNICODE(0x2586)%
+ENDIF
+IF ARGS:1 == ""
+	ARGS:1 = %UNICODE(0x2585)%
+ENDIF
+;バグ対策
+IF ARG:1 == 0
+	ARG:1 = 1
+ENDIF
+
+LOCAL:1 = ARG:0 * ARG:2 / ARG:1
+LOCAL:2 = GETCOLOR()
+FOR LOCAL, 1, ARG:2 + 1
+	IF LOCAL:1 >= LOCAL
+		IF !LOCAL:3
+			SETCOLOR ARG:3
+			LOCAL:3 = 1
+		ENDIF
+		PRINTFORM %ARGS:0%
+	ELSE
+		IF !LOCAL:4
+			SETCOLOR ARG:4
+			LOCAL:4 = 1
+		ENDIF
+		PRINTFORM %ARGS:1%
+	ENDIF
+NEXT
+SETCOLOR LOCAL:2
+VARSET LOCAL

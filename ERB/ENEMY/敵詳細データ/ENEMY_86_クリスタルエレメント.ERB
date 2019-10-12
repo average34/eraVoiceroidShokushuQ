@@ -1,0 +1,173 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_86(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 7500
+DA:(ARG:0):2 = 7500
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 80
+DA:(ARG:0):9 = 65
+
+DA:(ARG:0):15 = 0
+DA:(ARG:0):16 = 10
+DA:(ARG:0):17 = 90
+
+DA:(ARG:0):18 = 90
+DA:(ARG:0):19 = 5
+
+DA:(ARG:0):14 = 100
+DA:(ARG:0):42 = 80
+DA:(ARG:0):44 = 50
+
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 1
+DA:(ARG:0):86 = 4
+DA:(ARG:0):89 = 63
+
+
+IF RAND:2 == 0
+	DA:(ARG:0):88 = 2
+ENDIF
+
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(86)%
+
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_86(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には拘束攻撃以外
+	IF ARG:1 == LOCAL:1
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 65
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:3 = RAND:100
+			SELECTCASE LOCAL:3
+				CASE 0 TO 10
+					LOCAL:2 = 40
+				CASE 11 TO 14
+					LOCAL:2 = 41
+				CASE 15 TO 25
+					LOCAL:2 = 255
+				CASE 26 TO 35
+					LOCAL:2 = 732
+				CASE 36 TO 50
+					LOCAL:2 = 733
+				CASE 51 TO 60
+					LOCAL:2 = 734
+				CASE 61 TO 80
+					LOCAL:2 = 862
+				CASE 81 TO 90
+					LOCAL:2 = 979
+				CASEELSE
+					LOCAL:2 = 564
+			ENDSELECT
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		LOCAL:3 = RAND:80
+		SELECTCASE LOCAL:3
+		CASE 0 TO 20
+			LOCAL:2 = 40
+		CASE 21 TO 30
+			LOCAL:2 = 41
+		CASE 31 TO 50
+			LOCAL:2 = 255
+		CASE 51 TO 60
+			LOCAL:2 = 416
+		CASEELSE
+			LOCAL:2 = 417
+		ENDSELECT
+	ENDIF
+ELSEIF LOCAL:1 < 0
+	;PT外メンバーを拘束している場合
+	;PTには拘束攻撃以外
+	LOCAL:3 = RAND:80
+	SELECTCASE LOCAL:3
+		CASE 0 TO 20
+			LOCAL:2 = 40
+		CASE 21 TO 30
+			LOCAL:2 = 41
+		CASE 31 TO 50
+			LOCAL:2 = 255
+		CASE 51 TO 60
+			LOCAL:2 = 416
+		CASEELSE
+			LOCAL:2 = 417
+	ENDSELECT
+
+ELSEIF DA:(ARG:0):1 <= DA:(ARG:0):2 / 4
+	;HP四分の一以下
+	LOCAL:3 = RAND:100
+	SELECTCASE LOCAL:3
+		CASE 0 TO 20
+			LOCAL:2 = 40
+		CASE 21 TO 40
+			LOCAL:2 = 416
+		CASE 41 TO 60
+			LOCAL:2 = 417
+		CASEELSE
+			LOCAL:2 = 24
+	ENDSELECT
+ELSE
+	;通常時
+	;色々
+	LOCAL:3 = RAND:100
+	SELECTCASE LOCAL:3
+		CASE 0 TO 20
+			LOCAL:2 = 40
+		CASE 21 TO 30
+			LOCAL:2 = 41
+		CASE 31 TO 50
+			LOCAL:2 = 255
+		CASE 51 TO 60
+			LOCAL:2 = 416
+		CASE 61 TO 80
+			LOCAL:2 = 417
+		CASEELSE
+			LOCAL:2 = 564
+	ENDSELECT
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

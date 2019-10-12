@@ -1,0 +1,89 @@
+﻿; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1    3    コマンドID(前に出る)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「少しでも強い攻撃を当てないと！」"
+	CALL ADD_RAND_MESSAGE, @"「間合いはこの位近い方がいいかな」"
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「真っ直ぐ行って！　ぶっとばす！」"
+		CALL ADD_RAND_MESSAGE, @"「右ストレートで！　ぶっとばす！」"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「早めに勝負をつけてしまいましょ」"
+		CALL ADD_RAND_MESSAGE, @"「少しばかり危険はあるけど……」"
+	CASE 性格_しあわせもの
+		CALL ADD_RAND_MESSAGE, @"「どこにいても相手の攻撃は届くみたいですし、それなら！」"
+
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「不思議な出会いは交差するものよね」"
+
+	CASE 性格_ぬけめがない
+
+		CALL ADD_RAND_MESSAGE, @"「これでどんな攻撃も当てやすいはず……」"
+		CALL ADD_RAND_MESSAGE, @"「攻める意思表示は重要。相手も守りを考えざるを得なくなる」"
+
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「これで攻撃しやすくなった、覚悟しろ！」"
+		CALL ADD_RAND_MESSAGE, @"「距離が近い方がダメージは大きいだろ！」"
+
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「これなら一方的に攻撃されるってことはないんじゃない？」"
+
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「こ、ここまで出れば充分……だよね」"
+
+	CASE 性格_わがまま
+		CALL ADD_RAND_MESSAGE, @"「これなら、前にだけ集中して暴れられるわね」"
+
+	ENDSELECT
+
+
+	IF FLAG:10 > 0
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_おせっかい
+			CALL ADD_RAND_MESSAGE, @"「できるだけ敵を引きつけてみます」"
+		CASE 性格_おてんば
+
+		CASE 性格_がんこもの
+			CALL ADD_RAND_MESSAGE, @"「できるだけ敵を引きつけてみましょうか」"
+		CASE 性格_がんばりや
+			CALL ADD_RAND_MESSAGE, @"「私が敵を引きつけないと！」"
+		CASE 性格_きれもの
+
+		CASE 性格_くろうにん
+			CALL ADD_RAND_MESSAGE, @"「できるだけ敵を引きつけてみる……」"
+		CASE 性格_しあわせもの
+
+		CASE 性格_セクシーギャル
+
+		CASE 性格_ぬけめがない
+
+		CASE 性格_ねっけつかん
+		CASE 性格_のんきもの
+
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「仲間を守れるだけの勇気を……」"
+		CASE 性格_やさしいひと
+			CALL ADD_RAND_MESSAGE, @"「できるだけ敵を引きつけてみる……」"
+		CASE 性格_わがまま
+
+		CASE 性格_ふつう
+
+			CALL ADD_RAND_MESSAGE, @"「ここは私が……」"
+
+		ENDSELECT
+	ENDIF
+
+
+
+RETURN 1
+
+
+

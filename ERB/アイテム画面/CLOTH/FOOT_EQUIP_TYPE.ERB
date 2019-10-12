@@ -1,0 +1,470 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;コンフィグ
+;FLAG:534はビット演算で色々情報が入っています
+;0:全機能OFF　1:たっていると選択がランダム　2:立っていると特殊効果あり　1024以降:立っていると番号に対応した装備選択可能
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;コンフィグ取得
+;=================================================
+@GET_FOOT_EQUIP_CONFIG(項目,番号 = 0)
+#FUNCTION
+#DIMS 項目
+#DIM 番号
+
+	SELECTCASE 項目
+		CASE "動作"
+			SETBIT FLAG:534,0
+			RETURNF GETBIT(FLAG:534,0)
+		CASE "選択"
+			RETURNF GETBIT(FLAG:534,1)
+		CASE "効果"
+			RETURNF GETBIT(FLAG:534,2)
+		CASE "服装"
+			IF 番号 < 0
+				RETURNF -1
+			ELSEIF 番号 < 55
+				RETURNF GETBIT(FLAG:534,10 + 番号-1)
+			ELSEIF 番号 >= 100
+				RETURNF 1
+			ENDIF
+	ENDSELECT
+
+RETURNF -1
+;=================================================
+;コンフィグ設定
+;=================================================
+@SET_FOOT_EQUIP_CONFIG(ARG, 項目, 番号 = 0)
+#DIMS 項目
+#DIM 番号
+
+	SELECTCASE 項目
+		CASE "動作"
+			SIF ARG != GETBIT(FLAG:534,0)
+				INVERTBIT FLAG:534,0
+		CASE "選択"
+			SIF ARG != GETBIT(FLAG:534,1)
+				INVERTBIT FLAG:534,1
+		CASE "効果"
+			SIF ARG != GETBIT(FLAG:534,2)
+				INVERTBIT FLAG:534,2
+		CASE "服装"
+			IF 番号 < 0
+			
+			ELSEIF 番号 < 55
+				SIF ARG != GETBIT(FLAG:534,10 + 番号-1)
+					INVERTBIT FLAG:534,10 + 番号-1
+			ENDIF
+	ENDSELECT
+
+;=================================================
+;服装設定
+;=================================================
+@FOOT_EQUIP_CONFIG_FOOT_EQUIP_LIST
+#DIM LCOUNT,3	;ループ用
+#DIM ACTIVE, 100	;項目の有効記憶用
+#DIM デフォルト
+
+
+	デフォルト = FLAG:534
+
+	WHILE 1
+		;---表示---
+		DRAWLINEFORM -
+		PRINTL ここで足装備のON・OFFを切り替えられます
+		PRINTL （他のパッチで使用している足装備など、ここに表示されていないものは変更できません）
+		PRINTL
+		
+		VARSET ACTIVE
+		FOR LCOUNT ,0 ,26
+			CALL FOOT_EQUIP_CONFIG_FOOT_EQUIP_LIST_ボタン(LCOUNT)
+			SIF RESULT == 1
+				ACTIVE:(LCOUNT) = 1
+			
+			CALL FOOT_EQUIP_CONFIG_FOOT_EQUIP_LIST_ボタン(LCOUNT+25)
+			SIF RESULT == 1
+				ACTIVE:(LCOUNT+25) = 1
+			PRINTL
+		NEXT
+		PRINTL
+		PRINTFORML [100]決定　[101]全OFF　[102]全ON　[200]変更前に戻す
+		
+		$INPUT_LOOP_FOOT_EQUIP
+		INPUT
+		LOCAL = RESULT
+		
+		;---入力判定---
+		IF LOCAL == 100
+			RETURN
+		
+		ELSEIF LOCAL == 101
+			FOR LCOUNT, 0, 56
+				CALL GET_FOOT_EQUIP_DATA_名前(LCOUNT)
+				IF RESULT == 1
+					CALL SET_FOOT_EQUIP_CONFIG( 0, "服装", LCOUNT)
+				ENDIF
+			NEXT
+		
+		ELSEIF LOCAL == 102
+			FOR LCOUNT, 0, 56
+				CALL GET_FOOT_EQUIP_DATA_名前(LCOUNT)
+				IF RESULT == 1
+					CALL SET_FOOT_EQUIP_CONFIG( 1, "服装", LCOUNT)
+				ENDIF
+			NEXT
+		
+		ELSEIF LOCAL == 200
+			FLAG:534 = デフォルト
+		
+		ELSEIF LOCAL >= 0 && LOCAL < 100 && ACTIVE:(LOCAL) == 1
+			CALL SET_FOOT_EQUIP_CONFIG(1 - GET_FOOT_EQUIP_CONFIG("服装",LOCAL),"服装",LOCAL)
+		ELSE
+			CLEARLINE 1
+			REUSELASTLINE 入力が不正です！
+			GOTO INPUT_LOOP_FOOT_EQUIP
+		ENDIF
+	WEND
+
+;=================================================
+@FOOT_EQUIP_CONFIG_FOOT_EQUIP_LIST_ボタン(ARG:0)
+;ARG:0 服装ID
+	CALL GET_FOOT_EQUIP_DATA_名前(ARG:0)
+	IF RESULT == 1
+		LOCALS:0 = [{ARG:0, 2}] 
+		LOCALS:1 = %RESULTS, 25, LEFT%
+		IF GET_FOOT_EQUIP_CONFIG("服装",ARG:0)
+			LOCALS:2 = %"ON", 4, LEFT%
+		ELSE
+			LOCALS:2 = %"OFF", 4, LEFT%
+		ENDIF
+		PRINTBUTTON @"%LOCALS:0 + LOCALS:1 + LOCALS:2,40,LEFT%", ARG:0
+		RESETCOLOR
+		RETURN 1
+	ELSE
+		LOCALS:0 = [--] 
+		LOCALS:1 = %"－－－－－", 25, LEFT%
+		LOCALS:2 = %"--", 4, LEFT%
+		SETCOLOR 0x333333
+		PRINTFORM %LOCALS:0 + LOCALS:1 + LOCALS:2,40,LEFT%
+		RESETCOLOR
+		RETURN -1
+	ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;基本処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;服装変更
+;=================================================
+@FOOT_EQUIP_TYPE_1(ARG:1)
+#DIM LCOUNT,3	;ループ用
+;ARG:1 キャラID
+
+	SIF GET_FOOT_EQUIP_CONFIG("動作") == 0
+		RETURN -1
+		
+	SIF ARG:1 < 1 || ARG:1 >= CHARANUM
+		RETURN -1
+		
+	IF GET_FOOT_EQUIP_CONFIG("選択")
+		CALL FOOT_EQUIP_TYPE_SELECT_RAND(ARG:1)
+	ELSE
+		CALL FOOT_EQUIP_TYPE_SELECT(ARG:1)
+	ENDIF
+	LOCAL = RESULT
+	IF LOCAL >= 0
+		CALL GET_FOOT_EQUIP_DATA_選択文(LOCAL, ARG:1)
+		CFLAG:(ARG:1):500 = LOCAL
+	ENDIF
+
+;=================================================
+;服装変更（アイテム譲渡時用）
+;=================================================
+@FOOT_EQUIP_TYPE_2(ARG:1)
+#DIM LCOUNT,3	;ループ用
+;ARG:1 キャラID
+	SIF GET_FOOT_EQUIP_CONFIG("動作") == 0
+		RETURN -1
+		
+	SIF ARG:1 < 1 || ARG:1 >= CHARANUM
+		RETURN -1
+
+	IF GET_FOOT_EQUIP_CONFIG("選択")
+		
+		CALL FOOT_EQUIP_TYPE_SELECT_RAND(ARG:1)		
+		CALL GET_FOOT_EQUIP_DATA_名前(LOCAL)
+		PRINTFORML %RESULTS%を取り出した
+		
+	ELSE
+		PRINTFORML %CALLNAME:(ARG:1)%に渡したのは……
+		CALL FOOT_EQUIP_TYPE_SELECT(ARG:1)
+		
+	ENDIF
+	LOCAL = RESULT
+	
+	IF LOCAL >= 0
+		CFLAG:(ARG:1):500 = LOCAL
+	ENDIF
+
+;=================================================
+;着せ替え選択
+;RESULT:0 ARG:0（0:いつもの　1:・・・）
+;=================================================
+@FOOT_EQUIP_TYPE_SELECT(ARG:1)
+#DIM LCOUNT,3	;ループ用
+#DIM ACTIVE, 100	;項目の有効記憶用
+;ARG:1 キャラID
+;LOCAL:1	全部OFFのチェック用
+		
+	SIF GET_FOOT_EQUIP_CONFIG("動作") == 0
+		RETURN -1
+		
+	SIF ARG:1 < 1 || ARG:1 >= CHARANUM
+		RETURN -1
+
+	VARSET ACTIVE
+	FOR LCOUNT, 0, 100
+		CALL GET_FOOT_EQUIP_DATA_可不可(LCOUNT, ARG:1)
+		IF RESULT == 1
+		
+			ACTIVE:(LCOUNT) = 1
+			PRINTFORM [{LCOUNT,2}] 
+			
+			CALL GET_FOOT_EQUIP_DATA_名前(LCOUNT)
+			PRINTFORM %RESULTS, 13, LEFT%　
+			
+			CALL GET_FOOT_EQUIP_DATA_説明(LCOUNT)
+			PRINTFORM %RESULTS%
+			
+			PRINTL
+			;全部OFFのチェック用
+			LOCAL:1 += 1
+		ENDIF
+	NEXT
+	IF LOCAL:1 > 0
+		$INPUT_LOOP_FOOT_EQUIP
+		INPUT
+	
+		IF RESULT >= 0 && RESULT <= 99 && ACTIVE:(RESULT) == 1
+			RETURN RESULT
+		ELSE
+			GOTO INPUT_LOOP_FOOT_EQUIP
+		ENDIF
+		
+	ELSE
+	;全OFFなら何もなし
+	ENDIF
+
+;=================================================
+;着せ替えランダム選択
+;RESULT:0 ARG:0（0:いつもの　1:・・・）
+;=================================================
+@FOOT_EQUIP_TYPE_SELECT_RAND(ARG:1)
+#DIM LCOUNT,3	;ループ用
+#DIM ACTIVE, 100	;項目の有効記憶用
+;ARG:1 キャラID
+;LOCAL:1	全部OFFのチェック用
+		
+	SIF GET_FOOT_EQUIP_CONFIG("動作") == 0
+		RETURN -1
+
+	VARSET ACTIVE
+	LOCAL = 0
+	FOR LCOUNT, 0, 100
+		CALL GET_FOOT_EQUIP_DATA_可不可(LCOUNT, ARG:1)
+		IF RESULT == 1
+			ACTIVE:(LCOUNT) = 1
+			LOCAL ++
+		ENDIF
+		;全部OFFのチェック用
+		LOCAL:1 += 1
+	NEXT
+	IF LOCAL:1 > 0
+		FOR LCOUNT, 0, 100
+			IF ACTIVE:(LCOUNT) == 1
+				IF RAND:LOCAL == 0
+					RETURN LCOUNT
+				ENDIF
+				LOCAL --
+			ENDIF
+		NEXT
+	ELSE
+	;全OFFなら何もなし
+	ENDIF
+;=================================================
+;ステータス上の服装表示
+;=================================================
+@PRINT_FOOT_EQUIP_TYPE(ARG:1)
+;ARG:1 キャラID
+	
+	SIF GET_FOOT_EQUIP_CONFIG("動作") == 0
+		RETURN -1
+	
+	SIF ARG:1 < 1 || ARG:1 >= CHARANUM
+		RETURN -1
+	
+	IF CFLAG:(ARG:1):500 > 0 && BASE:(ARG:1):3 > 0
+		CALL GET_FOOT_EQUIP_DATA_服装表示(CFLAG:(ARG:1):500,ARG:1)
+		IF RESULT == 1
+			PRINTFORM %RESULTS%
+		ENDIF
+	ELSE
+		SETCOLOR 0xEE1010
+		PRINTFORM 全裸
+	ENDIF
+	RESETCOLOR
+
+;=================================================
+;キャラデータ簡易チェック
+;RESULT:0 結果(1:成功 -1:失敗)
+;=================================================
+@FOOT_EQUIP_TYPE_キャラチェック(ARG:1)
+;ARG:1 キャラID
+
+	SIF ARG:1 < 1 || ARG:1 >= CHARANUM
+		RETURN -1
+
+	BASE:(ARG:1):HP = LIMIT(BASE:(ARG:1):HP,0,MAXBASE:(ARG:1):HP)
+
+	IF CFLAG:(ARG:1):29
+		BASE:(ARG:1):MP = 0
+	ELSE
+		BASE:(ARG:1):MP = LIMIT(BASE:(ARG:1):MP,1,MAXBASE:(ARG:1):MP)
+	ENDIF
+
+	BASE:(ARG:1):EP = LIMIT(BASE:(ARG:1):EP,0,MAXBASE:(ARG:1):EP)
+
+	BASE:(ARG:1):CP = LIMIT(BASE:(ARG:1):CP,0,MAXBASE:(ARG:1):CP)
+	IF BASE:(ARG:1):CP <= 0
+		CFLAG:(ARG:1):40 = 0
+		CFLAG:(ARG:1):44 = 0
+		CFLAG:(ARG:1):500 = 0
+		CFLAG:(ARG:1):501 = 0
+	ENDIF
+	
+	RETURN 1
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;服装データ取得
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=================================================
+;服装データ:有効
+;RESULT:0 結果(1:有効 -1:無効)
+;=================================================
+@GET_FOOT_EQUIP_DATA_有効(ARG:0)
+;ARG:0 服装ID
+	IF GET_FOOT_EQUIP_CONFIG("服装",ARG:0)
+		CALL GET_FOOT_EQUIP_DATA_名前(ARG:0)
+		IF RESULT == 1
+			RETURN 1
+		ELSE
+			RETURN -1
+		ENDIF
+	ELSE
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:名前
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULTS:0 名前
+;=================================================
+@GET_FOOT_EQUIP_DATA_名前(ARG:0)
+;ARG:0 服装ID
+	RESULTS = %""%
+	TRYCCALLFORM FOOT_EQUIP_DATA_{ARG:0}(0)
+		IF RESULTS == ""
+			RETURN -1
+		ELSE
+			RETURN 1
+		ENDIF
+	CATCH
+		RETURN -1
+	ENDCATCH
+
+;=================================================
+;服装データ:説明
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULTS:0 説明
+;=================================================
+@GET_FOOT_EQUIP_DATA_説明(ARG:0)
+;ARG:0 服装ID
+	
+	CALL GET_FOOT_EQUIP_DATA_有効(ARG:0)
+	IF RESULT == 1
+		RESULTS = %""%
+		CALLFORM FOOT_EQUIP_DATA_{ARG:0}(1)
+		RETURN 1
+	ELSE
+		RESULTS = %""%
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:選択可不可
+;RESULT:0 結果(1:可 -1:不可)
+;=================================================
+@GET_FOOT_EQUIP_DATA_可不可(ARG:0, ARG:1)
+;ARG:0 服装ID
+;ARG:1 キャラID
+	
+	
+	CALL GET_FOOT_EQUIP_DATA_有効(ARG:0)
+	IF RESULT == 1
+		CALLFORM FOOT_EQUIP_DATA_{ARG:0}(2,ARG:1)
+		IF RESULT == 0
+			RETURN 1
+		ELSE
+			RETURN -1
+		ENDIF
+	ELSE
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:服装選択時地の文
+;RESULT:0 結果(1:成功 -1:失敗)
+;=================================================
+@GET_FOOT_EQUIP_DATA_選択文(ARG:0, ARG:1)
+;ARG:0 服装ID
+;ARG:1 キャラID
+	
+	CALL GET_FOOT_EQUIP_DATA_有効(ARG:0)
+	IF RESULT == 1
+		CALLFORM FOOT_EQUIP_DATA_{ARG:0}(5,ARG:1)
+		RETURN 1
+	ELSE
+		RETURN -1
+	ENDIF
+	
+;=================================================
+;服装データ:ステータス服装表示
+;RESULT:0 結果(1:成功 -1:失敗)
+;RESULTS:0 表示
+;=================================================
+@GET_FOOT_EQUIP_DATA_服装表示(ARG:0, ARG:1)
+;ARG:0 服装ID
+;ARG:1 キャラID
+#DIM CP率
+	
+	CALL GET_FOOT_EQUIP_DATA_有効(ARG:0)
+	IF RESULT == 1
+		CP率 = BASE:(ARG:1):CP * 100 / MAXBASE:(ARG:1):CP
+		IF CP率 > 66 
+			LOCAL = 10
+		ELSEIF CP率 > 33
+			LOCAL = 11
+		ELSE
+			LOCAL = 12
+		ENDIF
+		RESULTS = %""%
+		CALLFORM FOOT_EQUIP_DATA_{ARG:0}(LOCAL,ARG:1)
+		IF RESULTS == ""
+			CALL GET_FOOT_EQUIP_DATA_名前(ARG:0)
+		ENDIF
+		RETURN 1
+	ELSE
+		RESULTS = %""%
+		RETURN -1
+	ENDIF
+	
+

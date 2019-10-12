@@ -1,0 +1,350 @@
+﻿;エネミーフィルター
+;ここではフラグを立てるだけでREPOP.ERBなどの敵が出てくる処理で確定
+@ENEMY_FILTER
+;LOCAL
+;0	ループ用
+;1	ループ用
+;
+;5	ページ数
+;6	非表示処理の確認用
+
+;FLAG:527	種族フィルター （優先的に出現するもの）
+;FLAG:536	種族フィルター （優先的に出現させなくするもの）
+;FLAG:512	男フィルター (NPCにも使う可能性があるので別枠)
+
+
+
+LOCAL:5 = 0
+
+$START
+
+PRINTFORML 自然出現するエネミーにフィルターを掛ける（除外する）ことができます。
+;クイーンとかフィルターかけられないものは？？？表示
+PRINTFORML 「×」のついているエネミーはフィルター適用中です。
+
+DRAWLINE
+
+;リスト部分を表示
+FOR LOCAL:0, (1+20*LOCAL:5), (21+20*LOCAL:5)
+	;敵データ呼び出し
+	TRYCCALLFORM SET_ENEMY_DATA_{LOCAL:0}(FLAG:1)
+	CATCH
+	ENDCATCH
+	
+	;非表示にするか確認
+	LOCAL:6 = 0
+	
+	;No1～4はボスなので除外
+	IF LOCAL:0 <= 4
+		LOCAL:6 = 1
+	ENDIF
+	
+	;ランク7以上の敵は除外
+	IF DA:(FLAG:1):86 >= 7
+		LOCAL:6 = 1
+	ENDIF
+	
+	;出会ったことのない敵は除外
+	IF FLAG:(LOCAL:0 + 700) == 0
+		LOCAL:6 = 1
+	ENDIF
+	
+	
+	;表示条件を満たした敵は選択肢表示　満たしていない部分は？？？表示　現在存在しない敵も？？？
+	IF LOCAL:6 == 0 && ENEMY_NAME(LOCAL:0) != "バグ触手"
+		LOCALS = %ENEMY_NAME(LOCAL:0)%
+		IF FLAG:(LOCAL:0 + 700) < 0
+			PRINTFORM [{LOCAL:0,2}] × %LOCALS, 40, LEFT%
+		ELSE
+			PRINTFORM [{LOCAL:0,2}]    %LOCALS, 40, LEFT%
+		ENDIF
+	ELSE
+		;灰色表示
+		LOCALS = ？？？
+		SETCOLOR 0x333333
+		PRINTFORM [{LOCAL:0,2}]    %LOCALS, 40, LEFT%
+		RESETCOLOR
+	ENDIF
+	
+	
+	;処理が終わったら後始末
+	FOR LOCAL:1, 0, VARSIZE("DA", 1)
+		DA:(FLAG:1):(LOCAL:1) = 0
+	NEXT
+	
+	
+	;改行処理
+	IF LOCAL:0 % 2 == 0
+		PRINTL 
+	ENDIF
+	IF LOCAL:0 >= 98
+		;扱うのは98匹目まで
+		BREAK
+	ENDIF
+NEXT
+
+DRAWLINE
+PRINTLC [777] 前のページ
+PRINTFORMLC           Page({LOCAL:5 + 1}/5)
+PRINTC [999] 次のページ
+PRINTL 
+PRINTL 
+
+PRINTFORM [201] 個別フィルターを全て解除                    
+PRINTFORML [202] 基本モンスターのみ出現するようにする
+
+;各種族のフィルター
+PRINTFORML 
+PRINTFORML ※ 以下は種族ごとにまとめたフィルターです。上記個別フィルターとは別に管理されます。
+IF (FLAG:527 & 1) == 0
+	IF FLAG:536 & 1
+		PRINTFORMLC [211] × 女性系
+	ELSE
+		PRINTFORMLC [211]    女性系
+	ENDIF
+ENDIF
+IF (FLAG:527 & 2) == 0
+	IF FLAG:536 & 2
+		PRINTFORMLC [212] × 植物系
+	ELSE
+		PRINTFORMLC [212]    植物系
+	ENDIF
+ENDIF
+IF (FLAG:527 & 4) == 0
+	IF FLAG:536 & 4
+		PRINTFORMLC [213] × 動物系
+	ELSE
+		PRINTFORMLC [213]    動物系
+	ENDIF
+ENDIF
+
+PRINTFORML 
+
+IF (FLAG:527 & 8) == 0
+	IF FLAG:536 & 8
+		PRINTFORMLC [214] × 丸呑系
+	ELSE
+		PRINTFORMLC [214]    丸呑系
+	ENDIF
+ENDIF
+IF (FLAG:527 & 16) == 0
+	IF FLAG:536 & 16
+		PRINTFORMLC [215] × 海産系
+	ELSE
+		PRINTFORMLC [215]    海産系
+	ENDIF
+ENDIF
+IF (FLAG:527 & 32) == 0
+	IF FLAG:536 & 32
+		PRINTFORMLC [216] × ローパー系
+	ELSE
+		PRINTFORMLC [216]    ローパー系
+	ENDIF
+ENDIF
+
+PRINTFORML 
+
+IF (FLAG:527 & 64) == 0
+	IF FLAG:536 & 64
+		PRINTFORMLC [217] × スライム系
+	ELSE
+		PRINTFORMLC [217]    スライム系
+	ENDIF
+ENDIF
+IF (FLAG:527 & 256) == 0
+	IF FLAG:536 & 256
+		PRINTFORMLC [218] × 罠系
+	ELSE
+		PRINTFORMLC [218]    罠系
+	ENDIF
+ENDIF
+;野郎のみ別フラグによるフィルター
+IF (FLAG:512 & 1) == 0
+	PRINTFORMLC [219] × 野郎
+ELSE
+	PRINTFORMLC [219]    野郎
+ENDIF
+
+PRINTFORML 
+
+IF (FLAG:542 & 1) == 0
+	IF FLAG:543 & 1
+		PRINTFORMLC [220] × A系
+	ELSE
+		PRINTFORMLC [220]    A系
+	ENDIF
+ENDIF
+IF (FLAG:542 & 2) == 0
+	IF FLAG:543 & 2
+		PRINTFORMLC [221] × B系
+	ELSE
+		PRINTFORMLC [221]    B系
+	ENDIF
+ENDIF
+IF (FLAG:542 & 4) == 0
+	IF FLAG:543 & 4
+		PRINTFORMLC [222] × C系
+	ELSE
+		PRINTFORMLC [222]    C系
+	ENDIF
+ENDIF
+
+PRINTFORML 
+
+IF (FLAG:542 & 8) == 0
+	IF FLAG:543 & 8
+		PRINTFORMLC [223] × V系
+	ELSE
+		PRINTFORMLC [223]    V系
+	ENDIF
+ENDIF
+
+PRINTFORML 
+PRINTFORML 
+PRINTFORML [800] フィルター全解放（図鑑なども全て開放されます）
+PRINTFORML 
+
+PRINTFORML [  0] 戻る
+
+
+$INPUT_LOOP
+INPUT
+
+IF RESULT == 0
+	RETURN
+ELSEIF RESULT == 777
+	;前ページへ
+	LOCAL:5 -= 1
+	SIF LOCAL:5 < 0
+		LOCAL:5 = 4
+ELSEIF RESULT == 999
+	;次ページへ
+	LOCAL:5 += 1
+	SIF LOCAL:5 > 4
+		LOCAL:5 = 0
+ELSEIF RESULT == 800
+	FOR LOCAL:1, 5, 99
+		FLAG:(LOCAL:1 + 700) = 1
+	NEXT
+ELSEIF RESULT > 4 && RESULT < 99 && FLAG:(RESULT + 700) != 0
+	;各敵に割り当てられている初登場フラグを利用
+	;グローバルセーブで保存できるのでちょうどいい
+	FLAG:(RESULT + 700) *= -1
+ELSEIF RESULT == 201
+	FOR LOCAL:1, 5, 99
+		SIF FLAG:(LOCAL:1 + 700) < 0
+			FLAG:(LOCAL:1 + 700) *= -1
+	NEXT
+ELSEIF RESULT == 202
+	FOR LOCAL:1, 5, 20
+		SIF FLAG:(LOCAL:1 + 700) < 0
+			FLAG:(LOCAL:1 + 700) *= -1
+	NEXT
+
+	FOR LOCAL:1, 21, 99
+		TRYCCALLFORM SET_ENEMY_DATA_{LOCAL:1}(FLAG:1)
+		CATCH
+			;湧かなかった時用にフラグリセット
+			FOR LOCAL:0, 0, VARSIZE("DA", 1)
+				DA:(FLAG:1):(LOCAL:0) = 0
+			NEXT
+			CONTINUE
+		ENDCATCH
+		IF DA:(FLAG:1):1
+			IF FLAG:(LOCAL:1 + 700) > 0
+				FLAG:(LOCAL:1 + 700) *= -1
+			ELSEIF FLAG:(LOCAL:1 + 700) == 0
+				FLAG:(LOCAL:1 + 700) = -1
+			ENDIF
+		ENDIF
+		;チェックに使ったエネミーデータを削除
+		FOR LOCAL:0, 0, VARSIZE("DA", 1)
+			DA:(FLAG:1):(LOCAL:0) = 0
+		NEXT
+	NEXT
+
+ELSEIF RESULT == 211
+	IF FLAG:536 & 1
+		FLAG:536 -= 1
+	ELSE
+		FLAG:536 += 1
+	ENDIF
+ELSEIF RESULT == 212
+	IF FLAG:536 & 2
+		FLAG:536 -= 2
+	ELSE
+		FLAG:536 += 2
+	ENDIF
+ELSEIF RESULT == 213
+	IF FLAG:536 & 4
+		FLAG:536 -= 4
+	ELSE
+		FLAG:536 += 4
+	ENDIF
+ELSEIF RESULT == 214
+	IF FLAG:536 & 8
+		FLAG:536 -= 8
+	ELSE
+		FLAG:536 += 8
+	ENDIF
+ELSEIF RESULT == 215
+	IF FLAG:536 & 16
+		FLAG:536 -= 16
+	ELSE
+		FLAG:536 += 16
+	ENDIF
+ELSEIF RESULT == 216
+	IF FLAG:536 & 32
+		FLAG:536 -= 32
+	ELSE
+		FLAG:536 += 32
+	ENDIF
+ELSEIF RESULT == 217
+	IF FLAG:536 & 64
+		FLAG:536 -= 64
+	ELSE
+		FLAG:536 += 64
+	ENDIF
+ELSEIF RESULT == 218
+	IF FLAG:536 & 256
+		FLAG:536 -= 256
+	ELSE
+		FLAG:536 += 256
+	ENDIF
+ELSEIF RESULT == 219
+	IF (FLAG:512 & 1)
+		FLAG:512 -= 1
+	ELSE
+		FLAG:512 += 1
+	ENDIF
+ELSEIF RESULT == 220
+	IF FLAG:543 & 1
+		FLAG:543 -= 1
+	ELSE
+		FLAG:543 += 1
+	ENDIF
+ELSEIF RESULT == 221
+	IF FLAG:543 & 2
+		FLAG:543 -= 2
+	ELSE
+		FLAG:543 += 2
+	ENDIF
+ELSEIF RESULT == 222
+	IF FLAG:543 & 4
+		FLAG:543 -= 4
+	ELSE
+		FLAG:543 += 4
+	ENDIF
+ELSEIF RESULT == 223
+	IF FLAG:543 & 8
+		FLAG:543 -= 8
+	ELSE
+		FLAG:543 += 8
+	ENDIF
+ELSE
+	REUSELASTLINE 入力値が不正です。再入力してください
+	GOTO INPUT_LOOP
+ENDIF
+
+GOTO START
+

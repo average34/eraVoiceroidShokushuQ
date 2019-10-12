@@ -1,0 +1,35 @@
+﻿@FIX_ENEMY_ACTION_1911(ENEMY_ID)
+#DIM ENEMY_ID
+
+TFLAG:52 = ENEMY_ID
+TFLAG:54 = DA:ENEMY_ID:51
+;種別(0：味方の攻撃　1：通常　2：衣服　3：性　4：拘束　5：寄生　6：その他)
+TFLAG:55 = 3
+;気絶へ有効か
+TFLAG:60 = 1
+
+;威力
+TFLAG:57 = DA:ENEMY_ID:5
+
+TFLAG:58 = 10000 / TFLAG:57 + 200
+
+;命中率
+TFLAG:61 = 150
+;補助　性攻撃　：MPダメージ倍率　※千分率
+TFLAG:64 = 15
+;性攻撃　：CPダメージ倍率　※千分率
+TFLAG:65 = 15
+;絶頂時MPダメージ倍率(0だと1倍、それ以外の数値だと指定した値％になる　例えば50なら半減、200なら2倍)
+TFLAG:90 = 500
+
+;０．単体か　１．全体か
+TFLAG:59 = 0
+;多段、複合、特殊寄生の有無
+TFLAG:91 = 0
+TFLAG:92 = 0
+TFLAG:99 = 0
+;メイン性属性(0:A　1:B　2:C　3:V)
+TFLAG:63 = 2
+
+CALL ACTION_FILTER(-1, 4, 1911, CALLNAME:(TFLAG:54), SAVESTR:ENEMY_ID, TFLAG:54, TFLAG:63)
+

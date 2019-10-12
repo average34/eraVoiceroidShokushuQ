@@ -1,0 +1,111 @@
+﻿;装備中のアイテムを表示
+;ARG:0	対象キャラID
+@SHOW_EQUIP_LIST(ARG:0)
+
+PRINTFORM 装備１：%ITEMNAME:(CFLAG:(ARG:0):7), 20, LEFT% 
+CALL ITEM_EXPLAIN(ARG:0, 0)
+PRINTL  
+PRINTFORM 装備２：%ITEMNAME:(CFLAG:(ARG:0):8), 20, LEFT% 
+CALL ITEM_EXPLAIN(ARG:0, 1)
+PRINTL  
+
+
+
+;アイテム詳細を表示
+;ARG:0	対象キャラID（残弾表示などに必要）
+;ARG:1	装備欄(0：装備１　1：装備２)
+@ITEM_EXPLAIN(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	対象アイテムID
+;2	弾数
+
+LOCAL:1 = CFLAG:(ARG:0):(ARG:1 + 7)
+LOCAL:2 = CFLAG:(ARG:0):(ARG:1 + 17)
+
+IF LOCAL:1 == 0
+	PRINTFORM 何も装備していない状態
+ELSEIF LOCAL:1 == 1
+	PRINTFORM 威力35 弾数{LOCAL:2,2}/70 何の変哲もないクロスボウ
+ELSEIF LOCAL:1 == 2
+	PRINTFORM 威力50 弾数{LOCAL:2,2}/60 魔力が込められた弓矢　結構痛い
+ELSEIF LOCAL:1 == 3
+	PRINTFORM 威力65 弾数{LOCAL:2,2}/50 汚物を消毒できる道具　炎属性固定
+ELSEIF LOCAL:1 == 4
+	PRINTFORM 威力80 弾数{LOCAL:2,2}/40 念じるだけで魔法弾が飛ばせる便利な道具
+ELSEIF LOCAL:1 == 5
+	PRINTFORM 威力100 弾数{LOCAL:2,2}/30 どこかの教授が持っている強力な道具
+ELSEIF LOCAL:1 == 6
+	PRINTFORM 威力140 弾数{LOCAL:2,2}/20 博麗謹製のお札　効果はばつぐんだ！
+ELSEIF LOCAL:1 == 7
+	PRINTFORM 威力200 弾数{LOCAL:2,2}/10 強力な攻撃が展開できるスペルカード
+ELSEIF LOCAL:1 == 8
+	PRINTFORM 威力10 弾数{LOCAL:2,2}/10 敵を拘束し電撃を与えますが触手相手では…… 
+ELSEIF LOCAL:1 == 9
+	PRINTFORM 威力100 弾数{LOCAL:2,2}/30 触手エキスを高圧で放出する禁断の生体兵器
+ELSEIF LOCAL:1 == 10
+	PRINTFORM 威力25 大した威力は無いが、非力なキャラにとっては貴重な武器
+ELSEIF LOCAL:1 == 11
+	PRINTFORM 威力40 女性でも扱いやすい長柄武器　こんぼうよりはマシ
+ELSEIF LOCAL:1 == 12
+	PRINTFORM 威力55 椛が使っているものと同型の刀　それなりの威力がある
+ELSEIF LOCAL:1 == 13
+	PRINTFORM 威力70 どこかの魔法少女が持っていそうなステッキ　何故か強い
+ELSEIF LOCAL:1 == 14
+	PRINTFORM 威力80 羽衣を腕に巻きつけることで繰り出せるドリル　ｷｬｰｲｸｻｰﾝ!
+ELSEIF LOCAL:1 == 15
+	PRINTFORM 威力90 博麗神社最大の秘宝…………のレプリカ
+ELSEIF LOCAL:1 == 16
+	PRINTFORM 威力100 伝説の金属、緋緋色金でできた剣　強靭！無敵！最強！
+ELSEIF LOCAL:1 == 17
+	PRINTFORM 威力50 触手宮を支配するには、触手の力を受け入れるしかない！
+ELSEIF LOCAL:1 == 18
+	PRINTFORM 威力60 殺傷力の高い刃物状の触手を制御下に置く為の生体デバイス
+ELSEIF LOCAL:1 == 20
+	PRINTFORM 通常攻撃の威力微増（戦闘素質+10）
+ELSEIF LOCAL:1 == 21
+	PRINTFORM 通常攻撃の威力小増（戦闘素質+20）
+ELSEIF LOCAL:1 == 22
+	PRINTFORM 通常攻撃の威力中増（戦闘素質+40）睡眠時に見張りもしてくれますが…
+ELSEIF LOCAL:1 == 23
+	PRINTFORM 通常攻撃の威力大増（戦闘素質+60）
+ELSEIF LOCAL:1 == 24
+	PRINTFORM 速度+20
+ELSEIF LOCAL:1 == 25
+	PRINTFORM 速度+50
+ELSEIF LOCAL:1 == 26
+	PRINTFORM 先制攻撃（速度+500）
+ELSEIF LOCAL:1 == 27
+	PRINTFORM 回避+15
+ELSEIF LOCAL:1 == 28
+	PRINTFORM HPダメージを33％カット
+ELSEIF LOCAL:1 == 29
+	PRINTFORM MPダメージを33％カット
+ELSEIF LOCAL:1 == 30
+	PRINTFORM EPダメージを33％カット
+ELSEIF LOCAL:1 == 31
+	PRINTFORM CPダメージを50％カット
+ELSEIF LOCAL:1 == 32
+	PRINTFORM 戦闘終了時にHPを20％回復
+ELSEIF LOCAL:1 == 33
+	PRINTFORM 戦闘終了時にMPを10％回復
+ELSEIF LOCAL:1 == 34
+	PRINTFORM 戦闘終了時にEPを20％回復
+ELSEIF LOCAL:1 == 35
+	PRINTFORM 戦闘終了時にCPを33％回復（全裸時は回復不可能）
+ELSEIF LOCAL:1 == 36
+	PRINTFORM 戦闘中に拘束から脱出できる確率+15
+ELSEIF LOCAL:1 == 37
+	PRINTFORM 睡眠攻撃と眠気ペナルティを無効化
+ELSEIF LOCAL:1 == 38
+	PRINTFORM 煙幕・砂煙を防ぐ
+ELSEIF LOCAL:1 == 39
+	PRINTFORM 常に発情状態になるが、攻撃の威力が2倍になる
+ELSEIF LOCAL:1 == 40
+	PRINTFORM 催眠術が使えるようになるらしい
+ELSEIF LOCAL:1 == 41
+	PRINTFORM 違う部屋の映像が見えることがあるメガネ
+ELSE
+	PRINTFORM このアイテムの説明は未実装です
+ENDIF
+

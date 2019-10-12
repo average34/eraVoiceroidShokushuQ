@@ -1,0 +1,523 @@
+﻿;[ライセンス]パブリックドメイン
+;本ファイルに係る著作権を放棄する。
+;本ファイルに係る著作人格権は行使しない。
+;2009/3/28 MinorShift(Emuera作者)
+
+;独自のセーブ・ロードシステムの例（Emuera  ver 1.50以降対象）
+;LOADGAMEの代わりにCALL LOADGAME_EX、SAVEGAMEの代わりにCALL SAVEGAME_EXを実行してください。
+;実際に使用するには旧来の@SAVEINFOに合わせて@SAVEINFO_EXを編集する必要があります。
+;使用している命令の詳細についてはEmueraの拡張文法.txtを参照してください。
+;
+
+@SAVEGAME_EX
+#DIM TEMP
+#DIM SLOT_LIMIT
+
+;セーブする前に、プレイ時間反映
+TIME:1 += GETMILLISECOND() / 1000 - TIME:2
+TIME:2 = GETMILLISECOND() / 1000
+
+REDRAW 0
+
+; 見出し表示
+FONTSTYLE 4
+PRINTFORM \s\s
+FONTSTYLE 0
+PRINT  何番にセーブしますか？ 
+FONTSTYLE 4
+FOR TEMP, 0, 74
+	PRINTFORM \s
+NEXT
+FONTSTYLE 0
+PRINTL
+PRINTL
+
+; セーブモードで表示
+CALL PRINT_SAVEDATA(1)
+REDRAW 1
+
+SAVENOS SLOT_LIMIT
+INPUT
+; 戻る
+IF (RESULT == 999)
+	RETURN
+	
+; 前のページへ
+ELSEIF RESULT == 101
+	CALL MOVE_SAVEDATA(GLOBAL:900 - 10)
+	RESTART
+
+; 次のページへ
+ELSEIF RESULT == 102
+	CALL MOVE_SAVEDATA(GLOBAL:900 + 10)
+	RESTART
+	
+; 入力不可の数字
+ELSEIF ((RESULT < 0) || (RESULT >= SLOT_LIMIT))
+	RESTART
+ELSE
+	LOCAL = RESULT
+	CHKDATA LOCAL
+	;RESULT == 1は"ファイルが存在しない"
+	IF RESULT != 1
+		PRINTL 既にデータが存在します。上書きしますか？
+		PRINTL [0] はい
+		PRINTL [1] いいえ
+$INPUT_LOOP
+		INPUT
+		IF RESULT == 1
+			RESTART
+		ELSEIF RESULT != 0
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+	CALL SAVEINFO_EX
+	SAVEDATA LOCAL, RESULTS
+ENDIF
+
+@LOADGAME_EX
+#DIM TEMP
+#DIM SLOT_LIMIT
+
+REDRAW 0
+
+; 見出し表示
+PRINTL 何番をロードしますか？
+FONTSTYLE 4
+FOR TEMP, 0, 100
+	PRINTFORM \s
+NEXT
+FONTSTYLE 0
+PRINTL 
+PRINTL 
+
+; ロードモードで表示
+CALL PRINT_SAVEDATA
+REDRAW 1
+
+SAVENOS SLOT_LIMIT
+INPUT
+; 戻る
+IF (RESULT == 999)
+	RETURN
+	
+; 前のページへ
+ELSEIF RESULT == 101
+	CALL MOVE_SAVEDATA(GLOBAL:900 - 10)
+	RESTART
+
+; 次のページへ
+ELSEIF RESULT == 102
+	CALL MOVE_SAVEDATA(GLOBAL:900 + 10)
+	RESTART
+	
+; 入力不可の数字
+ELSEIF ((RESULT < 0) || (RESULT >= SLOT_LIMIT)) && (RESULT != 99)
+	RESTART
+	
+ELSE
+	LOCAL = RESULT
+	CHKDATA LOCAL
+	;RESULT == 0ならロード可能
+	IF RESULT != 0
+		RESTART
+	ENDIF
+	LOADDATA LOCAL
+ENDIF
+
+@PRINT_SAVEDATA(MODE = 0)
+#DIM	MODE	; 0:LOAD 1:SAVE
+#DIM	LCOUNT
+#DIM	TEMP
+#DIM	TEMP2
+
+	; セーブデータを表示
+	; セーブデータの表示はデザインを優先した為、結構な力業です
+	FOR LCOUNT, GLOBAL:900, (GLOBAL:900 + 5)
+	
+		; セーブデータのコメント読み込み & 分割
+		; 前周のゴミを引き継がないよう毎回初期化
+		; 左情報表示
+		VARSET SAVE_ARRAY
+		CHKDATA LCOUNT
+		SPLIT RESULTS:0, ",", SAVE_ARRAY
+		CALL SHOW_SAVEINFO(LCOUNT)
+		
+		; 右情報表示
+		VARSET SAVE_ARRAY
+		CHKDATA (LCOUNT + 5)
+		SPLIT RESULTS:0, ",", SAVE_ARRAY
+		CALL SHOW_SAVEINFO(LCOUNT + 5)
+		
+		PRINTL 
+		
+		; 左PT表示
+		VARSET SAVE_ARRAY
+		CHKDATA LCOUNT
+		SPLIT RESULTS:0, ",", SAVE_ARRAY
+		CALL SHOW_SAVEPT(LCOUNT)
+		
+		; 右PT表示
+		VARSET SAVE_ARRAY
+		CHKDATA (LCOUNT + 5)
+		SPLIT RESULTS:0, ",", SAVE_ARRAY
+		CALL SHOW_SAVEPT(LCOUNT + 5)
+		
+		PRINTL 
+		
+		; 左時間表示
+		VARSET SAVE_ARRAY
+		CHKDATA LCOUNT
+		SPLIT RESULTS:0, ",", SAVE_ARRAY
+		CALL SHOW_SAVETIME(LCOUNT)
+		
+		; 右時間表示
+		VARSET SAVE_ARRAY
+		CHKDATA (LCOUNT + 5)
+		SPLIT RESULTS:0, ",", SAVE_ARRAY
+		CALL SHOW_SAVETIME(LCOUNT + 5)
+
+		PRINTL 
+		PRINTL
+	NEXT
+
+
+	; オートセーブの表示(ロード時のみ)
+	IF MODE == 0
+		VARSET SAVE_ARRAY
+		CHKDATA 99
+		SPLIT RESULTS:0, ",", SAVE_ARRAY
+		
+		PRINTFORM %"", 25, LEFT%
+		SETCOLOR RGBCOLOR(137, 163, 255)
+		PRINTL 《AutoSave》
+		RESETCOLOR
+		
+		PRINTFORM %"", 25, LEFT%
+		CALL SHOW_SAVEINFO(99)
+		PRINTL 
+		
+		PRINTFORM %"", 25, LEFT%
+		CALL SHOW_SAVEPT(99)
+		PRINTL 
+		
+		PRINTFORM %"", 25, LEFT%
+		CALL SHOW_SAVETIME(99)
+		PRINTL 
+	ENDIF
+	
+	PRINTL 
+	DRAWLINEFORM .
+	PRINTFORML %" [101] 前のページ", 50, LEFT%%"[102] 次のページ ", 50, RIGHT%
+	
+	; 罫線
+	FONTSTYLE 4
+	FOR TEMP, 0, 100
+		PRINTFORM \s
+	NEXT
+	PRINTL
+	FONTSTYLE 0
+
+	PRINTL [999] 戻る
+RETURN
+
+
+;SAVEDATA命令は@SAVEINFO関数を呼ばないのでPUTFORMの代わりの文字列を用意する必要がある
+@SAVEINFO_EX
+#DIMS VALUE
+	; 初期化
+	VARSET VALUE
+
+	; 旧バージョンデータ
+	; RESULTS:0 = %RESULTS:0% %NAME:1, 20, LEFT%  {DAY}日目：%CONVERT_TIME()%  プレイ時間 %PRINT_TIME(TIME:1)%
+
+	; 新バージョンデータ
+	; EXセーブ判断用文字列"EX", ゲーム内日付, ゲーム内時間, デバッグモードの有無
+	VALUE = EX,{DAY},%CONVERT_TIME()%,{FLAG:9}
+	
+	; 難易度
+	CALL SET_CONFIGURE_96(0)
+	VALUE = %VALUE%,%RESULTS:1%
+	
+	; キャラデータ
+	; 主人公
+	VALUE = %VALUE%,%CALLNAME:1%,{CFLAG:1:700}
+	; 仲間1
+	IF FLAG:10
+		VALUE = %VALUE%,%CALLNAME:(FLAG:10)%,{CFLAG:(FLAG:10):700}
+	ELSE
+		VALUE = %VALUE%,,
+	ENDIF
+	; 仲間2
+	IF FLAG:11
+		VALUE = %VALUE%,%CALLNAME:(FLAG:11)%,{CFLAG:(FLAG:11):700}
+	ELSE
+		VALUE = %VALUE%,,
+	ENDIF
+	; ペット(ペットの文字色は赤固定)
+	IF PET:0
+		VALUE = %VALUE%,%PETNAME%,{0xEE1010}
+	ELSE
+		VALUE = %VALUE%,,
+	ENDIF
+	
+	; セーブ時間, プレイ時間
+	GETTIME
+	VALUE = %VALUE%,%RESULTS:0%,%PRINT_TIME(TIME:1)%
+	
+	RESULTS:0 = %VALUE%
+RETURN
+
+@TITLE_LOADGAME
+;タイトル画面のロードでも独自のロード画面を使う場合、@TITLE_LOADGAMEを定義する
+;@TITLE_LOADGAMEが定義されていると、標準のロード画面の代わりにTITLE_LOADGAMEが呼ばれる。
+CALL LOADGAME_EX
+RETURN
+;RETURNするとタイトルへ戻る。
+
+@SYSTEM_AUTOSAVE
+;オートセーブの処理を独自に行う場合、@SYSTEM_AUTOSAVEを定義する
+;@SYSTEM_AUTOSAVEが定義されていると、標準のオートセーブの代わりにSYSTEM_AUTOSAVEが呼ばれる。
+CALL AUTO_SAVE
+
+;独自のオートセーブ処理
+@AUTO_SAVE
+CALL SAVEINFO_EX
+SAVEDATA 99, RESULTS
+
+; 見出し表示
+@SHOW_SAVEINFO(ARG)
+#DIM TEMP
+#DIM TEMP2
+	
+	; セーブスロットよりも大きい数字で呼び出された場合は空白表示で帰る(AutoSaveのARG==99は除く)
+	SAVENOS TEMP
+	IF ARG > (TEMP - 1) && ARG != 99
+		PRINTFORM %"", 50, LEFT%
+		RETURN
+	ENDIF
+	
+	PRINTBUTTON "  ", ARG
+	
+	; セーブデータが読み込めない
+	CHKDATA ARG
+	IF RESULT:0 != 0
+		SETCOLOR 0x444444
+		FONTSTYLE 4
+		PRINTS "  "
+		FONTSTYLE 0
+		PRINTFORM  [{ARG, 2, RIGHT}]  NO DATA 
+		FONTSTYLE 4
+		FOR TEMP, 0, 29
+			PRINTFORM \s
+		NEXT
+		FONTSTYLE 0
+		PRINTS "  "
+		RESETCOLOR
+		RETURN
+	ENDIF
+	
+	; EX拡張フォーマットではない
+	IF SAVE_ARRAY:0 != "EX"
+		FONTSTYLE 4
+		PRINTS "  "
+		FONTSTYLE 0
+		PRINTFORM  [{ARG, 2, RIGHT}]  互換セーブデータ 
+		FONTSTYLE 4
+		FOR TEMP, 0, 20
+			PRINTFORM \s
+		NEXT
+		FONTSTYLE 0
+		PRINTS "  "
+		RETURN
+	ENDIF
+	
+	; 罫線の長さを調整するための変数
+	TEMP2 = 46
+
+	; 先頭罫線 + ゲーム内経過日数 + ゲーム内時間表示
+	FONTSTYLE 4
+	PRINTS "  "
+	FONTSTYLE 0
+	PRINTFORM  [{ARG, 2, RIGHT}]%SAVE_ARRAY:1, 4, RIGHT%日目：%SAVE_ARRAY:2%
+	TEMP2 -= 19
+	
+	; デバッグモード表示
+	TOINT SAVE_ARRAY:3
+	IF RESULT:0 == 1
+		PRINT 《Debug》
+		TEMP2 -= 9
+	ELSE
+		PRINTS " "
+		TEMP2 -= 1
+	ENDIF
+	
+	; 罫線表示
+	; 罫線後にも可変長な文字列を表示するので、先に文字の長さを出しておく
+	STRLENS SAVE_ARRAY:4
+	FONTSTYLE 4
+	FOR TEMP, 0, (TEMP2 - RESULT:0 - 4)
+		PRINTFORM \s
+	NEXT
+	FONTSTYLE 0
+	
+	PRINTFORM  %SAVE_ARRAY:4% 
+	
+	FONTSTYLE 4
+	PRINTS "  "
+	FONTSTYLE 0
+	PRINTS "  "
+RETURN
+
+; PT表示
+@SHOW_SAVEPT(ARG)
+#DIM TEMP
+#DIM LIMIT_COUNT
+
+	; セーブスロットよりも大きい数字で呼び出された場合は空白表示で帰る(AutoSaveのARG==99は除く)
+	SAVENOS TEMP
+	IF ARG > (TEMP - 1) && ARG != 99
+		PRINTFORM %"", 50, LEFT%
+		RETURN
+	ENDIF
+	
+	PRINTS "     "
+	
+	; セーブデータが読み込めない
+	CHKDATA ARG
+	IF RESULT:0 != 0
+		SETCOLOR 0x444444
+		PRINTFORM …………… …………… …………… ……………
+		RESETCOLOR
+		RETURN
+	ENDIF
+	
+	; EX拡張フォーマットではない
+	; 旧型の表示を行う
+	IF SAVE_ARRAY:0 != "EX"
+		SETCOLOR 0x999999
+		CHKDATA ARG
+		SUBSTRING RESULTS:0, 0, 40
+		PRINTFORM %RESULTS:0%
+		RETURN
+	ENDIF
+	
+	; PT表示領域は43文字までOK
+	LIMIT_COUNT = 43
+	
+	; キャラ3人 + ペット分ループ
+	FOR TEMP, 0, 4
+		; データあり
+		IF SAVE_ARRAY:(5 + (TEMP * 2)) != ""
+			; 2つめ以降の要素なら区切りを表示(LIMIT_COUNT 3以上)
+			IF TEMP != 0 && LIMIT_COUNT >= 3
+				PRINTS " / "
+				LIMIT_COUNT = LIMIT(LIMIT_COUNT - 3, 0, 43)
+			ENDIF
+			
+			TOINT SAVE_ARRAY:(6 + (TEMP * 2))
+			SETCOLOR RESULT:0
+			
+			STRLENS SAVE_ARRAY:(5 + (TEMP * 2))
+			; 文字数限界を超えていないので通常表示
+			IF RESULT:0 <= LIMIT_COUNT
+				PRINTFORM %SAVE_ARRAY:(5 + (TEMP * 2))%
+				LIMIT_COUNT = LIMIT(LIMIT_COUNT - RESULT:0, 0, 43)
+			
+			; 文字数限界を超えてしまったので表示を省略
+			ELSE
+				; 文字数限界が奇数だと表示が狂うので調整
+				SIF LIMIT_COUNT % 2
+					LIMIT_COUNT = LIMIT(LIMIT_COUNT - 1, 0, 43)
+					
+				SUBSTRING SAVE_ARRAY:(5 + (TEMP * 2)), 0, LIMIT_COUNT
+				PRINTFORM %RESULTS:0%
+				LIMIT_COUNT = 0
+			ENDIF
+			RESETCOLOR
+		ENDIF
+	NEXT
+
+	; 表示ズレ防止の空白を表示
+	FOR TEMP, 0, LIMIT_COUNT
+		PRINTS " "
+	NEXT
+	
+	PRINTS " "
+RETURN
+
+; 時間表示
+@SHOW_SAVETIME(ARG)
+#DIM TEMP
+
+	; セーブスロットよりも大きい数字で呼び出された場合は空白表示で帰る(AutoSaveのARG==99は除く)
+	SAVENOS TEMP
+	IF ARG > (TEMP - 1) && ARG != 99
+		PRINTFORM %"", 50, LEFT%
+		RETURN
+	ENDIF
+		
+	; セーブデータが読み込めない
+	CHKDATA ARG
+	IF RESULT:0 != 0
+		SETCOLOR 0x444444
+		PRINTFORM        ----/--/-- --:--:--   プレイ時間 --:--:-- 
+		RESETCOLOR
+		RETURN
+	ENDIF
+	
+	; EX拡張フォーマットではない
+	; 旧型の表示を行う
+	IF SAVE_ARRAY:0 != "EX"
+		; 旧セーブデータの文字列長は可変なので41文字目から最後まで
+		SETCOLOR 0x999999
+		CHKDATA ARG
+		LOCALS:0 = %RESULTS:0%
+		STRLENS LOCALS:0
+		SUBSTRING LOCALS:0, 41, RESULT:0
+		PRINTFORM %RESULTS:0, 49, RIGHT%
+		RETURN
+	ENDIF
+	
+	SETCOLOR 0x999999
+	PRINTFORM        %SAVE_ARRAY:13%   プレイ時間 %SAVE_ARRAY:14% 
+	RESETCOLOR
+RETURN
+
+; セーブデータの参照ページを変更します
+@MOVE_SAVEDATA(ARG)
+#DIM TEMP
+#DIM SLOT_LIMIT
+#DIM LCOUNT
+
+	; 変更したページが有効かどうかチェック
+	; 0以下 もしくはCONFIGのセーブ数超なら変更失敗
+	SAVENOS SLOT_LIMIT
+	; 0未満
+	IF ARG < 0
+		; 最終ページを参照するように
+		; 引数の1桁目を丸める
+		TEMP = (SLOT_LIMIT - 1) / 10
+		TEMP = TEMP * 10
+		LCOUNT = TEMP
+		
+	; CONFIGのセーブ設定数超
+	ELSEIF ARG >= SLOT_LIMIT
+		; 初期ページを参照するように
+		LCOUNT = 0
+		
+	; 通常処理
+	ELSE
+		; 指定されたページを参照する
+		; 引数の1桁目を丸める
+		TEMP = ARG / 10
+		TEMP = TEMP * 10
+		LCOUNT = TEMP
+	ENDIF
+	
+	; 変更したらGLOBAL書き換え
+	LOADGLOBAL
+	GLOBAL:900 = LCOUNT
+	SAVEGLOBAL
+	
+RETURN

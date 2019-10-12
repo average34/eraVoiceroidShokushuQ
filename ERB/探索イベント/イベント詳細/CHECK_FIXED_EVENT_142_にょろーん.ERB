@@ -1,0 +1,345 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_142
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	TARGET
+;10	Aフラグ
+;11	Bフラグ
+;12	Cフラグ
+;13	Vフラグ
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 0
+
+LOCAL:10 = 0
+LOCAL:11 = 0
+LOCAL:12 = 0
+LOCAL:13 = 0
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	;経験値が入るのは最初だけ
+	IF FLAG:142 < 100
+		CALL ADD_ABL_EXP_PT(0, 300)
+		FLAG:142 += 100
+		PRINTFORML 目の前を不思議な形をした触手生物が歩いている…
+		PRINTFORMW 退治しようとすると、突然触手生物が話しかけてきた！
+		PRINTFORML 
+		PRINTFORMW 「にょろにょろ、ボク悪い触手じゃないよ。ここには探し物を探しに来てるんだ」
+		PRINTFORMW 「キミ%TACHI()%は体がすごく敏感になってる人を知らないかな？」
+		PRINTFORMW 「もし連れてきてくれたら、お礼に良い物をあげるよ！」
+	ELSE
+		PRINTFORML 目の前を不思議な形をした触手生物が歩いている…
+		PRINTFORML 「やぁ、また会ったね。敏感な人は見つかった？」
+	ENDIF
+	IF ((FLAG:142 / 100) & 2)
+		;A終了済み
+		LOCAL:10 = 1
+	ENDIF
+	IF ((FLAG:142 / 100) & 4)
+		;B終了済み
+		LOCAL:11 = 1
+	ENDIF
+	IF ((FLAG:142 / 100) & 8)
+		;C終了済み
+		LOCAL:12 = 1
+	ENDIF
+	IF ((FLAG:142 / 100) & 16)
+		;V終了済み
+		LOCAL:13 = 1
+	ENDIF
+	PRINTFORML 何と答えますか？
+	IF LOCAL:10 == 0 && GET_PT_MAX_ABL(6) >= 3
+		PRINTFORML [1] A感覚の高い人を連れてきた
+	ENDIF
+	IF LOCAL:11 == 0 && GET_PT_MAX_ABL(7) >= 3
+		PRINTFORML [2] B感覚の高い人を連れてきた
+	ENDIF
+	IF LOCAL:12 == 0 && GET_PT_MAX_ABL(8) >= 3
+		PRINTFORML [3] C感覚の高い人を連れてきた
+	ENDIF
+	IF LOCAL:13 == 0 && GET_PT_MAX_ABL(9) >= 3
+		PRINTFORML [4] V感覚の高い人を連れてきた
+	ENDIF
+	PRINTFORML [0] 心当たりは居ない
+	INPUT
+	IF RESULT == 1 && LOCAL:10 == 0 && GET_PT_MAX_ABL(6) >= 3
+		$INPUT_LOOP_1
+		PRINTFORML 誰が名乗りでますか？
+			IF ABL:1:6 >= 3
+				PRINTFORML [1] %CALLNAME:1%
+			ENDIF
+			IF ABL:(FLAG:10):6 >= 3
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+			ENDIF
+			IF ABL:(FLAG:11):6 >= 3
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+			ENDIF
+		INPUT
+			IF RESULT == 1 && ABL:1:6 >= 3
+				LOCAL:4 = 1
+			ELSEIF RESULT == 2 && ABL:(FLAG:10):6 >= 3
+				LOCAL:4 = FLAG:10
+			ELSEIF RESULT == 3 && ABL:(FLAG:11):6 >= 3
+				LOCAL:4 = FLAG:11
+			ELSE
+				GOTO INPUT_LOOP_1
+			ENDIF
+		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
+		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 0)
+		CALL EXTASY(LOCAL:4, 0, 900, 400)
+		CALL EXTASY(LOCAL:4, 0, 900, 400)
+		CALL EXTASY(LOCAL:4, 0, 900, 400)
+		CALL EXTASY(LOCAL:4, 0, 900, 400)
+		CALL EXTASY(LOCAL:4, 0, 900, 400)
+		PRINTFORML 　
+		PRINTFORMW ……
+		PRINTFORMW …………
+		PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の尻穴を弄り回していた…
+		IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):75 == 0 
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、尻穴での快楽に溺れてしまった
+		ENDIF
+		IF TALENT:(LOCAL:4):74 == 0
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+			TALENT:(LOCAL:4):74 = 1
+		ENDIF
+		IF TALENT:(LOCAL:4):75 == 0
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:75%】を得た
+			TALENT:(LOCAL:4):75 = 1
+			
+			CALL ADD_HISTORY(DAY, LOCAL:4, 0, 10)
+		ENDIF
+		PRINTFORMW 　
+		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		;◆◆
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 0)
+		CALL ADD_ITEM(7, 1, 1)
+		FLAG:142 += 200
+	ELSEIF RESULT == 2 && LOCAL:11 == 0 && GET_PT_MAX_ABL(7) >= 3
+		$INPUT_LOOP_2
+		PRINTFORML 誰が名乗りでますか？
+			IF ABL:1:7 >= 3
+				PRINTFORML [1] %CALLNAME:1%
+			ENDIF
+			IF ABL:(FLAG:10):7 >= 3
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+			ENDIF
+			IF ABL:(FLAG:11):7 >= 3
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+			ENDIF
+		INPUT
+			IF RESULT == 1 && ABL:1:7 >= 3
+				LOCAL:4 = 1
+			ELSEIF RESULT == 2 && ABL:(FLAG:10):7 >= 3
+				LOCAL:4 = FLAG:10
+			ELSEIF RESULT == 3 && ABL:(FLAG:11):7 >= 3
+				LOCAL:4 = FLAG:11
+			ELSE
+				GOTO INPUT_LOOP_2
+			ENDIF
+		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
+		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 1)
+		CALL EXTASY(LOCAL:4, 1, 900, 400)
+		CALL EXTASY(LOCAL:4, 1, 900, 400)
+		CALL EXTASY(LOCAL:4, 1, 900, 400)
+		CALL EXTASY(LOCAL:4, 1, 900, 400)
+		CALL EXTASY(LOCAL:4, 1, 900, 400)
+		PRINTFORML 　
+		PRINTFORMW ……
+		PRINTFORMW …………
+		PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の胸を揉みしだいていた…
+		IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):76 == 0
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、胸での快楽に溺れてしまった
+		ENDIF
+		IF TALENT:(LOCAL:4):74 == 0
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+			TALENT:(LOCAL:4):74 = 1
+		ENDIF
+		IF TALENT:(LOCAL:4):76 == 0
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:76%】を得た
+			TALENT:(LOCAL:4):76 = 1
+			
+			CALL ADD_HISTORY(DAY, LOCAL:4, 1, 10)
+		ENDIF
+		PRINTFORMW 　
+		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		;◆◆
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 1)
+		CALL ADD_ITEM(16, 1, 1)
+		FLAG:142 += 400
+	ELSEIF RESULT == 3 && LOCAL:12 == 0 && GET_PT_MAX_ABL(8) >= 3
+		$INPUT_LOOP_3
+		PRINTFORML 誰が名乗りでますか？
+			IF ABL:1:8 >= 3
+				PRINTFORML [1] %CALLNAME:1%
+			ENDIF
+			IF ABL:(FLAG:10):8 >= 3
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+			ENDIF
+			IF ABL:(FLAG:11):8 >= 3
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+			ENDIF
+		INPUT
+			IF RESULT == 1 && ABL:1:8 >= 3
+				LOCAL:4 = 1
+			ELSEIF RESULT == 2 && ABL:(FLAG:10):8 >= 3
+				LOCAL:4 = FLAG:10
+			ELSEIF RESULT == 3 && ABL:(FLAG:11):8 >= 3
+				LOCAL:4 = FLAG:11
+			ELSE
+				GOTO INPUT_LOOP_3
+			ENDIF
+		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
+		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 2)
+			CALL EXTASY(LOCAL:4, 2, 900, 400)
+			CALL EXTASY(LOCAL:4, 2, 900, 400)
+			CALL EXTASY(LOCAL:4, 2, 900, 400)
+			CALL EXTASY(LOCAL:4, 2, 900, 400)
+			CALL EXTASY(LOCAL:4, 2, 900, 400)
+			PRINTFORML 
+			PRINTFORMW ……
+			PRINTFORMW …………
+			PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の\@ GET_PENIS(LOCAL:4) ? ペニス # クリトリス \@を弄り回していた…
+			IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):77 == 0
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、\@ GET_PENIS(LOCAL:4) ? ペニス # クリトリス \@での快楽に溺れてしまった
+			ENDIF
+			IF TALENT:(LOCAL:4):74 == 0
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+				TALENT:(LOCAL:4):74 = 1
+			ENDIF
+			IF TALENT:(LOCAL:4):77 == 0
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:77%】を得た
+				TALENT:(LOCAL:4):77 = 1
+				
+				CALL ADD_HISTORY(DAY, LOCAL:4, 2, 10)
+			ENDIF
+		PRINTFORMW 　
+		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		;◆◆
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 2)
+		CALL ADD_ITEM(23, 1, 1)
+		FLAG:142 += 800
+	ELSEIF RESULT == 4 && LOCAL:13 == 0 && GET_PT_MAX_ABL(9) >= 3
+		$INPUT_LOOP_4
+		PRINTFORML 誰が名乗りでますか？
+			IF ABL:1:9 >= 3
+				PRINTFORML [1] %CALLNAME:1%
+			ENDIF
+			IF ABL:(FLAG:10):9 >= 3
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+			ENDIF
+			IF ABL:(FLAG:11):9 >= 3
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+			ENDIF
+		INPUT
+			IF RESULT == 1 && ABL:1:9 >= 3
+				LOCAL:4 = 1
+			ELSEIF RESULT == 2 && ABL:(FLAG:10):9 >= 3
+				LOCAL:4 = FLAG:10
+			ELSEIF RESULT == 3 && ABL:(FLAG:11):9 >= 3
+				LOCAL:4 = FLAG:11
+			ELSE
+				GOTO INPUT_LOOP_4
+			ENDIF
+		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
+		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+			CALL LOST_VIRGIN(LOCAL:4, 1, 4)
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 3)
+			CALL EXTASY(LOCAL:4, 3, 900, 400)
+			CALL EXTASY(LOCAL:4, 3, 900, 400)
+			CALL EXTASY(LOCAL:4, 3, 900, 400)
+			CALL EXTASY(LOCAL:4, 3, 900, 400)
+			CALL EXTASY(LOCAL:4, 3, 900, 400)
+			PRINTFORML 　
+			PRINTFORMW ……
+			PRINTFORMW …………
+			PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分のヴァギナをかき回していた…
+			IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):78 == 0
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、膣内での快楽に溺れてしまった
+			ENDIF
+			IF TALENT:(LOCAL:4):74 == 0
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+				TALENT:(LOCAL:4):74 = 1
+			ENDIF
+			IF TALENT:(LOCAL:4):78 == 0
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:78%】を得た
+				TALENT:(LOCAL:4):78 = 1
+				
+				CALL ADD_HISTORY(DAY, LOCAL:4, 3, 10)
+			ENDIF
+		PRINTFORMW 　
+		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 3)
+		CALL ADD_ITEM(61, 1, 1)
+		CALL ADD_ITEM(62, 1, 1)
+		CALL ADD_ITEM(63, 1, 1)
+		FLAG:142 += 1600
+	ELSE
+		PRINTFORML 「にょろ～ん…」
+		PRINTFORML 残念そうにしている触手生物を無視して、%CALLNAME:1%%TACHI()%は探索を再開した
+		CALL PRINT_MESSAGE(1, 200, 142, CALLNAME:1, "", 4)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 142, CALLNAME:1, "", 4)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 142, CALLNAME:1, "", 4)
+	ENDIF
+	WAIT
+	
+	;同じ場所に残り続ける
+	
+	IF (FLAG:142 / 100) == 31
+		;4種コンプリート
+		PRINTFORMW 「凄い凄い！　こんなにすぐ見つかるとは思わなかったよ！」
+		PRINTFORMW 「これは全部見つけてくれたキミ%TACHI()%へのお礼だよ、受け取ってね！」
+		PRINTFORMW アイテム各種を貰った！
+		;ユニーク武器追加パッチ・触手使役術をにょろろから入手
+		PRINTFORMW 「キミ%TACHI()%は本当に頑張ったからね、今ならこの【触手ヒーロー変身グッズ】も無料であげるよ、受け取ってね！」
+		PRINTFORMW ☆触手使役術を貰った！
+		PRINTFORMW 「それじゃあ僕はもう帰るね。キミ%TACHI()%もそんな体じゃここは辛いだろうから、早く帰った方が良いよ～」
+		PRINTFORMW そう言って触手生物は姿を消した…
+		CALL PRINT_MESSAGE(1, 200, 142, CALLNAME:1, "", 5)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 142, CALLNAME:1, "", 5)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 142, CALLNAME:1, "", 5)
+		;全アイテム（唯一品除く）を１つずつ入手
+		FOR LOCAL:0, 1, 8
+			CALL ADD_ITEM(LOCAL:0, 1, 0)
+		NEXT
+		FOR LOCAL:0, 10, 18
+			CALL ADD_ITEM(LOCAL:0, 1, 0)
+		NEXT
+		FOR LOCAL:0, 20, 40
+			IF LOCAL:0 == 26
+				CONTINUE
+			ENDIF
+			CALL ADD_ITEM(LOCAL:0, 1, 0)
+		NEXT
+		FOR LOCAL:0, 50, 65
+			IF LOCAL:0 == 60 || LOCAL:0 == 64
+				CONTINUE
+			ENDIF
+			CALL ADD_ITEM(LOCAL:0, 1, 0)
+		NEXT
+		
+		;コンプリートでイベント消滅
+		FLAG:142 = 0
+	ENDIF
+	
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

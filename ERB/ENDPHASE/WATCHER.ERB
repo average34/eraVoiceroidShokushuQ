@@ -1,0 +1,130 @@
+﻿;ウォッチャーチェック
+;ARG:0	対象キャラ
+@WATCHER(ARG:0)
+;LOCAL
+;0	LOOP
+;1	メッセージ表示フラグ
+;2	ウォッチャーと同室
+;3	羞恥心ダメージ
+;4	メガネフラグ+誰が見ているか
+;5	情報が見られたかどうか
+
+;主人公と場所が違うかチェック
+IF CFLAG:(ARG:0):4 != CFLAG:1:4
+	LOCAL:1 = 0
+ELSE
+	LOCAL:1 = 1
+ENDIF
+
+
+LOCAL:0 = 0
+LOCAL:2 = 0
+LOCAL:4 = 0
+LOCAL:5 = 0
+FOR LOCAL:0, 1, FLAG:1
+	;現在位置が被ってる敵
+	IF CFLAG:(ARG:0):4 == DA:(LOCAL:0):4
+		;死体は除外
+		SIF DA:(LOCAL:0):1 <= 0
+			CONTINUE
+		;ウォッチャーだとフラグ
+		IF DA:(LOCAL:0):0 == 97
+			LOCAL:2 += 1
+			BREAK
+		ENDIF
+	ENDIF
+NEXT
+
+IF LOCAL:1 && LOCAL:2
+	IF CFLAG:(ARG:0):25 == 0 && CFLAG:(ARG:0):28 <= 0 && CFLAG:(ARG:0):29 == 0 &&  BASE:(ARG:0):3 - (BASE:(ARG:0):5 * 4) <= 0
+	;◆ターン終了時に裸ならMP微減	↑発情レベルの計算を変更                        ↑汚れで服が透けるようにする
+		IF TALENT:(ARG:0):36
+			PRINTFORM %CALLNAME:(ARG:0)%は
+			IF BASE:(ARG:0):3 > 0
+				PRINTFORM 染み込んだ体液のせいで服が透けて
+			ELSE
+				PRINTFORM 裸にされて
+			ENDIF
+			PRINTFORML いる姿を録画されているが気にしていないようだ
+			CALL PRINT_MESSAGE(ARG:0, 46, 3, CALLNAME:(ARG:0), "", 0)
+		ELSEIF TALENT:(ARG:0):35
+			;恥じらいなら２倍
+			LOCAL:3 = MAXBASE:(ARG:0):1 * (5 + RAND:11) / 1000
+			BASE:(ARG:0):1 -= LOCAL:3
+			;０にはならない
+			SIF BASE:(ARG:0):1 <= 0
+				BASE:(ARG:0):1 = 1
+			CALL PRINT_MESSAGE(ARG:0, 46, 5, CALLNAME:(ARG:0), "", LOCAL:3)
+		ELSE
+			LOCAL:3 = MAXBASE:(ARG:0):1 * (3 + RAND:5) / 1000
+			BASE:(ARG:0):1 -= LOCAL:3
+			;０にはならない
+			SIF BASE:(ARG:0):1 <= 0
+				BASE:(ARG:0):1 = 1
+			CALL PRINT_MESSAGE(ARG:0, 46, 4, CALLNAME:(ARG:0), "", LOCAL:3)
+		ENDIF
+	ENDIF
+ENDIF
+
+;メガネ PTメンバーでメガネを装備している人のうち一番上をチェック
+FOR LOCAL:0,0,GET_MEMBER_SUM()
+	CALL GET_EQUIP_BONUS(GET_MEMBER(LOCAL:0), 41)
+	IF RESULT == 1
+		LOCAL:4 = GET_MEMBER(LOCAL:0)
+		BREAK
+	ENDIF
+NEXT
+
+IF LOCAL:4 > 0 && TFLAG:13 == 0
+	PRINTFORML {CFLAG:(ARG:0):4}の部屋の映像が見えた
+	IF CFLAG:(ARG:0):29 && LOCAL:5 < RAND:4
+		PRINTFORML %CALLNAME:(ARG:0)%は光を失った目で虚空を見つめている
+		LOCAL:5 += 1
+	ENDIF
+	IF CFLAG:(ARG:0):20 && LOCAL:5 < RAND:4
+		PRINTFORML %CALLNAME:(ARG:0)%は触手に捕まっている……
+		LOCAL:5 += 1
+	ENDIF
+	IF BASE:(ARG:0):3  - (BASE:(ARG:0):5 * 4) <= 0 && LOCAL:5 < RAND:4
+		PRINTFORML %CALLNAME:(ARG:0)%の汚れで服が透けている姿が見えた
+		LOCAL:5 += 1
+	ENDIF
+	IF BASE:(ARG:0):3  <= 0 && LOCAL:5 < RAND:4
+		PRINTFORML %CALLNAME:(ARG:0)%は服を着ていない
+		LOCAL:5 += 1
+	ENDIF
+	IF (CFLAG:(ARG:0):507 & 1) && LOCAL:5 < RAND:4
+		PRINTFORML %CALLNAME:(ARG:0)%が見られているのにも気づかず自慰をしている……
+		LOCAL:5 += 1
+	ENDIF
+	IF (CFLAG:(ARG:0):507 & 2) && LOCAL:5 < RAND:4
+		PRINTFORML %CALLNAME:(ARG:0)%は見られているのにも気づかず着替えている……
+		LOCAL:5 += 1
+	ENDIF
+	IF (CFLAG:(ARG:0):505 & 1) && LOCAL:5 < RAND:4
+		CALL PRINT_MESSAGE(LOCAL:4, 463, 0, CALLNAME:(ARG:0), "")
+		LOCAL:5 += 1
+	ENDIF
+	IF (CFLAG:(ARG:0):505 & 2) && LOCAL:5 < RAND:4
+		CALL PRINT_MESSAGE(LOCAL:4, 463, 1, CALLNAME:(ARG:0), "")
+		LOCAL:5 += 1
+	ENDIF
+	IF (CFLAG:(ARG:0):505 & 4) && LOCAL:5 < RAND:4
+		CALL PRINT_MESSAGE(LOCAL:4, 463, 2, CALLNAME:(ARG:0), "")
+		LOCAL:5 += 1
+	ENDIF
+	IF (CFLAG:(ARG:0):505 & 8) && LOCAL:5 < RAND:4
+		CALL PRINT_MESSAGE(LOCAL:4, 463, 3, CALLNAME:(ARG:0), "")
+		LOCAL:5 += 1
+	ENDIF
+	IF (CFLAG:(ARG:0):505 & 16) && LOCAL:5 < RAND:4
+		CALL PRINT_MESSAGE(LOCAL:4, 463, 4, CALLNAME:(ARG:0), "")
+		LOCAL:5 += 1
+	ENDIF
+	IF LOCAL:5 == 0
+		PRINTFORML しかし映像が途切れてしまった……
+	ENDIF
+ENDIF
+
+CFLAG:(ARG:0):507 = 0
+

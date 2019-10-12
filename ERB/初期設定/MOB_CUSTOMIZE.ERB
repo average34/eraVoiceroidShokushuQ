@@ -1,0 +1,792 @@
+﻿
+@MOB_NAME(ARG:0)
+;ARG:0	モブの種類
+#FUNCTIONS
+
+SELECTCASE ARG:0
+	CASE (FLAG:2 + 1)
+		RETURNF "メイド妖精"
+	CASE (FLAG:2 + 2)
+		RETURNF "地上の兎"
+	CASE (FLAG:2 + 3)
+		RETURNF "月兎"
+	CASE (FLAG:2 + 4)
+		RETURNF "河童"
+	CASE (FLAG:2 + 5)
+		RETURNF "烏天狗"
+	CASE (FLAG:2 + 6)
+		RETURNF "白狼天狗"
+	CASE (FLAG:2 + 7)
+		RETURNF "ゾンビフェアリー"
+	CASE (FLAG:2 + 8)
+		RETURNF "妖狐"
+	CASE (FLAG:2 + 9)
+		RETURNF "化け猫"
+	CASE (FLAG:2 + 10)
+		RETURNF "化け狸"
+	CASE (FLAG:2 + 11)
+		RETURNF "妖獣"
+	CASE (FLAG:2 + 12)
+		RETURNF "村娘"
+	CASEELSE
+		RETURNF "存在しない種族"
+ENDSELECT
+
+
+;モブタイプ
+@MOB_TYPE(ARG:0, ARG:1)
+;ARG:0	キャラ番号
+;ARG:1	モブの種類
+
+SELECTCASE ARG:1
+	CASE 1
+		CALLNAME:(ARG:0) = メイド妖精
+	CASE 2
+		CALLNAME:(ARG:0) = 地上の兎
+	CASE 3
+		CALLNAME:(ARG:0) = 月兎
+	CASE 4
+		CALLNAME:(ARG:0) = 河童
+	CASE 5
+		CALLNAME:(ARG:0) = 烏天狗
+	CASE 6
+		CALLNAME:(ARG:0) = 白狼天狗
+	CASE 7
+		CALLNAME:(ARG:0) = ゾンビフェアリー
+	CASE 8
+		CALLNAME:(ARG:0) = 妖狐
+	CASE 9
+		CALLNAME:(ARG:0) = 化け猫
+	CASE 10
+		CALLNAME:(ARG:0) = 化け狸
+	CASE 11
+		CALLNAME:(ARG:0) = 妖獣
+	CASE 12
+		CALLNAME:(ARG:0) = 村娘
+ENDSELECT
+
+;モブタイプ固有の素質やステータス
+@MOB_BASE(ARG:0, ARG:1)
+;ARG:0	キャラ番号
+;ARG:1	モブの種類
+
+;共通でモブ
+TALENT:(ARG:0):166 = ARG:1
+
+SELECTCASE ARG:1
+	;メイド妖精
+	CASE 1
+		MAXBASE:(ARG:0):0 = 3500
+		MAXBASE:(ARG:0):1 = 2000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 55
+		ABL:(ARG:0):98 = 20
+		TALENT:(ARG:0):150 = 1
+		TALENT:(ARG:0):213 = 1
+		IF RAND:10 == 0
+			TALENT:(ARG:0):152 = 1
+		ENDIF
+	;地上の兎
+	CASE 2
+		MAXBASE:(ARG:0):0 = 3500
+		MAXBASE:(ARG:0):1 = 2000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):1 = 1
+		ABL:(ARG:0):97 = 30
+		ABL:(ARG:0):98 = 20
+		TALENT:(ARG:0):23 = 1
+		TALENT:(ARG:0):124 = 1
+		TALENT:(ARG:0):215 = 1
+	;月兎
+	CASE 3
+		MAXBASE:(ARG:0):0 = 3700
+		MAXBASE:(ARG:0):1 = 2000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):4 = 1
+		ABL:(ARG:0):97 = 60
+		ABL:(ARG:0):98 = 30
+		TALENT:(ARG:0):124 = 1
+		TALENT:(ARG:0):215 = 1
+	;河童
+	CASE 4
+		MAXBASE:(ARG:0):0 = 3700
+		MAXBASE:(ARG:0):1 = 2000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):4 = 1
+		ABL:(ARG:0):97 = 50
+		ABL:(ARG:0):98 = 40
+	;烏天狗
+	CASE 5
+		MAXBASE:(ARG:0):0 = 3800
+		MAXBASE:(ARG:0):1 = 2200
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):3 = 1
+		ABL:(ARG:0):97 = 75
+		ABL:(ARG:0):98 = 55
+		TALENT:(ARG:0):213 = 2
+	;白狼天狗
+	CASE 6
+		MAXBASE:(ARG:0):0 = 3800
+		MAXBASE:(ARG:0):1 = 2000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 40
+		ABL:(ARG:0):98 = 55
+		TALENT:(ARG:0):124 = 1
+		TALENT:(ARG:0):154 = 1
+		TALENT:(ARG:0):215 = 1
+	;ゾンビフェアリー
+	CASE 7
+		MAXBASE:(ARG:0):0 = 3700
+		MAXBASE:(ARG:0):1 = 2000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 55
+		ABL:(ARG:0):98 = 15
+		TALENT:(ARG:0):150 = 1
+		TALENT:(ARG:0):213 = 1
+		IF RAND:10 == 0
+			TALENT:(ARG:0):151 = 1
+		ENDIF
+	;妖狐
+	CASE 8
+		MAXBASE:(ARG:0):0 = 3600
+		MAXBASE:(ARG:0):1 = 2200
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 65
+		ABL:(ARG:0):98 = 50
+		TALENT:(ARG:0):124 = 1
+		TALENT:(ARG:0):215 = 2
+		IF RAND:10 == 0
+			TALENT:(ARG:0):116 = 1
+		ELSEIF RAND:10 == 0
+			TALENT:(ARG:0):139 = 1
+		ENDIF
+	;化け猫
+	CASE 9
+		MAXBASE:(ARG:0):0 = 3400
+		MAXBASE:(ARG:0):1 = 2000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 70
+		ABL:(ARG:0):98 = 45
+		TALENT:(ARG:0):54 = 1
+		TALENT:(ARG:0):124 = 1
+		TALENT:(ARG:0):215 = 1
+	;化け狸
+	CASE 10
+		MAXBASE:(ARG:0):0 = 3800
+		MAXBASE:(ARG:0):1 = 2300
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 50
+		ABL:(ARG:0):98 = 65
+		TALENT:(ARG:0):124 = 1
+		TALENT:(ARG:0):215 = 2
+		IF RAND:10 == 0
+			TALENT:(ARG:0):116 = 1
+		ELSEIF RAND:10 == 0
+			TALENT:(ARG:0):139 = 1
+		ENDIF
+	;妖獣
+	CASE 11
+		MAXBASE:(ARG:0):0 = 3800
+		MAXBASE:(ARG:0):1 = 2400
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 60
+		ABL:(ARG:0):98 = 60
+		TALENT:(ARG:0):116 = 1
+		TALENT:(ARG:0):124 = 1
+		TALENT:(ARG:0):215 = 2
+	;村人
+	CASE 12
+		MAXBASE:(ARG:0):0 = 3200
+		MAXBASE:(ARG:0):1 = 3000
+		MAXBASE:(ARG:0):2 = 10000
+		MAXBASE:(ARG:0):3 = 1000
+		ABL:(ARG:0):97 = 20
+		ABL:(ARG:0):98 = 10
+ENDSELECT
+
+
+;モブに初期素質設定
+@MOB_CUSTOMIZE(ARG:0)
+;ARG:0	キャラ番号
+;LOCAL
+;1	素質数制限
+
+;変数リセット
+LOCAL:1 = 0
+
+;性格は主人公だと独自決定するので、分岐
+IF ARG:0 == 1
+	SELECTCASE CFLAG:(ARG:0):12
+		;性格おとなしめ
+		CASE -40, -20 
+			IF RAND:2
+				TALENT:(ARG:0):10 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):13 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):14 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):17 = 1
+			ENDIF
+			
+			;素質20番代は効果が高いのでつきにくい
+			IF RAND:4 == 0
+				TALENT:(ARG:0):20 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):23 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):26 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):27 = 1
+			ENDIF
+			
+			IF RAND:4 == 0
+				TALENT:(ARG:0):35 = 1
+			ELSEIF RAND:3 == 0
+				TALENT:(ARG:0):36 = 1
+			ENDIF
+
+		;感情薄いor普通
+		CASE 0
+			;感情薄い
+			IF RAND:2
+				TALENT:(ARG:0):21 = 1
+				
+				IF RAND:2
+					TALENT:(ARG:0):14 = 1
+				ENDIF
+				;素質20番代は効果が高いのでつきにくい
+				IF RAND:4 == 0
+					TALENT:(ARG:0):20 = 1
+				ENDIF
+				IF RAND:4 == 0
+					TALENT:(ARG:0):27 = 1
+				ENDIF
+				
+				IF RAND:2
+					TALENT:(ARG:0):36 = 1
+				ENDIF
+			;普通
+			ELSE
+				IF RAND:2
+					TALENT:(ARG:0):12 = 1
+				ENDIF
+				IF RAND:2
+					TALENT:(ARG:0):13 = 1
+				ENDIF
+				IF RAND:2
+					TALENT:(ARG:0):14 = 1
+				ENDIF
+				IF RAND:2
+					TALENT:(ARG:0):16 = 1
+				ENDIF
+				;素質20番代は効果が高いのでつきにくい
+				IF RAND:4 == 0
+					TALENT:(ARG:0):20 = 1
+				ENDIF
+				IF RAND:4 == 0
+					TALENT:(ARG:0):23 = 1
+				ENDIF
+				IF RAND:4 == 0
+					TALENT:(ARG:0):25 = 1
+				ENDIF
+				IF RAND:4 == 0
+					TALENT:(ARG:0):26 = 1
+				ENDIF
+				IF RAND:4 == 0
+					TALENT:(ARG:0):27 = 1
+				ENDIF
+				IF RAND:4 == 0
+					TALENT:(ARG:0):28 = 1
+				ENDIF
+				IF RAND:4 == 0
+					TALENT:(ARG:0):35 = 1
+				ELSEIF RAND:3 == 0
+					TALENT:(ARG:0):36 = 1
+				ENDIF
+			ENDIF
+		;性格きつめ
+		CASE 20, 40
+			IF RAND:2
+				TALENT:(ARG:0):11 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):12 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):15 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):16 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):18 = 1
+			ENDIF
+			
+			;素質20番代は効果が高いのでつきにくい
+			IF RAND:4 == 0
+				TALENT:(ARG:0):20 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):23 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):24 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):25 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):28 = 1
+			ENDIF
+			
+			IF RAND:4 == 0
+				TALENT:(ARG:0):35 = 1
+			ELSEIF RAND:3 == 0
+				TALENT:(ARG:0):36 = 1
+			ENDIF
+	ENDSELECT
+ELSE
+	SELECTCASE RAND:4
+		;性格おとなしめ
+		CASE 0
+			IF RAND:2
+				TALENT:(ARG:0):10 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):13 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):14 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):17 = 1
+			ENDIF
+			
+			;素質20番代は効果が高いのでつきにくい
+			IF RAND:4 == 0
+				TALENT:(ARG:0):20 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):23 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):26 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):27 = 1
+			ENDIF
+			
+			IF RAND:4 == 0
+				TALENT:(ARG:0):35 = 1
+			ELSEIF RAND:3 == 0
+				TALENT:(ARG:0):36 = 1
+			ENDIF
+			
+			;強気弱気　-60～19の範囲に
+			CFLAG:(ARG:0):12 = 19 - RAND:80
+			;性格　1～15の数値に
+			CFLAG:(ARG:0):100 = 1 + RAND:15
+		;性格きつめ
+		CASE 1
+			IF RAND:2
+				TALENT:(ARG:0):11 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):12 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):15 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):16 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):18 = 1
+			ENDIF
+			
+			;素質20番代は効果が高いのでつきにくい
+			IF RAND:4 == 0
+				TALENT:(ARG:0):20 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):23 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):24 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):25 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):28 = 1
+			ENDIF
+			
+			IF RAND:4 == 0
+				TALENT:(ARG:0):35 = 1
+			ELSEIF RAND:3 == 0
+				TALENT:(ARG:0):36 = 1
+			ENDIF
+			
+			;強気弱気　-19～60の範囲に
+			CFLAG:(ARG:0):12 = -19 + RAND:80
+			;性格　1～15の数値に
+			CFLAG:(ARG:0):100 = 1 + RAND:15
+		;感情薄い
+		CASE 2
+			TALENT:(ARG:0):21 = 1
+			
+			IF RAND:2
+				TALENT:(ARG:0):14 = 1
+			ENDIF
+			;素質20番代は効果が高いのでつきにくい
+			IF RAND:4 == 0
+				TALENT:(ARG:0):20 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):27 = 1
+			ENDIF
+			
+			IF RAND:2
+				TALENT:(ARG:0):36 = 1
+			ENDIF
+			;強気弱気　-39～39の範囲に
+			CFLAG:(ARG:0):12 = -39 + RAND:79
+			;性格　1～15の数値に
+			CFLAG:(ARG:0):100 = 1 + RAND:15
+			
+		;普通
+		CASE 3
+			IF RAND:2
+				TALENT:(ARG:0):12 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):13 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):14 = 1
+			ENDIF
+			IF RAND:2
+				TALENT:(ARG:0):16 = 1
+			ENDIF
+			;素質20番代は効果が高いのでつきにくい
+			IF RAND:4 == 0
+				TALENT:(ARG:0):20 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):23 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):25 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):26 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):27 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):28 = 1
+			ENDIF
+			IF RAND:4 == 0
+				TALENT:(ARG:0):35 = 1
+			ELSEIF RAND:3 == 0
+				TALENT:(ARG:0):36 = 1
+			ENDIF
+	ENDSELECT
+ENDIF
+
+;この先は素質がつかない可能性も高い
+;特殊すぎるものなどはスルー
+;素質が多くなり過ぎないようにLOCAL:1で補正　目安は素質合計10前後
+
+;貞操観念
+IF RAND:4 == 0
+	TALENT:(ARG:0):30 = 1
+	LOCAL:1 += 1
+ELSEIF RAND:4
+	TALENT:(ARG:0):31 = 1
+	LOCAL:1 += 1
+ENDIF
+;抑圧
+IF RAND:4 == 0
+	TALENT:(ARG:0):32 = 1
+	LOCAL:1 += 1
+ENDIF
+;解放
+IF RAND:4 == 0
+	TALENT:(ARG:0):33 = 1
+	LOCAL:1 += 1
+ENDIF
+;抵抗
+IF RAND:4 == 0
+	TALENT:(ARG:0):34 = 1
+	LOCAL:1 += 1
+ENDIF
+;痛みに強い
+IF RAND:4 == 0
+	TALENT:(ARG:0):40 = 1
+	LOCAL:1 += 1
+ELSEIF RAND:4 == 0 && TALENT:(ARG:0):40 == 0
+	TALENT:(ARG:0):41 = 1
+	LOCAL:1 += 1
+ENDIF
+;濡れやすさ
+IF RAND:4 == 0
+	TALENT:(ARG:0):42 = 1
+	LOCAL:1 += 1
+ELSEIF RAND:4 == 0
+	TALENT:(ARG:0):43 = 1
+	LOCAL:1 += 1
+ENDIF
+
+IF LOCAL:1 < 3
+	;習得の早さ
+	IF RAND:4 == 0
+		TALENT:(ARG:0):50 = 1
+		LOCAL:1 += 1
+	ELSEIF RAND:4 == 0 && TALENT:(ARG:0):50 == 0
+		TALENT:(ARG:0):51 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;舌使い
+	IF RAND:4 == 0
+		TALENT:(ARG:0):52 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;針さばき
+	IF RAND:4 == 0
+		TALENT:(ARG:0):53 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;自慰しやすい
+	IF RAND:4 == 0
+		TALENT:(ARG:0):60 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;汚臭への反応
+	IF RAND:4 == 0
+		TALENT:(ARG:0):61 = 1
+		LOCAL:1 += 1
+	ELSEIF RAND:4 == 0 && TALENT:(ARG:0):61 == 0
+		TALENT:(ARG:0):62 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;献身的
+	IF RAND:4 == 0
+		TALENT:(ARG:0):63 = 1
+		LOCAL:1 += 1
+	ENDIF
+ENDIF
+
+IF LOCAL:1 < 4
+	;快感への反応
+	IF RAND:4 == 0
+		TALENT:(ARG:0):70 = 1
+		LOCAL:1 += 1
+	ELSEIF RAND:4 == 0 && TALENT:(ARG:0):70 == 0
+		TALENT:(ARG:0):71 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;中毒しやすい
+	IF RAND:4 == 0
+		TALENT:(ARG:0):72 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;両刀
+	IF RAND:4 == 0
+		TALENT:(ARG:0):81 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;小柄体型
+	IF RAND:4 == 0
+		TALENT:(ARG:0):100 = 1
+		LOCAL:1 += 1
+	ENDIF
+ENDIF
+
+;感度素質は入手しやすい
+;LOCAL:1制限を受けない
+IF RAND:3 == 0
+	TALENT:(ARG:0):101 = RAND:4 - 1
+ENDIF
+IF RAND:3 == 0
+	TALENT:(ARG:0):102 = RAND:4 - 1
+ENDIF
+IF RAND:3 == 0
+	TALENT:(ARG:0):103 = RAND:4 - 1
+ENDIF
+IF RAND:3 == 0
+	TALENT:(ARG:0):104 = RAND:4 - 1
+ENDIF
+IF RAND:3 == 0
+	TALENT:(ARG:0):105 = RAND:4 - 1
+ENDIF
+IF RAND:3 == 0
+	TALENT:(ARG:0):106 = RAND:4 - 1
+ENDIF
+;胸の大きさはLOCAL:1制限を受けない
+IF RAND:4 == 0
+	TALENT:(ARG:0):108 = 1
+ELSEIF RAND:3 == 0
+	TALENT:(ARG:0):109 = 1
+ELSEIF RAND:2 == 0
+	TALENT:(ARG:0):110 = 1
+ENDIF
+
+
+IF LOCAL:1 < 5
+	;治療鼓舞
+	;バランス的にも片方
+	IF RAND:4 == 0
+		TALENT:(ARG:0):117 = 1
+		LOCAL:1 += 1
+	ELSEIF RAND:4 == 0 && TALENT:(ARG:0):117 == 0
+		TALENT:(ARG:0):118 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;綺麗好き
+	IF RAND:4 == 0
+		TALENT:(ARG:0):152 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;裁縫上手
+	IF RAND:4 == 0
+		TALENT:(ARG:0):153 = 1
+		LOCAL:1 += 1
+	ENDIF
+	;哨戒
+	IF RAND:4 == 0
+		TALENT:(ARG:0):154 = 1
+		LOCAL:1 += 1
+	ENDIF
+ENDIF
+
+;体術習得or鷲の目
+;所持率かなり低い
+;両方は取れない
+IF RAND:10 == 0 && TALENT:(ARG:0):163 == 0
+	TALENT:(ARG:0):161 = 1
+ELSEIF RAND:10 == 0 && TALENT:(ARG:0):161 == 0
+	TALENT:(ARG:0):163 = 1
+ENDIF
+
+;ABL入手
+IF RAND:7 == 0
+	ABL:(ARG:0):0 = 1
+ELSEIF RAND:6 == 0
+	ABL:(ARG:0):1 = 1
+ELSEIF RAND:5 == 0
+	ABL:(ARG:0):2 = 1
+ELSEIF RAND:4 == 0
+	ABL:(ARG:0):3 = 1
+ELSEIF RAND:3 == 0
+	ABL:(ARG:0):4 = 1
+ELSEIF RAND:2 == 0
+	ABL:(ARG:0):5 = 1
+ENDIF
+
+ABL:(ARG:0):97 = MAX(ABL:(ARG:0):97 + RAND:15 - RAND:15, 10)
+ABL:(ARG:0):98 = MAX(ABL:(ARG:0):98 + RAND:8 - RAND:8, 10)
+
+;BASE入手
+MAXBASE:(ARG:0):0 = MAX(MAXBASE:(ARG:0):0 + (100 * RAND:15) - (100 * RAND:15), 2000)
+MAXBASE:(ARG:0):1 = MAX(MAXBASE:(ARG:0):1 + (100 * RAND:15) - (100 * RAND:15), 2000)
+MAXBASE:(ARG:0):3 = MAX(MAXBASE:(ARG:0):3 + (100 * RAND:5) - (100 * RAND:5), 800)
+
+;MAXBASE定義
+BASE:(ARG:0):0 = MAXBASE:(ARG:0):0
+BASE:(ARG:0):1 = MAXBASE:(ARG:0):1
+BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
+BASE:(ARG:0):3 = MAXBASE:(ARG:0):3
+
+
+;モブの素質をリセット
+@MOB_RESET(ARG:0)
+;ARG:0	キャラ番号
+
+TALENT:(ARG:0):10 = 0
+TALENT:(ARG:0):11 = 0
+TALENT:(ARG:0):12 = 0
+TALENT:(ARG:0):13 = 0
+TALENT:(ARG:0):14 = 0
+TALENT:(ARG:0):15 = 0
+TALENT:(ARG:0):16 = 0
+TALENT:(ARG:0):17 = 0
+TALENT:(ARG:0):18 = 0
+TALENT:(ARG:0):20 = 0
+TALENT:(ARG:0):21 = 0
+
+TALENT:(ARG:0):23 = 0
+TALENT:(ARG:0):24 = 0
+TALENT:(ARG:0):25 = 0
+TALENT:(ARG:0):26 = 0
+TALENT:(ARG:0):27 = 0
+TALENT:(ARG:0):28 = 0
+TALENT:(ARG:0):30 = 0
+TALENT:(ARG:0):31 = 0
+TALENT:(ARG:0):32 = 0
+TALENT:(ARG:0):33 = 0
+TALENT:(ARG:0):34 = 0
+TALENT:(ARG:0):35 = 0
+TALENT:(ARG:0):36 = 0
+
+TALENT:(ARG:0):40 = 0
+TALENT:(ARG:0):41 = 0
+TALENT:(ARG:0):42 = 0
+TALENT:(ARG:0):43 = 0
+
+TALENT:(ARG:0):50 = 0
+TALENT:(ARG:0):51 = 0
+TALENT:(ARG:0):52 = 0
+TALENT:(ARG:0):53 = 0
+
+TALENT:(ARG:0):60 = 0
+TALENT:(ARG:0):61 = 0
+TALENT:(ARG:0):62 = 0
+TALENT:(ARG:0):63 = 0
+
+TALENT:(ARG:0):70 = 0
+TALENT:(ARG:0):71 = 0
+TALENT:(ARG:0):72 = 0
+
+TALENT:(ARG:0):81 = 0
+
+TALENT:(ARG:0):100 = 0
+TALENT:(ARG:0):101 = 0
+TALENT:(ARG:0):102 = 0
+TALENT:(ARG:0):103 = 0
+TALENT:(ARG:0):104 = 0
+TALENT:(ARG:0):105 = 0
+TALENT:(ARG:0):106 = 0
+TALENT:(ARG:0):108 = 0
+TALENT:(ARG:0):109 = 0
+TALENT:(ARG:0):110 = 0
+
+TALENT:(ARG:0):117 = 0
+TALENT:(ARG:0):118 = 0
+
+TALENT:(ARG:0):152 = 0
+TALENT:(ARG:0):153 = 0
+TALENT:(ARG:0):154 = 0
+
+TALENT:(ARG:0):161 = 0
+TALENT:(ARG:0):163 = 0
+

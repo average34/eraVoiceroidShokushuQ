@@ -1,0 +1,119 @@
+﻿;=================================================
+;アイテム入手
+;ITEMID	入手アイテム
+;ARG:1	入手個数
+;ARG:2	入手メッセージ表示フラグ
+;=================================================
+@ADD_ITEM(ITEMID, ARG:1, ARG:2)
+#DIM LCOUNT,3	;ループ用
+#DIM ITEMID	;
+
+
+	IF ARG:2
+		IF ARG:1 == 1
+			PRINTFORML %ITEMNAME:(ITEMID)%を手に入れた！
+		ELSEIF ARG:1 > 1
+			PRINTFORML %ITEMNAME:(ITEMID)%を{ARG:1}個手に入れた！
+		ELSEIF ARG:1 < 0
+			PRINTFORML %ITEMNAME:(ITEMID)%を{(ARG:1) * -1}個失った！
+		ENDIF
+	ENDIF
+
+	ITEM:(ITEMID) += ARG:1
+	SIF ITEM:(ITEMID) < 0
+		ITEM:(ITEMID) = 0
+
+	;消耗武器の場合、弾も手に入る
+	IF ITEMID >= 1 && ITEMID <= 9
+		ITEM:GET_BULLET_ITEMID(ITEMID) += (GET_MAX_BULLET(ITEMID * ARG:1))
+	ENDIF
+	
+	;消耗品の場合、個数上限あり
+	LOCAL = GET_ITEM_MAX(ITEMID)
+	
+	;上限があった場合は確認
+	IF LOCAL > 0 && ITEM:(ITEMID) > LOCAL
+		IF ARG:2
+			PRINTFORML しかし、持ちきれなかったので諦めた…
+		ENDIF
+		ITEM:(ITEMID) = LOCAL
+	ENDIF
+
+;=================================================
+;アイテム数設定
+;ITEMID	設定アイテム
+;ARG:1	設定数
+;=================================================
+@MAKE_ITEM(ITEMID, ARG:1)
+#DIM ITEMID
+	ITEM:(ITEMID) = 0
+	CALL ADD_ITEM(ITEMID, ARG:1, 0)
+	
+;=================================================
+;アイテム所持上限
+;RESULT:0	上限数
+;=================================================
+@GET_ITEM_MAX(ITEMID)
+#FUNCTION
+#DIM LCOUNT,3	;ループ用
+#DIM ITEMID	;
+
+
+	SELECTCASE ITEMID
+		CASE 50	;緑茶
+			RETURNF 6
+			
+		CASE 51 ;玉露
+			RETURNF 3
+			
+		CASE 52 ;日本酒
+			RETURNF 6
+			
+		CASE 53 ;神酒
+			RETURNF 3
+			
+		CASE 54 ;着替えセット
+			RETURNF 9
+			
+		CASE 55 ;鎮静剤
+			RETURNF 9
+			
+		CASE 56	;興奮剤
+			RETURNF 9
+			
+		CASE 57	;薬酒
+			RETURNF 9
+			
+		CASE 58	;気付け薬
+			RETURNF 6
+			
+		CASE 59	;煙玉
+			RETURNF 9
+			
+		CASE 66	;携帯トイレ
+			RETURNF 9
+			
+		CASE 67	;包帯
+			RETURNF 9
+			
+		CASE 69	;縮乳薬
+			RETURNF 9
+		CASE 70	;アオカン
+			RETURNF 1
+		CASE 71 ;浄化玉
+			RETURNF 3
+		CASE 72 ;ゴーグル
+			RETURNF 1
+		CASE 73 ;薬草
+			RETURNF 3
+		CASE 74	;寄生封じの札
+			RETURNF 6
+		CASE 75 ;卵破壊の札
+			RETURNF 6
+		CASE 76 ;母乳止めの札
+			RETURNF 6
+		
+	ENDSELECT
+
+RETURNF -1
+;=================================================

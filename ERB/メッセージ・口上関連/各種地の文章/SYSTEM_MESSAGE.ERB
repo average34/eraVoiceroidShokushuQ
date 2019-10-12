@@ -1,0 +1,1629 @@
+﻿;システムメッセージ
+;かなりの地の文がここに纏められることになるのでかなり長い
+;!!!　いずれ「表現の難易度」を実装して分岐かける予定
+;
+;大抵の地の文はこっちに持ってきて、その気になれば書き換え可能としたい
+;ダメージ表記とかを勝手に書き換えられるとプレイヤーの混乱の元になるので
+;その辺は固定かなぁ……
+
+
+
+;12/11/03 長くなるので分離の部分は全削除　一番下のCASEELSEで別ファイルのものに飛ぶ処理をしている
+;逆に言うとここに無いメッセージを追加する場合他のファイルを参考に新規ファイルを用意すればOK　ここを弄る必要はなし
+
+@SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;LOCAL
+;0	LOOP
+;1	色のバックアップ
+
+GETCOLOR
+LOCAL:1 = RESULT
+
+;システムメッセージ表示中はデフォルトカラーに戻す
+RESETCOLOR
+
+SELECTCASE ARG:0
+	CASE 0
+		;何も表示しない
+	CASE 9
+		;今の所何もなし
+	CASE 11
+		;今の所何もなし
+	CASE 21
+		PRINTFORML %ARGS:1%は攻撃を避けた！
+	CASE 22
+		PRINTFORML %ARGS:0%は攻撃を避けた！
+	CASE 23
+		PRINTFORML %ARGS:0%は攻撃を避けた！
+	CASE 24
+		PRINTFORML %ARGS:0%は攻撃を避けた！
+	CASE 26
+		PRINTFORML %ARGS:0%は攻撃を避けた！
+	CASE 31
+		PRINTFORML %ARGS:1%を倒した！
+	CASE 32
+		SETCOLOR 0xEEEE10
+		PRINTFORML %ARGS:0%の体力が尽きてしまった！！
+		RESETCOLOR
+	CASE 33
+		IF ARG:1 == 0
+			PRINTFORMW %ARGS:0%の瞳から光が消えた…
+		ELSE
+			PRINTFORML %ARGS:0%の不屈の決意は、極悪な絶頂衝撃の前に完膚なきまでに粉砕され、蹂躙されてしまった！
+			PRINTFORMW %ARGS:0%の瞳から光が消えた…
+		ENDIF
+
+	CASE 34
+		;絶頂の寸前みたいな感じ
+		;システムメッセージは多分不要
+	CASE 35
+		IF ARG:1 == 0
+			SETCOLOR 0xF05080
+			PRINTFORML %ARGS:0%は裸にされてしまった！！
+			RESETCOLOR
+		ELSEIF ARG:1 == 1
+			SETCOLOR 0xF09000
+			PRINTFORML %ARGS:0%の服はあと僅かしか残っていない！！
+			RESETCOLOR
+		ELSE
+			SETCOLOR 0xEEEE10
+			PRINTFORML %ARGS:0%の服に穴が開き始めた！！
+			RESETCOLOR
+		ENDIF
+	CASE 37
+		PRINTFORML %ARGS:1%に呑み込まれていて%ARGS:0%には手出しできない！
+	CASE 38
+		;何もなし
+	CASE 39
+		PRINTFORML %ARGS:0%は激しい攻撃を受けてひるんでしまった！
+	CASE 40
+		IF TFLAG:63 == 0
+			PRINTFORML %ARGS:0%は%ARGS:1%に卵を産み付けられた！
+		ELSE
+			PRINTFORML %ARGS:0%は%ARGS:1%の幼体に寄生されてしまった！
+		ENDIF
+	CASE 41
+		PRINTFORML %ARGS:0%は目を覚ました！
+		CALL MSG_WAIT(1)
+	CASE 42
+		PRINTFORML %ARGS:0%は%ARGS:1%から解放された！
+	CASE 43
+		PRINTFORML %ARGS:0%は目を覚ました！
+		CALL MSG_WAIT(1)
+	CASE 44
+		PRINTFORML %ARGS:0%は煙幕を振り払った！
+		CALL MSG_WAIT(1)
+	CASE 45
+		PRINTFORML %ARGS:0%の周りの砂煙が晴れた！
+		CALL MSG_WAIT(1)
+	CASE 46
+		IF ARG:1 == 0
+			;恥薄いは何もなし
+		ELSEIF ARG:1 == 1
+			IF BASE:TARGET:3 > 0
+				PRINTFORM 染み込んだ体液のせいで服が透けて%ARGS:0%は
+			ELSE
+				PRINTFORM %ARGS:0%は裸にされて
+			ENDIF
+			PRINTFORM 恥ずかしがっている… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 2
+			IF BASE:TARGET:3 > 0
+				PRINTFORM 染み込んだ体液のせいで服が透けて%ARGS:0%は
+			ELSE
+				PRINTFORM %ARGS:0%は裸にされて
+			ENDIF
+			PRINTFORM 顔を真っ赤にしている… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 3
+			;恥薄いは何もなし
+		ELSEIF ARG:1 == 4
+			IF BASE:TARGET:3 > 0
+				PRINTFORM 染み込んだ体液のせいで服が透けた%ARGS:0%の姿を
+			ELSE
+				PRINTFORM 裸にされた%ARGS:0%の姿を
+			ENDIF
+			PRINTFORM ウォッチャーが記録している… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 5
+			IF BASE:TARGET:3 > 0
+				PRINTFORM %ARGS:0%は染み込んだ体液のせいで服が透けた姿を
+			ELSE
+				PRINTFORM %ARGS:0%は裸にされた姿を
+			ENDIF
+			PRINTFORM ウォッチャーに記録されて顔を真っ赤にしている… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 6
+			;恥薄いは何もなし
+		ELSEIF ARG:1 == 7
+			IF BASE:TARGET:3 > 0
+				PRINTFORM 風呂にはいるために服を脱いでいる%ARGS:0%の姿を
+			ELSE
+				PRINTFORM 無防備に風呂に入っている%ARGS:0%の姿を
+			ENDIF
+			PRINTFORM ウォッチャーが記録している… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 8
+			IF BASE:TARGET:3 > 0
+				PRINTFORM %ARGS:0%は風呂から出て火照った裸を
+			ELSE
+				PRINTFORM %ARGS:0%は無防備に身体を洗っている姿を
+			ENDIF
+			PRINTFORM ウォッチャーに記録されてしまい顔を真っ赤にしている… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 9
+			;恥薄いは何もなし
+		ELSEIF ARG:1 == 10
+			PRINTFORM %ARGS:0%の自慰にふける姿を
+			PRINTFORM ウォッチャーが記録している… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 11
+			PRINTFORM %ARGS:0%は自慰にふける姿を
+			PRINTFORM ウォッチャーに記録されてしまい顔を真っ赤にしている… (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM -{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 12
+			IF BASE:TARGET:3 > 0
+				PRINTFORM 染み込んだ体液のせいで服が透けて%ARGS:0%は
+			ELSE
+				PRINTFORM %ARGS:0%は裸にされて
+			ENDIF
+			PRINTFORM 顔を真っ赤にしていると同時に気持ちよさそうだ (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM +{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 13
+			IF BASE:TARGET:3 > 0
+				PRINTFORM %ARGS:0%は風呂から出て火照った裸を
+			ELSE
+				PRINTFORM %ARGS:0%は無防備に身体を洗っている姿を
+			ENDIF
+			PRINTFORM ウォッチャーに記録されてしまい顔を真っ赤にしていると同時に気持ちよさそうだ (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM +{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ELSEIF ARG:1 == 14
+			PRINTFORM %ARGS:0%は自慰にふける姿を
+			PRINTFORM ウォッチャーに記録されてしまい顔を真っ赤にしているが気持ちよさそうだ (MP 
+			SETCOLOR 0x70FF70
+			PRINTFORM +{ARG:2}
+			RESETCOLOR
+			PRINTFORML )
+		ENDIF
+	CASE 47
+		SETCOLOR 0xEE1010
+		IF !CFLAG:TARGET:35
+			PRINTFORML 部屋中に蠢く小さな触手が%ARGS:0%を責めたてる！
+		ELSE
+			PRINTFORML 部屋中に蠢く小さな触手が絶頂に達したばかりの%ARGS:0%をさらに責めたてる！
+		ENDIF
+		RESETCOLOR
+	CASE 48
+		;睡眠中
+		IF CFLAG:TARGET:25
+			PRINTFORMW 眠ったままであるにも関わらず、%ARGS:0%の手が無意識に自らの敏感な箇所へ向かって行く…
+		;催眠中
+		ELSEIF CFLAG:TARGET:43
+			;催眠強度で分岐 強度3以上はレッサーヒュプノの減衰あり催眠も兼ねる
+			SELECTCASE CFLAG:TARGET:43
+			CASE 1
+				SELECTCASE FLAG:526
+				CASE 0
+					PRINTFORML 催眠に掛かった%ARGS:0%の手は、操られるまま敏感な箇所へと向かって行く…
+				CASE 1
+					PRINTFORML 催眠にかかった%ARGS:0%は、今にも快感が溢れそうな身体を刺激し蕩けた声をあげはじめた…
+				CASE 2
+					PRINTFORML 今にも絶頂しそうな状態の%ARGS:0%は、うつろな目で敏感な箇所を刺激し始めた…
+				ENDSELECT
+			CASE 2
+				SELECTCASE FLAG:526
+				CASE 0
+					PRINTFORML 催眠に掛かった%ARGS:0%の手は、絶頂寸前の部位を容赦なく刺激していく…
+				CASE 1
+					PRINTFORML 催眠の力で性欲の虜になった%ARGS:0%は、発情した身体の疼きに耐えられず自慰を始めた！
+				CASE 2
+					PRINTFORML 絶頂寸前まで高ぶった%ARGS:0%の身体は無意識に自慰を始めた！
+					PRINTFORML うつろな表情とは対照的に手の動きは激しさを増していく！
+				ENDSELECT
+			CASEELSE
+				SELECTCASE FLAG:526
+				CASE 0
+					PRINTFORML 催眠の力で身体を操られた%ARGS:0%は、絶頂寸前の身体を見せつけ激しい自慰を始めた！
+				CASE 1
+					PRINTFORML 催眠の力で性欲のタガが外れた%ARGS:0%は、疼く身体を前に我慢をする事ができなかった…
+					PRINTFORML 淫らな思考に支配された%ARGS:0%は、うっとりとした表情を浮かべ自慰に没頭している！
+				CASE 2
+					PRINTFORML %ARGS:0%は絶頂寸前の身体に手を伸ばすと、呆けた顔のまま激しい自慰を始めた！
+				ENDSELECT
+			ENDSELECT
+		;通常時
+		ELSE
+			PRINTFORMW 絶頂近くまで高められた%ARGS:0%の手が、自然と自らの敏感な箇所へ向かって行く…
+		ENDIF
+	CASE 49
+		SETCOLOR 0x10EEEE
+		PRINTFORML %ARGS:0%は眠っている！
+		RESETCOLOR
+		CALL MSG_WAIT(1)
+	CASE 50
+		SETCOLOR 0x10EEEE
+		PRINTFORML %ARGS:0%は反撃の機会を窺っている！
+		RESETCOLOR
+		CALL MSG_WAIT(1)
+	CASE 51
+		SETCOLOR 0x10EEEE
+		PRINTFORML %ARGS:0%のカウンター！
+		RESETCOLOR
+	CASE 52
+		IF ARG:2
+			PRINTFORML %ARGS:0%は%ARGS:1%の体中へより深く引きずり込まれた！
+			IF ARG:1 > 4
+				PRINTFORML 激しく胎動する肉壁が%ARGS:0%に身動きすることを許さない！
+			ENDIF
+		ELSE
+			PRINTFORML %ARGS:0%の全身にさらに触手が絡みついた！
+			IF ARG:1 > 4
+				PRINTFORML %ARGS:0%は身動きが取れないほどに触手に絡みつかれてしまった！
+			ENDIF
+		ENDIF
+	CASE 53
+		IF ARG:2
+			PRINTFORML %ARGS:0%は既に完全に呑み込まれている…
+		ELSE
+			PRINTFORML %ARGS:0%の全身は既に触手で雁字搦めだ！
+		ENDIF
+	CASE 54
+		;今の所何もなし
+	CASE 55
+		;今の所何もなし
+	CASE 56
+		;今の所何もなし
+	CASE 57
+		;今の所何もなし
+	CASE 58
+		PRINTFORML しかしこれ以上獲物は抱えきれないのか、%ARGS:0%は%ARGS:1%に解放された！
+	CASE 59
+		PRINTFORML %ARGS:1%に咥えこまれた%ARGS:0%のココロとカラダが溶かされてゆく…
+	CASE 60
+		;今の所何もなし
+	CASE 62
+		;今の所何もなし
+	CASE 63
+		;今の所何もなし
+	CASE 64
+		PRINTFORMW %ARGS:0%は強靭な精神力で耐え忍んでいる！
+	CASE 70
+		PRINTFORML %ARGS:0%の何かが砕けた！
+		PRINTFORML %ARGS:0%は屈服刻印：%MARKNAME:(ARG:1)%を手に入れた！
+		
+	CASE 101
+		IF ARG:2
+			PRINTFORML %ARGS:1%は地面に横たわり、濁った眼で虚空を見つめているが、まだ息があるようだ…
+		ELSEIF CFLAG:1:25 == 0 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && BASE:1:3 <= 0
+			;全裸だと資質で反応が少しだけ変わるように
+			IF CFLAG:(ARG:1):5 < 0
+				PRINTFORML %ARGS:1%はあられもない姿の%ARGS:0%%TACHI()%を見下げ果てた目で見ている…
+			ELSEIF CFLAG:(ARG:1):5 < 50
+				PRINTFORML %ARGS:1%はあられもない%ARGS:0%%TACHI()%の姿に眉をひそめている…
+			ELSEIF CFLAG:(ARG:1):5 >= 200
+				PRINTFORM %ARGS:1%はあられもない姿の%ARGS:0%%TACHI()%に気付くと、
+				IF TALENT:(ARG:1):21 == 1 || TALENT:(ARG:1):22 == 1 
+					PRINTFORM 静かに
+				ELSEIF TALENT:(ARG:1):23 == 1 || TALENT:(ARG:1):25 == 1 || TALENT:(ARG:1):63 == 1 
+					PRINTFORM 驚いた顔で
+				ELSEIF TALENT:(ARG:1):24 == 1 || TALENT:(ARG:1):30 == 1 || TALENT:(ARG:1):32 == 1 || TALENT:(ARG:1):34 == 1 || TALENT:(ARG:1):35 == 1 || TALENT:(ARG:1):71 == 1 
+					PRINTFORM 顔を赤くして
+				ELSEIF TALENT:(ARG:1):31 == 1 || TALENT:(ARG:1):33 == 1 || TALENT:(ARG:1):36 == 1 || TALENT:(ARG:1):70 == 1 || TALENT:(ARG:1):72 == 1 
+					PRINTFORM 笑顔で
+				ELSE
+					PRINTFORM どぎまぎしながら
+				ENDIF
+			PRINTFORML 近づいてきた…
+			ENDIF
+		ELSE
+			IF CFLAG:(ARG:1):5 < 0
+				PRINTFORML %ARGS:1%は冷めた目でこちらを見ている…
+			ELSEIF CFLAG:(ARG:1):5 < 50
+				PRINTFORML %ARGS:1%はこちらを警戒している…
+			ELSEIF CFLAG:(ARG:1):5 >= 200
+				PRINTFORML %ARGS:1%はこちらに気付くと、笑顔で近づいてきた…
+			ENDIF
+		ENDIF
+	CASE 102
+		IF ARG:2
+			PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%を残し、その場を立ち去った…
+		ELSE
+			PRINTFORMW %ARGS:0%%TACHI()%は軽く挨拶だけ済ませ、%ARGS:1%と別れた
+		ENDIF
+	CASE 103
+		SIF BASE:1:5 >= 100
+			PRINTFORML %ARGS:0%から漂う雌の臭いにあてられ、%ARGS:1%は頬を染めている…
+		IF CFLAG:1:22 && (CFLAG:1:36 == 0 || CFLAG:1:36 >= 3)
+			PRINTFORML おぞましい生命を宿した%ARGS:0%の腹の事を少しでも忘れようと、雑談に花を咲かせた…
+		ELSE
+			PRINTFORML %ARGS:0%達は日常を取り戻すかのように、雑談に花を咲かせた…
+		ENDIF
+		IF ARG:2
+			PRINTFORML %ARGS:0%%TACHI()%のMPが少し回復した！
+		ENDIF
+	CASE 104
+			PRINTFORML %ARGS:0%達は迷宮について知っている情報を交換し合った…
+		SIF BASE:1:5 >= 100
+			PRINTFORML %ARGS:0%から漂う雌の臭いにあてられ、%ARGS:1%は頬を染めている…
+	CASE 105
+		IF ARG:3
+			PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%の荷物から%ITEMNAME:(ARG:2)%を１つ抜き取った！
+		ELSE
+			PRINTFORM %ARGS:1%は
+			IF CFLAG:1:25 == 0 && CFLAG:1:28 == 0 && CFLAG:1:29 == 0 && BASE:1:3 <= 0
+				PRINTFORM 値踏みするように%ARGS:0%の肢体を上から下まで眺めて
+			ENDIF
+			PRINTFORMW 少し考え込んだ後、%ITEMNAME:(ARG:2)%を１つ渡してくれた！
+		ENDIF
+	CASE 106
+		IF ARG:2
+			PRINTFORMW しかし%ARGS:1%はもう何も持っていなかった…
+		ELSE
+			PRINTFORMW しかし何も貰う事はできなかった…
+		ENDIF
+	CASE 107
+		IF ARG:2
+			PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%を抱え上げ、一緒に連れて行くことにした…
+		ELSE
+			PRINTFORMW %ARGS:0%%TACHI()%が誘ってみると、%ARGS:1%は快くパーティーに加わってくれた
+		ENDIF
+	CASE 108
+		IF FLAG:10
+			PRINTFORMW %ARGS:1%を誘ってみたが、大人数だと敵に見つかりやすくなるからと断られてしまった…
+		ELSE
+			PRINTFORMW %ARGS:1%を誘ってみたが、断られてしまった…
+		ENDIF
+	CASE 109
+		;何もなし
+	CASE 110
+		IF ARG:2 == 0
+			IF CFLAG:TARGET:29
+				PRINTFORML 自力では動くこともできない%ARGS:0%は、すぐに敵に捕まってしまうかもしれません
+			ELSEIF CFLAG:TARGET:5 < 200
+			ELSE
+				PRINTFORML %ARGS:0%は%CALLNAME:1%と離れたくないと言って嫌がっています
+			ENDIF
+		ELSEIF TARGET != 1
+			IF CFLAG:TARGET:29
+				PRINTFORMW %ARGS:0%を部屋の隅に横たえると、%CALLNAME:1%%TACHI()%はその場を去っていきました…
+			ELSEIF CFLAG:TARGET:5 < 200
+				PRINTFORMW %ARGS:0%と行動を別にすることにしました
+			ELSE
+				PRINTFORMW %ARGS:0%は悲しそうな顔をしながら、その場を去っていきました…
+			ENDIF
+		ENDIF
+	CASE 111
+		PRINTFORMW %ITEMNAME:(ARG:2)%を１つ奪われてしまった…
+	CASE 112
+		PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%に攻撃されて、ダメージを負ってしまった…
+	CASE 113
+		;特に何も表示しない
+	CASE 114
+		IF TARGET == -1
+			IF ARG:1 == 0
+				PRINTFORMW %ARGS:0%%TACHI()%は迷宮の隅に身を隠すようにしながら眠りについた…
+			ELSEIF ARG:1 == 1
+				PRINTFORMW %ARGS:0%%TACHI()%は交替で見張りを立てながら眠りについた…
+			ELSEIF ARG:1 == 2
+				PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%に敵が来たら起こしてくれるように頼み、眠りについた…
+			ENDIF
+		ENDIF
+	CASE 115
+		PRINTFORML 部屋中に蠢く小さな触手が眠りについた%ARGS:0%の身体を責めたてる！
+	CASE 116
+		;特に何も表示しない
+	CASE 117
+		IF FLAG:10
+			PRINTFORMW 悶々として眠れない%ARGS:0%は、他の仲間に気付かれないように声を潜めながら、自慰をし始めた…
+		ELSE
+			PRINTFORMW 悶々として眠れない%ARGS:0%は、淫らな声を上げながら、自慰をし始めた…
+		ENDIF
+	CASE 119
+		PRINTFORMW %ARGS:0%はイけなかったようだ…　悶々としながらも%ARGS:0%は自慰を中断した
+	CASE 121
+		IF CFLAG:TARGET:28 >= 1
+			PRINTFORML %ARGS:0%の発情が少し治まった！
+		ELSE
+			PRINTFORML %ARGS:0%の発情が治まった！
+		ENDIF
+		CALL MSG_WAIT(1)
+	CASE 122
+		PRINTFORML %ARGS:0%は虚ろな目をしたまま、全身をビクビクと震わせている…
+	CASE 123
+		PRINTFORML %ARGS:1%は更に%ARGS:0%の乳首に吸いつき、体力を回復した！
+	CASE 125
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の子宮に寄生した幼体が育つにはまだ時間がかかるようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。子宮に寄生した幼体が徐々に育ち始めたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。子宮に寄生した幼体がかなり育ってきたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。子宮に寄生した幼体がもうすぐ産まれそうだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+			CALL MSG_WAIT(1)
+		ENDIF
+	CASE 126
+		IF ARG:1 >= 11
+			PRINTFORML %ARGS:0%は少し体の調子が悪いようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 9
+			PRINTFORML %ARGS:0%の顔色が悪い…体調がよくないのだろうか
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 8
+			IF CFLAG:TARGET:36 == 1
+				PRINTFORML %ARGS:0%の体調が元に戻ったようだ
+			ELSE
+				PRINTFORML %ARGS:0%のお腹が膨らみ始めている
+				PRINTFORML どうやら以前射精された際に妊娠してしまったようだ…
+			ENDIF
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 5
+			PRINTFORML %ARGS:0%のお腹が大きくなってきた…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 3
+			PRINTFORML %ARGS:0%のお腹は、もはやはっきり分かるほどに大きくなっている
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 1
+			IF TALENT:130
+				PRINTFORML %ARGS:0%は陣痛に苦しんでいる…
+				CALL MSG_WAIT(1)
+			ELSE
+				PRINTFORML 陣痛に苦しむ%ARGS:0%の胸から、母乳が滲み始めている…
+				PRINTFORMW %ARGS:0%は【%TALENTNAME:130%】を得た
+			ENDIF
+		ENDIF
+	CASE 127
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%のナカから少しずつ這い出ようとしている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+				PRINTFORMW 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+				PRINTFORM そんなところに、
+			ENDIF
+			PRINTFORMW %ARGS:0%から産まれた幼体は%ARGS:0%の胸へと吸いついた
+			IF TALENT:130 == 0
+				PRINTFORMW どうやら疑似出産を経て、%ARGS:0%は母乳が出るようになったようだ…
+				PRINTFORMW %ARGS:0%は【%TALENTNAME:130%】を得た
+				PRINTFORML  
+			ENDIF
+			PRINTFORMW %ARGS:0%の生命力ごと吸い尽くすかのように、幼体は%ARGS:0%の乳首を吸い上げている
+		ELSEIF ARG:1 == 2
+			PRINTFORMW ……やがて満足したのか、幼体は白濁液に塗れた%ARGS:0%を残し、迷宮の奥へと消えて行った…
+		ELSEIF ARG:1 == 3
+			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ELSEIF ARG:1 == 4
+			PRINTFORML 
+			PRINTFORML 虚空に%ARGS:0%の様子が映し出された！
+		ELSEIF ARG:1 == 5
+			;母乳すすってた幼体に頭突っ込まれてNFされた
+			PRINTFORM 乳首に吸い付いていた幼体は突然%ARGS:0%の緩みきった乳腺に頭を突っ込み、内部のブドウの房のような乳分泌腺を甘噛みして直接母乳を啜りはじめた！　
+			PRINTFORMW じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+		ENDIF
+	CASE 129
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%がうめき声と共に屈み込むと、その足元に羊水が溢れ始めた…
+			IF TALENT:130 == 0
+				;残り時間がスキップされた場合への対策
+				PRINTFORMW 陣痛に苦しむ%ARGS:0%の胸から、母乳が滲み始めている…
+				PRINTFORMW %ARGS:0%は【%TALENTNAME:130%】を得た
+			ENDIF
+			PRINTFORMW 息を荒くする%ARGS:0%のナカから、孕んでいた子供が少しずつ這い出ようとしている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+				PRINTFORM 一人必死にお腹を抑えながら、
+			ENDIF
+			IF ARG:2 == 0
+				PRINTFORMW %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
+			ELSE
+				;母親が人間＝半人半妖　　母親が妖怪＝半妖半触手　みたいな
+				PRINTFORMW %ARGS:0%は半妖の女の子を産み落とした
+			ENDIF
+			PRINTFORMW 産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
+		ELSEIF ARG:1 == 2
+			;スライムとかの足は気にしてはいけない
+			PRINTFORMW ……しばらくして%ARGS:0%から離れた子供は、早くも自らの足で立ち上がり、迷宮の奥へと消えて行った…
+		ELSEIF ARG:1 == 3
+			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ELSEIF ARG:1 == 4
+			;母乳すすってた幼体に頭突っ込まれてNFされた
+			PRINTFORM 乳首に吸い付いていた幼体は突然%ARGS:0%の緩みきった乳腺に頭を突っ込み、内部のブドウの房のような乳分泌腺を甘噛みして直接母乳を啜りはじめた！　
+			PRINTFORMW じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+		ENDIF
+	CASE 130
+		IF TARGET == -1
+			PRINTFORMW この部屋を完全に浄化しました！
+		ENDIF
+	CASE 131
+		IF TARGET == -1
+			IF FLAG:7 == 3
+				PRINTFORMW %ARGS:0%%TACHI()%は少し眠くなってきた…
+			ELSEIF FLAG:7 == 7
+				SETCOLOR 0xEEEE10
+				PRINTFORMW %ARGS:0%%TACHI()%は睡眠不足でフラついてきた…
+			ELSEIF FLAG:7 == 11
+				SETCOLOR 0xEE1010
+				PRINTFORMW %ARGS:0%%TACHI()%は睡眠不足で意識が朦朧としてきた…
+			ENDIF
+			RESETCOLOR
+		ENDIF
+	CASE 132
+		;特に何も表示しない
+	CASE 133
+		;特に何も表示しない
+	CASE 134
+		;特に何も表示しない
+	CASE 135
+		;特に何も表示しない
+	CASE 136
+		IF ARG:3 == 0
+			IF CFLAG:TARGET:50 >= 54 && CFLAG:TARGET:50 <= 58
+				SETCOLOR 0xEE1010
+				PRINTFORM %ARGS:0%は【処女】を捧げた… 
+				RESETCOLOR
+				PRINTFORM (MP 
+				SETCOLOR 0x70FF70
+				PRINTFORM -{ARG:2}
+				RESETCOLOR
+				PRINTFORML )
+			ELSE
+				SETCOLOR 0xEE1010
+				PRINTFORM %ARGS:0%は【処女】を失った… 
+				RESETCOLOR
+				PRINTFORM (MP 
+				SETCOLOR 0x70FF70
+				PRINTFORM -{ARG:2}
+				RESETCOLOR
+				PRINTFORML )
+			ENDIF
+		ELSEIF ARG:3 == 2
+			SELECTCASE RAND:8
+				CASE 0
+					PRINTFORML %ARGS:0%は浅く触手を挿入されながらも、何とか処女を守り抜いた！
+				CASE 1
+					PRINTFORML %ARGS:0%はわずかに体をそらし、何とか処女を守り抜いた！
+				CASE 2
+					PRINTFORML %ARGS:0%は浄化結界により、何とか処女を守り抜いた！
+				CASE 3
+					PRINTFORML %ARGS:0%は秘部にしこんでおいた乙女の護符により、何とか処女を守り抜いた！
+				CASE 4
+					PRINTFORML %ARGS:0%は乙女の意地で、何とか処女を守り抜いた！
+				CASE 5
+					PRINTFORML %ARGS:0%は乙女の執念で、何とか処女を守り抜いた！
+				CASE 6
+					PRINTFORML %ARGS:0%は乙女の直感で、何とか処女を守り抜いた！
+				CASE 7
+					PRINTFORML %ARGS:0%は乙女の閃きで、何とか処女を守り抜いた！
+			ENDSELECT
+		ELSEIF ARG:3 == 3
+			PRINTFORML %ARGS:0%は自分より明らかに弱い雑魚に処女を奪われ呆然としている…
+		ELSEIF ARG:3 == 4
+			PRINTFORML %ARGS:0%は雑魚に処女を奪われまいと必死に抵抗している！
+		ELSE
+			IF CFLAG:TARGET:24 || CFLAG:TARGET:25 || CFLAG:TARGET:29
+				PRINTFORML %ARGS:0%は全く抵抗できないまま、易々と純潔を散らされてしまった！
+				CALL MSG_WAIT(1)
+			ELSEIF CFLAG:TARGET:50 >= 54 && CFLAG:TARGET:50 <= 58
+				PRINTFORML %ARGS:0%は全く抵抗せず、触手の挿入を受け入れた！
+			ELSEIF (CFLAG:TARGET:50 == 53 || CFLAG:TARGET:20 == 0) && CFLAG:TARGET:35
+				PRINTFORML %ARGS:0%は処女を守ろうとしたが、絶頂で力が抜けた隙に一気に貫かれてしまった！
+				CALL MSG_WAIT(1)
+			ELSEIF CFLAG:TARGET:28 || CFLAG:TARGET:35
+				PRINTFORML 濡れそぼった%ARGS:0%の膣は、処女でありながらもあっさりと触手を受け入れてゆく！
+				CALL MSG_WAIT(1)
+			ELSE
+				PRINTFORML 苦痛に顔を歪める%ARGS:0%を余所に、ゆっくりと触手が突き刺されてゆく！
+				CALL MSG_WAIT(1)
+			ENDIF
+		ENDIF
+	CASE 138
+		IF ARG:2 == 0
+			PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%に何か譲って貰えないか頼んでみた…
+		ENDIF
+	CASE 139
+		;特に何も表示しない
+	CASE 140
+		;特に何も表示しない
+	CASE 141
+		PRINTFORMW %ARGS:1%に話しかけようとしたところで、%ARGS:0%%TACHI()%は急に%ARGS:1%に襲われた！
+	CASE 142
+		;特に何も表示しない
+	CASE 143
+		IF ARG:2 == 0
+			PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%に%ITEMNAME:58%を飲ませた…
+			PRINTFORMW 見る見るうちに%ARGS:1%は生気を取り戻し、立ち上がれるまでに回復した！
+		ENDIF
+	CASE 144
+		IF ARG:1 == 0
+			IF CFLAG:TARGET:504 == 0
+				PRINTFORMW %ARGS:1%は%ARGS:0%%TACHI()%に礼を言い、その場を立ち去った…
+			ELSE
+				PRINTFORMW しかし%ARGS:1%は拘束具のせいで動けないようだ……
+			ENDIF
+		ELSEIF ARG:1 == 1
+			PRINTFORML  
+			PRINTFORML %ARGS:1%は助けてくれた%ARGS:0%%TACHI()%の役に立ちたいと言っています
+			PRINTFORML パーティーに加えてあげますか？
+		ELSEIF ARG:1 == 2
+			PRINTFORMW %ARGS:1%がパーティーに加わった！
+		ELSEIF ARG:1 == 3
+			PRINTFORMW %ARGS:1%は少し残念そうな顔をしたが、%ARGS:0%%TACHI()%に改めて礼を言い、その場を立ち去った…
+
+;追加でお酒を渡す+母乳飲み
+		ELSEIF ARG:1 == 4
+			PRINTFORML 
+			PRINTFORMW %ARGS:1%は嬉しそうに%ARGS:0%%TACHI()%に礼を言いお酒を飲み始めた。
+		ELSEIF ARG:1 == 5
+			PRINTFORML 
+			PRINTFORML 突如日本酒の容器から伸びた触手に%ARGS:1%は両腕を拘束され、
+			PRINTFORML 極太の触手が唇に近づいていく。
+			PRINTFORMW 涙目でこちらを見る%ARGS:1%にうつむきながら首を振った。
+			PRINTFORML 
+			PRINTFORML ……… 
+			PRINTFORMW そのまま触手は枯れ果てるまで、%ARGS:1%の喉奥に無理矢理体液を流し込み続けた。
+			PRINTFORML 
+		ELSEIF ARG:1 == 6
+			IF RAND:4 == 0
+				PRINTFORML 嫌な予感を感じたのか這って逃げようとした%ARGS:1%を、 
+				PRINTFORMW %ARGS:0%%TACHI()%は羽交い締めにして無理やり胸をいじくりはじめた。%ARGS:1%は強すぎる刺激にがくがくと震えている。
+				PRINTFORML 動けなくなった%ARGS:1%の胸を搾って母乳を堪能した。
+			ELSE
+				PRINTFORML 弱々しい抵抗をされながらも 
+				PRINTFORML %ARGS:0%%TACHI()%は%ARGS:1%の胸に吸い付き、よく出るように刺激を与えながら母乳をすすり始めた。
+				PRINTFORMW %ARGS:1%は刺激に身体を震わせている。
+			ENDIF
+		ELSEIF ARG:1 == 7
+			PRINTFORMW %ARGS:1%は困惑した様子で顔を真赤に染めながら首を縦に振った。
+			PRINTFORML %ARGS:0%%TACHI()%は%ARGS:1%の胸に吸い付き、よく出るように刺激を与えながら母乳をすすり始めた。
+		ELSEIF ARG:1 == 8
+			PRINTFORML %ARGS:1%は蔑むような目でこちらを見た。
+			PRINTFORMW
+		ELSEIF ARG:1 == 9
+			PRINTFORML %ARGS:0%%TACHI()%が%ARGS:1%の根を足で刺激すると強く太く屹立した。
+			PRINTFORML %ARGS:0%%TACHI()%は顔をしかめるとへそのあたりまで足を上げて全力で踏みつぶした！
+			PRINTFORMW 何か柔らかい物が折れ、生々しくちぎれる音が静かに響いた・・・ 
+			PRINTFORML 寄生していた触手は激しい攻めを受けてビクビクと白い液体を出しながら縮んでいった。
+			PRINTFORMW 
+			;キャン玉が付いている場合、折れた後にヴォッキ出現フラグが立つ
+			IF TALENT:180 > 0
+				PRINTFORMW こいつは　いったい　なんの　冗談だ？！
+				PRINTFORMW へし折られ、もげ落ちた%ARGS:1%のペニスが、まだ生きているかのように動いている！
+				PRINTFORML 言葉を失い呆気に捕られている%ARGS:0%%TACHI()%達の目の前で
+				PRINTFORML 生けるペニスはもぞもぞと這いながら、迷宮の奥へと消えていった！
+				PRINTFORMW 
+			ENDIF
+		ELSEIF ARG:1 == 10
+			PRINTFORML %ARGS:0%%TACHI()%は汚いものを見るような目で隆起した擬似根を見た。
+			PRINTFORMW 本人は動けなくても寄生した触手はビクビクと脈打っている。
+			PRINTFORML そして何かを思いついたような顔をすると足で敏感な部分を弄り始めた！
+			PRINTFORMW %ARGS:1%が肢体を震わせているのもお構いなしに足裏の柔らかい皮膚を押し付け何度も何度も欲望を吐き出させた。
+		ELSEIF ARG:1 == 11
+			PRINTFORML 白い体液が出ることに飽きた%ARGS:0%%TACHI()%は打ち捨てられた%ARGS:1%をそのままにして歩き出した。
+			PRINTFORMW
+		ELSEIF ARG:1 == 12
+			PRINTFORML %ARGS:0%%TACHI()%は回復した。
+			PRINTFORMW
+		ELSEIF ARG:1 == 13
+			PRINTFORML どうやら電撃の出力を最低にすることで%ARGS:1%を僅かながら回復させられるようだ。
+			PRINTFORML これで敵に襲われたとしても自分たちが助けに行くまでもつだろう。
+			PRINTFORMW
+		ELSEIF ARG:1 == 14
+			PRINTFORML %ARGS:0%は膝枕をしながら%ARGS:1%の髪をすき顔の汚れを拭いてあげた。
+			PRINTFORMW
+		ENDIF
+	CASE 145
+		;特に何も表示しない
+	CASE 146
+		;特に何も表示しない
+	CASE 147
+		;特に何も表示しない
+	CASE 148
+		;特に何も表示しない
+	CASE 149
+			IF CFLAG:TARGET:29
+				PRINTFORML %ARGS:0%は風呂に入れて貰って汚れを落とした！
+			ELSE
+				PRINTFORML %ARGS:0%は風呂に入って汚れを落とした！
+			ENDIF
+
+
+	CASE 153
+		PRINTFORMW ―――リザレクション！！
+	CASE 154
+		PRINTFORMW %ARGS:0%は一回休みになってしまった……
+	CASE 155
+		;今は表示なし
+
+	CASE 158
+		IF ARG:1 == 0
+			PRINTFORMW 助け出された%ARGS:0%の瞳に、かすかな光が灯った…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW 触手から解放された%ARGS:0%の瞳に、かすかな光が灯った…
+		ENDIF
+	CASE 159
+		;表示なし
+	CASE 160
+		;表示なし
+	CASE 161
+		PRINTFORMW %ARGS:0%の様子がおかしい…
+		PRINTFORMW %ARGS:0%はこれ以上%CALLNAME:1%と行動を共にするのは嫌だと言って、PTを抜けてしまいました…
+	CASE 162
+		;表示なし
+	CASE 163
+		PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%に%ITEMNAME:(ARG:2)%を渡した！
+	CASE 164
+		; 好感度で分岐
+		; 冷めた目でこちらを見ている…
+		IF CFLAG:5 < 0
+			PRINTFORMW %ARGS:1%は%CALLNAME:1%の手からアイテムを奪い取った！
+			
+		; こちらを警戒している…
+		ELSEIF CFLAG:5 < 50
+			PRINTFORMW %ARGS:1%は警戒しながらアイテムを受け取った
+			
+		; ふつう
+		ELSEIF CFLAG:5 < 200
+			PRINTFORMW %ARGS:1%は喜んでいるようだ…
+			
+		; 笑顔で近づいてきた…
+		ELSE
+			PRINTFORMW %ARGS:1%は贈り物を笑顔で受け取った
+		ENDIF
+	CASE 165
+		;特に何も表示しない
+	CASE 168
+		IF ARG:2 == 0
+			PRINTFORMW %ARGS:0%は%ARGS:1%に何か嫌なものを感じた……
+		ELSEIF ARG:2 == 1
+			PRINTFORMW %ARGS:0%は%ARGS:1%に何か不自然さを感じた……
+		ELSEIF ARG:2 == 2
+			PRINTFORML …………？
+			PRINTFORMW なぜか%CALLNAME:(FLAG:10)%は%ARGS:1%を警戒している。
+		ELSEIF ARG:2 == 3
+			PRINTFORML …………？
+			PRINTFORMW なぜか%CALLNAME:(FLAG:11)%は%ARGS:1%を警戒している。
+		;娘が勘付く　特に何も表示しない
+		ELSEIF ARG:2 == 4
+
+		;仲間が勘付く　特に何も表示しない
+		ELSEIF ARG:2 == 5
+
+		ENDIF
+	CASE 169
+		IF ARG:1 == 0
+			PRINTFORMW %ARGS:0%は周囲の環境に心が落ち着かないようだ……
+		ELSEIF ARG:1 == 1
+			PRINTFORMW %ARGS:0%は周囲の環境に参っているようだ……
+		ENDIF
+	CASE 201
+		;表示なし
+	CASE 202
+		;表示なし
+
+	CASE 205
+		;表示なし
+
+	CASE 207
+		;表示なし
+
+	CASE 209
+		;表示なし
+
+	CASE 211
+		;表示なし
+
+	CASE 213
+		;表示なし
+	CASE 214
+		;表示なし
+	;ここから追加メッセージ
+	CASE 221
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の尻に寄生した幼体が育つにはまだ時間がかかるようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。尻に寄生した幼体が徐々に育ち始めたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。尻に寄生した幼体がかなり育ってきたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。尻に寄生した幼体がもうすぐ産まれそうだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+			CALL MSG_WAIT(1)
+		ENDIF
+	CASE 222
+		;表示なし
+	CASE 223
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、四つん這いになった%ARGS:0%の尻から粘液まみれの卵が出ている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+			ENDIF
+			PRINTFORML %ARGS:0%の産卵は声がかれ痙攣するしかできなくなるまで続いた……
+			PRINTFORMW 中で生命がうごめくのが見えるいくつもの卵が水たまりのように広がっている……
+		ELSEIF ARG:1 == 2
+			PRINTFORMW 地面が生きているかのように盛り上がると、倒れたままの%ARGS:0%を残して卵を飲み込んだ……
+		ELSEIF ARG:1 == 3
+			PRINTFORML 何度も産卵をするうちに%ARGS:0%の身体が作り替えられてしまったようだ……
+			PRINTFORMW %ARGS:0%は【産卵体質】を手に入れた
+		ELSEIF ARG:1 == 4
+			PRINTFORML 産卵中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ENDIF
+	CASE 224
+		;表示なし
+	CASE 225
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の尻に寄生した幼体が育つにはまだ時間がかかるようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。尻に寄生した幼体が徐々に育ち始めたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。尻に寄生した幼体がかなり育ってきたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。尻に寄生した幼体がもうすぐ産まれそうだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+			CALL MSG_WAIT(1)
+		ENDIF
+	CASE 226
+		;表示なし
+	CASE 227
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の尻から少しずつ這い出ようとしている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+			ENDIF
+			PRINTFORMW 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+		ELSEIF ARG:1 == 2
+			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、迷宮の奥へと消えて行った…
+		ELSEIF ARG:1 == 3
+			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ENDIF
+	CASE 228
+		;表示なし
+	CASE 229
+		IF ARG:1 == 0
+			PRINTFORML %ARGS:0%は%ARGS:1%に%PETNAME%との結婚を告げた！
+		ELSEIF ARG:1 == 1
+			;表示なし
+		ENDIF
+	
+	CASE 401
+		IF ARG:1 == 0
+			PRINTFORMW 敗北した%ARGS:0%に%PETNAME%が襲いかかり、数時間かけて心と体に敗北を刻み込んでいく……
+			PRINTFORMW %ARGS:0%の常識が塗りつぶされ意志が消え去っていく……
+			PRINTFORMW %ARGS:0%は生涯%PETNAME%の【しもべ】として生きることになった……
+		ELSEIF ARG:1 == 1
+			;何もなし
+			
+		ELSEIF ARG:1 == 2
+			PRINTFORML 耐えきった%ARGS:0%を見る%PETNAME%はどこか残念そうだ……
+			PRINTFORMW %ARGS:0%は素質【ペット】を捨てた！
+		ELSEIF ARG:1 == 3
+			PRINTFORMW
+			PRINTFORMW
+			PRINTFORML 目の前で堕とされた%ARGS:1%の様子がおかしい。
+			PRINTFORML %ARGS:0%が後ずさりするも%PETNAME%に阻まれてしまった……
+			PRINTFORML %ARGS:1%は%ARGS:0%にも堕ちることを望み、
+			PRINTFORML %PETNAME%と一緒に襲い掛かってきた……
+		ELSEIF ARG:1 == 4
+			;何もなし
+		ELSEIF ARG:1 == 5
+			PRINTFORML 
+			PRINTFORML %ARGS:1%は%PETNAME%と一緒に%ARGS:0%を貪っている…
+			PRINTFORML 
+		ELSEIF ARG:1 == 6
+			;何もなし
+		ENDIF
+	CASE 403
+		IF ARG:1 == 0
+			PRINTFORMW 
+			PRINTFORMW ペットを追放しようとした%ARGS:0%は%ARGS:1%が仲間を押さえつけるのが見えた！
+			PRINTFORMW 助けようとするも%PETNAME%に阻まれて捕らえられてしまった……
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;何もなし
+			
+		ELSEIF ARG:1 == 2
+			PRINTFORML ペットを追放しようとした%ARGS:0%を%ARGS:1%が後ろから羽交い締めにした！
+			PRINTFORML 抵抗するも%PETNAME%が直ぐ側にまできてしまっている……
+			PRINTFORMW 
+		ELSEIF ARG:1 == 3
+			;何もなし
+		ELSEIF ARG:1 == 4
+			;何もなし
+		ELSEIF ARG:1 == 5
+			PRINTFORMW 
+			PRINTFORML %ARGS:1%が怪しげに目を光らせて%PETNAME%とともににじり寄ってくる……
+			PRINTFORML %ARGS:0%は必死で抵抗するも全員から押さえつけられた……
+			PRINTFORML %ARGS:1%に助けを求めるもその声が届くことはなかった……
+			PRINTFORMW 
+		ELSEIF ARG:1 == 6
+			;何もなし
+		ELSEIF ARG:1 == 7
+			;何もなし
+		ELSEIF ARG:1 == 8
+			;何もなし
+		ENDIF
+	CASE 414
+		PRINTFORML %ARGS:0%はないはずの女性器が犯されているのを感じた！
+	CASE 415
+		PRINTFORML %ARGS:0%は男なのに妊娠してしまうかのような錯覚を起こした！
+	CASE 427
+		IF FLAG:507 < 1
+			IF ARG:1 == 0
+				PRINTFORMW %ARGS:0%の胸は母乳で満たされてしまった…
+			ELSEIF ARG:1 == 1
+				PRINTFORMW %ARGS:0%の胸は搾り尽くせない程の母乳を吐き出す様になってしまった…
+			ELSEIF ARG:1 == 2
+				PRINTFORMW %ARGS:0%の胸は更に発達し、ついに母乳を止め処なく生産するようになった…
+			ELSEIF ARG:1 == 3
+				PRINTFORMW %ARGS:0%の胸は常時脈動しながら母乳を大量に生産している…
+				PRINTFORMW 急激な噴乳に耐え切れず、%ARGS:0%の胸は一部壊れてしまったようだ…
+			ELSEIF ARG:1 == 4
+				IF TALENT:130 == 0
+					PRINTFORMW %ARGS:0%は【母乳体質】になってしまった
+				ELSEIF TALENT:130 == 1
+					PRINTFORMW %ARGS:0%は【母乳分泌過多】になってしまった
+				ELSEIF TALENT:130 == 2
+					PRINTFORMW %ARGS:0%は【母乳異常分泌】になってしまった
+				ELSEIF TALENT:130 == 3
+					PRINTFORMW %ARGS:0%は【母乳製造装置】になってしまった
+				ELSEIF TALENT:130 == 4
+					PRINTFORMW %ARGS:0%は【母乳間欠泉】になってしまった
+				ELSEIF TALENT:130 == 5
+					PRINTFORMW %ARGS:0%は【母乳活火山】になってしまった
+				ENDIF
+			ELSEIF ARG:1 == 5
+				PRINTFORMW %ARGS:0%の胸は噴乳が追いつかず、母乳を詰まらせながら徐々に成長し始めた…
+			;超乳
+			ELSEIF ARG:1 == 6
+				PRINTFORMW %ARGS:0%の胸は限界知らずで肥大し続け、粘り気のある母乳を垂れ流している…
+				PRINTFORMW 異常で激しい噴乳に耐え切れず、%ARGS:0%の胸は完全に壊れてしまった…
+			ENDIF
+		ELSE
+			IF ARG:1 == 0
+				PRINTFORMW %ARGS:0%の胸は粘つく母乳で膨れ上がり、元に戻らなくなってしまった…
+			ELSEIF ARG:1 == 1
+				PRINTFORMW %ARGS:0%の胸は搾り尽くせない程の母乳ではちきれんばかりに膨れ上がってしまった…
+			ELSEIF ARG:1 == 2
+				PRINTFORMW %ARGS:0%の胸は更に発達し、ついに身体の限界まで膨れ上がってしまった…
+			ELSEIF ARG:1 == 3
+				PRINTFORMW %ARGS:0%の限界まで肥大しきった胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+				PRINTFORMW 急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+			ELSEIF ARG:1 == 4
+				IF TALENT:130 == 0
+					PRINTFORMW %ARGS:0%は【母乳体質】になってしまった
+				ELSEIF TALENT:130 == 1
+					PRINTFORMW %ARGS:0%は【母乳分泌過多】になってしまった
+				ELSEIF TALENT:130 == 2
+					PRINTFORMW %ARGS:0%は【母乳異常分泌】になってしまった
+				ELSEIF TALENT:130 == 3
+					PRINTFORMW %ARGS:0%は【母乳製造装置】になってしまった
+				ELSEIF TALENT:130 == 4
+					PRINTFORMW %ARGS:0%は【母乳間欠泉】になってしまった
+				ELSEIF TALENT:130 == 5
+					PRINTFORMW %ARGS:0%は【母乳活火山】になってしまった
+				ENDIF
+			ELSEIF ARG:1 == 5
+				PRINTFORMW %ARGS:0%の謙虚な胸は濁りきった母乳を蓄え、慎ましく成長し始めた…
+			;超乳
+			ELSEIF ARG:1 == 6
+				PRINTFORMW %ARGS:0%の限界を超えて肥大し続ける胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+				PRINTFORMW 急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+			ENDIF
+		ENDIF
+	CASE 449
+		PRINTFORMW %ARGS:0%は【%TALENTNAME:167%】を得た
+	CASE 451
+		PRINTFORMW %ARGS:0%は刺激に耐え切れず射精してしまった！
+	CASE 452
+		PRINTFORMW %ARGS:0%の股間に寄生していた触手は精液を出しきり、萎び落ちていった…
+	CASE 453
+		PRINTFORMW %ARGS:0%の股間に一体化しているモノが、周囲の触手に反応し刺激を送ってくる…
+		PRINTFORMW %ARGS:0%は【発情】してしまった！
+	CASE 454
+		PRINTFORMW 何度も射精を繰り返した結果、%ARGS:0%の体は【ふたなり】の状態を受け入れてしまったようだ…
+		PRINTFORMW %ARGS:0%の淫茎となっていた触手は完全に定着した！
+;性欲発散される側口上呼び出し用 ARG:1が1でV、2でB、3でA、4で口
+	CASE 458
+		;表示なし
+;治療を行う側の口上呼び出し用 ARG:1が0でV、1でB、2でA、3で口、4で手
+	CASE 461
+		;表示なし
+;触手放置プレイされる側の口上
+	CASE 463
+		;表示なし
+	
+	
+	CASE 466
+		IF ARG:1 == 0
+			PRINTFORML 
+			PRINTFORML %ARGS:0%の乳首は盛り上がり硬くなり、空気の流れだけでも快楽を感じるようになっている…
+			PRINTFORML 責められれば涎を垂らしながら嬌声を上げるのは間違いないだろう…
+			PRINTFORML 
+		ELSEIF ARG:1 == 1
+			PRINTFORML 
+			PRINTFORML %ARGS:0%のクリトリスは痛いほど肥大化し、身動ぎするだけでも快楽を感じるようになっている…
+			PRINTFORML 弄られれば意識が飛びながら情けない姿を見せるのは間違いないだろう…
+			PRINTFORML 
+		ELSEIF ARG:1 == 2
+			PRINTFORML 
+			PRINTFORML %ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは精液が溜まり過ぎて今にも爆発しそうだ…
+			PRINTFORML 苦しそうな\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽがドクドクと脈打っている…
+			PRINTFORML 
+		ELSEIF ARG:1 == 3
+			PRINTFORML 
+			PRINTFORML %ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは精液が溜まり限界以上に肥大化し始めている…
+			PRINTFORML 軽くこすられるだけで爆発し中身を撒き散らすのは間違いないだろう…
+			PRINTFORML 
+		ENDIF
+	
+	CASE 467
+		;表示なし
+	CASE 468
+		IF GET_ERECTION_STATE_B(TARGET) <= 1
+			PRINTFORML 発情した%ARGS:0%の乳首が勃起していく…
+		ELSE
+			PRINTFORML 発情した%ARGS:0%の乳首は限界まで勃起し、絶頂の瞬間を待っている…
+		ENDIF
+	CASE 469
+		PRINTFORML 
+		IF GET_PENIS(TARGET)
+			IF GET_ERECTION_STATE_C(TARGET) <= 1
+				PRINTFORML 発情した%ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽが勃起していく…
+			ELSEIF GET_ERECTION_STATE_C(TARGET) == 2
+				PRINTFORML 発情した%ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽが限界を超えて勃起していく…
+			ELSE
+				PRINTFORML 発情した%ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは大量のガマン汁を垂らしながら射精の瞬間を待っている…
+			ENDIF
+		ELSE
+			IF GET_ERECTION_STATE_C(TARGET) <= 1
+				PRINTFORML 発情した%ARGS:0%のクリトリスが勃起していく…
+			ELSE
+				PRINTFORML 発情した%ARGS:0%のクリトリスは限界まで勃起し、絶頂の瞬間を待っている…
+			ENDIF
+		ENDIF
+	CASE 470
+		PRINTFORML 
+		SELECTCASE ARG:1
+			CASE 0
+				PRINTFORML %ARGS:0%の乳首は完全に落ち着きを取り戻した
+			CASE 1
+				PRINTFORML %ARGS:0%の乳首は漸く落ち着きを取り戻し、勃起が収まってきた…
+			CASE 2
+				PRINTFORML %ARGS:0%の勃起乳首は少しずつ硬度を失ってきた、甘い痺れに耐えきれば無事収まるだろう…
+			CASEELSE
+				PRINTFORML 僅かに落ち着いたにも関わらず、%ARGS:0%の乳首は発情したままビンビンに勃ち続けている！
+		ENDSELECT
+	CASE 471
+		PRINTFORML 
+		IF GET_PENIS(TARGET)
+			SELECTCASE ARG:1
+				CASE 0
+					PRINTFORML %ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは完全に落ち着きを取り戻した
+				CASE 1
+					PRINTFORML %ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは漸く落ち着きを取り戻し、勃起が収まってきた…
+				CASE 2
+					PRINTFORML %ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは少しずつ硬度を失ってきた、触らなければ残る疼きにも耐えることが出来るだろう…
+				CASE 3
+					PRINTFORML 多くの精液を溜め込んだ%ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは、力強く脈打ちまだまだ熱くたぎっている
+				CASE 4
+					PRINTFORML 少しばかり落ち着いたが、肥大した%ARGS:0%の\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽからは射精の欲求がまだまだ消えない！
+				CASEELSE
+					PRINTFORML %ARGS:0%の勃起した\@GET_PENIS(TARGET) < 4 ? ふたなり # \@ちんぽは極わずか収まったが、次から次へと脳内に扱きたい欲求が溢れてくる！
+			ENDSELECT
+		ELSE
+			SELECTCASE ARG:1
+				CASE 0
+					PRINTFORML %ARGS:0%のクリトリスは完全に落ち着きを取り戻した
+				CASE 1
+					PRINTFORML %ARGS:0%のクリトリスは漸く落ち着きを取り戻し、勃起が収まってきた…
+				CASE 2
+					PRINTFORML %ARGS:0%のクリトリスは少しずつ硬度を失ってきた、触らなければ残る疼きにも耐えることが出来るだろう…
+				CASEELSE
+					PRINTFORML 多くの快感を溜め込んだ%ARGS:0%のクリトリスは、力強く脈打ちまだまだ熱くたぎっている！
+			ENDSELECT
+		ENDIF
+		
+;精液ダメージ
+	CASE 500
+		IF RAND:3 == 0
+			PRINTFORMW %ARGS:0%は白濁液を注がれたにもかかわらず怪しい快感を感じている……
+		ELSE
+			PRINTFORMW %ARGS:0%は精液が媚薬であるかのように膣が熱くなっているのを感じている……
+		ENDIF
+	CASE 501
+		PRINTFORMW 陥没していた%ARGS:0%の乳首が勃起した！
+	;B寄生ここから↓
+	;521～524　産卵プレイON
+	CASE 521
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の乳腺に寄生した幼体が育つにはまだ時間がかかるようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。乳腺に寄生した幼体が徐々に育ち始めたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。乳腺に寄生した幼体がかなり育ってきたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。乳腺に寄生した幼体がもうすぐ産まれそうだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+			CALL MSG_WAIT(1)
+		ENDIF
+	CASE 522
+		;表示なし
+	CASE 523
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、へたり込んだ%ARGS:0%の乳首から粘液\@ TALENT:130 >= 1 ? と母乳 # \@まみれの卵が出ている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+			ENDIF
+			PRINTFORML %ARGS:0%の産卵は声がかれ痙攣するしかできなくなるまで続いた……
+			PRINTFORMW 中で生命がうごめくのが見えるいくつもの卵が水たまりのように広がっている……
+		ELSEIF ARG:1 == 2
+			PRINTFORMW 地面が生きているかのように盛り上がると、倒れたままの%ARGS:0%を残して卵を飲み込んだ……
+		ELSEIF ARG:1 == 3
+			PRINTFORML 何度も産卵をするうちに%ARGS:0%の身体が作り替えられてしまったようだ……
+			PRINTFORMW %ARGS:0%は【産卵体質】を手に入れた
+		ELSEIF ARG:1 == 4
+			PRINTFORML 産卵中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ENDIF
+	CASE 524
+		;表示なし
+	;525～528　産卵プレイOFF
+	CASE 525
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の乳腺に寄生した幼体が育つにはまだ時間がかかるようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。乳腺に寄生した幼体が徐々に育ち始めたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。乳腺に寄生した幼体がかなり育ってきたようだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。乳腺に寄生した幼体がもうすぐ産まれそうだ…
+			CALL MSG_WAIT(1)
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+			CALL MSG_WAIT(1)
+		ENDIF
+	CASE 526
+		;表示なし
+	CASE 527
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の乳首から\@ TALENT:130 >= 1 ? 母乳に塗れながら # \@少しずつ這い出ようとしている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+			ENDIF
+			PRINTFORMW 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+		ELSEIF ARG:1 == 2
+			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、迷宮の奥へと消えて行った…
+		ELSEIF ARG:1 == 3
+			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ENDIF
+	CASE 528
+		;表示なし
+	;B寄生ここまで↑
+	CASE 529
+		;N性欲発散　最中
+		IF ARG:1 == 0
+			;1人
+		ELSEIF ARG:1 == 1
+			;2人同時
+			IF GET_BUST(TARGET) >= 4
+				IF RAND:2
+					PRINTFORML 両乳首を同時に激しくピストンされ、%ARGS:0%の特大の乳肉が何度も歪に変形し、撓み、揺れている…
+				ELSE
+					PRINTFORML 両乳首を同時に激しくピストンされ、%ARGS:0%の特大の乳肉が別の生き物のように撓み、揺れている…
+				ENDIF
+			ELSE
+				PRINTFORML 目の前で両乳首を激しくピストンされ、%ARGS:0%の2つの乳房が何度も歪に変形し、撓み、揺れている…
+			ENDIF
+		ENDIF
+	CASE 530
+		;N性欲発散　射精
+		IF ARG:1 == 0
+			;1人のみ
+;			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;2人同時
+;			PRINTFORMW 
+		ELSEIF ARG:1 == 2
+			;1人のみ、1人継続
+;			PRINTFORMW 
+		ENDIF
+	CASE 531
+		;N性欲発散　事後
+		IF ARG:1 == 0
+			;1人のみ
+			PRINTFORML 擬似陰茎が引き抜かれてぽっかり開いた%ARGS:0%の乳首から、精液\@ TALENT:130 ? と母乳 # \@が垂れ流されている…
+			PRINTFORMW
+		ELSEIF ARG:1 == 1
+			;2人同時
+			PRINTFORML 擬似陰茎が引き抜かれてぽっかり開いた%ARGS:0%の両乳首から、精液\@ TALENT:130 ? と母乳 # \@が垂れ流されている…
+			PRINTFORMW
+		ELSEIF ARG:1 == 2
+			;1人終了＋1人継続
+			PRINTFORMW 擬似陰茎が引き抜かれてぽっかり開いた%ARGS:0%の乳首から、精液\@ TALENT:130 ? と母乳 # \@がドロォ…と垂れ出てくる…
+			PRINTFORML それを脇目に%ARGS:1%はもう片方の乳房に腰を打ち付け乳膣穴を嬲り続けている…
+			PRINTFORMW
+		ENDIF
+	CASE 532
+		PRINTFORML あまりにも白濁液を注がれすぎた%ARGS:0%のお腹が盛り上がっている……
+		PRINTFORML このままではおそらく妊娠するだろう……
+	CASE 533
+		IF CFLAG:TARGET:29
+			PRINTFORML %ARGS:0%は%ARGS:1%の用意した精液風呂に入れて貰った！
+			PRINTFORML 触手と生温かい白濁液が全身を陵辱していく……
+		ELSE
+			PRINTFORML %ARGS:0%は%ARGS:1%の用意した精液風呂に入った！
+			PRINTFORML 独特な香りが体を覆い、下半身の隙間に白濁液が染み込む……
+			PRINTFORML 触手と温かな白濁液が全身をじっくりほぐしていく……
+		ENDIF
+		PRINTFORML 
+
+	;C寄生はB寄生とCASE番号を似た感じにしておく
+	CASE 541
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の玉に寄生した幼体が育つにはまだ時間がかかるようだ…
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。%ARGS:0%の玉に寄生した幼体が徐々に育ち始めたようだ…
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。%ARGS:0%の玉に寄生した幼体がかなり育ってきたようだ…
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。%ARGS:0%の玉に寄生した幼体がもうすぐ産まれそうだ…
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+		ENDIF
+	CASE 542
+		;表示なし
+	CASE 543
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、へたり込んだ%ARGS:0%の玉が脈動し精液まみれの卵が出ている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+			ENDIF
+			PRINTFORML %ARGS:0%の産卵は声がかれ痙攣するしかできなくなるまで続いた……
+			PRINTFORMW 中で生命がうごめくのが見えるいくつもの卵が水たまりのように広がっている……
+		ELSEIF ARG:1 == 2
+			PRINTFORMW 地面が生きているかのように盛り上がると、倒れたままの%ARGS:0%を残して卵を飲み込んだ……
+		ELSEIF ARG:1 == 3
+			PRINTFORML 何度も産卵をするうちに%ARGS:0%の身体が作り替えられてしまったようだ……
+			PRINTFORMW %ARGS:0%は【産卵体質】を手に入れた
+		ELSEIF ARG:1 == 4
+			PRINTFORML 産卵中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ENDIF
+	CASE 544
+		;表示なし
+	CASE 545
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の玉に寄生した幼体が育つにはまだ時間がかかるようだ…
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。%ARGS:0%の玉に寄生した幼体が徐々に育ち始めたようだ…
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。%ARGS:0%の玉に寄生した幼体がかなり育ってきたようだ…
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。%ARGS:0%の玉に寄生した幼体がもうすぐ産まれそうだ…
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+		ENDIF
+	CASE 546
+		;表示なし
+	CASE 547
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が少しずつ這い出ようとしている…
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+			ENDIF
+			PRINTFORMW 幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+		ELSEIF ARG:1 == 2
+			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、迷宮の奥へと消えて行った…
+		ELSEIF ARG:1 == 3
+			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ENDIF
+	CASE 548
+		;表示なし
+	CASE 549
+		PRINTFORML %ARGS:0%の玉が膨張するも中の寄生体が邪魔で射精できない！
+	CASE 550
+		PRINTFORML %ARGS:0%の玉が寄生体を吐き出しても膨張したままなおらないようだ……
+		PRINTFORM %ARGS:0%は
+		IF TALENT:180 == 1
+			PRINTFORM 【玉あり】
+		ELSEIF TALENT:180 == 2
+			PRINTFORM 【巨玉】
+		ELSEIF TALENT:180 == 3
+			PRINTFORM 【爆玉】
+		ELSEIF TALENT:180 == 4
+			PRINTFORM 【超巨玉】
+		ENDIF
+		PRINTFORML を手に入れた
+	CASE 551
+		IF ARG:1 == 0
+			;主人公捕食時
+			IF !(CFLAG:1:10 == 0 && CFLAG:1:504 < 2)
+				IF CFLAG:TARGET:4 == FLAG:5
+					PRINTFORML 同じ部屋から%ARGS:0%の悲鳴が聞こえる…
+				ELSE
+					PRINTFORML %ARGS:0%の悲鳴が{ARG:2}の部屋から聞こえる…
+				ENDIF
+			;主人公非捕食時
+			ELSE
+				IF CFLAG:TARGET:4 == FLAG:5
+					PRINTFORML 同じ部屋から%ARGS:0%の悲鳴が聞こえた！
+				ELSE
+					PRINTFORML %ARGS:0%の悲鳴が{ARG:2}の部屋から聞こえた！
+				ENDIF
+			ENDIF
+		ELSEIF ARG:1 == 1
+			;表示なし
+		ENDIF
+	CASE 552
+		IF ARG:1 >= 12
+			PRINTFORML %ARGS:0%の妊娠した玉で幼体が育つにはまだ時間がかかるようだ…
+		ELSEIF ARG:1 >= 8
+			PRINTFORML %ARGS:0%は少し体に違和感を覚えた。%ARGS:0%の妊娠した玉の幼体が徐々に育ち始めたようだ…
+		ELSEIF ARG:1 >= 4
+			PRINTFORML %ARGS:0%は時折息を荒げている。%ARGS:0%の妊娠した玉の幼体がかなり育ってきたようだ…
+		ELSEIF ARG:1 >= 2
+			PRINTFORML %ARGS:0%は辛そうな表情を見せている。%ARGS:0%の妊娠した玉の幼体がもうすぐ産まれそうだ…
+		ELSEIF ARG:1 >= 1
+			PRINTFORML %ARGS:0%の様子がおかしい。もはや一刻の猶予も無いようだ…
+		ENDIF
+	CASE 553
+		;表示なし
+	CASE 554
+		IF ARG:1 == 0
+			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+			PRINTFORMW 見ると、%ARGS:0%の妊娠していた玉が脈動し竿が膨れ上がっていく……
+		ELSEIF ARG:1 == 1
+			PRINTFORMW ………
+			IF TARGET != 1
+				;他の仲間から産まれる
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:1%を余所に、
+				ENDIF
+			ELSEIF FLAG:10
+				;主人公から産まれる＋仲間居る
+				IF FLAG:11
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%達を余所に、
+				ELSE
+					PRINTFORM あまりの光景に呆然と立ち尽くすしかない%CALLNAME:(FLAG:10)%を余所に、
+				ENDIF
+			ELSE
+				;主人公から産まれる＋誰も居ない
+			ENDIF
+			PRINTFORMW 幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+		ELSEIF ARG:1 == 2
+			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、迷宮の奥へと消えて行った…
+		ELSEIF ARG:1 == 3
+			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
+		ENDIF
+	CASE 555
+		;表示なし
+	;悪落ちキャラ用口上
+	;基本的に口上呼び出し専用なのでなにもしない
+	;通常攻撃
+	CASE 1012
+	
+	;衣服攻撃
+	CASE 1013
+	
+	;性攻撃
+	CASE 1014
+	
+	;拘束攻撃
+	CASE 1015
+	
+	;寄生攻撃
+	CASE 1016
+	
+	;結婚式
+	CASE 1200
+	
+	;下剋上失敗
+	CASE 1401
+	
+	;連鎖落ち
+	CASE 1403
+	
+	;ペット周り
+	CASE 1514
+	
+	
+	
+	
+	CASEELSE
+		TRYCCALLFORM SYSTEM_MESSAGE_{ARG:0}(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		CATCH
+			PRINTFORMW (SYSTEM_MESSAGE)未実装のメッセージID {ARG:0} が指定されました ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+		ENDCATCH
+ENDSELECT
+
+
+;終わったら色を戻す
+SETCOLOR LOCAL:1
+

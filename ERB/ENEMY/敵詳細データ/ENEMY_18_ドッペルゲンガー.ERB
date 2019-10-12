@@ -1,0 +1,247 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_18(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 35000
+DA:(ARG:0):2 = 35000
+DA:(ARG:0):3 = 1
+DA:(ARG:0):5 = 180
+DA:(ARG:0):9 = 110
+
+DA:(ARG:0):15 = 30
+DA:(ARG:0):16 = 40
+DA:(ARG:0):17 = 30
+DA:(ARG:0):18 = 110
+DA:(ARG:0):19 = 30
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 33
+DA:(ARG:0):86 = 7
+DA:(ARG:0):89 = 63
+
+IF RAND:2 == 0
+	DA:(ARG:0):88 = 2
+ENDIF
+
+IF CHARANUM < 1
+	LOCAL:2 = -1
+ELSE
+	VARSET LOCAL, 0, 1, MIN(CHARANUM, 11)
+	LOCAL:11 = 0
+	;11番目以降のキャラには化けない
+	FOR LOCAL:0, 1, MIN(CHARANUM, 11)
+		SIF LOCAL:0 == 1 || LOCAL:0 == FLAG:10 || LOCAL:0 == FLAG:11
+			CONTINUE
+		LOCAL:11 += 1
+		;化けられる相手の番号をLOCAL:1～LOCAL:9に入れていく
+		LOCAL:(LOCAL:11) = LOCAL:0
+	NEXT
+	
+	IF LOCAL:11 < 1
+		LOCAL:2 = -1
+	ELSE
+		;LOCAL:1～LOCAL:9に入った化けられる相手の番号をランダムに入れる
+		LOCAL:2 = LOCAL:(1 + RAND:(LOCAL:11))
+	ENDIF
+ENDIF
+IF LOCAL:2 <= 0
+	;化けられるキャラが居ないなら主人公に化ける
+	SAVESTR:(ARG:0) = %CALLNAME:1%
+ELSE
+	SAVESTR:(ARG:0) = %CALLNAME:(LOCAL:2)%
+ENDIF
+;生まれた直後に変化後のIDを入れると図鑑でもここを呼び出しおかしくなりうるのでAUTO_HEAL経由までいれない。見抜かれたらドジッペル
+
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_18(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+;4	拘束フラグ２
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+LOCAL:4 = 0
+IF DA:(ARG:0):10 == 1
+	;１人目拘束
+	LOCAL:4 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):10 == FLAG:10
+	;２人目拘束
+	LOCAL:4 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):10 == FLAG:11
+	;３人目拘束
+	LOCAL:4 = FLAG:11
+ELSEIF DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:4 = -1
+ENDIF
+
+
+IF LOCAL:1 > 0 || LOCAL:4 > 0
+	;PTメンバーを拘束している場合
+	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
+	;それ以外の相手には枠が無ければ拘束攻撃以外
+	IF ARG:1 == LOCAL:1 || ARG:1 == LOCAL:4
+		;拘束している相手を攻撃
+		IF CFLAG:(ARG:1):29 && RAND:100 < 40
+			;既に戦意喪失している場合、一定確率で解放する
+			LOCAL:2 = 1
+		ELSE
+			IF DA:(ARG:0):35
+				LOCAL:3 = RAND:10
+				IF LOCAL:3 < 1
+					LOCAL:2 = 673
+				ELSEIF LOCAL:3 < 2
+					LOCAL:2 = 674
+				ELSEIF LOCAL:3 < 3
+					LOCAL:2 = 675
+				ELSEIF LOCAL:3 < 4
+					LOCAL:2 = 676
+				ELSEIF LOCAL:3 < 5
+					LOCAL:2 = 677
+				ELSEIF LOCAL:3 < 6
+					LOCAL:2 = 986
+				ELSEIF LOCAL:3 < 7
+					LOCAL:2 = 987
+				ELSE
+					LOCAL:2 = 988
+				ENDIF
+			ELSE
+				LOCAL:3 = RAND:32
+				IF LOCAL:3 < 3
+					LOCAL:2 = 673
+				ELSEIF LOCAL:3 < 6
+					LOCAL:2 = 674
+				ELSEIF LOCAL:3 < 9
+					LOCAL:2 = 675
+				ELSEIF LOCAL:3 < 12
+					LOCAL:2 = 676
+				ELSEIF LOCAL:3 < 15
+					LOCAL:2 = 677
+				ELSEIF LOCAL:3 < 17
+					LOCAL:2 = 837
+				ELSEIF LOCAL:3 < 19
+					LOCAL:2 = 838
+				ELSEIF LOCAL:3 < 20
+					LOCAL:2 = 981
+				ELSEIF LOCAL:3 < 21
+					LOCAL:2 = 984
+				ELSEIF LOCAL:3 < 22
+					LOCAL:2 = 986
+				ELSEIF LOCAL:3 < 23
+					LOCAL:2 = 987
+				ELSEIF LOCAL:3 < 24
+					LOCAL:2 = 988
+				ELSEIF LOCAL:3 < 25
+					LOCAL:2 = 993
+				ELSEIF LOCAL:3 < 26
+					LOCAL:2 = 995
+				ELSEIF LOCAL:3 < 27
+					LOCAL:2 = 1013
+				ELSEIF LOCAL:3 < 28
+					LOCAL:2 = 1014
+				ELSEIF LOCAL:3 < 29
+					LOCAL:2 = 1015
+				ELSE
+					LOCAL:2 = 21
+				ENDIF
+			ENDIF
+		ENDIF
+	ELSE
+		;キャラを拘束中だが、別のキャラを攻撃
+		IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+			LOCAL:3 = RAND:15
+		ELSE
+			LOCAL:3 = RAND:20
+		ENDIF
+		IF LOCAL:3 < 2
+			LOCAL:2 = 137
+		ELSEIF LOCAL:3 < 4
+			LOCAL:2 = 138
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 139
+		ELSEIF LOCAL:3 < 9
+			LOCAL:2 = 237
+		ELSEIF LOCAL:3 < 11
+			LOCAL:2 = 238
+		ELSEIF LOCAL:3 < 12
+			LOCAL:2 = 373
+		ELSEIF LOCAL:3 < 13
+			LOCAL:2 = 374
+		ELSEIF LOCAL:3 < 14
+			LOCAL:2 = 375
+		ELSEIF LOCAL:3 < 15
+			LOCAL:2 = 376
+		ELSEIF LOCAL:3 < 16
+			LOCAL:2 = 377
+		ELSEIF LOCAL:3 < 18
+			LOCAL:2 = 537
+		ELSE
+			LOCAL:2 = 538
+		ENDIF
+	ENDIF
+ELSE
+	;通常時
+	IF CFLAG:(ARG:1):10 || CFLAG:(ARG:1):20 || (DA:(ARG:0):10 && DA:(ARG:0):20) || (CFLAG:(ARG:1):29 && RAND:100 < 70)
+		LOCAL:3 = RAND:15
+	ELSE
+		IF BASE:(ARG:1):0 < MAXBASE:(ARG:1):0 / 2 || BASE:(ARG:1):2 < MAXBASE:(ARG:1):2 * 2 / 3
+			LOCAL:3 = RAND:21
+		ELSE
+			LOCAL:3 = RAND:20
+		ENDIF
+	ENDIF
+	IF LOCAL:3 < 2
+		LOCAL:2 = 137
+	ELSEIF LOCAL:3 < 4
+		LOCAL:2 = 138
+	ELSEIF LOCAL:3 < 6
+		LOCAL:2 = 139
+	ELSEIF LOCAL:3 < 9
+		LOCAL:2 = 237
+	ELSEIF LOCAL:3 < 11
+		LOCAL:2 = 238
+	ELSEIF LOCAL:3 < 12
+		LOCAL:2 = 373
+	ELSEIF LOCAL:3 < 13
+		LOCAL:2 = 374
+	ELSEIF LOCAL:3 < 14
+		LOCAL:2 = 375
+	ELSEIF LOCAL:3 < 15
+		LOCAL:2 = 376
+	ELSEIF LOCAL:3 < 16
+		LOCAL:2 = 377
+	ELSEIF LOCAL:3 < 18
+		LOCAL:2 = 537
+	ELSE
+		LOCAL:2 = 538
+	ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

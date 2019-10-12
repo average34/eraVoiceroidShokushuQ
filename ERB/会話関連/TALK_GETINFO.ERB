@@ -1,0 +1,215 @@
+﻿;会話で情報を得られる系の処理
+
+;固定イベントの位置取得
+;ARG:0	対象キャラ(会話相手)
+;ARG:1	会話内容(0：雑談　1：情報収集)
+@TALK_GETINFO(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	情報収集力
+;2	入手情報数
+;3	得られた情報
+
+
+;----- ↓ 情報収集力計算 ↓ -----
+;主人公の話術による基準値
+IF ABL:1:2 == 0
+	LOCAL:1 = 10
+ELSEIF ABL:1:2 == 1
+	LOCAL:1 = 40
+ELSEIF ABL:1:2 == 2
+	LOCAL:1 = 90
+ELSE
+	LOCAL:1 = 170
+ENDIF
+
+;仲間の話術による補正
+FOR LOCAL:0, 1, 3
+	IF GET_MEMBER(LOCAL:0)
+		LOCAL:1 += ABL:(GET_MEMBER(LOCAL:0)):2 * 15
+	ENDIF
+NEXT
+
+;好感度補正
+LOCAL:1 += LIMIT((CFLAG:(ARG:0):5 - 100) / 2, -20, 50)
+
+;相手の探索技能による補正
+IF ABL:(ARG:0):0 == 0
+	LOCAL:1 += 10
+ELSEIF ABL:(ARG:0):0 == 1
+	LOCAL:1 += 20
+ELSEIF ABL:(ARG:0):0 == 2
+	LOCAL:1 += 40
+ELSE
+	LOCAL:1 += 70
+ENDIF
+
+;情報収集ならボーナス
+IF ARG:1 == 1
+	LOCAL:1 += 40
+ENDIF
+;----- ↑ 情報収集力計算 ↑ -----
+
+;入手情報数決定(情報収集力100につき80％で+1　100未満は端数に応じた確率で+1)
+LOCAL:2 = 0
+FOR LOCAL:0, 0, (LOCAL:1 / 100)
+	IF RAND:100 < 80
+		LOCAL:2 += 1
+	ENDIF
+NEXT
+IF ARG:1 == 0
+	IF (LOCAL:1 % 100) < RAND:200
+		LOCAL:2 += 1
+	ENDIF
+ELSE
+	IF (LOCAL:1 % 100) < RAND:100
+		;収集力81～99は収集力100より良い結果になるけど、気にしない
+		LOCAL:2 += 1
+	ENDIF
+ENDIF
+
+
+;雑談なら情報を得られる数が減る
+IF ARG:1 == 0
+	LOCAL:2 = LIMIT(LOCAL:2 - 1, 1, 2)
+ENDIF
+
+FOR LOCAL:0, 0, LOCAL:2
+	IF ARG:1 == 0
+		;場所が固定されているイベントの情報を取得
+		CALL GET_FIX_EVENT_NO_1(ARG:0)
+	ELSE
+		;場所が固定されていないイベントの情報を取得
+		CALL GET_FIX_EVENT_NO_2(ARG:0)
+	ENDIF
+	LOCAL = RESULT
+	IF LOCAL > 0
+		
+		;聞き出した情報を調書に送る
+		CALL ROOMREPORT_GETINFO(LOCAL)
+		
+		IF ARG:1 == 0
+			CALL PRINT_MESSAGE(ARG:0, 137, ARG:0, CALLNAME:1, CALLNAME:(ARG:0), LOCAL, 0)
+			CALL PRINT_MESSAGE(1, 165, ARG:0, CALLNAME:1, CALLNAME:(ARG:0), LOCAL, 0)
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 137, ARG:0, CALLNAME:1, CALLNAME:(ARG:0), LOCAL, 1)
+			CALL PRINT_MESSAGE(1, 165, ARG:0, CALLNAME:1, CALLNAME:(ARG:0), LOCAL, 1)
+		ENDIF
+	ENDIF
+NEXT
+
+
+
+
+;場所が固定されているイベントの情報を取得
+@GET_FIX_EVENT_NO_1(ARG:0)
+#LOCALSIZE 300
+#DIM INFO,100	;聞ける可能性があるイベント
+#DIM INFOSUM	;聞ける可能性があるイベントの数
+
+VARSET LOCAL
+
+;対象のイベントをON
+LOCAL:108 = 1
+LOCAL:111 = 1
+LOCAL:119 = 1
+LOCAL:133 = 1
+LOCAL:134 = 1
+LOCAL:139 = 1
+LOCAL:142 = 1
+LOCAL:160 = 1
+LOCAL:170 = 1
+LOCAL:172 = 1
+LOCAL:173 = 1
+LOCAL:177 = 1
+LOCAL:178 = 1
+LOCAL:179 = 1
+
+;対象かつ残存イベントなら候補に
+INFOSUM = 0
+FOR LOCAL:0, 100, 200
+	IF LOCAL:(LOCAL:0) == 1 && FLAG:(LOCAL:0)
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+;拘束されてる仲間の情報も候補に
+FOR LOCAL:0, 1, CHARANUM
+	SIF LOCAL:0 >= 100 || INFOSUM >= 100
+		BREAK
+		
+	IF CFLAG:(LOCAL:0):10
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+;候補があれば抽選
+IF INFOSUM > 0
+	LOCAL = RAND:(INFOSUM)
+	LOCAL =  INFO:(LOCAL)
+ENDIF
+
+RETURN LOCAL
+
+
+
+;場所が固定されていないイベントの情報を取得
+@GET_FIX_EVENT_NO_2(ARG:0)
+#LOCALSIZE 300
+#DIM INFO,100	;聞ける可能性があるイベント
+#DIM INFOSUM	;聞ける可能性があるイベントの数
+
+VARSET LOCAL
+;対象のイベントをON
+LOCAL:109 = 1
+LOCAL:110 = 1
+LOCAL:136 = 1
+LOCAL:137 = 1
+LOCAL:138 = 1
+LOCAL:143 = 1
+LOCAL:146 = 1
+LOCAL:147 = 1
+LOCAL:148 = 1
+LOCAL:149 = 1
+LOCAL:150 = 1
+LOCAL:152 = 1
+LOCAL:161 = 1
+LOCAL:169 = 1
+LOCAL:180 = 1
+
+;対象かつ残存イベントなら候補に
+INFOSUM = 0
+FOR LOCAL:0, 100, 200
+	IF LOCAL:(LOCAL:0) == 1 && FLAG:(LOCAL:0)
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+IF FLAG:206 == 0
+	;脱出イベントの隠しフラグを立てている場合、外れパターンを教えてもらえる（ちょっと選択される確率高め）
+	INFO:(INFOSUM) = 206
+	INFOSUM++
+	INFO:(INFOSUM) = 206
+	INFOSUM++
+ENDIF
+;拘束されてる仲間の情報も候補に
+FOR LOCAL:0, 1, CHARANUM
+	SIF LOCAL:0 >= 100 || INFOSUM >= 100
+		BREAK
+		
+	IF CFLAG:(LOCAL:0):10
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+;候補があれば抽選
+IF INFOSUM > 0
+	LOCAL = RAND:(INFOSUM)
+	LOCAL =  INFO:(LOCAL)
+ENDIF
+
+RETURN LOCAL

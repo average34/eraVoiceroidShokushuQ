@@ -1,0 +1,341 @@
+﻿■DEBUG加筆
+★解説
+CASE分けされている素質が増えていますが、DEBUGがそれに対応しておらず、○×の２段階しかなかったものを簡易修正します。
+※採用されている略称が気に入らなければ自由にお書き換えください。
+
+
+※修正・加筆・改変・二次配布のさい、このreadmeを同梱する必要はありません。
+
+★前提導入
+[eraT0005432.zip]	[本体]東方触手宮Ver1013						2013/07/28(Sun)22:55
+[eraT0005527.zip]	[パッチ]触手宮V1013パッチまとめ0820				2013/08/20(Tue)20:40
+[eraT0005529.zip]	[パッチ]触手宮ふたなり素質細分化　csvをいじって入手してください	2013/08/21(Wed)03:15
+[eraT0005534.zip]	[パッチ]触手宮の新落とし穴の口上を一部添削するだ	け	2013/08/22(Thu)09:04
+[eraT0005535.zip]	[パッチ]ふたなり素質細分化用ふたなりがないと素質非表示になるパッチ	2013/08/22(Thu)15:42
+排卵強化パッチ
+
+★上書き導入
+・おまけ内の[DEBUG_COMMAND.ERB]を上書きしてください。
+
+★手動導入
+説明投げっぱなしです。
+主に、母乳(130)、卵巣(137)、Mと肌(105,106)、結界(160)、奇乳(158)、ふたなり詳細(170～177,180～188)の追加
+
+	;CFLAG変更
+	ELSEIF 入力 == 400
+		$LOOP_CFLAG_ABL
+		PRINTL
+		PRINTFORML 変更対象を指定してください。
+		PRINTFORML [ 5] %"好感度",30,LEFT%現在の値：{CFLAG:(キャラID):(5)}
+		PRINTFORML [28] %"発情",30,LEFT%現在の値：{CFLAG:(キャラID):(28)}
+		PRINTFORML [29] %"戦意喪失",30,LEFT%現在の値：{CFLAG:(キャラID):(29)}
+		PRINTFORML [40] %"触装",30,LEFT%現在の値：{CFLAG:(キャラID):(40)}
+		PRINTFORML [42] %"ふたなり",30,LEFT%現在の値：{CFLAG:(キャラID):(42)}
+		PRINTFORML [44] %"はいてない",30,LEFT%現在の値：{CFLAG:(キャラID):(44)}
+		PRINTFORML [46] %"触手包帯",30,LEFT%現在の値：{CFLAG:(キャラID):(46)}
+		PRINTFORML [48] %"粘装",30,LEFT%現在の値：{CFLAG:(キャラID):(48)}
+		PRINTFORML [150] %"月経日",30,LEFT%現在の値：{CFLAG:(キャラID):(150)}
+		PRINTL
+		PRINTL [ 0] 戻る
+
+	;TALENT変更
+	ELSEIF 入力 == 700
+		$LOOP_SHOW_TALENT
+		VARSET 表示
+		PRINTFORML 変更対象を指定してください。
+		FOR LCOUNT, 0, 201
+			IF TALENTNAME:(LCOUNT) != ""
+				PRINTFORM [{LCOUNT+1,3}] %TALENTNAME:(LCOUNT),15,LEFT%現在の値：
+				SELECTCASE LCOUNT
+					CASE 0
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"処",4,LEFT%
+							CASE 2
+								PRINTFORM %"再",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 101 TO 106
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"鈍",4,LEFT%
+							CASE 1
+								PRINTFORM %"敏",4,LEFT%
+							CASE 2
+								PRINTFORM %"過",4,LEFT%
+							CASE 3
+								PRINTFORM %"異",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 130
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"乳",4,LEFT%
+							CASE 2
+								PRINTFORM %"異",4,LEFT%
+							CASE 3
+								PRINTFORM %"造",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 137
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"未",4,LEFT%
+							CASE 1
+								PRINTFORM %"異",4,LEFT%
+							CASE 2
+								PRINTFORM %"肥",4,LEFT%
+							CASE 3
+								PRINTFORM %"苗",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 160
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"浄",4,LEFT%
+							CASE 2
+								PRINTFORM %"結",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 170
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"小",4,LEFT%
+							CASE 1
+								PRINTFORM %"巨",4,LEFT%
+							CASE 2
+								PRINTFORM %"爆",4,LEFT%
+							CASE 3
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 172
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"薄",4,LEFT%
+							CASE 1
+								PRINTFORM %"濃",4,LEFT%
+							CASE 2
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 173
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"剥",4,LEFT%
+							CASE 2
+								PRINTFORM %"仮",4,LEFT%
+							CASE 3
+								PRINTFORM %"真",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 176
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"先",4,LEFT%
+							CASE 2
+								PRINTFORM %"後",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 180
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"玉",4,LEFT%
+							CASE 2
+								PRINTFORM %"巨",4,LEFT%
+							CASE 3
+								PRINTFORM %"爆",4,LEFT%
+							CASE 4
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 181
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE 1
+								PRINTFORM %"毛",4,LEFT%
+							CASE 2
+								PRINTFORM %"剛",4,LEFT%
+							CASE 0
+								PRINTFORM %"無",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 185
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"少",4,LEFT%
+							CASE 1
+								PRINTFORM %"大",4,LEFT%
+							CASE 2
+								PRINTFORM %"超",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASE 186
+						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -1
+								PRINTFORM %"薄",4,LEFT%
+							CASE 1
+								PRINTFORM %"濃",4,LEFT%
+							CASE 2
+								PRINTFORM %"特",4,LEFT%
+							CASE 0
+								PRINTFORM %"普",4,LEFT%
+							CASEELSE
+								PRINTFORM %"??",4,LEFT%
+						ENDSELECT
+					CASEELSE
+						SELECTCASE TALENT:(キャラID):(LCOUNT)
+							CASE 1
+								PRINTFORM %"○",4,LEFT%
+							CASEELSE
+								PRINTFORM %"×",4,LEFT%
+						ENDSELECT
+				ENDSELECT
+				表示:1 ++
+				IF 表示:1 == PRINTCPERLINE()
+					PRINTL
+					表示:1 = 0
+					表示 ++
+				ENDIF
+			ENDIF
+		NEXT
+		PRINTL
+		PRINTL [ 0] 戻る
+		
+		$INPUT_TALENT
+		INPUT
+		入力 = RESULT-1
+		
+		IF 入力 == -1
+			CONTINUE
+		ELSEIF 入力 > -1
+			SELECTCASE 入力
+				CASE 0
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 101 TO 106
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = -1
+				CASE 107
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):110 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 108
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):110 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 109
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):110 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 110
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):158 = 0
+				CASE 130
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = 0
+				CASE 137
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = -1
+				CASE 158
+					TALENT:(キャラID):(入力) = 1
+					TALENT:(キャラID):107 = 0
+					TALENT:(キャラID):108 = 0
+					TALENT:(キャラID):109 = 0
+					TALENT:(キャラID):110 = 0
+				CASE 160
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 170
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = -1
+				CASE 172
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = -1
+				CASE 173
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 4
+							TALENT:(キャラID):(入力) = 0
+				CASE 176
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 180
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 5
+							TALENT:(キャラID):(入力) = 0
+				CASE 181
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = 0
+				CASE 185 TO 186
+					TALENT:(キャラID):(入力) ++
+						SIF TALENT:(キャラID):(入力) == 3
+							TALENT:(キャラID):(入力) = -1
+				CASEELSE
+					IF TALENT:(キャラID):(入力)
+						TALENT:(キャラID):(入力) = 0
+					ELSE
+						TALENT:(キャラID):(入力) = 1
+					ENDIF
+			ENDSELECT
+			CLEARLINE 5 + 表示
+			GOTO LOOP_SHOW_TALENT
+		ELSE
+			REUSELASTLINE 不正入力です。
+			表示 ++
+			GOTO INPUT_TALENT
+		ENDIF
+		CONTINUE
+		
+	ENDIF
+WEND

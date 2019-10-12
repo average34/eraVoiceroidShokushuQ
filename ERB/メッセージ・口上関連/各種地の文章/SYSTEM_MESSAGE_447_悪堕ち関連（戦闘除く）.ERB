@@ -1,0 +1,34 @@
+﻿;悪堕ち関連　ここは戦意喪失してると出ない、拘束されていても基本的には出ない
+;悪堕ちしたキャラがいるパーティと戦う際は54へ
+@SYSTEM_MESSAGE_447(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	;淫魔習得
+	IF ARG:1 == 0
+		PRINTFORML 
+		PRINTFORML %ARGS:0%の様子がおかしい…
+		PRINTFORML 迷宮の空気に完全に馴染んでしまった%ARGS:0%の体は、本能的に快楽を求めて疼くようだ…
+		PRINTFORMW %ARGS:0%は【淫魔】になった！
+	;狂気習得
+	ELSEIF ARG:1 == 1
+		PRINTFORML 
+		PRINTFORMW %ARGS:0%の%CALLNAME:1%を見る目がおかしくなってきている…
+	;脱走する側（順番的に脱走するキャラの台詞→地の文→主人公の口上という流れを想定している）
+	ELSEIF ARG:1 == 2
+
+	;脱走された主人公側　ここだけ拘束されていても出る　ARG:2に悪堕ちするキャラが入る
+	ELSEIF ARG:1 == 3
+		PRINTFORML 
+		PRINTFORMW ふと目を離した隙に、ここのところ奇妙な様子を見せていた%ARGS:1%がいなくなっていた…
+	;悪堕ちしたキャラと同じ部屋にいた主人公（気配察知３限定）　ARG:2に悪堕ちするキャラが入る
+	ELSEIF ARG:1 == 4
+		PRINTFORML 
+		PRINTFORML ふと気が付くと、同じ部屋にいたはずの%ARGS:1%の気配が完全に無くなっていた。
+		PRINTFORMW ……無事だったはずだが、どこへ行ったのだろう？
+	;悪堕ちした主人公の分身発生
+	ELSEIF ARG:1 == 5
+		PRINTFORML 
+		PRINTFORML この迷宮に来て『堕ちたら楽になるんじゃないか』という思いが強くなってきた
+		PRINTFORML 正気との狭間でふと遠くを見ると、もう一人の自分がいた
+		PRINTFORMW ……どうやらこの迷宮は自分自身すら敵らしい
+	ENDIF
+

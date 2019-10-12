@@ -1,0 +1,1341 @@
+﻿;=================================================
+;マップおよび各種情報表示
+;=================================================
+@PRINT_MAP_INFO
+#DIM LCOUNT,3  ;ループ用
+
+	;23行
+	FOR LCOUNT, 0, 23
+
+		;メイン表示（マップ）
+		CALL PRINT_MAP_INFO_MAIN(LCOUNT)
+		;サイド表示（情報）
+		CALL PRINT_MAP_INFO_SIDE(LCOUNT)
+		
+		;ツールチップを埋め込み
+		CALL PRINT_MAP_SET_TOOLTIP(LCOUNT)
+	NEXT
+	;同室メンバー表示
+	CALL PRINT_SAME_ROOM_MEMBER
+
+;=================================================
+;主人公と同じ部屋に居るメンバーを出力
+;=================================================
+@PRINT_SAME_ROOM_MEMBER
+	
+	CALL PRINT_MAP_INFO_SUB(FLAG:5,3)
+	IF RESULT == 1
+		PRINTFORM 同じ部屋に
+		CALL PRINT_MAP_INFO_SUB2(RESULTS,80)
+		IF RESULT == 1
+			PRINT ..
+		ENDIF
+		PRINTFORM が居ます
+	ENDIF
+	PRINTL
+	
+;=================================================
+;マップ表示
+;ARG:0 行数（0～）
+;=================================================
+@PRINT_MAP_INFO_MAIN(ARG)
+#DIM LCOUNT,3	;ループ用
+#DIM ROOMNO,5	;部屋番号記憶用
+#DIM ROOMTYPE,5	;部屋枠表示パターン記憶用
+;-MEMO-
+;23行
+
+
+	;部屋上部の行
+	IF ARG % 4 == 0
+		;横方向
+		FOR LCOUNT, 0, 5
+			;部屋番号
+			ROOMNO:(LCOUNT) = ARG / 4 * 5 + LCOUNT + 1
+			CALL CHECK_PRINT_ROOMWALL(ROOMNO:(LCOUNT))
+			IF RESULT >= 0
+				ROOMTYPE:(LCOUNT) = RESULT
+			ELSE
+				RETURN -1
+			ENDIF
+		NEXT
+	ENDIF
+
+
+	;左部余白
+	PRINT 　
+	;部屋上部
+	IF ARG % 4 == 0
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),0)
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),1)
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),2)
+			;---部屋の間---
+			IF LCOUNT < 4
+				PRINT 　
+			ENDIF
+		NEXT
+	;部屋中部
+	ELSEIF ARG % 4 == 1
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),3)
+			CALL PRINT_ROOM_NO(ROOMNO:(LCOUNT))
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),4)
+			;---部屋の間---
+			IF LCOUNT < 4
+				CALL CHECK_ROUTE_NO(ROOMNO:(LCOUNT), 2)
+				IF RESULT >= 0
+					CALL PRINT_ROUTE(RESULT)
+				ENDIF
+			ENDIF
+		NEXT
+	;部屋下部
+	ELSEIF ARG % 4 == 2
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),5)
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),6)
+			CALL PRINT_ROOMWALL(ROOMTYPE:(LCOUNT),7)
+			;---部屋の間---
+			IF LCOUNT < 4
+				PRINT 　
+			ENDIF
+		NEXT
+	;部屋の下
+	ELSE
+		;横方向
+		FOR LCOUNT, 0, 5
+			;---部屋---
+			PRINT 　
+			CALL CHECK_ROUTE_NO(ROOMNO:(LCOUNT), 3)
+			IF RESULT >= 0
+				CALL PRINT_ROUTE(RESULT)
+			ENDIF
+			PRINT 　
+			;---部屋の間---
+			IF LCOUNT < 4
+				PRINT 　
+			ENDIF
+		NEXT
+	ENDIF
+	;右部余白
+	PRINT 　
+
+;=================================================
+;情報表示
+;ARG:0 行数（0～）
+;=================================================
+@PRINT_MAP_INFO_SIDE(ARG)
+#DIM LCOUNT,3	;ループ用
+#DIMS ROOMINFO,4	;部屋情報
+#DIM ROOMNO,4	;部屋番号
+#DIM PTABL	;気配察知
+#DIM INFONUM
+
+
+;-MEMO-
+;23行
+;40文字くらい？
+;＝＝＝＝＝内部・操作処理＝＝＝＝＝
+	IF ARG < 0
+		IF ARG == -1
+			IF INFONUM
+				INFONUM = 0
+			ELSE
+				INFONUM = 1
+			ENDIF
+		ELSEIF ARG == -2
+			RETURN INFONUM
+		ENDIF
+		RETURN
+	ENDIF
+	
+	
+	
+;＝＝＝＝＝表示処理＝＝＝＝＝
+	IF INFONUM == 1
+		CALL MAP_INFO_SIDE_ROOMREPORT(ARG)
+		RETURN
+	ENDIF
+	IF ARG == 0
+		;---隣接部屋情報収集---
+		
+		;PTの気配察知から表示する情報タイプを決定
+		PTABL = GET_PT_MAX_ABL(1)
+		IF PTABL == 1
+			LOCAL = 0 ;情報タイプ
+		ELSEIF PTABL == 2
+			LOCAL = 1
+		ELSEIF PTABL >= 3
+			LOCAL = 2
+		ELSE
+			LOCAL = -1
+		ENDIF
+		
+		FOR LCOUNT, 0, 4
+			
+			;---部屋番号取得---
+			CALL CHECK_ROOM_NO(FLAG:5, LCOUNT)
+			IF RESULT >= 1
+				ROOMNO:(LCOUNT) = RESULT
+			ELSE
+				ROOMNO:(LCOUNT) = -1
+			ENDIF
+			
+			;---情報取得---
+			ROOMINFO:(LCOUNT) = %""%
+			IF ROOMNO:(LCOUNT) >= 1 && LOCAL >= 0
+				CALL PRINT_MAP_INFO_SUB(ROOMNO:(LCOUNT),LOCAL)
+				IF RESULT == 1
+					ROOMINFO:(LCOUNT) = %RESULTS%0/の気配がする…/
+				ENDIF
+			ENDIF
+			
+		NEXT
+		;------
+	ENDIF
+
+
+	;インデント
+	PRINT 　　
+	;表示
+	SELECTCASE ARG
+		CASE 0
+			PRINTFORM 【{DAY,3}日目（%CONVERT_TIME()%）】
+			PRINT 　　　　　　　　　　
+			PRINTBUTTON "[1000]情報切替", 1000
+		CASE 1
+			
+		CASE 2
+			PRINTFORM 現在 {FLAG:5} の部屋に居ます
+			IF FLAG:5 == FLAG:98
+				SETCOLOR 0x10EEEE
+				PRINTFORM   [結界展開中]
+				RESETCOLOR
+			ENDIF
+		CASE 3
+			PRINTFORM 眠気：{FLAG:7}
+			CALL PRINT_SLEEPINESS
+		CASE 4
+			PRINTFORM 【浄化力】
+		CASE 5
+			IF FLAG:6 < 100
+				CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("黄"), RESULT:1)
+			ELSEIF FLAG:6 < 200
+				CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("緑"), RESULT:1)
+			ELSEIF FLAG:6 < 300
+				CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("青緑"), RESULT:1)
+			ELSE
+				CALL PRINT_COLORBAR(FLAG:6, 300, 30, BARCOLORSET("青"), RESULT:1)
+			ENDIF
+			PRINTFORM  ({FLAG:6,3}/300)
+		CASE 6
+			PRINTFORM 【この部屋の汚染度】
+		CASE 7
+			IF FLAG:(50 + FLAG:5) < 10
+				CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("青"), RESULT:1)
+			ELSEIF FLAG:(50 + FLAG:5) < 40
+				CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("緑"), RESULT:1)
+			ELSEIF FLAG:(50 + FLAG:5) < 70
+				CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("黄"), RESULT:1)
+			ELSEIF FLAG:(50 + FLAG:5) < 100
+				CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("紫"), RESULT:1)
+			ELSE
+				CALL PRINT_COLORBAR(FLAG:(50 + FLAG:5), 100, 30, BARCOLORSET("赤"), RESULT:1)
+			ENDIF
+			PRINTFORM  ({FLAG:(50 + FLAG:5),3}/100) 
+			CALL PRINT_POLLUTION
+		CASE 8
+			
+		CASE 9
+			;---上の部屋の情報を表示---
+			IF ROOMNO:0 >= 1
+				PRINTFORM 【 {ROOMNO:0,2} の部屋（↑）】
+			ENDIF
+		CASE 10
+			IF ROOMNO:0 >= 1 && PTABL >= 1
+				IF ROOMINFO:0 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:0,50)
+					ROOMINFO:0 = %RESULTS%
+				ELSE
+					PRINTFORM 特に気配は感じられない…
+				ENDIF
+			ENDIF
+		CASE 11
+			IF ROOMNO:0 >= 1 && PTABL >= 1
+				IF ROOMINFO:0 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:0,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 12
+			;---左の部屋の情報を表示---
+			IF ROOMNO:1 >= 1
+				PRINTFORM 【 {ROOMNO:1,2} の部屋（←）】
+			ENDIF
+		CASE 13
+			IF ROOMNO:1 >= 1 && PTABL >= 1
+				IF ROOMINFO:1 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:1,50)
+					ROOMINFO:1 = %RESULTS%
+				ELSE
+					PRINTFORM 特に気配は感じられない…
+				ENDIF
+			ENDIF
+		CASE 14
+			IF ROOMNO:1 >= 1 && PTABL >= 1
+				IF ROOMINFO:1 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:1,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 15
+			;---右の部屋の情報を表示---
+			IF ROOMNO:2 >= 1
+				PRINTFORM 【 {ROOMNO:2,2} の部屋（→）】
+			ENDIF
+		CASE 16
+			IF ROOMNO:2 >= 1 && PTABL >= 1
+				IF ROOMINFO:2 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:2,50)
+					ROOMINFO:2 = %RESULTS%
+				ELSE
+					PRINTFORM 特に気配は感じられない…
+				ENDIF
+			ENDIF
+		CASE 17
+			IF ROOMNO:2 >= 1 && PTABL >= 1
+				IF ROOMINFO:2 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:2,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 18
+			;---下の部屋の情報を表示---
+			IF ROOMNO:3 >= 1
+				PRINTFORM 【 {ROOMNO:3,2} の部屋（↓）】
+			ENDIF
+		CASE 19
+			IF ROOMNO:3 >= 1 && PTABL >= 1
+				IF ROOMINFO:3 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:3,50)
+					ROOMINFO:3 = %RESULTS%
+				ELSE
+					PRINTFORM 特に気配は感じられない…
+				ENDIF
+			ENDIF
+		CASE 20
+			IF ROOMNO:3 >= 1 && PTABL >= 1
+				IF ROOMINFO:3 != ""
+					CALL PRINT_MAP_INFO_SUB2(ROOMINFO:3,48)
+					IF RESULT == 1
+						PRINTFORM ..
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 21
+			PRINTFORM -- メモ（現在の部屋） ------------------------------
+		CASE 22
+			IF SAVESTR:(300 + FLAG:5) != ""
+				CALL CHANGE_ROOM_COLOR(FLAG:5)
+				PRINTFORM ■ 
+				RESETCOLOR
+				; 文字数をカウント 表示領域はSHIFT-JISで48文字
+				; はみ出る場合は46文字にして..を付与
+				IF STRLENS(SAVESTR:(300 + FLAG:5)) <= 46
+					SUBSTRING SAVESTR:(300 + FLAG:5), 0, 48
+					PRINTFORM %RESULTS:0%
+				ELSE
+					SUBSTRING SAVESTR:(300 + FLAG:5), 0, 46
+					PRINTFORM %RESULTS:0%
+					PRINTFORM ..
+				ENDIF
+			ELSE
+				PRINTFORM ----
+			ENDIF
+	ENDSELECT
+	PRINTL
+	
+	
+	
+	
+
+;=================================================
+;指定部屋の気配情報を取得
+;ROOMNO 部屋番号
+;TYPE 情報タイプ（0:何かいる　1:敵か味方　2:名前　3:名前+喪失）
+;RESULT:0 処理結果（0:いない　1:いる
+;RESULTS:0 （色/文字/･･･）
+;=================================================
+@PRINT_MAP_INFO_SUB(ROOMNO,TYPE)
+#DIM LCOUNT,3	;ループ用
+#DIM ROOMNO	;部屋番号
+#DIM TYPE	;情報タイプ
+
+#DIM MEMBERID,100
+#DIM MEMBERSUM
+
+#DIM PTID,5
+#DIM PTSUM
+
+#DIM MOZICOLOR,20
+
+	MOZICOLOR:0 = 0xEE10EE ;何か文字色
+	MOZICOLOR:1 = 0x10EEEE ;味方文字色
+	MOZICOLOR:2 = 0x006699 ;喪失味方文字色
+	MOZICOLOR:11 = 0xEE1010 ;敵文字色
+
+
+	;---PTメンバの取得---
+
+	PTID:0 = 1
+	PTID:1 = FLAG:10
+	PTID:2 = FLAG:11
+
+	
+	RESULTS = %""%
+	
+	;===味方===
+	MEMBERSUM = 0
+	VARSET MEMBERID
+	;同室の味方を取得
+	FOR LCOUNT, 1, CHARANUM
+		;---同じ部屋にいないとダメ---
+		SIF CFLAG:(LCOUNT):4 != ROOMNO
+			CONTINUE
+		;---既にPTメンバに含まれていたらダメ---
+		LOCAL = 0
+		FOR LCOUNT:1, 0, 3
+			SIF LCOUNT == PTID:(LCOUNT:1)
+				LOCAL = 1
+		NEXT
+		SIF LOCAL
+			CONTINUE
+		;---生存してないならダメ---
+		IF CFLAG:(LCOUNT):2 || CFLAG:(LCOUNT):3
+			CONTINUE
+		ENDIF
+		;---同室メンバ追加---
+		MEMBERID:(MEMBERSUM) = LCOUNT
+		MEMBERSUM++
+	NEXT
+
+	;同室の擬態している敵を取得
+	FOR LCOUNT, 1, FLAG:1
+		;---同じ部屋にいないなら除外---
+		SIF ROOMNO != DA:(LCOUNT):4
+			CONTINUE
+		;---死んでるなら除外---
+		SIF DA:(LCOUNT):1 <= 0
+			CONTINUE
+		
+		;---正体看破済みでないドッペルなら追加---
+		IF ( DA:(LCOUNT):0 == 18 )&&( DA:(LCOUNT):45 == 0 )
+			;敵の場合はIDを負数にしておく
+			MEMBERID:(MEMBERSUM) = LCOUNT * -1
+			MEMBERSUM++
+		ENDIF
+	NEXT
+	
+	IF TYPE == 0
+		IF MEMBERSUM > 0
+			RESULTS = {MOZICOLOR:0}/何か/
+			RETURN 1
+		ENDIF
+	ELSEIF TYPE == 1
+		IF MEMBERSUM > 0
+			LOCAL = 0x10EEEE
+			RESULTS = {MOZICOLOR:1}/味方/
+		ENDIF
+	ELSEIF TYPE >= 2
+		IF MEMBERSUM > 0
+			;名前の位置で擬態がバレないように細工
+			;とりあえずIDでソートをかける（敵IDの場合は擬態対象のIDを用いる）
+			FOR LCOUNT, 0, MEMBERSUM
+				FOR LCOUNT:1, LCOUNT + 1, MEMBERSUM
+					;負数（敵ID）なら
+					IF MEMBERID:(LCOUNT) < 0
+						;ドッペルなら
+						IF DA:(ABS(MEMBERID:(LCOUNT))):0 == 18
+							LOCAL:1 = GET_DOPPEL_BASE(ABS(MEMBERID:(LCOUNT)))
+						ELSE
+							;エラー
+							LOCAL:1 = MEMBERID:(LCOUNT)
+						ENDIF
+					ELSE
+						LOCAL:1 = MEMBERID:(LCOUNT)
+					ENDIF
+					
+					;負数（敵ID）なら
+					IF MEMBERID:(LCOUNT:1) < 0
+						;ドッペルなら
+						IF DA:(ABS(MEMBERID:(LCOUNT:1))):0 == 18
+							LOCAL:2 = GET_DOPPEL_BASE(ABS(MEMBERID:(LCOUNT:1)))
+						ELSE
+							;エラー
+							LOCAL:2 = MEMBERID:(LCOUNT:1)
+						ENDIF
+					ELSE
+						LOCAL:2 = MEMBERID:(LCOUNT:1)
+					ENDIF
+					
+					IF LOCAL:1 > LOCAL:2
+						LOCAL = MEMBERID:(LCOUNT)
+						MEMBERID:(LCOUNT) = MEMBERID:(LCOUNT:1)
+						MEMBERID:(LCOUNT:1) = LOCAL
+					ENDIF
+				NEXT
+			NEXT
+			
+			;---名前の追加---
+			FOR LCOUNT, 0, MEMBERSUM
+				
+				;負数（敵ID）なら
+				IF MEMBERID:(LCOUNT) < 0
+					;ドッペルなら
+					IF DA:(ABS(MEMBERID:(LCOUNT))):0 == 18
+						;擬態対象IDを使って名前を取得
+						LOCAL = GET_DOPPEL_BASE(ABS(MEMBERID:(LCOUNT)))
+						LOCALS = %CALLNAME:(LOCAL)%
+					ENDIF
+				ELSE
+					LOCALS = %CALLNAME:(MEMBERID:(LCOUNT))%
+				ENDIF
+				SIF RESULTS != ""
+					RESULTS = %RESULTS%0/、/
+				RESULTS = %RESULTS%{MOZICOLOR:1}/%LOCALS%/
+				
+			NEXT
+		ENDIF
+		
+	ENDIF
+	
+	
+	;===敵===
+	MEMBERSUM = 0
+	VARSET MEMBERID
+	;同室の敵を取得
+	FOR LCOUNT, 1, FLAG:1 + 1
+		;---同じ部屋にいないなら除外---
+		SIF DA:(LCOUNT):4 != ROOMNO
+			CONTINUE
+		;---死んでるなら除外---
+		SIF DA:(LCOUNT):1 <= 0
+			CONTINUE
+		;---正体看破済みでないドッペルは除外---
+		SIF ( DA:(LCOUNT):0 == 18 )&&( DA:(LCOUNT):45 == 0 )
+			CONTINUE
+		;---トラップ系は隠れているので除外---
+		SIF DA:(LCOUNT):0 == 97 || (DA:(LCOUNT):85 & 256)
+			CONTINUE
+		;---同室メンバ追加---
+		MEMBERID:(MEMBERSUM) = LCOUNT
+		MEMBERSUM++
+		
+	NEXT
+	
+	
+	IF TYPE == 0
+		IF MEMBERSUM > 0
+			RESULTS = {MOZICOLOR:0}/何か/
+			RETURN 1
+		ENDIF
+	ELSEIF TYPE == 1
+		IF MEMBERSUM > 0
+			SIF RESULTS != ""
+				RESULTS = %RESULTS%0/と/
+			RESULTS = %RESULTS%{MOZICOLOR:11}/敵/
+		ENDIF
+	ELSEIF TYPE >= 2
+		IF MEMBERSUM > 0
+			;---名前の追加---
+			FOR LCOUNT, 0, MEMBERSUM
+				LOCALS = %SAVESTR:(MEMBERID:(LCOUNT))%
+				SIF RESULTS != ""
+					RESULTS = %RESULTS%0/、/
+				RESULTS = %RESULTS%{MOZICOLOR:11}/%LOCALS%/
+			NEXT
+		ENDIF
+	ENDIF
+	
+	IF RESULTS != ""
+		RETURN 1
+	ENDIF
+	
+RETURN 0
+	
+;=================================================
+@PRINT_MAP_INFO_SUB2(INFO,MOZIMAXSUM,KUGIRIMOZI = "/")
+#LOCALSSIZE 300
+#DIM LCOUNT,3	;ループ用
+
+#DIMS INFO
+#DIMS KUGIRIMOZI
+
+#DIM MOZISUM
+#DIM MOZIMAXSUM
+	
+	
+	MOZISUM = 0
+	RESULTS = %""%
+	VARSET LOCALS
+	;情報文字列分解
+	SPLIT INFO, KUGIRIMOZI, LOCALS
+	LOCAL:1 = RESULT
+	FOR LCOUNT, 0, RESULT / 2
+		;---文字色情報使用---
+		LOCAL = TOINT(LOCALS:(LCOUNT*2))
+		IF LOCAL <= 0
+			RESETCOLOR
+		ELSE
+			SETCOLOR LOCAL
+		ENDIF
+		
+		;---文字列情報使用---
+		STRLENS LOCALS:(LCOUNT*2 + 1)
+		MOZISUM += RESULT
+		
+		;上限文字数を超えるなら
+		IF MOZISUM > MOZIMAXSUM
+			;表示できる量を記憶
+			LOCAL = RESULT - (MOZISUM - MOZIMAXSUM)
+			
+			;表示できる分は表示
+			SUBSTRING LOCALS:(LCOUNT*2 + 1), 0, LOCAL
+			PRINTFORM %RESULTS%
+			
+			;できない分は保管
+			SUBSTRING LOCALS:(LCOUNT*2 + 1), LOCAL, -1
+			LOCALS:(LCOUNT*2 + 1) = %RESULTS%
+			
+			;残った情報
+			ARRAYREMOVE LOCALS, 0, LCOUNT*2
+			LOCAL:1 = ((LOCAL:1) / 2) - LCOUNT
+			;元の形式に変換して返す
+			RESULTS = %""%
+			FOR LCOUNT:1, 0 ,LOCAL:1
+				SIF LOCALS:(LCOUNT:1) == ""
+					BREAK
+				RESULTS = %RESULTS%%LOCALS:((LCOUNT:1)*2)%%KUGIRIMOZI%%LOCALS:((LCOUNT:1)*2+1)%%KUGIRIMOZI%
+			NEXT
+			RESETCOLOR
+			RETURN 1
+		ELSE
+			PRINTFORM %LOCALS:(LCOUNT*2 + 1)%
+		ENDIF
+		
+	NEXT
+	RESETCOLOR
+	
+	
+;=================================================
+;通路番号取得
+;ROOMNO 基準部屋番号
+;ANGLE 基準からみてどの方向か（0:上　1:左　2:右　3:下）
+;RESULT:0 通路（-1:エラー 以外:通路番号）
+;=================================================
+@CHECK_ROUTE_NO(ROOMNO, ANGLE)
+#DIM ROOMNO	;部屋番号
+#DIM ANGLE	;方向
+
+	;エラー
+	IF ROOMNO < 1 || ROOMNO > 30
+		RETURN -1
+	;上方向
+	ELSEIF ANGLE == 0 && (ROOMNO > 5)
+		LOCAL = -4
+	;左方向
+	ELSEIF ANGLE == 1 && (ROOMNO % 5 != 1)
+		LOCAL = 0
+	;右方向
+	ELSEIF ANGLE == 2 && (ROOMNO % 5 != 0)
+		LOCAL = 1
+	;下方向
+	ELSEIF ANGLE == 3 && (ROOMNO < 26)
+		LOCAL = 5
+	;なし
+	ELSE
+		RETURN -1
+	ENDIF
+
+	LOCAL = ROOMNO - 2 + ((ROOMNO - 1) / 5 * 4) + LOCAL
+	
+	SIF LOCAL < 0 || LOCAL > 48
+		RETURN -1
+		
+	RETURN LOCAL
+
+;=================================================
+;部屋番号取得
+;ROOMNO 基準部屋番号
+;ANGLE 基準からみてどの方向か（0:上　1:左　2:右　3:下）
+;RESULT:0 （-1:部屋無し　以外:部屋番号）
+;=================================================
+@CHECK_ROOM_NO(ROOMNO, ANGLE)
+#DIM ROOMNO	;部屋番号
+#DIM ANGLE	;方向
+
+	;エラー
+	IF ROOMNO < 1 || ROOMNO > 30
+		RETURN -1
+	;右隣
+	ELSEIF (ANGLE == 2) && (ROOMNO % 5 != 0)
+		RETURN ROOMNO + 1
+	;左隣
+	ELSEIF (ANGLE == 1) && (ROOMNO % 5 != 1)
+		RETURN ROOMNO - 1
+	;下隣
+	ELSEIF (ANGLE == 3) && (ROOMNO < 26)
+		RETURN ROOMNO + 5
+	;上隣
+	ELSEIF (ANGLE == 0) && (ROOMNO > 5)
+		RETURN ROOMNO - 5
+	;なし
+	ELSE
+		RETURN -1
+	ENDIF
+
+;=================================================
+;部屋間位置関係取得
+;ROOMNO:0 基準部屋番号
+;ROOMNO:1 対象部屋番号
+;RESULT:0 結果
+;	-1:エラー（無効な部屋番号を指定した）
+;	 0:遠い（隣ではない）
+;	 1:隣（RESULT:1に方向（0:上　1:左　2:右　3:下）※基準から見ての方向）
+;	 2:同室
+;=================================================
+@CHECK_ROOM_POSITION(ROOMNO:0, ROOMNO:1)
+#DIM ROOMNO,2	;部屋番号
+
+	;エラー
+	IF ROOMNO:0 < 1 || ROOMNO:0 > 30 || ROOMNO:1 < 1 || ROOMNO:1 > 30
+		RETURN -1
+	;同室
+	ELSEIF ROOMNO:0 == ROOMNO:1
+		RETURN 2
+	;右隣
+	ELSEIF (ROOMNO:0 % 5 != 0) && (ROOMNO:0 == ROOMNO:1 - 1)
+		RETURN 1, 2
+	;左隣
+	ELSEIF (ROOMNO:0 % 5 != 1) && (ROOMNO:0 == ROOMNO:1 + 1)
+		RETURN 1, 1
+	;下隣
+	ELSEIF (ROOMNO:0 == ROOMNO:1 - 5)
+		RETURN 1, 3
+	;上隣
+	ELSEIF (ROOMNO:0 == ROOMNO:1 + 5)
+		RETURN 1, 0
+	;離れてる
+	ELSE
+		RETURN 0
+	ENDIF
+
+;=================================================
+;通路の表示
+;ARG:0 通路番号
+;=================================================
+@PRINT_ROUTE(ARG:0)
+
+;通路の有無チェック
+IF FLAG:(300 + ARG:0) == 0
+	PRINT 　
+	RETURN
+ENDIF
+
+IF (ARG:0 % 9) <= 3
+	;9で割った余りが3以下なら、横向きの通路
+	;左右どちらかの部屋に入ったことがあれば、通路を表示（デバッグ中でも表示）
+	IF FLAG:9 || FLAG:(600 + (ARG:0 / 9 * 5 + (ARG:0 % 9) + 1)) || FLAG:(600 + (ARG:0 / 9 * 5 + (ARG:0 % 9) + 2))
+		PRINT ─
+	ELSE
+		PRINT 　
+	ENDIF
+ELSE
+	;それ以外は、縦向きの通路
+	;上下どちらかの部屋に入ったことがあれば、通路を表示（デバッグ中でも表示）
+	IF FLAG:9 || FLAG:(600 + ((ARG:0 - 4) / 9 * 5 + (ARG:0 % 9) - 3)) || FLAG:(600 + ((ARG:0 - 4) / 9 * 5 + (ARG:0 % 9) + 2))
+		PRINT │
+	ELSE
+		PRINT 　
+	ENDIF
+ENDIF
+
+;=================================================
+;部屋番号の表示
+;ARG:0 部屋番号
+;=================================================
+@PRINT_ROOM_NO(ARG:0)
+
+;LOCAL
+;0	LOOP
+;1	表示色
+;2	気配察知レベル
+
+;表示色は以下の通り(基本的に値が大きい方が優先順位上　「共有」はちょっと特殊)
+;0	黒灰：未侵入
+;1	白灰：侵入経験あり
+;2	紫　：誰かいる
+;3	黄　：味方がいる
+;4	赤　：敵がいる
+;5	橙　：両方いる
+;6	白　：現在位置
+LOCAL:1 = 0
+LOCAL:2 = GET_PT_MAX_ABL(1)
+
+IF FLAG:9
+	LOCAL:2 = 3
+ENDIF
+
+;侵入経験チェック
+IF FLAG:(600 + ARG:0)
+	LOCAL:1 = 1
+ENDIF
+
+;味方チェック（共有）
+FOR LOCAL:0, 1, CHARANUM
+	IF CFLAG:(LOCAL:0):16 && CFLAG:(LOCAL:0):4 == ARG:0
+		;共有状態のキャラがその部屋にいれば、フラグを立てる
+		LOCAL:1 = 3
+		BREAK
+	ENDIF
+NEXT
+
+;味方チェック（隣）
+IF FLAG:9 || CHECK_NEXT(FLAG:5, ARG:0)
+	IF LOCAL:2 == 1
+		FOR LOCAL:0, 1, FLAG:1
+			IF DA:(LOCAL:0):4 == ARG:0 && DA:(LOCAL:0):0 == 18 && DA:(LOCAL:0):45 == 0
+				LOCAL:1 = 2
+				BREAK
+			ENDIF
+		NEXT
+		FOR LOCAL:0, 1, CHARANUM
+			IF CFLAG:(LOCAL:0):4 == ARG:0 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+				LOCAL:1 = 2
+				BREAK
+			ENDIF
+		NEXT
+	ELSEIF LOCAL:2 >= 2
+		FOR LOCAL:0, 1, FLAG:1
+			IF DA:(LOCAL:0):4 == ARG:0 && DA:(LOCAL:0):0 == 18 && DA:(LOCAL:0):45 == 0
+				LOCAL:1 = 3
+				BREAK
+			ENDIF
+		NEXT
+		FOR LOCAL:0, 1, CHARANUM
+			IF CFLAG:(LOCAL:0):4 == ARG:0 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+				LOCAL:1 = 3
+				BREAK
+			ENDIF
+		NEXT
+	ENDIF
+ENDIF
+
+;敵チェック
+IF FLAG:9 || CHECK_NEXT(FLAG:5, ARG:0)
+	IF LOCAL:2 == 1
+		FOR LOCAL:0, 1, FLAG:1
+			;ドッペルは弾く
+			IF DA:(LOCAL:0):4 == ARG:0 && (DA:(LOCAL:0):0 != 18 || DA:(LOCAL:0):45 == 1)
+				LOCAL:1 = 2
+				BREAK
+			ENDIF
+			;罠系は弾く
+			SIF DA:(LOCAL:0):0 == 97 || (DA:(LOCAL:0):85 & 256)
+				BREAK
+		NEXT
+	ELSEIF LOCAL:2 >= 2
+		FOR LOCAL:0, 1, FLAG:1
+			IF DA:(LOCAL:0):4 == ARG:0 && (DA:(LOCAL:0):0 != 18 || DA:(LOCAL:0):45 == 1)
+				IF LOCAL:1 == 3
+					LOCAL:1 = 5
+				ELSE
+					LOCAL:1 = 4
+				ENDIF
+				BREAK
+			ENDIF
+			;罠系は弾く
+			SIF DA:(LOCAL:0):0 == 97 || (DA:(LOCAL:0):85 & 256)
+				BREAK
+		NEXT
+	ENDIF
+ENDIF
+
+;現在地
+IF ARG:0 == FLAG:5
+	LOCAL:1 = 6
+ENDIF
+
+SELECTCASE LOCAL:1
+CASE 1
+	RESETCOLOR
+CASE 2
+	SETCOLOR 0xEE10EE
+CASE 3
+	SETCOLOR 0x1070FF
+CASE 4
+	SETCOLOR 0xEE1010
+CASE 5
+	SETCOLOR 0xEE6010
+CASE 6
+	SETCOLOR 0xFFFF10
+CASEELSE
+	SETCOLOR 0x333333
+ENDSELECT
+
+;PRINTFORM {ARG:0,2}
+PRINTBUTTON @"{ARG:0,2}", ARG:0
+RESETCOLOR
+
+;=================================================
+;部屋枠の表示パターンを判定
+;ROOMNO:0 部屋番号
+;RESULT:0 結果（-1:エラー 以外:表示パターン）
+;=================================================
+@CHECK_PRINT_ROOMWALL(ROOMNO)
+#DIM ROOMNO	;部屋番号
+#DIM NEXTFLAG,2	;隣接フラグ
+
+;-MEMO-
+;FLAG
+;51～　汚染度
+;601～　侵入経験
+;300～　有効な通路
+
+
+	IF ROOMNO < 1 || ROOMNO > 30
+		RETURN -1
+	ENDIF
+
+	;隣接チェック
+	CALL CHECK_ROOM_POSITION(ROOMNO, FLAG:5)
+	IF RESULT >= 0
+		NEXTFLAG:0 = RESULT:0
+		NEXTFLAG:1 = RESULT:1
+	ELSE
+		RETURN -1
+	ENDIF
+	
+	;現在地
+	IF NEXTFLAG == 2
+		;汚染度分岐
+		IF FLAG:(50 + ROOMNO) >= 100
+			RETURN 24
+		ELSEIF FLAG:(50 + ROOMNO) >= 70
+			RETURN 23
+		ELSEIF FLAG:(50 + ROOMNO) >= 40
+			RETURN 22
+		ELSEIF FLAG:(50 + ROOMNO) >= 10
+			RETURN 21
+		ELSE
+			RETURN 20
+		ENDIF
+	;デバッグモードか現在地と隣接
+	ELSEIF FLAG:9 || NEXTFLAG == 1
+		;デバッグモードか侵入経験あり
+		IF FLAG:9 || FLAG:(600 + ROOMNO) > 0
+			;デバッグモードか気配察知高
+			IF FLAG:9 || GET_PT_MAX_ABL(1) >= 3
+				;汚染度分岐
+				IF FLAG:(50 + ROOMNO) >= 100
+					RETURN 14
+				ELSEIF FLAG:(50 + ROOMNO) >= 70
+					RETURN 13
+				ELSEIF FLAG:(50 + ROOMNO) >= 40
+					RETURN 12
+				ELSEIF FLAG:(50 + ROOMNO) >= 10
+					RETURN 11
+				ELSE
+					RETURN 10
+				ENDIF
+			ELSE
+				RETURN 2
+			ENDIF
+		ELSE
+			RETURN 1
+		ENDIF
+	;遠い
+	ELSEIF NEXTFLAG == 0
+		;侵入経験あり
+		IF FLAG:(600 + ROOMNO) > 0
+			RETURN 2
+		ELSE
+			RETURN 0
+		ENDIF
+	ELSE
+		;想定外
+		RETURN 0
+	ENDIF
+	
+;=================================================
+;部屋枠を表示
+;TYPE パターン
+;	0:非表示（未探索で隣接じゃない）
+;	1:グレー（未探索で隣接している）
+;	2:白（探索済みで隣接していない）
+;	10～:カラー（探索済みで隣接している、部屋の汚染度で色変化）
+;	20～:太枠、カラー（現在地、部屋の汚染度で色変化）
+;PART 部位（0:左上　1:上　2:右上　3:左　4:右　5:左下　6:下　7:右下）
+;=================================================
+@PRINT_ROOMWALL(TYPE, PART)
+#DIM TYPE
+#DIM PART
+
+	;---色---
+	SELECTCASE TYPE
+		CASE 1
+			SETCOLOR 0x333333
+		CASE 2
+			RESETCOLOR
+		CASE 10,20
+			;四隅
+			IF PART == 0 || PART == 2 || PART == 5 || PART == 7
+				SETCOLOR BARCOLORSET("青")
+			;現在地なら
+			ELSEIF TYPE == 20
+				;SETCOLOR 0xFFFF10
+				SETCOLOR BARCOLORSET("青")
+			ELSE
+				RESETCOLOR
+			ENDIF
+		CASE 11,21
+			IF PART == 0 || PART == 2 || PART == 5 || PART == 7
+				SETCOLOR BARCOLORSET("緑")
+			;現在地なら
+			ELSEIF TYPE == 21
+				;SETCOLOR 0xFFFF10
+				SETCOLOR BARCOLORSET("緑")
+			ELSE
+				RESETCOLOR
+			ENDIF
+		CASE 12,22
+			IF PART == 0 || PART == 2 || PART == 5 || PART == 7
+				SETCOLOR BARCOLORSET("黄")
+			;現在地なら
+			ELSEIF TYPE == 22
+				;SETCOLOR 0xFFFF10
+				SETCOLOR BARCOLORSET("黄")
+			ELSE
+				RESETCOLOR
+			ENDIF
+		CASE 13,23
+			IF PART == 0 || PART == 2 || PART == 5 || PART == 7
+				SETCOLOR BARCOLORSET("紫")
+			;現在地なら
+			ELSEIF TYPE == 23
+				;SETCOLOR 0xFFFF10
+				SETCOLOR BARCOLORSET("紫")
+			ELSE
+				RESETCOLOR
+			ENDIF
+		CASE 14,24
+			IF PART == 0 || PART == 2 || PART == 5 || PART == 7
+				SETCOLOR BARCOLORSET("赤")
+			;現在地なら
+			ELSEIF TYPE == 24
+				;SETCOLOR 0xFFFF10
+				SETCOLOR BARCOLORSET("赤")
+			ELSE
+				RESETCOLOR
+			ENDIF
+		CASEELSE
+			RESETCOLOR
+	ENDSELECT
+	;---表示---
+	SELECTCASE TYPE
+		CASE 0
+			IF PART == 0
+				PRINTFORM 　
+			ELSEIF PART == 1
+				PRINTFORM 　
+			ELSEIF PART == 2
+				PRINTFORM 　
+			ELSEIF PART == 3
+				PRINTFORM 　
+			ELSEIF PART == 4
+				PRINTFORM 　
+			ELSEIF PART == 5
+				PRINTFORM 　
+			ELSEIF PART == 6
+				PRINTFORM 　
+			ELSEIF PART == 7
+				PRINTFORM 　
+			ENDIF
+		CASE 1 TO 19
+			IF PART == 0
+				PRINTFORM ┌
+			ELSEIF PART == 1
+				PRINTFORM ─
+			ELSEIF PART == 2
+				PRINTFORM ┐
+			ELSEIF PART == 3
+				PRINTFORM │
+			ELSEIF PART == 4
+				PRINTFORM │
+			ELSEIF PART == 5
+				PRINTFORM └
+			ELSEIF PART == 6
+				PRINTFORM ─
+			ELSEIF PART == 7
+				PRINTFORM ┘
+			ENDIF
+		CASE 20 TO 29
+			IF PART == 0
+				PRINTFORM ┏
+			ELSEIF PART == 1
+				;PRINTFORM ＝
+				PRINTFORM ━
+			ELSEIF PART == 2
+				PRINTFORM ┓
+			ELSEIF PART == 3
+				;PRINTFORM ∥
+				PRINTFORM ┃
+			ELSEIF PART == 4
+				;PRINTFORM ∥
+				PRINTFORM ┃
+			ELSEIF PART == 5
+				PRINTFORM ┗
+			ELSEIF PART == 6
+				;PRINTFORM ＝
+				PRINTFORM ━
+			ELSEIF PART == 7
+				PRINTFORM ┛
+			ENDIF
+	ENDSELECT
+	RESETCOLOR
+
+;=================================================
+;ツールチップを埋め込み
+;部屋番号に対応した手書きメモの内容
+;情報交換・雑談で取得した情報をツールチップに埋め込みます
+;部屋番号にマウスオーバーで情報が見られるように
+
+; ARG 現在の表示行
+;=================================================
+@PRINT_MAP_SET_TOOLTIP(ARG)
+#DIM  LCOUNT, 2
+#DIM  ROOM_NO
+#DIM  TOOLTIP_MATCH_COUNT
+#DIM  TAGSPRIT_COUNT
+#DIMS TAGSPRIT_TEXT, VARSIZE("RESULTS")
+#DIMS CUSTOM_TEXT
+#DIMS SPLIT_TEXT
+#DIMS TOOLTIP_MESSAGE, 5
+
+	VARSET TOOLTIP_MATCH_COUNT
+	VARSET CUSTOM_TEXT
+	VARSET SPLIT_TEXT
+	
+	; ツールチップのディレイは短めに設定
+	TOOLTIP_SETDELAY 75
+
+	; ツールチップ用メッセージを読み込んでおく
+	FOR LCOUNT:0, 0, 5
+		CALL PRINT_MAP_CREATE_TOOLTIP_MESSAGE(((ARG / 4) * 5) + 1 + (LCOUNT:0))
+		TOOLTIP_MESSAGE:(LCOUNT:0) = %CUSTOM_TEXT%%RESULTS%
+	NEXT
+	
+	; 寸前に表示された文章を取得&分割
+	HTML_TAGSPLIT @"%HTML_GETPRINTEDSTR(0)%"
+	; 処理中にRESULTが別の値になる可能性を考慮して待避
+	TAGSPRIT_COUNT = RESULT
+	FOR (LCOUNT:0), 0, TAGSPRIT_COUNT
+		TAGSPRIT_TEXT:(LCOUNT:0) = %RESULTS:(LCOUNT:0)%
+;		PRINTFORML %TAGSPRIT_TEXT:(LCOUNT:0)%
+	NEXT
+	
+	; 先にbuttonタグにtitleを付けておく
+	FOR LCOUNT:0, 0, TAGSPRIT_COUNT
+		; buttonタグ以外はそのまま(閉じタグもそのまま出力)
+		IF STRFIND(TAGSPRIT_TEXT:(LCOUNT:0), "button") == -1 || STRFIND(TAGSPRIT_TEXT:(LCOUNT:0), "/button") != -1
+			CUSTOM_TEXT = %CUSTOM_TEXT%%TAGSPRIT_TEXT:(LCOUNT:0)%
+		
+		; buttonタグは処理する
+		ELSE
+			;valueに設定されている値を取得(部屋番号)
+			REPLACE TAGSPRIT_TEXT:(LCOUNT:0), "<button value='", ""
+			REPLACE RESULTS, "'>", ""
+			ROOM_NO = TOINT(RESULTS)
+			
+			; 有効な部屋番号ではない場合 そのままのテキストを出力
+			IF !(ROOM_NO >= 1 && ROOM_NO <= 30)
+				CUSTOM_TEXT = %CUSTOM_TEXT%%TAGSPRIT_TEXT:(LCOUNT:0)%
+				
+			; 有効な部屋番号の場合、必要なツールチップ情報を埋め込む
+			ELSE
+				REPLACE TAGSPRIT_TEXT:(LCOUNT:0), ">", ""
+				CUSTOM_TEXT = %CUSTOM_TEXT%%RESULTS%
+				CUSTOM_TEXT = %CUSTOM_TEXT% title='
+				
+				
+				CALL PRINT_MAP_CREATE_TOOLTIP_MESSAGE(ROOM_NO)
+				CUSTOM_TEXT = %CUSTOM_TEXT%%RESULTS%
+
+				CUSTOM_TEXT = %CUSTOM_TEXT%'>
+			ENDIF
+		ENDIF
+	NEXT
+	
+	; 数字にのみツールチップを配置すると、狭くて選択が難しいので枠にも埋め込む
+	; HTML_PRINTをタグ分離して文字数カウントして云々をすると
+	; 解りにくくなる上長ったらしくなるので力技で実装
+	FOR LCOUNT:0, 0, STRLENSU(CUSTOM_TEXT)
+		SUBSTRINGU CUSTOM_TEXT, LCOUNT:0, 1
+		
+		; 行数によって分岐
+		SELECTCASE ARG
+		; 数字のない行
+		CASE 0, 4, 8, 12, 16, 20, 2, 6, 10, 14, 18, 22
+			IF GROUPMATCH(RESULTS, "┌", "─", "┐", "┏", "━", "┓", "└", "─", "┘", "┗", "━", "┛", "　")
+				SELECTCASE TOOLTIP_MATCH_COUNT
+				CASE 1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15, 17, 18, 19
+					SPLIT_TEXT = %SPLIT_TEXT%<nonbutton title='%TOOLTIP_MESSAGE:(TOOLTIP_MATCH_COUNT / 4)%'>
+					SPLIT_TEXT = %SPLIT_TEXT%%RESULTS%
+					SPLIT_TEXT = %SPLIT_TEXT%</nonbutton>
+				CASEELSE
+					SPLIT_TEXT = %SPLIT_TEXT%%RESULTS%
+				ENDSELECT
+				TOOLTIP_MATCH_COUNT++
+			ELSE
+				SPLIT_TEXT = %SPLIT_TEXT%%RESULTS%
+			ENDIF
+			
+		; 数字のある行
+		CASE 1, 5, 9, 13, 17, 21
+			IF GROUPMATCH(RESULTS, "│", "┃", "─", "　")
+				SELECTCASE TOOLTIP_MATCH_COUNT
+				CASE 1, 2, 4, 5, 7, 8, 10, 11, 13, 14
+					SPLIT_TEXT = %SPLIT_TEXT%<nonbutton title='%TOOLTIP_MESSAGE:(TOOLTIP_MATCH_COUNT / 3)%'>
+					SPLIT_TEXT = %SPLIT_TEXT%%RESULTS%
+					SPLIT_TEXT = %SPLIT_TEXT%</nonbutton>
+				CASEELSE
+					SPLIT_TEXT = %SPLIT_TEXT%%RESULTS%
+				ENDSELECT
+				TOOLTIP_MATCH_COUNT++
+			ELSE
+				SPLIT_TEXT = %SPLIT_TEXT%%RESULTS%
+			ENDIF
+			
+		; その他の行
+		CASEELSE
+			SPLIT_TEXT = %SPLIT_TEXT%%RESULTS%
+		ENDSELECT
+	NEXT
+
+	; 実際に表示
+	CLEARLINE 1
+	CALL PRINT_MAP_DECODE_TOOLTIP_MESSAGE(SPLIT_TEXT)
+	HTML_PRINT @"%RESULTS%"
+;	PRINTFORML @"%SPLIT_TEXT%"
+;	HTML_PRINT @"%SPLIT_TEXT%"
+
+;=================================================
+;ツールチップ用のメッセージを作成
+; ARG 部屋番号
+;=================================================
+@PRINT_MAP_CREATE_TOOLTIP_MESSAGE(ARG)
+#DIM  LCOUNT
+#DIMS CUSTOM_TEXT
+#DIM  RDATA, 100, 4
+#DIM  RDATA_MATCH_COUNT
+
+	VARSET CUSTOM_TEXT
+	
+	; 有効な部屋番号ではない場合 空テキストを返す
+	IF !(ARG >= 1 && ARG <= 30)
+		RESULTS = ""
+	ELSE
+		IF SAVESTR:(300 + ARG) != ""
+			CUSTOM_TEXT = %CUSTOM_TEXT%■メモ\n
+			CUSTOM_TEXT = %CUSTOM_TEXT%%SAVESTR:(300 + ARG)%\n\n
+		ENDIF
+
+		; 手書き地図自動書き込みパッチに合わせて必要なデータをロード
+		CALL ROOMREPORT_RDATA_LOAD(RDATA)
+					
+		; この部屋の情報取得数をチェック
+		VARSET RDATA_MATCH_COUNT
+		FOR LCOUNT, 0, 100
+			SIF RDATA:LCOUNT:1 == ARG
+				RDATA_MATCH_COUNT++
+		NEXT
+					
+		; 情報あり
+		IF RDATA_MATCH_COUNT
+			CUSTOM_TEXT = %CUSTOM_TEXT%■取得情報\n
+			FOR LCOUNT, 0, 100
+				IF RDATA:LCOUNT:1 == ARG
+					CALL ROOMREPORT_LISTMESSAGE(RDATA:LCOUNT:0, RDATA:LCOUNT:1, RDATA:LCOUNT:2)
+					SIF RESULT
+						CUSTOM_TEXT = %CUSTOM_TEXT%%RESULTS%\n
+				ENDIF
+			NEXT
+		ENDIF
+		
+		; 情報なし + 手書きメモもなし
+		IF RDATA_MATCH_COUNT == 0 && SAVESTR:(300 + ARG) == ""
+			CUSTOM_TEXT = %CUSTOM_TEXT%情報はありません
+		ENDIF
+	
+		; マップ表示に使われる予約語を一時的に別文字に
+		; 値は直接RESULTSに代入される
+		CALL PRINT_MAP_ENCODE_TOOLTIP_MESSAGE(CUSTOM_TEXT)
+	ENDIF
+
+;=================================================
+;ツールチップ用のメッセージをエンコード
+;マップ表示に使われる文字がメッセージ含まれるとまずい為
+;ARGS エンコード前メッセージ
+;=================================================
+@PRINT_MAP_ENCODE_TOOLTIP_MESSAGE(ARGS)
+#DIM LCOUNT
+#DIMS CUSTOM_TEXT
+	VARSET CUSTOM_TEXT
+	
+	FOR LCOUNT:0, 0, STRLENSU(ARGS)
+		
+		; 予約文字が発見されたら別の文字(おそらくメモに入力されないであろう文字コード)に置き換える
+		SUBSTRINGU ARGS, LCOUNT:0, 1
+		IF GROUPMATCH(RESULTS, "┌", "─", "┐", "┏", "━", "┓", "└", "─", "┘", "┗", "━", "┛", "│", "┃", "　")
+			CUSTOM_TEXT = %CUSTOM_TEXT%%UNICODE(ENCODETOUNI(RESULTS) - 0X1400)%
+		ELSE
+			CUSTOM_TEXT = %CUSTOM_TEXT%%RESULTS%
+		ENDIF
+	NEXT
+
+	RESULTS = %CUSTOM_TEXT%
+
+;=================================================
+;ツールチップ用のメッセージをデコード
+;マップ表示に使われる文字がメッセージ含まれるとまずい為
+;ARGS デコード前メッセージ
+;=================================================
+@PRINT_MAP_DECODE_TOOLTIP_MESSAGE(ARGS)
+#DIM LCOUNT
+#DIMS CUSTOM_TEXT
+	VARSET CUSTOM_TEXT
+	
+	FOR LCOUNT:0, 0, STRLENSU(ARGS)
+		
+		; 一時置き換えされていた文字を元に戻す
+		SUBSTRINGU ARGS, LCOUNT:0, 1
+		IF GROUPMATCH(RESULTS, "ᄌ", "ᄀ", "ᄐ", "ᄏ", "ᄁ", "ᄓ", "ᄔ", "ᄀ", "ᄘ", "ᄗ", "ᄁ", "ᄛ", "ᄂ", "ᄃ", "ᰀ")
+			CUSTOM_TEXT = %CUSTOM_TEXT%%UNICODE(ENCODETOUNI(RESULTS) + 0X1400)%
+		ELSE
+			CUSTOM_TEXT = %CUSTOM_TEXT%%RESULTS%
+		ENDIF
+	NEXT
+
+	RESULTS = %CUSTOM_TEXT%

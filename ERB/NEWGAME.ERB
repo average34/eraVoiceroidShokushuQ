@@ -1,0 +1,258 @@
+﻿;ニューゲーム
+;マップ初期化・手書きマップ初期化・敵の初期化・キャラの回復
+
+@NEWGAME
+
+;LOCAL
+;0	LOOP
+;1	ラスボス位置
+;2	中ボス位置
+;10	LOOP2
+
+
+;MAP関係初期化
+
+;こんぼう入手は必ず主人公の初期配置と同じ場所
+FLAG:100 = FLAG:5
+
+;イベント配置リセット
+FOR LOCAL:0, 101, 300
+	FLAG:(LOCAL:0) = RAND:30 + 1
+NEXT
+
+;重要な回復ポイントや中毒をわざと増やすのに必要なイベントは四隅を避ける
+FLAG:133 = GET_CENTER_ROOM()
+FLAG:139 = GET_CENTER_ROOM()
+FLAG:160 = GET_CENTER_ROOM()
+FLAG:177 = GET_CENTER_ROOM()
+FLAG:178 = GET_CENTER_ROOM()
+
+;一部の固定イベントは他のイベントの位置に影響を受ける
+DO
+	FLAG:134 = GET_CENTER_ROOM()
+LOOP (FLAG:134 == (FLAG:133 % 100))
+DO
+	FLAG:135 = RAND:30 + 1
+LOOP (FLAG:135 == (FLAG:133 % 100) || FLAG:135 == (FLAG:134 % 100))
+
+DO
+	FLAG:202 = RAND:30 + 1
+LOOP (FLAG:202 == (FLAG:201 % 100))
+DO
+	FLAG:203 = RAND:30 + 1
+LOOP (FLAG:203 == (FLAG:201 % 100) || FLAG:203 == (FLAG:202 % 100))
+DO
+	FLAG:204 = RAND:30 + 1
+LOOP (FLAG:204 == (FLAG:201 % 100) || FLAG:204 == (FLAG:202 % 100) || FLAG:204 == (FLAG:203 % 100))
+DO
+	FLAG:205 = RAND:30 + 1
+LOOP (FLAG:205 == (FLAG:201 % 100) || FLAG:205 == (FLAG:202 % 100) || FLAG:205 == (FLAG:203 % 100) || FLAG:205 == (FLAG:204 % 100))
+DO
+	FLAG:207 = RAND:30 + 1
+LOOP (FLAG:207 == (FLAG:201 % 100) || FLAG:207 == (FLAG:202 % 100) || FLAG:207 == (FLAG:203 % 100) || FLAG:207 == (FLAG:204 % 100) || FLAG:207 == (FLAG:205 % 100))
+
+;遺品イベントは初期配置しない
+FOR LOCAL:0, 190, 201
+	FLAG:(LOCAL:0) = 0
+NEXT
+
+;全部屋の初期汚染度を10に設定
+FOR LOCAL:0, 51, 81
+	FLAG:(LOCAL:0) = 10
+NEXT
+
+
+;各部屋の侵入経験リセット
+FOR LOCAL:0, 601, 631
+	FLAG:(LOCAL:0) = 0
+NEXT
+
+;手書きマップリセット
+FOR LOCAL:0, 1001, 1031
+	FLAG:(LOCAL:0) = 0
+NEXT
+FOR LOCAL:0, 300, 341
+	SAVESTR:(LOCAL:0) '= ""
+NEXT
+
+IF RAND:2 == 1
+	CALL INITIALIZE_SET_ROOT_ORIGINAL
+ELSE
+	CALL INITIALIZE_SET_ROOT_RANDOM
+ENDIF
+
+
+;DAをペット（IDは0）を除いてリセット DAは100が限界
+FOR LOCAL:0, FLAG:1, 0, -1
+	FOR LOCAL:10, 0, 100
+		DA:(LOCAL:0):(LOCAL:10) = 0
+	NEXT
+NEXT
+
+;履歴をリセット
+FOR LOCAL:0, 8998, 9500
+	FLAG:(LOCAL:0) = 0
+NEXT
+FOR LOCAL:0, 101, 200
+	SAVESTR:(LOCAL:0) '= ""
+NEXT
+
+;敵の数を減らす ペットに使用するID0は残るので残存数1
+FLAG:1 = 1
+
+;★EX系にクイーン、ガーディアン、バイオプラントはいない
+
+IF FLAG:997 == 0 && FLAG:999 == 0
+
+	;ラスボスとお供を４隅のどこかに配置
+	LOCAL:1 = RAND:4
+	IF LOCAL:1 == 0
+		LOCAL:1 = 1
+	ELSEIF LOCAL:1 == 1
+		LOCAL:1 = 5
+	ELSEIF LOCAL:1 == 2
+		LOCAL:1 = 26
+	ELSE
+		LOCAL:1 = 30
+	ENDIF
+
+	;中ボス配置
+	LOCAL:2 = RAND:3
+	IF LOCAL:2 == 0
+		LOCAL:2 = 1
+	ELSEIF LOCAL:2 == 1
+		LOCAL:2 = 5
+	ELSE
+		LOCAL:2 = 26
+	ENDIF
+	;ラスボスと位置が被っていたら30に移動　（要するにラスボス以外の４隅から３択となる）
+	IF LOCAL:2 == LOCAL:1
+		LOCAL:2 = 30
+	ENDIF
+ENDIF
+
+;敵キャラデータ作成
+
+IF FLAG:997 == 0 && FLAG:999 == 0
+	IF FLAG:4 >= 0
+		CALL CREATE_ENEMY(1, LOCAL:1, FLAG:5)
+		CALL CREATE_ENEMY(2, LOCAL:1, FLAG:5)
+		CALL CREATE_ENEMY(2, LOCAL:1, FLAG:5)
+	ENDIF
+	CALL CREATE_ENEMY(3, LOCAL:2, FLAG:5)
+
+	IF FLAG:998 == 0
+		;バイオプラントは移動しないので、ボスと被らないように、4隅を避ける
+		CALL CREATE_ENEMY(4, GET_CENTER_ROOM(), FLAG:5)
+		CALL CREATE_ENEMY(4, GET_CENTER_ROOM(), FLAG:5)
+	ENDIF
+ENDIF
+
+;以下、雑魚キャラ追加
+;★EXモードだと数は減るが、上級モンスターやヒュプノが初期状態から闊歩する
+IF FLAG:999
+	CALL CREATE_ENEMY(6, 0, FLAG:5)
+	CALL CREATE_ENEMY(8, 0, FLAG:5)
+	CALL CREATE_ENEMY(45, 0, FLAG:5)
+	CALL CREATE_ENEMY(10, 0, FLAG:5)
+	CALL CREATE_ENEMY(12, 0, FLAG:5)
+	CALL CREATE_ENEMY(14, 0, FLAG:5)
+	CALL CREATE_ENEMY(15, 0, FLAG:5)
+	CALL CREATE_ENEMY(16, 0, FLAG:5)
+	CALL CREATE_ENEMY(17, 0, FLAG:5)
+	CALL CREATE_ENEMY(98, 0, FLAG:5)
+;★ここまで
+ELSEIF FLAG:998
+	FOR LOCAL:0, 0, 13
+		CALL CREATE_ENEMY(FLAG:998, 0, FLAG:5)
+	NEXT
+;トラップモードはシェイプシフターも最初からの敵もなし
+ELSEIF FLAG:997 == 0
+;パッチにより大量に敵が追加+種類により湧きの偏りのコンフィグが可能なため初期配置はシェイプシフターのみで残りはREPOPで処理
+	CALL CREATE_ENEMY(17, 0, FLAG:5)
+ENDIF
+
+IF FLAG:4 >= 2
+	;HARD以上ならドッペルを初期配置
+	CALL CREATE_ENEMY(18, 0, FLAG:5)
+ENDIF
+
+
+
+
+
+
+
+;キャラリセット
+
+;娘が生まれた際NPC予定の娘を虚空に埋めているので消す
+;HPMPCPEPNP汚れリタイア拘束丸呑み戦意喪失とどめを刺した相手魔法の拘束具をリセットする
+;HPMPCPEPはいじめすぎた時対策に最低1にしておく
+;触手服や寄生妊娠は回復しない 開始1ターン目で即死する可能性があるが回復しない
+;初期位置はランダムに
+FOR LOCAL:0, CHARANUM - 1, 0, -1
+	IF CFLAG:(LOCAL:0):4 == 59
+		DELCHARA LOCAL:0
+	ELSE
+		BASE:(LOCAL:0):0 = MAXBASE:(LOCAL:0):0
+		IF BASE:(LOCAL:0):0 == 0
+			BASE:(LOCAL:0):0 = 1
+			MAXBASE:(LOCAL:0):0 = 1
+		ENDIF
+		BASE:(LOCAL:0):1 = MAXBASE:(LOCAL:0):1
+		IF BASE:(LOCAL:0):1 == 0
+			BASE:(LOCAL:0):1 = 1
+			MAXBASE:(LOCAL:0):1 = 1
+		ENDIF
+		;CPのみ、全裸だったとき服装をいつもの服にしてはいてない解除するので処理を挟む
+		IF BASE:(LOCAL:0):2 == 0
+			CFLAG:(LOCAL:0):44 = 0
+			CFLAG:(LOCAL:0):504 = 0
+		ENDIF
+		;靴下のみになっている場合、いつもの服に戻す
+		IF CFLAG:(LOCAL:0):501 == 101
+			CFLAG:(LOCAL:0):501 = 0
+		ENDIF
+		BASE:(LOCAL:0):2 = MAXBASE:(LOCAL:0):2
+		IF BASE:(LOCAL:0):2 == 0
+			BASE:(LOCAL:0):2 = 1
+			MAXBASE:(LOCAL:0):2 = 1
+		ENDIF
+		
+		BASE:(LOCAL:0):3 = MAXBASE:(LOCAL:0):3
+		IF BASE:(LOCAL:0):3 == 0
+			BASE:(LOCAL:0):3 = 1
+			MAXBASE:(LOCAL:0):3 = 1
+		ENDIF
+		BASE:(LOCAL:0):5 = 0
+		BASE:(LOCAL:0):6 = 0
+		CFLAG:(LOCAL:0):2 = 0
+		CFLAG:(LOCAL:0):10 = 0
+		CFLAG:(LOCAL:0):20 = 0
+		CFLAG:(LOCAL:0):21 = 0
+		CFLAG:(LOCAL:0):29 = 0
+		CFLAG:(LOCAL:0):103 = 0
+		CFLAG:(LOCAL:0):504 = 0
+		CFLAG:(LOCAL:0):4 = GET_CENTER_ROOM()
+	ENDIF
+	
+NEXT
+
+
+;主人公の位置を初期位置とする
+FLAG:5 = CFLAG:1:4
+
+;初期部屋の侵入経験をありにする
+FLAG:(600 + FLAG:5) = 1
+
+;PT解散
+FLAG:10 = 0
+FLAG:11 = 0
+
+
+;日数リセット
+TIME:0 = 0
+DAY = 1
+
+;処理全部投げ捨ててショップへ飛ぶ
+JUMP SHOW_SHOP

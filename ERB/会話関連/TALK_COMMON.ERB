@@ -1,0 +1,259 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;遭遇した相手の見た目
+;ARG:0	遭遇相手のキャラID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@TALK_LOOK(ARG)
+;-MEMO-
+;遭遇した相手の見た目(服がボロボロとか寄生されてるとか)を表示する
+;探索以外でも呼び出せるように「主人公達が探索していると～」の表示は行わない←呼び出し側で表示してもらう
+;表示行数指定：無し
+
+
+
+LOCALS = 
+
+
+;体力気力
+IF CFLAG:(ARG):戦意喪失 == 0 && CFLAG:(ARG):睡眠 == 0
+	IF TALK_LOWHP(ARG) && TALK_LOWMP(ARG)
+		LOCALS += "体力(HP)と気力(MP)を削られ、"
+	ELSEIF TALK_LOWHP(ARG)
+		LOCALS += "体力(HP)を削られ、"
+	ELSEIF TALK_LOWMP(ARG)
+		LOCALS += "気力(MP)を削られ、"
+	ENDIF
+ENDIF
+
+;服
+IF BASE:(ARG):CP <= 0
+	LOCALS += "全裸にされ、"
+ELSEIF BASE:(ARG):CP <= MAXBASE:(ARG):CP / 2
+	LOCALS += "服をボロボロにされ、"
+ENDIF
+
+SIF GET_PENIS(ARG) & 3
+	LOCALS += "ふたなりにされ、"
+	
+SIF (CFLAG:(ARG):22 && CFLAG:(ARG):36 == 0) || CFLAG:(ARG):152 || CFLAG:(ARG):162
+	LOCALS += "異形に寄生され、"
+
+;母乳粘度は垂れ流し状態でないと他人にわからないので、母乳体質4以上かつ自由に動けない状態(拘束、眠り、戦意喪失)でのみ表示する
+IF TALENT:(ARG):130 >= 4 && (CFLAG:(ARG):睡眠 > 0 || CFLAG:(ARG):戦意喪失 > 0 || CFLAG:(ARG):魔法の拘束具 > 0)
+	SELECTCASE TALENT:(ARG):220
+	CASE 0
+	CASE 1
+	CASE 2
+		LOCALS += "トロトロの"
+	CASE 3
+		LOCALS += "粘り気のある濃い"
+	CASE 4
+		LOCALS += "練乳状のとても濃い"
+	CASE 5
+		LOCALS += "半固形物まじりの特濃"
+	CASE IS >= 6
+		LOCALS += "全てヨーグルト状の超特濃"
+	CASEELSE
+	ENDSELECT
+ENDIF
+
+IF TALENT:(ARG):130 >= 4 && (CFLAG:(ARG):睡眠 > 0 || CFLAG:(ARG):戦意喪失 > 0 || CFLAG:(ARG):魔法の拘束具 > 0)
+	LOCALS += "母乳を乳首から垂れ流し、"
+ELSEIF TALENT:(ARG):130 >= 1
+	LOCALS += "母乳のせいで胸が張り、"
+ENDIF
+	
+IF LOCALS != ""
+	IF CFLAG:(ARG):睡眠 > 0
+		IF CFLAG:(ARG):魔法の拘束具 > 0
+			PRINTFORML %CALLNAME:(ARG)%は%LOCALS%眠ったまま拘束されている。
+		ELSE
+			PRINTFORML %CALLNAME:(ARG)%は%LOCALS%目を閉じて寝息を立てている。
+		ENDIF
+	ELSEIF CFLAG:(ARG):戦意喪失 > 0
+		IF CFLAG:(ARG):魔法の拘束具 > 0
+			PRINTFORML %CALLNAME:(ARG)%は%LOCALS%ぐったりした状態で拘束されている…
+		ELSE
+			PRINTFORML %CALLNAME:(ARG)%は%LOCALS%気力が尽きた状態で打ち捨てられている…
+			CALL PRINT_MESSAGE(1, 101, ARG, CALLNAME:1, CALLNAME:(ARG), 1)
+		ENDIF
+		
+	ELSE
+		IF CFLAG:(ARG):魔法の拘束具 > 0
+			PRINTFORML %CALLNAME:(ARG)%は%LOCALS%困った様子で拘束されている…
+		ELSE
+			PRINTFORML %CALLNAME:(ARG)%は%LOCALS%困っているようだ…
+		ENDIF
+	ENDIF
+ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;逆襲チェック
+;ARG:0	対象キャラ
+;RETURN	0:何もなし	1:逆襲された
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@CHECK_COUNTER(ARG:0)
+;友好度が0以上あるなら襲われない催眠状態も大丈夫
+SIF CFLAG:(ARG:0):5 >= 0 || CFLAG:(ARG:0):43
+	RETURN 0
+
+;友好度が低すぎる＝これまで色々と苛めてきた場合、問答無用で襲われる場合アリ
+IF RAND:100 < (20 + LIMIT((-1 * CFLAG:(ARG:0):5), 0, 50))
+	CALL PRINT_MESSAGE(ARG:0, 142, 0, CALLNAME:1, CALLNAME:(ARG:0), 0)
+	CALL PRINT_MESSAGE(1, 141, ARG:0, CALLNAME:1, CALLNAME:(ARG:0), 0)
+	;アイテムをランダムに選択　対象のアイテムを持っている場合、（貴重品だろうと）１個持っていかれる
+	;持っていない（もしくはデータが存在しないアイテムの）場合、HPやCPにダメージを与えてくる
+	LOCAL:1 = RAND:64 + 1
+	IF ITEM:(LOCAL:1)
+		CALL PRINT_MESSAGE(1, 111, ARG:0, CALLNAME:1, CALLNAME:(ARG:0), LOCAL:1)
+		CALL ADD_ITEM(LOCAL:1, -1, 0)
+		;腹いせが成功してちょっと満足
+		CFLAG:(ARG:0):5 += 5
+	ELSE
+		CALL PRINT_MESSAGE(1, 112, ARG:0, CALLNAME:1, CALLNAME:(ARG:0))
+		;全員のHP・CPが20％低下
+		BASE:1:0 -= MAXBASE:1:0 / 5
+		SIF BASE:1:0 < 0
+			BASE:1:0 = 0
+		BASE:1:3 -= MAXBASE:1:3 / 5
+		SIF BASE:1:3 < 0
+			BASE:1:3 = 0
+		IF FLAG:10
+			BASE:(FLAG:10):0 -= MAXBASE:(FLAG:10):0 / 5
+			SIF BASE:(FLAG:10):0 < 0
+				BASE:(FLAG:10):0 = 0
+			BASE:(FLAG:10):3 -= MAXBASE:(FLAG:10):3 / 5
+			SIF BASE:(FLAG:10):3 < 0
+				BASE:(FLAG:10):3 = 0
+		ENDIF
+		IF FLAG:11
+			BASE:(FLAG:11):0 -= MAXBASE:(FLAG:11):0 / 5
+			SIF BASE:(FLAG:11):0 < 0
+				BASE:(FLAG:11):0 = 0
+			BASE:(FLAG:11):3 -= MAXBASE:(FLAG:11):3 / 5
+			SIF BASE:(FLAG:11):3 < 0
+				BASE:(FLAG:11):3 = 0
+		ENDIF
+		;腹いせが成功してちょっと満足
+		CFLAG:(ARG:0):5 += 5
+	ENDIF
+	RETURN 1
+ELSE
+	RETURN 0
+ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;気力ピンチの判定　※式中関数
+;ARG:0	キャラID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@TALK_LOWMP(ARG)
+#FUNCTION
+
+IF BASE:(ARG):MP == 0
+	;尽きてる
+	RETURNF 3
+ELSEIF BASE:(ARG):MP <= MAXBASE:(ARG):MP / 3
+	;3分の1以下
+	RETURNF 2
+ELSEIF BASE:(ARG):MP <= MAXBASE:(ARG):MP / 2
+	;半分以下
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;体力ピンチの判定　※式中関数
+;ARG:0	キャラID
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@TALK_LOWHP(ARG)
+#FUNCTION
+
+IF BASE:(ARG):HP == 0
+	;尽きてる
+	RETURNF 3
+ELSEIF BASE:(ARG):HP <= MAXBASE:(ARG):HP / 3
+	;3分の1以下
+	RETURNF 2
+ELSEIF BASE:(ARG):HP <= MAXBASE:(ARG):HP / 2
+	;半分以下
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;ギフトアイテム選定
+;ARG:0	ランク
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@GIFT_ITEM(ARG = 0)
+
+IF ARG == 0
+	;普通
+	SELECTCASE RAND:100
+		CASE 0 TO 4
+			LOCAL = 1
+		CASE 5 TO 9
+			LOCAL = 2
+		CASE 10 TO 14
+			LOCAL = 10
+		CASE 15 TO 19
+			LOCAL = 11
+		CASE 20 TO 29
+			LOCAL = 20
+		CASE 30 TO 39
+			LOCAL = 24
+		CASE 40 TO 59
+			LOCAL = 50
+		CASE 60 TO 79
+			LOCAL = 52
+		CASE 80 TO 89
+			LOCAL = 54
+		CASE 90 TO 94
+			LOCAL = 55
+		CASE 95 TO 99
+			LOCAL = 56
+		CASEELSE
+			LOCAL = 50
+	ENDSELECT
+
+ELSEIF ARG >= 1
+	;良い
+	SELECTCASE RAND:100
+		CASE 0 TO 4
+			LOCAL = 3
+		CASE 5 TO 9
+			LOCAL = 4
+		CASE 10 TO 14
+			LOCAL = 12
+		CASE 15 TO 19
+			LOCAL = 13
+		CASE 20 TO 26
+			LOCAL = 21
+		CASE 27 TO 29
+			LOCAL = 22
+		CASE 30 TO 39
+			LOCAL = 25
+		CASE 40 TO 44
+			LOCAL = 28
+		CASE 45 TO 49
+			LOCAL = 29
+		CASE 50 TO 54
+			LOCAL = 30
+		CASE 55 TO 59
+			LOCAL = 31
+		CASE 60 TO 69
+			LOCAL = 51
+		CASE 70 TO 79
+			LOCAL = 53
+		CASE 80 TO 89
+			LOCAL = 57
+		CASE 90 TO 94
+			LOCAL = 58
+		CASE 95 TO 99
+			LOCAL = 59
+		CASEELSE
+			LOCAL = 51
+	ENDSELECT
+	
+ENDIF
+RETURN LOCAL
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡

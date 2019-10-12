@@ -1,0 +1,25 @@
+﻿;目潰し
+@FIX_PET_ACTION_206
+
+;威力
+PET:90 = 60
+;命中率
+PET:91 = 45
+;種別 0攻撃　1回復HP 2回復MP　3回復TP
+PET:92 = 0
+;対象全体フラグ
+PET:93 = 0
+;行動の回数　0なら1
+PET:94 = 1
+;特殊フラグ　コレに応じたEXTRA_PET_ACTIONが呼ばれるます
+PET:98 = 206
+;メイン処理回避フラグ　これ立てる場合は全部関数内で処理つくること。
+PET:99 = 0
+CALL PRINT_MESSAGE(-1, 400)
+
+@PET_EXTRA_ACTION_206
+
+PRINTFORML %SAVESTR:(PET:51)%をひるませた！
+DA:(PET:51):24 = 1
+DA:(PET:51):50 = 45
+

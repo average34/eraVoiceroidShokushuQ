@@ -1,0 +1,491 @@
+﻿
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  130    発生イベント:全快湧き水
+; / ARG:2    0    0:飲んだ 1:飲まない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_130_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「ふぅ、生き返るわね……」"
+	CALL ADD_RAND_MESSAGE, @"「っぷはぁ……なにこれおいしい……！」"
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「うめー！　元気百倍って感じだな！」"
+	ENDSELECT
+	
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  131    発生イベント:発情湧き水
+; / ARG:2    0    0:飲んだ 1:飲まない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_131_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"（急に身体が……　熱い♥　熱い……っ♥）"
+	CALL ADD_RAND_MESSAGE, @"「や、やば……♥　これ飲んじゃダメなやつだったかも……♥♥」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  132    発生イベント:ステUP湧き水
+; / ARG:2    0    0:飲んだ 1:飲まない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_132_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「不思議な水ね、力が湧いてくるみたい」"
+	CALL ADD_RAND_MESSAGE, @"「すごい！　今ならなんでも出来そう！」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  133    発生イベント:澄んだ泉
+; / ARG:2    0    0:飲んだ
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_133_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「綺麗な水が手に入るのは助かるわ」"
+	CALL ADD_RAND_MESSAGE, @"「水の確保は大事だからね」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  133    発生イベント:澄んだ泉
+; / ARG:2    1    1:泉に入った
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_133_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「冷たくて気持ちいい……」"
+	CALL ADD_RAND_MESSAGE, @"「ひゃっ……冷たいけど……なんか落ち着く……」"
+	CALL ADD_RAND_MESSAGE, @"「ふぁ～気持ちい～」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  133    発生イベント:澄んだ泉
+; / ARG:2    5    5:薬草取得
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_133_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 薬草のストック十分、もう持てない
+	IF ITEM:(73) == GET_ITEM_MAX(73)
+		CALL ADD_RAND_MESSAGE, @"「もうこの草は十分かな」"
+		CALL ADD_RAND_MESSAGE, @"「全部取らずに残しておこう」"
+	
+	; まだ持てる
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「使えそうね、これ」"
+		CALL ADD_RAND_MESSAGE, @"「この草は……！」"
+		
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ぬけめがない
+			CALL ADD_RAND_MESSAGE, @"「役に立ちそうな物があるじゃない」"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  134    発生イベント:白濁泉
+; / ARG:2    3    3:水に入った（速度アップ）
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_134_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「あ、ちょっとぬるぬるしているけど温かい」"
+	CALL ADD_RAND_MESSAGE, @"「見た目のわりにいい感じじゃない」"
+
+
+	CALL ADD_RAND_MESSAGE, @"「あら、意外。体にピースってやつ？」"
+	CALL ADD_RAND_MESSAGE, @"「今度は飲んでみようかしら？」"
+	CALL ADD_RAND_MESSAGE, @"「まあ、牛乳だって白いし」"
+
+	CALL ADD_RAND_MESSAGE, @"「この液体、どうして白い色なのかしら？」"
+	CALL ADD_RAND_MESSAGE, @"「なんだか気分爽快ね」"
+	CALL ADD_RAND_MESSAGE, @"「すっきりさわやか、ハイテンションってやつ？」"
+	CALL ADD_RAND_MESSAGE, @"「やる気が潤うわね」"
+
+		; 性格別 追加口上
+		SELECTCASE CFLAG:100
+			CASE 性格_おてんば
+				CALL ADD_RAND_MESSAGE, @"「元気が流れ込んでくる～」"
+				CALL ADD_RAND_MESSAGE, @"「すっきり、つるつる～」"
+
+			CASE 性格_きれもの
+				CALL ADD_RAND_MESSAGE, @"「予想は鮮やかに裏切られるものね。いつもこうだと良いのだけれど」"
+
+			CASE 性格_しあわせもの
+
+				CALL ADD_RAND_MESSAGE, @"「すっきり、つるつる～」"
+				CALL ADD_RAND_MESSAGE, @"「よみがえれ～、よみがえれ～、肌力～」"
+			CASE 性格_セクシーギャル
+				CALL ADD_RAND_MESSAGE, @"「よみがえれ～、よみがえれ～、肌力～」"
+			CASE 性格_のんきもの
+				CALL ADD_RAND_MESSAGE, @"「よみがえれ～、よみがえれ～、肌力～」"
+
+			CASE 性格_わがまま
+
+				CALL ADD_RAND_MESSAGE, @"「贅沢なひと時になったわ」"
+
+		ENDSELECT
+
+
+
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  135    発生イベント:不思議な泉
+; / ARG:2    0    0:水を飲んだ(HP・MP・EP全回復)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_135_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「すごいお酒……　ちょっとくらい持ち帰……　あれ？」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  137    発生イベント:壁触手
+; / ARG:2    2    1:触手に捕まった 2:回避した
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_137_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「まったく、油断も隙もあったもんじゃないわ」"
+	CALL ADD_RAND_MESSAGE, @"「壁や床にまで注意を払わないといけないなんて」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「残念、その程度予想済みよ」"
+	CASE 性格_ぬけめがない
+		CALL ADD_RAND_MESSAGE, @"「隙を突く動きはいいけど、それだけね」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  138    発生イベント:落とし穴
+; / ARG:2    1    1:穴に落ちた
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_138_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「う、嘘！？　落とし穴！？」"
+	CALL ADD_RAND_MESSAGE, @"「ゆ、床が急に……！」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  138    発生イベント:落とし穴
+; / ARG:2    2    2:回避した
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_138_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「危なかった、もう少しで落ちる所だったわ」"
+	CALL ADD_RAND_MESSAGE, @"「びっくりしたぁ……」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  140    発生イベント:荷物袋
+; / ARG:2    0    0:開けた 1:開けない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_140_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「誰かの落とし物かしら？」"
+	CALL ADD_RAND_MESSAGE, @"「こんなところに荷物袋……？」"
+	CALL ADD_RAND_MESSAGE, @"「持ち主が居ないって事は……そういうことかしら……お借りします」"
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「誰が落としたのかは知らないけれど、有効的に活用させてもらいましょう」"
+	CASE 性格_しあわせもの
+		CALL ADD_RAND_MESSAGE, @"「こんな所にアイテムが落ちてるなんて、きっと日頃の行いが良いのね」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「誰が落としたかわからないんだし、貰っちゃってもいいよね」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  140    発生イベント:荷物袋
+; / ARG:2    1    0:開けた 1:開けない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_140_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「やめときましょ、変な物でも入ってたら怖いし」"
+	CALL ADD_RAND_MESSAGE, @"「今動いたような……」"
+	CALL ADD_RAND_MESSAGE, @"「幾らなんでも怪しすぎるって……」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  141    発生イベント:荷物袋トラップ
+; / ARG:2    0    0:開けた 1:開けない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_141_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「て、敵っ！？　罠だったの！？」"
+	CALL ADD_RAND_MESSAGE, @"「そんな！？　嘘でしょ……！」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  141    発生イベント:荷物袋トラップ
+; / ARG:2    1    0:開けた 1:開けない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_141_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 発生イベント:荷物袋で処理
+	CALL KOJO_DEFAULT_200_140_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  143    発生イベント:不思議なガス
+; / ARG:2    5    5:テンションが下がった(TP=0)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_143_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「何か急に……　気が滅入って……」"
+	CALL ADD_RAND_MESSAGE, @"「あれ……どうしたんだろ……急にやる気が……」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  151    発生イベント:不意打ち
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_151(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「な、何！？」"
+	CALL ADD_RAND_MESSAGE, @"「不意打ち！？」"
+	CALL ADD_RAND_MESSAGE, @"「ど、どこから！？」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  152    発生イベント:C寄生淫蟲
+; / ARG:2    1    1:ふたなり化 2:既にふたなり 3:淫蟲を回避
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_152_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「い、嫌っ！？　離れなさい……っ！？」"
+	CALL ADD_RAND_MESSAGE, @"「ちょっと……！　なんでそんなところに……！？　離れてよ！」"
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  153    発生イベント:淫蟲肌
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_153(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「何よこいつら……　肌にまとわりついて……」"
+	CALL ADD_RAND_MESSAGE, @"「やだ……！　気持ち悪っ……」"
+RETURN 1
+
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  170    キュウリ畑
+; / ARG:2    3    食べさせられた
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_170(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「ここの植物はどうなってるのよ……」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「ただの植物だと思って油断したわ……」"
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「もう♪　積極的なキュウリさんですね♪」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「普通のキュウリだと思ったのに……」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  171    発生イベント:荷物袋トラップヒュプノ
+; / ARG:2    0    0:開けた 1:開けない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_171_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「な、何こいつ！？　どうやって入ってたの！？」"
+	CALL ADD_RAND_MESSAGE, @"「こんなの聞いてないわよ！？」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_がんこもの
+		CALL ADD_RAND_MESSAGE, @"「おのれ、狡猾な！」"
+	CASE 性格_がんばりや
+		CALL ADD_RAND_MESSAGE, @"「えっ！？　えええっ！？」"
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「この生き物、誰かが開けなければどうするつもりだったの？」"
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「しまった、罠か！」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「もうちょっと寝てなさい、ほらほら袋に戻って」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「う……　嘘……！？」"
+	CASE 性格_わがまま
+		CALL ADD_RAND_MESSAGE, @"「もっかい袋にもどんなさい！　ああこら出てくるな！」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  171    発生イベント:荷物袋トラップヒュプノ
+; / ARG:2    1    0:開けた 1:開けない
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_171_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 発生イベント:荷物袋で処理
+	CALL KOJO_DEFAULT_200_140_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  173    発生イベント:動物耳
+; / ARG:2    2    2:動物耳取得
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_173_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「えっ、ちょっと何これ！？　耳！？」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「可愛い耳が生えた！？」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  173    発生イベント:動物耳
+; / ARG:2    3    3:食べずに立ち去った
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_173_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「ちょっと食べる気にはなれないわ」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  173    発生イベント:動物耳
+; / ARG:2    4    4:動物耳喪失
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_173_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「ふぅ、元に戻ったわね」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「耳消えちゃったあ、可愛かったのになあ」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  173    発生イベント:動物耳
+; / ARG:2    5    5:HP回復
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_173_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「あら、思ったより美味しい」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  173    発生イベント:動物耳
+; / ARG:2    6    6:動物耳と尻尾取得
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_173_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「えっ、ちょっと何これ！？　耳！？尻尾まで！？」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「可愛い耳が生えた！？」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「あ、この耳と尻尾、動かせる」（ピコピコ）"
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「これは龍の尻尾か？」"
+	CASE 性格_わがまま
+		CALL ADD_RAND_MESSAGE, @"「もっともふもふした狐とかが良かったのに……」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  173    発生イベント:動物耳
+; / ARG:2    7    7:動物耳ともふ尻尾取得
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_173_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「えっ、ちょっと何これ！？　耳！？尻尾まで！？あ、ふかふかしてる」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_セクシーギャル
+		CALL ADD_RAND_MESSAGE, @"「可愛い耳が生えた！？」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「あ、この耳と尻尾、動かせる」（ピコピコ）"
+	CASE 性格_わがまま
+		CALL ADD_RAND_MESSAGE, @"「今は猫の気分なのに……。手入れ大変そうだし……」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  174    発生イベント:媚薬風呂
+; / ARG:2    1    1:落下した
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_174_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「うあぁぁっ！？　熱いっ！？　この水熱いぃっ！？」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「や……やだぁ……！？　この水、染みこんでくる……っ！？」"
+	ENDSELECT
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  175    発生イベント:白濁風呂
+; / ARG:2    1    1:落下した
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_175_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「放しなさい！　うあっ！？　何するのよ！？」"
+	CALL ADD_RAND_MESSAGE, @"「うっ……ぷあ……っ！　やめ……っ……！　くうぅ……っ……！」"
+	CALL ADD_RAND_MESSAGE, @"「やだ！　何よこれ、汚い！」"
+	CALL ADD_RAND_MESSAGE, @"「けほっ。うう……飲んじゃった……」"
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0  200    ランダムイベント発生
+; / ARG:1  201    発生イベント:石碑
+; / ARG:2    0    0:読むことが出来なかった 1:読めた
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_200_201_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL ADD_RAND_MESSAGE, @"「これは文字なのかしら？」"
+	CALL ADD_RAND_MESSAGE, @"「えっと……　何て書いてあるのかしら？」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「まるで読めないけど、この場所に関する手がかりとかかしらね」"
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「考えたって読めるようになるわけでもないし、まあいいか」"
+	ENDSELECT
+RETURN 1
+
+

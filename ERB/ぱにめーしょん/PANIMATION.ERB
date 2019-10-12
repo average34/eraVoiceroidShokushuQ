@@ -1,0 +1,1011 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;文字列表示・アニメーション関数ファイル「ぱにめーしょん」0527版
+;文字色設定や文字列のビジュアル・アニメ表示に特化した関数ファイルです。
+;このファイル単独で利用できますが、旧ぱんくしょんその他との関数名被りにはご注意ください
+;たぶん、たいていのバリアントにそのまま入れて動作するはずです
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;＠色操作系関数
+;色の取出しや変換を行う基本関数。
+;同梱の関数から呼ばれたり、呼ぶ時に使うと便利だったり。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;-------------------------------------------------
+;RGB色指定関数@RGBCOLOR
+;	引数0：Ｒ輝度（0～255）
+;	引数1：Ｇ輝度（0～255）
+;	引数2：Ｂ輝度（0～255）
+;
+;式中で使用する関数です。引数0～3でRGBを指定すると、16進（0xRRGGBB）にして返します
+;-------------------------------------------------
+@RGBCOLOR(ARG, ARG:1, ARG:2)
+#FUNCTION
+RETURNF (65536*ARG)+(256*ARG:1)+ARG:2
+
+
+;-------------------------------------------------
+;カラー分解関数@GETRED/GETGREEN/GETBLUE
+;	引数：16進カラー表記、省略すると現在の文字色
+;
+;0xRRGGBB形式のカラー表記から、RGBそれぞれの値を0～255で抽出します
+;-------------------------------------------------
+@GETRED(ARG = -1)
+#FUNCTION
+RETURNF (ARG >= 0 ? ARG # GETCOLOR())/65536
+
+@GETGREEN(ARG = -1)
+#FUNCTION
+RETURNF ((ARG >= 0 ? ARG # GETCOLOR())/256)%256
+
+@GETBLUE(ARG = -1)
+#FUNCTION
+RETURNF (ARG >= 0 ? ARG # GETCOLOR())%256
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;＠拡張表示系関数
+;Emuera本体の表示機能を無理やり強化する関数。
+;BARをカラー表示したり、文字列をため込んだり、特殊文字を表示したり。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;-------------------------------------------------
+;カラーバー表示関数@PRINT_COLORBAR
+;	引数0：バーにする変数（数値）
+;	引数1：バーの最大値（数値）
+;	引数2：バー全体の長さ（1あたり半角１文字）
+;	文字列引数0：バーに使用する文字（省略すると*）
+;	文字列引数1：バーの背景に使用する文字（省略すると.）
+;	引数3：バーの色（16進。RGBCOLOR関数使用可能。省略すると現在の文字色に）
+;	引数4：バーの背景色（同上）
+;
+;BARを指定した文字・指定した色で表示する関数です。UNICODE2588番などの、隙間のないブロックと相性がよかったり。
+;隙間が出る場合はフォント関連のコンフィグを見直しましょう。
+;引数0～2の仕様はBAR命令とほとんど同一（従来引数型）です。
+;バーの背景とは、バーの最大値に満たない部分の表示です。格闘ゲームとかでよく見る■■■■■■□□　の□の部分。
+;グラデーション機能を用意することもできそうですが、背景色もあるし、現状必要ないと思ってやってません。
+;この関数は口上・開発chのCrow君から輸入して改変したものです。さんくす
+;-------------------------------------------------
+;!!! 触手宮側に同名の関数があるため、PRINT_COLORBAR_PA に名称変更
+@PRINT_COLORBAR_PA(ARG, ARG:1, ARG:2, ARGS = "*", ARGS:1 = ".", ARG:3 = -1, ARG:4 = -1)
+#LOCALSIZE 5
+VARSET LOCAL
+ARG:3 = ARG:3 < 0 ? GETCOLOR() # ARG:3
+ARG:4 = ARG:4 < 0 ? GETCOLOR() # ARG:4
+LOCAL:1 = ARG * ARG:2 / ARG:1
+LOCAL:2 = GETCOLOR()
+FOR LOCAL, 1, ARG:2 + 1
+	IF LOCAL:1 >= LOCAL
+		IF !LOCAL:3
+			SETCOLOR ARG:3
+			LOCAL:3 = 1
+		ENDIF
+		PRINTFORM %ARGS%
+	ELSE
+		IF !LOCAL:4
+			SETCOLOR ARG:4
+			LOCAL:4 = 1
+		ENDIF
+		PRINTFORM %ARGS:1%
+	ENDIF
+NEXT
+SETCOLOR LOCAL:2
+
+
+;-------------------------------------------------
+;従来引数型・8分割カラーバー表示関数@PRINT_EIGHT_BAR_INT
+;	引数0：バーにする変数（数値）
+;	引数1：バーの最大値（数値）
+;	引数2：バー全体の長さ（1あたり半角１文字）
+;	引数3：バー始端の色（16進。RGBCOLOR関数使用可能。省略すると現在の文字色に）
+;	引数4：バー終端の色（同上。省略すると単色バーに）
+;	引数5：始色比率（始端の色が濃くなる。1～10で比率指定、デフォだと5、つまり5:5）
+;
+;引数0～2の仕様はBAR命令とほとんど同一（従来引数型）です。
+;@PRINT_EIGHT_BARの引数が独自形式なので、従来のBARの形式でも呼び出せるように用意しました。
+;半角の1/8刻みでバーを表示できますが、バーに使う文字を指定はできません。また、バーの背景色も使えません。
+;引数3・4を指定することでグラデーションができますが、この場合色の変わる単位は半角１文字ごとになります。
+;この関数は口上・開発chのkapnaluqa君から輸入したものです。さんくす
+;-------------------------------------------------
+@PRINT_EIGHT_BAR_INT(ARG, ARG:1, ARG:2, ARG:3 = -1, ARG:4 = -1, ARG:5 = 5)
+;ARG:2を8倍して1/8単位での全体の長さを得る
+ARG:2 *= 8
+IF ARG >= ARG:1
+	;対象変数が最大値以上だった場合、バーの長さは全体の長さに等しい
+	ARG = ARG:2
+ELSE
+	;最大値を全体の長さで割って、1/8単位あたりの数値。
+	;対象変数をそれで割ることで1/8単位での長さを得る
+	ARG /= ARG:1/ARG:2
+ENDIF
+;数値を与えて表示関数へ
+CALL PRINT_EIGHT_BAR(ARG, ARG:2, ARG:3, ARG:4, ARG:5, 10-ARG:5)
+
+;-------------------------------------------------
+;8分割カラーバー表示関数@PRINT_EIGHT_BAR
+;	引数0：バーの長さ（半角1/8文字単位）
+;	引数1：バー全体の長さ（半角1/8文字単位）
+;		なお、バーの長さが最長の数値(ARG:1*8-1)を超えている場合、表示は0に戻る
+;	引数2：バー始端の色（16進。RGBCOLOR関数使用可能。省略すると現在の文字色に）
+;	引数3：バー終端の色（同上。省略すると単色バーに）
+;	引数4：始色比率（始端の色が濃くなる）
+;	引数5：終色比率（終端の色が濃くなる）
+;
+;独自形式の引数です。ご注意ください
+;@PRINT_EIGHT_BARの引数が独自形式なので、従来のBARの形式でも呼び出せるように用意しました。
+;半角の1/8刻みでバーを表示できますが、バーに使う文字を指定はできません。また、バーの背景色も使えません。
+;引数3・4を指定することでグラデーションができますが、この場合色の変わる単位は半角１文字ごとになります。
+;-------------------------------------------------
+@PRINT_EIGHT_BAR(ARG, ARG:1 = 32, ARG:2 = -1, ARG:3 = -1, ARG:4 = 1, ARG:5 = 1)
+#LOCALSIZE 1
+#DIM COLOR
+#DIM RED, 3
+#DIM BLUE, 3
+#DIM GREEN, 3
+#DIM 始色比率
+#DIM 終色比率
+始色比率 = ARG:4
+終色比率 = ARG:5
+COLOR = GETCOLOR()
+IF ARG:2  >= 0 && ARG:3 >= 0
+	RED:1 = GETRED(ARG:2)
+	GREEN:1 = GETGREEN(ARG:2)
+	BLUE:1 = GETBLUE(ARG:2)
+	RED:2 = GETRED(ARG:3)
+	GREEN:2 = GETGREEN(ARG:3)
+	BLUE:2 = GETBLUE(ARG:3)
+ELSEIF ARG:2 >= 0
+	SETCOLOR ARG:2
+ENDIF
+FOR LOCAL, 0, ARG:1
+	IF ARG:2 >= 0 && ARG:3 >= 0
+		RED = (RED:1 * (ARG:1 - LOCAL) * 始色比率 + RED:2 * LOCAL * 終色比率) / ((ARG:1 -LOCAL) * 始色比率 + LOCAL * 終色比率)
+		GREEN = (GREEN:1 * (ARG:1 - LOCAL) * 始色比率 + GREEN:2 * LOCAL * 終色比率) / ((ARG:1 -LOCAL) * 始色比率 + LOCAL * 終色比率)
+		BLUE = (BLUE:1 * (ARG:1 - LOCAL) * 始色比率 + BLUE:2 * LOCAL * 終色比率) / ((ARG:1 -LOCAL) * 始色比率 + LOCAL * 終色比率)
+		SETCOLOR RED, GREEN, BLUE
+	ENDIF
+	IF LOCAL < MAX((ARG % (ARG:1 * 8) / 8),0)
+		PRINTFORM %UNICODE(0x2588)%
+	ELSEIF LOCAL == MAX((ARG % (ARG:1 * 8) / 8),0)
+		PRINTFORM \@ARG % (ARG:1 * 8) % 8 ? %UNICODE(0x2588 + 8 - (ARG % (ARG:1 * 8) % 8))%# %" "%\@
+	ELSE
+		PRINTFORM  
+	ENDIF
+NEXT
+SETCOLOR COLOR
+
+
+;-------------------------------------------------
+;口上色指定文字列表示関数@PRINTCOLOR～系
+;	引数0：文字色
+;	引数1：文字列
+;
+;指定した文字色で文字列を表示します。カラー指定は16進ですが、RGBCOLOR関数を利用することができます
+;PRINT命令同様の「PRINTCOLORL」「PRINTCOLORW」もありますが、書式は面倒です
+;例えば…
+;CALL PRINTCOLORW(RGBCOLOR(255, 0, 0), "この文字列は赤く表示されて改行待ちをします。")
+;-------------------------------------------------
+@PRINTCOLOR(ARG, ARGS, ARG:1)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG
+PRINTFORM %ARGS%
+IF ARG:1 == 1
+	PRINTL 
+ELSEIF ARG:1 == 2
+	PRINTW 
+ENDIF
+SETCOLOR LOCAL
+RETURN RESULT
+
+@PRINTCOLORL(ARG, ARGS)
+CALL PRINTCOLOR(ARG, ARGS, 1)
+RETURN RESULT
+
+@PRINTCOLORW(ARG, ARGS)
+CALL PRINTCOLOR(ARG, ARGS, 2)
+RETURN RESULT
+
+
+;-------------------------------------------------
+;文字列整列関数@UNITCELL
+;	文字列引数：セルに入れる文字列
+;	引数0：区切り文字数（PRINTCの文字数+1が望ましい）
+;
+;指定文字数に合わせて半角スペースを付与します。
+;PRINTCとの違いは、指定文字数を超えた場合、指定文字数の２倍、３倍で区切る点です
+;PRINTCと併用して横２セル結合みたいな表示ができます
+;キチッと揃った表や罫線囲みを作成するのに便利です
+;-------------------------------------------------
+@UNITCELL(ARGS, ARG)
+#FUNCTIONS
+RETURNF @"%ARGS+(" "*(ARG-(STRLENS(ARGS)%ARG)))%"
+
+;こちらは余った分はカットします。
+@FIXEDCELL(ARGS, ARG)
+#FUNCTIONS
+RETURNF \@ STRLENS(ARGS) > ARG ? %SUBSTRING(ARGS, 0, ARG-2)%.. # %ARGS+" "*(ARG-(STRLENS(ARGS)))% \@
+
+
+;-------------------------------------------------
+;再描画関数@SAVELINE/@RETURNLINE
+;	引数0：RETUENLINEから呼ばれたことを表す
+;
+;SAVELINEしてからRETURNLINEすると、SAVELINEしたところまで行削除します。
+;メニューの再描画とかにご利用ください
+;SAVELINE忘れてRETURNLINEするとごっそり削除してしまいます。
+;-------------------------------------------------
+@SAVELINE(ARG)
+#LOCALSIZE 1
+IF ARG
+	CLEARLINE LINECOUNT-LOCAL
+ELSE
+	LOCAL = LINECOUNT
+ENDIF
+RETURN RESULT
+
+@RETURNLINE
+CALL SAVELINE, 1
+RETURN RESULT
+
+
+;-------------------------------------------------
+;表示テキスト保管関数@STRBANK
+;	文字列引数：保存する文面（空文字列可）
+;	引数0：改行情報。0で改行なし、1で改行、2でクリック待ち、3でテキスト放出して廃棄、4で放出、5で廃棄（3以上のとき文字列引数は無視する）
+;	引数1：文字色情報。0で指定なし、1で一行デフォカラー、2で一行カラー指定、3でカラー指定しつつ、そのカラーを維持する（表示が終わっても戻らない）
+;	引数2：文字色指定。引数2が2か3だった場合に参照される。式中関数@RGBCOLORに対応
+;
+;繰り返し呼ぶことで文字列をLOCALSに蓄えていき、引数で指定したときにすべて表示します。
+;表示方法は代入するときに指定可能。1000行まで引き受けるよ！
+;カラー指定は行単位でのみ可能。同じ行で複数回指定された場合、最後の指定を優先。フォント指定は何かと問題起こすんでオミットしてます
+;@STRBANKL～@STRDRAWを経由して使われるのを想定していますが、直接呼ばなきゃできない操作もあります。
+;-------------------------------------------------
+@STRBANK(ARGS, ARG, ARG:1, ARG:2)
+#LOCALSIZE 1000
+#LOCALSSIZE 1000
+#DIM COLORDATA, 1000
+#DIM COLORNUM, 1000
+#DIM SET_LOCALS, 1
+#DIM LCOUNT, 2
+;初期設定
+IF !SET_LOCALS
+	VARSET LOCALS, "VOID"
+	VARSET LOCAL
+	SET_LOCALS = 1
+ENDIF
+;預金
+IF ARG < 3
+	FOR LCOUNT, 0, 1000
+		IF !LOCAL:LCOUNT
+			IF LOCALS:LCOUNT == "VOID"
+				LOCALS:LCOUNT = %ARGS%
+			ELSE
+				LOCALS:LCOUNT = %LOCALS:LCOUNT + ARGS%
+			ENDIF
+			LOCAL:LCOUNT = ARG
+			COLORDATA:LCOUNT = ARG:1
+			COLORNUM:LCOUNT = ARG:2
+			BREAK
+		ENDIF
+	NEXT
+;引き出し
+ELSE
+	IF ARG < 5
+		FOR LCOUNT, 0, 1000
+			SIF LOCALS:LCOUNT == "VOID"
+				BREAK
+			SELECTCASE COLORDATA:LCOUNT
+				CASE 0
+					PRINTS LOCALS:LCOUNT
+				CASE 1
+					PRINTSD LOCALS:LCOUNT
+				CASE 2
+					LCOUNT:1 = GETCOLOR()
+					SETCOLOR COLORNUM:LCOUNT
+					PRINTS LOCALS:LCOUNT
+					SETCOLOR LCOUNT:1
+				CASE 3
+					SETCOLOR COLORNUM:LCOUNT
+					PRINTS LOCALS:LCOUNT
+			ENDSELECT
+			SELECTCASE LOCAL:LCOUNT
+				CASE 1
+					PRINTL 
+				CASE 2
+					PRINTW 
+			ENDSELECT
+		NEXT
+	ENDIF
+	IF ARG != 4
+		VARSET LOCALS, "VOID"
+		VARSET LOCAL
+	ENDIF
+ENDIF
+RETURN RESULT
+
+;以下、関連関数。PRINT系命令の名称に倣う
+;一部使わないと判断して入ってないものも。
+
+;STRBANKL 改行つきで文字列を保存する
+@STRBANKL(ARGS)
+CALL STRBANK(ARGS, 1)
+RETURN RESULT
+
+;STRBANKW 改行と入力待ちつきで文字列を保存する
+@STRBANKW(ARGS)
+CALL STRBANK(ARGS, 2)
+RETURN RESULT
+
+;STRBANKDL デフォルト文字色。改行つきで文字列を保存する
+@STRBANKDL(ARGS)
+CALL STRBANK(ARGS, 1, 1)
+RETURN RESULT
+
+;STRBANKDW デフォルト文字色。改行と入力待ちつきで文字列を保存する
+@STRBANKDW(ARGS)
+CALL STRBANK(ARGS, 2, 1)
+RETURN RESULT
+
+;STRBANKCL 文字色を引数で指定。改行つきで文字列を保存する
+@STRBANKCL(ARGS, ARG)
+CALL STRBANK(ARGS, 1, 2, ARG)
+RETURN RESULT
+
+;STRBANKCW 文字色を引数で指定。改行と入力待ちつきで文字列を保存する
+@STRBANKCW(ARGS, ARG)
+CALL STRBANK(ARGS, 2, 2, ARG)
+RETURN RESULT
+
+;STRDRAW 保存した文字列をすべてぶちまける。引数を1にするとデータを廃棄しない。2にすると表示せずに廃棄する。
+@STRDRAW(ARG)
+CALL STRBANK("", ARG + 3)
+RETURN RESULT
+
+
+;-------------------------------------------------
+;ハートマーク関数@HEART
+;	引数0：ハートの数（省略すると1つ）
+;	引数1：使用するフォント名（省略するとVerdana）
+;
+;中抜きのハートマークを表示します
+;-------------------------------------------------
+@HEART(ARG = 1, ARGS = "Verdana")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x2661))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+
+;-------------------------------------------------
+;入力待ちハートマーク関数@HEARTW
+;	引数0：ハートの数（省略すると1つ）
+;	引数1：使用するフォント名（省略するとVerdana）
+;	引数2：『」』の代わりに表示する文字列
+;	引数3：真にすると、『」』を表示しない
+;
+;中抜きハートマークを表示してから『」』を表示し、入力待ち・改行をします。口上に便利です
+;引数2に文字列を入れると、代わりにそれを表示します。
+;-------------------------------------------------
+@HEARTW(ARG = 1, ARGS = "Verdana", ARGS:1 = "」", ARG:1 = 0)
+CALL HEART(ARG, ARGS)
+IF ARG:1 != 0
+	PRINTFORMW
+ELSE
+	PRINTSW ARGS:1
+ENDIF
+RETURN RESULT
+
+
+;-------------------------------------------------
+;黒ハートマーク関数@HEARTB
+;	引数0：ハートの数（省略すると1つ）
+;	引数1：使用するフォント名（省略するとVerdana）
+;
+;塗りつぶしのハートマークを表示します
+;-------------------------------------------------
+@HEARTB(ARG = 1, ARGS = "Verdana")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+IF GETFONT() == "Symbol"
+	CALL SYMBOLPRINT(ARG, UNICODE(0xA9))
+ELSE
+	CALL SYMBOLPRINT(ARG, UNICODE(0x2665))
+ENDIF
+
+SETFONT LOCALS
+RETURN LOCAL
+
+
+;-------------------------------------------------
+;入力待ち黒ハートマーク関数@HEARTBW
+;	引数0：ハートの数（省略すると1つ）
+;	引数1：使用するフォント名（省略するとVeedana）
+;	引数2：『」』の代わりに表示する文字列
+;	引数3：真にすると、『」』を表示しない
+;
+;塗りつぶしハートマークを表示してから『」』を表示し、入力待ち・改行をします
+;-------------------------------------------------
+@HEARTBW(ARG = 1, ARGS = "Verdana", ARGS:1 = "」", ARG:1 = 0)
+CALL HEARTB(ARG, ARGS)
+IF ARG:1 != 0
+	PRINTFORMW
+ELSE
+	PRINTSW ARGS:1
+ENDIF
+RETURN RESULT
+
+
+;-------------------------------------------------
+;ハートマーク系カラーバリエーション関数@HEARTC～系
+;
+;上記と同じバリエーションがありますが、最初の引数で指定した文字色で表示します。省略するとピンクがかった明るい赤になります
+;文字色指定についてはGETRGBCOLOR関数が使えます。
+;-------------------------------------------------
+@HEARTC(ARG:1 = 0xC07070, ARG = 1, ARGS = "Verdana")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL HEART(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@HEARTCW(ARG:1 = 0xC07070, ARG = 1, ARGS = "Verdana", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL HEARTW(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@HEARTCB(ARG:1 = 0xC07070, ARG = 1, ARGS = "Verdana")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL HEARTB(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@HEARTCBW(ARG:1 = 0xC07070, ARG = 1, ARGS = "Verdana", ARGS:1 = "」", ARG:2 = 0)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL HEARTB(ARG, ARGS)
+SETCOLOR LOCAL
+IF ARG:2 != 0
+	PRINTFORMW
+ELSE
+	PRINTSW ARGS:1
+ENDIF
+RETURN RESULT
+
+
+;-------------------------------------------------
+;ハートマーク系デフォルトカラー関数@HEARTD～系
+;
+;上記と同じバリエーションがありますが、デフォルトの文字色で表示します
+;また、こちらで呼ぶと入力待ちハート系の『」』が表示されません。つまり地の文向けの関数
+;引数3を真にすれば逆に『」』を表示するようになります
+;-------------------------------------------------
+@HEARTD(ARG = 1, ARGS = "Verdana")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+RESETCOLOR
+CALL HEART(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@HEARTDW(ARG = 1, ARGS = "Verdana", ARGS:1 = "」", ARG:1)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+RESETCOLOR
+CALL HEARTW(ARG, ARGS, ARGS:1, !ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@HEARTDB(ARG = 1, ARGS = "Verdana")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+RESETCOLOR
+CALL HEARTB(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@HEARTDBW(ARG = 1, ARGS = "Verdana", ARGS:1 = "」", ARG:1 = 0)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+RESETCOLOR
+CALL HEARTB(ARG, ARGS)
+SETCOLOR LOCAL
+IF ARG:1 != 0
+	PRINTSW ARGS:1
+ELSE
+	PRINTFORMW
+ENDIF
+RETURN RESULT
+
+
+;-------------------------------------------------
+;記号表示関数@SYMBOLPRINT
+;内部的に使う関数です。呼び出さないでください
+;-------------------------------------------------
+@SYMBOLPRINT(ARG, ARGS)
+#LOCALSIZE 1
+FOR LOCAL, 0, ARG
+	PRINTS ARGS
+NEXT
+RETURN RESULT
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;＠アニメーション系関数
+;文字列を動かしたりフェードイン・アウトさせたりします。ある意味このファイルの目玉か
+;だいたい表示時間があるため、多用すると鬱陶しさを与えます、注意。
+;制御関数を通して、各関数毎にアニメーションのオンオフ設定ができます。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;-------------------------------------------------
+;アニメーション制御関数@ANIME_CONFIG
+;	文字列引数・引数：文字列引数により機能分岐
+;		"SAVE"：引数は無効。コンフィグビットの値を返します。セーブされる変数に代入する際に。
+;		"SET"：コンフィグビットに引数の値を直接代入。@EVENTLORD等で設定反映する際に。引数省略するとSAVE互換
+;		"FORCE"：強制表示・強制非表示・通常のモード切り替えをします。コンフィグビットは元のままです
+;				（引数=0,コンフィグビットを参照して表示（通常）、1,強制表示、2,強制非表示、省略,現在の設定を返すのみ）
+;		"TIMES"：この後に呼ばれるアニメを、引数の回数分、強制表示にします。関数は指定できません。FORCEに優先します
+;				 引数を0にすると、回数を初期化します。引数を省略すると、残り回数を返すのみ
+;		"ONCE"：この後に呼ばれるアニメを、一回だけ強制表示にします。関数は指定できません。FORCE・TIMESに優先します。引数は無効。
+;		"%関数名%"：指定した関数ごとのコンフィグビットを設定します。引数1で表示に、0で非表示にします。2だと、設定を逆にします
+;					引数を省略すると、戻り値が真なら表示する判定になります（強制表示状態に影響されます）
+;		"USER{番号}"：ユーザー定義のコンフィグ項目を設定できます。自分でアニメ効果を作成した場合に便利です。1～13番まで持てます
+;					　引数を省略すると、戻り値が真なら表示する判定になります（強制表示状態に影響されます）
+;
+;ぱにめーしょん内蔵のアニメ効果の総合的な制御。関数毎のコンフィグビットが立っていると、その関数のアニメ効果を表示しません
+;表示しない場合は右クリックスキップ用と同じ簡略テキストを表示するようにします
+;関数名はエイリアスでなく本体で指定。あと日本語名も受け付けるようになってます。
+;口上側などでFORCE・TIMES機能を多用すると、きっと嫌われます。
+;-------------------------------------------------
+@ANIME_CONFIG(ARGS, ARG = -1)
+#FUNCTION
+#LOCALSIZE 6
+;LOCALはコンフィグビットを格納
+;LOCAL:1は強制表示・非表示状態
+;LOCAL:2は回数指定強制表示の回数を格納
+;LOCAL:3は編集・参照するコンフィグビットの番号
+;LOCAL:4はユーザー定義の番号
+;LOCAL:5はONCE状態
+
+SELECTCASE ARGS
+	CASE "SAVE"
+		RETURNF LOCAL
+	CASE "SET"
+		SIF ARG >= 0
+			LOCAL = ARG
+		RETURNF LOCAL
+	CASE "FORCE"
+		SIF ARG >= 0
+			LOCAL:1 = ARG
+		RETURNF LOCAL:1
+	CASE "TIMES"
+		SIF ARG >= 0
+			LOCAL:2 = ARG
+		RETURNF LOCAL:2
+	CASE "ONCE"
+		LOCAL:5 = 1
+		RETURNF LOCAL:5
+	CASE "SCROLLTEXT", "スクロール"
+		;コンフィグビット0番
+		LOCAL:3 = 0
+	CASE "FADE", "フェード"
+		;コンフィグビット1番
+		LOCAL:3 = 1
+	CASE "QUAKE", "振動"
+		;コンフィグビット2番
+		LOCAL:3 = 2
+	CASE "FLASH", "発光"
+		;コンフィグビット3番
+		LOCAL:3 = 3
+	CASE "FULLCUTIN", "全画面カットイン"
+		;コンフィグビット4番
+		LOCAL:3 = 4
+	CASE "BGM_CUTIN", "ＢＧＭカットイン"
+		;コンフィグビット41番
+		LOCAL:3 = 41
+	CASE "CHARA_CUTIN", "キャラカットイン"
+		;コンフィグビット42番
+		LOCAL:3 = 42
+	CASEELSE
+		LOCAL:4 = TOINT(REPLACE(ARGS, "USER", ""))
+		;ユーザー定義の処理
+		IF STRCOUNT(ARGS, "USER") && LOCAL:4 > 0 && LOCAL:4 < 14
+			;コンフィグビット51番以降
+			LOCAL:3 = 50+LOCAL:4
+		;それ以外は-1を返すのみ。デバッグ用
+		ELSE
+			RETURNF -1
+		ENDIF
+ENDSELECT
+;コンフィグビットの処理
+SELECTCASE ARG
+	CASE 0
+		SETBIT LOCAL, LOCAL:3
+	CASE 1
+		CLEARBIT LOCAL, LOCAL:3
+	CASE 2
+		INVERTBIT LOCAL, LOCAL:3
+ENDSELECT
+;ONCEが有効な場合
+IF LOCAL:5
+	LOCAL:5 = 0
+	RETURNF MESSKIP() ? 0 # 1
+;強制表示系が有効な場合
+ELSEIF LOCAL:2 > 0
+	LOCAL:2--
+	RETURNF MESSKIP() ? 0 # 1
+ELSEIF LOCAL:1
+	RETURNF MESSKIP() ? 0 # !(LOCAL:1-1)
+ENDIF
+;コンフィグビットを参照して戻る
+RETURNF MESSKIP() ? 0 # !GETBIT(LOCAL, LOCAL:3)
+
+;-------------------------------------------------
+;文字列スクロール関数@SCROLLTEXT
+;	文字列引数：スクロールさせる文字列
+;	引数0：1にするとスクロール中、文字列の下にDRAWLINEします。2だと-=ラインに
+;	引数1：スクロール速度（デフォルトだと30）
+;	引数2：ウィンドウの横に入る文字数（デフォルトだと117）
+;			メモ　117
+;	引数3：真にすると文字列が端でバウンドします。数字を上げるとバウンドが緩くなります。誰が得するんだよこの機能
+;	引数4：真にするとスクロール方向が逆になります。デフォルトだと左から右。SCROLLTEXTLというエイリアスが存在
+;
+;引数の文字列をスクロールさせます
+;-------------------------------------------------
+@SCROLLTEXT(ARGS, ARG, ARG:1 = 30, ARG:2 = 117, ARG:3, ARG:4)
+#LOCALSIZE 3
+#LOCALSSIZE 1
+LOCALS = %ARGS%
+;スペースを付加
+IF ARG:4
+	ARGS = %(" "*ARG:2)+ARGS%
+ELSE
+	ARGS = %" "*(ARG:2 - 2 - STRLENS(ARGS))+ARGS%
+ENDIF
+;表示オン
+IF ANIME_CONFIG("SCROLLTEXT")
+	;スクロール速度がウィンドウ幅に対し速すぎる場合、矯正する
+	ARG:1 = ARG:1 >= ARG:2 ? ARG:2-1 # ARG:1
+	REDRAW 0
+	LOCAL = 0
+	FOR LOCAL, 0, ARG:2-2, ARG:1
+		IF ARG:4
+			PRINTSINGLEFORM %SUBSTRING(ARGS , LOCAL)%
+		ELSE
+			PRINTSINGLEFORM %SUBSTRING(ARGS , (ARG:2 - 2) - LOCAL)%
+		ENDIF
+		IF ARG == 1
+			DRAWLINE
+		ELSEIF ARG == 2
+			CUSTOMDRAWLINE -=
+		ENDIF
+		TWAIT 2 , 0
+		CLEARLINE 1+!(!ARG)
+	NEXT
+	;ばうんど。実に適当に跳ねます
+	IF ARG:3
+		FOR LOCAL, ARG:3, ARG:3*5, ARG:3*2
+			IF ARG:4
+				PRINTFORML %LOCALS%
+			ELSE
+				PRINTFORML %ARGS%
+			ENDIF
+			IF ARG == 1
+				DRAWLINE
+			ELSEIF ARG == 2
+				CUSTOMDRAWLINE -=
+			ENDIF
+			TWAIT 2 , 0
+			CLEARLINE 1+!(!ARG)
+			FOR LOCAL:1, 0, ARG:2/(LOCAL+4), ARG:1/(LOCAL+1)
+				IF ARG:4
+					PRINTSINGLEFORM %SUBSTRING(ARGS , ARG:2 - LOCAL:1)%
+				ELSE
+					PRINTSINGLEFORM %SUBSTRING(ARGS , LOCAL:1)%
+				ENDIF
+				IF ARG == 1
+					DRAWLINE
+				ELSEIF ARG == 2
+					CUSTOMDRAWLINE -=
+				ENDIF
+				TWAIT 2 , 0
+				CLEARLINE 1+!(!ARG)
+			NEXT
+			FOR LOCAL:2, 0, ARG:2/(LOCAL+4), ARG:1/(LOCAL+1)
+				IF ARG:4
+					PRINTSINGLEFORM %SUBSTRING(ARGS , ARG:2 - LOCAL:1 + LOCAL:2)%
+				ELSE
+					PRINTSINGLEFORM %SUBSTRING(ARGS , LOCAL:1 - LOCAL:2)%
+				ENDIF
+				IF ARG == 1
+					DRAWLINE
+				ELSEIF ARG == 2
+					CUSTOMDRAWLINE -=
+				ENDIF
+				TWAIT 2 , 0
+				CLEARLINE 1+!(!ARG)
+			NEXT
+		NEXT
+	ENDIF
+ENDIF
+
+IF ARG:4
+	PRINTFORML %LOCALS%
+ELSE
+	PRINTFORML %ARGS%
+ENDIF
+IF ARG == 1
+	DRAWLINE
+ELSEIF ARG == 2
+	CUSTOMDRAWLINE -=
+ENDIF
+REDRAW 1
+RETURN RESULT
+
+
+;-------------------------------------------------
+;文字列右スクロール関数@SCROLLTEXTL
+;	文字列引数：スクロールさせる文字列
+;	引数0：真にするとスクロール中、文字列の下にDRAWLINEします
+;	引数1：スクロール速度（デフォルトだと30）
+;	引数2：ウィンドウの横に入る文字数（デフォルトだと117）
+;	引数3：真にすると文字列が端でバウンドします。数字を上げるとバウンドが緩くなります
+;
+;引数の文字列をウィンドウの右から左へスクロールさせます
+;-------------------------------------------------
+@SCROLLTEXTL(ARGS, ARG, ARG:1 = 30, ARG:2 = 117, ARG:3)
+CALL SCROLLTEXT(ARGS, ARG, ARG:1, ARG:2, ARG:3, 1)
+RETURN RESULT
+
+
+;-------------------------------------------------
+;フェードアウト関数@FADEOUT
+;	引数0：コマ数。多くするほどゆるやかになります。デフォルトは8
+;	文字列引数0～29：表示する文字列（空行はスペースで。省略すると無視します）
+;	引数3：FULLCUTIN用。正にすると開幕行削除から入ります
+;
+;引数で与えた文字列を表示し、背景色にフェードアウトします。
+;見えなくなるだけで消えないので、必要ならCLEARLINEで消してください。
+;文字列は30行まで引き受けることができます
+;-------------------------------------------------
+@FADEOUT(ARG = 8, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID", ARG:3)
+CALL FADE(ARG, GETCOLOR(), GETBGCOLOR(), ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29, ARG:3)
+RETURN RESULT
+
+
+;-------------------------------------------------
+;フェードイン関数@FADEIN
+;	引数0：コマ数。多くするほどゆるやかになります。デフォルトは8
+;	文字列引数0～29：表示する文字列（空行はスペースで。省略すると無視します）
+;
+;引数で与えた文字列を、背景色からフェードイン表示します。
+;色を変えたい場合は事前にSETCOLORするか、@FADEを直接呼んでください
+;文字列は30行まで引き受けることができます
+;-------------------------------------------------
+@FADEIN(ARG = 8, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID")
+CALL FADE(ARG, GETBGCOLOR(), GETCOLOR(), ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29)
+RETURN RESULT
+
+
+;-------------------------------------------------
+;フェード処理関数@FADE
+;	引数0：コマ数。多くするほどゆるやかになります。デフォルトは8。大きくしすぎるとおかしくなります
+;	引数1：初期文字色
+;	引数2：変化する文字色
+;	文字列引数0～29：表示する文字列（空行はスペースで。省略すると無視します）
+;	引数3：FULLCUTIN用。正にすると開幕行削除から入ります
+;
+;フェードアウト・フェードインの処理をします。内部関数ですが、呼び出しも可能です
+;-------------------------------------------------
+@FADE(ARG = 8, ARG:1 , ARG:2, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID", ARG:3)
+#LOCALSIZE 2
+#DIM PRICOLOR,1
+#DIM RED,2
+#DIM GREEN,2
+#DIM BLUE,2
+VARSET RED
+VARSET GREEN
+VARSET BLUE
+
+;元の文字色の取得
+PRICOLOR = GETCOLOR()
+
+;表示オン
+IF ANIME_CONFIG("FADE")
+	;初期色
+	SETCOLOR ARG:1
+
+	;RGBそれぞれのベース値、減少値を各色:0と1に代入
+	RED = GETRED()
+	IF RED > GETRED(ARG:2)
+		RED:1 = MAX(1, (RED-GETRED(ARG:2))/ARG)
+	ELSEIF RED < GETRED(ARG:2)
+		RED:1 = MIN(-1, (RED-GETRED(ARG:2))/ARG)
+	ENDIF
+	GREEN = GETGREEN()
+	IF GREEN > GETGREEN(ARG:2)
+		GREEN:1 = MAX(1, (GREEN-GETGREEN(ARG:2))/ARG)
+	ELSEIF GREEN < GETGREEN(ARG:2)
+		GREEN:1 = MIN(-1, (GREEN-GETGREEN(ARG:2))/ARG)
+	ENDIF
+	BLUE = GETBLUE()
+	IF BLUE > GETBLUE(ARG:2)
+		BLUE:1 = MAX(1, (BLUE-GETBLUE(ARG:2))/ARG)
+	ELSEIF BLUE < GETBLUE(ARG:2)
+		BLUE:1 = MIN(-1, (BLUE-GETBLUE(ARG:2))/ARG)
+	ENDIF
+
+	IF !ARG:3
+		FOR LOCAL, 0, 30
+			SIF ARGS:LOCAL != "VOID"
+				PRINTSL ARGS:LOCAL
+		NEXT
+		TWAIT 100 , 0
+	ENDIF
+	CLEARLINE 30-MATCH(ARGS, "VOID")
+
+	FOR LOCAL:1, 0, ARG
+		RED = MAX(0, RED-RED:1)
+		GREEN = MAX(0, GREEN-GREEN:1)
+		BLUE = MAX(0, BLUE-BLUE:1)
+		SETCOLOR RED, GREEN, BLUE
+		FOR LOCAL, 0, 30
+			SIF ARGS:LOCAL != "VOID"
+				PRINTSL ARGS:LOCAL
+		NEXT
+		TWAIT 100 , 0
+		CLEARLINE 30-MATCH(ARGS, "VOID")
+	NEXT
+	SETCOLOR ARG:2
+	FOR LOCAL, 0, 30
+		SIF ARGS:LOCAL != "VOID"
+			PRINTSL ARGS:LOCAL
+	NEXT
+;表示オフ
+ELSE
+	;終了色が背景色と同じ場合、初期色で表示。そうでなければ終了色で表示
+	SETCOLOR GETBGCOLOR() == ARG:2 ? ARG:1 # ARG:2
+	FOR LOCAL, 0, 30
+		IF ARGS:LOCAL != "VOID"
+			PRINTSL ARGS:LOCAL
+		ENDIF
+	NEXT
+ENDIF
+SETCOLOR PRICOLOR
+RETURN RESULT
+
+
+;-------------------------------------------------
+;振動エフェクト関数@QUAKE
+;	引数0：振動数。省略すると2
+;
+;画面を上下に揺らします。揺れ幅はある程度ランダムです
+;-------------------------------------------------
+@QUAKE(ARG = 2)
+#LOCALSIZE 3
+;表示オフだと戻る
+SIF !ANIME_CONFIG("QUAKE")
+	RETURN RESULT
+REDRAW 0
+FOR LOCAL, 0, ARG
+	LOCAL:1 = RAND:4+1
+	FOR LOCAL:2, 0, LOCAL:1
+		PRINTL 
+	NEXT
+	TWAIT 100, 0
+	CLEARLINE LOCAL:1
+	TWAIT 100, 0
+NEXT
+REDRAW 3
+RETURN RESULT
+
+
+;-------------------------------------------------
+;発光エフェクト関数@FLASH
+;	引数0：発光数。省略すると2
+;	引数1：光る色。省略すると白
+;
+;画面を発光させます。背景色の点滅
+;-------------------------------------------------
+@FLASH(ARG = 2, ARG:1 = 0xFFFFFF)
+#LOCALSIZE 2
+;表示オフだと戻る
+SIF !ANIME_CONFIG("FLASH")
+	RETURN RESULT
+REDRAW 0
+FOR LOCAL, 0, 150
+	PRINTL
+NEXT
+LOCAL:1 = GETBGCOLOR()
+FOR LOCAL, 0, ARG
+	SETBGCOLOR ARG:1
+	REDRAW 2
+	SETBGCOLOR LOCAL:1
+	REDRAW 2
+NEXT
+CLEARLINE 150
+REDRAW 3
+RETURN RESULT
+
+
+;-------------------------------------------------
+;全画面カットイン関数@FULLCUTIN
+;	引数0：左端からのインデント
+;	引数1：床から浮かせる行数（表示文字列と合わせて30を超えないでください）
+;	文字列引数0～29：表示する文字列
+;
+;空行で画面を掃除して、全画面分のカットインを表示します
+;行揃えやフォントなどのオプションはまだほとんど設定していません。アイデアだけとりあえず。
+;-------------------------------------------------
+@FULLCUTIN(ARG, ARG:1, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID", ARG:2 = 8)
+#LOCALSIZE 1
+;表示オン
+IF ANIME_CONFIG("FULLCUTIN")
+	FOR LOCAL, 0, 30
+		IF ARGS:LOCAL == "VOID"
+			IF ARG:1 > 0
+				ARGS:LOCAL =  
+				ARG:1--
+			ENDIF
+		ELSE
+			ARGS:LOCAL = %" "*ARG+ARGS:LOCAL%
+		ENDIF
+	NEXT
+	CALL SAVELINE
+	FOR LOCAL, 0, 150
+		PRINTL 
+	NEXT
+	;FULLCUTINがオンならフェードは強制
+	CALLF ANIME_CONFIG("ONCE")
+	CALL FADEIN(ARG:2, ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29)
+	TWAIT 2000, 0
+	CALLF ANIME_CONFIG("ONCE")
+	CALL FADEOUT(ARG:2, ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29, 1)
+	TWAIT 500, 0
+	CALL RETURNLINE
+;表示オフ（簡略化表示）
+ELSE
+	PRINTL 
+	PRINTL 
+	FOR LOCAL, 0, 30
+		IF ARGS:LOCAL != "VOID"
+			IF STRLENSU(ARGS:LOCAL) < 2
+				PRINTSL ARGS:LOCAL
+			ELSE
+				PRINTFORMW %" "*ARG+ARGS:LOCAL%
+			ENDIF
+		ENDIF
+	NEXT
+	PRINTL 
+	PRINTL 
+ENDIF
+RETURN RESULT
+
+
+;-------------------------------------------------
+;全画面カットイン関数@FULLCUTIN2
+;	フェードイン・アウト等が従来より速いだけです
+;-------------------------------------------------
+@FULLCUTIN2(ARG, ARG:1, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID", ARG:2 = 4)
+#LOCALSIZE 1
+CALL FULLCUTIN(ARG, ARG:1, ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29, ARG:2)
+RETURN RESULT

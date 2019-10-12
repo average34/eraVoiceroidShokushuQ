@@ -1,0 +1,18 @@
+﻿; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1    4    コマンドID(元に戻る)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	CALL ADD_RAND_MESSAGE, @"「少し前に出すぎたわ」"
+	CALL ADD_RAND_MESSAGE, @"「落ち着いて、少し後ろに……」"
+	
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「これぐらいが丁度いいと思う……」"
+	ENDSELECT
+RETURN 1
+
+
+

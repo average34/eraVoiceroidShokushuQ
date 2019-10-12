@@ -1,0 +1,60 @@
+﻿; AI戦闘コマンド 脱出を試みる
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_42(CHARA_ID, TARGET_ID, SUPPORT_VALUE)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM SUPPORT_VALUE ; Reserved
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+
+	VARSET RATE
+		
+	; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+	;                超弱気    弱気    普通    強気  超強気
+	DATA_TABLE:10:0 =  2900,   3300,   3700,   4100,   4500  ; 10:ねっけつかん
+	DATA_TABLE:2:0  =  3000,   3400,   3800,   4200,   4600  ; 02:おてんば
+	DATA_TABLE:14:0 =  3100,   3500,   3900,   4300,   4700  ; 14:わがまま
+	DATA_TABLE:3:0  =  3200,   3600,   4000,   4400,   4800  ; 03:がんこもの
+	DATA_TABLE:6:0  =  3300,   3700,   4100,   4500,   4900  ; 06:くろうにん
+	DATA_TABLE:4:0  =  3400,   3800,   4200,   4600,   5000  ; 04:がんばりや
+	DATA_TABLE:5:0  =  3300,   3700,   4100,   4500,   4900  ; 05:きれもの
+	DATA_TABLE:1:0  =  3200,   3600,   4000,   4400,   4800  ; 01:おせっかい
+	DATA_TABLE:0:0  =  3100,   3500,   3900,   4300,   4700  ; 00:ふつう
+	DATA_TABLE:9:0  =  3000,   3400,   3800,   4200,   4600  ; 09:ぬけめがない
+	DATA_TABLE:8:0  =  2900,   3300,   3700,   4100,   4500  ; 08:セクシーギャル
+	DATA_TABLE:7:0  =  2800,   3200,   3600,   4000,   4400  ; 07:しあわせもの
+	DATA_TABLE:11:0 =  2700,   3100,   3500,   3900,   4300  ; 11:のんきもの
+	DATA_TABLE:13:0 =  2600,   3000,   3400,   3800,   4200  ; 13:やさしいひと
+	DATA_TABLE:12:0 =  2500,   2900,   3300,   3700,   4100  ; 12:ひっこみじあん
+	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+	
+	; 脱出成功率で補正
+	CALL GET_RELEASE_RATE(CHARA_ID)
+	SELECTCASE RESULT
+	; 75%以上
+	CASE IS >= 80
+		TIMES RATE, 1.6
+	; 50%以上
+	CASE IS >= 50
+		TIMES RATE, 1.2
+	; 25%以上
+	CASE IS >= 25
+		TIMES RATE, 0.7
+	; 0%以上
+	CASE IS >= 0
+		TIMES RATE, 0.5
+	ENDSELECT
+	
+	; 1人で行動 or 自分以外行動不能
+	; 力溜めループに入らないよう乱数で倍率を上げる
+	{
+	IF GET_MEMBER_SUM() == 1 ||
+	   (CHARA_ID == 1 && (FLAG:10 && !IS_POSSIBLE_ACTION(FLAG:10)) && (FLAG:11 && !IS_POSSIBLE_ACTION(FLAG:11))) ||
+	   (CHARA_ID == FLAG:10 && !IS_POSSIBLE_ACTION(1) && (FLAG:11 && !IS_POSSIBLE_ACTION(FLAG:11))) ||
+	   (CHARA_ID == FLAG:11 && !IS_POSSIBLE_ACTION(1) && (FLAG:10 && !IS_POSSIBLE_ACTION(FLAG:10)))
+	}
+		RATE = (RATE * (RAND:40 + 10)) / 10
+	ENDIF
+	
+RETURN LIMIT(RATE, 0, 10000)

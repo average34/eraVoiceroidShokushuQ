@@ -1,0 +1,89 @@
+﻿
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   54    コマンドID(Aおねだり)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_54(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL ADD_RAND_MESSAGE, @"「私のおしり、好きにしてください♥」"
+	CALL ADD_RAND_MESSAGE, @"「こっちの穴、好きにしていいんですよ♥」"
+	CALL ADD_RAND_MESSAGE, @"「こっちの穴、触手せーえきで綺麗にしてください♥　お願いします♥」"
+	CALL ADD_RAND_MESSAGE, @"「後ろの穴で気持ちよくなる、ヘンタイなんです♥　どうか、使ってください♥」"
+	CALL ADD_RAND_MESSAGE, @"「こっちの穴も使ってみてください♥　ちゃんと準備してきましたぁ♥」"
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   55    コマンドID(Bおねだり)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_55(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 母乳体質
+	IF TALENT:130
+		CALL ADD_RAND_MESSAGE, @"「おっぱい吸って♥　私のミルク、いっぱい吸ってください♥」"
+
+		CALL ADD_RAND_MESSAGE, @"「どうか私のおっぱい、好きに搾ってください♥」"
+		CALL ADD_RAND_MESSAGE, @"「どうか私の柔らかいおっぱいで、楽しんでください♥」"
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「赤ちゃんみたいにおっぱいちゅーちゅーしてほしいんです♥」"
+
+		CALL ADD_RAND_MESSAGE, @"「どうか私のおっぱい、好きに揉んでください♥」"
+		CALL ADD_RAND_MESSAGE, @"「どうか私の柔らかいおっぱいで、楽しんでください♥」"
+		CALL ADD_RAND_MESSAGE, @"「私のおっぱいの形、どうですかぁ♥　今なら好きにしていいんですよ♥」"
+
+	ENDIF
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   56    コマンドID(Cおねだり)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_56(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL ADD_RAND_MESSAGE, @"「おっきくなったクリトリス♥　おもいっきりいじってください♥」"
+	CALL ADD_RAND_MESSAGE, @"「ここが一番好きなんです♥　淫乱クリトリスむちゃくちゃにして♥♥」"
+
+	CALL ADD_RAND_MESSAGE, @"「もう待ちきれないんです♥　えっちなお豆にご褒美ください♥」"
+	CALL ADD_RAND_MESSAGE, @"「ちゃんと見て♥　私のクリ、こんなに弄ってほしそうにしてるの♥」"
+
+RETURN 1
+
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   57    コマンドID(Vおねだり)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_57(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 触手中毒LV3以上 or V感覚LV3以上or [淫壷]所持
+	IF ABL:11 >= 3 || ABL:9 >= 3 || TALENT:77
+		CALL ADD_RAND_MESSAGE, @"「おまんこ♥　おまんこすきなんです♥♥　%CALLNAME:TARGET%の淫乱まんこ好きに使ってくださいぃ♥♥」"
+		CALL ADD_RAND_MESSAGE, @"「見て♥　みて♥♥　受精準備できてるんです♥♥　だからっ♥　らからは、はやく♥♥♥」"
+	ELSE
+		CALL ADD_RAND_MESSAGE, @"「おっきぃの、おまんこにいれてください♥」"
+		CALL ADD_RAND_MESSAGE, @"「おまんこ、使ってください♥」"
+
+		CALL ADD_RAND_MESSAGE, @"「おまんこ、あなた専用の穴になるまで、どうか躾けてください♥」"
+		CALL ADD_RAND_MESSAGE, @"「おまんこ、いっぱい掻き混ぜて♥」"
+		CALL ADD_RAND_MESSAGE, @"「おまんこ、ぐぽぐぽしてほしいんです♥」"
+		CALL ADD_RAND_MESSAGE, @"「おまんこ、あなた好みの形に、たっぷり躾けてください♥」"
+		CALL ADD_RAND_MESSAGE, @"「おまんこで、どうか気持ちよくなってください♥」"
+		CALL ADD_RAND_MESSAGE, @"「ほらぁ、ここにハメてみてください♥　気持ちイイはずです♥」"
+		CALL ADD_RAND_MESSAGE, @"「トロトロな発情まんこが、たくましいのを、ほしがってるんです♥」"
+
+
+	ENDIF
+	; 性格別 追加口上
+		SELECTCASE CFLAG:100
+		CASE 性格_ひっこみじあん
+			CALL ADD_RAND_MESSAGE, @"「%CALLNAME:TARGET%の……お、おまんこ……好きに使ってください……♥」"
+		ENDSELECT
+
+RETURN 1
+; ////////////////////////////
+; / ARG:0    1    味方の攻撃(発動時)
+; / ARG:1   58    コマンドID(その他おねだり)
+; / ARGS:0        自分の名前
+@KOJO_DEFAULT_1_58(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL ADD_RAND_MESSAGE, @"「早く♥　早く♥　早く♥　来てぇ♥」"
+	CALL ADD_RAND_MESSAGE, @"「むちゃくちゃに犯してください♥」"
+	
+	
+		
+RETURN 1

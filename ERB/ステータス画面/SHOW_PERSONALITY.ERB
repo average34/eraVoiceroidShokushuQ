@@ -1,0 +1,58 @@
+﻿;対象の性格を表示
+;ARG:0	対象キャラID
+@SHOW_PERSONALITY(ARG:0)
+
+PRINTFORM 性格：
+
+
+IF CFLAG:(ARG:0):12 <= -40
+	PRINTFORM 超弱気
+ELSEIF CFLAG:(ARG:0):12 <= -20
+	PRINTFORM 弱気
+ELSEIF CFLAG:(ARG:0):12 <= 19
+	PRINTFORM 普通
+ELSEIF CFLAG:(ARG:0):12 <= 39
+	PRINTFORM 強気
+ELSE
+	PRINTFORM 超強気
+ENDIF
+
+;○○な～～　という形にするので、性格の最初に「な」を入れておく
+;一部は「な」だと変なので別の接続詞を使う
+SELECTCASE CFLAG:(ARG:0):100
+	CASE 1
+		PRINTFORML なおせっかい
+	CASE 2
+		PRINTFORML なおてんば
+	CASE 3
+		PRINTFORML ながんこもの
+	CASE 4
+		PRINTFORML ながんばりや
+	CASE 5
+		PRINTFORML なきれもの
+	CASE 6
+		PRINTFORML なくろうにん
+	CASE 7
+		PRINTFORML なしあわせもの
+	CASE 8
+		PRINTFORML なセクシーギャル
+	CASE 9
+		PRINTFORML でぬけめがない
+	CASE 10
+		PRINTFORML なねっけつかん
+	CASE 11
+		PRINTFORML なのんきもの
+	CASE 12
+		PRINTFORML なひっこみじあん
+	CASE 13
+		PRINTFORML なやさしいひと
+	CASE 14
+		PRINTFORML なわがまま
+	CASEELSE
+		;普通なふつう　が割と居る気がする
+		;気に入らない場合（嫁キャラな場合）は自分でCSV弄ってあげてください…
+		PRINTFORML なふつう
+ENDSELECT
+
+
+

@@ -1,0 +1,190 @@
+﻿; 戦闘コマンドの実行可能判定を行う
+; 0:実行不可 1:実行可能を返す
+@IS_BATTLE_COMMAND(CHARA_ID, COMMAND_NO)
+#FUNCTION
+#DIM CHARA_ID
+#DIM COMMAND_NO
+#DIM IS_COMMAND
+
+	VARSET IS_COMMAND
+	
+	; 前提条件として戦闘行動が行えること
+	SIF !IS_POSSIBLE_BATTLE_ACTION(CHARA_ID)
+		RETURNF 0
+	
+	; キャラの状態によって利用可能コマンドが変化するので分岐
+	; 催眠状態
+	IF CFLAG:CHARA_ID:43
+		; 使用コマンドによって分岐
+		SELECTCASE (COMMAND_NO % 100)
+		; おねだり
+		CASE 54 TO 58
+			; 触手中毒1以上ならおねだり可能
+			SIF ABL:CHARA_ID:11 > 0
+				IS_COMMAND = 1
+		; 平常行動
+		CASE 71
+			IS_COMMAND = 1
+		; 自慰
+		CASE 72
+			IS_COMMAND = 1
+		; 仲間を襲う
+		CASE 73
+			; PTメンバーが2人以上 自分が拘束・丸呑みされていない
+			IF GET_MEMBER_SUM() >= 2 && !CFLAG:CHARA_ID:20
+				; 自分以外のキャラを襲える状態にある (丸呑みされていない)
+				IF CHARA_ID == 1 && ((FLAG:10 && !CFLAG:(FLAG:10):21) || (FLAG:11 && !CFLAG:(FLAG:11):21))
+					IS_COMMAND = 1
+				ELSEIF CHARA_ID == FLAG:10 && (!CFLAG:1:21 || (FLAG:11 && !CFLAG:(FLAG:11):21))
+					IS_COMMAND = 1
+				ELSEIF CHARA_ID == FLAG:11 && (!CFLAG:1:21 || (FLAG:10 && !CFLAG:(FLAG:10):21))
+					IS_COMMAND = 1
+				ENDIF
+			ENDIF
+		; 着替える
+		CASE 74
+			IS_COMMAND = 1
+		; 逃げる(催眠中は前に出ると同じ効果)
+		CASE 75
+			IS_COMMAND = 1
+		; 安眠
+		CASE 76
+			IS_COMMAND = 1
+		; 催眠強度依存コマンド(踏む)
+		CASE 80
+			SIF CFLAG:CHARA_ID:43 < 3
+				IS_COMMAND = 1
+		; 催眠強度依存コマンド(ビンタ 折る)
+		CASE 81, 82
+			SIF CFLAG:CHARA_ID:43 == 1
+				IS_COMMAND = 1
+		; 催眠強度依存コマンド(キス 手淫)
+		CASE 83, 84
+			SIF CFLAG:CHARA_ID:43 >= 2
+				IS_COMMAND = 1
+		; 催眠強度依存コマンド(フェラチオ パイズリ)
+		CASE 85, 86
+			SIF CFLAG:CHARA_ID:43 >= 3
+				IS_COMMAND = 1
+		ENDSELECT
+		
+	; 拘束中
+	ELSEIF CFLAG:CHARA_ID:10 || CFLAG:CHARA_ID:20
+		; 使用コマンドによって分岐
+		SELECTCASE (COMMAND_NO % 100)
+		; 防御
+		CASE 1
+			IS_COMMAND = 1
+		; 霊撃
+		CASE 19
+			SIF BASE:CHARA_ID:0
+				IS_COMMAND = 1
+		; 脱出を試みる
+		CASE 42
+			IS_COMMAND = 1
+		; 力を溜める
+		CASE 43
+			IS_COMMAND = 1
+		; 諦める
+		CASE 44
+			SIF TFLAG:16 == 1
+				IS_COMMAND = 1
+		; 性部位防御
+		CASE 50 TO 53
+			; 拘束レベル5未満なら防御可能
+			SIF CFLAG:CHARA_ID:38 < 5
+				IS_COMMAND = 1
+		; おねだり
+		CASE 54 TO 58
+			; 触手中毒1以上ならおねだり可能
+			SIF ABL:CHARA_ID:11 > 0
+				IS_COMMAND = 1
+		ENDSELECT
+		
+	; 通常時
+	ELSE
+		; 使用コマンドによって分岐
+		SELECTCASE (COMMAND_NO % 100)
+		; 防御
+		CASE 1
+			IS_COMMAND = 1
+		; アイテム
+		CASE 2
+			IS_COMMAND = 1
+		; 前に出る
+		CASE 3
+			; 後退中ならOK
+			SIF !CFLAG:CHARA_ID:34
+				IS_COMMAND = 1
+		; 元に戻る
+		CASE 4
+			; 前進中ならOK
+			SIF CFLAG:CHARA_ID:34
+				IS_COMMAND = 1
+		; 逃げる
+		CASE 5
+			IS_COMMAND = 1
+		; 緊急浄化
+		CASE 8
+			; 浄化力50以上なら使用可能
+			; 複数キャラクターが緊急浄化コマンドを使用した場合を想定して計算
+			SIF FLAG:6 - (CFLAG:1:50 == 8 ? 50 # 0) - (CFLAG:(FLAG:10):50 == 8 ? 50 # 0) - (CFLAG:(FLAG:11):50 == 8 ? 50 # 0) >= 50
+				IS_COMMAND = 1
+		; 通常攻撃
+		CASE 10 TO 15
+			; 攻撃戦闘レベルが足りていればOK
+			SIF ABL:CHARA_ID:3 > (COMMAND_NO - 13)
+				IS_COMMAND = 1
+		; 霊撃
+		CASE 19
+			SIF BASE:CHARA_ID:0
+				IS_COMMAND = 1
+		; 消耗武器攻撃
+		CASE 20 TO 25
+			; 対応武器を装備していることが条件
+			IF ((COMMAND_NO / 100) == 1 && INRANGE(CFLAG:CHARA_ID:7, 1, 9)) || ((COMMAND_NO / 100) == 2 && INRANGE(CFLAG:CHARA_ID:8, 1, 9))
+				; 道具戦闘レベルが足りていればOK
+				IF ABL:CHARA_ID:4 > ((COMMAND_NO % 100) - 23)
+					; 消耗武器は更に残弾チェック
+					SIF CHECK_BULLET_ENOUGH((CFLAG:CHARA_ID:(16 + (COMMAND_NO / 100))), (COMMAND_NO % 100))
+						IS_COMMAND = 1
+				ENDIF
+			ENDIF
+		; 非消耗武器攻撃
+		CASE 30 TO 35
+			; 対応武器を装備していることが条件
+			IF ((COMMAND_NO / 100) == 1 && INRANGE(CFLAG:CHARA_ID:7, 10, 19)) || ((COMMAND_NO / 100) == 2 && INRANGE(CFLAG:CHARA_ID:8, 10, 19))
+				; 道具戦闘レベルが足りていればOK
+				SIF ABL:CHARA_ID:4 > ((COMMAND_NO % 100) - 33)
+						IS_COMMAND = 1
+			ENDIF
+		; おねだり
+		CASE 54 TO 58
+			; 触手中毒1以上ならおねだり可能
+			SIF ABL:CHARA_ID:11 > 0
+				IS_COMMAND = 1
+		; 使う(装備品1)
+		CASE 60
+			; アクセサリを装備しているなら使用可
+			SIF INRANGE(CFLAG:CHARA_ID:7, 20, 49)
+				IS_COMMAND = 1
+		; 使う(装備品2)
+		CASE 61
+			; アクセサリを装備しているなら使用可
+			SIF INRANGE(CFLAG:CHARA_ID:8, 20, 49)
+				IS_COMMAND = 1
+		; 性攻撃(キス 手淫)
+		CASE 83, 84
+			; 触手中毒2以上 + 精液中毒2以上で使用可能
+			SIF ABL:CHARA_ID:11 >= 2 && ABL:CHARA_ID:14 >= 2
+				IS_COMMAND = 1
+		; 性攻撃(フェラチオ パイズリ)
+		CASE 85, 86
+			; 触手中毒3以上 + 精液中毒3以上で使用可能
+			SIF ABL:CHARA_ID:11 >= 3 && ABL:CHARA_ID:14 >= 3
+				IS_COMMAND = 1
+		ENDSELECT
+	ENDIF
+	
+RETURNF IS_COMMAND
+

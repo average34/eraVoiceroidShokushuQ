@@ -1,0 +1,120 @@
+﻿; AI戦闘コマンド 性交を防ぐ
+; コマンドの実行率を0.00%～100.00%で返す
+; emueraは小数が使えないので*100した値(0-10000)を扱う
+@GET_COMMAND_EXECUTION_RATE_53(CHARA_ID, TARGET_ID, SUPPORT_VALUE)
+#DIM CHARA_ID
+#DIM TARGET_ID
+#DIM SUPPORT_VALUE ; Reserved
+#DIM RATE
+#DIM DATA_TABLE, 15, 5
+
+	VARSET RATE
+	
+	; PTメンバーが1人の場合誰も助けてくれないので防御はしない
+	SIF GET_MEMBER_SUM() == 1
+		RETURN 0
+	
+	; 助け出してくれるキャラが居ないなら防御しても無駄
+	{
+	SIF (CHARA_ID == 1 && (FLAG:10 && (!IS_POSSIBLE_ACTION(FLAG:10) || CFLAG:(FLAG:10):43 || CFLAG:(FLAG:10):10 || CFLAG:(FLAG:10):20)) && (FLAG:11 && (!IS_POSSIBLE_ACTION(FLAG:11) || CFLAG:(FLAG:11):43 || CFLAG:(FLAG:11):10 || CFLAG:(FLAG:11):20))) ||
+	    (CHARA_ID == FLAG:10 && (!IS_POSSIBLE_ACTION(1) || CFLAG:1:43 || CFLAG:1:10 || CFLAG:1:20) && (FLAG:11 && (!IS_POSSIBLE_ACTION(FLAG:11) || CFLAG:(FLAG:11):43 || CFLAG:(FLAG:11):10 || CFLAG:(FLAG:11):20))) ||
+	    (CHARA_ID == FLAG:11 && (!IS_POSSIBLE_ACTION(1) || CFLAG:1:43 || CFLAG:1:10 || CFLAG:1:20) && (FLAG:10 && (!IS_POSSIBLE_ACTION(FLAG:10) || CFLAG:(FLAG:10):43 || CFLAG:(FLAG:10):10 || CFLAG:(FLAG:10):20)))
+	}
+		RETURN 0
+		
+	; 性格別コマンド実行基礎値(攻撃的な性格別に並べ替え済)
+	;                超弱気    弱気    普通    強気  超強気
+	DATA_TABLE:10:0 =  2000,   2400,   2800,   3200,   3600  ; 10:ねっけつかん
+	DATA_TABLE:2:0  =  2100,   2500,   2900,   3300,   3700  ; 02:おてんば
+	DATA_TABLE:14:0 =  2200,   2600,   3000,   3400,   3800  ; 14:わがまま
+	DATA_TABLE:3:0  =  2300,   2700,   3100,   3500,   3900  ; 03:がんこもの
+	DATA_TABLE:6:0  =  2400,   2800,   3200,   3600,   4000  ; 06:くろうにん
+	DATA_TABLE:4:0  =  2500,   2900,   3300,   3700,   4100  ; 04:がんばりや
+	DATA_TABLE:5:0  =  2600,   3000,   3400,   3800,   4200  ; 05:きれもの
+	DATA_TABLE:1:0  =  2700,   3100,   3500,   3900,   4300  ; 01:おせっかい
+	DATA_TABLE:0:0  =  2800,   3200,   3600,   4000,   4400  ; 00:ふつう
+	DATA_TABLE:9:0  =  2900,   3300,   3700,   4100,   4500  ; 09:ぬけめがない
+	DATA_TABLE:8:0  =  3000,   3400,   3800,   4200,   4600  ; 08:セクシーギャル
+	DATA_TABLE:7:0  =  3100,   3500,   3900,   4300,   4700  ; 07:しあわせもの
+	DATA_TABLE:11:0 =  3200,   3600,   4000,   4400,   4800  ; 11:のんきもの
+	DATA_TABLE:13:0 =  3300,   3700,   4100,   4500,   4900  ; 13:やさしいひと
+	DATA_TABLE:12:0 =  3400,   3800,   4200,   4600,   5000  ; 12:ひっこみじあん
+	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
+	
+	; EPによる補正
+	; 絶頂が近い場合、ついつい性防御を行ってしまう
+	SELECTCASE BASE:CHARA_ID:EP
+	; 75%以上
+	CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 75)
+		RATE -= 500
+	; 50%以上
+	CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 50)
+		; 補正無し
+	; 25%以上
+	CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 25)
+		RATE += 300
+	; 5%以上
+	CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 5)
+		RATE += 700
+	; 寸止め
+	CASE 1
+		RATE += 1000
+	ENDSELECT
+	
+	; CPによる補正
+	; 服破れが大きいとEPダメージが大きくなるので身を守ってしまう
+	SELECTCASE BASE:CHARA_ID:CP
+	; 服破れなし
+	CASE MAXBASE:CHARA_ID:CP
+		RATE -= 1000
+	; 66%以上
+	CASE IS >= (MAXBASE:CHARA_ID:CP / 100 * 66)
+		RATE -= 500
+	; 33%以上
+	CASE IS >= (MAXBASE:CHARA_ID:EP / 100 * 33)
+		; 補正無し
+	; 0%超
+	CASE IS > 0
+		RATE += 500
+	; 服を着ていない
+	CASE 0
+		RATE += 1000
+	ENDSELECT
+	
+	; V感度による補正
+	; 感度が高いほど危機感を持つ
+	SELECTCASE ABL:CHARA_ID:9
+	CASE 0
+		RATE -= 500
+	CASE 1
+		; 補正なし
+	CASE 2
+		RATE += 500
+	CASEELSE
+		RATE += 1000
+	ENDSELECT
+	
+	; [淫壺]所持
+	; 実は欲しがっているということでマイナス補正
+	SIF TALENT:CHARA_ID:78
+		TIMES RATE, 0.5
+	
+	; 脱出成功率で補正
+	; 成功率が高いなら防御するより逃げた方がいい 低いなら身を守る方がいい
+	CALL GET_RELEASE_RATE(CHARA_ID)
+	SELECTCASE RESULT
+	; 75%以上
+	CASE IS >= 80
+		TIMES RATE, 0.2
+	; 50%以上
+	CASE IS >= 50
+		TIMES RATE, 0.5
+	; 25%以上
+	CASE IS >= 25
+		TIMES RATE, 1.2
+	; 0%以上
+	CASE IS >= 0
+		TIMES RATE, 1.5
+	ENDSELECT
+	
+RETURN LIMIT(RATE, 0, 10000)

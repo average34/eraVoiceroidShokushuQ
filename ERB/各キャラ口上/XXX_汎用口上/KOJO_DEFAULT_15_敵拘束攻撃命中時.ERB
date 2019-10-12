@@ -1,0 +1,218 @@
+﻿
+
+
+;拘束と丸呑みの二種類ある点に注意
+
+
+
+; ////////////////////////////
+; / ARG:0   15    敵の拘束攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2         0:拘束 1:丸呑み
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_15(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+
+
+;喪失時
+IF CFLAG:29 > 0
+
+	CALL COMMON_KOJO_DEFAULT_RYONA_TEST(0)
+
+
+	RETURN 1
+ENDIF
+
+
+	
+	; 催眠中
+	IF CFLAG:43
+		SELECTCASE CFLAG:43
+		; 催眠強度1
+		CASE 1
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"「逃げなきゃいけないのに動けない……！」"
+				CALL ADD_RAND_MESSAGE, @"「このままじゃ捕まっちゃう……なんで動けないの……！？」"
+				
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"（ああ……　もう逃げられない……♥）"
+				CALL ADD_RAND_MESSAGE, @"「あれに捕まったら……どうなっちゃうんだろ♥」"
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"「優しくしてくださいね……」"
+			ENDSELECT
+
+		; 催眠強度2
+		CASE 2
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"「動いてよ……　身体動いてよ……　逃げなきゃいけないのに……」"
+				
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"「わざわざ捕まえるって事は、激しいの期待していいんですよね♥」"
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"「どうぞ……　好きなだけ%CALLNAME:TARGET%の身体でお楽しみ下さい……」"
+			ENDSELECT
+			
+		; 催眠強度最大、又はレッサーヒュプノの減衰あり催眠
+		CASEELSE
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				CALL ADD_RAND_MESSAGE, @"（逃げたいのに身体は勝手に抱きついて……　もうやだ……）"
+				CALL ADD_RAND_MESSAGE, @"「助けて……誰か助けて助けてよ！！　いやぁぁぁぁ！！！！」"
+				
+			; 発情・感情操作系
+			CASE 1
+				CALL ADD_RAND_MESSAGE, @"（捕まって性欲処理に使われる♥　逃げられない♥　もう気持ちいいのから逃げられない♥）"
+				CALL ADD_RAND_MESSAGE, @"（あ……すごいの期待しちゃって子宮がきゅんきゅんしてる♥♥　えっちな汁止まらないよぉ♥♥）"
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL ADD_RAND_MESSAGE, @"「はい……　今から%CALLNAME:TARGET%は%ARGS:1%様の専用肉便器です……」"
+			ENDSELECT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	CALL ADD_RAND_MESSAGE, @"「放してよ！！」"
+	CALL ADD_RAND_MESSAGE, @"「いやぁー！！」"
+
+
+	CALL ADD_RAND_MESSAGE, @"「うそっ！？捕まった！？」"
+	CALL ADD_RAND_MESSAGE, @"「まずいっ！」"
+	CALL ADD_RAND_MESSAGE, @"「そんな！？」"
+	CALL ADD_RAND_MESSAGE, @"「まさか！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「か、体の自由が！？」"
+	CALL ADD_RAND_MESSAGE, @"「かわしきれなかった！？」"
+	CALL ADD_RAND_MESSAGE, @"「反応が遅れた！？」"
+
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+
+	CASE 性格_おせっかい
+
+		CALL ADD_RAND_MESSAGE, @"「前より速い！？ううん、私のカラダが鈍くなってきているのね……」"
+
+	CASE 性格_がんばりや
+
+		CALL ADD_RAND_MESSAGE, @"「前より速い！？ううん、私のカラダが鈍くなってきているのね……」"
+
+	CASE 性格_きれもの
+		CALL ADD_RAND_MESSAGE, @"「しまった！？」"
+
+
+	CASE 性格_セクシーギャル
+
+		CALL ADD_RAND_MESSAGE, @"「かわしきれなかった？……ちょっと太ったのかな」"
+		CALL ADD_RAND_MESSAGE, @"「避けられなかった？……ダイエットするべきかな」"
+		CALL ADD_RAND_MESSAGE, @"「……そう。そんなに私の声が聞きたいんだ？」"
+		CALL ADD_RAND_MESSAGE, @"「昔の傷を忘れさせてくれるのかしら？」"
+
+		CALL ADD_RAND_MESSAGE, @"「いつのまにか、やきもちの風に酔わされていたようね」"
+
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「くっ、油断した！！」"
+		CALL ADD_RAND_MESSAGE, @"「やばっ！」"
+		CALL ADD_RAND_MESSAGE, @"「なんだと！？」"
+		CALL ADD_RAND_MESSAGE, @"「しくじった！？」"
+
+	CASE 性格_のんきもの
+		CALL ADD_RAND_MESSAGE, @"「もう、これじゃ動けないでしょ？」"
+		CALL ADD_RAND_MESSAGE, @"「あらー？」"
+		CALL ADD_RAND_MESSAGE, @"「……困るわね」"
+		CALL ADD_RAND_MESSAGE, @"「ミスったかしら！？」"
+
+		CALL ADD_RAND_MESSAGE, @"「……出口が分かっている分、どこかの迷宮よりは楽よね」"
+
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「やぁ……っ、放してぇ……」"
+	ENDSELECT
+RETURN 1
+
+
+
+
+
+; ////////////////////////////
+; / ARG:0   15    敵の丸呑み攻撃(命中)
+; / ARG:1         コマンドID
+; / ARG:2    1    0:拘束 1:丸呑み
+; / ARGS:0        自分の名前
+; / ARGS:1        敵の名前
+@KOJO_DEFAULT_15_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+;●睡眠
+IF CFLAG:25 > 0
+
+	CALL COMMON_KOJO_DEFAULT_SLEEP_TEST(0)
+
+	RETURN 1
+ENDIF
+
+
+
+;喪失時
+IF CFLAG:29 > 0
+
+	CALL COMMON_KOJO_DEFAULT_RYONA_TEST(0)
+
+	RETURN 1
+ENDIF
+
+	
+	CALL ADD_RAND_MESSAGE, @"「や、やだ！？　食べる気！？」"
+	CALL ADD_RAND_MESSAGE, @"「の、呑み込まれ……っ！」"
+
+	CALL ADD_RAND_MESSAGE, @"「うそっ！？呑み込まれ……っ！」"
+	CALL ADD_RAND_MESSAGE, @"「マズイっ！？呑み込まれ……っ！」"
+	CALL ADD_RAND_MESSAGE, @"「そんな！？呑み込まれ……っ！」"
+	CALL ADD_RAND_MESSAGE, @"「しまった！呑み込まれ……っ！」"
+
+	CALL ADD_RAND_MESSAGE, @"「まさか、食べる気！？」"
+
+	CALL ADD_RAND_MESSAGE, @"「と、とり込まれ……っ！」"
+
+
+	; 性格別 追加口上
+	SELECTCASE CFLAG:100
+	CASE 性格_おてんば
+		CALL ADD_RAND_MESSAGE, @"「やーだー！　食べないでー！」"
+		CALL ADD_RAND_MESSAGE, @"「食べたっておいしくないぞー！？」"
+	CASE 性格_ねっけつかん
+		CALL ADD_RAND_MESSAGE, @"「くっ、喰われる！？」"
+		CALL ADD_RAND_MESSAGE, @"「やばっ、喰われる！？」"
+	CASE 性格_くろうにん
+		CALL ADD_RAND_MESSAGE, @"「面倒ごとばっかり……！」"
+	CASE 性格_ひっこみじあん
+		CALL ADD_RAND_MESSAGE, @"「…………ひぃっ！！」"
+		CALL ADD_RAND_MESSAGE, @"「――――ッ！？」"
+	ENDSELECT
+RETURN 1
+

@@ -1,0 +1,160 @@
+﻿;攻撃（分類5＝敵の寄生攻撃）を処理
+;ARG:0	攻撃側キャラ
+;ARG:1	防御側キャラ
+;RESULT:0	当たったかどうか（1で命中）
+;RESULT:1	ダメージ
+@CHECK_ATTACK_5(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	当たったかどうか
+;2	ダメージ
+;3	攻撃力(今の所未使用)
+;4	防御力(今の所未使用)
+;5	属性倍率
+;6	命中率
+;7	TEMP
+;8	TEMP2
+
+
+VARSET LOCAL, 0, 1, 9
+
+;----- 攻撃力計算 -----
+;基本値
+LOCAL:2 = TFLAG:57 * TFLAG:58
+
+;防御側TP倍率
+LOCAL:7 = 0
+IF BASE:(ARG:1):4 >= 100
+	LOCAL:7 = 100
+ELSE
+	LOCAL:7 = LIMIT(100 - (100 - BASE:(ARG:1):4) / 2, 50, 100)
+ENDIF
+LOCAL:2 = LOCAL:2 * LOCAL:7 / 100
+
+;触手中毒による軽減
+IF ABL:(ARG:1):11 == 0
+	LOCAL:7 = 100
+ELSEIF ABL:(ARG:1):11 == 1
+	LOCAL:7 = 90
+ELSEIF ABL:(ARG:1):11 == 2
+	LOCAL:7 = 75
+ELSE
+	LOCAL:7 = 50
+ENDIF
+LOCAL:2 = LOCAL:2 * LOCAL:7 / 100
+
+;精液中毒による軽減
+IF ABL:(ARG:1):14 == 0
+	LOCAL:7 = 100
+ELSEIF ABL:(ARG:1):14 == 1
+	LOCAL:7 = 95
+ELSEIF ABL:(ARG:1):14 == 2
+	LOCAL:7 = 85
+ELSE
+	LOCAL:7 = 75
+ENDIF
+LOCAL:2 = LOCAL:2 * LOCAL:7 / 100
+
+;防御中は威力0.5倍
+IF CFLAG:(ARG:1):30
+	LOCAL:2 = LOCAL:2 * 5 / 10
+ENDIF
+
+;溜め中は威力1.5倍
+IF CFLAG:(ARG:1):31
+	LOCAL:2 = LOCAL:2 * 15 / 10
+ENDIF
+
+;集中時は威力1.5倍
+IF CFLAG:(ARG:1):32
+	LOCAL:2 = LOCAL:2 * 15 / 10
+ENDIF
+
+;カウンター時は威力1.2倍
+IF CFLAG:(ARG:1):33
+	LOCAL:2 = LOCAL:2 * 12 / 10
+ENDIF
+
+
+;乱数加算および桁補正
+LOCAL:2 = LOCAL:2 * (90 + RAND:11 + RAND:11) / 1000
+
+
+;寄生攻撃に属性は無い
+;……AとVくらい分けようかと思ったけど、手間軽減の方向で
+LOCAL:5 = 100
+
+;素質補正
+IF TALENT:(ARG:1):12
+	LOCAL:5 = LOCAL:5 * 9 / 10
+ENDIF
+
+;汚染度補正
+SELECTCASE FLAG:4
+	CASE -1, 0
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0
+				LOCAL:5 = LOCAL:5 * 5 / 10
+			CASE 1
+				LOCAL:5 = LOCAL:5 * 7 / 10
+			CASE 2, 3
+			CASE 4
+				LOCAL:5 = LOCAL:5 * 11 / 10
+			CASE 5
+				LOCAL:5 = LOCAL:5 * 12 / 10
+		ENDSELECT
+	CASE 1
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0
+				LOCAL:5 = LOCAL:5 * 6 / 10
+			CASE 1
+				LOCAL:5 = LOCAL:5 * 8 / 10
+			CASE 2
+				;普通なので何もなし
+			CASE 3
+				LOCAL:5 = LOCAL:5 * 11 / 10
+			CASE 4
+				LOCAL:5 = LOCAL:5 * 13 / 10
+			CASE 5
+				LOCAL:5 = LOCAL:5 * 15 / 10
+		ENDSELECT
+	CASE 2, 3
+		SELECTCASE BATTLE_POLUTION()
+			CASE 0
+				LOCAL:5 = LOCAL:5 * 7 / 10
+			CASE 1
+				LOCAL:5 = LOCAL:5 * 9 / 10
+			CASE 2
+				;普通なので何もなし
+			CASE 3
+				LOCAL:5 = LOCAL:5 * 12 / 10
+			CASE 4
+				LOCAL:5 = LOCAL:5 * 14 / 10
+			CASE 5
+				LOCAL:5 = LOCAL:5 * 16 / 10
+		ENDSELECT
+ENDSELECT
+
+;命中率チェック
+CALL GET_HIT_RATE_ENEMY(ARG:0, ARG:1, 5)
+LOCAL:6 = RESULT
+;Vを防御していれば威力と命中率減少（拘束状態でも避けられる）
+IF CFLAG:(ARG:1):50 == 53 && !CFLAG:(ARG:1):35
+	PRINTFORML %CALLNAME:(ARG:1)%は激しく抵抗した！
+	LOCAL:5 = LOCAL:5 * 8 / 10
+	LOCAL:6 -= RAND:30
+ENDIF
+PRINTFORML 命中率：{LOCAL:6}％
+
+IF RAND:100 < LOCAL:6
+	LOCAL:1 = 1
+ENDIF
+
+IF LOCAL:1
+	LOCAL:2 = LOCAL:2 * LOCAL:5 / 100
+ELSE
+	LOCAL:2 = 0
+ENDIF
+
+RETURN LOCAL:1, LOCAL:2
+

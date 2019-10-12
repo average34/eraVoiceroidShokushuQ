@@ -1,0 +1,261 @@
+﻿;MAP上の周囲のキャラクター表示関連関数群
+
+
+;タイトル部分表示＋表示が必要かチェック＋表示文字列作成
+;ARG:0	表示方向（０：上　１：左　２：右　３：下）
+;RETURN	0:表示不要　1:表示が必要な行数
+@PRINT_SEARCH_INFO(ARG:0)
+;LOCAL
+;0	LOOP
+;1	対象部屋番号
+;2	気配察知レベル
+;3	誰か居るかどうか
+;4	表示行数（戻り値）
+
+;LOCALS
+;0	表示する文字列
+;   ※２行になる可能性があるので、最終的にはSTR:1とSTR:2に保存する
+
+
+;気配察知レベルを取得
+;気配察知が０なら何も表示しない
+LOCAL:2 = GET_PT_MAX_ABL(1)
+
+IF LOCAL:2 <= 0
+	RETURN
+ENDIF
+
+IF ARG:0 == 0
+	;現在地の上の部屋が対象
+	;5以下の部屋なら何も表示しない
+	IF FLAG:5 <= 5
+		RETURN
+	ENDIF
+	LOCAL:1 = FLAG:5 - 5
+ELSEIF ARG:0 == 1
+	;現在地の左の部屋が対象
+	;5n+1の部屋なら何も表示しない
+	IF (FLAG:5 % 5) == 1
+		RETURN
+	ENDIF
+	LOCAL:1 = FLAG:5 - 1
+ELSEIF ARG:0 == 2
+	;現在地の右の部屋が対象
+	;5nの部屋なら何も表示しない
+	IF (FLAG:5 % 5) == 0
+		RETURN
+	ENDIF
+	LOCAL:1 = FLAG:5 + 1
+ELSE
+	;現在地の下の部屋が対象
+	;26以上の部屋なら何も表示しない
+	IF FLAG:5 >= 26
+		RETURN
+	ENDIF
+	LOCAL:1 = FLAG:5 + 5
+ENDIF
+
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+;対象となる部屋に誰か居るかどうかチェック
+
+;味方キャラ
+FOR LOCAL:0, 1, CHARANUM
+	IF CFLAG:(LOCAL:0):4 == LOCAL:1 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+		;生きているキャラが居ればフラグを立てる
+		LOCAL:3 |= 1
+	ENDIF
+NEXT
+
+;敵キャラ
+FOR LOCAL:0, 1, FLAG:1
+	IF DA:(LOCAL:0):4 == LOCAL:1
+		;キャラが居ればフラグを立てる
+		LOCAL:3 |= 2
+	ENDIF
+NEXT
+
+IF LOCAL:3
+	;部屋番号部分をタイトルとして表示
+	PRINTFORM 【 {LOCAL:1} の部屋 】
+
+	;詳細表示用の文字列を作成
+	LOCALS:0 = 
+
+	IF LOCAL:2 == 1
+		;察知レベルが１＝何か居る事しか分からない
+		LOCAL:4 = 1
+		STR:1 = 何かの気配がする…
+	ELSEIF LOCAL:2 == 2
+		;察知レベルが２＝敵味方判別可能　※ドッペルに関する処理は後で変更したいな…
+		LOCAL:4 = 1
+		IF LOCAL:3 == 3
+			;両方居る
+			STR:1 = 敵と味方の気配がする…
+		ELSEIF LOCAL:3 == 1
+			;味方だけ居る
+			STR:1 = 味方の気配がする…
+		ELSEIF LOCAL:3 == 2
+			;敵だけ居る
+			STR:1 = 敵の気配がする…
+		ENDIF
+	ELSE
+		;察知レベルがそれ以上＝全部わかる　※ドッペルに関する処理は後で変更したいな…
+		
+		;味方キャラ
+		FOR LOCAL:0, 1, CHARANUM
+			IF CFLAG:(LOCAL:0):4 == LOCAL:1 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+				;生きているキャラが居れば名前を表示
+				IF LOCALS:0 == ""
+					LOCALS:0 = %CALLNAME:(LOCAL:0)%
+				ELSE
+					LOCALS:0 = %LOCALS:0%と、%CALLNAME:(LOCAL:0)%
+				ENDIF
+			ENDIF
+		NEXT
+
+		;敵キャラ
+		FOR LOCAL:0, 1, FLAG:1
+			IF DA:(LOCAL:0):4 == LOCAL:1
+				;キャラが居ればフラグを立てる
+				IF LOCALS:0 == ""
+					LOCALS:0 = %SAVESTR:(LOCAL:0)%
+				ELSE
+					LOCALS:0 = %LOCALS:0%と、%SAVESTR:(LOCAL:0)%
+				ENDIF
+			ENDIF
+		NEXT
+		
+		LOCALS:0 = %LOCALS:0%の気配がする…
+		
+		;文字数をチェックし、長ければ２行に分割　　それでも長ければ省略
+		IF STRLENSU(LOCALS:0) > 50
+			;３行以上必要になるので省略
+			LOCAL:4 = 2
+			STR:1 = %SUBSTRINGU(LOCALS:0, 0, 25)%
+			STR:2 = %SUBSTRINGU(LOCALS:0, 25, 24)%..
+		ELSEIF STRLENSU(LOCALS:0) > 25
+			;２行で表示
+			LOCAL:4 = 2
+			STR:1 = %SUBSTRINGU(LOCALS:0, 0, 25)%
+			STR:2 = %SUBSTRINGU(LOCALS:0, 25, -1)%
+		ELSE
+			;１行で足りる
+			LOCAL:4 = 1
+			STR:1 = %LOCALS:0%
+		ENDIF
+	ENDIF
+
+ENDIF
+
+RETURN LOCAL:4
+
+
+
+
+;PRINT_SEARCH_INFO の、会話による情報交換版
+;ARG:0	表示方向（０：上　１：左　２：右　３：下）
+;RETURN	対象部屋番号（0なら表示不要, -1なら誰も居ない）
+@PRINT_SEARCH_INFO_2(ARG:0)
+;LOCAL
+;0	LOOP
+;1	対象部屋番号
+;2	気配察知レベル
+;3	誰か居るかどうか
+
+;LOCALS
+;0	表示する文字列
+
+IF ARG:0 == 0
+	;現在地の上の部屋が対象
+	;5以下の部屋なら何も表示しない
+	IF FLAG:5 <= 5
+		RETURN 0
+	ENDIF
+	LOCAL:1 = FLAG:5 - 5
+ELSEIF ARG:0 == 1
+	;現在地の左の部屋が対象
+	;5n+1の部屋なら何も表示しない
+	IF (FLAG:5 % 5) == 1
+		RETURN 0
+	ENDIF
+	LOCAL:1 = FLAG:5 - 1
+ELSEIF ARG:0 == 2
+	;現在地の右の部屋が対象
+	;5nの部屋なら何も表示しない
+	IF (FLAG:5 % 5) == 0
+		RETURN 0
+	ENDIF
+	LOCAL:1 = FLAG:5 + 1
+ELSE
+	;現在地の下の部屋が対象
+	;26以上の部屋なら何も表示しない
+	IF FLAG:5 >= 26
+		RETURN 0
+	ENDIF
+	LOCAL:1 = FLAG:5 + 5
+ENDIF
+
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+;対象となる部屋に誰か居るかどうかチェック
+
+;味方キャラ
+FOR LOCAL:0, 1, CHARANUM
+	IF CFLAG:(LOCAL:0):4 == LOCAL:1 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+		;生きているキャラが居ればフラグを立てる
+		LOCAL:3 |= 1
+	ENDIF
+NEXT
+
+;敵キャラ
+FOR LOCAL:0, 1, FLAG:1
+	IF DA:(LOCAL:0):4 == LOCAL:1
+		;キャラが居ればフラグを立てる
+		LOCAL:3 |= 2
+	ENDIF
+NEXT
+
+IF LOCAL:3
+	;詳細表示用の文字列を作成
+	LOCALS:0 = 
+
+	;※ドッペルに関する処理は後で変更したいな…
+	
+	;味方キャラ
+	FOR LOCAL:0, 1, CHARANUM
+		IF CFLAG:(LOCAL:0):4 == LOCAL:1 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0
+			;生きているキャラが居れば名前を表示
+			IF LOCALS:0 == ""
+				LOCALS:0 = %CALLNAME:(LOCAL:0)%
+			ELSE
+				LOCALS:0 = %LOCALS:0%と、%CALLNAME:(LOCAL:0)%
+			ENDIF
+		ENDIF
+	NEXT
+
+	;敵キャラ
+	FOR LOCAL:0, 1, FLAG:1
+		IF DA:(LOCAL:0):4 == LOCAL:1
+			;キャラが居ればフラグを立てる
+			IF LOCALS:0 == ""
+				LOCALS:0 = %SAVESTR:(LOCAL:0)%
+			ELSE
+				LOCALS:0 = %LOCALS:0%と、%SAVESTR:(LOCAL:0)%
+			ENDIF
+		ENDIF
+	NEXT
+	
+	STR:1 = %LOCALS:0%が居るらしい…
+ELSE
+	LOCAL:4 = 1
+ENDIF
+
+RETURN LOCAL:1, LOCAL:4
+
+
+

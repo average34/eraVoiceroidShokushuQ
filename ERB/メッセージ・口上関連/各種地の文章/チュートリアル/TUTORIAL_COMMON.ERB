@@ -1,0 +1,34 @@
+﻿;チュートリアル関係の共通処理
+
+;チュートリアル表示
+;ARG:0	チュートリアルID
+@SHOW_TUTORIAL(ARG:0)
+
+IF FLAG:500 == 0
+	;表示しない設定の場合、何もしない
+	RETURN 0
+ENDIF
+
+IF FLAG:(ARG:0 + 400)
+	;既に表示したことがある場合、何もしない
+	;D&Tと違って FLAG:500 でも管理しているから、2以上かどうかは気にしないで良いはずだけど、一応見ておく
+	RETURN 0
+ENDIF
+
+SETCOLOR 0xF2A0A1
+
+TRYCCALLFORM TUTORIAL_{ARG:0}
+CATCH
+	;該当するチュートリアルが未実装の場合、何もしない
+	RESETCOLOR
+	RETURN 0
+ENDCATCH
+
+RESETCOLOR
+
+;チュートリアルを見終わったら、フラグを立てる
+FLAG:(ARG:0 + 400) |= 1
+
+;ちゃんとチュートリアルを見た場合、1を返しておく
+RETURN 1
+

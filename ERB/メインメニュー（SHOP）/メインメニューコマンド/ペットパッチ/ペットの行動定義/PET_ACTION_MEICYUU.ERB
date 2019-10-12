@@ -1,0 +1,292 @@
+﻿;変なファイル名だが、そのままでいいならこれ使って命中率固定行動を作れます。メイン処理回避フラグを立てて最後にこれCALLしてください。
+;でもこれメイン処理から外れる要素削っただけです。ごめんなさい。
+@PET_ACTION_MEICYUU(ARG)
+#DIM LCOUNT, 5
+;-------------
+;ダメージ算出
+;-------------
+LOCAL:1 = (25 + PET:10 / 2) * PET:90
+SELECTCASE PET_STARVE()
+	CASE 3
+		TIMES LOCAL:1, 1.25
+	CASE 2
+		TIMES LOCAL:1, 1.125
+	CASE 0
+		TIMES LOCAL:1, 0.8
+ENDSELECT
+;難易度補正
+;EASY時のクイーンとか相手の補正はナシ
+SELECTCASE FLAG:4
+	CASE 0
+		TIMES LOCAL:1, 1.7
+	CASE 1
+		TIMES LOCAL:1, 1.2
+	CASE 3
+		TIMES LOCAL:1, 0.8
+ENDSELECT
+;乱数
+LOCAL:1 = LOCAL:1 * (90 + RAND:11 + RAND:11) / 1000
+
+;-------------
+;ダメージ算出ここまで
+;-------------
+
+
+;-------------
+;命中率算出
+;-------------
+LOCAL:3 = ARG
+;-------------
+;命中判定ここまで
+;-------------
+
+;-------------
+;数字をどうこうする処理
+;-------------
+
+;攻撃回数が0なら1に修正
+SIF PET:94 == 0
+	PET:94 = 1
+
+;攻撃回数だけループ
+FOR LCOUNT:1, 0, PET:94
+	;全体攻撃フラグあり
+	IF PET:93
+		;敵への攻撃
+		IF PET:92 == 0
+			;命中率表示回数は1回で良い
+			PRINTFORML 命中率:{LOCAL:3}％
+			;敵の数だけループ
+			FOR LCOUNT, 1, TFLAG:15 + 1
+				;死体殴り防止
+				SIF DA:(TFLAG:LCOUNT):1 <= 0
+					CONTINUE
+				IF RAND:100 < 2 + PET:13 / 3
+					SETCOLOR 255, 255, 0
+					PRINTFORML クリティカルヒット！
+					RESETCOLOR
+					LOCAL:1 = LOCAL:1 * 3
+					LOCAL:3 += 100
+					LOCAL:5 = 1
+				ENDIF
+				PET:51 = TFLAG:LCOUNT
+				IF RAND:100 > LOCAL:3
+					PRINTFORML 外した！
+					CONTINUE
+				ENDIF
+				PRINTFORM %SAVESTR:(PET:51)%に
+				SETCOLOR 0x70FFFF
+				PRINTFORM {LOCAL:1}
+				RESETCOLOR
+				PRINTFORML のダメージ！
+				DA:(PET:51):1 -= LOCAL:1
+				;ダメージによる拘束キャラ救出判定
+				IF DA:(PET:51):1 > 0 && (DA:(PET:51):10 || DA:(PET:51):20)
+					LOCAL:4 = 2 + LIMIT((LOCAL * 51 / DA:(PET:51):2), 1, 10) + LIMIT((DA:(PET:51):1 * 10 / DA:(PET:51):2), 0, 5)
+					IF RAND:100 < LOCAL:4
+						CALL STATUS_RENEW_RELEASE(DA:(PET:51):10, 0, 2)
+						CALL STATUS_RENEW_RELEASE(DA:(PET:51):20, 0, 2)
+					ENDIF
+				ENDIF
+				IF LOCAL:5 == 1
+					LOCAL:1 = LOCAL:1 / 3
+					LOCAL:3 -= 100
+					LOCAL:5 = 0
+				ENDIF
+				SIF PET:98
+					TRYCALLFORM PET_EXTRA_ACTION_{PET:98}
+			NEXT
+		;味方への回復
+		ELSEIF PET:92 >= 1
+			PET:51 = 1
+			;先頭キャラ
+			PRINTFORM %CALLNAME:(PET:51)%の
+			SELECTCASE PET:92
+				CASE 1
+					PRINT HPが
+				CASE 2 
+					PRINT MPが
+				CASE 3
+					PRINT TPが
+			ENDSELECT
+			SETCOLOR 0x70FFFF
+			PRINTFORM {LOCAL:1}
+			RESETCOLOR
+			PRINTFORML 回復！
+			SELECTCASE PET:92
+				CASE 0
+					BASE:(PET:51):0 += LOCAL:1
+					SIF BASE:(PET:51):0 > MAXBASE:(PET:51):0
+						BASE:(PET:51):0 = MAXBASE:(PET:51):0
+				CASE 1
+					BASE:(PET:51):1 += LOCAL:1
+					SIF BASE:(PET:51):1 > MAXBASE:(PET:51):1
+						BASE:(PET:51):1 = MAXBASE:(PET:51):1
+				CASE 2
+					BASE:(PET:51):4 += LOCAL:1
+					SIF BASE:(PET:51):4 > MAXBASE:(PET:51):4
+						BASE:(PET:51):4 = MAXBASE:(PET:51):4
+			ENDSELECT
+			SIF PET:98
+				TRYCALLFORM PET_EXTRA_ACTION_{PET:98}
+			;二人目（いる場合）
+			IF FLAG:10
+				PET:51 = FLAG:10
+				PRINTFORM %CALLNAME:(PET:51)%の
+				SELECTCASE PET:92
+					CASE 1
+						PRINT HPが
+					CASE 2 
+						PRINT MPが
+					CASE 3
+						PRINT TPが
+				ENDSELECT
+				SETCOLOR 0x70FFFF
+				PRINTFORM {LOCAL:1}
+				RESETCOLOR
+				PRINTFORML 回復！
+				SELECTCASE PET:92
+					CASE 0
+						BASE:(PET:51):0 += LOCAL:1
+						SIF BASE:(PET:51):0 > MAXBASE:(PET:51):0
+							BASE:(PET:51):0 = MAXBASE:(PET:51):0
+					CASE 1
+						BASE:(PET:51):1 += LOCAL:1
+						SIF BASE:(PET:51):1 > MAXBASE:(PET:51):1
+							BASE:(PET:51):1 = MAXBASE:(PET:51):1
+					CASE 2
+						BASE:(PET:51):4 += LOCAL:1
+						SIF BASE:(PET:51):4 > MAXBASE:(PET:51):4
+							BASE:(PET:51):4 = MAXBASE:(PET:51):4
+				ENDSELECT
+				SIF PET:98
+					TRYCALLFORM PET_EXTRA_ACTION_{PET:98}
+			ENDIF
+			;三人目（いる場合）
+			IF FLAG:11
+				PET:51 = FLAG:11
+				PRINTFORM %CALLNAME:(PET:51)%の
+				SELECTCASE PET:92
+					CASE 1
+						PRINT HPが
+					CASE 2 
+						PRINT MPが
+					CASE 3
+						PRINT TPが
+				ENDSELECT
+				SETCOLOR 0x70FFFF
+				PRINTFORM {LOCAL:1}
+				RESETCOLOR
+				PRINTFORML 回復！
+				SELECTCASE PET:92
+					CASE 0
+						BASE:(PET:51):0 += LOCAL:1
+						SIF BASE:(PET:51):0 > MAXBASE:(PET:51):0
+							BASE:(PET:51):0 = MAXBASE:(PET:51):0
+					CASE 1
+						BASE:(PET:51):1 += LOCAL:1
+						SIF BASE:(PET:51):1 > MAXBASE:(PET:51):1
+							BASE:(PET:51):1 = MAXBASE:(PET:51):1
+					CASE 2
+						BASE:(PET:51):4 += LOCAL:1
+						SIF BASE:(PET:51):4 > MAXBASE:(PET:51):4
+							BASE:(PET:51):4 = MAXBASE:(PET:51):4
+				ENDSELECT
+				SIF PET:98
+					TRYCALLFORM PET_EXTRA_ACTION_{PET:98}
+			ENDIF
+		ENDIF
+	;全体フラグなし
+	ELSE
+		;攻撃する場合
+		IF PET:92 == 0
+			PRINTFORML 命中率:{LOCAL:3}％
+			;クリティカルヒットの処理
+			IF RAND:100 < 2 + PET:13 / 3
+				SETCOLOR 255, 255, 0
+				PRINTFORML クリティカルヒット！
+				RESETCOLOR
+				LOCAL:1 = LOCAL:1 * 3
+				LOCAL:3 += 100
+				LOCAL:5 = 1
+			ENDIF
+			IF RAND:100 > LOCAL:3
+				PRINTFORML 外した！
+				CONTINUE
+			ENDIF
+			PRINTFORM %SAVESTR:(PET:51)%に
+			SETCOLOR 0x70FFFF
+			PRINTFORM {LOCAL:1}
+			RESETCOLOR
+			PRINTFORML のダメージ！
+			DA:(PET:51):1 -= LOCAL:1
+			;ダメージによる拘束キャラ救出判定
+			IF DA:(PET:51):1 > 0 && (DA:(PET:51):10 || DA:(PET:51):20)
+				LOCAL:4 = 2 + LIMIT((LOCAL * 51 / DA:(PET:51):2), 1, 10) + LIMIT((DA:(PET:51):1 * 10 / DA:(PET:51):2), 0, 5)
+				IF RAND:100 < LOCAL:4
+					CALL STATUS_RENEW_RELEASE(DA:(PET:51):10, 0, 2)
+					CALL STATUS_RENEW_RELEASE(DA:(PET:51):20, 0, 2)
+				ENDIF
+			ENDIF
+			IF LOCAL:5 == 1
+				LOCAL:1 = LOCAL:1 / 3
+				LOCAL:3 -= 100
+				LOCAL:5 = 0
+			ENDIF
+			SIF PET:98
+				TRYCALLFORM PET_EXTRA_ACTION_{PET:98}
+		ELSEIF PET:92 >= 1
+			PRINTFORM %CALLNAME:(PET:51)%の
+			SELECTCASE PET:92
+				CASE 1
+					PRINT HPが
+				CASE 2 
+					PRINT MPが
+				CASE 3
+					PRINT TPが
+			ENDSELECT
+			SETCOLOR 0x70FFFF
+			PRINTFORM {LOCAL:1}
+			RESETCOLOR
+			PRINTFORML 回復！
+			SELECTCASE PET:92
+				CASE 1
+					BASE:(PET:51):0 += LOCAL:1
+					SIF BASE:(PET:51):0 > MAXBASE:(PET:51):0
+						BASE:(PET:51):0 = MAXBASE:(PET:51):0
+				CASE 2
+					BASE:(PET:51):1 += LOCAL:1
+					SIF BASE:(PET:51):1 > MAXBASE:(PET:51):1
+						BASE:(PET:51):1 = MAXBASE:(PET:51):1
+				CASE 3
+					BASE:(PET:51):4 += LOCAL:1
+					SIF BASE:(PET:51):4 > MAXBASE:(PET:51):4
+						BASE:(PET:51):4 = MAXBASE:(PET:51):4
+			ENDSELECT
+			SIF PET:98
+				TRYCALLFORM PET_EXTRA_ACTION_{PET:98}
+		ENDIF
+	ENDIF
+NEXT
+;-------------
+;数字をどうこうする処理終わり
+;-------------
+
+;-------------
+;好感度変化
+;-------------
+SELECTCASE PET_LIKE()
+	CASE 3
+		PET:22 -= 3 + RAND:3
+	CASE 2
+		PET:22 -= 3 + RAND:2
+	CASE 1
+		PET:22 -= 2 + RAND:2
+	CASE 0
+		PET:22 -= 1
+ENDSELECT
+;-------------
+;好感度変化終わり
+;-------------
+
+CALLFORM LIMIT_PET_STATUS

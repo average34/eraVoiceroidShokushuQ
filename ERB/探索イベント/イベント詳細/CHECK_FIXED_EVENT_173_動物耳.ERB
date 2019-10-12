@@ -1,0 +1,123 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_173
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	誰が食べるか
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 40
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1 || FLAG:173 >= 100
+	;経験値が入るのは最初だけ
+	IF FLAG:173 < 100
+		CALL ADD_ABL_EXP_PT(0, 1000)
+		FLAG:173 += 100
+	ENDIF
+	PRINTFORML %CALLNAME:1%%TACHI()%は紫色の木を見つけた。
+	PRINTFORML 植物にはが茶色の細長い実がなっている。
+	PRINTFORML %CALLNAME:1%%TACHI()%が見ていると風もないのに木が揺れたように見えた……
+	$INPUT_LOOP
+	PRINTFORML [1] 食べる
+	PRINTFORML [0] その場を離れる
+	INPUT
+	IF RESULT == 1
+
+		SIF CFLAG:1:29 == 0
+			PRINTFORML [1] %CALLNAME:1%
+		SIF FLAG:10 && CFLAG:(FLAG:10):29 == 0
+			PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		SIF FLAG:11 && CFLAG:(FLAG:11):29 == 0
+			PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		PRINTFORML [0] 戻る
+		INPUT
+		
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1 && CFLAG:1:29 == 0
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10 && CFLAG:(FLAG:10):29 == 0
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11 && CFLAG:(FLAG:11):29 == 0
+			LOCAL:4 = FLAG:11
+		ENDIF
+		PRINTFORML おそるおそる%CALLNAME:(LOCAL:4)%は実を口にした！
+		PRINTFORML %CALLNAME:(LOCAL:4)%の身体が熱くなると頭とお尻が熱を帯びた！
+			
+		;すでに動物耳や尻尾がある場合　後天的なら50%で外れる、25%で発情、25%で回復
+		;先天的なら50%で発情、50%で回復
+		;動物耳がなければ生える　動物の種類は口上次第　クマやうさぎの可能性もあるのでパンツは脱げない
+		;動物耳と尻尾の片方だけある場合、50％で外れる、16％で発情、16％で回復、16％で残りも生える
+		IF (TALENT:(LOCAL:4):124 == 2 || TALENT:(LOCAL:4):215 > 10) && CFLAG:(LOCAL:4):29 == 0 && RAND:2 == 0
+			;動物耳が後天的なら消しておく
+			IF TALENT:(LOCAL:4):124 == 2
+				TALENT:(LOCAL:4):124 = 0
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 4)
+			ENDIF
+			;尻尾も後天的なら消しておく
+			IF TALENT:(LOCAL:4):215 > 10
+				TALENT:(LOCAL:4):215 = 0
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 8)
+			ENDIF
+		ELSEIF (TALENT:(LOCAL:4):124 && TALENT:(LOCAL:4):215 && RAND:2 == 0) || ((TALENT:(LOCAL:4):124 == 0 ^^ TALENT:(LOCAL:4):215 == 0) && RAND:3 == 0) && CFLAG:(LOCAL:4):29 == 0
+			SIF CFLAG:(LOCAL:4):28 < 5
+				CFLAG:(LOCAL:4):28 += 1
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 1)
+		ELSEIF (TALENT:(LOCAL:4):124 && TALENT:(LOCAL:4):215) || ((TALENT:(LOCAL:4):124 == 0 ^^ TALENT:(LOCAL:4):215 == 0) && RAND:2 == 0) && CFLAG:(LOCAL:4):29 == 0
+			BASE:(LOCAL:4):1 += MAXBASE:(LOCAL:4):1 / 10
+			SIF BASE:(LOCAL:4):1 > MAXBASE:(LOCAL:4):1
+				BASE:(LOCAL:4):1 = MAXBASE:(LOCAL:4):1
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 5)
+		ELSE
+			;尻尾も動物耳もなければ3/4で尻尾と後天的動物耳を生やす
+			IF RAND:4 && TALENT:(LOCAL:4):215 == 0 && TALENT:(LOCAL:4):124 == 0
+				TALENT:(LOCAL:4):124 = 2
+				TALENT:(LOCAL:4):215 = 11
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 6)
+			;尻尾も動物耳もなければ1/2で尻尾と後天的動物耳を生やす ここではえなければ耳のみ生える
+			ELSEIF RAND:2 && TALENT:(LOCAL:4):215 == 0 && TALENT:(LOCAL:4):124 == 0
+				TALENT:(LOCAL:4):124 = 2
+				TALENT:(LOCAL:4):215 = 12
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 7)
+			
+			;動物耳がなければ動物耳を生やす
+			ELSEIF TALENT:(LOCAL:4):124 == 0
+				TALENT:(LOCAL:4):124 = 2
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 2)
+			
+			;尻尾がなければがなければ1/4でもふ尻尾を生やす
+			ELSEIF RAND:4 == 0 && TALENT:(LOCAL:4):215 == 0
+				TALENT:(LOCAL:4):215 = 12
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 9)
+			;尻尾がなければがなければ尻尾を生やす
+			ELSEIF TALENT:(LOCAL:4):215 == 0
+				TALENT:(LOCAL:4):215 = 11
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 173, CALLNAME:(LOCAL:4), "", 10)
+			ENDIF
+		ENDIF
+
+	ELSE
+		CALL PRINT_MESSAGE(1, 200, 173, CALLNAME:1, "", 3)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 173, CALLNAME:1, "", 3)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 173, CALLNAME:1, "", 3)
+	ENDIF
+	;どの場合でもイベントをその場に残す
+	LOCAL:3 = 1
+	WAIT
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

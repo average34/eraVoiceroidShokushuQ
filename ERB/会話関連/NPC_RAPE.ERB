@@ -1,0 +1,973 @@
+﻿;性欲発散
+;基本的にNPCいじめはこっち
+;主人公をいじめる場合はNPC_RAPE_2
+;ARG:0	対象キャラ
+@NPC_RAPE(ARG:0)
+;犯される側の状態定義	主にコードの見た目の向上
+#DIM エネミー
+#DIM 好感度
+#DIM 喪失
+#DIM 催眠
+#DIM 睡眠
+#DIM レズ中毒
+;犯す側の状態定義
+#DIM P喪失,3
+
+エネミー = TALENT:(ARG:0):157
+好感度 = CFLAG:(ARG:0):5
+喪失 = CFLAG:(ARG:0):29
+催眠 = CFLAG:(ARG:0):43
+睡眠 = CFLAG:(ARG:0):25
+レズ中毒 = ABL:(ARG:0):13
+P喪失:0 = CFLAG:1:29
+P喪失:1 = CFLAG:(FLAG:10):29
+P喪失:2 = CFLAG:(FLAG:11):29
+
+PRINTFORML どうやって発散しますか？
+
+;貞操帯だとVは選べない
+SIF CFLAG:(ARG:0):47 == 0 && TALENT:(ARG:0):122 == 0
+	PRINTFORML [ 1] V
+
+PRINTFORML [ 2] B
+PRINTFORML [ 3] A
+PRINTFORML [ 4] 口
+SIF FLAG:507 > 0 && TALENT:(ARG:0):162 >= 3 && GET_BUST(ARG:0) > 0
+	PRINTFORML [ 5] N
+PRINTFORML [ 0] やめる
+$INPUT_LOOP
+INPUT
+
+IF RESULT == 0
+		RETURN
+;＝＝＝＝＝＝＝＝＝＝＝＝
+;V
+;＝＝＝＝＝＝＝＝＝＝＝＝
+ELSEIF RESULT == 1 && CFLAG:(ARG:0):47 == 0 && TALENT:(ARG:0):122 == 0
+	;主人公の性欲処理
+	IF GET_PENIS(1) && P喪失:0 == 0 && ARG:0 != 1
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(1)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1
+			CALL PRINT_MESSAGE(1, 457, 0, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(1, 457, 1, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1
+			CALL PRINT_MESSAGE(1, 455, 0, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 睡眠 > 0
+			CALL PRINT_MESSAGE(1, 455, 2, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(1, 455, 1, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+		SIF GET_PENIS(1) == 1
+			CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+		TFLAG:63 = 3
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		CALL LOST_VIRGIN(ARG:0, 0, 3, 1)
+
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(1)
+	ENDIF
+
+	IF CFLAG:(ARG:0):22 == 0 && RAND:2 == 0
+		;生まれるのはシェイプシフター
+		CALL PARASITE_TYPE(ARG:0, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2, 1)
+	ENDIF
+	;仲間もふたなりなら輪姦になる
+	IF FLAG:10 > 0 && GET_PENIS(FLAG:10) > 0 && P喪失:1 == 0 && ARG:0 != FLAG:10
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:10)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:10, 457, 0, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		;主人公やNPCが気絶しているかで分岐
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 0, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 1, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:10, 455, 0, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:10, 455, 1, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:10) == 1
+			CFLAG:(FLAG:10):42 = LIMIT(CFLAG:(FLAG:10):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:10, LOCAL:4)
+		TFLAG:63 = 3
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		CALL LOST_VIRGIN(ARG:0, 0, 3, FLAG:10)
+
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:10)
+
+		;射精すれば射精するほど妊娠確率アップ
+		IF CFLAG:(ARG:0):22 == 0 && RAND:2 == 0
+			CALL PARASITE_TYPE(ARG:0, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2, FLAG:10)
+		ENDIF
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:10):5 >= 200 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 30, CALLNAME:(FLAG:10), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:10, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 31, CALLNAME:(FLAG:10), "")
+		CFLAG:(FLAG:10):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+
+	IF FLAG:11 > 0 && GET_PENIS(FLAG:11) > 0 && P喪失:2 == 0 && ARG:0 != FLAG:11
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:11)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:11, 457, 0, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 0, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 1, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:11, 455, 0, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:11, 455, 1, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:11) == 1
+			CFLAG:(FLAG:11):42 = LIMIT(CFLAG:(FLAG:11):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:11, LOCAL:4)
+		TFLAG:63 = 3
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		CALL LOST_VIRGIN(ARG:0, 0, 3, FLAG:11)
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:11)
+
+		;射精すれば射精するほど妊娠確率アップ
+		IF CFLAG:(ARG:0):22 == 0 && RAND:2 == 0
+			;生まれるのはシェイプシフター
+			CALL PARASITE_TYPE(ARG:0, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2, FLAG:11)
+		ENDIF
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:11):5 >= 200 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 30, CALLNAME:(FLAG:11), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:11, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 31, CALLNAME:(FLAG:11), "")
+		CFLAG:(FLAG:11):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+	;襲われる側の口上呼び出し
+	SIF 喪失 == 0
+		CALL PRINT_MESSAGE((ARG:0), 458, 1, CALLNAME:(ARG:0),CALLNAME:1)
+
+;＝＝＝＝＝＝＝＝＝＝＝＝
+;B
+;＝＝＝＝＝＝＝＝＝＝＝＝
+ELSEIF RESULT == 2
+	;主人公の性欲処理
+	IF GET_PENIS(1) > 0 && P喪失:0 == 0 && ARG:0 != 1
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(1)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(1, 457, 5, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && GET_BUST(ARG:0) > 0
+			CALL PRINT_MESSAGE(1, 455, 7, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1
+			CALL PRINT_MESSAGE(1, 455, 5, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 睡眠 > 0
+			CALL PRINT_MESSAGE(1, 455, 9, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF GET_BUST(ARG:0) > 0
+			CALL PRINT_MESSAGE(1, 455, 8, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(1, 455, 6, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(1) == 0
+			CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+		TFLAG:63 = 1
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(1)
+	ENDIF
+
+	;仲間もふたなりなら輪姦になる
+	IF FLAG:10 > 0 && GET_PENIS(FLAG:10) > 0 && P喪失:1 == 0 && ARG:0 != FLAG:10
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:10)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:10, 457, 5, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 5, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 6, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:10, 455, 5, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:10, 455, 6, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:10) == 1
+			CFLAG:(FLAG:10):42 = LIMIT(CFLAG:(FLAG:10):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:10, LOCAL:4)
+		TFLAG:63 = 1
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:10)
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:10):5 >= 180 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 30, CALLNAME:(FLAG:10), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:10, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 31, CALLNAME:(FLAG:10), "")
+		CFLAG:(FLAG:10):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+
+	IF FLAG:11 > 0 && GET_PENIS(FLAG:11) > 0 && P喪失:2 == 0 && ARG:0 != FLAG:11
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:11)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:11, 457, 5, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 5, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 6, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:11, 455, 5, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:11, 455, 6, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:11) == 1
+			CFLAG:(FLAG:11):42 = LIMIT(CFLAG:(FLAG:11):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:11, LOCAL:4)
+		TFLAG:63 = 1
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:11)
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:11):5 >= 180 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 30, CALLNAME:(FLAG:11), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:11, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 31, CALLNAME:(FLAG:11), "")
+		CFLAG:(FLAG:11):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+	
+	;襲われる側の口上呼び出し
+	SIF 喪失 == 0
+		CALL PRINT_MESSAGE((ARG:0), 458, 2, CALLNAME:(ARG:0),CALLNAME:1)
+
+;＝＝＝＝＝＝＝＝＝＝＝＝
+;A
+;＝＝＝＝＝＝＝＝＝＝＝＝
+ELSEIF RESULT == 3
+	;主人公の性欲処理
+	IF GET_PENIS(1) > 0 && P喪失:0 == 0 && ARG:0 != 1
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(1)
+		LOCAL:4 = RESULT
+		
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(1, 457, 10, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1
+			CALL PRINT_MESSAGE(1, 455, 10, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 睡眠 > 0
+			CALL PRINT_MESSAGE(1, 455, 12, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(1, 455, 11, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(1) == 1
+			CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+		TFLAG:63 = 0
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(1)
+	ENDIF
+
+	;仲間もふたなりなら輪姦になる
+	IF FLAG:10 > 0 && GET_PENIS(FLAG:10) > 0 && P喪失:1 == 0 && ARG:0 != FLAG:10
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:10)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:10, 457, 10, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 10, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 11, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:10, 455, 10, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:10, 455, 11, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:10) == 1
+			CFLAG:(FLAG:10):42 = LIMIT(CFLAG:(FLAG:10):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:10, LOCAL:4)
+		TFLAG:63 = 0
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:10)
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:10):5 >= 220 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 30, CALLNAME:(FLAG:10), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:10, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 31, CALLNAME:(FLAG:10), "")
+		CFLAG:(FLAG:10):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+
+	IF FLAG:11 > 0 && GET_PENIS(FLAG:11) > 0 && P喪失:2 == 0 && ARG:0 != FLAG:11
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:11)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:11, 457, 10, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 10, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 11, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:11, 455, 10, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:11, 455, 11, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:11) == 1
+			CFLAG:(FLAG:11):42 = LIMIT(CFLAG:(FLAG:11):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:11, LOCAL:4)
+		TFLAG:63 = 0
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:11)
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:11):5 >= 220 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 30, CALLNAME:(FLAG:11), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:11, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 31, CALLNAME:(FLAG:11), "")
+		CFLAG:(FLAG:11):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+	
+	;襲われる側の口上呼び出し
+	SIF 喪失 == 0
+		CALL PRINT_MESSAGE((ARG:0), 458, 3, CALLNAME:(ARG:0),CALLNAME:1)
+
+;＝＝＝＝＝＝＝＝＝＝＝＝
+;口
+;＝＝＝＝＝＝＝＝＝＝＝＝
+ELSEIF RESULT == 4
+	IF GET_PENIS(1) > 0 && P喪失:0 == 0 && ARG:0 != 1
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(1)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(1, 457, 15, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1
+			CALL PRINT_MESSAGE(1, 455, 15, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 睡眠 > 0
+			CALL PRINT_MESSAGE(1, 455, 17, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(1, 455, 16, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(1) == 1
+			CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(1)
+	ENDIF
+
+	;仲間もふたなりなら輪姦になる
+	IF FLAG:10 > 0 && GET_PENIS(FLAG:10) > 0 && P喪失:1 == 0 && ARG:0 != FLAG:10
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:10)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:10, 457, 15, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 15, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:10, 456, 16, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:10, 455, 15, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:10, 455, 16, CALLNAME:(FLAG:10),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:10) == 1
+			CFLAG:(FLAG:10):42 = LIMIT(CFLAG:(FLAG:10):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:10, LOCAL:4)
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:10)
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:10):5 >= 180 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 30, CALLNAME:(FLAG:10), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:10, 2, 400 + RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 31, CALLNAME:(FLAG:10), "")
+		CFLAG:(FLAG:10):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+
+	IF FLAG:11 > 0 && GET_PENIS(FLAG:11) > 0 && P喪失:2 == 0 && ARG:0 != FLAG:11
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:11)
+		LOCAL:4 = RESULT
+
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(FLAG:11, 457, 15, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 15, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 0
+			CALL PRINT_MESSAGE(FLAG:11, 456, 16, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1 && P喪失:0 == 1
+			CALL PRINT_MESSAGE(FLAG:11, 455, 15, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(FLAG:11, 455, 16, CALLNAME:(FLAG:11),CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+
+		SIF GET_PENIS(FLAG:11) == 1
+			CFLAG:(FLAG:11):42 = LIMIT(CFLAG:(FLAG:11):42 - LOCAL:4, 0, __INT_MAX__)
+		CALL ADD_ABL_EXP(12, FLAG:11, LOCAL:4)
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(ARG:0, 2, 8000 + RAND:4001, 100)
+		;ふたなり消失チェック
+		CALL CHECK_TEMP_FUTANARI_LOST(FLAG:11)
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:11):5 >= 180 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 30, CALLNAME:(FLAG:11), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:11, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 31, CALLNAME:(FLAG:11), "")
+		CFLAG:(FLAG:11):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+
+	;襲われる側の口上呼び出し
+	SIF 喪失 == 0
+		CALL PRINT_MESSAGE((ARG:0), 458, 4, CALLNAME:(ARG:0),CALLNAME:1)
+
+;＝＝＝＝＝＝＝＝＝＝＝＝
+;N
+;＝＝＝＝＝＝＝＝＝＝＝＝
+ELSEIF RESULT == 5 && FLAG:507 > 0 && TALENT:(ARG:0):162 >= 3 && GET_BUST(ARG:0) > 0
+;犯す側が二人以上居ると、二人同時に乳姦する
+	;LOCAL
+	;6	同時NFトリガ
+	;7	ダメージ計算
+	;61 犯す側のキャラID
+	;62	SYSTEM_MESSAGE番号
+	;63	SYSTEM_MESSAGEのARG:1
+	;64	SYSTEM_MESSAGEのARG:4
+	;99	犯す順番判定
+	LOCAL:6 = 0
+	LOCAL:99 = 0
+	;素質LVまたは乳姦回数によるダメージ補正
+	LOCAL:7 = 100 + CALC_NF_DAMAGE(ARG:0, 5)
+
+	;主人公の性欲処理------------------------------------------------------
+	IF GET_PENIS(1) > 0 && P喪失:0 == 0 && ARG:0 != 1
+		LOCAL:99 += 1
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(1)
+		LOCAL:4 = RESULT
+
+		;催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上)
+		IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+			CALL PRINT_MESSAGE(1, 457, 55, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 喪失 == 1
+			CALL PRINT_MESSAGE(1, 455, 21, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSEIF 睡眠 > 0
+			CALL PRINT_MESSAGE(1, 455, 22, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ELSE
+			CALL PRINT_MESSAGE(1, 455, 23, CALLNAME:1,CALLNAME:(ARG:0), LOCAL:4, ARG:0)
+		ENDIF
+		
+		;仲間がふたなり、かつ、犯す対象がその仲間でないなら同時輪姦
+		IF FLAG:10 > 0 && GET_PENIS(FLAG:10) > 0 && ARG:0 != FLAG:10
+			LOCAL:6 = 12
+		ELSEIF FLAG:11 > 0 && GET_PENIS(FLAG:11) > 0 && ARG:0 != FLAG:11
+			LOCAL:6 = 13
+		ENDIF
+
+		;呼び出しメッセージは襲われる側
+		;複数人での輪姦描写の場合、犯され側のダメージのみ表示(射精経験は2番目のPTメンバが犯す時に同時にする)
+		IF LOCAL:6 == 12 || LOCAL:6 == 13
+			CALL PRINT_MESSAGE(ARG:0, 529, 0, CALLNAME:(ARG:0), CALLNAME:1, 1)
+			TFLAG:63 = 1
+			CALL DAMAGE_COMMON(ARG:0, 2, 8000*LOCAL:7/100 + RAND:4001*LOCAL:7/100, 100)
+		ELSE
+			CALL PRINT_MESSAGE(ARG:0, 529, 0, CALLNAME:(ARG:0), CALLNAME:1, 1)
+			;非定着ふたなり
+			SIF GET_PENIS(1) == 1
+				CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+			CALL PRINT_MESSAGE(ARG:0, 530, 0, CALLNAME:(ARG:0), CALLNAME:1, 1)
+			CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+			TFLAG:63 = 1
+			CALL DAMAGE_COMMON(ARG:0, 2, 8000*LOCAL:7/100 + RAND:4001*LOCAL:7/100, 100)
+			;ふたなり消失チェック
+			CALL CHECK_TEMP_FUTANARI_LOST(1)
+		ENDIF
+		
+		CFLAG:(ARG:0):512 += 1
+		;事後描写(仲間が居ない場合)
+		SIF !FLAG:10 && !FLAG:11
+			CALL PRINT_MESSAGE(ARG:0, 531, 0, CALLNAME:(ARG:0), CALLNAME:1, 1)
+	ENDIF
+
+
+	;PTメンバ2人目の性欲処理-------------------------------------------------
+	IF FLAG:10 > 0 && GET_PENIS(FLAG:10) > 0 && P喪失:1 == 0 && ARG:0 != FLAG:10
+		LOCAL:99 += 1
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:10)
+		LOCAL:4 = RESULT
+		LOCAL:61 = FLAG:10
+		LOCAL:62 = 0
+		LOCAL:63 = 0
+		LOCAL:64 = 0
+
+		;PTメンバが輪姦対象
+		IF ARG:0 == 1 || ARG:0 == FLAG:11
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋1番目
+			IF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 1
+				LOCAL:62 = 457
+				LOCAL:63 = 55
+			;催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上)
+			ELSEIF 催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+				LOCAL:62 = 457
+				LOCAL:63 = 56
+				LOCAL:64 = 1
+			;喪失＋プレイヤー非喪失
+			ELSEIF 喪失 == 1 && P喪失:0 == 0
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			;喪失＋プレイヤー喪失
+			ELSEIF 喪失 == 1 && P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 21
+			;睡眠＋プレイヤー喪失
+			ELSEIF 睡眠 > 0 && P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 22
+			;プレイヤー喪失
+			ELSEIF P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 23
+			ELSE
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			ENDIF
+		;PTメンバ以外が輪姦対象
+		ELSE
+			;催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上)＋1番目
+			IF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200) && LOCAL:99 == 1
+				LOCAL:62 = 457
+				LOCAL:63 = 55
+			;催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上)
+			ELSEIF 催眠 == 1 || ( (レズ中毒 > 1 || エネミー) && 好感度 >= 200)
+				LOCAL:62 = 457
+				LOCAL:63 = 56
+				LOCAL:64 = 1
+			;喪失＋プレイヤー非喪失
+			ELSEIF 喪失 == 1 && P喪失:0 == 0
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			;喪失＋プレイヤー喪失
+			ELSEIF 喪失 == 1 && P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 21
+			;睡眠＋プレイヤー喪失
+			ELSEIF 睡眠 > 0 && P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 22
+			;プレイヤー喪失
+			ELSEIF P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 23
+			;2番目
+			ELSEIF LOCAL:99 == 2
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			ELSE
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			ENDIF
+		ENDIF
+		CALL PRINT_MESSAGE(LOCAL:61, LOCAL:62, LOCAL:63, CALLNAME:(LOCAL:61),CALLNAME:(ARG:0), LOCAL:4, ARG:0, LOCAL:64)
+
+		;主人公が喪失していて、仲間3人目がふたなり、かつ、犯す対象が3人目でないなら同時輪姦
+		IF P喪失:0 == 1 && FLAG:11 > 0 && GET_PENIS(FLAG:11) > 0 && ARG:0 != FLAG:11
+			LOCAL:6 = 23
+		ENDIF
+
+		;呼び出しメッセージは襲われる側
+		;同時輪姦フラグが立っている(PTメンバ1・2)
+		IF LOCAL:6 == 12
+			CALL PRINT_MESSAGE(ARG:0, 529, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:10), FLAG:10, 1)
+			;3番目のPTメンバが居て、かつ輪姦対象が3番目のPTメンバでない場合、50％でPTメンバ(2・3)の同時輪姦描写にする(主人公のみここで射精)
+			IF FLAG:11 && ARG:0 != FLAG:11 && RAND:2
+				LOCAL:6 = 23
+				;非定着ふたなり
+				SIF GET_PENIS(1) == 1
+					CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+				;１人目が先に射精した
+				CALL PRINT_MESSAGE(ARG:0, 530, 2, CALLNAME:(ARG:0), CALLNAME:(FLAG:10), FLAG:10, 1)
+				CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+				TFLAG:63 = 1
+				CALL DAMAGE_COMMON(ARG:0, 2, 16000*LOCAL:7/100 + RAND:8001*LOCAL:7/100, 100)
+				;ふたなり消失チェック
+				CALL CHECK_TEMP_FUTANARI_LOST(1)
+				;事後描写(1終了・2継続)
+				CALL PRINT_MESSAGE(ARG:0, 531, 2, CALLNAME:(ARG:0), CALLNAME:(FLAG:10), FLAG:10, 1)
+			ELSE
+				LOCAL:6 = 99
+				;非定着ふたなり
+				SIF GET_PENIS(1) == 1
+					CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+				SIF GET_PENIS(FLAG:10) == 1
+					CFLAG:(FLAG:10):42 = LIMIT(CFLAG:(FLAG:10):42 - LOCAL:4, 0, __INT_MAX__)
+				;同時射精(PTメンバ1・2)
+				CALL PRINT_MESSAGE(ARG:0, 530, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:10), FLAG:10, 1)
+				CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+				CALL ADD_ABL_EXP(12, FLAG:10, LOCAL:4)
+				TFLAG:63 = 1
+				CALL DAMAGE_COMMON(ARG:0, 2, 16000*LOCAL:7/100 + RAND:8001*LOCAL:7/100, 100)
+				;ふたなり消失チェック(2人)
+				CALL CHECK_TEMP_FUTANARI_LOST(1)
+				CALL CHECK_TEMP_FUTANARI_LOST(FLAG:10)
+				;事後描写(1・2終了)
+				CALL PRINT_MESSAGE(ARG:0, 531, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:10), FLAG:10, 1)
+			ENDIF
+		;主人公が喪失していて、同時輪姦フラグが立っている
+		ELSEIF P喪失:0 == 1 && LOCAL:6 == 23
+			TFLAG:63 = 1
+			CALL DAMAGE_COMMON(ARG:0, 2, 8000*LOCAL:7/100 + RAND:4001*LOCAL:7/100, 100)
+		ELSE
+			;仲間が非定着ふたなり
+			SIF GET_PENIS(FLAG:10) == 1
+				CFLAG:(FLAG:10):42 = LIMIT(CFLAG:(FLAG:10):42 - LOCAL:4, 0, __INT_MAX__)
+			CALL ADD_ABL_EXP(12, FLAG:10, LOCAL:4)
+			TFLAG:63 = 1
+			CALL DAMAGE_COMMON(ARG:0, 2, 8000*LOCAL:7/100 + RAND:4001*LOCAL:7/100, 100)
+			;ふたなり消失チェック
+			CALL CHECK_TEMP_FUTANARI_LOST(FLAG:10)
+		ENDIF
+
+		CFLAG:(ARG:0):512 += 1
+
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:10):5 >= 180 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 30, CALLNAME:(FLAG:10), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:10, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:10, 456, 31, CALLNAME:(FLAG:10), "")
+		CFLAG:(FLAG:10):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+
+	;PTメンバ3人目の性欲処理-------------------------------------------------
+	IF FLAG:11 > 0 && GET_PENIS(FLAG:11) > 0 && P喪失:2 == 0 && ARG:0 != FLAG:11
+		LOCAL:99 += 1
+		;回復＋射精量計算処理
+		CALL NPC_RAPE_PARAM_RCV(FLAG:11)
+		LOCAL:4 = RESULT
+		LOCAL:61 = FLAG:11
+		LOCAL:62 = 0
+		LOCAL:63 = 0
+		LOCAL:64 = 0
+
+		;PTメンバが輪姦対象
+		IF ARG:0 == 1 || ARG:0 == FLAG:10
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋1番目
+			IF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 1
+				LOCAL:62 = 457
+				LOCAL:63 = 55
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋2番目＋主人公喪失
+			ELSEIF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 2 && P喪失:0
+				LOCAL:62 = 457
+				LOCAL:63 = 56
+				LOCAL:64 = FLAG:10
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋2番目
+			ELSEIF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 2
+				LOCAL:62 = 457
+				LOCAL:63 = 56
+				LOCAL:64 = 1
+			;喪失＋プレイヤー非喪失(1・3パターンのみ)
+			ELSEIF 喪失 == 1 && P喪失:0 == 0
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			;喪失＋プレイヤー喪失＋1番目(1・2人目喪失)
+			ELSEIF 喪失 == 1 && P喪失:0 == 1 && LOCAL:99 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 21
+			;喪失＋プレイヤー喪失＋2番目(主人公が対象)
+			ELSEIF 喪失 == 1 && P喪失:0 == 1 && LOCAL:99 == 2
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = FLAG:10
+			;睡眠＋プレイヤー喪失
+			ELSEIF 睡眠 > 0 && P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 22
+			;プレイヤー喪失(犯す対象が2人目で、1番目になる)
+			ELSEIF P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 23
+			;好感度低くて非喪失ではイベント自体発生しないけど一応残す
+			ELSE
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = FLAG:10
+			ENDIF
+		;PTメンバ以外が輪姦対象
+		ELSE
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋1番目
+			IF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 1
+				LOCAL:62 = 457
+				LOCAL:63 = 55
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋2番目＋主人公喪失
+			ELSEIF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 2 && P喪失:0
+				LOCAL:62 = 457
+				LOCAL:63 = 56
+				LOCAL:64 = FLAG:10
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋2番目＋2人目喪失
+			ELSEIF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 2 && P喪失:1
+				LOCAL:62 = 457
+				LOCAL:63 = 56
+				LOCAL:64 = 1
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋3番目＋同時輪姦フラグ
+			ELSEIF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 3 && LOCAL:6 == 23
+				LOCAL:62 = 457
+				LOCAL:63 = 57
+				LOCAL:64 = FLAG:10
+			;(催眠or((レズ中毒LV1以上orエネミー)＋好感度200以上))＋3番目(1・2人目は射精済み)
+			ELSEIF (催眠 == 1 || ((レズ中毒 > 1 || エネミー) && 好感度 >= 200)) && LOCAL:99 == 3
+				LOCAL:62 = 457
+				LOCAL:63 = 58
+				LOCAL:64 = FLAG:10
+			;喪失＋2番目＋同時輪姦フラグ13
+			ELSEIF 喪失 == 1 && LOCAL:99 == 2 && LOCAL:6 == 13
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			;喪失＋2番目＋同時輪姦フラグ23
+			ELSEIF 喪失 == 1 && LOCAL:99 == 2 && LOCAL:6 == 23
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = FLAG:10
+			;喪失＋3番目＋同時輪姦フラグ23
+			ELSEIF 喪失 == 1 && LOCAL:99 == 3 && LOCAL:6 == 23
+				LOCAL:62 = 456
+				LOCAL:63 = 36
+				LOCAL:64 = FLAG:10
+			;喪失＋3番目(1・2人目は射精済み)
+			ELSEIF 喪失 == 1 && LOCAL:99 == 3
+				LOCAL:62 = 456
+				LOCAL:63 = 37
+				LOCAL:64 = FLAG:10
+			;喪失＋プレイヤー喪失＋1番目
+			ELSEIF 喪失 == 1 && P喪失:0 == 1 && LOCAL:9 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 21
+			;喪失＋プレイヤー喪失＋2番目
+			ELSEIF 喪失 == 1 && P喪失:0 == 1 && LOCAL:9 == 2
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = FLAG:10
+			;睡眠＋プレイヤー喪失
+			ELSEIF 睡眠 > 0 && P喪失:0 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 22
+			;プレイヤー喪失＋1番目
+			ELSEIF P喪失:0 == 1 && LOCAL:6 == 1
+				LOCAL:62 = 455
+				LOCAL:63 = 23
+			;プレイヤー喪失＋2番目
+			ELSEIF P喪失:0 == 1 && LOCAL:6 == 2
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = FLAG:10
+			;喪失＋2番目＋同時輪姦フラグ13
+			ELSEIF LOCAL:99 == 2 && LOCAL:6 == 13
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = 1
+			;喪失＋2番目＋同時輪姦フラグ23
+			ELSEIF LOCAL:99 == 2 && LOCAL:6 == 23
+				LOCAL:62 = 456
+				LOCAL:63 = 35
+				LOCAL:64 = FLAG:10
+			;喪失＋3番目＋同時輪姦フラグ23
+			ELSEIF LOCAL:99 == 3 && LOCAL:6 == 23
+				LOCAL:62 = 456
+				LOCAL:63 = 36
+				LOCAL:64 = FLAG:10
+			ELSE
+				LOCAL:62 = 456
+				LOCAL:63 = 37
+				LOCAL:64 = FLAG:10
+			ENDIF
+		ENDIF
+		CALL PRINT_MESSAGE(LOCAL:61, LOCAL:62, LOCAL:63, CALLNAME:(LOCAL:61),CALLNAME:(ARG:0), LOCAL:4, ARG:0, LOCAL:64)
+
+		;呼び出しメッセージは襲われる側
+		;同時輪姦フラグが立っている(PTメンバ1・3) 
+		IF LOCAL:6 == 13
+			;最中
+			CALL PRINT_MESSAGE(ARG:0, 529, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11, 1)
+			;非定着ふたなり
+			SIF GET_PENIS(1) == 1
+				CFLAG:1:42 = LIMIT(CFLAG:1:42 - LOCAL:4, 0, __INT_MAX__)
+			SIF GET_PENIS(FLAG:11) == 1
+				CFLAG:(FLAG:11):42 = LIMIT(CFLAG:(FLAG:11):42 - LOCAL:4, 0, __INT_MAX__)
+			;同時射精（PTメンバ1・3）
+			CALL PRINT_MESSAGE(ARG:0, 530, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11, 1)
+			CALL ADD_ABL_EXP(12, 1, LOCAL:4)
+			CALL ADD_ABL_EXP(12, FLAG:11, LOCAL:4)
+			TFLAG:63 = 1
+			CALL DAMAGE_COMMON(ARG:0, 2, 16000*LOCAL:7/100 + RAND:8001*LOCAL:7/100, 100)
+			;ふたなり消失チェック(2人)
+			CALL CHECK_TEMP_FUTANARI_LOST(1)
+			CALL CHECK_TEMP_FUTANARI_LOST(FLAG:11)
+			;事後描写（PTメンバ1・3）
+			CALL PRINT_MESSAGE(ARG:0, 531, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11, 1)
+		;同時輪姦フラグが立っている(PTメンバ2・3)
+		ELSEIF LOCAL:6 == 23
+			;最中
+			CALL PRINT_MESSAGE(ARG:0, 529, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11, FLAG:10)
+			;非定着ふたなり
+			SIF GET_PENIS(FLAG:10) == 1
+				CFLAG:(FLAG:10):42 = LIMIT(CFLAG:(FLAG:10):42 - LOCAL:4, 0, __INT_MAX__)
+			SIF GET_PENIS(FLAG:11) == 1
+				CFLAG:(FLAG:11):42 = LIMIT(CFLAG:(FLAG:11):42 - LOCAL:4, 0, __INT_MAX__)
+			;同時射精（PTメンバ2・3）
+			CALL PRINT_MESSAGE(ARG:0, 530, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11, FLAG:10)
+			CALL ADD_ABL_EXP(12, FLAG:10, LOCAL:4)
+			CALL ADD_ABL_EXP(12, FLAG:11, LOCAL:4)
+			TFLAG:63 = 1
+			CALL DAMAGE_COMMON(ARG:0, 2, 16000*LOCAL:7/100 + RAND:8001*LOCAL:7/100, 100)
+			;ふたなり消失チェック(2人)
+			CALL CHECK_TEMP_FUTANARI_LOST(FLAG:10)
+			CALL CHECK_TEMP_FUTANARI_LOST(FLAG:11)
+			;事後描写（PTメンバ2・3）
+			CALL PRINT_MESSAGE(ARG:0, 531, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11, FLAG:10)
+		ELSE
+			;仲間が非定着ふたなり
+			SIF GET_PENIS(FLAG:11) == 1
+				CFLAG:(FLAG:11):42 = LIMIT(CFLAG:(FLAG:11):42 - LOCAL:4, 0, __INT_MAX__)
+			;射精
+			CALL PRINT_MESSAGE(ARG:0, 530, 0, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11)
+			CALL ADD_ABL_EXP(12, FLAG:11, LOCAL:4)
+			TFLAG:63 = 1
+			CALL DAMAGE_COMMON(ARG:0, 2, 12000 + RAND:6001, 100)
+			;ふたなり消失チェック
+			CALL CHECK_TEMP_FUTANARI_LOST(FLAG:11)
+			;PTメンバの前2人が喪失
+			IF P喪失:0 == 1 && P喪失:1 == 1
+				;ソロ
+				CALL PRINT_MESSAGE(ARG:0, 531, 0, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11)
+			ELSE
+				;PTメンバ2・3
+				CALL PRINT_MESSAGE(ARG:0, 531, 1, CALLNAME:(ARG:0), CALLNAME:(FLAG:11), FLAG:11, FLAG:10)
+			ENDIF
+		ENDIF
+
+		CFLAG:(ARG:0):512 += 1
+	;主人公のみがふたなりになる場合好感度が高いと掃除、低いと好感度減少
+	ELSEIF FLAG:520 == 2 && CFLAG:(FLAG:11):5 >= 180 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 30, CALLNAME:(FLAG:11), "")
+		TFLAG:63 = 9
+		CALL DAMAGE_COMMON(FLAG:11, 2, 400+RAND:800, 100)
+	ELSEIF FLAG:520 == 2 && P喪失:0 == 0
+		CALL PRINT_MESSAGE(FLAG:11, 456, 31, CALLNAME:(FLAG:11), "")
+		CFLAG:(FLAG:11):5 -= 20 + RAND:30
+	ELSE
+	ENDIF
+
+	;襲われる側の口上呼び出し
+	SIF 喪失 == 0
+		CALL PRINT_MESSAGE((ARG:0), 458, 2, CALLNAME:(ARG:0),CALLNAME:1)
+
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 入力が不正です！
+	GOTO INPUT_LOOP
+ENDIF
+
+
+
+@NPC_RAPE_PARAM_RCV(ARG:0)
+;犯す側のキャラの回復処理
+;ARG:0	対象キャラ
+BASE:(ARG:0):1 += 300
+BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
+SIF BASE:(ARG:0):1 > MAXBASE:(ARG:0):1
+	BASE:(ARG:0):1 = MAXBASE:(ARG:0):1
+IF CFLAG:(ARG:0):42 < 4 && GET_PENIS(ARG:0) == 0
+	LOCAL:4 = CFLAG:(ARG:0):42
+ELSE
+	LOCAL:4 = 2 + RAND:3
+ENDIF
+
+RETURN LOCAL:4
+
+@CHECK_TEMP_FUTANARI_LOST(ARG:0)
+;萎び落ちる(非定着ふたなり)
+;ARG:0	対象キャラ
+IF CFLAG:(ARG:0):42 <= 0 && GET_PENIS(ARG:0) < 1
+	CFLAG:(ARG:0):42 = 0
+	CALL PRINT_MESSAGE(ARG:0, 452, 0, CALLNAME:(ARG:0), "")
+ENDIF
+

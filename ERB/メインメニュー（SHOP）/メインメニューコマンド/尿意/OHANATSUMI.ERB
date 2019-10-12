@@ -1,0 +1,1506 @@
+﻿
+;=================================================
+;お花摘み可能かどうかチェック
+;RESULT:0 判定結果(0:可能 -1:不可)
+;=================================================
+@CHECK_OHANATSUMI(処理ID = 0)
+#DIM LCOUNT,3	;ループ用
+#DIM 処理ID
+	;0:判定だけ
+	;1:理由メッセージも表示
+#DIM PTID,3
+#DIM PTSUM
+
+#DIM 敵フラグ
+#DIM 結界部屋フラグ
+#DIM 尿意フラグ
+#DIM 全員睡眠フラグ
+#DIM 全員動けずフラグ
+#DIM スピーチキャラ
+	
+	SIF FLAG:522 == 2
+		RETURN -1
+	
+	;PTID更新
+	VARSET PTID
+	PTSUM = GET_MEMBER_SUM()
+	FOR LCOUNT,0 , PTSUM
+		PTID:(LCOUNT) = GET_MEMBER(LCOUNT)
+	NEXT
+
+	;===チェック===
+	
+	;現在地が結界部屋
+	IF FLAG:5 == FLAG:98
+		結界部屋フラグ = 1
+	ELSE
+		結界部屋フラグ = 0
+	ENDIF
+	
+
+	;敵チェック
+	敵フラグ = 0
+	FOR LCOUNT, 1, FLAG:1
+		;現在位置が被ってる敵
+		IF FLAG:5 == DA:(LCOUNT):4
+			
+			;死体は除外
+			SIF DA:(LCOUNT):1 <= 0
+				CONTINUE
+				
+			;擬態は除外
+			SIF DA:(LCOUNT):0 == 18 || DA:(LCOUNT):45 == 0
+				CONTINUE
+			
+			敵フラグ = 1
+			
+			BREAK
+		ENDIF
+	NEXT
+
+	;PTチェック
+	尿意フラグ = 0
+	全員睡眠フラグ = 1
+	全員動けずフラグ = 1
+	スピーチキャラ = 0
+	FOR LCOUNT, 0, 3
+		IF BASE:(PTID:(LCOUNT)):NP > 0
+			尿意フラグ = 1
+		ENDIF
+		
+		IF CFLAG:(PTID:(LCOUNT)):25 == 0
+			全員睡眠フラグ = 0
+		ENDIF
+		
+		IF CFLAG:(PTID:(LCOUNT)):25 == 0 || CFLAG:(PTID:(LCOUNT)):29 == 0
+			全員動けずフラグ = 0
+			IF スピーチキャラ == 0
+				スピーチキャラ = LCOUNT
+			ENDIF
+		ENDIF
+		
+	NEXT
+
+	;===判定===
+	
+	IF 全員睡眠フラグ == 1
+		IF 処理ID == 1
+			PRINTFORMW %CALLNAME:(PTID:0)%\@ PTID:1 > 0 ? 達 # \@はトイレに行くことを夢見ている…
+		ENDIF
+		RETURN -1
+	ELSEIF 全員動けずフラグ == 1
+		IF 処理ID == 1
+			PRINTFORMW %CALLNAME:(PTID:0)%\@ PTID:1 > 0 ? 達 # \@は動くことができない…
+		ENDIF
+		RETURN -1
+	ELSEIF 尿意フラグ == 0
+		IF 処理ID == 1
+			PRINTFORMW %CALLNAME:(スピーチキャラ)%はトイレを済ませることを提案したが誰も尿意が無かった…
+		ENDIF
+		RETURN -1
+	ELSEIF 結界部屋フラグ == 0 && 敵フラグ == 1
+		IF 処理ID == 1
+			PRINTFORMW 同じ部屋に敵が居る状態ではそんなことはできない！
+		ENDIF
+		RETURN -1
+		
+	ENDIF
+RETURN 1
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+#DIM PTSUM
+#DIM PTトイレ済みフラグ
+#DIM おもらしメンバ
+#DIM UNKおもらしメンバ
+#DIM キャラID
+#DIM FLAGウォッチャー
+#DIM FLAG襲撃
+#DIMS UNK_おもらしチェック
+
+;-MEMO-
+
+
+
+	;-----PTID更新-----
+	VARSET PTID
+	PTSUM = GET_MEMBER_SUM()
+	FOR LCOUNT,0, PTSUM
+		PTID:(LCOUNT) = GET_MEMBER(LCOUNT)
+	NEXT
+	
+	;-----ウォッチャーがいるかチェック-----
+	FLAGウォッチャー = 0
+	FOR LCOUNT, 1, FLAG:1
+		;現在位置が被ってる敵
+		IF FLAG:5 == DA:(LCOUNT):4
+			
+			;死体は除外
+			SIF DA:(LCOUNT):1 <= 0
+				CONTINUE
+				
+			;ウォッチャー以外は除外
+			SIF DA:(LCOUNT):0 != 97
+				CONTINUE
+			
+			FLAGウォッチャー = 1
+			BREAK
+		ENDIF
+	NEXT
+	
+	;-----漏らしそうなメンバを抽出-----
+	おもらしメンバ = 0
+	FOR LCOUNT, 0, PTSUM
+		IF PTID:(LCOUNT) > 0
+			キャラID = PTID:(LCOUNT)
+			IF BASE:(キャラID):NP > 60
+				おもらしメンバ |= POWER(2, LCOUNT)
+				;整理中の為一時無効化
+				;CALL PRINT_MESSAGE(キャラID, 506, 6, CALLNAME:(キャラID), "",1)
+			ELSE
+				;整理中の為一時無効化
+				;CALL PRINT_MESSAGE(キャラID, 506, 6, CALLNAME:(キャラID), "",0)
+			ENDIF
+		ENDIF
+	NEXT
+	;便意処理
+	UNKおもらしメンバ = 0
+	FOR LCOUNT, 0, PTSUM
+		IF PTID:(LCOUNT) > 0
+			キャラID = PTID:(LCOUNT)
+			IF UNK_おもらしチェック(キャラID)
+				UNKおもらしメンバ |= POWER(2, LCOUNT)
+			ELSE
+			ENDIF
+		ENDIF
+	NEXT
+	おもらしメンバ |= UNKおもらしメンバ
+	
+	
+	;＝＝＝お花摘み前イベント「ウォッチャーの視線（伏線）」＝＝＝
+	IF FLAGウォッチャー == 1
+		
+		PRINTFORMW %CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@は何かに見られているよう気がした
+		PRINTL [0] 引き返す
+		PRINTL [1] 気のせい
+		PRINTL
+		
+		$INPUT_w0
+		INPUT
+		IF RESULT == 0
+			PRINTFORMW 嫌な予感がした%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@は引き返すことにした。
+			;お花摘み中断
+			RETURN -1
+			
+		ELSEIF RESULT == 1
+			PRINTFORMW %CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@は気のせいだという事にした。
+			
+		ELSE
+			CLEARLINE 1
+			REUSELASTLINE ※無効な入力です！※
+			GOTO INPUT_w0
+		ENDIF
+
+
+	;＝＝＝お花摘み前イベント「漏らす」＝＝＝
+	ELSEIF おもらしメンバ || UNKおもらしメンバ
+		PRINTFORMW 適当な場所を探している途中で%GET_NYOU_名前(おもらしメンバ)%は突然その場にへたり込んでしまった！
+		PRINTFORMW 服の染みと周囲に広がるものが状況を物語っている、どうやら間に合わなかったようだ…
+		
+		;-----おもらし処理----
+		LOCAL = 0	;はいてない取得メンバ
+		FOR LCOUNT, 0, PTSUM
+			IF PTID:(LCOUNT) > 0
+				IF おもらしメンバ & POWER(2, LCOUNT)
+					BASE:(PTID:(LCOUNT)):NP = 0
+					EXP:(PTID:(LCOUNT)):お漏らし経験 += 1
+					CALL CHANGE_TP(PTID:(LCOUNT), 21)
+					CALL CHECK_GET_OMORASHI(PTID:(LCOUNT))
+					
+					CALL SET_はいてない(PTID:(LCOUNT))
+					;触手服メンバは除外
+					IF RESULT == 1 && CFLAG:(PTID:(LCOUNT)):40 == 0
+						LOCAL |= POWER(2, LCOUNT)
+					ENDIF
+					
+				ENDIF
+			ENDIF
+		NEXT
+		WAIT
+		
+		
+		
+		PRINTFORM %GET_NYOU_名前(おもらしメンバ)%は顔を朱色に染めながら後始末をし
+		IF LOCAL 
+			PRINTFORML 、
+			PRINTFORMW %GET_NYOU_名前(LOCAL)%はぐしょぐしょになって履くに耐えない下着を脱ぎ捨てた…
+		ELSE
+			PRINTFORMW た。
+		ENDIF
+		
+		;-----便意-----
+		;便意ありだと漏れろ 処理が面倒なので強制的に漏れろ
+		IF CFLAG:(キャラID):49
+			CALL UNK_OMORASHI(キャラID, 100, 0, 0, 0)
+		ENDIF
+		
+		;-----メッセージ-----
+		FOR LCOUNT, 0, PTSUM
+			IF PTID:(LCOUNT) > 0
+				キャラID = PTID:(LCOUNT)
+				IF LOCAL & POWER(2, LCOUNT)
+					;整理中の為一時無効化
+					;CALL PRINT_MESSAGE(キャラID, 506, 7, CALLNAME:(キャラID), "",1)
+				ELSE
+					;整理中の為一時無効化
+					;CALL PRINT_MESSAGE(キャラID, 506, 7, CALLNAME:(キャラID), "",0)
+				ENDIF
+			ENDIF
+		NEXT
+		
+		;-----尿意の残っているキャラをチェック-----
+		LOCAL = 0
+		FOR LCOUNT, 0, PTSUM
+			IF PTID:(LCOUNT) > 0
+				IF BASE:(PTID:(LCOUNT)):NP > 0
+					LOCAL = 1
+					BREAK
+				ENDIF
+			ENDIF
+		NEXT
+		
+		;-----全員尿意が無ければお花摘み終了-----
+		IF LOCAL == 0
+			;トイレを済ませた。(意味深)
+			PRINTFORMW %CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@はトイレを済ませたようだ。
+			RETURN 1
+		ENDIF
+		
+	ENDIF
+	;＝＝＝お花摘み前イベントここまで＝＝＝
+
+	;---襲撃判定---
+	FLAG襲撃 = 0
+	IF FLAG:(CFLAG:1:4 + 50) < 40
+	ELSEIF FLAG:(CFLAG:1:4 + 50) < 70
+		IF RAND:4 == 0
+			FLAG襲撃 = 1
+		ENDIF
+	ELSEIF FLAG:(CFLAG:1:4 + 50) < 100
+		IF RAND:3 == 0
+			FLAG襲撃 = 1
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			FLAG襲撃 = 1
+		ENDIF
+	ENDIF
+
+	
+	PRINTFORMDW 適当な場所を見つけた%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@は早速トイレを済ませる事にした…
+	PRINTFORMDW ……
+	IF FLAGウォッチャー == 1
+		;＝＝＝ウォッチャー有り＝＝＝
+
+		
+		;-----尿意・便意クリア-----
+		FOR LCOUNT, 0, PTSUM
+			IF PTID:(LCOUNT) > 0
+				BASE:(PTID:(LCOUNT)):NP = 0
+				CFLAG:(PTID:(LCOUNT)):49 = 0
+			ENDIF
+		NEXT
+		
+		
+		
+		IF FLAG襲撃
+			CALL OHANATSUMI_SHUGEKI2
+		ELSE
+
+
+			;PT全体の気配察知合計が3以上なら見つける
+			LOCAL = 0
+			FOR LCOUNT, 0, PTSUM
+				IF PTID:(LCOUNT) > 0
+					LOCAL += ABL:(PTID:(LCOUNT)):1
+				ENDIF
+			NEXT
+
+			IF LOCAL >= 3
+				PRINTFORML 部屋の隅に水音が小さく響く中、%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@がふと壁に目をやると
+				PRINTFORMW ウォッチャーが壁に張り付いてこちらを凝視しているのに気がついた！
+				PRINTL
+				;水の種類
+				IF FLAG:522 == 1
+					;黄金水
+					PRINTFORML ウォッチャーの周りには%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@の排泄行為を
+					PRINTFORMW 様々な角度から記録したライブ映像が大きく映し出されていた、
+					PRINTL
+					PRINTFORML 慌てて立ち上がろうとする%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@だが
+					PRINTFORML 排泄行為を"見られている"という事を意識した途端
+					PRINTFORMW 秘部から排出される液体が量を増し、行為を中断出来ないでいた…
+					PRINTL
+					PRINTFORML 結局%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@は最後まで放尿ライブを止めることが出来ず
+					PRINTFORMW 体勢を整えた時には撮影者にもどこかへ逃げられてしまっていた…
+					
+				ELSEIF FLAG:522 == 0
+					;愛液
+					PRINTFORML 対応しようにもなぜか秘部から流れる体液が量を増し動くことができない……
+					PRINTFORMW そのまま行為の最後まで見られてしまい体勢を整えた時にはすでにどこかへ逃げられてしまっていた……
+					PRINTL
+				ENDIF
+			ELSE
+				PRINTFORML 部屋の隅に水音が小さく響く中、安息のひとときを過ごす%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@だが
+				PRINTFORMW 常に部屋のどこかから視線を感じ、かえって疲れてしまった……
+				PRINTL
+			ENDIF
+
+
+			;効果はTP・MPダウン
+			FOR LCOUNT, 0, PTSUM
+				IF PTID:(LCOUNT) > 0
+					IF TALENT:(PTID:(LCOUNT)):36
+						;恥薄いならダメージなし
+						LOCAL = 0
+					ELSEIF TALENT:(PTID:(LCOUNT)):35
+						;恥じらいなら２倍
+						LOCAL = MAXBASE:(PTID:(LCOUNT)):MP * (5 + RAND:11) / 1000
+					ELSE
+						LOCAL = MAXBASE:(PTID:(LCOUNT)):MP * (3 + RAND:5) / 1000
+					ENDIF
+					BASE:(PTID:(LCOUNT)):MP = MAX(1, BASE:(PTID:(LCOUNT)):MP - LOCAL)
+					BASE:(PTID:(LCOUNT)):TP = MAX(0, BASE:(PTID:(LCOUNT)):TP - LOCAL)
+					CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 2000, CALLNAME:(PTID:(LCOUNT)), "",0)
+				ENDIF
+			NEXT
+			
+			
+			
+		ENDIF
+		
+		
+	ELSE
+		;＝＝＝通常＝＝＝
+		
+		
+		
+		;-----尿意・便意クリア-----
+		FOR LCOUNT, 0, PTSUM
+			IF PTID:(LCOUNT) > 0
+				BASE:(PTID:(LCOUNT)):NP = 0
+				CFLAG:(PTID:(LCOUNT)):49 = 0
+			ENDIF
+		NEXT
+		
+		
+		
+		IF FLAG襲撃
+			CALL OHANATSUMI_SHUGEKI
+		ELSE
+			PRINTFORMDW スッキリした！
+		ENDIF
+		
+		
+	ENDIF
+
+
+;=================================================
+;◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆
+;襲撃イベ達
+;PRINT_MESSAGE引数
+;ARG:0＿状況ID、506固定
+;ARG:1＿イベント番号、一つのイベント（関数）につき一つの値を割り当てる
+;	1000~1999：通常お花摘み襲撃
+;	2000~2999：ウォッチャー付お花摘み襲撃（予定）
+;ARGS:0＿内容は各イベントに委任
+;ARGS:1＿内容は各イベントに委任
+;ARG:2＿イベント内の呼び出し位置、各イベント参照
+;ARG:3,4,5,6＿内容は各イベントに委任
+;◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI
+RESULT = -1
+;結構適当
+
+
+
+IF RESULT == -1 && RAND:10 == 0
+	CALL OHANATSUMI_SHUGEKI_EV1001()
+ENDIF
+IF RESULT == -1 && RAND:10 == 0
+	CALL OHANATSUMI_SHUGEKI_EV1002()
+ENDIF
+IF RESULT == -1 && RAND:10 == 0
+	CALL OHANATSUMI_SHUGEKI_EV1003()
+ENDIF
+IF RESULT == -1 && RAND:10 == 0
+	CALL OHANATSUMI_SHUGEKI_EV1004()
+ENDIF
+IF RESULT == -1 && RAND:10 == 0
+	CALL OHANATSUMI_SHUGEKI_EV1005()
+ENDIF
+
+
+
+IF RESULT == -1 && RAND:4 == 0
+	CALL OHANATSUMI_SHUGEKI_EV4()
+ENDIF
+IF RESULT == 0
+	RETURN
+ELSEIF RAND:3 == 0
+	CALL OHANATSUMI_SHUGEKI_EV3()
+ELSEIF RAND:2 == 0
+	CALL OHANATSUMI_SHUGEKI_EV2()
+ELSE
+	CALL OHANATSUMI_SHUGEKI_EV1()
+ENDIF
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI2
+RESULT = -1
+;そのうち増やす…つもり
+
+
+
+
+
+CALL OHANATSUMI_SHUGEKI_EV2000()
+
+
+
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;各部位
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV1(ARG = 0)
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+;特に無し
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+PRINTFORMW 匂いや音に反応したのか%CALLNAME:(PTID)%%TACHI()%に、壁や床から伸びた触手が襲い掛かる！
+PRINTFORML 
+
+;ダメージとか属性とかの設定
+;属性はACVのいずれか
+TFLAG:63 = RAND:3
+IF TFLAG:63 >=1
+	TFLAG:63 += 1
+ENDIF
+
+
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		LOCAL = CALC_SENSITIVITY(PTID:(LCOUNT), TFLAG:63, (RAND:100)+400)
+		CALL DAMAGE_COMMON(PTID:(LCOUNT), 2, LOCAL, 2000)
+	ENDIF
+NEXT
+
+;片づけ
+TFLAG:63 = 0
+
+
+PRINTFORML %CALLNAME:(PTID)%%TACHI()%を散々犯し抜いた触手は何事も無かったかのように引っ込んでいった…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 8, CALLNAME:(PTID:(LCOUNT)), CALLNAME:(PTID:(LCOUNT)))
+	ENDIF
+NEXT
+WAIT
+	
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;寄生
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV2(ARG = 0)
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+;特に無し
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+
+PRINTFORMW 無防備に秘所を晒す%CALLNAME:(PTID)%%TACHI()%に、どこからとも無く湧いた淫蟲が襲い掛かる！
+PRINTFORML 
+
+TFLAG:63 = 3
+
+
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		LOCAL = CALC_SENSITIVITY(PTID:(LCOUNT), TFLAG:63, (RAND:100)+400)
+		CALL DAMAGE_COMMON((PTID:(LCOUNT)), 2, LOCAL * 10 * (TALENT:(PTID:(LCOUNT)):103 + 2), 500)
+		IF RAND:6 == 0 && CFLAG:(PTID:(LCOUNT)):22 == 0
+			CFLAG:(PTID:(LCOUNT)):22 = 5 + RAND:12
+			CFLAG:(PTID:(LCOUNT)):23 = 4 + RAND:5 + RAND:5 + RAND:3
+			PRINTFORML %CALLNAME:(PTID:(LCOUNT))%は何かに【寄生】されてしまった！
+		ENDIF
+	ENDIF
+NEXT
+
+
+TFLAG:63 = 0
+
+PRINTFORMW %CALLNAME:(PTID)%%TACHI()%を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 9, CALLNAME:(PTID:(LCOUNT)), CALLNAME:(PTID:(LCOUNT)))
+	ENDIF
+NEXT
+WAIT
+	
+	
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;発情
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV3(ARG)
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+;特に無し
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+
+PRINTFORML 用をたすため無防備に晒されていた%CALLNAME:(PTID)%%TACHI()%の陰唇や膣に触手が粘液を塗りつけた！
+PRINTFORML %CALLNAME:(PTID)%%TACHI()%の頬が朱に染まっていく…
+PRINTFORML パーティー全員が【発情】状態になってしまった！
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0 && CFLAG:(PTID:(LCOUNT)):発情 <= 5
+		CFLAG:(PTID:(LCOUNT)):発情 += 1
+	ENDIF
+NEXT
+
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 10, CALLNAME:(PTID:(LCOUNT)), CALLNAME:(PTID:(LCOUNT)))
+	ENDIF
+NEXT
+WAIT
+	
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;はいてない取得
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV4(ARG)
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+;全員「はいてない」だとダメ
+LOCAL = 0
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0 && CFLAG:(PTID:(LCOUNT)):44 == 0
+		LOCAL = 1
+	ENDIF
+NEXT
+SIF LOCAL == 0
+	RETURN -1
+	
+
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+	
+	
+PRINTFORML %CALLNAME:(PTID)%%TACHI()%のずり下げられた下着に触手が固く巻きついた！
+PRINTFORML %CALLNAME:(PTID)%%TACHI()%は抵抗して逃れたが下着が破れて使えなくなってしまった…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0 && CFLAG:(PTID:(LCOUNT)):44 == 0
+		CFLAG:(PTID:(LCOUNT)):44 = 1
+	ENDIF
+NEXT
+
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 11, CALLNAME:(PTID:(LCOUNT)), CALLNAME:(PTID:(LCOUNT)))
+	ENDIF
+NEXT
+WAIT
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV1000(ARG)
+;標準的なV攻撃シチュ
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+;特に無し
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+PRINTFORML お花を摘んでいると、その周囲の地面から突如として触手が飛び出し
+PRINTFORMW 瞬く間に%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@はしゃがんだままの姿勢で拘束されてしまった…
+PRINTL
+PRINTFORML 拘束を解こうともがいていると
+PRINTFORML %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の真下から他の触手よりも更に太い触手がゆっくりと這い出り
+PRINTFORMW その頭を割れ目の間にぐりぐりと押し付けてきた…
+PRINTL
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		;CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 1000, CALLNAME:(PTID:(LCOUNT)), "",0)
+		CALL LOST_VIRGIN(PTID:(LCOUNT), 2, 4, 0)
+		;CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 1000, CALLNAME:(PTID:(LCOUNT)), "",1)
+	ENDIF
+NEXT
+
+PRINTFORML 身をよじるしか抵抗のできない%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の秘所に
+PRINTFORMW みるみる触手はその体を突き挿すと、今度は激しく体を抽送させ始めた…
+
+PRINTL
+TFLAG:63 = 3
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		LOCAL = CALC_SENSITIVITY(PTID:(LCOUNT), TFLAG:63, (RAND:100)+400)
+		FOR LCOUNT:1, 0, 10
+			CALL DAMAGE_COMMON(PTID:(LCOUNT), 2, LOCAL + RAND:(LOCAL), 100)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 1000, CALLNAME:(PTID:(LCOUNT)), "",2)
+		PRINTL
+	ENDIF
+NEXT
+TFLAG:63 = 0
+PRINTL
+
+PRINTFORML 嬌声をあげながらもがく%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の足元では様々な液体が滴り
+PRINTFORMW 地面に大きな水たまりを広げていった……
+PRINTL
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV1001(ARG)
+;羞恥シチュ、恥じらい持ちで仲間持ち限定(PTID:0に恥じらいの人をセット)、黄金水限定
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+;黄金水かどうか
+SIF FLAG:522 != 1
+	RETURN -1
+
+;恥じらい所持者チェック
+VARSET LOCAL
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0 && TALENT:(PTID:(LCOUNT)):恥じらい > 0
+		LOCAL++
+	ENDIF
+NEXT
+SIF LOCAL == 0
+	RETURN -1
+
+;複数いた場合はランダムで一人
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0 && TALENT:(PTID:(LCOUNT)):恥じらい > 0
+		IF RAND:(LOCAL+1) == 0
+			LOCAL:1 = PTID:(LCOUNT)
+			BREAK
+		ELSE
+			LOCAL--
+		ENDIF
+	ENDIF
+NEXT
+IF FLAG:10 && LOCAL:1 == FLAG:10
+	PTID:0 = FLAG:10
+	PTID:1 = 1
+	PTID:2 = FLAG:11
+	
+ELSEIF FLAG:11 && LOCAL:1 == FLAG:11
+	PTID:0 = FLAG:11
+	PTID:1 = 1
+	PTID:2 = FLAG:10
+	
+ENDIF
+
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+	
+PRINTFORMW …皆と一緒にお花を摘むのが恥ずかしい%CALLNAME:(PTID)%は他の仲間から見えない少し離れた場所にいた、
+PRINTFORMW 秘所を露わにさせた%CALLNAME:(PTID)%は体を小さく丸めて深めにしゃがむと、周りを気にしながらおずおずと体の力を抜いた…
+;CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 1001, CALLNAME:(PTID:(LCOUNT)), "",0)
+PRINTFORMW …
+PRINTFORMW 床に落ちる水の音を聞きながら、%CALLNAME:(PTID)%は膝の上で組んだ腕の中に少し赤面した顔を伏せていた
+PRINTFORMW すると突然、周囲から触手が飛び出し%CALLNAME:(PTID)%の腰に巻きついてきた！
+;CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 1001, CALLNAME:(PTID:(LCOUNT)), "",1)
+PRINTFORMW 驚いた%CALLNAME:(PTID)%が逃げようとするも固く巻きついた触手が解けず、腰を上げることすら出来ないでいた
+PRINTFORMW %CALLNAME:(PTID)%が仲間に助けを呼ぼうとすると、触手は%CALLNAME:(PTID)%の膝に体を巻きつけて転倒させ
+PRINTFORMW 背中を地面につけ"まんぐり返し"の状態になった%CALLNAME:(PTID)%の秘所やお尻の周囲に多数の細い触手を這わせると
+PRINTFORMW 陰唇やお尻のツボミを拡げて、その内部を調べるようにゆっくりと数本の触手で撫ではじめた…
+;CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 1001, CALLNAME:(PTID:(LCOUNT)), "",2)
+PRINTFORMW その様子に%CALLNAME:(PTID)%は、火が出そうなほど紅潮した顔を手で覆うと、
+PRINTFORMW 早くこの羞恥から解放される事と、仲間がこっちに来ないでくれる事を祈り続けた……
+
+
+PRINTL
+FOR LCOUNT, 0, 10
+	;属性はACVのいずれか
+	TFLAG:63 = RAND:3
+	IF TFLAG:63 >=1
+		TFLAG:63 += 1
+	ENDIF
+	
+	;紳士的な低ダメ触手さん
+	LOCAL = CALC_SENSITIVITY(PTID, TFLAG:63, (RAND:100)+200)
+	CALL DAMAGE_COMMON(PTID, 2, LOCAL + RAND:(LOCAL), 100)
+	;CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 1001, CALLNAME:(PTID:(LCOUNT)), "",3)
+NEXT
+TFLAG:63 = 0
+PRINTL
+
+
+PRINTFORMW …
+PRINTFORMW 触手から解放された%CALLNAME:(PTID)%は合流した仲間に何かあったのか尋ねられたが
+PRINTFORMW 火照ったままの顔を俯かせたまま、何もなかったと言い続けるしかできなかった……
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV1002(ARG)
+;一人用、汚染度の高い部屋用
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+;複数はダメ
+SIF FLAG:10 > 0
+	RETURN -1
+
+;汚染度が高くないとダメ
+SIF FLAG:((CFLAG:1:現在位置)+50) < 80
+	RETURN -1
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+
+;長い…
+PRINTFORMW この部屋は触手による汚染が酷くなっているらしく、壁や天井だけでなく床にまで触手がはびこっている
+PRINTFORMW 恐らくどこもこういう状態なのだろうと諦めた%CALLNAME:(PTID)%は、腰を下ろして用を足しすことにした
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",0)
+PRINTFORMW すると突然%CALLNAME:(PTID)%は秘所をヌメヌメとした何かに舐められるような感覚に襲われた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",1)
+PRINTFORMW 驚いた%CALLNAME:(PTID)%は飛び上がって後ろに下がり、自分のいた場所を見つめた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",2)
+PRINTFORMW すると%CALLNAME:(PTID)%の居たあたりに、他と色の違う触手が先端から粘液を垂らしながらゆらゆらと揺れていた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",3)
+PRINTFORMW %CALLNAME:(PTID)%はその触手を睨むと手を前に出し攻撃の構えをとった…
+PRINTFORMW が、攻撃を放とうとした時、%CALLNAME:(PTID)%は下腹部に違和感を感じた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",4)
+PRINTFORMW %CALLNAME:(PTID)%が目をやると足の付け根から透明な液体がポタポタと滴り落ちていた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",5)
+PRINTFORMW 思わず付け根を押さえた%CALLNAME:(PTID)%の手に、煮えるほどの熱を放ちながら止めどなくと愛液を流す秘所の感触が伝わった
+PRINTFORMW どうやら秘所を舐められた際に毒を塗られたようだ
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",6)
+PRINTFORMW %CALLNAME:(PTID)%は鋭い目で前を見るが、それを塗りつけた犯人の姿は目の前から消えていた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",7)
+PRINTFORMW 周囲を見回してみるも姿は無く、その間にも下腹部の熱は強さを増しながら身体中に広がっていった
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",8)
+PRINTFORMW 熱が広がるたび、意識が遠くなる感覚に恐怖を感じた%CALLNAME:(PTID)%は、その場を離れようと足を出すも、
+PRINTFORMW ガクガクと震える膝は%CALLNAME:(PTID)%の体を支えることが出来ず、バランスを崩してその場に膝をついてしまった
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",9)
+PRINTFORMW 自分の体を抱きしめ、何とか耐えようとする%CALLNAME:(PTID)%の目の前に
+PRINTFORMW 指ほどの細さの触手が集まり枕ほどの塊になってズルズルと移動しているのを見つけた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",10)
+PRINTFORMW 細い触手達は%CALLNAME:(PTID)%に気付くと、ウニのように指先を伸ばし、ウネウネと動いて威嚇してきた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",11)
+PRINTFORMW 熱のこもった目でその卑猥な動きを見つめていた%CALLNAME:(PTID)%は吸い込まれるように体を近づけると、
+PRINTFORMW 枕の上に膝立ちでまたがり、息を荒げながら両手でお尻と股の割れ目をしっかり開いたまま、ゆっくりと腰を下ろしていった…
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",12)
+
+PRINTL
+FOR LCOUNT, 0, 3
+	;属性はACVのいずれか
+	LOCAL = RAND:3
+	IF LOCAL >=1
+		LOCAL += 1
+	ENDIF
+	CALL NYOU_簡易ダメ(PTID, LOCAL, (RAND:100)+200)
+NEXT
+PRINTL
+
+IF GET_PENIS(PTID)
+	PRINTFORMW %CALLNAME:(PTID)%にのしかかられた枕は、指先を次々と%CALLNAME:(PTID)%のペニスや陰唇、お尻の蕾に這わせて愛撫を始めた
+ELSE
+	PRINTFORMW %CALLNAME:(PTID)%にのしかかられた枕は、指先を次々と%CALLNAME:(PTID)%のクリトリスや陰唇、お尻の蕾に這わせて愛撫を始めた
+ENDIF
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",13)
+PRINTFORMW %CALLNAME:(PTID)%はお尻や下腹部を撫でられる感触にうっとりとしながらも、物足りないのか太ももで枕を挟んで腰を押し付けている…
+
+PRINTL
+FOR LCOUNT, 0, 5
+	;属性はACVのいずれか
+	LOCAL = RAND:3
+	IF LOCAL >=1
+		LOCAL += 1
+	ENDIF
+	CALL NYOU_簡易ダメ(PTID, LOCAL, (RAND:200)+300)
+NEXT
+PRINTL
+
+PRINTFORMW %CALLNAME:(PTID)%の圧迫に苦しくなった枕は触手の束の一部を解くと%CALLNAME:(PTID)%のアナルやヴァギナの内部に次々となだれ込ませてきた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",14)
+PRINTFORM 膣内や腸内がみるみる触手達で満たされ、その圧迫感や媚毒で感度を高められた内壁を勢いよく擦られる感触に
+PRINTFORMW %CALLNAME:(PTID)%は甲高い嬌声を発しながら恍惚とした表情をしながらもなお、自分の胸を弄り快楽の量を増やしている…
+
+PRINTL
+FOR LCOUNT, 0, 15
+	CALL NYOU_簡易ダメ(PTID, RAND:4, (RAND:1000)+2000)
+NEXT
+PRINTL
+
+PRINTFORMW %CALLNAME:(PTID)%は送られてくる快楽の刺激を処理しきれなくなり、体を痙攣させながらその場に倒れこんだ
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",15)
+PRINTFORMW その膨らんだ下腹部ではなおも触手達が暴れ続けており、大きく拡がった出入り口からは様々な液体が勢いよく吹き出し続けている
+
+PRINTL
+FOR LCOUNT, 0, 15
+	CALL NYOU_簡易ダメ(PTID, RAND:4, (RAND:1000)+2000)
+NEXT
+PRINTL
+
+PRINTFORMW ……
+PRINTFORMW %CALLNAME:(PTID)%は気が付くと部屋の隅にうつ伏せで倒れていた
+;CALL PRINT_MESSAGE(PTID, 506, 1002, CALLNAME:(PTID), "",16)
+PRINTFORMW 体の熱は収まっていたが、毒の副作用か%CALLNAME:(PTID)%は用を足そうとしてからの記憶がいまいち思い出せずにいた
+PRINTFORMW 何故か部屋で倒れていた%CALLNAME:(PTID)%は不思議そうな表情をしながら頭を掻くと、その場を後にした……
+
+
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV1003(ARG)
+;仲間あり、汚染度の高い部屋用
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+
+
+SIF PTID:1 == 0
+	RETURN -1
+
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+
+
+PRINTFORMW %CALLNAME:(PTID)%達が用を足していると、突然周囲から大量の触手が飛び出し、下半身に群がってきた
+PRINTFORMW 次々と足や腰に絡みついてくる触手を%CALLNAME:(PTID)%達は必死で振り払おうとするが、多勢に無勢でしかなく
+PRINTFORMW あっというまに主人公達は両足の間にお尻を落とした姿勢のまま、へその上から下を触手の束でドーム状に覆われてしまった…
+;CALL PRINT_MESSAGE(PTID:0, 506, 1003, "", "",0)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1003, "", "",0)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1003, "", "",0)
+
+PRINTFORMW 何とか抜け出そうとする%CALLNAME:(PTID)%の目の前で、%CALLNAME:(PTID:1)%\@PTID:2?達#\@の下半身を包む触手の束が、形を歪めながら蠢きだした
+;CALL PRINT_MESSAGE(PTID:0, 506, 1003, "", "",1)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1003, "", "",1)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1003, "", "",1)
+
+PRINTFORMW \@PTID:2?二人#%CALLNAME:(PTID:1)%\@は助けを求める目でこちらを見ていたが、突然何かに突き上げられたように体を跳ね上げさせると大きな嬌声をあげた
+FOR LCOUNT, 1, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:100)+400)
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 3, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1003, "", "",2)
+	ENDIF
+NEXT
+PRINTFORMW 身体を上下に揺らす\@PTID:2?二人#%CALLNAME:(PTID:1)%\@は歯を食いしばりながら必死に何かに耐えている
+FOR LCOUNT, 1, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 5
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:100)+400)
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 3, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1003, "", "",3)
+	ENDIF
+NEXT
+PRINTFORMW \@PTID:2?二人#%CALLNAME:(PTID:1)%\@の触手の束からは複数の淫猥な抽挿音が聞こえてくる
+FOR LCOUNT, 1, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 5
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:100)+400)
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 3, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1003, "", "",4)
+	ENDIF
+NEXT
+PRINTFORMW \@PTID:2?二人#%CALLNAME:(PTID:1)%\@の触手の束が一層大きく蠢くと
+PRINTFORMW \@PTID:2?二人#%CALLNAME:(PTID:1)%\@は顔を伏せ、口を開けて涎をたらしながらビクビクと身体を震わせた
+FOR LCOUNT, 1, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:500)+500)
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 3, (RAND:500)+500)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1003, "", "",5)
+	ENDIF
+NEXT
+PRINTFORMW 涙を流しながらえずく\@PTID:2?二人#%CALLNAME:(PTID:1)%\@の触手の束がみるみる膨らんでいく
+FOR LCOUNT, 1, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 5
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:100)+400)
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 3, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1003, "", "",6)
+	ENDIF
+NEXT
+PRINTFORMW 束の膨張が止まると、\@PTID:2?二人#%CALLNAME:(PTID:1)%\@の下半身を包んでいた触手の束が崩れだし、みるみる地面へと消えていった
+PRINTFORMW 解放されて露わになった\@PTID:2?二人#%CALLNAME:(PTID:1)%\@の下腹は出産前の妊婦のように酷く膨れ上がっておりその表面は妖しく蠢いている
+PRINTFORMW \@PTID:2?二人#%CALLNAME:(PTID:1)%\@が放心状態のまま地面に倒れこむと、その足の間には大量の触手によって大きく拡げられた二つの穴が
+PRINTFORMW ドロドロとした白濁液を流しているのが確認できた
+
+
+;CALL PRINT_MESSAGE(PTID:0, 506, 1003, "", "",7)
+PRINTFORMW 二つの穴からは仕事を終え帰宅の途に就こうとする触手達が次々と這い出てきており
+PRINTFORMW 触手達が戸枠を押し拡げて体を通過させるたび、\@PTID:2?二人#%CALLNAME:(PTID:1)%\@は身体を大きく震わせて絶頂し、
+PRINTFORMW 下品な音をたてながら大量の触手と液体を足の間からぶち撒けた
+
+
+;CALL PRINT_MESSAGE(PTID:0, 506, 1003, "", "",8)
+PRINTFORMW 悪夢のような光景を目の当たりにして呆然とする%CALLNAME:(PTID)%の下半身で、触手の束がぞわぞわと蠢きだした
+;CALL PRINT_MESSAGE(PTID:0, 506, 1003, "", "",9)
+PRINTFORMW これから再現される事態を理解した%CALLNAME:(PTID)%は、目に涙を浮かべながら薄ら笑いを浮かべていた……
+
+FOR LCOUNT, 0, 20
+	CALL NYOU_簡易ダメ(PTID:0, 0, (RAND:100)+400)
+	CALL NYOU_簡易ダメ(PTID:0, 3, (RAND:100)+400)
+NEXT
+
+PRINTFORMW ……静かな部屋の隅に\@PTID:2?３人#２人\@の少女達が横たわっている、
+PRINTFORMW そのお腹はどれも酷く膨れ上がっており、足の間からは様々な液体と触手の塊が吐き出され続けている
+;CALL PRINT_MESSAGE(PTID:0, 506, 1003, "", "",10)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1003, "", "",10)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1003, "", "",10)
+
+
+PRINTFORMW 全ての触手を出し終えた%CALLNAME:(PTID)%達は、放心状態のまま暫く体を動かすことが出来なかったが
+PRINTFORMW 呼吸を整え、よろめきながら立ち上がると、震える体を支え合いながらその場を後にした……
+
+
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV1004(ARG)
+;肛虐
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+
+
+
+
+
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+
+
+PRINTFORMW 用を足す%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の足元から突如として触手が飛び出し、襲いかかってきた！
+PRINTFORMW 触手は%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の腰に巻きつくと人の腕ほどのその体を無防備に晒されたアナルに深々と突き挿した
+;CALL PRINT_MESSAGE(PTID:0, 506, 1004, "", "", 0)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1004, "", "", 0)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1004, "", "", 0)
+
+PRINTFORMW 突然にアナルを貫かれた%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@が震える手で触手を取り払おうとすると、
+PRINTFORMW 触手は%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の内部で何かを吐き出してから勢いよく自身を引き抜き、地面の中へと消え去った
+;CALL PRINT_MESSAGE(PTID:0, 506, 1004, "", "", 1)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1004, "", "", 1)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1004, "", "", 1)
+
+PRINTFORMW 高速でアナルを犯された%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@は、暫くお尻を押さえたままうずくまっていたが、その奥に違和感を感じた
+;CALL PRINT_MESSAGE(PTID:0, 506, 1004, "", "", 2)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1004, "", "", 2)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1004, "", "", 2)
+
+PRINTFORMW どうやら先ほどの触手が体内で吐き出した何かが急速にその体積を増やし、腸内を圧迫しているようだ
+PRINTFORMW %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の身体は腸を圧迫する異物を追い出す為、それを出口へと押し出す行動をとりはじめた
+;CALL PRINT_MESSAGE(PTID:0, 506, 1004, "", "", 3)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1004, "", "", 3)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1004, "", "", 3)
+
+PRINTFORMW %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@はとっさにお腹を押さえてお尻を窄めるも、内部から押し付けられた異物によってアナルがゆっくりと押し拡げられ
+PRINTFORMW その蕾からは表面から粘液を滲ませた透明なグミのような物体が顔をのぞかせていた
+;CALL PRINT_MESSAGE(PTID:0, 506, 1004, "", "", 4)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1004, "", "", 4)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1004, "", "", 4)
+
+PRINTFORMW この粘液には媚薬の成分が含まれているらしく、異物に粘液を塗り付けられた部分が次々と敏感になり、
+PRINTFORMW 蕾からにじり出る異物との僅かな摩擦でさえも大きな刺激となって%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@に襲いかかってきた
+;CALL PRINT_MESSAGE(PTID:0, 506, 1004, "", "", 5)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1004, "", "", 5)
+;CALL PRINT_MESSAGE(PTID:2, 506, 1004, "", "", 5)
+
+PRINTFORMW %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@は涙目で体を震わせながらも蕾に力を込めると半分ほど顔を出していた異物が滑るようにお尻から飛び出した
+PRINTFORMW その瞬間、勢いよく擦られた%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の蕾からは何倍にも誇張された刺激が発せられ、たちまち絶頂させられてしまった
+CALL EXTASY(PTID:0, 0, 100, 100)
+;CALL PRINT_MESSAGE(PTID:0, 506, 1004, "", "", 6)
+IF PTID:1 > 0
+	CALL EXTASY(PTID:1, 0, 100, 100)
+	;CALL PRINT_MESSAGE(PTID:1, 506, 1004, "", "", 6)
+ENDIF
+IF PTID:2 > 0
+	CALL EXTASY(PTID:2, 0, 100, 100)
+	;CALL PRINT_MESSAGE(PTID:2, 506, 1004, "", "", 6)
+ENDIF
+
+PRINTFORMW %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@が絶頂した直後、力の緩んだお尻から大量の異物が次々と溢れ出し始めた
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1004, "", "", 7)
+		PRINTL
+	ENDIF
+NEXT
+
+
+PRINTFORMW %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@から吐き出されている異物の表面にはポツポツと突起物がついており、
+PRINTFORMW 異物がアナルを通過するたび、その突起が蕾の端を弾いて%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@の感覚を更に刺激した
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 5
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:500)+500)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1004, "", "", 8)
+		PRINTL
+	ENDIF
+NEXT
+
+
+PRINTFORMW %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@はうずくまって疑似排泄行為を止めようとお尻に力を込めるも、
+PRINTFORMW それは出口を強く締め、吐き出される異物との摩擦を大きくするだけの結果となった
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:1000)+2000)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1004, "", "", 9)
+		PRINTL
+	ENDIF
+NEXT
+
+
+PRINTFORMW %CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@は泣きじゃくりながら懇願するが異物の増殖はまだまだ止まりそうに無い……
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 10
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), 0, (RAND:500)+1500)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1004, "", "", 10)
+		PRINTL
+	ENDIF
+NEXT
+
+
+PRINTFORMW …全てが終わったとき、%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@は地面に突っ伏したまま体をピクピクと震わすだけの状態に
+PRINTFORMW なっており、長時間の肛虐を受け続けた%CALLNAME:(PTID)%\@ PTID:1 ? 達 # \@のお尻は蕾を拡げたままひだをひくつかせ続けていた……
+
+
+
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV1005(ARG)
+;前提：二人用、超仲良しでレズ気がある
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+
+SIF PTID:1 == 0 || PTID:2 > 0
+	RETURN -1
+	
+SIF CFLAG:(PTID:1):5 < 500 || ABL:(PTID:1):レズ中毒 < 1
+	RETURN -1
+	
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+
+
+PRINTFORMW %CALLNAME:(PTID)%達が並んで座っていると、突如として地面から触手が飛び出し、二人の足に巻き付いてきた
+PRINTFORMW 二人は慌てて巻きついた触手を解こうとするも、見た目によらぬ怪力に阻まれ、中々上手くいかない…
+;CALL PRINT_MESSAGE(PTID:0, 506, 1005, "", "", 0)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1005, "", "", 0)
+
+PRINTFORMW 二人が手をこまねいていると、地面からさらに触手が伸び、二人の身体に絡み付いてきた、
+PRINTFORMW ぬめった体表が二人の乳房やお尻、足の間に這わされ、二人の身体を優しく愛撫している
+;CALL PRINT_MESSAGE(PTID:0, 506, 1005, "", "", 1)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1005, "", "", 1)
+
+PRINTFORMW 全身に舌を這わされるような感覚に二人は身体を震わせながらも
+PRINTFORMW お互いの身を守るようにしてお互いの身体を抱きしめている
+FOR LCOUNT, 0, 2
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:4, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1005, "", "", 2)
+		PRINTL
+	ENDIF
+NEXT
+
+PRINTFORMW ねっとりと執拗な触手の愛撫を受け続ける二人の身体はみるみる昂揚していき
+PRINTFORMW 限界に達した二人はお互いの身体を強く抱きしめると、嬌声を上げながらがくがくと身体を震わせた
+FOR LCOUNT, 0, 2
+	IF PTID:(LCOUNT) > 0
+		CALL EXTASY(PTID:LCOUNT, 2, 100, 100)
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1005, "", "", 3)
+		PRINTL
+	ENDIF
+NEXT
+
+PRINTFORMW 絶頂に震える二人の足の間からは排出の途中だった液体が勢いよく吐き出されている
+;CALL PRINT_MESSAGE(PTID:0, 506, 1005, "", "", 4)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1005, "", "", 4)
+
+PRINTFORMW 二人が抱き合ったまま息を荒げ絶頂の余韻に浸っていると
+PRINTFORMW 満足した触手が二人の拘束を解いて地面の中へと消えていった
+;CALL PRINT_MESSAGE(PTID:0, 506, 1005, "", "", 5)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1005, "", "", 5)
+
+PRINTFORMW 触手の拘束から解放された二人が身体を離すと、足元に大きな一つの水溜りが出来ていた
+PRINTFORMW 二人はお互いの目の前で痴態を晒してしまったことを理解すると、照れながらクスクスと笑みを交わした、
+PRINTFORMW そして震えの残るお互いの身体を再び抱き合うと、紅く染まった顔をそっと近づけ、静かに唇を重ねた
+;CALL PRINT_MESSAGE(PTID:0, 506, 1005, "", "", 6)
+;CALL PRINT_MESSAGE(PTID:1, 506, 1005, "", "", 6)
+
+FOR LCOUNT, 0, 2
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:2 + 1, (RAND:101)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1005, "", "", 7)
+		PRINTL
+	ENDIF
+NEXT
+PRINTFORMW %CALLNAME:(PTID)%達は相手の秘所をまさぐりながら胸についた触手の粘液を優しく舐め取っている…
+
+FOR LCOUNT, 0, 2
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:2 + 1, (RAND:101)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1005, "", "", 8)
+		PRINTL
+	ENDIF
+NEXT
+PRINTFORMW %CALLNAME:(PTID)%達は相手のへそに指を這わせながら首筋に舌を這わせている…
+
+FOR LCOUNT, 0, 2
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:2 + 1, (RAND:101)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1005, "", "", 9)
+		PRINTL
+	ENDIF
+NEXT
+PRINTFORMW %CALLNAME:(PTID)%達はお互いの胸を揉みしだいている…
+
+FOR LCOUNT, 0, 2
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:2 + 1, (RAND:101)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 1005, "", "", 10)
+		PRINTL
+	ENDIF
+NEXT
+PRINTFORMW %CALLNAME:(PTID)%達は最後にじっくりとお互いの舌の感触を堪能したあと
+PRINTFORMW 立ち上がって手を繋ぐと、寄り添いながらその場を後にした……
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+
+
+
+
+
+
+;下半身から与えられる刺激に身体を打ち震わせる二人は
+;お互いの舌を絡ませながら背筋や乳房に細い指を這わせ合い、快楽をむさぼっている
+
+
+
+;わんこそば
+;もう何度目かわからない、おかわりをそそがれた主人公
+
+
+;卑猥な排泄音と共に大量の触手を吐き出している
+
+
+
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆
+;ウォッチャー有り襲撃2000～
+;◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お花摘み時襲われ
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+@OHANATSUMI_SHUGEKI_EV2000(ARG)
+;標準
+#DIM LCOUNT,3	;ループ用
+#DIM PTID,3
+
+
+PTID:0 = 1
+PTID:1 = FLAG:10
+PTID:2 = FLAG:11
+
+
+;＝＝＝＝＝＝＝前提チェック＝＝＝＝＝＝＝
+
+
+
+
+;＝＝＝＝＝＝＝イベント処理＝＝＝＝＝＝＝
+;チェック用
+SIF ARG == 1
+	RETURN 0
+;-----
+
+
+PRINTFORMW %CALLNAME:(PTID)%%TACHI()%が用を足そうとしていると突如地面から飛び出した触手達に、体を拘束されてしまった！
+;CALL PRINT_MESSAGE(PTID:0, 506, 2000, "", "", 0)
+;CALL PRINT_MESSAGE(PTID:1, 506, 2000, "", "", 0)
+;CALL PRINT_MESSAGE(PTID:2, 506, 2000, "", "", 0)
+PRINTL
+
+PRINTFORMW 必死に抵抗する%CALLNAME:(PTID)%%TACHI()%を余所に、触手達はその柔肌を嬲るように愛撫している…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 3
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:4, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 2000, "", "", 1)
+		PRINTL
+	ENDIF
+NEXT
+
+PRINTFORMW 無駄な抵抗を続ける%CALLNAME:(PTID)%%TACHI()%が顔をあげると、
+PRINTFORMW 視線の先に好奇の目でこちらを見つめるウォッチャーの姿があった
+PRINTFORMW ウォッチャーは%CALLNAME:(PTID)%%TACHI()%が、拘束されて動けないのをいいことに、
+PRINTFORMW %CALLNAME:(PTID)%%TACHI()%が触手達に弄ばれるさまを間近でじっくりと撮影している…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 5
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:4, (RAND:100)+400)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 2000, "", "", 2)
+		PRINTL
+	ENDIF
+NEXT
+
+PRINTFORMW %CALLNAME:(PTID)%%TACHI()%が見世物にならぬよう頑張って平然を装っていると
+PRINTFORMW 突然触手達は%CALLNAME:(PTID)%%TACHI()%の足を持ち上げて大きく開かせると、
+PRINTFORMW 無防備に晒された秘所やアナルに触手を集め、内側を見せる様にしてその口を大きくこじ開けた…
+;CALL PRINT_MESSAGE(PTID:0, 506, 2000, "", "", 3)
+;CALL PRINT_MESSAGE(PTID:1, 506, 2000, "", "", 3)
+;CALL PRINT_MESSAGE(PTID:2, 506, 2000, "", "", 3)
+PRINTL
+
+PRINTFORMW 突如外気に晒された膣内や腸内はひんやりした部屋の空気に触れ、驚いたようにその内壁をヒクつかせている
+PRINTFORMW その様子はウォッチャーによって様々な角度から記録され、%CALLNAME:(PTID)%%TACHI()%の目の前に映し出されている…
+;CALL PRINT_MESSAGE(PTID:0, 506, 2000, "", "", 4)
+;CALL PRINT_MESSAGE(PTID:1, 506, 2000, "", "", 4)
+;CALL PRINT_MESSAGE(PTID:2, 506, 2000, "", "", 4)
+PRINTL
+
+PRINTFORMW %CALLNAME:(PTID)%%TACHI()%が紅潮した顔を、カメラから背けて羞恥に耐えていると
+PRINTFORMW 触手達が媚薬を含んだ粘液を体表から滲ませながら、大きく拡げた%CALLNAME:(PTID)%%TACHI()%の恥部をゆっくりと撫で始めた…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 5
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:4, (RAND:100)+800)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 2000, "", "", 5)
+		PRINTL
+	ENDIF
+NEXT
+
+PRINTFORMW 触手達は%CALLNAME:(PTID)%%TACHI()%のアナルのしわの溝や陰唇の裏側にも丹念に粘液を塗り付けている
+PRINTFORMW %CALLNAME:(PTID)%%TACHI()%は嬌声をあげながらカメラの前で卑猥なダンスを続けている…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		FOR LCOUNT:1, 0, 8
+			CALL NYOU_簡易ダメ(PTID:(LCOUNT), RAND:4, (RAND:500)+1000)
+		NEXT
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 2000, "", "", 6)
+		PRINTL
+	ENDIF
+NEXT
+
+PRINTFORMW %CALLNAME:(PTID)%%TACHI()%のダンスが最高潮を迎えると、触手達はその先端で一斉に%CALLNAME:(PTID)%%TACHI()%の全身を愛撫した
+PRINTFORMW 粘液の媚薬で敏感になった身体を一斉に刺激され、堪らず%CALLNAME:(PTID)%%TACHI()%は体を激しく跳ね上げさせた…
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		CALL EXTASY(PTID:LCOUNT, RAND:4, 100, 100)
+		;CALL PRINT_MESSAGE(PTID:LCOUNT, 506, 2000, "", "", 7)
+		PRINTL
+	ENDIF
+NEXT
+
+PRINTFORMW 絶頂に震える%CALLNAME:(PTID)%%TACHI()%はカメラの前で秘所から弧を描いて大量の液体を吹き出している…
+;CALL PRINT_MESSAGE(PTID:0, 506, 2000, "", "", 8)
+;CALL PRINT_MESSAGE(PTID:1, 506, 2000, "", "", 8)
+;CALL PRINT_MESSAGE(PTID:2, 506, 2000, "", "", 8)
+
+
+
+PRINTFORMW …
+PRINTFORMW 触手達が去った後も、%CALLNAME:(PTID)%%TACHI()%は絶頂の余韻と激しいに羞恥に襲われ、
+PRINTFORMW 子犬のように体を震わせながら部屋の隅で、暫くの間すすり泣き続けた……
+
+
+
+
+;TP・MPダウン
+FOR LCOUNT, 0, 3
+	IF PTID:(LCOUNT) > 0
+		IF TALENT:(PTID:(LCOUNT)):36
+			;恥薄いならダメージなし
+			LOCAL = 0
+		ELSEIF TALENT:(PTID:(LCOUNT)):35
+			;恥じらいなら２倍
+			LOCAL = MAXBASE:(PTID:(LCOUNT)):MP * (5 + RAND:11) / 1000
+		ELSE
+			LOCAL = MAXBASE:(PTID:(LCOUNT)):MP * (3 + RAND:5) / 1000
+		ENDIF
+		BASE:(PTID:(LCOUNT)):MP = MAX(1, BASE:(PTID:(LCOUNT)):MP - LOCAL)
+		BASE:(PTID:(LCOUNT)):TP = MAX(0, BASE:(PTID:(LCOUNT)):TP - LOCAL)
+	ENDIF
+NEXT
+
+
+
