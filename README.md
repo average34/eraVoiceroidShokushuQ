@@ -6,7 +6,7 @@ __エロコンテンツを閲覧したくない方はブラウザバックをお
 ![Link Text](https://github.com/average34/eraVoiceroidShokushuQ/blob/master/RESOURCES/eraVStop.png "Title")  
 https://seesaawiki.jp/eraseries/d/eraVoiceroid  
 このゲームは、VOICEROID、CeVIO、AITalkのキャラクターの二次創作ゲームです。
-テキストのみで進める、ボイロといちゃいちゃするゲームです。
+テキストのみで進める、ボイロたちが触手のモンスターと戦うゲームです。
 
 # ダウンロード
 以下のURLから最新バージョンをダウンロードしてください。
@@ -44,4 +44,6 @@ https://jbbs.shitaraba.net/bbs/read.cgi/otaku/16783/1509965059/
 また eraVoiceroidは当然ながら非公式の二次創作物ですので、
 株式会社AHS様、東北ずん子公式、精華町、ついなちゃん公式、CeVIO、1st PLACE、ヤマハ、株式会社インターネット、ガイノイド様等に eraVoiceroid の件で問い合わせ等を行わないで下さい。
 
-
+# 注意
+​※「Youtube」「ニコニコ動画」などのR-18コンテンツを扱ってはいけない動画サイトでのプレイ動画投稿はNGです。  
+「FC2アダルト」「ボイろだ」などのR-18コンテンツをアップロード可能なサイトでの動画投稿をお願いします。​  
