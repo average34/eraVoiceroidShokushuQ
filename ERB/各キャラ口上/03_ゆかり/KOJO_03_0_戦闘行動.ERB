@@ -1,0 +1,447 @@
+﻿;ARG:0 == 1の管理
+@BATTLE_MIKATA_KOUDOU_HATUDOU_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	IF ARG:1 < 10
+		CALL BATTLE_MIKATA_KOUDOU_SONOTA_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		;相手がクイーンかガーディアンで、残りHPが少ない時に攻撃
+	ELSEIF ARG:1 < 35 && (DA:(CFLAG:51):0 == 1 || DA:(CFLAG:51):0 == 3) && DA:(CFLAG:51):1 < 600
+		PRINTFORMW 「これで終わりです！」
+	ELSEIF ARG:1 < 16
+		CALL BATTLE_MIKATA_KOUDOU_DANMAKU_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 26
+		CALL BATTLE_MIKATA_KOUDOU_SYOUMOUBUKI_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 35
+		CALL BATTLE_MIKATA_KOUDOU_NO_SYOUMOUBUKI_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ELSEIF ARG:1 < 87
+		CALL BATTLE_MIKATA_KOUDOU_KOUSOKU_NOW_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ENDIF
+RETURN
+
+@BATTLE_MIKATA_KOUDOU_SONOTA_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE ARG:1
+		;防御
+		CASE 1
+			;身を守る
+			IF ARG:2 == 0
+				;MP1/4以下か拘束中か発情中か朦朧
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:20 || CFLAG:28 || FLAG:7 >= 11
+					IF RAND:2 == 0
+						PRINTFORMW 「け、結界をっ！」
+					ELSE
+						PRINTFORMW 「わたしに触れないでっ！」
+					ENDIF
+				;HP1/4以下か妊娠中か要睡眠
+				ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3 || FLAG:7 >= 7
+					PRINTFORMW 「今の状況で食らうのはまずい……」
+				ELSE
+					PRINTFORMW 「触手相手に正々堂々もあったものじゃないですね」
+				ENDIF
+
+				;リロードフラグ洗浄
+				SIF CFLAG:805 == 5
+					CFLAG:805 = 0
+			;リロード
+			ELSEIF ARG:2 == 1
+				IF CFLAG:805 == 5
+					CFLAG:805 = 0
+				ELSE
+					;MP1/4以下かHP1/4以下か妊娠中か要睡眠か発情
+					IF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3 || FLAG:7 >= 7 || CFLAG:28
+						PRINTFORMW 「今のうちに……準備を！」
+					ELSE
+						PRINTFORMW 「ケチってる場合じゃないですね」
+					ENDIF
+					CFLAG:805 = 5
+				ENDIF
+			ENDIF
+		;アイテム
+		CASE 2
+		;前進
+		CASE 3
+		;後退
+		CASE 4
+		;逃走
+		CASE 5
+	ENDSELECT
+RETURN
+@BATTLE_MIKATA_KOUDOU_DANMAKU_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE ARG:1
+		;弾幕攻撃
+		;弱弾幕
+		CASE 10
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「まずは当てませんとね……！」
+			;HP1/4以下or妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「体力がなくても、これくらいの攻撃は……！」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「これでも食らいなさい！」
+				ELSE
+					PRINTFORMW 「これぐらいに加減して……」
+				ENDIF
+			ENDIF
+		;中弾幕
+		CASE 11
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「落ち着いて……普通にやるだけ……」
+			;HP1/4以下or妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「そこ、動かないでくださいよ！」
+			ELSE
+				IF RAND:3 == 0
+					PRINTFORMW 「さっさと退治されてほしいんですけどね」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「こいつで……！」
+				ELSE
+					PRINTFORMW 「邪魔だからさっさと退いてくださいね」
+				ENDIF
+			ENDIF
+		;強弾幕
+		CASE 12
+			;拘束状態で強弾幕。つまり、霊撃
+			IF CFLAG:10 || CFLAG:20
+				;MP1/4以下か要睡眠以上かHP1/4以下
+				IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7 || MAXBASE:HP/4 >= BASE:HP
+					PRINTFORMW 「いちか、ばちかっ……！」
+				ELSE
+					PRINTFORMW 「好き勝手やれるのはここまでですよ！」
+				ENDIF
+			ELSE
+				;MP1/4以下か要睡眠以上
+				IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+					PRINTFORMW 「このっ、とっとと倒れてくださいよ！」
+				;HP1/4以下or妊娠中
+				ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+					PRINTFORMW 「はぁっ、はぁ、次……！」
+				ELSE
+					IF RAND:2 == 0
+						PRINTFORMW 「うぅ、こっちの状況はお構いなしですか」
+					ELSE
+						PRINTFORMW 「なんとかしないと」
+					ENDIF
+				ENDIF
+			ENDIF
+		;溜め撃ち
+		CASE 13
+			;溜め
+			IF CFLAG:31 == 2
+				;MP1/4以下or妊娠中or要睡眠以上
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+					PRINTFORMW 「もう容赦しませんよ……！」
+				ELSE
+					IF RAND:2 == 0
+						PRINTFORMW 「白旗を知らないって言うなら……」
+					ELSE
+						PRINTFORMW 「疲労困憊くらいじゃ納得……しませんよねぇ」
+					ENDIF
+				ENDIF
+			;発射
+			ELSE
+				;MP1/4以下or妊娠中or要睡眠以上
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+					PRINTFORMW 「さっさと潰れなさい、この化物！」
+				ELSE
+					IF RAND:2 == 0
+						PRINTFORMW 「捉えましたよ……真正面！」
+					ELSE
+						PRINTFORMW 「相手が何だろうと、片っ端から倒すのみです！」
+					ENDIF
+				ENDIF
+			ENDIF
+		;ばら撒き弾
+		CASE 14
+			;MP1/4以下or妊娠中or要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「くっ、ちょこまか逃げるな！」
+			ELSE
+				PRINTFORMW 「数撃ちゃ当たりますかね？」
+			ENDIF
+		;貫通弾
+		CASE 15
+			;MP1/4以下or妊娠中or要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「ぶっ放しますよ！」
+			ELSE
+				PRINTFORMW 「まとめて貫いてあげますからね」
+			ENDIF
+		ENDSELECT
+RETURN
+
+@BATTLE_MIKATA_KOUDOU_SYOUMOUBUKI_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	;消耗武器
+	SELECTCASE ARG:1
+		;弱攻撃
+		CASE 20
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「無駄打ちするわけには……！」
+			;HP1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「当てるくらいなら！」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「逃がしませんよ」
+				ELSE
+					PRINTFORMW 「わざわざ避けさせてあげません」
+				ENDIF
+			ENDIF
+		;中攻撃
+		CASE 21
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「このっ！」
+			;HP1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「これくらいならまだ……」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「これはどうですか？」
+				ELSE
+					PRINTFORMW 「普通ならこれくらいがちょうどいいんですけど……。相手が普通なら、ですが」
+				ENDIF
+			ENDIF
+		;強攻撃
+		CASE 22
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「お願い、当たってください！」
+			;HP1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「もうっ、これで倒れてくださいよ……！」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「傷めつけないとわかりませんか？」
+				ELSE
+					PRINTFORMW 「醜い壁の一つにでも戻ってくれませんかね」
+				ENDIF
+			ENDIF
+		;節約攻撃
+		CASE 23
+			;MP1/4以下or妊娠中or要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「あんまり使ったら……！」
+			ELSE
+				IF RAND:2 == 1
+					PRINTFORMW 「なるべく節約しませんと」
+				ELSE
+					PRINTFORMW 「武器を用意するのもそれなりに手間がかかりますからね」
+				ENDIF
+			ENDIF
+		;みだれうち
+		CASE 24
+			;MP1/4以下or妊娠中or要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「まとめて吹き飛んでくれれば……！」
+			ELSE
+				PRINTFORMW 「一斉射撃ですよ！」
+			ENDIF
+		;一点集中
+		CASE 25
+			;MP1/4以下or妊娠中or要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「し、しつこいですねっ！」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「これで終わってくれるとありがたいんですけど」
+				ELSE
+					PRINTFORMW 「いい加減消えてくれませんかね？」
+				ENDIF
+			ENDIF
+	ENDSELECT
+RETURN
+
+@BATTLE_MIKATA_KOUDOU_NO_SYOUMOUBUKI_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	;非消耗武器
+	SELECTCASE ARG:1
+	;弱攻撃
+		CASE 30
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「ぶつける感触が気持ち悪いですねぇ……」
+			;HP1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「軽く振るくらいなら……」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「これくらいで十分でしょうか」
+				ELSE
+					PRINTFORMW 「これなら届くはずですね」
+				ENDIF
+			ENDIF
+		;中攻撃
+		CASE 31
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「近づきたくないんですが……」
+			;HP1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「くっ、結構キツいですね……」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「少しは効くはずですよね」
+				ELSE
+					PRINTFORMW 「いい加減倒れてくれませんか？」
+				ENDIF
+			ENDIF
+		;強攻撃
+		CASE 32
+			;MP1/4以下か要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 7
+				PRINTFORMW 「早く消えてください！」
+			;HP1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				PRINTFORMW 「ぐっ、体が重い……」
+			ELSE
+				IF RAND:2 == 1
+					PRINTFORMW 「ぶっ飛ばしてあげますよ」
+				ELSE
+					PRINTFORMW 「ゆかりさんの全力全開を食らいなさい！」
+				ENDIF
+			ENDIF
+		;下段狙い
+		CASE 33
+			;MP1/4以下or妊娠中or要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「け、牽制を……」
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「足を止めさせてもらいますよ」
+				ELSE
+					PRINTFORMW 「膝を狙えば良さそうですね」
+				ENDIF
+			ENDIF
+		;急所狙い
+		CASE 34
+			;MP1/4以下or妊娠中or要睡眠以上
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「来る……なっ！」
+			ELSE
+				IF RAND:2 == 1
+					PRINTFORMW 「痛くしないとわかりませんか？」
+				ELSE
+					PRINTFORMW 「弱点をしっかり狙いますよ……」
+				ENDIF
+			ENDIF
+	ENDSELECT
+RETURN
+
+@BATTLE_MIKATA_KOUDOU_KOUSOKU_NOW_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE ARG:1
+		;拘束離脱
+		CASE 42
+			IF ARG:3 == 0
+				;MP1/4以下か妊娠中
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3
+					PRINTFORMW 「このっ……離して、離しなさいって！」
+				;HP1/4以下
+				ELSEIF MAXBASE:HP/4 >= BASE:HP
+					PRINTFORMW 「うっ……だめ、力が……」
+				;その他
+				ELSE
+					PRINTFORMW 「さっさと離しなさいって！」
+				ENDIF
+			ENDIF
+		;力溜め
+		CASE 43
+			;こっちは3じゃなくて2なのか……めんどいな……
+			IF ARG:2 == 0
+				;MP1/4以下か妊娠中
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3
+					PRINTFORMW 「はやく……早くしなきゃ……！」
+				;HP1/4以下
+				ELSEIF MAXBASE:HP/4 >= BASE:HP
+					PRINTFORMW 「今の状態じゃ抜け出せませんね、待ちましょう……」
+				;その他
+				ELSE
+					PRINTFORMW 「くっ、じれったいですね……」
+				ENDIF
+			ENDIF
+		;諦め
+		CASE 44
+			IF ARG:2 == 0
+				PRINTFORMW （どうやっても抜け出せない……なら、身を任せてチャンスを待つしか……
+				PRINTFORML 　そう……待つだけ、待つだけです。他に手がないから仕方なくやってるだけなんです。
+				PRINTFORMW 　気持ちよくなるのは、あくまで戦略……だから。
+				PRINTFORML 
+				PRINTFORMW 　がまんしないで、気持ちよく、なっても……）
+			ENDIF
+		;何もしない
+		CASE 45
+		;強制自慰
+		CASE 46
+			IF RAND:2 == 0
+				PRINTFORML 「た……たたかわなきゃ、たたかわなきゃ……あ、あぁっ！
+				PRINTFORMW 　だめ、もう……だめぇっ、がまんできないぃ……うはぁ♪」
+			ELSE
+				PRINTFORML 「はぁっ……んはっ♪　気持ちよくしなくちゃ、動けない、しぃ♪
+				PRINTFORMW 　勝つためには、しょうが、ないん、ですぅ……♪」
+			ENDIF
+		;お尻ガード
+		CASE 50
+		;胸ガード
+		CASE 51
+			;戦意喪失
+			IF CFLAG:29
+				PRINTFORMW 「お願い……吸わないでください……」
+			;母乳体質orMP1/4以下
+			ELSEIF TALENT:130 || MAXBASE:MP/4 >= BASE:MP
+				PRINTFORMW 「うぅ、吸われたくありません……！」
+			ELSE
+				PRINTFORMW 「胸をくすぐられると気色悪い……」
+			ENDIF
+		;Cガード
+		CASE 52
+		;挿入ガード
+		CASE 53
+			;戦意喪失
+			IF CFLAG:29
+				PRINTFORMW 「中は……だめ、おねがい……」
+			;母乳体質orMP1/4以下
+			ELSEIF TALENT:130 || MAXBASE:MP/4 >= BASE:MP
+				PRINTFORMW 「中だけはもう、絶対いや……！」
+			ELSE
+				PRINTFORMW 「中を優先的に守らないとまずいですよね」
+			ENDIF
+		;おねだり
+		CASE 54 TO 58
+			IF RAND:2 == 0 && FLAG:10
+				PRINTFORMW （囮になるだけ……なるだけ、ですから……）
+			ELSE
+				PRINTFORMW （油断させて倒すため。……気持ちよくなるためじゃないなら、こういう事しても……）
+			ENDIF
+		;キス
+		CASE 83
+			PRINTFORMW （あ、あれ……わたし、なにしてるんでしょうか……）
+		;手淫
+		CASE 84
+			PRINTFORM 「ふふっ……立てなくなるくらい射精させて、退治しちゃいますよぉ
+			IF FLAG:526 == 1
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW ……」
+			ENDIF
+		;フェラ
+		CASE 85
+			PRINTFORM 「んむぅ……せーえき、全部吸い尽くして、やっつけるのぉ……
+			SIF FLAG:526 == 1 || (ABL:11 > 2 && ABL:14 > 2)
+				CALL HEARTCB(0xD02830)
+
+			PRINTFORMW 」
+		;パイズリ
+		CASE 86
+			PRINTFORM 「どうですか、おちんちんから搾り取られる感覚は……？　しゃせーで動けなくして倒しちゃいますからね
+			IF FLAG:526 == 1
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW ……」
+			ENDIF
+	ENDSELECT
+RETURN

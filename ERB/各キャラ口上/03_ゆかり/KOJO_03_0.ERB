@@ -1,0 +1,2959 @@
+﻿;　東方触手宮　ゆかり口上
+
+;口上基礎知識
+;　口上を書く時は基本的に ARG:0 と ARG:1 の中に「シチュエーション」が入っているので、
+;　それに応じて分岐を行い、適切なメッセージを表示する……というのが基本方針になります
+;　
+;　なお、TARGET に口上を表示するキャラが指定された状態になっているので、
+;　自分の名前や自分のCFLAGを見たい時などは CALLNAME:TARGET とか CFLAG:1 とかで参照できます
+;
+;フラグ活用　ビット演算に１が開いてるのは単なる趣味、個人的に２の倍数で覚えたほうがわかりやすいので
+;CFLAG:800　ビット演算　2 娘と初遭遇　4 孫と　8 ひ孫と
+;CFLAG:801　戦闘回数
+;CFLAG:802　ビット演算　2 出産経験　4 娘出産経験　8 幼体出産経験　16 寄生経験
+;CFLAG:803　妊娠悦びフラグ
+;CFLAG:805　口上非表示管理　1で探索時、2で出産時、3で自慰、4で戦闘開始、5でリロード二刀流
+;CFLAG:806　連続絶頂管理　絶頂するたびに+1、他のところいくと０に
+;CFLAG:898　ビット演算　2で迷宮内でマキに会った　15 あかり
+;CFLAG:899　ビット演算　2 マキ死亡確認　15 あかり死亡確認
+;CFLAG:900　ゲームオーバーになったのが自分の娘のせいかどうか
+;CFLAG:901～989　アイテム習得管理　下二桁にアイテムの番号
+;CFLAG:990　マキのふたなり治療を膣でした回数
+;CFLAG:999　ビット演算　2 マキリタイア（発見未発見問わず）　15 あかり
+
+
+;修正、加筆、転載、再配布はご自由に
+;改変は元の内容をあまり削除しないレベルでお願いします
+
+;口上選択時のタイトル
+@KOJO_TITLE_3_0
+RESULTS = ボイスロイド触手宮　ゆかり口上
+
+
+;口上選択時の詳細説明
+;フリーフォーマットです。ご自由にどうぞ
+@KOJO_DETAIL_3_0
+PRINTFORML 娘との会話や孕ませ系、ステータス変化による分岐に注力した口上。
+PRINTFORML キャラは全般的にクール。微妙にツンデレ。
+PRINTFORML なお、この口上を使用すると娘も喋ります。
+
+;フクシアピンク　娘はカーネションピンク
+@KOJO_DEFAULT_COLOR_3_0
+IF CFLAG:104
+	RETURN RGBCOLOR(220, 100, 240)
+ELSE
+	RETURN RGBCOLOR(200, 40, 220)
+ENDIF
+
+;口上本体
+@KOJO_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;孫以降をさよならする
+IF CFLAG:104 >= 2
+	RESETCOLOR
+	RETURN 0
+ENDIF
+;いつか汎用口上ができたらこっちにチェンジする
+;（孫以降と口上の性格に合わないものを除外）
+;IF CFLAG:104 >= 2 || CFLAG:100 != 14 || CFLAG:100 != 12 || CFLAG:100 != 11 || CFLAG:100 != 8  || CFLAG:100 != 6 || CFLAG:100 != 5
+;	RETURN 0
+;ENDIF
+
+
+;ここからコールゆかり娘までの順番は絶対に並び替えてはいけない！
+;地の文は一部を除きデフォルトのものを使用します
+;除くのはオープニング、エンディング、ゲームオーバー、裸で時間経過
+SIF ARG:0 != 203 && ARG:0 != 206 && ARG:0 != 210 && ARG:0 != 157 && ARG:0 != 46
+	CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;連続絶頂の管理
+IF ARG:0 == 120 || ARG:0 == 122
+	CFLAG:806 += 1
+;EPダメージ・MP0になった・EPが0になった・自慰全般・自慰でイけなかった・発情が収まった・
+;母乳を吸われる・射精関連・触手スーツ以外の時にフラグをウォッシュ（回数蓄積の無効化）
+ELSEIF ARG:0 != 14 && ARG:0 != 33  && ARG:0 != 34 && ARG:0 != 118 && ARG:0 != 119 && ARG:0 != 121 && ARG:0 != 123 && ARG:0 != 440 && ARG:0 != 441 && ARG:0 != 442 && ARG:0 != 451 && ARG:0 != 452 && ARG:0 != 454 && ARG:0
+	CFLAG:806 = 0
+ENDIF
+;戦意喪失は21以上149以下か160以上なら一部を除いて逃がす
+;ここで逃がさないもの（＝除外してRETURN 1させないもの）
+;戦闘中（20以下）MP0(33)服が破ける(35)ターン終了時自慰(48)自慰メッセージ(118)自慰で絶頂失敗(119)
+;戦意喪失中に絶頂(122)母乳を吸われる(123)出産系イベント(127と129)喪失中に気付け薬を使われた(144)
+;エンディング(204、206、208、210)
+SIF CFLAG:29 && ARG:0 != 33 && ARG:0 != 48 && ARG:0 != 118 && ARG:0 != 119 && ARG:0 != 122 && ARG:0 != 123 && ARG:0 != 127 && ARG:0 != 129 && ARG:0 != 144 && ARG:0 != 202 && ARG:0 != 204 && ARG:0 != 206 && ARG:0 != 208 && ARG:0 != 210 && ((ARG:0 > 20 && ARG:0 < 150) || ARG:0 >= 160)
+	RETURN 1
+
+
+;娘は専用口上へ
+IF CFLAG:104 == 1
+	CALL KOJO_YUKARIdaughter(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	RETURN 1
+ENDIF
+
+;文字色設定
+SETCOLOR CFLAG:700
+
+;睡眠　ここに来るのはほぼ間違いなく戦闘中に何か食らった時だけだろうし……多分
+;叩き起こされたときは除く
+IF CFLAG:25 && ARG:0 != 41
+	IF RAND:3 == 0
+		PRINTFORMW 「ん……あむっ……」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「あぅ……」
+	ELSE
+		PRINTFORMW 「……ひくっ」
+	ENDIF
+	RESETCOLOR
+	;口上記入済み
+	RETURN 1
+ENDIF
+
+SELECTCASE ARG:0
+	CASE 1
+		CALL BATTLE_MIKATA_KOUDOU_HATUDOU_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	;HPダメージ
+	CASE 12
+		;妊娠中ランダム
+		IF RAND:2 == 0 && CFLAG:36 >= 3
+			PRINTFORMW 「お、おなかはダメですってっ……」
+		;戦意喪失or諦めor深い催眠
+		ELSEIF CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1
+			PRINTFORMW 「あ……うぁ……」
+		;MP1/4以下＆拘束中or催眠
+		ELSEIF (MAXBASE:MP/4 >= BASE:MP && CFLAG:20) || CFLAG:43
+			PRINTFORMW 「こ……これ以上は……！」
+		;HP1/4以下or拘束中orMP1/4以下
+		;HPはダメージ後の数値を見る
+		ELSEIF (BASE:HP - ARG:2 < MAXBASE:HP/4) || CFLAG:20 ||  MAXBASE:MP/4 >= BASE:MP
+			IF RAND:2 == 0
+				PRINTFORMW 「避けないと……」
+			ELSE
+				PRINTFORMW 「くっ……まずい、ですね」
+			ENDIF
+		;その他
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「イタタっ！」
+			ELSE
+				PRINTFORMW 「このっ、これくらいで……」
+			ENDIF
+		ENDIF
+	;EPダメージ
+	CASE 14
+		;戦意喪失or諦めor深い催眠でランダム
+		IF RAND:3 == 0 && (CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1)
+			;コウノトリ、フコウノトリの暗示系攻撃
+			IF ARG:1 ==  387 || ARG:1 ==  388
+				PRINTFORM 「ほしぃ
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　みてるだけじゃイヤです、なかに白いのくださいっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「んあぁ……も、もっと！　もっとしてください！」
+			ENDIF
+		;MP1/4以下or発情中or戦意喪失or諦めor深い催眠
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1
+			IF RAND:2 == 0
+				PRINTFORM 「ハァッ、すごい、すごいぃ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORM 「ふあぁっ、いい、そこぉ、とろけちゃいますぅ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ENDIF
+		;EPダメージ4500以上か浅い催眠ランダム
+		ELSEIF RAND:3 == 0 && (ARG:3 >= 4500 || CFLAG:43)
+			PRINTFORMW 「ひっ、あふぁっ！？　き……きてるぅ、なんかきてぇ……！」
+		;EPダメージ1500以上か浅い催眠かEP3000未満
+		ELSEIF ARG:3 >= 1500 || CFLAG:43 || BASE:EP < 3000
+			;コウノトリ、フコウノトリの暗示系攻撃
+			IF ARG:1 ==  387 || ARG:1 ==  388
+				PRINTFORMW 「うわ、何てモノ見せてるんですか……！？」
+			;EPダメージ3000以上か催眠
+			ELSEIF RAND:2 == 0 && (ARG:3 >= 3000 || CFLAG:43)
+				PRINTFORMW 「くぅ……こんなの、もぉ……」
+			ELSE
+				PRINTFORMW 「や、やだっ、はなれっ！？」
+			ENDIF
+		;コウノトリ、フコウノトリの暗示系攻撃
+		ELSEIF ARG:1 ==  387 || ARG:1 ==  388
+			PRINTFORMW 「……何見せてるんですか」
+		;その他
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「この……気色悪いんですよ！」
+			ELSE
+				PRINTFORMW 「ぶっ飛ばされたいんですか？」
+			ENDIF
+		ENDIF
+	;拘束攻撃
+	CASE 15
+		;戦意喪失or諦めor深い催眠
+		IF CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1
+			PRINTFORMW 「…………あは♪」
+		;発情中or催眠
+		ELSEIF CFLAG:28 || CFLAG:43
+			PRINTFORMW （だ、だめ……わたし、期待しちゃって……！）
+		ELSE
+			PRINTFORMW 「しまっ……！？」
+		ENDIF
+	;寄生攻撃
+	CASE 16
+		;頻度的にはあんまり出ないのに明らかに力入れまくっているというね
+		;初期は孕ませか寄生かで区分するつもりだったけど地の文が大して変わらんので諦める
+;		IF ARG:2
+
+		;コウノトリの空気妊娠
+		IF ARG:1 == 842
+			;妊娠出産経験済みかつ戦意喪失or諦めor深い催眠でランダム
+			IF RAND:2 == 0 && (CFLAG:802 & 2) && (CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1)
+				PRINTFORM 「はぁあっ、きてますぅ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　中に入ってくるの、わかるぅ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			;妊娠出産経験済みか寄生出産経験済みか深い催眠か精液中毒2以上
+			ELSEIF (CFLAG:802 & 2) || (CFLAG:802 & 16) || CFLAG:43 > 1 || ABL:14 >= 2
+				;MP1/4以下or発情中or戦意喪失or諦めか妊娠悦びフラグ一定以上
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:803 >= 3
+					PRINTFORM 「だ、だめ……これ吸ったら、わたしぃ……
+					CALL HEARTCB(0xD02830)
+					PRINTFORMW 」
+				ELSE
+					PRINTFORMW 「気色悪いですよ……！」
+				ENDIF
+			ELSE
+				;HP0orMP1/4以下or発情中or戦意喪失or諦め
+				IF BASE:HP < 1 || MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+					PRINTFORMW 「うあっ……なに、これ……」
+				ELSE
+					PRINTFORMW 「うぅっ……よく分かりませんけど悪寒が……」
+				ENDIF
+			ENDIF
+		ELSE
+			;妊娠出産経験済みか寄生出産経験済みか深い催眠
+			IF (CFLAG:802 & 2) || (CFLAG:802 & 16) || CFLAG:43 > 1
+				;戦意喪失or諦めor深い催眠でランダム
+				IF RAND:2 == 0 && (CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1)
+					IF RAND:2 == 0
+						PRINTFORMW 「しゅきぃ%UNICODE(0x2665)%　じゅぽじゅぽされながら出されるのしゅごくいぃですぅ……♪」
+					ELSE
+						IF CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
+							PRINTFORMW 「だしてっ、もっとだしてっ、せーえき出してください、赤ちゃん溺れるくらいぃ♪」
+						ELSE
+							PRINTFORMW 「だしてっ、いっぱいだしてっ、赤ちゃん作りたいんですからぁ♪」
+						ENDIF
+					ENDIF
+				;発情中or戦意喪失or諦めか妊娠悦びフラグ一定以上か深い催眠か精液中毒2以上
+				ELSEIF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:803 >= 3 || CFLAG:43 > 1 || ABL:14 >= 2
+					IF RAND:2 == 0
+						PRINTFORM 「んうっ！？　せーえき、きてる、おく、とどいてるぅ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					ELSE
+						IF CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
+							PRINTFORMW 「あ、あぁっ……お腹ぁ、お腹に赤ちゃんいるのにぃ……♪」
+						;出産なし
+						ELSEIF EXP:22 == 0
+							PRINTFORMW 「あ、あぁっ……出てますよ、いっぱい、すごいぃ……♪」
+						ELSE
+							PRINTFORMW 「あ、あぁっ……できちゃいます、だめなのにぃ、また子供できちゃいますうぅ……♪」
+						ENDIF
+					ENDIF
+				ELSE
+					;ランダムかMP1/4以下
+					IF RAND:2 == 0 || MAXBASE:MP/4 >= BASE:MP
+						IF CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
+							PRINTFORMW 「い、いや、子供が……！」
+						ELSE
+							PRINTFORMW 「い、いや、中出しはいや、また子供作るのいやぁぁぁぁぁっ！」
+						ENDIF
+					ELSE
+						PRINTFORMW 「だめ、射精はもうだめ、だめですってばぁ！」
+					ENDIF
+				ENDIF
+			ELSE
+				;戦意喪失or諦めでランダム
+				IF RAND:3 == 0 && (CFLAG:29 || TFLAG:16 == 2)
+					PRINTFORMW 「これ、いぃ、なかにだされるのきもちいぃですぅ！」
+				;発情中or戦意喪失or諦めor浅い催眠か精液中毒2以上
+				ELSEIF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 || ABL:14 >= 2
+					IF RAND:2 == 0
+						PRINTFORM 「んうっ、びゅくびゅくあついの、とどいてるぅ……
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					ELSE
+						PRINTFORM 「んっ……
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　なに……？　これ、きもちよくて……
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					ENDIF
+				ELSE
+					;ランダムかMP1/4以下
+					IF RAND:2 == 0 || MAXBASE:MP/4 >= BASE:MP
+						PRINTFORMW 「ひっ……な、なにこれ、何してるんですか……！？」
+					ELSE
+						PRINTFORMW 「うぅ、気持ち悪い……離れてください……！」
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+;		ELSE
+;		ENDIF
+	;通常攻撃回避
+	CASE 22
+		;MP1/4以下or発情中
+		IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28
+			PRINTFORMW 「なんとか避けられましたね……」
+		ELSE
+			PRINTFORMW 「そういう攻撃なら慣れてるんですよ」
+		ENDIF
+	;衣服攻撃回避
+	CASE 23
+		;MP1/4以下or発情中
+		IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28
+			PRINTFORMW 「避けられたみたいですね……」
+		ELSE
+			PRINTFORMW 「ありゃ、服でも狙ってました？　残念でした」
+		ENDIF
+	;性攻撃回避
+	CASE 24
+		;MP1/4以下or発情中
+		IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28
+			PRINTFORMW 「い、今は絶対だめです！」
+		ELSE
+			PRINTFORMW 「んくっ……これは避けないと」
+		ENDIF
+	;拘束・寄生・その他攻撃回避
+	CASE 25 TO 27
+		;諦め時スルー
+		IF TFLAG:16 == 2
+			RESETCOLOR
+			RETURN 1
+		;MP1/4以下or発情中
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || CFLAG:28
+			PRINTFORMW 「ぐ……冗談じゃありませんよ！」
+		ELSE
+			PRINTFORMW 「冗談じゃないですよ」
+		ENDIF
+	;HP0
+	CASE 32
+		;諦め中でも深い催眠でもないでも戦意喪失でもなく戦闘中
+		SIF TFLAG:16 != 2 && CFLAG:43 < 2 && CFLAG:29 == 0 && TFLAG:13
+			PRINTFORMW 「た、体力が……」
+	;戦意喪失
+	CASE 33
+		PRINTFORMW 「た、戦わなきゃ……んんっ♪　わらひが、たたかわなきゃ、みんながぁ……」
+	;服が破ける
+	CASE 35
+		;戦意喪失or諦めor深い催眠
+		IF CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1
+			PRINTFORMW 「服なんてどうでもいいじゃないですかぁ？　はやくぅ……♪」
+		;MP1/4以下or発情中or要睡眠以上or妊娠中or催眠
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || FLAG:7 >= 7 || CFLAG:36 >= 3 || CFLAG:43
+			PRINTFORMW 「しまった、服が……！」
+		;全裸
+		ELSEIF ARG:1 == 0
+			PRINTFORMW 「きゃっ！？　こ、この、ほんといやらしいですねぇ」
+		;半裸
+		ELSEIF ARG:1 == 1
+			PRINTFORMW 「くっ！　もっと厚着をしてくるべきでしたね……」
+		;破れ始めた
+		ELSEIF ARG:1 == 2
+			PRINTFORMW 「げっ、服が……」
+		ENDIF
+	;攻撃されて起きた
+	CASE 41
+		PRINTFORMW 「あうっ！　な、なんですか……！？」
+	;裸で時間経過
+	CASE 46
+		IF RAND:2 == 0
+			RESETCOLOR
+			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ELSE
+			;発情or諦めor深い催眠
+			IF CFLAG:28 || TFLAG:16 == 2 || CFLAG:43 > 1
+				PRINTFORM 「はぁ、はぁっ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORML 」
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMDW 耐え切れないように、ゆかりは熱っぽい表情で自分の指を咥えている……
+					CASE 1
+						PRINTFORMDW 熱い吐息を吐きながら、もじもじとゆかりは股間を擦りあわせた……
+				ENDSELECT
+			;拘束中
+			ELSEIF CFLAG:20
+				PRINTFORMDW 裸の状態で体を締め付けられ、ゆかりは必死にもがいている……
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「は、肌に、くっかないでください……！」
+					CASE 1
+						PRINTFORMW 「この、はり付かないでくださいってば……！」
+				ENDSELECT
+			;EP1/4以下かMP1/4以下or催眠
+			ELSEIF MAXBASE:MP/4 >= BASE:MP || MAXBASE:EP/4 >= BASE:EP || CFLAG:43
+				PRINTFORMDW 魔物からの視線に気づき、ゆかりは顔を赤らめながら胸を隠した……
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW （い、今されたら、だめ……）
+					CASE 1
+						PRINTFORMW （変なことされるの、もう無理……）
+				ENDSELECT
+			ELSE
+				PRINTFORMD 魔物から視線を向けられている事に気付いたゆかりは、不快そうに
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMDW 舌打ちをした……
+					CASE 1
+						PRINTFORMDW 睨み返した……
+				ENDSELECT
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「……さっさと倒さないと」
+					CASE 1
+						PRINTFORMW 「いい気分じゃないですねぇ……」
+					CASE 2
+						PRINTFORMW 「どうせ着てても、すぐ破かれるんですよね」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;ターン終了時自慰　面倒なので強制自慰と共通に
+	CASE 48
+		;諦めか戦意喪失
+		IF CFLAG:29 || TFLAG:16 == 2
+			PRINTFORM 「足りない……たりませんよぉ……
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「た……たたかわなきゃ、たたかわなきゃ……あ、あぁっ！
+			PRINTFORMW 　だめ、もう……だめぇっ、がまんできません……んはぁ♪」
+		ELSE
+			PRINTFORM 「はぁっ……んぁっ♪　気持ちよくしなくちゃ、動けませんよ
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 　勝つためには、しょうが、ないんですぅ……♪」
+		ENDIF
+	;戦闘開始
+	CASE 54
+		CFLAG:801 += 1
+		;睡眠
+		IF TFLAG:14 == 3
+			PRINTFORMW 「…………ん……」
+		;娘との初遭遇時、もしくはドッペルとの遭遇時、口上スキップ
+		ELSEIF CFLAG:805 == 4
+			CFLAG:805 = 0
+		;主人公時初戦闘
+		ELSEIF TARGET == 1 && CFLAG:801 == 1 && FLAG:999 == 0
+			PRINTFORMW 「やる気みたいですが……ゆかりさんに勝つつもりですか？」
+		;敵に悪堕ちキャラがいるパーティ ARG:3にいる悪堕ちキャラのID
+		ELSEIF ARG:2 == 1
+			;YYにキャラNOいれることで知り合いかどうか判別
+			;Ｑ．なんで魔理沙達を差し置いてひじりん？　Ａ．悪堕ちの実験に使ってたから
+			IF NO:(ARG:3) == 96
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「こいつ……！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMW 「そんなに妖怪の味方がしたいってわけ？」
+				ENDIF
+			;マキ
+			ELSEIF NO:(ARG:3) == 2
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「……えっ、マキさん！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「さてはドッペルゲンガーってやつですね？マキさんの姿をしても騙されませんよ」
+				ENDIF
+			;ずん子
+			ELSEIF NO:(ARG:3) == 4
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「ずん子さん？え、ちょっと何を……！」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「ずん子さん……じゃありませんね。とするとドッペルゲンガーでしょうか」
+				ENDIF
+			;きりたん
+			ELSEIF NO:(ARG:3) == 8
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「あれ、きりたん？いつも背負ってたきりたん砲は……うわっ！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「きりたんの姿をしてますが、なんか違うような気がしますね」
+				ENDIF
+			;イタコ
+			ELSEIF NO:(ARG:3) == 16
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「イタコさ……！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「イタコさんはもっとこう……どこか抜けてる感じなんですよね」
+				ENDIF
+			;茜
+			ELSEIF NO:(ARG:3) == 5
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「その姿は茜ちゃん……じゃない！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「茜ちゃんはっけーん。って違う……！？」
+				ENDIF
+			;葵
+			ELSEIF NO:(ARG:3) == 6
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「お、葵ちゃん……え、姿が消えて！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「葵ちゃんはもっとしっかりした顔してたはず……ですよね？」
+				ENDIF
+			;セイカ
+			ELSEIF NO:(ARG:3) == 7
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「セイカさん、見つかってよか……うあっ！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「セイカさんがシラフなのは怪しいんですよねぇ」
+				ENDIF
+			;あかり
+			ELSEIF NO:(ARG:3) == 15
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「あかり！？な、何するの……！！」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「あかりの姿をマネるなんて……」
+				ENDIF
+			;そら
+			ELSEIF NO:(ARG:3) == 17
+				;敵先制
+				IF TFLAG:14 == 2
+					PRINTFORMW 「そらさんまで巻き込まれて……あっ、こいつ、違う！？」
+;				;味方先制
+;				ELSEIF TFLAG:14 == 1
+;				;	PRINTFORMW 
+				ELSE
+					PRINTFORMDW 「そらさんによく似てますけど、ちょっと違うみたいですね」
+				ENDIF
+			ENDIF
+		;MP1/4以下or発情中or要睡眠以上or妊娠中
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || FLAG:7 >= 7 || CFLAG:36 >= 3
+			;敵先制
+			IF TFLAG:14 == 2
+				PRINTFORMW 「やばっ……！」
+			;ボス　ARG:1 == 1でクイーン、2でガーディアンの模様
+			ELSEIF ARG:1
+				PRINTFORMW 「……この状態で来たくなかったんですけど」
+			;味方先制
+			ELSEIF TFLAG:14 == 1
+				PRINTFORMW 「早く突破しないと……」
+			ELSE
+				PRINTFORMW 「こんな時に！」
+			ENDIF
+		ELSE
+			;敵先制
+			IF TFLAG:14 == 2
+				PRINTFORMW 「…………あ、やば」
+			;ボス　ARG:1 == 1でクイーン、2でガーディアンの模様(TFLAG:0)
+			ELSEIF ARG:1
+				;一人PTか戦闘技能1以下か戦意喪失が二人いる
+				IF FLAG:10 == 0 || (ABL:3 < 2 && ABL:4 < 2) || (CFLAG:1:29 && CFLAG:(FLAG:10):29) || (CFLAG:1:29 && CFLAG:(FLAG:11):29) || (CFLAG:(FLAG:10):29 && CFLAG:(FLAG:11):29)
+					PRINTFORMW 「今度こそ勝つ……って言いたいところなんですが……」
+				ELSE
+					PRINTFORMW 「態勢を整える必要はもう不要ですよ」
+				ENDIF
+			ELSEIF TARGET == 1 && CFLAG:801 < 4
+				PRINTFORMW 「またこんな奴ですか……？」
+			;味方先制でランダム
+			ELSEIF RAND:2 == 0 && TFLAG:14 == 1
+				PRINTFORMW 「さっさと片づけますよ」
+			;ゆかりの戦闘回数30越え
+			ELSEIF CFLAG:801 > 30
+				PRINTFORMW 「こんなところさっさと出るつもりだったんですけど……予定外でしたね」
+			ELSE
+				PRINTFORMW 「次から次へと……どこまで湧いてくるんでしょうね？」
+			ENDIF
+		ENDIF
+	;逃走成功　PRE_BATTLE見る限りここは普通に見捨て逃走だと表示されなくなった模様？
+	CASE 55
+		;発情
+		IF CFLAG:28
+			PRINTFORMW 「に、逃げ切れましたか……
+			PRINTFORMW 　は、はやく、どこか、隠れて……あ、あふぁっ♪」
+		;MP1/4以下かHP1/4以下か妊娠中か要睡眠以上
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3 || FLAG:7 >= 7
+				PRINTFORMW 「た、助かった……」
+		ELSE
+			PRINTFORMW 「こんな連中の相手なんて、まともにしてられませんね」
+		ENDIF
+	;!!! v0.05.3で逃走口上の仕様が変わったため、勝手に改変
+	CASE 62
+		IF ARG:4 == 0
+			PRINTFORMW 「早く、あいつらを退治する対策を考えないと……」
+		ELSE
+			PRINTFORMW 「仕切り直しますよ。ここで動けなくなったら……」
+		ENDIF
+	CASE 63
+		IF ARG:4 == 0
+			;MPが1/4以下か最大HPが2000未満
+			IF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP < 2000
+				PRINTFORMW 「えっ、なっ……ちょ、ちょっと、待ってください！
+				PRINTFORMW 　ま、待って、今、見捨てられたら、わたし……！
+				PRINTFORMW 　す、すぐ助けに来てくれますよね……！？」
+			ELSE
+				;丸呑み
+				IF CFLAG:21
+					PRINTFORMW （…………！　気配が、遠く？）
+					PRINTFORMW （……そっか。そういうことか）
+					PRINTFORML （今の状態じゃわたしを助け出せないと思って逃げたのなら、
+					PRINTFORMW 　まだ助かる望みはある。体勢を立て直して助けに来てくれる。
+					PRINTFORMW 　無茶な戦いをして余計な犠牲が増えるより、よっぽどいい……）
+					PRINTFORML 
+					PRINTFORMW （けど、どうやってもわたしを助け出せないと思って逃げたんなら。
+					PRINTFORMW 　…………ここで、終わりなのかな……？）
+				ELSE
+					PRINTFORMW 「……仕切り直すんですよね？
+					PRINTFORMW 　待ってますから……
+					PRINTFORMW 
+					PRINTFORMW 　だから、なるべく早く助けに来てください。じゃないと、手遅れになるかもしれませんよ」
+				ENDIF
+			ENDIF
+		ELSE
+			;MPが1/4以下か最大HPが2000未満
+			IF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP < 2000
+				;丸呑み
+				IF CFLAG:21
+					PRINTFORMDW ゆかりは仲間が逃げ出す気配を即座に感じ取ったらしく、敵の体内から悲鳴が漏れ始める。
+					PRINTFORMDW だが、その悲鳴は物理的にも精神的にも仲間に届くことはなかった……
+				ELSE
+					PRINTFORMW 「えっ、なっ……ちょ、ちょっと、待ってください！
+					PRINTFORMW 　ま、待って、今、見捨てられたら、わたし……！
+					PRINTFORMW 　す、すぐ助けに来てくれますよね……！？」
+					PRINTFORML 
+					PRINTFORMDW 縋りつくようなゆかりの泣き声をその場に残して、%CALLNAME:1%は逃げ出した……
+				ENDIF
+			ELSE
+				;丸呑み
+				IF CFLAG:21
+					PRINTFORMW （…………！　気配が、遠く？）
+					PRINTFORMW （……そっか。そういうことか）
+					PRINTFORML （今の状態じゃわたしを助け出せないと思って逃げたのなら、
+					PRINTFORMW 　まだ助かる望みはある。体勢を立て直して助けに来てくれる。
+					PRINTFORMW 　無茶な戦いをして余計な犠牲が増えるより、よっぽどいい……）
+					PRINTFORML 
+					PRINTFORMW （けど、どうやってもわたしを助け出せないと思って逃げたんなら。
+					PRINTFORMW 　…………ここで、終わりなのかな……？）
+				ELSE
+					PRINTFORMW 「……仕切り直すんですよね？
+					PRINTFORMW 　待ってますから……
+					PRINTFORMW 
+					PRINTFORMW 　だから、なるべく早く助けに来てください。じゃないと、手遅れになるかもしれませんよ」
+				ENDIF
+			ENDIF
+		ENDIF
+;	;戦闘敗北　なんか戦意喪失とかぶってしっくり来ない
+;	CASE 56
+;		;味方か助っ人がいる
+;		SIF FLAG:10 || FLAG:15
+;			PRINTFORMW 
+	;戦闘勝利
+	CASE 57
+		;敵に悪堕ちキャラがいるパーティ ARG:3にいる悪堕ちキャラのID
+		IF ARG:2 == 1
+			;YYにキャラNOいれることで知り合いかどうか判別
+			;マキ
+			IF NO:(ARG:3) == 2
+				PRINTFORMW 「マキさん……」
+			;ずん子
+			ELSEIF NO:(ARG:3) == 4
+				PRINTFORMW 「ずん子さん、堕ちててもあんまり変わってないような」
+			;きりたん
+			ELSEIF NO:(ARG:3) == 8
+				PRINTFORMW 「きりたん……なんとかして元に戻さないといけないですね」
+			;イタコ
+			ELSEIF NO:(ARG:3) == 16
+				PRINTFORMW 「イタコさんのあの衣装、サキュバスってやつですよね……？」
+			;茜
+			ELSEIF NO:(ARG:3) == 5
+				PRINTFORMW 「茜ちゃん、堕ちてるはずなのにあんまり雰囲気変わってませんでしたね」
+			;葵
+			ELSEIF NO:(ARG:3) == 6
+				PRINTFORMW 「葵ちゃんなんかこう……Sっ気が強くなってたような……？」
+			;セイカ
+			ELSEIF NO:(ARG:3) == 7
+				PRINTFORMW 「セイカさん……大人の女性だったんですね」
+			;あかり
+			ELSEIF NO:(ARG:3) == 15
+				PRINTFORMW 「全く。あかりは、いつも手間がかかるんだから……」
+			;そら
+			ELSEIF NO:(ARG:3) == 17
+				PRINTFORMW 「何度もそらさんとやり合いたくありませんね……」
+			ELSE
+				PRINTFORMW 「……ったく」
+			ENDIF
+		;主人公時初戦闘
+		ELSEIF TARGET == 1 && CFLAG:801 == 1 && FLAG:999 == 0
+			PRINTFORMW 「うわぁ……触手の見た目がリアルすぎますね。気持ち悪い……」
+		;MP1/4以下or発情中か要睡眠以上か妊娠中
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || FLAG:7 >= 7 || CFLAG:36 >= 3
+			;ボス
+			IF ARG:1
+				PRINTFORMW 「あなた達なんかに、絶対負けませんよ……！」
+			ELSE
+				PRINTFORMW 「はぁ、はぁっ、はぁっ……て、手間を……」
+			ENDIF
+		ELSE
+			;ボス
+			IF ARG:1
+				PRINTFORMW 「これで事態は進展しますかね？」
+			;ゆかりの戦闘回数30越えでランダム
+			ELSEIF CFLAG:801 > 30 && RAND:2 == 0
+				PRINTFORMW 「はぁ……。いったい、何匹出てくるんですか」
+			ELSE
+				;HP最大・MP最大・EP半分以上・CP半分以上
+				IF BASE:MP >= MAXBASE:MP && BASE:HP >= MAXBASE:HP && BASE:EP >= MAXBASE:EP/2 && BASE:CP >= MAXBASE:CP/2
+					PRINTFORMW 「まだまだなんとかなりそうですね」
+				ELSE
+					PRINTFORMW 「退治完了っと。ゆかりさんに勝とうなんて早いですよ？」
+				ENDIF
+			ENDIF
+		ENDIF
+	;ARG:1 の種族と初遭遇
+	CASE 61
+		;娘
+		IF ARG:1 == 19 && TFLAG:14 != 3
+			PRINTFORMW 「うあ……？　わたしにそっくり……
+			PRINTFORMW 　いやまぁ、娘なんだから当たり前ですね」
+			CFLAG:805 = 4
+		;悪堕ちキャラ（通常）
+		ELSEIF ARG:1 == 101 && TFLAG:14 != 3
+			;YYにキャラNOいれることで知り合いかどうか判別
+			;マキ
+			IF NO:(ARG:3) == 2
+				PRINTFORMW 「マキさん、どうして……」
+			;ずん子
+			ELSEIF NO:(ARG:3) == 4
+				PRINTFORMW 「うーわ……ずん子さん、その衣装すっごいエロい」
+			;きりたん
+			ELSEIF NO:(ARG:3) == 8
+				PRINTFORMW 「き、きりたん……！こんな子まで堕ちちゃったなんて……」
+			;イタコ
+			ELSEIF NO:(ARG:3) == 16
+				PRINTFORMW 「ヤバい、イタコさんの近くにいるだけで……おかしくなりそう」
+			;茜
+			ELSEIF NO:(ARG:3) == 5
+				PRINTFORMW 「茜ちゃん、あんま雰囲気変わってないような……？」
+			;葵
+			ELSEIF NO:(ARG:3) == 6
+				PRINTFORMW 「あ、葵ちゃん……！その雰囲気……どうしたんですか？」
+			;セイカ
+			ELSEIF NO:(ARG:3) == 7
+				PRINTFORMW 「セイカさん……その顔、酔ってるんですか……？それとも……」
+			;あかり
+			ELSEIF NO:(ARG:3) == 15
+				PRINTFORMW 「そんな……。まさか、あかりが……」
+			;そら
+			ELSEIF NO:(ARG:3) == 17
+				PRINTFORMW 「そらさん！？す、すごい魅惑的な雰囲気が……」
+			;その他
+			ELSE
+				PRINTFORMW 「……いいわよ、ある意味いつも通りよねっ！」
+			ENDIF
+			CFLAG:805 = 4
+		;悪堕ちキャラ（その他）
+		ELSEIF ARG:1 >= 102 && ARG:1 <= 104 && TFLAG:14 != 3
+			;YYにキャラNOいれることで知り合いかどうか判別
+			IF NO:(ARG:2) == 2
+				PRINTFORMW 「………………嘘。なんでマキさんが」
+			;その他
+			ELSE
+				IF ARG:1 == 102
+					PRINTFORMW 「まずあいつらと引き離しますよ……！」
+				ELSE
+					PRINTFORMW 「倒して……解決、しませんよねぇ」
+				ENDIF
+			ENDIF
+			CFLAG:805 = 4
+		;VSクイーンorガーディアン
+		ELSEIF ARG:1 == 1 || ARG:1 == 3
+			;消耗状態
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || FLAG:7 >= 7 || CFLAG:36 >= 3
+				PRINTFORMW 「大物……！？　やばいですね……」
+			ELSE
+				PRINTFORMW 「なるほど。ここの大ボスって事ですね？」
+				;一人PTか戦闘技能1以下か戦意喪失が二人いる
+				IF FLAG:10 == 0 || (ABL:3 < 2 && ABL:4 < 2) || (CFLAG:1:29 && CFLAG:(FLAG:10):29) || (CFLAG:1:29 && CFLAG:(FLAG:11):29) || (CFLAG:(FLAG:10):29 && CFLAG:(FLAG:11):29)
+					PRINTFORMW 「……今の戦力でやれるでしょうか？」
+				;相手がクイーンでマキがリタイア時かつ不死身モード自分以外オフ
+				ELSEIF ARG:1 == 1 && (CFLAG:899 & 2) && FLAG:503 < 2
+					PRINTFORMW 「マキさん。今、仇を討ちますから」
+				;相手がクイーンで紫リタイア時かつ不死身モード自分以外オフ
+				ELSEIF ARG:1 == 1 && (CFLAG:899 & 32) && FLAG:503 < 2
+					PRINTFORMW 「紫の仇……討たせてもらうわ」
+				ELSE
+					PRINTFORMW 「さっさと片付けさせてもらいますよ！」
+				ENDIF
+			ENDIF
+			CFLAG:805 = 4
+		ENDIF
+	;誰かに会う
+	CASE 101
+		;喪失キャラ
+		IF ARG:2
+			SELECTCASE NO:(ARG:1)
+				;娘
+				CASE 3
+					PRINTFORMW 「あ……」
+					PRINTFORMW 「うぅむ、わたしの娘ですらこの迷宮でヤられますか」
+				;マキ
+				CASE 2
+					PRINTFORMW 「マキさん！？」
+					PRINTFORMW 「な、なんとかしませんと。何かあったかな……」
+				;ずん子
+				CASE 4
+					PRINTFORMW 「あ、ずん子さん」
+					PRINTFORMW 「ひどい状態……何とかしてあげないといけませんね」
+				;きりたん
+				CASE 8
+					PRINTFORMW 「き、きりたん……！」
+					PRINTFORMW 「助けてあげますね。何か使えるものは……」
+				;イタコ
+				CASE 16
+					PRINTFORMW 「イタコさん！？」
+					PRINTFORMW 「う……服がはだけて……。い、今は助けないと」
+				;茜
+				CASE 5
+					PRINTFORMW 「茜ちゃんだ」
+					PRINTFORMW 「寝てる……わけじゃないですよね。なんか安らかな顔してるのは何故でしょうか」
+				;葵
+				CASE 6
+					PRINTFORMW 「葵ちゃん……？」
+					PRINTFORMW 「茜ちゃんのために無理したんでしょうね。助けてあげないと」
+				;セイカ
+				CASE 7
+					PRINTFORMW 「セイカさーん？」
+					PRINTFORMW 「酔っぱらって寝てるわけじゃないですね。しょうがない、助けましょう」
+				;あかり
+				CASE 15
+					PRINTFORMW 「あかり！」
+					PRINTFORMW 「なんで無茶して……。全くもう……！」
+				;そら
+				CASE 17
+					PRINTFORMW 「そらさん！」
+					PRINTFORMW 「何とかして助けないと……」
+				CASEELSE
+					PRINTFORMW 「……やられちゃってますね。いや、犯られちゃった？
+					PRINTFORMW 　自分で言っててなんですけど、趣味悪いですね……」
+			ENDSELECT
+		ELSE
+			;霊夢に化けたドジッペル
+			IF NO:(ARG:1) == 1 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「……んん～？こちらにおわす美人さんはどちらさまでしょうか？」
+			;娘初遭遇　問題は姉妹に対応できないことか
+			ELSEIF (CFLAG:800 & 2) == 0 && NO:(ARG:1) == 1 && CFLAG:(ARG:1):104 == 1
+				PRINTFORMW 「その顔……。わたしにそっくりですねぇ。
+				PRINTFORMW 　本当ならあなたも倒さないといけないんですが……ねぇ？」
+				CFLAG:800 |= 2
+			;孫娘初遭遇
+			ELSEIF (CFLAG:800 & 4) == 0 && NO:(ARG:1) == 1 && CFLAG:(ARG:1):104 == 2
+				PRINTFORMW 「……もしかして、わたしの孫？　うわぁ。
+				PRINTFORMW 　さすがにそういう願望無いですよ」
+				CFLAG:800 |= 4
+				;孫以降は出産悦びフラグ増加
+				CFLAG:803 += 1
+			;ひ孫初遭遇
+			ELSEIF (CFLAG:800 & 8) == 0 && NO:(ARG:1) == 1 && CFLAG:(ARG:1):104 >= 3
+				PRINTFORMW 「なんかもう、突っ込む気力すら無くなりますね。
+				PRINTFORMW 　どう考えてもこれだけの人数を養える余裕は無いんですが……まぁ、なんとかしましょう」
+				CFLAG:800 |= 8
+				CFLAG:803 += 1
+			ELSE
+				;HP1/2以下でMP1/6以下で味方がいないか味方が戦意喪失　たぶん救出されたて
+				IF MAXBASE:HP/2 > BASE:HP && MAXBASE:MP/6 >= BASE:MP && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
+					PRINTFORMW 「た……体勢……立て直さなきゃ……」
+				ELSE
+					IF BASE:3 <= 0 && TARGET == 1
+						PRINTFORML 「うぅ……あんまり見ないでください……。しょうがないじゃないですか、襲われたんですから」
+						PRINTFORMW 「それはともかく、無事だったみたいですね」
+					ELSE
+						PRINTFORML 「おぉ、無事だったみたいですね」
+					ENDIF
+					SELECTCASE NO:(ARG:1)
+						;自分の娘
+						CASE 1
+							;出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+							IF CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+								PRINTFORMW （……無事じゃなきゃよかったんですがね）
+							ELSE
+								PRINTFORMW 「それくらいじゃないと困りますよ。わたしの……子供、ですし？」
+							ENDIF
+						;マキ
+						CASE 2
+							;マキの娘
+							IF CFLAG:(ARG:1):104
+								PRINTFORMW 「無茶するところまで親に似ないでくださいよ」
+							ELSE
+								PRINTFORMW 「マキさん、あまり無理しないでください。こんな場所なんですから慎重に」
+							ENDIF
+
+						;紫
+						CASE 22
+							PRINTFORMW 「まぁ、あんたの心配なんて不要でしょうけど」
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ENDIF
+		IF CFLAG:(ARG:1):104 == 0
+			;初対面じゃないフラグ
+			SELECTCASE NO:(ARG:1)
+				;マキ
+				CASE 2
+					CFLAG:898 |= 2
+				;きりたん
+				CASE 13
+					CFLAG:898 |= 8
+				;イタコ
+				CASE 21
+					CFLAG:898 |= 16
+				;ゆかりん
+				CASE 22
+					CFLAG:898 |= 32
+			ENDSELECT
+		ENDIF
+
+	;別れる
+	CASE 102
+		;喪失キャラ
+		IF ARG:2
+			;自分の娘で出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+			IF NO:(ARG:1) == 1 && CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+				PRINTFORMW 「……ただでさえ余裕ないんですよ」
+			ELSEIF NO:(ARG:1) == 1 || NO:(ARG:1) == 2
+				PRINTFORMW 「すみません。せめて、軽い結界を張っていきますね……」
+			ELSE
+				PRINTFORMW 「……悪いですけど、庇いながら戦える余裕はないんです」
+			ENDIF
+		ELSE
+			;霊夢に化けたドジッペル
+			IF NO:(ARG:1) == 1 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「先制攻撃をするって選択肢は無いんですかー！？」
+			;HP1/2以下でMP1/6以下で味方がいないか味方が戦意喪失　たぶん救出されたて
+			ELSEIF MAXBASE:HP/2 > BASE:HP && MAXBASE:MP/6 >= BASE:MP && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
+				PRINTFORMW 「ありがと……わたしは、大丈夫ですから……」
+			;自分の娘で出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+			ELSEIF NO:(ARG:1) == 1 && CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+				PRINTFORMW 「…………じゃあね」
+			;自分の娘
+			ELSEIF NO:(ARG:1) == 1
+				PRINTFORMW 「何かあったら、すぐわたしを探してくださいよ？」
+			ELSE
+				PRINTFORMW 「いつものゲームとは違うんですから、同じような感覚じゃ駄目ですよ」
+			ENDIF
+		ENDIF
+	;雑談
+	CASE 103
+			;HP1/2以下でMP1/6以下で味方がいないか味方が戦意喪失　たぶん救出されたて
+			IF MAXBASE:HP/2 > BASE:HP && MAXBASE:MP/6 >= BASE:MP && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
+				PRINTFORMDW 話すだけで足がふらつくゆかりの状態は、明らかにまだ辛そうだ……
+			;妊娠時
+			ELSEIF CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
+				SELECTCASE NO:(ARG:1)
+					;自分の娘
+					CASE 1
+						PRINTFORMW 「……あなたと会ったのはちょうどいいのか、最悪なタイミングなのか」
+						PRINTFORMW 「生まれるのがあなたみたいのなら、まぁ、マシでしょうかね……
+						;娘
+						IF CFLAG:(ARG:1):104 == 1
+							;孫娘やひ孫娘と会ってない
+							IF (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+								PRINTFORMW 　……勘違いしないでくださいよ？　別にあなたのこと認めたわけじゃないですから」
+							ELSE
+								PRINTFORMW 　でも娘とか姪っ子より若い妹って、そっちとしてはどうなんですか？」
+							ENDIF
+						;孫娘
+						ELSEIF CFLAG:(ARG:1):104 == 2
+							PRINTFORMW 　う～ん……この子は生まれる前からおばさんかぁ……」
+						;更に下
+						ELSEIF CFLAG:(ARG:1):104 >= 3
+							PRINTFORMW 　そっちから見た時の立場ってどういう表現になるんでしょうね？」
+						ENDIF
+						;出産悦びフラグ一定未満
+						IF CFLAG:803 < 3
+							PRINTFORMW 「………………」
+							PRINTFORMW 「まぁ、あなたと同じか分からない以上……こんな話しても意味ないんですけど、ね……」
+						ENDIF
+					;マキ
+					CASE 2
+						;マキの娘
+						IF CFLAG:(ARG:1):104
+							PRINTFORMW （マキさんとの子……それなら別に……いやいや何を考えて）
+						ELSE
+							PRINTFORMW 「あー……マキさんや。出来ればあんまりお腹を見ないで欲しいんだけど」
+						ENDIF
+					;紫
+					CASE 22
+						IF CFLAG:(ARG:1):104
+							PRINTFORMW （紫の力を受け継いでいるなら、私のお腹の中にいるのが何かわかるのかしら……）
+						ELSE
+							PRINTFORMW （紫には、私のお腹の中にいるのが何かわかるのかしら……）
+						ENDIF
+					CASEELSE
+						IF RAND:2 == 0
+							PRINTFORMW （……あからさまにお腹から視線を逸らされると、逆に辛いんですよねぇ）
+						ELSE
+							PRINTFORMW 「最近の天気はどうですか？　……うん、わたしも全然見てないんですよね」
+						ENDIF
+				ENDSELECT
+			ELSE
+				SELECTCASE NO:(ARG:1)
+					;自分の娘
+					CASE 1
+						;出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+						IF CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+							PRINTFORMW 「むむ……！？なんと美人な子。まるでわたしにそっくりですねぇ」
+						ELSE
+							IF RAND:2 == 0
+								PRINTFORMW 「そうだなぁ……今日は、外についてのお話でもしてみますか？」
+							ELSE
+								PRINTFORMW 「いいですか？　いきなり相手を犯したらダメですからね」
+							ENDIF
+						ENDIF
+					;マキ
+					CASE 2
+						;マキの娘
+						IF CFLAG:(ARG:1):104
+							PRINTFORMW 「いつかあなたにも、外の世界を見せたいですね」
+						ELSEIF RAND:2 == 0
+							PRINTFORMW 「帰った後、部屋の掃除を考えると憂鬱だ……。マキさんも手伝ってくださいね？」
+						ELSE
+							PRINTFORMW 「部屋の片づけしてないし、大変なことになってそうだよね……。帰ったら二人で掃除しないとね」
+						ENDIF
+					CASEELSE
+						IF RAND:2 == 0
+							PRINTFORMW 「いつになったら出られるかな……。なんて言っても何もならないですし、地道に、ね」
+						ELSE
+							PRINTFORMW 「帰った後、部屋の掃除を考えると憂鬱なんですよねぇ……」
+						ENDIF
+				ENDSELECT
+			ENDIF
+	;情報交換
+	CASE 104
+			IF ARG:2 == 0
+				;HP1/2以下でMP1/6以下で味方がいないか味方が戦意喪失　たぶん救出されたて
+				IF MAXBASE:HP/2 > BASE:HP && MAXBASE:MP/6 >= BASE:MP && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
+					PRINTFORMW 「周りの状況……わかりますか……？」
+				ELSE
+					SELECTCASE NO:(ARG:1)
+						;自分の娘
+						CASE 1
+							PRINTFORMW 「スパイみたいなことできませんか？　あいつらの眷属みたいな感じですし」
+							;出産悦びフラグ一定以上or孫娘かひ孫娘と会ってる
+							SIF CFLAG:803 >= 3 || (CFLAG:800 & 4) || (CFLAG:800 & 8)
+								PRINTFORMW 「……危険なら構いませんよ。無茶はしなくていいんです」
+
+						CASEELSE
+							PRINTFORMW 「わたしが知ってるのはこんな感じです。そっちは何か？」
+					ENDSELECT
+				ENDIF
+			ENDIF
+	;アイテム強請り成功
+	CASE 105
+		;相手が喪失
+		IF ARG:3
+			;自分の娘で出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+			IF NO:(ARG:1) == 1 && CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+				PRINTFORMW 「……うぅん、ちょっと気が引けますけど」
+			ELSEIF NO:(ARG:1) == 1 || NO:(ARG:1) == 2
+				PRINTFORMW 「……ごめんね」
+			ELSE
+				PRINTFORMW 「できるだけ早くボスを倒すから。それで勘弁して」
+			ENDIF
+		ELSE
+			;HP1/2以下でMP1/6以下で味方がいないか味方が戦意喪失　たぶん救出されたて
+			IF MAXBASE:HP/2 > BASE:HP && MAXBASE:MP/6 >= BASE:MP && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
+				PRINTFORMW 「ありがとうございます……これで、なんとか……」
+			ELSE
+				SELECTCASE NO:(ARG:1)
+					;自分の娘
+					CASE 1
+						PRINTFORMW （なんか、ものすごく情けないことしてるような気がしますね……）
+					;マキ
+					CASE 2
+						;マキの娘
+						IF CFLAG:(ARG:1):104
+							PRINTFORMW 「大した収集癖ですね。でも、今はそれがありがたいですよ」
+						ELSE
+							PRINTFORMW 「マキさんってこんな収集癖あったかな？子供に遺伝したとすると……」
+						ENDIF
+					CASEELSE
+						PRINTFORMW 「ありがとうございます。触手退治にちゃんと役立てますからね」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;勧誘成功
+	CASE 107
+		;相手が喪失
+		IF ARG:2
+			;自分の娘で出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+			IF NO:(ARG:1) == 1 && CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+				PRINTFORMW 「……何やってるんでしょうね。こんなのを助けて……」
+			ELSEIF NO:(ARG:1) == 1 || NO:(ARG:1) == 2
+				PRINTFORMW 「わたしが守ってあげなきゃ……」
+			ELSE
+				PRINTFORMW 「ほっとくわけにもいきませんね……」
+			ENDIF
+		ELSE
+			;HP1/2以下でMP1/6以下で味方がいないか味方が戦意喪失　たぶん救出されたて
+			IF MAXBASE:HP/2 > BASE:HP && MAXBASE:MP/6 >= BASE:MP && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
+				PRINTFORMW 「すみません……しばらくの間、頼ります……」
+			ELSE
+				SELECTCASE NO:(ARG:1)
+					;自分の娘
+					CASE 1
+						;出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+						IF CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+							PRINTFORMW （こいつだって化物なんだし、手元に置かないと何するか分からない……）
+						ELSE
+							PRINTFORMW 「ボイスロイド一の美人、ゆかりさんの戦い方、ちゃーんと見てなさい」
+						ENDIF
+					;マキ
+					CASE 2
+						PRINTFORMW 「頼りにしてますからね」
+					CASEELSE
+						PRINTFORMW 「わたしの足を引っ張らないでくださいよー？」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;勧誘失敗　娘やマキは実質死に口上だが、ともかく
+	CASE 108
+		SELECTCASE NO:(ARG:1)
+			;自分の娘
+			CASE 1
+				;出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+				IF CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+					PRINTFORMW （……何か企んでるのかな）
+				ELSE
+					PRINTFORMW 「無茶はしないでください。いいですね？」
+				ENDIF
+			;マキ
+			CASE 2
+				;マキの娘
+				IF CFLAG:(ARG:1):104
+					PRINTFORMW 「……うーん、無理強いはしないですけど、無理したらダメですからね？」
+				ELSE
+					PRINTFORMW 「マキさん、意地になってませんか？」
+				ENDIF
+			CASEELSE
+				;MP1/4以下or発情中か妊娠中
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:36 >= 3
+					PRINTFORMW 「ちょ、ちょっと！　……もう！」
+				ELSE
+					PRINTFORMW 「そうですか？　別にいいですけど、ヤられないでくださいよ」
+				ENDIF
+			ENDSELECT
+	;パーティ加入　140に移設　なおここは144から飛んで出てきたりするので結構不便な模様
+;	CASE 109
+	;離脱時
+	CASE 110
+		;ゆかりが主人公でない＝別れる方
+		IF TARGET != 1
+			;離脱後
+			IF ARG:2 == 1
+				;好感度200以上　パッチなしだと地の文が間違ってCFLAG:5を見ていた模様
+				IF CFLAG:5 >= 200
+					PRINTFORML 「……あらら。一応考えがあるんですよね？
+					PRINTFORMW 　ヤられないように気を付けて。困ったら頼ってくださいよ」
+				;MP1/4以下か妊娠中かHPとCPが0
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || CFLAG:36 >= 3 || (BASE:HP <= 0 && BASE:CP <= 0)
+					PRINTFORMW 「さすがにこの状態で一人は辛いですけど……そこはゆかりさんパワーでなんとかしてみせますよ」
+				ELSE
+					PRINTFORML 「じゃあ、そっちは任せます。
+					PRINTFORMW 　わたしは一人で大丈夫なので、自分の心配だけしててください」
+				ENDIF
+			ENDIF
+		ENDIF
+	;遭遇時逆襲
+	CASE 112, 111
+		PRINTFORMW 「……あいつも倒さないといけないんでしょうか」
+	;探索でアイテムを見つけた
+	CASE 113
+		;MP1/4以下or発情中or妊娠中
+		IF MAXBASE:MP/4 > BASE:MP || CFLAG:28 || CFLAG:36 >= 3
+			IF CFLAG:805 == 1
+				RESETCOLOR
+				RETURN 1
+			ELSE
+				;戦意喪失じゃない味方がいる
+				IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+					PRINTFORMW 「何か、拾えました？　後で見せてもらえますか……今は、余裕がないですから……」
+				ELSE
+					PRINTFORMW 「何だろうこれ……ま、確認するのは後にしましょう。見つけられたんだし、少し休も……」
+				ENDIF
+				CFLAG:805 = 1
+			ENDIF
+		;要睡眠以上
+		ELSEIF FLAG:7 >= 7
+			IF CFLAG:805 == 1
+				RESETCOLOR
+				RETURN 1
+			ELSE
+				;戦意喪失じゃない味方がいる
+				IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+					PRINTFORMW 「ん……成果が出たんですから、そろそろ寝ませんか……？」
+				ELSE
+					PRINTFORMW 「ん……成果が出たし、そろそろ寝ましょうか……」
+				ENDIF
+				CFLAG:805 = 1
+			ENDIF
+		ELSE
+			;ARG:1にアイテムID
+			SELECTCASE ARG:1
+				;クロスボウ
+				CASE 1
+					PRINTFORML 「非力な人でも扱える遠距離武器ですね」
+				;拳銃
+				CASE 2
+					PRINTFORML 「うわっ！　これ……本物？」
+				;火炎放射器
+				CASE 3
+					PRINTDATAL
+						DATAFORM 「うわおぅ……世紀末な武器」
+						DATAFORM 「肩パッドは流石にありませんか」
+					ENDDATA
+				;携帯型ミサイル
+				CASE 4
+					PRINTFORML 「スティンガーってやつですかね？　ここじゃ狭いような」
+				;おふだ
+				CASE 5
+					PRINTFORML 「どっかで見たような……どこでしたっけねぇ」
+				;ずんだアロー
+				CASE 6
+					PRINTFORML 「これずん子さんが持ってるやつ……の、量産品？」
+				;きりたん砲
+				CASE 7
+					PRINTFORML 「きりたんが背負ってるやつだ。思ったより軽いんですね」
+				;ナイフ
+				CASE 10
+					PRINTFORML 「ちょっと心元ないですけど、無いよりはマシですね」
+				;ナギナタ
+				CASE 11
+					PRINTFORML 「心得は無いんですけど…ま、なんとかしましょう」
+				;フライパン
+				CASE 12
+					PRINTDATAL
+						DATAFORM 「これは……フライパン？」
+						DATAFORM 「いい音は鳴るでしょうけど、武器になるんですかねぇ？」
+					ENDDATA
+				;マジカルステッキ
+				CASE 13
+					PRINTFORML 「感じる……力を込めれば魔法少女になれる！」
+					PRINTFORML 「残念ながらわたしじゃ出来ないみたいですが」
+				;刀
+				CASE 14
+					PRINTDATAL
+						DATAFORM 「おぉ、ゆかりさんに合いそうですね」
+						DATAFORM 「本当に斬れるんでしょうか？まぁいいでしょう」
+					ENDDATA
+				;ギター
+				CASE 15
+					PRINTFORML 「んんっ。これはマキさんの」
+					PRINTFORML 「やっぱり武器になるんですね……」
+				;チェーンソー
+				CASE 16
+					PRINTFORML 「う～ん。　なんでかしっくりと来ますね」
+				;小さなお守り
+				CASE 20
+					PRINTFORML 「どう見ても普通のお守りにしか見えませんが……不思議と安心しますね」
+				;メリケンサック
+				CASE 21
+					PRINTDATAL
+						DATAFORM 「お、メリケンサック」
+						DATAFORM 「ゆかりさんはどんな物でも使いこなせますから、これで軽く触手どもを蹴散らしますよ」
+					ENDDATA
+				;式神
+				CASE 22
+					PRINTFORML 「お、これはイタコさんの式神」
+					PRINTFORML 「のはずなんですけど、なーんか変な風になってます……？」
+				;力持ちの腕輪
+				CASE 23
+					PRINTFORML 「おぉ？　これは……？」
+					PRINTFORML 「なんかすっごい力が湧いてきますね……」
+				;ウィングブーツ
+				CASE 24
+					PRINTFORML 「おぉっと、身体が軽くなったような。　これなら素早く動けそうですね」
+				;バニー耳
+				CASE 25
+					PRINTFORML 「ゆかりさんのアンデンティティの一つになりつつあるんですよね」
+				;猫耳
+				CASE 27
+					PRINTDATAL
+						DATAFORM 「これをマキさんに……」
+						DATAFORM 「う～ん、ここで拾うと変な考えが」
+					ENDDATA
+				;天使の翼
+				CASE 28
+					PRINTFORML 「ちょっと光ってますね。蛍光仕様でしょうか？」
+				;警策
+				CASE 30
+					PRINTFORML 「喝ーつ！！　武器にした方が良そうですよね？」
+				;絶対領域
+				CASE 31
+					PRINTFORML 「ゆかりさんの絶対領域なんだから攻撃力のほうが高いはずじゃないですか！」
+				;治療の指輪
+				CASE 32
+					PRINTFORML 「治療効果を上げる特性と組み合わせればリジェネマンの出来上がり！ってね」
+				;花柄の指輪
+				CASE 33
+					PRINTFORML 「あ、なんか落ち着きますね……」
+				;香袋
+				CASE 34
+					PRINTFORML 「ん～いい香り。ご丁寧に巾着に入ってるなんて便利だなぁ」
+				;裁縫セット
+				CASE 35
+					PRINTDATAL
+						DATAFORM 「ゆかりさんあんまり裁縫得意じゃないんですけど」
+						DATAFORM 「持ってても損はありませんね」
+					ENDDATA
+				;幸運のお守り
+				CASE 36
+					PRINTDATAL
+						DATAFORM 「うさぎの足をかたどってるお守りですね」
+						DATAFORM 「運勢上がりますかね？」
+					ENDDATA
+				;ブラックコーヒー
+				CASE 37
+					PRINTFORML 「あんまり苦いの苦手なんですが。　まぁ贅沢は言えませんね」
+				;ゴーグル
+				CASE 38
+					PRINTDATAL
+						DATAFORM 「つけても似合いそうにないですねぇ」
+						DATAFORM 「スキーの時以外にかけた時ありましたっけ？」
+					ENDDATA
+				;媚薬
+				CASE 39
+					PRINTFORML 「あ～……えーと……ま、まぁあっても困らないでしょう」
+				;うめおにぎり
+				CASE 50
+					PRINTDATAL
+						DATAFORM 「梅干し入りだ」
+						DATAFORM 「こんなところに置いてあるのは怪しいですけど、ね」
+					ENDDATA
+				;太巻き
+				CASE 51
+					PRINTFORML 「うっ……大きさがアレに似てて……」
+				;エビフライ
+				CASE 52
+					PRINTFORML 「エビフライ、ゲットヤデ～」
+					PRINTFORML 「あんま似てなかった……」
+				;チョコミントアイス
+				CASE 53
+					PRINTFORML 「ん～？　なんで溶けないんだろう」
+				;着替えセット
+				CASE 54
+					PRINTDATAL
+						DATAFORM 「しっかり一組揃っているのはどうしてなんでしょう？」
+						DATAFORM 「ここの連中大体脱がそうとしてきますから、いくつあっても足りないんですよねぇ」
+					ENDDATA
+				;鎮静剤
+				CASE 55
+					PRINTFORML 「…万が一の時には頼りましょう」
+				;興奮剤
+				CASE 56
+					PRINTFORML 「副作用…発情。って媚薬じゃないですか！」
+				;万能薬
+				CASE 57
+					PRINTDATAL
+						DATAFORM 「惜しみなく使っていきたいですけど、そんなに落ちてますか？」
+						DATAFORM 「何があるか分からないからいっぱい拾っておきたいですね…」
+					ENDDATA
+				;気付け薬
+				CASE 58
+					PRINTFORML 「匂いは普通…と言うか無臭なんですが」
+				;煙玉
+				CASE 59
+					PRINTFORML 「忍法！　イヤーッ！！」
+				;種
+				CASE 61,62,63
+					PRINTFORML 「さすがに食べても大丈夫だとは思いますが……お腹から触手が出てきたりしませんよね？」
+				;携帯トイレ
+				CASE 66
+					PRINTFORML 「その辺でするよりずっとマシですね」
+				;包帯
+				CASE 67
+					PRINTDATAL
+						DATAFORM 「服の補修にも使えそうですし…意外と便利そうですね」
+						DATAFORM 「これの世話になることなんてあんまりないだろうって思ってましたけど…」
+					ENDDATA
+				;縮乳剤
+				CASE 69
+					;巨乳以上
+					IF GET_BUST(TARGET) >= 1
+						PRINTDATAL
+							DATAFORM 「あんまり重たくて邪魔だと思ったら使いましょうか」
+							DATAFORM 「せっかくの……いやいや、触手のオモチャにされるだけですし」
+						ENDDATA
+					ELSE
+						PRINTDATAL
+							DATAFORM 「うーむ……」
+							DATAFORM 「ゆかりさんのナイスバストには必要ありませんね？」
+						ENDDATA
+					ENDIF
+				;アオカン
+				CASE 70
+					PRINTDATAL
+						DATAFORM 「ホントに美味しいんでしょうか…？」
+						DATAFORM 「一体何でできているやら」
+					ENDDATA
+				;浄化玉
+				CASE 71
+					PRINTDATAL
+						DATAFORM 「交戦中にはゆっくり浄化している暇ありませんし」
+						DATAFORM 「浄化する力が足りない時にも使えそうですね」
+					ENDDATA
+				;すけーるゴーグル
+				CASE 72
+					PRINTDATAL
+						DATAFORM 「この眼鏡……えっ！丸見え！？」
+						DATAFORM 「こ、こんな危険な物は……ｺﾞｸﾘ」
+					ENDDATA
+			ENDSELECT
+		ENDIF
+	;睡眠開始
+	CASE 114
+		IF TARGET == 1
+			SELECTCASE ARG:1
+				;見張りなし
+				CASE 0
+					;朦朧
+					IF FLAG:7 >= 11
+						PRINTFORMW 「も、もう、限界……寝落ちする……」
+					;妊娠中
+					ELSEIF CFLAG:36 >= 3
+						IF RAND:2 == 0
+							;出産悦びフラグ一定以下
+							IF CFLAG:803 < 3
+								PRINTFORMW 「寝て覚めたらお腹が戻ってたり……してないんでしょうねぇ」
+							ELSE
+								PRINTFORMW 「寝てる最中に産まれたりしませんよね……？」
+							ENDIF
+						ELSE
+							PRINTFORMW 「少しは体が楽になるといいんですが」
+						ENDIF
+					;要睡眠
+					ELSEIF FLAG:7 >= 7
+						IF RAND:2 == 0
+							PRINTFORMW 「ふぅ……つっかれたぁ」
+						ELSE
+							PRINTFORMW 「おやすみなさい、ぐー……」
+						ENDIF
+					;睡眠可
+					ELSE
+						IF RAND:2 == 0
+							PRINTFORMW 「寝心地は最悪でしょうが、贅沢言ってる場合じゃありませんね」
+						ELSE
+							PRINTFORMW 「うぅ、布団が恋しい……」
+						ENDIF
+					ENDIF
+				;PTで見張り
+				CASE 1
+					;朦朧
+					IF FLAG:7 >= 11
+						PRINTFORML 「うぅ、もう見張る時間……？
+						PRINTFORMW 　すみません……あと少しだけ寝かせてください……」
+					;妊娠中
+					ELSEIF CFLAG:36 >= 3
+						IF RAND:2 == 0
+							PRINTFORMW 「わたしの様子が変だったら起こしてください。こんな体ですから……」
+						ELSE
+							PRINTFORMW 「……気遣って、無理に長く寝かせようとしなくてもいいですよ」
+						ENDIF
+					;要睡眠
+					ELSEIF FLAG:7 >= 7
+						IF RAND:2 == 0
+							PRINTFORML 「この結界に何か入ってくれば音が鳴るから、聞き逃さないでください。
+							PRINTFORMW 　それじゃ、おやすみ……」
+						ELSE
+							PRINTFORMW 「ふあぁ～あ……結界は異常なしっと」
+						ENDIF
+					;睡眠可
+					ELSE
+						IF RAND:2 == 0
+							PRINTFORMW 「わたしの見張る番ですか？　時間の経過がわかりにくいですね……」
+						ELSE
+							PRINTFORMW 「一度見張りに起きると寝付けないんですよ。寝床がこんなのですし」
+						ENDIF
+					ENDIF
+				;NPCに見張り ARG:2で見張りキャラ
+				CASE 2
+					;朦朧
+					IF FLAG:7 >= 11
+						PRINTFORMW 「あとはお願いします……こっちはもう限界……」
+					;妊娠中
+					ELSEIF CFLAG:36 >= 3
+						PRINTFORMW 「……わたしの様子がおかしかったら、すぐ起こしてください」
+					ELSE
+						PRINTFORMW 「見張り、頼みましたよ」
+					ENDIF
+			ENDSELECT
+		ENDIF
+	;睡眠時自慰
+	CASE 117
+		IF RAND:2 == 0 && FLAG:10
+			PRINTFORMW 「ふっ……んんっ……だれも、見てない、今の……うちにぃ……♪」
+		ELSE
+			PRINTFORMW 「あっ、あぁぁんっ……！　こ、こえ、だしたら……でもぉ♪」
+		ENDIF
+	;自慰発生時　フラグだけ回収するので戦意喪失でも来る
+	;いろんな自慰からここに来るのでフラグ追加はここだけ書いておけば大丈夫？
+	;書くときは色んな自慰から飛んでくるのを考慮して書かないといけない
+	CASE 118
+		CFLAG:805 = 3
+		RESETCOLOR
+		;口上記入済み
+		RETURN 1
+	;自慰で絶頂失敗　フラグだけ消去するので戦意喪失でも来る
+	CASE 119
+		CFLAG:805 = 0
+		RESETCOLOR
+		;口上記入済み
+		RETURN 1
+	;絶頂
+	CASE 120
+		;出産絶頂は出さない
+		IF CFLAG:805 == 2
+			CFLAG:805 = 0
+		;連続絶頂２回めor４回め以降ランダム
+		ELSEIF CFLAG:806 == 2 || (CFLAG:806 > 3 && RAND:4 == 0)
+				PRINTFORM 「ま……たぁっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　これぇ、すごすぎますよぉ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+		;諦め時orMP1/4以下or発情中or深い催眠
+		ELSEIF TFLAG:16 == 2 || MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:43 > 1
+			IF RAND:3 == 0
+				PRINTFORM 「あはぁっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　きもちいぃ、きもちいいっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　たたかうの、わすれちゃうぅ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSEIF RAND:2 == 0
+				PRINTFORM 「あ、あぁっ、ああああああぁっ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORM 「く、くるの、きもちいいのっ、我慢できな――あ、ああああああぁんっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ENDIF
+		ELSE
+			;ランダムか自慰で絶頂した時
+			IF RAND:3 == 0 || CFLAG:805 == 3
+				PRINTFORMW 「ひんっ♪　あっ……ううぅんっ……！」
+			ELSEIF RAND:2 == 0
+				PRINTFORM 「だ、だめっ……これ以上はだめ、だめぇぇぇぇぇっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「や、やめて、やめっ――あ、うああぁぁぁぁっ！」
+			ENDIF
+		ENDIF
+		;自慰絶頂管理
+		SIF CFLAG:805 == 3
+			CFLAG:805 = 0
+
+	;喪失中絶頂
+	CASE 122
+		;出ない時
+		IF CFLAG:805 == 2
+			CFLAG:805 = 0
+		;自慰のときはこっちでない
+		ELSEIF RAND:3 == 0 && CFLAG:805 != 3
+			PRINTFORM 「はぁんっ……♪　やめないでぇ……このままイかせ続けてぇ……
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+		ELSEIF RAND:2 == 0
+				PRINTFORM 「ま……たぁっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　きもちいいの、いっぱい……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+		ELSE
+			PRINTFORM 「あ、あぁっ、ああああああぁっ……
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+		ENDIF
+
+		SIF CFLAG:805 == 3
+			CFLAG:805 = 0
+	;母乳を吸われる
+	CASE 123
+		SELECTCASE ARG:1
+			;娘
+			CASE 19
+				;発情時・戦意喪失時・諦め時・出産悦びフラグ・深い催眠
+				IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:803 >= 3 || CFLAG:43 > 1
+					PRINTFORM 「吸われてる……
+					CALL HEARTCB(0xD02830)
+					PRINTFORMW 　わたしのおっぱい、子供に、吸われてるぅ……♪」
+				ELSE
+					PRINTFORMW 「いやぁっ……！　産んだ時みたいになるの、もういやぁ……」
+				ENDIF
+			CASEELSE
+				;発情時・戦意喪失時・諦め時・深い催眠・MP1/4以下でランダム
+				IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1 || (RAND:3 == 0 && MAXBASE:MP/4 >= BASE:MP)
+					;諦め時か戦意喪失時か深い催眠時専用
+					IF RAND:2 == 0 && (TFLAG:16 == 2 || CFLAG:29 || CFLAG:43 > 1)
+						PRINTFORMW 「んぅっ……♪　わたしのおっぱい、おいしぃの……？」
+					ELSE
+						PRINTFORM 「うあぁあんっ♪　お、おっぱい、すわれるのでも、感じてぇ……
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					ENDIF
+				ELSE
+					IF RAND:2 == 0
+						PRINTFORMW 「こ……のっ、吸い付く……なぁっ……！」
+					ELSE
+						PRINTFORMW 「な、なに飲んで……はなれなさいって……！」
+					ENDIF
+				ENDIF
+			ENDSELECT
+	;寄生が進行 802の16で寄生経験があるかどうか確認する
+	CASE 125
+		;寄生出産経験済み
+		IF (CFLAG:802 & 16)
+			IF ARG:1 >= 8
+				IF RAND:3 == 0
+					PRINTFORMW 「……また、何か仕込まれましたかね」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「なにか、体に引っかかるような……」
+				ELSE
+					PRINTFORMW 「……うぅん、なにか変」
+				ENDIF
+			ELSEIF ARG:1 >= 4
+				IF RAND:2 == 0
+					PRINTFORMW 「はぁっ……このっ、またっ……！」
+				ELSE
+					PRINTFORMW 「また、体の中に……！」
+				ENDIF
+			ELSEIF ARG:1 >= 2
+				PRINTFORMW 「うぅっ……こいつっ……」
+			ELSEIF ARG:1 >= 1
+				PRINTFORMW 「膨らんでるっ……なにか、すわれてるぅ……！」
+			ENDIF
+		ELSE
+			IF ARG:1 >= 8
+				IF RAND:2 == 0
+					PRINTFORMW （……なに、この感覚？　まるで、体の中から見張られてるような）
+				ELSE
+					;妊娠経験済み
+					IF (CFLAG:802 & 2)
+						PRINTFORMW 「お腹が膨れてきて……でも妊娠したなら体調が悪くなってるはずですよね……」
+					ELSE
+						PRINTFORMW 「おなかが、何か……」
+					ENDIF
+				ENDIF
+			ELSEIF ARG:1 >= 4
+				PRINTFORMW 「はぁ、はぁっ……大きく、なってる」
+			ELSEIF ARG:1 >= 2
+					;妊娠経験済み
+					IF (CFLAG:802 & 2)
+						PRINTFORMW 「づっ……前と、違う……？」
+					ELSE
+						PRINTFORMW 「うぅっ……、なん、ですか……これぇ……！？」
+					ENDIF
+			ELSEIF ARG:1 >= 1
+				PRINTFORMW 「く、くるしぃ……」
+			ENDIF
+		ENDIF
+;	;妊娠が進行
+	CASE 126
+		;妊娠出産経験済み　4で娘経験、8で幼体経験
+		IF (CFLAG:802 & 2)
+			IF ARG:1 >= 11
+				IF RAND:3 == 0
+					PRINTFORMW 「……さんざん中に出されましたけど……まさか」
+				ELSEIF RAND:2 == 0
+					;戦意喪失じゃない味方がいる
+					IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+						PRINTFORMW 「……ご飯、いりません。食欲がないのであげますよ」
+					ELSE
+						PRINTFORMW 「食欲が出ない……食べなきゃいけないのに……」
+					ENDIF
+				ELSE
+					PRINTFORMW 「はぁ、なんかだるいですね……嫌な予感がします……」
+				ENDIF
+			ELSEIF ARG:1 >= 9
+				IF RAND:3 == 0
+					PRINTFORMW 「うっ、気分が……。また、なんでしょうか……」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「……疲れがとれない……前にもこんなこと、ありましたっけ」
+				ELSE
+					PRINTFORMW 「づっ……頭が、いたぃ……！」
+				ENDIF
+			ELSEIF ARG:1 >= 8
+				IF CFLAG:36 == 1
+					PRINTFORMW 「あれ？　調子、よくなってますね。
+					;出産悦びフラグ
+					IF CFLAG:803 >= 3
+						PRINTFORMW 　……そうですよね……そうそう何度も、あるわけないですもの……うん」
+					ELSE
+						PRINTFORMW 　……そう、ですよね。そうそう何度も、あるわけないですよね、うん！」
+					ENDIF
+				ELSE
+					IF CFLAG:803 >= 3
+						PRINTFORMW （そう……あの快感が、また……）
+						PRINTFORMW （あれ……な、なに考えてるんですか、わたしは！）
+					ELSE
+						PRINTFORMW 「……ああ、やっぱり」
+						PRINTFORMW 「いっそ、お腹でも殴ったほう……いや絶対痛いだけですよね」
+					ENDIF
+				ENDIF
+			ELSEIF ARG:1 >= 5
+				IF RAND:3 == 0
+					PRINTFORMW 「育ってる……前みたいに、数日もしないうちに生まれるんですか？」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「せめて、今のうちに敵を減らさなきゃ……動けなくなる前に……」
+				ELSE
+					PRINTFORMW 「……こういうのを追い払うのってどうすればいいんでしょうね」
+				ENDIF
+			ELSEIF ARG:1 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「あぁっ、動いてますね……わたしの中でしっかり生きてるってわかってしまいます……」
+				ELSE
+					PRINTFORMW 「今から無理やり追いだそうとしても……手遅れですよね」
+				ENDIF
+			ELSEIF ARG:1 >= 1
+				IF RAND:2 == 0
+					;戦意喪失じゃない味方がいる
+					IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+						PRINTFORMW 「うぅっ、あぅ、だい、じょうぶ……まだ……動け、ます」
+					ELSE
+						PRINTFORMW 「うぅっ、あぅ……限界が、来る前に、準備を……」
+					ENDIF
+				ELSE
+					PRINTFORMW 「あぐっ……はぁ、はぁっ、せ、せめて、もう少しだけ……」
+				ENDIF
+			ENDIF
+		;妊娠出産経験なし
+		ELSE
+			IF ARG:1 >= 11
+				IF RAND:2 == 0
+					;戦意喪失じゃない味方がいる
+					IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+						PRINTFORMW 「……ご飯、いりません。食欲がないのであげますよ」
+					ELSE
+						PRINTFORMW 「食欲が出ない……食べなきゃいけないのに……」
+					ENDIF
+				ELSE
+					PRINTFORMW 「はぁ、なんかだるいですね……こんな状況じゃ疲れてもしょうがないですけど」
+				ENDIF
+			ELSEIF ARG:1 >= 9
+				IF RAND:2 == 0
+					;戦意喪失じゃない味方がいる
+					IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+						PRINTFORMW 「ちょ、ちょっと待ってください。なんか、めまいがして……病気？」
+					ELSE
+						PRINTFORMW 「うっ……なんか、視界が歪んで……病気でしょうか？」
+					ENDIF
+				ELSE
+					PRINTFORMW 「調子が悪い……これくらいでサボるわけにもいかないですけど……」
+				ENDIF
+			ELSEIF ARG:1 >= 8
+				IF CFLAG:36 == 1
+					PRINTFORMW 「ん……治った？　なんだったんでしょう」
+				ELSE
+					PRINTFORMW 「……あれ？　私、太った？　最近、あんまり食べてないはずなんですけど」
+					;戦意喪失じゃない味方がいる
+					IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+						PRINTFORMW 「急に青ざめてどうしたんですか？」
+						PRINTFORMW 「え？　妊、娠……？」
+					ELSE
+						PRINTFORMW 「………………。まさか、子供がいるなんてこと、ないですよね……？」
+					ENDIF
+				ENDIF
+			ELSEIF ARG:1 >= 5
+				IF RAND:2 == 0
+					PRINTFORML 「……ほ、ほんとに妊娠した？
+					PRINTFORMW 　子供って、生まれるまで何ヶ月もかかるはずじゃ……」
+				ELSE
+					PRINTFORMW 「わたしの体が、化物を育てているとしたら……最悪ですね……」
+				ENDIF
+			ELSEIF ARG:1 >= 3
+				PRINTFORMW 「おなか、重い……どうして、こんな事に」
+			ELSEIF ARG:1 >= 1
+				;母乳体質
+				IF TALENT:130
+					PRINTFORMW 「いたたたっ、おなか、いたいっ！　こんな痛み、知らないっ……！」
+				ELSE
+					PRINTFORMW 「な、なにこれ、胸から何か、滲んで……あぐっ！」
+					PRINTFORMW 「お、おなか、いたい……！」
+				ENDIF
+			ENDIF
+		ENDIF
+	;寄生・出産イベント　喪失中も出る　妊娠との違いがどうしても気が乗らなくて差別化できない……
+	CASE 127
+		;絶頂口上を出ないように管理する
+		CFLAG:805 = 2
+		;寄生出産経験済み
+		IF (CFLAG:802 & 16)
+			;生まれ始める
+			IF ARG:1  == 0
+				IF RAND:2 == 0
+					PRINTFORMW 「お、おなかっ、押されてるっ、私の、おなかがぁっ！？」
+				ELSE
+					PRINTFORMW 「ひ、ひろがってるぅ……なか、むりやりっ、広げられてっ……！？」
+				ENDIF
+			;生んだ後胸吸われる
+			ELSEIF ARG:1 == 1
+				IF RAND:2 == 0
+					PRINTFORMW 「やぁっ、だめぇっ……！　わたしのこどもじゃ、ないのぃ……」
+				ELSE
+					PRINTFORMW 「いじらないでぇっ……いま、乳首、そんなにすわれたら、あ、あぁっ……！」
+				ENDIF
+			ENDIF
+		ELSE
+			;生まれ始める
+			IF ARG:1  == 0
+				PRINTFORMW 「っ、あ、あぁっ、あばれてるっ……なにか、うごいてっ……！」
+			;生んだ後胸吸われる
+			ELSEIF ARG:1 == 1
+				;母乳体質習得
+				IF TALENT:130 == 0
+					PRINTFORMW 「や、やぁっ、おっぱい、なんでぇっ！？」
+				ELSE
+					PRINTFORMW 「や、やぁっ、おっぱい、すわないでぇっ！」
+				ENDIF
+			ELSE
+				;寄生出産経験
+				CFLAG:802 |= 16
+				;ここからは絶頂に行かないので
+				CFLAG:805 = 0
+			ENDIF
+		ENDIF
+	;妊娠・出産イベント 喪失中でも出る
+	CASE 129
+		;絶頂口上を出ないように管理する
+		CFLAG:805 = 2
+		;妊娠出産経験済み　4で娘出産経験、8で幼体出産経験
+		IF (CFLAG:802 & 2)
+			;生まれ始める
+			IF ARG:1  == 0
+				IF RAND:2 == 0
+					PRINTFORMW 「だ、だめぇ……もう、がまん、できまっ、せん……う、うまれちゃうぅ……！」
+				ELSE
+					;出産悦びフラグ
+					IF CFLAG:803 >= 3
+						PRINTFORMW 「んうっ……降りてっ……きてますぅ、なか、こすりながら、おりてぇ……♪」
+					ELSE
+						PRINTFORMW 「い、いや……気持ちよくなるのいやです、産みながらイっちゃうのはもういやぁ！」
+					ENDIF
+				ENDIF
+			;生んだ後胸吸われる
+			ELSEIF ARG:1 == 1
+				IF RAND:2 == 0
+					PRINTFORMW 「や、やめてぇ……そんなに、つよく、すったら……あっ、あぁっ、んあぁっ！」
+				ELSE
+					IF CFLAG:803 >= 3
+						PRINTFORMW 「吸ってっ、おっぱい吸ってください……お母さんを、そのおくちでイかせてぇっ！」
+					ELSE
+						PRINTFORMW 「い、いやぁっ……はなれ、て……あ、あぁぁっ……♪」
+					ENDIF
+				ENDIF
+			ELSEIF ARG:1 == 2
+				IF CFLAG:803 >= 3
+					PRINTFORMW 「ふぅ、ふうぅっ……あはっ、私、またこどもに……きもちよく、されちゃいましたぁ……♪」
+				ELSE
+					PRINTFORMW 「……わたし……また、こども産んで……また、こどもに、犯されて……」
+				ENDIF
+				;出産悦びフラグ追加
+				CFLAG:803 += 1
+				;ここからは絶頂に行かないので
+				CFLAG:805 = 0
+				;幼体出産経験
+				IF ARG:2 == 0 && (CFLAG:802 & 8) == 0
+					CFLAG:802 |= 8
+				;娘出産経験
+				ELSEIF ARG:2 == 1 && (CFLAG:802 & 4) == 0
+					CFLAG:802 |= 4
+				ENDIF
+			ENDIF
+		ELSE
+			;生まれ始める
+			IF ARG:1  == 0
+				PRINTFORMW 「あ、あぁ、うぅっ……で、でて、きます！　なかから、なにか出てくるぅぅっ！」
+			;生んだ後胸吸われる
+			ELSEIF ARG:1 == 1
+				PRINTFORMW 「や、ふやぁっ！？　その吸い方いやぁ、赤ちゃんにイかされるのいや、あ、ああぁっ♪」
+			ELSEIF ARG:1 == 2
+				PRINTFORMW 「あ……あぁ……イっちゃいました、わたし……こどもに、イかされちゃいましたよぉ……」
+				;ここからは絶頂に行かないので
+				CFLAG:805 = 0
+				;出産経験
+				CFLAG:802 |= 2
+				IF ARG:2 == 0 && (CFLAG:802 & 8) == 0
+					CFLAG:802 |= 8
+				ELSEIF ARG:2 == 1 && (CFLAG:802 & 4) == 0
+					CFLAG:802 |= 4
+				ENDIF
+			ENDIF
+		ENDIF
+	;浄化開始
+	CASE 130
+		;MPが1/4以下か発情中か朦朧
+		IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || FLAG:7 >= 11
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「体調悪いですけど、これくらいは……！」
+				CASEELSE
+					PRINTFORMW 「この程度……失敗なんか、しませんよ……！」
+			ENDSELECT
+		;HPが1/4以下か妊娠中か要睡眠
+		ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3 || FLAG:7 >= 7
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「動かない相手なら、問題はありませんね」
+				CASEELSE
+					PRINTFORMW 「休む準備を整えましょう」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「あくまで障害物を取っ払うだけですから、気遣いも体裁もいりませんね」
+				CASE 1
+					PRINTFORMW 「何回消しても、根本を断たない限りはやっぱり元に戻るんでしょうかねぇ……」
+				CASEELSE
+					PRINTFORMW 「きりがないし何か得られるわけでもないし……ここの壁ってほんと嫌になりますね」
+			ENDSELECT
+		ENDIF
+	;眠気が進行
+	CASE 131
+		IF TARGET == 1
+			;MPが1/4以下か発情中か妊娠
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 ||  CFLAG:36 >= 3
+				;朦朧
+				IF FLAG:7 == 11
+					PRINTFORMW 「無理……眠すぎて戦えない……」
+				;要睡眠
+				ELSEIF FLAG:7 == 7
+					PRINTFORMW 「……そろそろ休まないとまずいですよ」
+				ENDIF
+			ELSE
+				;朦朧
+				IF FLAG:7 == 11
+					PRINTFORMW 「う……このままだとやばそうですね……」
+				;要睡眠
+				ELSEIF FLAG:7 == 7
+					PRINTFORMW 「ふわぁぁぁ……ちょっと休んだほうがいいでしょうかね？」
+				ENDIF
+			ENDIF
+		ENDIF
+	;部屋を移動（突撃）
+	CASE 132
+		;ランダム
+		IF RAND:2 == 0
+			;MPが1/4以下か朦朧　ここだけ移動系の中では条件違う
+			IF MAXBASE:MP/4 >= BASE:MP || FLAG:7 >= 11
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「早く……早く進んで、隠れる場所を……！」
+					CASEELSE
+						PRINTFORMW 「のんびりしてたら、追ってくるかもしれませんし……！」
+				ENDSELECT
+			;HPが1/4以下か妊娠中か発情中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3 || CFLAG:28
+				SELECTCASE RAND:2
+					CASE 0
+						;戦意喪失じゃない味方がいる
+						IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+							PRINTFORMW 「ま、待ってください。もう少しゆっくりお願いします！」
+						ELSE
+							PRINTFORMW 「はぁ、はぁっ、急ごうにもこの体じゃ……」
+						ENDIF
+					CASEELSE
+						PRINTFORMW 「う……くっ、このっ、ちょっと走るくらい、なんともっ、ありませんよっ」
+				ENDSELECT
+			;要睡眠
+			ELSEIF FLAG:7 >= 7
+				PRINTFORMW 「走るのも、眠気覚ましになるでしょうし……」
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「うぅ～ん……天井からなんか蠢いてる気がしますね……」
+					CASEELSE
+						PRINTFORMW 「警戒しようにも、どこもかしこも怪しいですし。走ったほうが良さそうですね」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;部屋を移動（慎重）
+	CASE 133
+		IF RAND:2 == 0
+			;MPが1/4以下か発情中か朦朧
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || FLAG:7 >= 11
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「もうイヤです、気が滅入りそう……！」
+					CASEELSE
+						PRINTFORMW 「集中……集中……しないと」
+				ENDSELECT
+			;HPが1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「ゆっくり動くのも、これはこれで辛い……走るのよりは楽なんですが」
+					CASEELSE
+						PRINTFORMW 「……苦しいですが、今の状況じゃ満足に戦えないですから」
+				ENDSELECT
+			;要睡眠
+			ELSEIF FLAG:7 >= 7
+				PRINTFORMW 「……ふあーぁ。こうも動きがないとあくびが止まらないんですよねぇ」
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「適当に動くだけで上手くいく……なんて事ありませんよね」
+					CASEELSE
+						PRINTFORMW 「真っ向から勝負して……というのは愚策でしょうかねぇ？」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;部屋を移動（待ち伏せ）
+	CASE 134
+		IF RAND:2 == 0
+			;MPが1/4以下か発情中か朦朧
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || FLAG:7 >= 11
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW （うぅ……どう見ても、結界の強度が弱い……）
+					CASEELSE
+						PRINTFORMW 「結界くらい張れるはずなんですけど、弱ってるとキツイ、ですね……！」
+				ENDSELECT
+			;HPが1/4以下か妊娠中
+			ELSEIF MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「ふぅ。結界の設置、終了っと……」
+					CASEELSE
+						PRINTFORMW 「……結界を作るのって、こんなに疲れるんですね」
+				ENDSELECT
+			;要睡眠
+			ELSEIF FLAG:7 >= 7
+				PRINTFORMDW ゆかりは眠気を振り払うように体を伸ばしている……
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「急ごしらえの結界じゃ、そんなに保ちそうにありませんね」
+					CASEELSE
+						PRINTFORMW 「結界は張りました。後は待つだけですね」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;探索開始
+	CASE 135
+		;探索管理口上フラグを洗浄
+		CFLAG:805 = 0
+	;処女喪失　貞操無頓着だからあまり重くするわけにもいかず
+	CASE 136
+		SELECTCASE ARG:1
+			;敵の攻撃で
+			CASE 0
+				SELECTCASE ARG:3
+				;喪失直前
+				CASE 1
+				;守れた
+				CASE 2
+
+				;失った
+				CASEELSE
+					;深い催眠・諦め
+					IF CFLAG:43 > 1 || TFLAG:16 == 2
+						PRINTFORMDW ゆかりは破瓜の血が零れ落ちるのを、思考が浮かばないぼんやりとした瞳で見つめている……
+					ELSE
+						PRINTFORMW 「い、痛っ！　ちょっと、何して……！？」
+					ENDIF
+				ENDSELECT
+			;自慰で　確か絶頂しないと処女破らない……はず
+			CASE 1
+				PRINTFORMW 「い、痛っ！　……もしかして、これって……
+				PRINTFORMW 　……うぅ。べ、別にこんな状況ですから、犯されるよりは、ずっと……ずっと……うぅっ」
+				PRINTFORMDW ゆかりは自分に言い聞かせるように、独り言を繰り返している……
+		ENDSELECT
+	;PTに勧誘された
+	CASE 140
+		;成功
+		IF ARG:2 == 1
+			;通常
+			IF ARG:1 == 0
+				;MP1/4以下or発情中か妊娠中
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:36 >= 3
+					PRINTFORMW 「……ちょっと失敗してしまったので、しばらく、援護お願いします」
+				ELSE
+					PRINTFORMW 「こんな事になるとは思いませんでしたよ……。。
+					PRINTFORMW 　無事に帰ったら、宴会しませんか？」
+				ENDIF
+			;共闘
+			ELSE
+				;MP1/4以下or発情中か妊娠中
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:36 >= 3
+					PRINTFORMW 「……こっちも余裕はないんですけどね、っと！」
+				ELSE
+					PRINTFORMW 「いいですよ。さっさと片付けてあげます！」
+				ENDIF
+				;戦闘前口上回避……載せるべきか否か
+;				CFLAG:805 = 4
+			ENDIF
+		;失敗
+		ELSE
+			;主人公が捕まってる＝助けを求めた
+			IF CFLAG:1:10
+				;MP1/4以下or発情中か妊娠中
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:36 >= 3
+					PRINTFORMW 「今のわたしじゃ……」
+				ELSE
+					PRINTFORMW 「ごめんなさい、ちょっと今は助けられません……」
+				ENDIF
+			ELSE
+				;MP1/4以下or発情中か妊娠中
+				IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:36 >= 3
+					PRINTFORMW 「多分、足を引っ張ることになりますから……」
+				ELSE
+					PRINTFORMW 「わたしはわたしで動きますね」
+				ENDIF
+			ENDIF
+		ENDIF
+	;襲撃「される」
+	CASE 141
+		;ドッペル
+		IF ARG:2 == 1
+			PRINTFORMW 「……こいつ、違う！？」
+			CFLAG:805 = 4
+		ENDIF
+	;襲撃「する」
+	CASE 142
+		;ドッペル
+		IF ARG:2 == 1
+			PRINTFORMW 「こういう時、化けるには最良ですよね……」
+		ENDIF
+	;喪失キャラに気付け薬を使った
+	CASE 143
+		IF ARG:2 == 0
+			;自分の娘で出産悦びフラグ一定未満＆孫娘やひ孫娘と会ってない
+			IF NO:(ARG:1) == 1 && CFLAG:803 < 3 && (CFLAG:800 & 4) == 0 && (CFLAG:800 & 8) == 0
+				PRINTFORMW 「……なんでこんなもったいない事してるんでしょう、わたし」
+			ELSEIF NO:(ARG:1) == 1 || NO:(ARG:1) == 2
+				PRINTFORMW 「ほら、しっかりしてください！　目を開けるんですよ！」
+			ELSE
+				PRINTFORMW 「ほら、起きてください。もう大丈夫なはずですよ」
+			ENDIF
+		ENDIF
+	;喪失してるときに気付け薬を使われたとか、乳搾りされたとか
+	CASE 144
+		SELECTCASE ARG:1
+			;そのまま立ち去る
+			CASE 0
+				PRINTFORMW 「うぅん……ありがとうございます」
+			;仲間入り
+			CASE 2
+				PRINTFORMW 「よし。借りはすぐ返しますからね」
+			;断られた
+			CASE 3
+				PRINTFORMW 「ありゃ……ゆかりさんじゃ頼りになりませんか？」
+		ENDSELECT
+	;結界とお風呂
+	CASE 149
+		IF TARGET == 1
+			;MPが1/4以下か発情中か妊娠か朦朧
+			IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:36 >= 3 || FLAG:7 >= 11
+				PRINTFORMW 「結界は、張れたし……もう、さっさと休みたいんですけど……」
+			ELSE
+				;戦意喪失じゃない味方がいる
+				IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
+					PRINTFORMW 「結界を張ったので、お風呂の用意頼めますか？」
+				;味方はいるが壊滅状態
+				ELSEIF FLAG:10
+					PRINTFORMW 「やれやれ、結界の展開にお風呂に世話までっ……。動けるのはわたしだけだから仕方ないですねぇ」
+					PRINTFORMDW ゆかりは愚痴りながら、そのまま風呂で仲間たちの体を洗っている……
+				ELSE
+					PRINTFORMW 「はぁ……結界の展開よりもお風呂の準備のほうが辛い。こんな場所ですし」
+				ENDIF
+			ENDIF
+		ENDIF
+	;完全捕食
+	CASE 152
+		CFLAG:900 = 0
+		PRINTFORMW （あぁ……ごめんなさい、みなさん……）
+		PRINTFORMW （わたしは、もう……）
+		;どうも、157ではDA:(CFLAG:10):46で見ても反応しない
+		IF DA:(ARG:1):46 == TARGET && TARGET == 1
+			CFLAG:900 = 1
+		ELSEIF NO:(DA:(ARG:1):46) == 2 && TARGET == 1
+			CFLAG:900 = 2
+		ENDIF
+	;ゲームオーバー
+	CASE 157
+		;スライム化したマキにやられた（描写ハード以上）
+		;なんという趣味全開の長文……この条件では見れる人が何人いるか分からないというのに
+		IF ARG:1 == 104 && CFLAG:900 == 2 && FLAG:507 > 0
+			PRINTFORMDW 『やっと諦めた？　ゆかり』
+			PRINTFORMW 「マ、マキさん…………」
+			PRINTFORMDW 完全に抵抗する力を失い、ぐったりとするゆかりにマキがどろどろとまとわりつく。
+			PRINTFORMDW 睨むことすらできないゆかりの様子に、マキは粘体と化した体を嬉しそうに揺らした。
+			PRINTFORMDW 『別に怖がったりしなくてもいいんだよ。わたしはゆかりと一緒に気持ちよくなりたいだけなんだから』
+			PRINTFORMW 「マキさん……お願い……正気に、戻って……」
+			PRINTFORMDW 『なぁに、まだそんな事言ってるの？　しょうがないなぁ……』
+			PRINTFORMW 「は、ひっ！？」
+			PRINTFORMDW そうマキは口を尖らせると、自分の体を薄くしてゆかりの体の全てを覆い尽くしていく。
+			PRINTFORMDW 今までにも経験したことのある覆われ方だが、今回は特に念入りだ。
+			PRINTFORMDW 女性器に尻穴から乳腺まで、体の各所に染み込んでくるマキの身体にゆかりは喘ぐ。
+			PRINTFORMDW 気持ちよくなっている事を否定できない状況で……ふと、ゆかりは「体の中から」違和感を覚えた。
+			PRINTFORMDW 肌がぷるんとして、艶やかになっていくような感覚――
+			PRINTFORMDW 『一緒に気持ちよくなりたいって言ったでしょ？』
+			PRINTFORMDW 絶句しているゆかりに対し、マキは口を開く。その顔は半分くらいしか形を留めていないが。
+			PRINTFORMDW 『だから文字通りくっつこうよ？　ゆかりもスライムになって、わたしと混じり合おう』
+			PRINTFORMW 「ひっ……！？」
+			PRINTFORMDW その言葉に悲鳴を上げるのと同時に、ゆかりはぐしゃりと音を立てながら座り込んだ。
+			PRINTFORMDW 足元を見ると、膝から下がくっつき始めている。重力に耐え切れず、平らになりながら。
+			PRINTFORM 「い、嫌、ヤダぁ！　化け物になんてなりたくないっ……あぁっ、うああぁっ
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW 『ちょっとちょっと、こんなに気持ちいいのに嫌がるの？』
+			PRINTFORMDW 身体が快楽に揺れ、腕が視界の中に入ってくる。その手は色を失い始めていた。骨すら見えない。
+			PRINTFORMDW もはや暴れる体力もなく、泣き叫ぶしかできないゆかりは自分の身長が低くなっていくのを実感した。
+			PRINTFORMDW 体全体が粘液と化して、ゆかりの身体は水たまりの中に消えていった……
+			PRINTFORML 
+			PRINTFORMDW ………
+			PRINTFORMDW ……
+			PRINTFORMDW …
+			PRINTFORML 
+			SETCOLOR 0, 255, 255
+			PRINTFORMDW 『おはよう、ゆかり』
+			PRINTFORMW 「う…………」
+			PRINTFORMDW 聞き慣れた声が耳に届く。意識を取り戻したゆかりは、今どんな状況だったかを思い出して、
+			PRINTFORMW 「っ！！！！」
+			PRINTFORMDW 思わず跳ね起きた。その身体が水しぶきが上がる。とっさにゆかりは自らの手を見つめて、
+			PRINTFORMW 「……そん、な」
+			PRINTFORMDW 自らの手が、完全に粘液そのものになっている事に気付いた。
+			PRINTFORMDW そしてそれは身体全体も同じで、足元にある水たまりは自分の思った通りに動いていく。
+			PRINTFORMDW 震えながら体液を落とすゆかりに、同じ水たまりから生えたマキが抱きついてくる。
+			PRINTFORMD 「じゃあ、さっそく実験……んぅ……
+			CALL HEARTCB(0xD02830)
+			PRINTFORMDW 」
+			PRINTFORM 「はっ……
+			CALL HEARTCB(0xD02830)
+			PRINTFORM 　あ、なに
+			CALL HEARTCB(0xD02830)
+			PRINTFORM 　これぇっ
+			CALL HEARTCB(0xD02830)
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW マキが舌を絡ませながら互いの乳首を擦り合わせると、おかしな感覚が伝わってきた。
+			PRINTFORMDW 舌を、胸を、自分を責めるマキの快楽まで伝わってくる。その快感は二倍、いやそれ以上だ。
+			PRINTFORMDW ゆかりが粘液を撒き散らしながら快感に身を震わせるのを見て、マキは体液を零しながら口を離した。
+			PRINTFORMDW 『言ったでしょ、わたしと混じり合うんだ……って。ゆかりの身体とわたしの身体は融合してるんだ』
+			PRINTFORMW 「ふぁ……？」
+			PRINTFORMDW 理解しているのかいないのか、ゆかりは舌を突き出した口から体液をどろどろと零しているだけだ。
+			PRINTFORMDW そんなゆかりの……自分の身体に、マキは再び容赦なく体を重ねた。
+			PRINTFORMDW 『要するに……ゆかりもわたしも普通よりずっと気持ちいいって事だよ！』
+			PRINTFORM 「はっ
+			CALL HEARTCB(0xD02830)
+			PRINTFORM 　は……あぁっ
+			CALL HEARTCB(0xD02830)
+			CALL HEARTCB(0xD02830)
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW ゆかりが絶頂すると同時にマキも絶頂を迎え、二人で一つの身体から粘液を飛び散らせる。
+			PRINTFORMDW 無論、責めはこれで終わること無く二人のスライム少女はずっと体を絡ませ続けていく。
+			PRINTFORMDW 迷宮クリアも、人間だったことすら忘れて、ただ異形の快楽に身を委ねるのだった……
+		;自分の娘にやられた
+		ELSEIF ARG:1 == 19 && CFLAG:900 == 1
+			PRINTFORMDW 母親が完全に屈服したことを確認した娘は、愛おしげにゆかりを抱え上げると迷宮の一室に連れ込んだ。
+			PRINTFORMDW ぐったりとしてしたゆかりを触手で縛り上げると、娘はさっそく胸に吸い付き母乳を吸い上げていく……
+			PRINTFORMW 「あ、か、噛まれっ、はんっうっ！？　ち、乳首、したで、転がされてぇ！？」
+			SETCOLOR 235, 83, 129
+			PRINTFORMW 「ん……ママのみるく、おいしいよ♪」
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「とけるっ、あつくて、胸がとけちゃうぅぅぅぅぅっ！」
+			PRINTFORMDW それこそ吸い尽くされる勢いで乳首を吸われること数分……
+			PRINTFORMDW 満足げに娘が胸から離れる頃には、ゆかりは何度も絶頂を繰り返していた。
+			PRINTFORMW 「うぁ……は、あひっ……」
+			SETCOLOR 235, 83, 129
+			PRINTFORMW 「あはっ、ママ、かわいい♪」
+			PRINTFORMDW 娘は朗らかに笑うと自分の股間から肉竿を生やし、ゆかりの割れ目にぴったりと先端を当てる。
+			PRINTFORMW 「んっ、ここから、私が産まれたんだよね……やっと一人で、じっくり弄れるね♪」
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「あっ……ぅ、んあっ、あ、あーっ！？」
+			PRINTFORMDW そのまま、膣内へとじっくりと肉竿を押し込んでいく。慣れ親しんだ快感に、ゆかりは腰を浮かした。
+			PRINTFORMW 「そ、そんなっ、あっ、だめ、そこはぁぁぁぁぁぁっ♪」
+			PRINTFORMDW 中を細かく抉っていく動きに、散々秘所を犯され開発されてきたゆかりは耐え切れない。
+			PRINTFORMDW 表情は快感に染まり、言葉は嬌声ばかりになっていく……
+			PRINTFORMW 「いぁ、い、いいのっ、きもちいぃんっ、も、もうやめてくださいぃ！」
+			SETCOLOR 235, 83, 129
+			PRINTFORMW 「そうなんだ、よかった♪　それでね……ママ」
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「ひあぁんっ！？」
+			PRINTFORMDW 抽送を止めることなく、娘はゆかりの顔に自分の顔をすり寄せ、囁いた。
+			SETCOLOR 235, 83, 129
+			;妊娠中
+			IF CFLAG:36 >= 3
+				PRINTFORMW 「ママ、もう子供がいるんだね……？　わたし、妹にあいさつしたい♪」
+			ELSE
+				PRINTFORMW 「わたしね、妹がほしい……ママにいっぱい子供を産んで欲しい♪」
+			ENDIF
+			SETCOLOR CFLAG:700
+			;妊娠中
+			IF CFLAG:36 >= 3
+				PRINTFORMW 「だ、だめですよ……そんな、の……こども、が……ひあぁっんっ！？」
+			ELSE
+				PRINTFORMW 「だ、だめですよ……そんな、の……わたし、たち、おや、こ……ひあぁっんっ！？」
+			ENDIF
+			PRINTFORMDW 娘の腰の動きが加速する。その気持ちよさに、言葉と裏腹にゆかりの腰も自然と揺れてしまう。
+			PRINTFORMW 「だ、だめだめだめだめぇ！　きもちいぃことはしてあげますから、こどもはぁっ！」
+			SETCOLOR 235, 83, 129
+			;妊娠中
+			IF CFLAG:36 >= 3
+				PRINTFORMW 「んっ……だすよ、ママ、ちゃんと妹に届かせてねっ……！」
+			ELSE
+				PRINTFORMW 「んっ……だすよ、ママ、ちゃんとじゅせーしてねっ……！」
+			ENDIF
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「だめぇ、も、もうっ、イく、なかだしでイっちゃううぅぅぅっ！！？」
+			PRINTFORMDW ゆかりが絶頂すると共に、娘の肉竿はゆかりの一番奥で射精した。膣から、白いものが溢れてくる。
+			PRINTFORM 「んああああっ、入ってるぅ♪　なか、あついの、いっぱい来ちゃったぁんっ……
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW 快楽で痙攣するゆかりにできるのは、蕩けた表情で甘い声を漏らすことだけ。
+			PRINTFORMDW 娘と交わっているという背徳感も、快楽を加速させる要素にしかならない。
+			PRINTFORMDW そんなゆかりの顔を見て、娘はにっこりと笑った。膣内から、自分の肉竿を抜かないまま。
+			SETCOLOR 235, 83, 129
+			PRINTFORMW 「ママがきもちよさそうで、よかった……♪　それじゃ、続きだね！」
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「ふぇ……？　んひぃっ！？」
+			PRINTFORMDW 余韻に浸っていたゆかりの奥を、また肉竿が押し広げる。急な快楽で、ゆかりの息が詰まる。
+			SETCOLOR 235, 83, 129
+			;妊娠中
+			IF CFLAG:36 >= 3
+				PRINTFORMW 「だいじょうぶだよ……わたし達は、そうそう簡単に死なないから♪」
+			ELSE
+				PRINTFORMW 「ママがぜったい、１００％妊娠できるくらいまでやろうよ♪」
+			ENDIF
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「んあああああああああっ！　やめて、やめてやめてやめてぇ！　イく、すぐイっちゃうぅぅっ！」
+			PRINTFORML 
+			PRINTFORMDW ………
+			PRINTFORMDW ……
+			PRINTFORMDW …
+			PRINTFORML 
+			PRINTFORMW 「うあっ！？　あ、あぁっ、うま、うまれっ、うまれりゅっ！
+			PRINTFORMW 　こしゅ、こしゅってるっ、うぅんっ♪　んっ、んうぅっ……！」
+			PRINTFORMDW それから毎日、ゆかりは娘たちに犯され続け……何度も出産してはすぐ孕まされた。
+			PRINTFORMDW 今日もまた子供を産むゆかりの体は、出産で受ける感覚がすべて快感になるよう作り変えられていた。
+			SETCOLOR 235, 83, 129
+			PRINTFORMW 「えへへ、また妹ができたね、ママ。そろそろ、娘で孫な子も作れるよ♪」
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「……はぁ、はぁっ、んぅっ、あはぁ……♪」
+			PRINTFORMDW 嬉しそうな娘にゆかりはもはや抵抗する様子もなく、蕩け切った笑みを浮かべるだけ。
+			PRINTFORMDW 迷宮がゆかりに瓜二つの少女たちで溢れかえる日は、そう遠くはないだろう……
+		ELSE
+			RESETCOLOR
+			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+			RETURN 1
+		ENDIF
+	;主人公復活
+	CASE 158
+		;助けてもらって復活
+		IF ARG:1 == 0
+			PRINTFORMW 「う……あ……？」
+			PRINTFORMW 「たす、かったの……わたし……？」
+		ENDIF
+	;PT離脱　霊夢が抜ける
+	CASE 161
+		PRINTFORMW 「ごめんなさい、その～……ちょっと抜けますね？」
+	;PT離脱　霊夢が残る
+	CASE 162
+		SELECTCASE NO:(ARG:1)
+			;マキ　娘含む
+			CASE 2
+				PRINTFORMW 「1人で行動するのはいいけど、無理はダメだぞぉ？
+				PRINTFORMW 　危なくなったらどっかで隠れてて。いい？」
+			CASEELSE
+				PRINTFORMW 「1人で行動するんですか？
+				PRINTFORMW 　別に構いませんけど、無理しないでくださいね」
+		ENDSELECT
+	;ランダムイベント発生
+	CASE 200
+		;MPが1/4以下か発情中か妊娠か朦朧
+		IF MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:36 >= 3 || FLAG:7 >= 11
+			SELECTCASE ARG:1
+				;澄んだ泉　0で飲む、1で入る、2で無視
+				CASE 133
+					SELECTCASE ARG:2
+						;MP回復
+						CASE 0
+							PRINTFORMW 「……ジュースの方がいいんですけど、贅沢言えませんよね」
+						;EP回復
+						CASE 1
+							PRINTFORMW 「はふぅ、体の火照りが鎮まる……」
+						;無視
+						CASE 2
+							PRINTFORMW 「できれば休みたいんですけど……」
+						ENDSELECT
+				;白濁した泉　133とは違う場所
+				CASE 134
+					SELECTCASE ARG:2
+						;入って速度+
+						CASE 3
+							PRINTFORMW 「？　体がいつもより軽いような……」
+						;入って寄生
+						CASE 4
+							PRINTFORMW 「！？　な、何か変なのが！」
+						;帰る
+						CASE 5
+							PRINTFORMW 「なんか、嫌な感じがしますね……」
+					ENDSELECT
+				;不思議な泉　0で飲む、1で入る、2で無視
+				CASE 135
+					SELECTCASE ARG:2
+						;HP・MP・EP全快	;全状態異常治療
+						CASE 0, 1
+							PRINTFORMW 「た、助かったぁ……」
+						;無視
+						CASE 2
+							PRINTFORMW 「……入るべきだったかもしれませんけど、でも……」
+						ENDSELECT
+				;天井からスライム　1で回避失敗、2で回避成功
+				CASE 136
+					SELECTCASE ARG:2
+						CASE 1
+							IF BASE:CP <= 0
+								PRINTFORMW 「慌てる必要ありませんでしたね……服着てないですし」
+							ELSE
+								PRINTFORMW 「しまった、こんなのにやられるなんて……！」
+							ENDIF
+						CASE 2
+							PRINTFORMW 「気付くのが遅れてたら……危なかったかもしれませんね」
+					ENDSELECT
+				;壁から触手　1で回避失敗、2で回避成功
+				CASE 137
+					SELECTCASE ARG:2
+						CASE 1
+							PRINTFORMW 「な、なにこれ、離れっ……！」
+						CASE 2
+							PRINTFORMW 「うわっ！壁も敵なんて、気が休まりませんね……」
+					ENDSELECT
+				;落とし穴　霊夢の初期能力上、絶対に落ちない…はずなのだがルナティックで落ちた
+				;なんか補正あるのかしらん
+				CASE 138
+					SIF ARG:2 == 2
+						PRINTFORMW 「今の体調でも、これくらいはなんとか」
+				;桃色ガス　1で回避失敗、2で回避成功
+				CASE 139
+					SELECTCASE ARG:2
+						CASE 1
+							;自慰中毒2以上
+							IF ABL:10 > 1
+								PRINTFORMW （吸えば……自分でしたくなる……してもしょうがなくなる……！）
+							ELSE
+								PRINTFORMW 「あ、いき、止めなきゃ、す、吸ったらっ……！？」
+							ENDIF
+						CASE 2
+							PRINTFORMW 「んっ……ほんと面倒ですね……！」
+					ENDSELECT
+				;誰かの荷物
+				CASE 140
+					SELECTCASE ARG:2
+						;開ける
+						CASE 0
+							PRINTFORMW 「誰の……うぅん、今は気にしていられませんね」
+						;無視
+						CASE 1
+
+					ENDSELECT
+
+				;喋れる触手
+				CASE 142
+					SELECTCASE ARG:2
+						;開始
+						;ARG:3が0は尻、1は胸、2はC、3は膣
+						CASE 0
+							PRINTFORMW 「役に立つ物がもらえるなら……でも怪しさ満点ですし……ふやんっ！？」
+						;終了
+						CASE 3
+
+						;だが断る
+						CASE 4
+							PRINTFORMW 「い、いくらゆかりさんでもお断りです……！」
+					ENDSELECT
+				;淫蟲の大群　A属性EPダメージ　絶頂時MPダメージ大
+				CASE 146
+					PRINTFORMW 「な、中に……ぁ、ふあああぁっ！？」
+				;淫蟲の大群　B属性EPダメージ　母乳体質時EP・MPダメージ倍
+				CASE 147
+					IF TALENT:130
+						;出産悦びフラグ
+						IF CFLAG:803 >= 3
+							PRINTFORM 「いやぁ、吸っちゃだめぇ、赤ちゃんのために出るのにぃ……
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						ELSE
+							PRINTFORMW 「いやぁ、吸っちゃだめぇ……また、またみるく出ますからぁ！？」
+						ENDIF
+					ELSE
+						PRINTFORMW 「は、張り付かないでっ、そこだめぇっ！」
+					ENDIF
+				;淫蟲の大群　C属性EPダメージ　それなりの確率で発情
+				CASE 148
+					SELECTCASE ARG:2
+						;受けた時
+						CASE 1
+							PRINTFORMW 「は、張り付かないでっ、そこだめぇっ！？」
+						;発情　↑から連続で発生するので被りに注意
+;						CASE 2
+;							PRINTFORMW 
+						;ふたなり　↑から連続で発生するので被りに注意
+;						CASE 3
+
+					ENDSELECT
+				;淫蟲の大群　V属性EPダメージ　稀に寄生
+				CASE 149
+					SELECTCASE ARG:2
+						CASE 1
+							PRINTFORMW 「な、中に……ひあああぁっ！？」
+						CASE 2
+							;寄生　↑から連続で発生するので被りに注意
+							PRINTFORMW 「まだ、いる……あぐっ、なかから、擦られてるぅ……」
+					ENDSELECT
+				;落石　1で回避失敗、2で回避成功
+				CASE 150
+					SELECTCASE ARG:2
+						CASE 1
+							PRINTFORMW 「い、いたた……やっぱり動きが鈍ってますね。なんとかしないと」
+						CASE 2
+							PRINTFORMW 「こんなのを避けるくらいは……」
+					ENDSELECT
+			ENDSELECT
+		ELSE
+			SELECTCASE ARG:1
+				;澄んだ泉　0で飲む、1で入る、2で無視
+				CASE 133
+					SELECTCASE ARG:2
+						;MP回復
+						CASE 0
+							PRINTFORMW 「これで、マキさんの作ったお弁当があったら良かったんですが」
+						;EP回復
+						CASE 1
+							PRINTFORMW 「う～ん、温泉だったら良かったんですけど」
+						;無視
+						CASE 2
+							PRINTFORMW 「安全そうだし、この場所は覚えておいたほうが良さそうですね」
+						ENDSELECT
+				;白濁した泉　133とは違う場所
+				CASE 134
+					SELECTCASE ARG:2
+						;入って速度+
+						CASE 3
+							PRINTFORMW 「？　体がいつもより軽いような……」
+						;入って寄生
+						CASE 4
+							PRINTFORMW 「！？　な、何か変なのが！」
+						;帰る
+						CASE 5
+							PRINTFORMW 「なんか、嫌な感じがしますね……」
+					ENDSELECT
+				;不思議な泉　0で飲む、1で入る、2で無視
+				CASE 135
+					SELECTCASE ARG:2
+						;HP・MP・EP全快	;全状態異常治療
+						CASE 0, 1
+							PRINTFORMW 「おぉ！すっごく美味しい……って消えちゃいましたね」
+						;無視
+						CASE 2
+							PRINTFORMW 「……なんか、もったいないことをしたような」
+					ENDSELECT
+				;天井からスライム　1で回避失敗、2で回避成功
+				CASE 136
+					SELECTCASE ARG:2
+						CASE 1
+							IF BASE:CP <= 0
+								PRINTFORMW 「避ける必要ありませんでしたね……服着てないですし」
+							ELSE
+								PRINTFORMW 「しまった、こんなのにやられるなんて……！」
+							ENDIF
+						CASE 2
+							PRINTFORMW 「事前に水滴落としちゃうような間抜けに、ゆかりさんは引っかかりませんよ」
+					ENDSELECT
+				;壁から触手　1で回避失敗、2で回避成功
+				CASE 137
+					SELECTCASE ARG:2
+						CASE 1
+							PRINTFORMW 「や、やめてください、やめ……！」
+						CASE 2
+							PRINTFORMW 「そんな長さじゃあ届かないですよ」
+					ENDSELECT
+				;落とし穴　霊夢の初期能力上、絶対に落ちない…はずなのだがルナティックで落ちた
+				;なんか補正あるのかしらん
+				CASE 138
+					SIF ARG:2 == 2
+						PRINTFORMW 「わっとと。危うく落ちるところでした」
+				;桃色ガス　1で回避失敗、2で回避成功
+				CASE 139
+					SELECTCASE ARG:2
+						CASE 1
+							;自慰中毒2以上
+							IF ABL:10 > 1
+								PRINTFORMW （吸えば……自分でしたくなる……してもしょうがなくなる……！）
+							ELSE
+								PRINTFORMW 「あ、いき、止めなきゃ、す、吸ったらっ……！？」
+							ENDIF
+						CASE 2
+							PRINTFORMW 「んっ……面倒な」
+					ENDSELECT
+				;誰かの荷物
+				CASE 140
+					SELECTCASE ARG:2
+						;開ける
+						CASE 0
+							PRINTFORMW 「拾った以上は、有効活用させてもらいましょう」
+						;無視
+						CASE 1
+
+					ENDSELECT
+
+				;喋れる触手
+				CASE 142
+					SELECTCASE ARG:2
+						;開始
+						;ARG:3が0は尻、1は胸、2はC、3は膣
+						CASE 0
+							PRINTFORMW 「ちゃ、ちゃんと報酬はもらいますからね……ひゃんっ！？」
+						;終了
+						CASE 3
+
+						;だが断る
+						;※主人公です
+						CASE 4
+							PRINTFORMW 「こんな場所にあること自体、どう考えても……ねぇ？」
+					ENDSELECT
+				;淫蟲の大群　A属性EPダメージ　絶頂時MPダメージ大
+				CASE 146
+					PRINTFORMW 「なっ、ばか、どこに入り込んでぇっ！？」
+				;淫蟲の大群　B属性EPダメージ　母乳体質時EP・MPダメージ倍
+				CASE 147
+					IF TALENT:130
+						;出産悦びフラグ
+						IF CFLAG:803 >= 3
+							PRINTFORM 「いやぁ、吸っちゃだめぇ、赤ちゃんのために出るのにぃ……
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						ELSE
+							PRINTFORMW 「いやぁ、吸っちゃだめぇ……また、またみるく出ますからぁ！？」
+						ENDIF
+					ELSE
+						PRINTFORMW 「は、はやく、叩き落とっ……やぁぁぁぁぁっ！」
+					ENDIF
+				;淫蟲の大群　C属性EPダメージ　それなりの確率で発情
+				CASE 148
+					SELECTCASE ARG:2
+						;受けた時
+						CASE 1
+							PRINTFORMW 「は、はやく、叩き落とっ……やぁぁぁぁぁっ！」
+						;発情　↑から連続で発生するので被りに注意
+;						CASE 2
+;							PRINTFORMW 
+						;ふたなり　↑から連続で発生するので被りに注意
+;						CASE 3
+
+					ENDSELECT
+				;淫蟲の大群　V属性EPダメージ　稀に寄生
+				CASE 149
+					SELECTCASE ARG:2
+						CASE 1
+							PRINTFORMW 「なっ、ばか、どこに入り込んでぇっ！？」
+						CASE 2
+							;寄生　↑から連続で発生するので被りに注意
+							PRINTFORMW 「ぐ、最悪……こいつら、出てこない……」
+					ENDSELECT
+				;落石　1で回避失敗、2で回避成功
+				CASE 150
+					SELECTCASE ARG:2
+						CASE 1
+							PRINTFORMW 「い、いたた……落石なんかに当たっちゃうだなんて……」
+						CASE 2
+							PRINTFORMW 「危ない危ない」
+					ENDSELECT
+			ENDSELECT
+		ENDIF
+	;遺品回収　喪失か不死身モードではフラグのみ回収
+	CASE 202
+		;娘は弾く、念のため
+		IF CFLAG:(ARG:1):104
+			;汎用　行あけ区分のためこっちから戻す
+			RESETCOLOR
+			;口上記入済み
+			RETURN 1
+		ENDIF
+
+		SELECTCASE NO:(ARG:1)
+			;マキ
+			CASE 2
+				IF CFLAG:29 == 0 && FLAG:503 < 2
+					PRINTFORMW 「……これ……マキさんの。
+					PRINTFORMW 　……………………全く、わたしより先にヤられてどうするんですか。
+					PRINTFORMW 　これは帰ったらお説教……ですね」
+				ENDIF
+				CFLAG:899 |= 2
+			;アリス
+			CASE 14
+				IF CFLAG:29 == 0 && FLAG:503 < 2
+					PRINTFORMW 「……あんたとは、それなりに長い付き合いだったみたいだけど。
+					PRINTFORMW 　それも、もうおしまいね。さよなら……アリス」
+				ENDIF
+				CFLAG:899 |= 4
+			;紫
+			CASE 22
+				IF CFLAG:29 == 0 && FLAG:503 < 2
+					PRINTFORMW 「この服は……紫の……。そう。そういうことなのね。
+					PRINTFORMW 　迷惑な話よ。いろんな仕事をしないといけなくなったのが目に見えてるし。
+					PRINTFORMW 　とりあえずしなきゃいけなくなったのは――仇討ちだけど」
+				ENDIF
+				CFLAG:899 |= 32
+			;その他　他の口上次第では超外道にならねーかこれ？　悲しむ奴の隣でこんなこと言ったら……
+			CASEELSE
+				IF CFLAG:29 == 0 && FLAG:503 < 2
+					PRINTFORMW 「誰かヤられちゃったみたいですね。
+					PRINTFORMW 　ちょっと気は引けますけど、わたしも余裕がありませんし……」
+				ENDIF
+				;藍様　ゆかりん死亡時のエンディングで八雲家引き継ぐ霊夢とか書きたいので
+				IF NO:(ARG:1) == 21
+					CFLAG:899 |= 16
+				;ちぇん
+				ELSEIF NO:(ARG:1) == 13
+					CFLAG:899 |= 8
+				ENDIF
+		ENDSELECT
+	;任意のほうのオープニング
+	CASE 203
+		IF TARGET == 1
+			;リセットカラーしないとドローラインも桃色になる
+			RESETCOLOR
+			DRAWLINE 
+			PRINTFORMW 普段と変わらない日常。
+			PRINTFORMW いつも通り、ゆかりはマキの家に向かっていた。
+			PRINTFORML 
+			SETCOLOR CFLAG:700
+			PRINTFORMW 「おや？」
+			PRINTFORML 
+			PRINTFORMDW マキの家に着いたが、違和感に包まれた。
+			PRINTFORMDW ふと玄関を見ると、わずかに扉が開いていた。
+			PRINTFORMDW 訝し気にゆかりは声をかける。
+			PRINTFORML 
+			PRINTFORMW 「マキさん、いるんですか？」
+			PRINTFORML 
+			PRINTFORMDW 不用心な、と思いながらそっと扉に手をかける。
+			PRINTFORMDW 普段からちょっと抜けているから鍵をかけ忘れたのかもしれない。
+			PRINTFORMDW だからゆかりは油断し、反応出来なかった。
+			PRINTFORML 
+			PRINTFORMDW 「え……？　なっ！？」
+			PRINTFORML 
+			PRINTFORMDW 自分に降りかかる淫劇を想像だにせず、ゆかりは触手宮の中へと引きずり込まれていった――
+			RESETCOLOR
+			DRAWLINE 
+		ENDIF
+	;主人公時エンディング系で、現在書いてるもの
+	CASE 206, 210
+		CALL ENDING_3_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	;ふたなり治療
+	CASE 461
+;		;ゆかり以外の娘
+;		IF CFLAG:(ARG:2):104 && NO:(ARG:2) != 1
+;			;汎用　行あけ区分のためこっちから戻す
+;			RESETCOLOR
+;			;口上記入済み
+;			RETURN 1
+		;ゆかりの娘
+		IF CFLAG:(ARG:2):104 && NO:(ARG:2) == 1
+			;出産悦びフラグ一定未満
+			IF CFLAG:803 < 3
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+						PRINTFORMW 「ほ、ほら……さっさと動いてください……他のやつ、襲わせるわけにはいかないんですからだから……
+						PRINTFORMW 　だから……わたしの中に、出してください……」
+					;胸＆口
+					CASE 1, 3
+						PRINTFORMW 「んんっ……勘違いしないで、ください。身内の恥を外に出したくないってだけですから、んむぅっ……」
+					;尻で
+					CASE 2
+						PRINTFORMW 「お尻なら……しても大丈夫ですから。それで満足して……」
+					;手で
+					CASE 4
+						PRINTFORMW 「ほら、早く出してください」
+				ENDSELECT
+			ELSE
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+						PRINTFORMW 「しかたないんです……んっ、他の誰かを犯させるわけにはいきません、からっ……♪
+						IF CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
+							PRINTFORM 　今なら、赤ちゃんができませんから……
+						ELSE
+							PRINTFORM 　もし出来ても、受け入れますよ……
+						ENDIF
+						PRINTFORM あっ、う、ぁあっ、きてる、のぼってきてる、
+						IF CFLAG:(ARG:2):104 > 1
+							PRINTFORMW ちっちゃい子のせーえきくるっ！
+						ELSE
+							PRINTFORMW 娘のせーえきくるっ！
+						ENDIF
+						PRINTFORM 　わたしもきてます、きもちいいの来るっ、そのまま、なかにだしてぇっ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					;胸or口or手
+					CASE 1, 3, 4
+						PRINTFORM 「もう、困った子ですね。わたしがしてあげますから……
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					;尻で
+					CASE 2
+						PRINTFORM 「お尻ならいいですよ……はっ、んぅ……ふふ、ほら、いっぱい出してください
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			ENDIF
+		;マキ
+		ELSEIF NO:(ARG:2) == 2 && CFLAG:(ARG:2):104 == 0
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+						PRINTFORMW 「はっ、ああぁぁぁぁっ……見て、マキさんのが入ってますよ……？
+						PRINTFORM 　ふふっ、そんな顔しても、だーめ、逃がさないの、精液出させるのっ、うあぁんっ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 
+						PRINTFORMW 　ほら、おちんちんは素直ですよ、マキさん？　おっきくなって、なかに、出そうとっ、してますぅ……♪
+						;出産悦びフラグかつ妊娠
+						IF CFLAG:803 >= 3 && CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
+							PRINTFORM 　抜かないでっ！　なかだししてマキさん、赤ちゃんにせーえき飲ませてあげてぇっ
+						;出産悦びフラグ
+						ELSEIF CFLAG:803 >= 3
+							PRINTFORM 　抜かないでっ！　なかだししてマキさん、わたしに貴方の赤ちゃん孕ませてぇっ
+						ELSE
+							PRINTFORM 　ダメ、抜かせないっ、わたしの中にいっぱいなかだししてぇっ
+						ENDIF
+						CALL HEARTCB(0xD02830)
+						CALL HEARTCB(0xD02830)
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+						CFLAG:990 += 1
+					;胸で
+					CASE 1
+						PRINTFORM 「マキさんったら、擦られる度に震えちゃってますよ。かわいい
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					;尻で
+					CASE 2
+						PRINTFORMW 「ふふ……好きなだけ出していいよ？」
+					;口で
+					CASE 3
+						IF ABL:14 > 1
+							PRINTFORM 「はむっ……飲ませてね、マキさんのせーえき……れろぉ
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						ELSE
+							PRINTFORMW 「は、はむぅ……ど、どうですか、マキさん……」
+						ENDIF
+					;手で
+					CASE 4
+						IF ABL:14 > 1
+							PRINTFORMW 「ふふ……好きなだけ出していいですよ？」
+						ELSE
+							PRINTFORMW 「ほ、ほら……手伝ってあげますから、早くなんとかしてください、それ」
+						ENDIF
+				ENDSELECT
+		ELSE
+			SIF ABL:14 > 1
+				PRINTFORMW 「うんうん、こんな風に股間に張り付いた触手は退治しますよ！　それじゃ……」
+
+				SELECTCASE ARG:1
+					;膣で
+					CASE 0
+						PRINTFORM 「あぁ、おっきい……
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　そのまま動いてっ、いっぱいせーえき出させておちんちん退治しますからぁ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 
+						;妊娠
+						IF CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
+							PRINTFORMW 　孕むとか気にしなくていいんです、もうお腹の中にいるんですから、好きなだけ中出ししてぇっ！」
+						;出産悦びフラグ
+						ELSEIF CFLAG:803 >= 3
+							PRINTFORMW 　受精してもいいっ、欲しいんです、子供も産みたい、だから好きなだけ中出ししてぇっ！」
+						ELSE
+							PRINTFORMW 　できちゃってもいいですから、せーえき欲しいの、だから好きなだけ中出ししてぇっ！」
+						ENDIF
+					;胸で
+					CASE 1
+						PRINTFORML 「あ……凄い、どんどんおっきくなってきてます……出したいんですね？
+						PRINTFORM 　なら出してください、びゅくびゅくって体が真っ白になるくらい……
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					;尻で
+					CASE 2
+						PRINTFORMW 「ふふ……好きなだけ出していいですよ？」
+					;口で
+					CASE 3
+						IF ABL:14 > 1
+							PRINTFORM 「ちゅっ、んむぅ……んふ、おいひ……
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						ELSE
+							PRINTFORMW 「んぐっ、んむぅ……は、はひゃく、はひてくらひゃい……」
+						ENDIF
+					;手で
+					CASE 4
+						IF ABL:14 > 1
+							PRINTFORMW 「あらら、いじる度に震えちゃうんですね。ついでに息でも吹きかけましょうか……？」
+						ELSE
+							PRINTFORMW 「ほら、早く出してください」
+						ENDIF
+				ENDSELECT
+		ENDIF
+	CASEELSE
+		;汎用　行あけ区分のためこっちから戻す
+		RESETCOLOR
+		;口上記入済み
+		RETURN 1
+ENDSELECT
+
+RESETCOLOR
+
+;行あけ
+PRINTFORML 
+
+;口上記入済み
+RETURN 1
+

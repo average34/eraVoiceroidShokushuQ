@@ -98,8 +98,9 @@ CFLAG:CHARA_ID:99 = 0
 ;戦意喪失していても巻き込まれるし巻き込む
 @LINK_FALL_2
 #DIM LCOUNT	;ループ用
-#DIM SLAVE_ID,2
+#DIM SLAVE_ID,3
 #DIM VICTIM_ID,2
+#DIM NOTPET
 
 LOCAL:0 = 0
 LOCAL:1 = 0
@@ -114,6 +115,19 @@ FOR LCOUNT, 0, 3
 		LOCAL:1 += 1
 	ENDIF
 NEXT
+
+;PT全員【しもべ】か【花嫁】なら別れようとした主人公が被害者
+IF (FLAG:11 == 0 && SLAVE_ID:1) || SLAVE_ID:2
+	VICTIM_ID:0 = 1
+	SLAVE_ID:0 = FLAG:10
+	SLAVE_ID:1 = FLAG:11
+	NOTPET = 1
+ENDIF
+
+
+
+
+
 
 ;【しもべ】か【花嫁】がメンバーに二人以上いる
 IF SLAVE_ID:1 > 0
@@ -167,8 +181,10 @@ IF SLAVE_ID:1 > 0
 	NEXT
 
 	PRINTFORMW
-	PRINTFORML %PETNAME%に堕とされた%CALLNAME:(VICTIM_ID:0)%は【しもべ】を手に入れた！
-	PRINTFORML 
+	IF NOTPET == 0
+		PRINTFORML %PETNAME%に堕とされた%CALLNAME:(VICTIM_ID:0)%は【しもべ】を手に入れた！
+		PRINTFORML 
+	ENDIF
 ;【しもべ】や【花嫁】は一人
 ELSE
 	;【しもべ】や【花嫁】でない正常なのが二人いる
@@ -232,8 +248,10 @@ ELSE
 	NEXT
 
 	PRINTFORMW
-	PRINTFORML %PETNAME%に堕とされた%CALLNAME:(VICTIM_ID:0)%は【しもべ】を手に入れた！
-	PRINTFORML 
+	IF NOTPET == 0
+		PRINTFORML %PETNAME%に堕とされた%CALLNAME:(VICTIM_ID:0)%は【しもべ】を手に入れた！
+		PRINTFORML 
+	ENDIF
 	
 	;ここから二人目がいるなら染める　みんな仲良し
 	IF VICTIM_ID:1 > 0
@@ -287,8 +305,10 @@ ELSE
 		NEXT
 		
 		PRINTFORMW
-		PRINTFORML %PETNAME%に堕とされた%CALLNAME:(VICTIM_ID:0)%は【しもべ】を手に入れた！
-		PRINTFORML 
+		IF NOTPET == 0
+			PRINTFORML %PETNAME%に堕とされた%CALLNAME:(VICTIM_ID:1)%は【しもべ】を手に入れた！
+			PRINTFORML 
+		ENDIF
 	ENDIF
 		
 	PRINTFORMW
@@ -341,6 +361,8 @@ VICTIM_ID:0 = 0
 VICTIM_ID:1 = 0
 SLAVE_ID:0 = 0
 SLAVE_ID:1 = 0
+SLAVE_ID:2 = 0
+NOTPET = 0
 
 PRINTFORMW
 
