@@ -1,0 +1,217 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 10～14 弾幕攻撃
+; ------------------------------------------------------------------------------
+
+; □ 10 弾幕攻撃 弱攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_1_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 汎用口上を読み込む
+	CALL KOJO_8_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 残りMP 66%以上
+	IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「塵も積もれば山となる！　こんな攻撃でも意味があるはず！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「威力は低くても、ちゃんと当てていかないとですね！」\n"
+		ENDSELECT
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんな攻撃でも、ちょっとは効くハズ…っ！」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしの攻撃、ちゃんと効いてるんでしょうか…）\n"
+		ENDSELECT
+	ENDIF
+	
+	; 2人以上のPTで行動中、他キャラが行動可能なら追加口上
+	IF GET_MEMBER_SUM() > 1 && ((TARGET != 1 && CHECK_FINE(TARGET)) || (FLAG:10 && FLAG:10 != TARGET && CHECK_FINE(FLAG:10)) || (FLAG:11 && FLAG:11 != TARGET && CHECK_FINE(FLAG:11)))
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「力の弱いわたしはサポート、確実に当てていかないと」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 11 弾幕攻撃 中攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_1_11(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 汎用口上を読み込む
+	CALL KOJO_8_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 残りMP 66%以上
+	IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっと強めにいきますよ！」\n"
+		ENDSELECT
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「威力とか、当たりやすさとか、何事もバランスが大事です」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こっ、これでもくらえ！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 12 弾幕攻撃 強攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_1_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 霊撃も強攻撃から呼び出される
+	; 霊撃
+	IF CFLAG:50 == 19
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これで、どぉだぁっ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「撃て－っ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「せーのっ！！」\n"
+	
+	; 強攻撃
+	ELSE
+		; 汎用口上を読み込む
+		CALL KOJO_8_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		CALL KOJO_8_0_FIX_MESSAGE
+	
+		; 残りMP 66%以上
+		IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「かなり強めにいきますよ！　ちゃんと当たってくださいね！」\n"
+			ENDSELECT
+		
+		; 残りMP 33%以上
+		ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「威力重視だと、どうしても狙いが大雑把になっちゃいますね」\n"
+			ENDSELECT
+			
+		; 残りMP 0%以上
+		ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あっ…あったれぇ…！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 13 弾幕攻撃 溜め撃ち
+; ◆ 0 チャージ
+@KOJO_8_0_SYSTEM_MESSAGE_1_13_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ほらほらぁ♥　こっちに隙だらけの小学生がいますよー♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（今のわたしって無防備ですねー♥　捕まったら抵抗できないんじゃないですか？）\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「はーっ♥　はーっ♥　はーっ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こうげきっ…♥　こうげきしなきゃっ…♥　いっぱつで…、おっきいの…っ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「しゅっ…　しゅうちゅ…っ♥　しゅうちゅうしないとぉ…♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（きもちいいのなんかほしくないっ…！　きもちいいのなんかほしくないっ…！！）\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d発情しきった%CALLNAME:TARGET%は、荒い息を吐きながら必死に力を溜めようとしている…\d\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「次ので仕留めてあげます！　覚悟しなさい！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ふっふっふ…　見てなさい！　次はおっきいのいくきますよー！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"(わたしの力はあんまり強くないし…　力を溜めて…　じっくり狙って…)\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は呼吸を整えながら敵の隙をうかがっている\d\n"
+	ENDSELECT
+RETURN 1
+
+
+; 13 弾幕攻撃 溜め撃ち
+; ◆ 1 発射
+@KOJO_8_0_SYSTEM_MESSAGE_1_13_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_MODE
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こっ、これでもっ…　くりゃへぇぇっ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これでぇ、たおりぇへぇぇっ♥」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は辛うじて力を溜めきったが、攻撃の瞬間声が上ずってしまった\d\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「攻撃は最大の防御って言います！　一発おっきいのを喰らえ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「力を溜めて敵を討つ！　とかよりもっと搦め手が好きなんだけですけどね」\n"
+	CASEELSE
+		IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「きりたん砲発射ー！！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「これでも、くらえー！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっきいのいきますよー！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「一撃！必殺！」\n"
+		ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「せーのっ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「とっとと倒れなさいっ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こいつで、なんとかっ！」\n"
+		ELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「いいかげんに倒れてください！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はやく倒さないと…」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1
+
+
+; □ 14 弾幕攻撃 ばら撒き弾
+@KOJO_8_0_SYSTEM_MESSAGE_1_14(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「逃げ道を塞ぎます！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「威力は低いけど当てるが勝ちです！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「きりたん砲、全門斉射－！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「下手な鉄砲も数撃ちゃなんとやら」\n"
+	ENDSELECT
+	
+	; 2人以上のPTで行動中、他キャラが行動可能なら追加口上
+	IF GET_MEMBER_SUM() > 1 && ((TARGET != 1 && CHECK_FINE(TARGET)) || (FLAG:10 && FLAG:10 != TARGET && CHECK_FINE(FLAG:10)) || (FLAG:11 && FLAG:11 != TARGET && CHECK_FINE(FLAG:11)))
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「メイン攻撃は他の仲間、わたしは後ろから攪乱です」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「仲間がいる時はサポートに回れるから気が楽ですね」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ XX 弾幕攻撃 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 汎用攻撃口上を読み込む
+	CALL KOJO_8_0_SYSTEM_MESSAGE_1_VERSATILE_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 汎用口上
+	; 残りMP 66%以上
+	IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「よ～く狙って、撃～つ！！」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+	ENDIF
+RETURN 1

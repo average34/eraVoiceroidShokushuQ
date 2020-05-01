@@ -1,0 +1,89 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0613 ガーディアン C
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_14_613(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_AFTER("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時
+	SIF CFLAG:25
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; ふたなりと通常時で分岐
+			; 通常時
+			IF !GET_PENIS(TARGET)
+				CALL KOJO_8_0_ADD_MESSAGE, @"「見られるだけで…　クリトリス、勃起してきました…　気持ちいい…けど…ふしぎです…」\n"
+			; ふたなり時
+			ELSE
+				; 催眠深度によって変化
+				SELECTCASE CFLAG:43
+				CASE 1
+					CALL KOJO_8_0_ADD_MESSAGE, @"（ううぅっ…！？　おちんちんに…　なにしたんですか…っ！？）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（こわれるっ！！　もう見るな…っ！！　おちんちん壊れちゃうっ！！）\n"
+				CASE 2
+					CALL KOJO_8_0_ADD_MESSAGE, @"（もっと近くで、見て欲しいなぁ…　もっと…おちんちん気持ちよくされたいかも…）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（そんなに見られたら…っ　身体が勝手に、腰振っちゃうっ…　止まんなくなっちゃうっ…）\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「なかから…　射精させられるみたいで…　すごい、きもちいいです…」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「見られて感じている、わたしのバカおちんぽ…　もっと、目で犯してください…」\n"
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; ふたなりと通常時で分岐
+	; 通常時
+	IF !GET_PENIS(TARGET)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっとぉ…っ♥　もっと見てぇ…っ♥　くりとりす、きもちい…っ♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うぅっ、見るなぁぁ……っ！　見るなぁぁっ……っ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「何なんですかその目えぇっ！？　うぁぁっ、お豆…勃っちゃう…っっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ただでさえ丸見えなのに…っ…　クリトリス、勃起してピクピクして…るぅっ！？）\n"
+		ENDSELECT
+		
+	; ふたなり時
+	ELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%ARGS:1%に睨まれた%CALLNAME:TARGET%のペニスは、瞬く間に勃起するとビクビクと脈打ちはじめた！\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ふぁ…っ♥　奧から…気持ちいいのがあふれてくる…っ♥　トコロテンしちゃう…かもぉっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はぁ…んっ♥　その目…ぇ、勃起とまんなくなる…のぉ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あっ、わたしっ…　見られて、おちんぽバカみたいに勃起させてる…っ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（そ、そんな目で見ないでぇっ…　おちんちん付いてるの恥ずかしいんですから…っ）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「なにコレっ！？　おちんちん、勝手に暴れ…てぇっ！？　あひぃぃ…っっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（丸見えおちんちんっ、ビクビク震えるのとまんなくなってるっ！？　見られてるっ！　見られてるうっ！！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うあああぁぁっ！？　とまってっ！？　おちんちんとまってぇぇつ！？」\n"
+		ENDSELECT
+		
+		; 地の文表示 手動で表示タイミング制御
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+	ENDIF
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

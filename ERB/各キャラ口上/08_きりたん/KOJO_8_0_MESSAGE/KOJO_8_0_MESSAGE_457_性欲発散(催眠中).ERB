@@ -1,0 +1,185 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 457 性欲発散(催眠中)
+; ------------------------------------------------------------------------------
+
+; □ 追加地の文
+@KOJO_8_0_SYSTEM_MESSAGE_457_DES_DESCRIPTIVE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE ARG:1
+	; 催眠中
+	CASE 0, 5, 10, 15
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠の力で身体の自由を奪われた%ARGS:1%に、%CALLNAME:TARGET%は囁いた\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠の力で身体の自由を奪われた%ARGS:1%に、%CALLNAME:TARGET%は命令した\d\n"
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠の力で快楽を得る事しか考えられなくなった%ARGS:1%に、%CALLNAME:TARGET%は囁いた\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠の力で快楽を得る事しか考えられなくなった%ARGS:1%に、%CALLNAME:TARGET%は命令した\d\n"
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠の力で何でも言うことを聞くようになった%ARGS:1%に、%CALLNAME:TARGET%は囁いた\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠の力で何でも言うことを聞くようになった%ARGS:1%に、%CALLNAME:TARGET%は命令した\d\n"
+		ENDSELECT
+		
+	; 同意
+	CASE 1
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d今から何をされるか察し身体の力を抜いた%ARGS:1%に、%CALLNAME:TARGET%はゆっくりと近付いた\d\n"
+	ENDSELECT
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+RETURN 1
+
+
+; □ 00 V
+@KOJO_8_0_SYSTEM_MESSAGE_457_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文読み込み
+	CALL KOJO_8_0_SYSTEM_MESSAGE_457_DES_DESCRIPTIVE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; きりたんが主人公
+	IF TARGET == 1
+		; 汎用口上
+		SELECTCASE KOJO_MODE
+		CASE "淫乱" 
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおまんこぉ♥　たぁくさん膣内射精してあげます♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたっ、わたしとっ……♥　わたしとえっちしよっ……♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「お、おちんちんっ！　わたしのおちんちん、%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおまんこで気持よくしてほしいなぁ！」\n"
+		ENDSELECT
+		
+		; 遭遇キャラが[淫壺]所持時 追加口上
+		IF TALENT:(ARG:3):78
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおまんこ、オスを誘うフェロモンだだ漏れですよぉ？\n　ニオイだけで、わたしのおちんぽガッチガチにさせられちゃった♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あ……これ、壊されてエッチに造り替えられたんでしょう♥\n　精液狂いにされちゃった%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおちんぽ専用穴、ひくひくしてるよ♥」\n"
+			CASEELSE
+			ENDSELECT
+		ENDIF
+		
+		; 催眠種類で分岐 各種追加口上
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%は今からおまんこオナニーをするんです♥　使っていいのはわたし%TACHI()%のおちんぽだけ♥ はいスタート♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽ勃起止まらないな～♥　どっかに全自動オナホとかないかな～♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%はおまんこで、わたし%TACHI()%のおちんちんを食べて……　自分から腰をふって……」\n"
+			ENDSELECT
+			
+		; 発情・感情操作系
+		CASE 1
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ほらほら、%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%の大好きなおちんちんですよぉ♥　犯したいでしょう♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「『私はセックスのことばかり考える変態で淫乱なおまんこ奴隷です』\n　って言えたら%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%の大好きなおちんちん、食べてもいいよぉ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「今の%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%は淫らなおまんこ奴隷♥　セックスする事しか考えられないんですもんね、かわいそ～♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ほ、ほらっ…　%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%の大好きなセックスの時間ですよ…　特別にわたし%TACHI()%のおちんちん使わせてあげる…」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「今から%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%は、わたし%TACHI()%のおちんちんを犯すの　ほらほら、おまんこが疼いてきたんですよね？」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「そんな目でおちんちん見られたら興奮しちゃいますよぉ\n　ほら、好きに食べて良いですよ」\n"
+			ENDSELECT
+			
+		; 無意識・認識操作系
+		CASE 2
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおまんこは今精液便所になってるの\n　精液便所の前におちんぽがあるんだもの、やることは判るでしょう♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%はおまんこを使って、わたし%TACHI()%のおちんちんを気持ちよくしたい…　そうですよね？」\n"
+			ENDSELECT
+		ENDSELECT
+		
+	; きりたんはパーティーメンバー
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱" 
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしも%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおまんこかき混ぜてぇ、気持ちよく射精したいなー♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あ、わたしのおちんちんも気持ちよくしてください…　%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%達見てたら、ガマンできなくなっちゃいました…」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文を表示
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 01 V(同意)
+; 発生条件が結構厳しめ
+; 相手が(レズ中毒 LV1超 or [エネミー]持ち) & 友好度200以上 で発生
+@KOJO_8_0_SYSTEM_MESSAGE_457_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文読み込み
+	CALL KOJO_8_0_SYSTEM_MESSAGE_457_DES_DESCRIPTIVE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; きりたんが主人公の時しかこの口上は呼び出されない
+	; パーティーメンバー状態での口上は不要
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽくださいって顔に書いてあるみたいですよ、この変態♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これが欲しいんですよね？　もう、%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%はえっちなんだからぁ♥\n　そんな顔されたら、おちんちん勃起止まんなくなっちゃうよぉ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ふふ…　ガマンできないのね？\n　%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおまんこ♥　膣内射精されたくてトロトロになってるよぉ♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「今から%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%は、わたし%TACHI()%に犯されちゃうの　おまんこが疼いてどうしようもないんですよね？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「もう、そんな顔で見ないでよ…　こっちも興奮してきちゃうじゃない……」\n"
+	ENDSELECT
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文を表示
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 05 B
+@KOJO_8_0_SYSTEM_MESSAGE_457_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文読み込み
+	CALL KOJO_8_0_SYSTEM_MESSAGE_457_DES_DESCRIPTIVE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱" 
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおっぱいは、わたしのおちんぽを気持ちよくする為にあるんです　わかりました？」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「お、おちんちんっ！　わたしのおちんちん、%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおっぱいで気持よくしてほしいなぁ！」\n"
+	ENDSELECT
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文を表示
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 10 A
+@KOJO_8_0_SYSTEM_MESSAGE_457_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文読み込み
+	CALL KOJO_8_0_SYSTEM_MESSAGE_457_DES_DESCRIPTIVE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL KOJO_8_0_ADD_MESSAGE, @"「お、おちんちんっ！　わたしのおちんちん、%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおしりで気持よくしてほしいなぁ！」\n"
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文を表示
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 15 M
+@KOJO_8_0_SYSTEM_MESSAGE_457_15(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文読み込み
+	CALL KOJO_8_0_SYSTEM_MESSAGE_457_DES_DESCRIPTIVE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL KOJO_8_0_ADD_MESSAGE, @"「お、おちんちんっ！　わたしのおちんちん、%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%のおくちで気持よくしてほしいなぁ！」\n"
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文を表示
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1

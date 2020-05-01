@@ -1,0 +1,34 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 152 捕食後
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_152(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（………もう…意識が……　ちょっと、だけ……　休…………）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（……悪い夢でした……　これで…起き…………ら…）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（あ……　もう、なにも……　かんがえなくて……　いいんだ……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（………わたしの……さいご…なん…て……　こんなもん……なのかな……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（………もう…なにも………かんが……え……………）\n"
+	ENDSELECT
+RETURN 1

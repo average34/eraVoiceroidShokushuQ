@@ -1,0 +1,105 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 前回情報参照 200 ランダムイベント
+; ------------------------------------------------------------------------------
+
+; □ 174 媚薬風呂
+; ◆ 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_200_174(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 睡眠中, 喪失中は通常絶頂処理にお願い
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「すご…っ♥　すごいよぉ…っ♥　イクの、とまんなく…なってるっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「へんな水…飲んじゃったぁ♥　…♥　…あっ♥　あッ♥♥　うああぁッッ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「からだがヘンっ♥　ヘンになってるぅっ♥♥　なんで…イッちゃうのぉ…っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「でなきゃっ♥　はやくここから出なきゃぁっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（なんですかこの水っ♥　触れてるだけなのにぃぃ…っっ♥♥）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（はやく穴から出なきゃ…いけないのにぃ…っ♥　イッちゃって、ちからはいんない……♥♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（もがけばもがくほど…っ♥　わたしのカラダ気持ちよくなっちゃうっ♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「たっ、たすけてぇっ♥　この水…やだぁぁっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「とまってぇ…っ♥　とまってよぉぉ♥　勝手にイカないでぇ…っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「しみこんでぇっ♥　しみこんでくるよぉっ♥」\n"
+	ENDSELECT
+	
+	; 追加部位別口上
+	SELECTCASE ARG:1
+	; A
+	CASE 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おしりに…しみこんでくるっ♥　うあぁっ♥\n　コレっ、コレすごい…っ♥　おしりの穴、おまんこにされちゃったみたいぃ…っ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おﾞひ…っ♥　おﾞへ…あﾞぁ…っ♥♥　んおﾞぉひぃ……っ、りﾞいﾞぃぃ…っっ…♥♥♥」\n\d直腸から高濃度の媚薬を吸収してしまった%CALLNAME:TARGET%は、呂律の回らない舌で尻穴絶頂を訴えている…\d\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おしりとけちゃうっ♥　おしりとけちゃうっ♥　おしりとけちゃううぅっ♥♥」\n"
+		ENDSELECT
+		
+	; B
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おﾞおﾞぉぉっ♥　おっぱいイッてる…っ♥　あついのしみこんでおっぱいイカされてる…っ♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱっ…♥　おっぱいが勝手にいぃ……っ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「胸ぇ…っ！？　胸が熱いよぉぉっ…っ！？」\n"
+		ENDSELECT
+			
+	; C
+	CASE 2
+		; ふたなり
+		IF GET_PENIS(TARGET)
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「にゃにこれ…っ♥　にゃにこれぇぇ…っ♥♥\n　おちんぽ…っ、勝手に射精の準備…してるうぅ……っ♥♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「出ちゃうっ！？　おちん…ちん…っ、勝手に射精しちゃうぅ…っ！？」\n"
+			ENDSELECT
+			
+		; 通常
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「くりとりす…っ♥　くりとりすにぃ…っ♥　あついの…しみこんでくるぅ…っ♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ひィ…っ♥　おまめ…っ、勝手に大きくなって…ぇっ♥♥」\n"
+			ENDSELECT
+		ENDIF
+	; V
+	CASE 3
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたし…っ…のっ…　しきゅうぅっ♥♥　イカされて…っ、きゅんきゅんって…よろこんでる…ぅっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あかちゃんの部屋…ぁ♥　へんな水でたぷたぷに…なっちゃったぁ♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（うそで…しょぉっ！？　子宮のなか…まで入って…っ♥♥　ナカから…しみこんでくる…っ♥♥）\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

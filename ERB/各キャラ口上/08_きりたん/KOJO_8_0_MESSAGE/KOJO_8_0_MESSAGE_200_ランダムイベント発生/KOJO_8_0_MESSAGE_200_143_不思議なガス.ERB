@@ -1,0 +1,112 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 143 不思議なガス
+; ------------------------------------------------------------------------------
+
+; □ 1 眠くなってきた
+@KOJO_8_0_SYSTEM_MESSAGE_200_143_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「しまった……　睡眠ガス……です……」\n"
+	ENDSELECT
+	
+	; 眠気によって分岐
+	IF FLAG:7 <= 3
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「効果は薄いですが……眠い時に吸ったらマズかったかも……」\n"
+		ENDSELECT
+		
+	ELSEIF FLAG:7 <= 7
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「この程度の眠気なら、なんとか……」\n"
+		ENDSELECT
+		
+	ELSEIF FLAG:7 <= 11
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うぅ……　ただでさえ眠いって言うのに……」\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やば……　起きてるのも限界なのに、こんな……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 2 発情した
+@KOJO_8_0_SYSTEM_MESSAGE_200_143_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 発情処理は口上の後なので、未発情状態の口上が書ける
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんなの吸ったらぁ……♥　気持ちいいの、何でも欲しくなっちゃいますよ……ぉ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「はぁ……ぁ……♥　こうなった女の子を皆で襲うんですね……ぇ♥　ひどい罠ぁ……♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんなの吸わされたらぁ……♥　とまんなくなっちゃいますよぉ……♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（欲しい……っ♥　気持ちいいの欲しい……っ♥　気持ちいいの欲しいぃぃ……っ♥♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ただでさえ身体が熱くて大変なのにぃ……っ……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やだ……♥　やだぁ……♥　もう、気持ちいいの、欲しくないのにぃ……♥♥」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うああぁぁっ♥　身体、ぞわぞわするううぅぅっ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「くっそ……ぉ……♥　わたしが、こんな罠なんか……にぃぃ……っ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（油断した……っ……　注意してれば、避ける時間は十分あったのに……っ……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「わたしっ……と、した……ことがぁ……っ♥　こんな罠に……っ、掛かるなんてぇ……♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やっ……られたぁ……っ……♥　こんな、単純な罠にぃ……っ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（獲物が自分から欲しがるようにする……なんて……、嫌な罠ぁ……っ……）\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 自慰が止まらなくなった
+@KOJO_8_0_SYSTEM_MESSAGE_200_143_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 200_139 桃色ガスにおねがい
+	CALL KOJO_8_0_SYSTEM_MESSAGE_200_139_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; □ 4 テンションが上がった(TP=MAX)
+@KOJO_8_0_SYSTEM_MESSAGE_200_143_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（何これ！？　もしかして興奮剤の一種！？）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あはははは！！　こんなトラップに怯む%CALLNAME:TARGET%様じゃないですよ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何なんですかもう！　吸い込んじゃったじゃないですか！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 5 テンションが下がった(TP=0)
+@KOJO_8_0_SYSTEM_MESSAGE_200_143_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「はぁ……　家に帰ってゲームしたい……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「はぁ……　わたしこんな所で何やってんだろ……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 6 回避
+@KOJO_8_0_SYSTEM_MESSAGE_200_143_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああいう罠はどんな効果あるかわかんないから怖いですねえ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ふぅ……　危ない危ない……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 7 気絶した
+@KOJO_8_0_SYSTEM_MESSAGE_200_143_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「は……　あ……　ぁ…………」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やば……　この……ガスは……　いし……き…………」\n"
+	ENDSELECT
+RETURN 1
+

@@ -1,0 +1,34 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 163 遭遇時会話：アイテムをあげた
+; ------------------------------------------------------------------------------
+
+; □ XX 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_163(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんなもんでも何かの役には立つと思いますよ」\n"
+	ENDSELECT
+	
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 39 媚薬
+@KOJO_8_0_SYSTEM_MESSAGE_163_X_39(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「コレ使うと気持ちいいことしか考えられなくなっちゃうの♥　オススメ♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「コレあげる　つ、使い方はまかせます……」\n"
+	ENDSELECT
+
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1

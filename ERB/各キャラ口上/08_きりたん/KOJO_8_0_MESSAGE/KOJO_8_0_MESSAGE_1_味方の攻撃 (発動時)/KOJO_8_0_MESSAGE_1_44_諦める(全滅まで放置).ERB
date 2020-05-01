@@ -1,0 +1,23 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 44 諦める(全滅まで放置)
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_1_44(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 諦めた後にも何度も呼び出されるので、表示は諦めた瞬間1回のみ
+	IF TFLAG:16 != 2
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こうさん…♥　こうさぁ…ん……♥♥\n　だから…もっとっ…むちゃくちゃ…にいっ……♥♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（もうダメ…がまんできない……\n　きもちいいの…もっとほしい♥　もっといっぱいほしいっ♥）\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d心が挫けてしまった%CALLNAME:TARGET%は、与えられる快楽に身を委ねはじめた…\d\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（嫌なのに、逃げ出したいのに、からだに…ちから…はいんない…\n　もうだめなのかな…　わたし……）\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d心が挫けてしまった%CALLNAME:TARGET%は、ボロボロと涙をこぼしながら身体の力を抜いた…\d\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

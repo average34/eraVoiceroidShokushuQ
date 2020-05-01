@@ -1,0 +1,121 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 107 遭遇時会話：勧誘成功
+; ------------------------------------------------------------------------------
+; 遭遇時会話：勧誘成功 は主人公時のみ呼び出されるので判定はそれに準じて
+
+; □ 0 通常
+@KOJO_8_0_SYSTEM_MESSAGE_107_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（よっし！　仲間ゲットです！）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これで少し楽になりますね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そうそう、小さな子供は助けるものです」\n"
+	ENDSELECT
+	
+	; 相手の初期戦闘素質が、自分の初期戦闘素質より低いなら追加口上
+	IF ABL:(ARG:1):98 < ABL:98
+		CALL KOJO_8_0_ADD_MESSAGE, @"（あんま強そうじゃないけど、贅沢は言ってられないですね）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ま、人数は多い方がいいですね）\n"
+	ENDIF
+	
+	
+	; 2人目勧誘成功なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「仲間も増えた事だし、こんなダンジョンとっとと攻略しちゃいましょう」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「か弱い小学生一人じゃ、どうしようもなくて困ってたんですよー」\n"
+		ENDSELECT
+		
+		; 相手の初期戦闘素質が、自分の初期戦闘素質より低いなら追加口上
+		IF ABL:(ARG:1):98 < ABL:98
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ま、一人よりはマシかな……）\n"
+		ENDIF
+	ENDIF
+	
+	; 3人目勧誘成なら追加口上
+	IF GET_MEMBER_SUM() == 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「一人よりも二人、二人よりも三人ですね♪」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「人数が揃うと心強いです」\n"
+		ENDSELECT
+	ENDIF
+	
+	; キャラクター対応 追加口上　考えるのが面倒になりました（本音）
+	;SELECTCASE NO:(ARG:1)
+	; ずん子
+	;CASE 4
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%が一緒なら色々と助かります」\n"
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「ずんだもんが居ない%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%って主武装封印状態ですか……」\n"
+	; ウナ
+	;CASE 14
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「」\n"
+	; イタコ
+	;CASE 16
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「」\n"
+	;ENDSELECT
+RETURN 1
+
+
+; □ 1 喪失キャラを連れていく
+@KOJO_8_0_SYSTEM_MESSAGE_107_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こっちも余裕あるわけじゃないし、連れてくだけありがたいと思ってくださいよ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「このまま放置しといても良くないだろうし……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「連れて行くにしろ、安全な場所に運ばないと……」\n"
+	ENDSELECT
+	
+	; 相手の初期戦闘素質が、自分の初期戦闘素質より低いなら追加口上
+	IF ABL:(ARG:1):98 < ABL:98
+		CALL KOJO_8_0_ADD_MESSAGE, @"（いざとなったら置いていけばいいか……）\n"
+	ENDIF
+	
+	
+	; 2人目勧誘成功なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「回復してあげられれば、一人で動きまわるよりいいですよね」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 3人目勧誘成なら追加口上
+	IF GET_MEMBER_SUM() == 2
+		; 現在PTに居る仲間は行動可能
+		IF CHECK_FINE(FLAG:10)
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ねえ%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(FLAG:10)))%、折角だから連れて行ってあげようよ」\n"
+			ENDSELECT
+			
+		; 現在PTに居る仲間は行動不能
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしってお人好しですねー、自分から新しいお荷物を背負い込むんですから」\n\d%CALLNAME:TARGET%は行動不能に陥った%CALLNAME:(FLAG:10)%に続き、力尽きた%ARGS:1%の手を握った\d\n"
+			ENDSELECT
+			
+			; 相手の初期戦闘素質が、自分の初期戦闘素質より低いなら追加口上
+			IF ABL:(ARG:1):98 < ABL:98
+				CALL KOJO_8_0_ADD_MESSAGE, @"（まあ、弾除けは多い方がいいか……）\n"
+			ENDIF
+		ENDIF
+	ENDIF
+	
+	; キャラクター対応 追加口上（同上）
+	;SELECTCASE NO:(ARG:1)
+	; ずん子
+	;CASE 4
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「」\n"
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「」\n"
+	; ウナ
+	;CASE 14
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「」\n"
+	;	CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%がダウンするって事は」\n"
+	;ENDSELECT
+RETURN 1

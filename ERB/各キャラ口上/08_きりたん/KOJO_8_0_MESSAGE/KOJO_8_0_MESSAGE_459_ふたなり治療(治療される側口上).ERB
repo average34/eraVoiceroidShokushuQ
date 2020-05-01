@@ -1,0 +1,319 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 459 ふたなり治療(治療される側口上)
+; ------------------------------------------------------------------------------
+
+; □ X 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_459(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠時処理
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしなんかの精液でよければ、いくらでも……　どうぞ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「どうぞ……　発情小学生の勃起ちんぽ……　お楽しみください……」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠術で射精奴隷へ堕ちた%ARGS:1%は、ペニスを嬲る%ARGS:0%を虚ろな表情で眺めている……\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠術で射精奴隷へ堕ちた%ARGS:1%は、%ARGS:0%に精液を捧げるため快感を貪っている……\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠術を掛けられた%ARGS:1%は、無様に射精する姿を見て貰う事が何よりの幸せだと思い込んでいる！\d\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 戦意喪失中
+	IF CFLAG:29
+		; 射精中毒 Lv0
+		IF ABL:12 == 0
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「さわっ…　ちゃぁ…　だぁ、めえぇ……」\n"
+			ENDSELECT
+
+		; 射精中毒 Lv1
+		ELSEIF ABL:12 == 1
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「そんな…に…　された…らぁ…　でちゃ…う…　よぉ……」\n"
+			ENDSELECT
+
+		; 射精中毒 Lv2
+		ELSEIF ABL:12 == 2
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「だめ…ぇ…　おちん…ちん…　だ…めぇ……」\n"
+			ENDSELECT
+
+		; 射精中毒 Lv3以上
+		ELSEIF ABL:12 >= 3 || TALENT:121
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「おちん…ちん…　きもちよく…　して…ぇ……」\n"
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	; 通常時
+	; 射精中毒 Lv0
+	IF ABL:12 == 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「まだ感じ方よくわかんないから…　やさしくしてね♪」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ううっ…　わたしだって好きでこんなの付けてるわけじゃないんですよ…」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「だめぇっ！　そこダメですぅっ！　いじっちゃあダメぇぇっ！」\n"
+		ENDSELECT
+
+	; 射精中毒 Lv1
+	ELSEIF ABL:12 == 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしのおちんぽ治してぇ♥　こんなのついてたら誰彼構わず襲っちゃいますよぉ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そんな治療されたらぁ、おちんちんで気持ちよくなるの……　忘れられなくなっちゃいますよぉ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やぁ…っ、おちんちん……　勝手に大きくなってく…っ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そこ…っ、敏感だから……　優しくさわって……」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(1)%に触られて、おちんちん勃起…とまんなくなってる……っ）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やだ…ぁっ！　さわらないでくださいよぉっ！　そこでっ、きもちよくなるのイヤなんですっ…！」\n"
+		ENDSELECT
+
+	; 射精中毒 Lv2
+	ELSEIF ABL:12 == 2
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「治療なんて言ってぇ♥　ホントはおちんぽが欲しいだけなんでしょう♥\n　いいよぉ♥　わたしのおちんぽ好きにして♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっとぉ♥　壊れるくらい激しくして…ぇ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「なんで…ぇっ…！　おちんちん…　びくびくするの…　とまらないですよ…ぉっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「壊れちゃうっ…！　おちんちん壊れちゃいますよぉぉっ！！」\n"
+		ENDSELECT
+
+	; 射精中毒 Lv3以上
+	ELSEIF ABL:12 >= 3 || TALENT:121
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うぁ…ぁっ！　きもち…ぃ…っ♪　おちんちんっ、いじめられるの…っ♪　すっ…きぃっ♪」\n "
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 0 V
+@KOJO_8_0_SYSTEM_MESSAGE_459_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 催眠時処理
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はい……　%KOJO_8_0_CALLNAME_FROM_ID(1)%様のおまんこに……　変態小学生の精子、射精させていただきます……」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠術で射精奴隷へ堕ちた%ARGS:1%は、%ARGS:0%の雌穴を満足させる為必死に腰を振っている！\d\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 射精中毒 Lv0
+	IF ABL:12 == 0
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ちょ、ちょっと%KOJO_8_0_CALLNAME_FROM_ID(1)%！？　自分で何やってるかわかって…っ！？　うんんっ…！！」\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv1
+	ELSEIF ABL:12 == 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「へぇ、自分からくわえこむとか%KOJO_8_0_CALLNAME_FROM_ID(1)%って淫乱なんですねぇ♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしっ、わたし%KOJO_8_0_CALLNAME_FROM_ID(1)%とセックスしてるっ♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うぁあぁっ…　わたしのおちんちん、%KOJO_8_0_CALLNAME_FROM_ID(1)%のおまんこに…はいってくぅ…」\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv2
+	ELSEIF ABL:12 == 2
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「治療なんて言っちゃってぇ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のおちんぽを見る目、とろとろだよぉ？\n　じゃあセンセ、治療をお願いします♥　わたしのおちんぽで、いっぱいセックスしよ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（中に射精したいっ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のおまんこっ、わたしの精液でぐちゃぐちゃにぃ……っ♥♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%のナカぁっ…ぬるぬるして気持ちいいよぉ…っ　おちんちん勝手に暴れてぇ…っ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うあぁっ！　おちんちん言うこと聞かないっ！　%KOJO_8_0_CALLNAME_FROM_ID(1)%の中でおっきくなってる…っ！！」\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv3以上
+	ELSEIF ABL:12 >= 3 || TALENT:121
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そんな事されたらぁ…っ♥　わたしガマンできなくなって、ナカに射精しちゃうかも…ぉっ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしのおちんちん、%KOJO_8_0_CALLNAME_FROM_ID(1)%のおまんこに膣内射精したがってるよぉ…」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 治療する側が[淫壺]所持 or V感覚LV3以上なら追加口上
+	IF TALENT:1:78 || ABL:1:9 >= 3
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「見ればわかるよ、%KOJO_8_0_CALLNAME_FROM_ID(1)%のおまんこセックス専用に改造されちゃったんですよね？\n　雄を発情させるニオイ、スッゴいもん♥　おちんちんバッキバキに勃起しちゃったぁ♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%の中凄いっ♥　何コレっ！？　おちんちん溶けちゃうぅっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃぅうっ♥　おちん……ちんっ、搾りとられる……ぅっ♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 2 A
+@KOJO_8_0_SYSTEM_MESSAGE_459_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 戦意喪失中
+	SIF CFLAG:29
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あぁぁ…っ♥　わたしのおちんぽ…ぉ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のおしりにぬぷぬぷってぇ、食べられてる♥♥」\n"
+	CASEELSE
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 M
+@KOJO_8_0_SYSTEM_MESSAGE_459_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 催眠時処理
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はい……　%KOJO_8_0_CALLNAME_FROM_ID(1)%様のお口に……　変態小学生の精子、射精させていただきます……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はい……　変態小学生の発情精液……　ご賞味ください……」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠術で射精奴隷へ堕ちた%ARGS:1%は、ペニスを舐め回す%ARGS:0%を虚ろな表情で眺めている……\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%ARGS:1%は良質な精液を%ARGS:0%に捧げるため、大量の先走りを零し射精を堪えている！\d\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 戦意喪失中
+	IF CFLAG:29
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(1)%……　わたしのおちんちん……　なめてる……）\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 通常時
+	; 射精中毒 Lv0
+	IF ABL:12 == 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ああっ♥　これがフェラチオってやつ…ですねぇっ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うっ、嘘ですよね！？　そんなとこ舐めるなんて…っ！？」\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv1
+	ELSEIF ABL:12 == 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%…っ、舐めるの上手…っ♥　どこでそんなの覚えたんですか…ぁ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そんなトコ舐めちゃ…っ…　汚いですよぉ…」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（これは治療されてるだけなんだから！　気持ちよくなんか…っ…）\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv2
+	ELSEIF ABL:12 == 2
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「焦らさないでぇ♥　ちんぽバキバキになってるからぁ♥　もっと強くぅ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっと…ぉ…　つよくして…っ…　もどかしい、ですよぉ…っ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あ、わたしのおちんちん…　おいしい…？」\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv3以上
+	ELSEIF ABL:12 >= 3 || TALENT:121
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ほらほら頑張ってぇ♥　小学生の特濃ミルク、いっぱいご馳走したげるう♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽ舐めてる%KOJO_8_0_CALLNAME_FROM_ID(1)%の顔…見てると…っ♥　興奮…とまんなくなっちゃいます♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そんな…っ、焦らすみたいにぃ…っ…　ああっ、%KOJO_8_0_CALLNAME_FROM_ID(1)%の舌やわらか…っ…」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 4 手淫
+@KOJO_8_0_SYSTEM_MESSAGE_459_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 戦意喪失中
+	IF CFLAG:29
+		; 射精中毒 Lv0
+		IF ABL:12 == 0
+			
+		; 射精中毒 Lv1
+		ELSEIF ABL:12 == 1
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%の手…っ、わたしのおちんちん扱いてる…っ\n　何これっ！？　きもちいい…っ♥　きもちいいよぉ……っ♥」\n"
+			ENDSELECT
+			
+		; 射精中毒 Lv2
+		ELSEIF ABL:12 == 2
+
+		; 射精中毒 Lv3以上
+		ELSEIF ABL:12 >= 3 || TALENT:121
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「たぁく…さん…　しこしこ…　して…ぇ……」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+

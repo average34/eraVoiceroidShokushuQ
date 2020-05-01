@@ -1,0 +1,107 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 104 遭遇時会話：情報交換
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_104(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 初日の場合、情報を持ってる風のセリフは違和感があるので分岐
+	IF DAY:0 == 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ついさっき気付いたらココに居まして、何か教えてくれると助かります」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「情報交換……って言っても、気付いたばっかりでさ\n　ここがどういう場所なのか良くわからないんです」\n"
+		ENDSELECT
+		
+	; 2日目以降
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「エッチな情報は大歓迎ですよ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やらしくない情報と、やらしい情報♪　どっちから聞きたいですか♪」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしなんかの情報、役に立つのかな……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「や、役に立つかわからないけど……」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「どんな些細な情報だって大事ですよ、そういう所に脱出のカギがあるかもしれないし」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そうそう聞いて！　いい情報があるんですよ！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「う～ん、何から話そうかな」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「お客さんいい情報ありますよ、こんな時までウソは付かないから安心してください」\n"
+		ENDSELECT
+		
+		; 3日目までなら追加口上
+		IF DAY:0 <= 3
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「まだろくな情報ないんですよ、知ってる事何でも教えてくれると助かります」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「こっちは来たばかりで、交換出来るほど情報ないんですけどね」\n"
+			ENDSELECT
+		ENDIF
+		
+		; DPが高いと遭遇キャラが頬を染める、な追加口上
+		IF BASE:DP >= 100
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「少し前にエッチな敵に襲われてね♥　わたしは必死で抵抗したんですけど――」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「なに？　わたしの顔に何か付いてますか？　それともエッチなニオイが気になりますか？」\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（やっぱ気付いてますよね、わたしのエッチなニオイ……）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（こんだけ雌臭いんじゃ仕方ないか……）\n"
+			ENDSELECT
+		ENDIF
+		
+		; 好感度別、追加口上
+		; 好感度:低
+		IF CFLAG:(ARG:1):5 < 0
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%相手ならウソついてもいいですかね）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%なんかに本当の事教えてやる必要ないかも……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（実はあんまり信用して無いけどね……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%の情報なんか、本当に信用出来るんですかね……）\n"
+			ENDSELECT
+			
+		; 好感度:警戒
+		ELSEIF CFLAG:(ARG:1):5 < 50
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（聞くだけ聞いて、真贋見極めるのは後で）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（嘘でなくても結果的に嘘になる事もあるから注意しないと……）\n"
+			ENDSELECT
+			
+		; 好感度:通常
+		ELSEIF CFLAG:(ARG:1):5 < 200
+			SELECTCASE KOJO_MODE
+			CASEELSE
+			ENDSELECT
+			
+		; 好感度:高
+		ELSEIF CFLAG:(ARG:1):5 >= 200
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「助かりますよ♪　さっすが%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%、頼りになる～♪」\n"
+			ENDSELECT
+		ENDIF
+		
+		
+		; キャラクター対応 追加口上
+		SELECTCASE NO:(ARG:1)
+		; ゆかり
+		CASE 3
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ボドゲやってた時の恨みはお互いに忘れて情報交換をしましょう」\n"
+		; ずん子
+		CASE 4
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ずん姉様になら何でも話しちゃいますよ！（秘蔵のアルバムの事は秘密ですが）」\n"
+		; ウナ
+		CASE 14
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%、こういう所は協力が大事ですよ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%、わたしがウソ付くと思ってない？」\n"
+		; イタコ
+		CASE 16
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%、ずん姉様の情報は無いんですか？」\n"
+		ENDSELECT
+		
+	ENDIF
+RETURN 1

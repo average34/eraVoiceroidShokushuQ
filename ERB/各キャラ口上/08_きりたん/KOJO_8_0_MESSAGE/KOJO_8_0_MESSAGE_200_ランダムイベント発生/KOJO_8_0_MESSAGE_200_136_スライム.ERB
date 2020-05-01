@@ -1,0 +1,86 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 136 スライム
+; ------------------------------------------------------------------------------
+
+; □ 1 服を溶かされた
+@KOJO_8_0_SYSTEM_MESSAGE_200_136_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; もともと全裸
+	IF BASE:CP == 0
+		CALL KOJO_8_0_ADD_MESSAGE, @"\dが、もともと服を着ていなかった…\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		; PTメンバーにいる
+		IF NO:1 == 27 || NO:(FLAG:10) == 27 || NO:(FLAG:11) == 27
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「コイツ……ぷるぷるしてて気持ちいいかも……」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ぬめぬめして気持ち悪いだけで、特に害はないんですかね？」\n"
+			ENDSELECT
+			
+		; 同室に居て巻き込まれた
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「オマケ的に襲われた気がします……　ただでさえ服着てないのに……」\n"
+			ENDSELECT
+		ENDIF
+
+	; 通常
+	ELSE
+		; PTメンバーにいる
+		IF NO:1 == 27 || NO:(FLAG:10) == 27 || NO:(FLAG:11) == 27
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うわわっ！？　なにコイツっ！？　わたしの服になにするんですかー！」\n"
+			ENDSELECT
+			
+		; 同室に居て巻き込まれた
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっと！！　わたし関係ないですよ！？」\n"
+			ENDSELECT
+		ENDIF
+		
+		; 触装中なら追加口上
+		IF CFLAG:40
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ええっ？　触手服も溶かしちゃうんですか？\n　気持ちいいなら、触手服とヌルヌル両方あってもいいのに♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ええっ！？　服溶けてるっ！？　……ってこの服、生存競争でもしてるんですか！？\n　わたしは溶けてくれた方が助かりますけどね！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 2 回避した
+@KOJO_8_0_SYSTEM_MESSAGE_200_136_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あー、つい避けちゃったけど勿体なかった♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「き、気付いて良かったぁ……」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「不意打ちしたいなら、もうちょっと身の回りに気をつける事ですね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「タイミングが甘い！」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「よっ！　ほっ！　たぁっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「スライムは洋ゲーでは油断出来ないですからね　物理無効で相手を食べちゃうのまで居ますし」\n"
+	ENDSELECT
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 全裸なら追加口上
+	IF BASE:CP == 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「多分服を溶かしちゃうヤツなんだろうけど、わたし何も着てないんですよね～♪」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「服を溶かす生き物とか、今のわたしには無意味です\n　溶かしたいなら服をくれ、ですよ！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

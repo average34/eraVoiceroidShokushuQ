@@ -1,0 +1,372 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 113 探索でアイテムを見つけた
+; ------------------------------------------------------------------------------
+
+; □ XX 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_113(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上
+	; アイテムを複数個拾う場合汎用口上が連続するので表示は1回だけ
+	SIF KOJO_8_0_GET_PREV_ARG(0) == 113
+		RETURN 0
+		
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+	
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何か落ちてる……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何ですかコレ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「金銀財宝すら出ないなんてシケてますねえ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おっと、使えそうなもの発見！」\n"
+	ENDSELECT
+RETURN 1
+
+; □ 10 こんぼう
+@KOJO_8_0_SYSTEM_MESSAGE_113_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	; ゲーム開始直後に探索すると こんぼうが落ちてるらしいな
+	IF DAY:0 == 1 && TIME:0 == 0
+		CALL KOJO_8_0_ADD_MESSAGE, @"「よくわかんない場所にほっぽり出されて、とりあえず辺りを見渡したら\n　目の前に武器が落ちてるとか、これ見よがし……って感じですねえ」\n"
+
+	; 普通に見つける
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「化物相手に、こんな棒っきれが役に立つんですかね\n　生身よりはマシですかね、振り回されなければ……ですけど」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 22 使い魔
+@KOJO_8_0_SYSTEM_MESSAGE_113_22(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「使い魔……　使い魔ねえ…\n　そういえば使い魔で攻撃するジョブとかありましたね」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 39 媚薬
+@KOJO_8_0_SYSTEM_MESSAGE_113_39(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 初発見
+	IF KOJO_8_0_GET_ITEMGET_COUNT(ARG:1) == 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「気持よくなれるお薬ね、けっこうイイもの落ちてるじゃないですか」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ただでさえ身体が火照って大変だって言うのに……」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「これはちょっと、なんていうか見るからに……」\n"
+		ENDSELECT
+		
+	; 2つめ以降
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「また落ちてるわ、えっちになれるおクスリ♪\n　全部諦めて楽しめって事ですかね？」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「またこの薬、ここのヤツラって相当悪趣味ですね……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 50 緑茶
+@KOJO_8_0_SYSTEM_MESSAGE_113_50(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「熱いお茶みたいな怖いものも落ちてるんですねぇ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 51 玉露
+@KOJO_8_0_SYSTEM_MESSAGE_113_51(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「また随分な上物が落ちてるんですね、ここが茶屋なら最高なんですけど」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「上物のお茶を落としておくなら、一緒にずんだ餅も落としておいてほしいです」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 52 日本酒
+@KOJO_8_0_SYSTEM_MESSAGE_113_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「お酒は飲んだらいけないんですよねぇ」\n"
+	ENDSELECT
+
+RETURN 1
+
+
+; □ 53 神酒
+@KOJO_8_0_SYSTEM_MESSAGE_113_53(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うっわ、高そうなお酒」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「儀式とかに使うようなお神酒ですかね？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「お神酒ですか…　聖水代わりにそこらへんの奴にぶちまけた方が効果的なんじゃないですか？」\n"
+	ENDSELECT
+
+RETURN 1
+
+
+; □ 54 着替えセット
+@KOJO_8_0_SYSTEM_MESSAGE_113_54(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+	
+	; 服のストックなし
+	IF ITEM:54 == 0
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「予備の着替えなかったから助かります」\n"
+		ENDSELECT
+		
+		; 自身のCPも低いなら追加口上
+		IF BASE:CP <= (MAXBASE:CP / 100 * 25)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「新しい服探してたんですよ\n　早いとこ着替えたいです、ボロボロだし……」\n"
+		ENDIF
+		
+	; 服のストックあり
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ありがたいけど、なんで新品の服が落ちてるんだろう？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「すぐダメになっちゃうから服はいくらあっても困らないですね」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「普段ならどうでもいいけど、ここだと多分貴重品ですね」\n"
+		ENDSELECT
+		
+		IF BASE:CP <= (MAXBASE:CP / 100 * 25)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっ、新しい服\n　替えも何着かあるし、ボロボロの服着てないで着替えたいです」\n"
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 55 鎮静剤
+@KOJO_8_0_SYSTEM_MESSAGE_113_55(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「テンション下がりまくりってヤバげな薬じゃあないですか？どうしても薬ってだけで身構えちゃいますね……\n　依存性とかないですよね……？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 56 興奮剤
+@KOJO_8_0_SYSTEM_MESSAGE_113_56(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「テンション上がりまくりってヤバげな薬じゃあないですか？どうしても薬ってだけで身構えちゃいますね……\n　依存性とかないですよね……？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 58 気付け薬
+@KOJO_8_0_SYSTEM_MESSAGE_113_58(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「気付け薬を頻繁に使うような場所から出られない……なんてあまり考えくないですね……　はぁ……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 60 大人の玩具
+@KOJO_8_0_SYSTEM_MESSAGE_113_60(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（これを使えば、火照った身体……　ちょっとは……　おさまるかも……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「な、なんでこんなのが落ちてるんですか！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 61 生命の種
+@KOJO_8_0_SYSTEM_MESSAGE_113_61(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「植物がすごい勢いで成長する肥料なんてのがあったけど、この種増やせば凄いコトになるんじゃないかなぁ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 62 魔力の種
+@KOJO_8_0_SYSTEM_MESSAGE_113_62(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 61 生命の種 にお任せ
+	CALL KOJO_8_0_SYSTEM_MESSAGE_113_61()
+RETURN RESULT
+
+
+; □ 63 敏捷の種
+@KOJO_8_0_SYSTEM_MESSAGE_113_63(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 61 生命の種 にお任せ
+	CALL KOJO_8_0_SYSTEM_MESSAGE_113_61()
+RETURN RESULT
+
+
+; □ 64 不死鳥の羽
+@KOJO_8_0_SYSTEM_MESSAGE_113_64(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「フェニ尾ですか……ゲーム設定なら死なないと効果がないのでは？」\n"
+	ENDSELECT
+
+RETURN 1
+
+
+; □ 67 包帯
+@KOJO_8_0_SYSTEM_MESSAGE_113_67(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「この包帯、ちゃんと清潔なんでしょうか？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「落っこちてた割りにやたら綺麗とか、逆に怪しいです」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 69 縮乳薬
+@KOJO_8_0_SYSTEM_MESSAGE_113_69(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE GET_BUST(TARGET)
+	; 絶壁 or 貧乳
+	CASE -2, -1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱいのでかい奴に使う薬ですね！間違いない！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんな状況でなければ悪戯に使うんですけどね、面白そうだし」\n"
+		ENDSELECT
+	
+	; 普乳
+	CASE 0
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「なんだか莫迦にされてる気がします……」\n"
+		ENDSELECT
+		
+	; 爆乳 or 巨乳
+	CASE 1, 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「これがあれば、オバケおっぱいとオサラバ！\n　大きいおっぱいは嫌いじゃないけど、大きすぎるのはちょっとね……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「これを飲めば、おっぱいが縮むんですね……　ずん姉様とお揃いも捨てがたいです……」\n"
+		ENDSELECT
+	
+	; 超乳以上
+	CASEELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「バカみたいに大きい胸がこれで少しでも小さく……」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+; □ 70 アオカン
+@KOJO_8_0_SYSTEM_MESSAGE_113_70(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ペットフード……ですか、これ？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 72 すけーるゴーグル
+@KOJO_8_0_SYSTEM_MESSAGE_113_72(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「へんな汁とか飛ばしてきそうなヤツも居るし、目の防護用かな」\n"
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,34 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 75 戦闘から逃走(前に出る)
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_1_75(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中行動
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「へぇ……、絶対逃げられないようになってるんですね♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「なっ、何でっ！？　足が勝手にっ！？」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「えっ！？　ちょっと、そっちは違っ！？」\n"
+			ENDSELECT
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_8_0_ADD_MESSAGE, @"「気持ちいいことしてくれるなら、わたしはどこにも行かないよ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしはお交尾だけ出来ればいいの♥　貴方もそう思うでしょう♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっと近くに……　うん……　大好き♥」\n"
+
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ご主人様から逃げようとした……　バカなわたしを……　お躾けください……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「一瞬でも逃げようなんて考えた……わたしに……　罰をお与え下さい……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

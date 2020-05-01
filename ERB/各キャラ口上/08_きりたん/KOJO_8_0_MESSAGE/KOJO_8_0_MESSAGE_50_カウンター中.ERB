@@ -1,0 +1,43 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 50 カウンター中
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_50(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 残りMPによって分岐
+	IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（弱い力でも、カウンターのタイミングを合わせればそこそこの威力に……）\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしに攻撃を仕掛けたら、絶好のタイミングでやり返してやる！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ほらほら、かかってきなさい！　小学生一人倒すのなんて簡単ですよ」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（カウンター待ちなのを、気付かれないように……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「敵の動きをよーく見て……」\n"
+		ENDSELECT
+		
+	ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしの力じゃ、普通に攻撃しても大した威力は出ないから……）\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（力は無いけど、技術で勝負！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（隙があるように見せかければ、反撃しやすくなる筈！）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（相手の力を利用して、効率的に……）\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（疲れさえなければ、待ちの攻撃よりも攻めの攻撃するのに……）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（疲れてるから、出来るだけ相手の力を利用した攻撃を……）\n"
+		ENDSELECT
+	ENDIF
+		
+		
+	
+RETURN 1

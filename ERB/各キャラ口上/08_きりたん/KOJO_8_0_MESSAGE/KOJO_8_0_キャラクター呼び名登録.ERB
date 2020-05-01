@@ -1,0 +1,260 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ キャラクタの呼び名を登録
+; ------------------------------------------------------------------------------
+; 特に指定の無いキャラは、常時その名前でしか呼ばない為未指定
+; 特定個人を指さない名称は口上側で記述する事
+
+; 仲良くなると愛称で呼んだり、自分より大きい相手に平然とちゃん付けしたりする
+; 第三者がいる場ではTPOに応じて呼び分ける
+
+; □ 001 月読アイ
+@KOJO_8_0_CALLNAME_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(1) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(1)))) && CFLAG:(GET_ID_FROM_NO(1)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 1, "アイちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 1, "アイさん"
+	ENDIF
+RETURN 1
+
+; □ 002 弦巻マキ
+@KOJO_8_0_CALLNAME_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(2) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(2)))) && CFLAG:(GET_ID_FROM_NO(2)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 2, "マキちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 2, "マキさん"
+	ENDIF
+RETURN 1
+
+; □ 03 結月ゆかり
+@KOJO_8_0_CALLNAME_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(3) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(3)))) && CFLAG:(GET_ID_FROM_NO(3)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 3, "ゆかりさん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		; 好感度が警戒以下状態
+		IF CFLAG:(GET_ID_FROM_NO(35)):5 < 50
+			CALL KOJO_8_0_ADD_CALLNAME, 3, "結月さん"
+			
+		; 好感度問題なし
+		ELSE
+			CALL KOJO_8_0_ADD_CALLNAME, 3, "ゆかりん"
+		ENDIF
+	ENDIF
+RETURN 1
+
+; □ 004 東北ずん子
+@KOJO_8_0_CALLNAME_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(4) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(4)))) && CFLAG:(GET_ID_FROM_NO(4)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 4, "姉様"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 4, "ずん姉様"
+	ENDIF
+RETURN 1
+
+; □ 05 琴葉茜
+@KOJO_8_0_CALLNAME_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(5) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(5)))) && CFLAG:(GET_ID_FROM_NO(5)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 5, "茜ちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		; 好感度が警戒以下状態
+		IF CFLAG:(GET_ID_FROM_NO(35)):5 < 50
+			CALL KOJO_8_0_ADD_CALLNAME, 5, "琴葉さん"
+			
+		; 好感度問題なし
+		ELSE
+			CALL KOJO_8_0_ADD_CALLNAME, 5, "茜さん"
+		ENDIF
+	ENDIF
+RETURN 1
+
+; □ 006 琴葉葵
+@KOJO_8_0_CALLNAME_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(6) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(6)))) && CFLAG:(GET_ID_FROM_NO(6)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 6, "葵ちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		; 好感度が警戒以下状態
+		IF CFLAG:(GET_ID_FROM_NO(35)):5 < 50
+			CALL KOJO_8_0_ADD_CALLNAME, 6, "琴葉さん"
+			
+		; 好感度問題なし
+		ELSE
+			CALL KOJO_8_0_ADD_CALLNAME, 6, "葵さん"
+		ENDIF
+	ENDIF
+RETURN 1
+
+; □ 007　京町セイカ
+@KOJO_8_0_CALLNAME_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(7) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(7)))) && CFLAG:(GET_ID_FROM_NO(7)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 7, "セイカさん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 7, "京町さん"
+	ENDIF
+RETURN 1
+
+; □ 009 さとうささら
+@KOJO_8_0_CALLNAME_9(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(9) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(9)))) && CFLAG:(GET_ID_FROM_NO(9)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 9, "ささらさん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 9, "さとうさん"
+	ENDIF
+RETURN 1
+
+; □ 010 鈴木つづみ
+@KOJO_8_0_CALLNAME_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(10) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(10)))) && CFLAG:(GET_ID_FROM_NO(10)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 10, "つづみさん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 10, "鈴木さん"
+	ENDIF
+RETURN 1
+
+; □ 011　ONE
+@KOJO_8_0_CALLNAME_11(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(11) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(11)))) && CFLAG:(GET_ID_FROM_NO(11)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 11, "ONEちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 11, "ONEさん"
+	ENDIF
+RETURN 1
+
+; □ 012 IA
+@KOJO_8_0_CALLNAME_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(12) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(12)))) && CFLAG:(GET_ID_FROM_NO(12)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 12, "IAちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 12, "IAさん"
+	ENDIF
+RETURN 1
+
+; □ 013 ギャラ子
+@KOJO_8_0_CALLNAME_13(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(13) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(13)))) && CFLAG:(GET_ID_FROM_NO(13)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 13, "ギャラ子さん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 13, "ギャラ子さん"
+	ENDIF
+RETURN 1
+
+; □ 014 音街ウナ
+@KOJO_8_0_CALLNAME_14(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(14) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(14)))) && CFLAG:(GET_ID_FROM_NO(14)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 14, "ウナ"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 14, "音街"
+	ENDIF
+RETURN 1
+
+; □ 015 紲星あかり
+@KOJO_8_0_CALLNAME_15(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(15) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(15)))) && CFLAG:(GET_ID_FROM_NO(10)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 15, "あかりちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 15, "あかりさん"
+	ENDIF
+RETURN 1
+
+; □ 016 東北イタコ
+@KOJO_8_0_CALLNAME_16(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(16) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(16)))) && CFLAG:(GET_ID_FROM_NO(16)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 16, "イタコ姉様"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 16, "タコ姉様"
+	ENDIF
+RETURN 1
+
+; □ 017 桜乃そら
+@KOJO_8_0_CALLNAME_17(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(17) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(17)))) && CFLAG:(GET_ID_FROM_NO(17)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 17, "そらさん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 17, "桜乃さん"
+	ENDIF
+RETURN 1
+
+; □ 018 ついな
+@KOJO_8_0_CALLNAME_18(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(18) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(18)))) && CFLAG:(GET_ID_FROM_NO(18)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 18, "ついなちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 18, "ついなさん"
+	ENDIF
+RETURN 1
+
+; □ 019 鳴花　ヒメ
+@KOJO_8_0_CALLNAME_19(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(19) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(19)))) && CFLAG:(GET_ID_FROM_NO(19)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 19, "ヒメちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 19, "ヒメさん"
+	ENDIF
+RETURN 1
+
+;　　020　鳴花ミコト
+@KOJO_8_0_CALLNAME_20(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 人の目がないか2人きり、そして好感度が高い場合二人称が変化
+	IF GET_ID_FROM_NO(20) && (GET_MEMBER_SUM() == 1 || (GET_MEMBER_SUM() == 2 && IN_PT(GET_ID_FROM_NO(20)))) && CFLAG:(GET_ID_FROM_NO(20)):5 >= KOJO_8_0_LIKABILITY_BORDER
+		CALL KOJO_8_0_ADD_CALLNAME, 20, "ミコトちゃん"
+		
+	; 人の目がある時は普段通り
+	ELSE
+		CALL KOJO_8_0_ADD_CALLNAME, 20, "ミコトさん"
+	ENDIF
+RETURN 1
+
+

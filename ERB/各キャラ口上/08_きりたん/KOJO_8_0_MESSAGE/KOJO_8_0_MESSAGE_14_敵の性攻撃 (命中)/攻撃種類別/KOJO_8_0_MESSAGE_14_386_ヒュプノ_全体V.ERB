@@ -1,0 +1,72 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0386 ヒュプノ 全体V
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_14_386(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_AFTER("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 真の処女
+			IF TALENT:0 == 1
+				CALL KOJO_8_0_ADD_MESSAGE, @"「どうぞ…　%CALLNAME:TARGET%の処女おまんこ…　ご堪能ください……」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「はい…　%CALLNAME:TARGET%の新品おまんこをお使いください…」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしの未使用こどもおまんこ…　大人にしてくださるんですか…　ありがとうございます…」\n"
+			; 通常
+			ELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「この格好…犯しやすいですか？　いつもより…奥まで、感じます…」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「はい……　こうすれば、奧まで挿入れやすいですよね……」\n"
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 真の処女
+	IF TALENT:0 == 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしのおまんこ♥　ぐちゃぐちゃにかき回して…ッ♥　処女喪失させてくださいっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やだやだやだぁっ！　処女っ、わたしの処女ぉっ！？）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あっ、わたし…っ、未経験なのよぉっ！？　こんなはじめて…ないよぉっ…！？」\n"
+		ENDSELECT
+	
+	; 通常
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わざわざ人間体に変化してるのにっ♥　獣みたいなセックスっ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うしろからズポズポされるのっ、いいっ♥　コレいいっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（獣みたいなポーズで犯されてるのに…っ…　普通にされるより感じてる…っ…）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（うしろから犯されて…っ！　見えないの怖いっ！　怖いよぉっ！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やだぁ…　こんなカッコ…ぉ…」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

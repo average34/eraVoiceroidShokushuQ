@@ -1,0 +1,25 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 137 壁触手
+; ------------------------------------------------------------------------------
+
+; □ 1 回避失敗
+@KOJO_8_0_SYSTEM_MESSAGE_200_137_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んん♥　捕まっちゃいましたぁ♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「きゃあああぁぁっ！　そんな急にっ！？」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「かっ、壁からぁっ！？　そんなの聞いてないですよぉ！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 回避成功
+@KOJO_8_0_SYSTEM_MESSAGE_200_137_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「タイミングが甘いですね、罠ってのはもうちょい引きつけてから」\n"
+	ENDSELECT
+RETURN 1

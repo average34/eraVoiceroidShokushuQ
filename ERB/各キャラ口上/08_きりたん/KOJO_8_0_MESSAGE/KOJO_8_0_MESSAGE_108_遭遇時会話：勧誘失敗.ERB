@@ -1,0 +1,32 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 108 遭遇時会話：勧誘失敗
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひとりじゃ危ないと思うんですけどね？　気が変わったらいつでも言ってください」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「残念です」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ちょっとくらい楽が出来ると思ったけど、アテが外れましたね…）\n"
+	ENDSELECT
+	
+	; この小学生は現金なので相手の強さで追加口上
+	; 相手の初期戦闘素質が高い(50以上
+	IF ABL:(ARG:1):98 < ABL:98
+		CALL KOJO_8_0_ADD_MESSAGE, @"「か弱い小学生を助けてくれないなんて、人でなし～」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（そりゃ強いなら一人でもいんだろうけどさ）\n"
+	ENDIF
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; ずん子
+	CASE 4
+		CALL KOJO_8_0_ADD_MESSAGE, @"「まさか%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%に断られるなんて……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そんな、酷い」\n"
+	; イタコ
+	CASE 16
+		CALL KOJO_8_0_ADD_MESSAGE, @"「見損ないましたよ、タコ姉様！」\n"
+	ENDSELECT
+RETURN 1

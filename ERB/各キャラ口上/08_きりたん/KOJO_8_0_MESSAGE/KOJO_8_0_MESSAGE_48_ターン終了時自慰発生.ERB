@@ -1,0 +1,41 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 48 ターン終了時自慰発生
+; ------------------------------------------------------------------------------
+
+; 詳細な描写は実際に自慰を行う側で
+; ここではフレーバー程度の文を追加する
+@KOJO_8_0_SYSTEM_MESSAGE_48(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; このターン既に絶頂している
+	IF CFLAG:35
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「気持ちいいの、足りないよお♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（だめ…　イッたばかりなのに……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（なんでまだ疼んですか…っ　たった今イッたばかりなの…にっ）\n"
+		ENDSELECT
+	ENDIF
+	
+	; 通常の地の文表示
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1

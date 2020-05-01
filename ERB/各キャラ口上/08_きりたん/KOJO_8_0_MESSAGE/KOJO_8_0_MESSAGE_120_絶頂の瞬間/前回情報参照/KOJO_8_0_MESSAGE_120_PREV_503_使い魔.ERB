@@ -1,0 +1,48 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 前回情報参照 503 使い魔
+; ------------------------------------------------------------------------------
+
+; □ 1 使い魔による発情解消
+; ターン開始時 使い魔による発情解消
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_503_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 発情中にしか発動しないので淫乱・発情のみ埋めればOK
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥　ちくび、もっと強くしてぇっ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「はひゃァ、ぁひィィ…っ♥　んヒィィっ♥　おっぱぁい…っ♥　おっぱぁ…ぁぃィィッ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ちくびっ♪　ぴくぴくしてとまらないですぅ♪」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「バカ使い魔ぁ♥　わたしのおっぱい壊すつもりですかぁ？」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「使い魔ならぁ、使い魔らしい仕事をしろぉ…っ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「バカ使い魔ぁ…邪魔ばっかしてると捨てますよぉっ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「――ッ♥　――ッッ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひぁっ！？　ちょっ、ちょっとぉ！？　邪魔ですよぉっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「離れてくださいっ！　そんなコトしなくていいからぁっ！」\n"
+	ENDSELECT
+RETURN 1
+

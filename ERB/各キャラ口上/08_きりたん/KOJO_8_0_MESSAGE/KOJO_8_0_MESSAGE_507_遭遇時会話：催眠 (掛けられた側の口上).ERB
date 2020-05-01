@@ -1,0 +1,47 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 507 遭遇時会話：催眠 (掛けられた側の口上)
+; ------------------------------------------------------------------------------
+
+; □ 0 催眠に掛かった
+@KOJO_8_0_SYSTEM_MESSAGE_507_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠を掛けられた
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_8_0_ADD_MESSAGE, @"「身体が急に動かなく……っ！？　ちょっと%KOJO_8_0_CALLNAME_FROM_ID(1)%、わたしに何したの！？」\n"
+			
+		; 発情・感情操作系
+		CASE 1
+			{
+			CALL KOJO_8_0_ADD_MESSAGE, @"（なにこれ…っ、急に…っ！？　ひぁ…ぁっ…♥　イキたいっ♥　欲しいっ♥　なんでもいぃっ♥♥）\n
+			                              \d催眠術で思考を書き換えられ、%CALLNAME:TARGET%は発情しきった牝へと堕ちていく…\d\n
+			                              「はぁ…ぁっ…♥　はーっ♥　はーっ♥　きもちいいこと…してぇ♥♥」\n
+			                              \d肉欲を貪ること以外何も考えられなくなった%CALLNAME:TARGET%は、蕩けた顔で%CALLNAME:1%を見ている\d\n"
+			}
+			
+		; 無意識・認識操作系
+		CASE 2
+			{
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あ……　ご主人……様……　性欲処理の肉便器……　ご利用ですか？」\n
+			                              \d%CALLNAME:TARGET%は%ARGS:0%の足下に跪くと、触手の汚液にまみれた足にうやうやしく接吻した\d\n"
+			}
+		ENDSELECT
+	
+	; 催眠を解除された
+	ELSE
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+		; 発情・感情操作系 or 無意識・認識操作系
+		CASE 1, 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"（あ…あれ？　わたし…何を…？）\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠を解除された%CALLNAME:TARGET%は状況を把握出来ずに困惑している\d\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

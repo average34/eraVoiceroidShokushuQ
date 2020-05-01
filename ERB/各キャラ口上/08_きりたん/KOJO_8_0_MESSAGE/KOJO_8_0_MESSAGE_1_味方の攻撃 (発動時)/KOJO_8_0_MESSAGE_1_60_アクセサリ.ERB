@@ -1,0 +1,25 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 60 アクセサリ
+; ------------------------------------------------------------------------------
+
+; □ 1 使用
+@KOJO_8_0_SYSTEM_MESSAGE_1_60_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE ARG:2
+		; 魔導触媒, 簡易魔法陣, 使い魔, 賢者の石
+		CASE 20 TO 23
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっともったいないけど！」\n"
+		; 身代わり人形
+		CASE 27
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ちゃんと役にたってよね）\n"
+		; 幸運のお守り
+		CASE 36
+			CALL KOJO_8_0_ADD_MESSAGE, @"「幸運のお守りとずん姉様の写真の相乗効果！　…ってのは流石に期待できないですかね」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 破損
+@KOJO_8_0_SYSTEM_MESSAGE_1_60_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1

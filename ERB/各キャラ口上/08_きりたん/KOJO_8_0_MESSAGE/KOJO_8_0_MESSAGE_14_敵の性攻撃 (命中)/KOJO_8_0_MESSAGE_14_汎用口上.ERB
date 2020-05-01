@@ -1,0 +1,372 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 汎用口上
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_14(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM NAME_ID
+
+	; 性複合属性口上を呼び出す
+	CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_8_0_SYSTEM_MESSAGE_14_MULTIPLE_{TFLAG:92}")
+	SIF KOJO_8_0_GET_IMPORTANT_FLAG()
+		RETURN 1
+		
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_AFTER("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時
+	IF CFLAG:25
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あぅ……っ　んっ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「んんぅ…」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 戦意喪失
+	IF CFLAG:29
+		; 催眠中
+		IF KOJO_8_0_IS_HYPNO()
+			; 催眠種類で分岐
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				
+			; 発情・感情操作系
+			CASE 1
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"（もう…動けない…のに…　わたしの身体…　公衆便所にして…　くれてる…）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「もっと…ぉ…　わたし…を…つかって…　きも…ちよく…　なって…　ください…」\n"
+				RETURN 1
+			ENDSELECT
+		ENDIF
+
+		; 通常時
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おﾞひぃ…っ♥♥　んおﾞおﾞおﾞぉっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「このまま……このままイカせてぇ……♥　お願い、お願いします…ぅっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっとぉ…♥　もっと強いの、ほしいのぉ…♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もう…カラダうごかない…からぁ\n　そう…　やさしく…イカせてね…ぇ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あﾞ～っ♥　あﾞあﾞ～～っ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そ、そんなっああっ無理っ♥　無理だよおっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（あ…とめちゃやだ…　もっと…もっとぉ……♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もうイヤ…ぁ♥　イヤなの…ぉぉ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もﾞうﾞ…　ゆﾞるﾞじで…ぇﾞぇﾞ……♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もう…　ゆるして…ぇ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うあ…ぁっ……　もう…　やめて…ぇ……」\n"
+		ENDSELECT
+		
+		; 自分が喪失中 + まだ仲間が行動中なら追加口上
+		IF BASE:1:1 > 0 || (FLAG:10 && BASE:(FLAG:10):1 > 0) || (FLAG:11 && BASE:(FLAG:11):1 > 0)
+			; まだ行動中キャラのIDを取得
+			VARSET NAME_ID
+			WHILE 1
+				SELECTCASE RAND:3
+				CASE 0
+					IF BASE:1:1 > 0 && TARGET != 1
+						NAME_ID = 1
+					ENDIF
+				CASE 1
+					IF FLAG:10 && BASE:(FLAG:10):1 > 0 && TARGET != FLAG:10
+						NAME_ID = FLAG:10
+					ENDIF
+				CASE 2
+					IF FLAG:11 && BASE:(FLAG:11):1 > 0 && TARGET != FLAG:11
+						NAME_ID = FLAG:11
+					ENDIF
+				ENDSELECT
+				
+				SIF NAME_ID
+					BREAK
+			WEND
+			
+			; 好感度によって分岐
+			; 好感度:低
+			IF CFLAG:NAME_ID:5 < 0
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「えへへぇ……♥　%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%もはやく、諦めて犯されちゃおうよぉ……♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（やだ……　%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%なんかに見られてる……のに……　目の前で犯されるなんてぇ……っ……）\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（よりによって、仲間の前で犯されるなんて……っ……　しかも%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%なんかに見られるし最悪……）\n"
+				ENDSELECT
+				
+			; 好感度:警戒
+			ELSEIF CFLAG:NAME_ID:5 < 50
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「みっ、見られてるぅ……っ♥　犯されてるトコ……っ、%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%に見られてるうっっ♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「ううぅ……っ……　はやく、助けてくださいよぉ……　%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%……っ……」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%……　わたしのこんな姿……　見ないで……」\n"
+				ENDSELECT
+				
+			; 好感度:通常
+			ELSEIF CFLAG:NAME_ID:5 < 200
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「仲間の前で犯されるの……っ♥　気持ちい～っ♥　気持ちいいいぃぃ～～ッッ♥\n　%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%っ……！　見てぇぇっ♥　感じてるわたしの顔見てええぇぇぇッッ♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「あﾞ～っ♥　あﾞあﾞ～っ♥　%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%っ、見ないでぇ……っ♥♥　犯されるとこ見ないでぇっ♥♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（見られちゃう……っ……　%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%に、わたしの犯されるトコ……　見られちゃうっ……）\n"
+				ENDSELECT
+				
+			; 好感度:高
+			ELSEIF CFLAG:NAME_ID:5 >= 200
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%っ♥♥　みっ、見てぇっ♥♥\n　あた……わたしっ、犯されて……こんなになってるの……ぉ♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%っ……　見っ、見ないでぇっ……　ちがうの……っ……　わたし感じてなんかぁ♥　うひぃぃっ♥♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「お願い%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%っ……　こっち見ないでぇ……っ　わたし、頑張って耐えるから……ぁ……」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「いやあぁ……ぁぁっ……　%KOJO_8_0_CALLNAME_FROM_ID(NAME_ID)%……っ……　たすけて……　たすけてえぇぇ……」\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	; 諦めた
+	IF TFLAG:16 == 2
+		; 催眠中
+		IF KOJO_8_0_IS_HYPNO()
+			; 催眠種類で分岐
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				
+			; 発情・感情操作系
+			CASE 1
+				
+			; 無意識・認識操作系
+			CASE 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"「きもちよくして…　いただけるんですね…　ありがとう、ございます……」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしのカラダは…　皆様の性欲処理用です……　お好きにお使いください……」\n"
+				RETURN 1
+			ENDSELECT
+		ENDIF
+		
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は蕩けた顔で触手を受け入れている…\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d抵抗を諦めた%CALLNAME:TARGET%は、緩みきった牝の表情で触手に身体を許している…\d\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ふにゃぁぅぅっ…♥　きもちいいっ♥　きもちいいれすぅ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あぁぁっ♥　いいよぉっ♥　きもちいいよぉっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そこっ♥　そこぉっ♥　もっと…いじめてぇ…♥♥」\n"
+			
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっとぉ♥　もっときもちいいコトしてぇ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたし…ぃ、自分で気持ちいいトコ…擦りつけて…ぇ　よろこんじゃって…るよぉ）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やだ！やだ！やだあぁっ！　気持ちいいのずっと続いてっ、わたしの身体…バカになってるううっ！！）\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d甘い痺れに身も心も屈した%CALLNAME:TARGET%は、%ARGS:1%に蕩けた声でおねだりしている\d\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（いやなのにっ…　いやなのにいぃっ…　触手ちんぽ気持ちいいよおぉっ……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（感じたくないっ！　こんなので感じたくないっ！！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（感じてない感じてない感じてない！　気持ちよくなんてない！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（しっかり気を持たないと…っ！！）\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は無理矢理押し上げられる快感に、涙目で耐えている…\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_8_0_ADD_MESSAGE, @"（なんでカラダが勝手に動くのよぉっ！？）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（さわんないでよぉっ！　カラダの自由を奪って好き勝手…なんて卑怯よー！）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（わたしは…　こんなコト…　したくないのにぃっ！？）\n"
+			CASE 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"（なんか、気持ちよくされるの…　嬉しい気がする……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（ご奉仕…　しないと……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（あれ？　わたし何を嫌がってたんだっけ？）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「はい…　いっぱい…　いじめて…　ください…」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたし…　むりやり、イカされるの…　すきです…」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「…気持ちいい…です」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしのカラダで…　好きなだけ…　性欲処理してください…」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたし…　ちゃんと、えっちなこと…　できてますか…？」\n"
+			ENDSELECT
+			
+			; バッドステータス"絶頂"時追加口上
+			IF CFLAG:35
+				CALL KOJO_8_0_ADD_MESSAGE, @"「イッたばかりの%CALLNAME:TARGET%を……　もっと、かわいがってくれるんですか……？」\n"
+			ENDIF
+			
+			; おねだり時追加口上
+			IF CFLAG:50 >= 54 && CFLAG:50 <= 58
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしの…　おねだり、きいてくれて…　ありがとう…　ございます…\n　たっぷり、ご奉仕させて…　いただきます…」\n"
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃうっ…♥　びりびり…するぅっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んんっ…っ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あう…っ…♥　きもちぃ…っ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「もっと…ぉっ♥　つよ…くして…ぇっ…♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「びりびりってして…ぇ♥　しゅご…ぉぉ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「きもちいい…♥　きもちいいよぉ…♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「きもち…よすぎてぇ…、とけちゃうよぉ…ぉ♥♥」\n"
+
+	CASE "発情"
+		; 媚薬での発情か 進行での発情かによって地の文が変化
+		IF CFLAG:28 != 0
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d強制的に発情させられた%CALLNAME:TARGET%は、想像以上の快感に身悶えている\d\n"
+		ELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d多数の触手に開発され、火照りの収まらなくなった身体が%CALLNAME:TARGET%の意志とは無関係に震えている…\d\n"
+		ENDIF
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_8_0_ADD_MESSAGE, @"（う…ぅ…っ！！　んんんっ…っ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（くうぅ…んん…っっ！？　気持ち悪い…ハズなのにっ…っ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（そんなに触られたらっ…おかしくなっちゃ…っ！）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（熱いっ！　カラダ熱いよぉ…っ！）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ダっ…メぇ…　ひゃぅっ！　さわらっ、ない…　あぁっ！　でぇっ…！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃ…あ……ぁ　ふうぅ…っ♥\n　ダメぇ　こえぇ　でちゃうぅっ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃうっ！？\n　ビンカンになってるからぁ…今さわっちゃ…だめぇ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「わたしぃ…そんなに　えっちじゃ…ぁ　ないもぉんっ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ダメ　ダメ　ダメぇっ♥\n　きもちっ…いいっのっ…だっめぇぇ…ぇっ…っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やだぁっ！　壊れるぅっ♥　壊れちゃうぅっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「さわるなぁっ！　いやっ♥　ほんとにっ♥　さわっちゃだめですよぉ♥」\n"
+	
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あーもー！　さわるな！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いいかげんにしてくださいっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「くぅっ…！　気持ちわるっ…！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いやですっ、さわらないで！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「や…っだ…、やめて…っ…！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（気持ちわるい、気持ちわるい、気持ちわるいっ！！）\n"
+		
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ヘタ…クソぉ…　そんなので、感じるわけないで…すよぉっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んひっ！？\n　どこ…　さわってんですかぁ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んうぅっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こ、こんなので感じるわけないじゃないですか！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やーだー、気持ち悪ー！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ううっ…　きもちわるい…よぉっ…！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やだ、やだ、やーだー！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やだ…　さわらない…でぇっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やめて…よぉっ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃぁっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃうっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃぅ…っん！？　何！？　今の感覚っ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ヘン…っ…なっ、感覚がぁ…っ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「触られたトコ…っ、あつくてジンジンするぅ…っ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「さわっちゃ…ぁ、だめぇっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そんなに…　いじめないでぇ…」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「だめぇ…　それだめぇ…っ」\n"
+
+	ENDSELECT
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 絶頂寸前(このダメージで絶頂)
+	IF BASE:EP <= ARG:3
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひああぁぁぁっ♥　きちゃうっ、これ絶対きちゃううううっっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「だめえぇぇっ♥　ゾクゾクするの大きくなるうっ♥　あっ♥　あっ♥　あああああっ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やめて！　やめてよぉ！　だめええぇっ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やだあぁぁっ！　感じたくない！　こんなので感じたくないいいぃぃっ！！」\n"
+		ENDSELECT
+	ENDIF
+	
+	; バッドステータス"絶頂"時追加口上
+	IF CFLAG:35
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あんっ♥　イキっぱなしの身体ぁ、勝手に跳ねちゃうっ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　あっ♥　イッたばかりなのにっ、また気持ちいいの来たあ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やめてよぉ！　もうイッてる、イッてるからぁ！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひいいぃっ……！　もうイカせたんだからいいでしょぉ……！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やめて…ぇ！　イッたばっかで、苦し…っ！」\n"
+		ENDSELECT
+		
+		; 絶頂中の部位を攻撃された
+		{
+		IF (ARG:2 == 0 && GETBIT(CFLAG:35, 1)) ||
+		   (ARG:2 == 1 && GETBIT(CFLAG:35, 2)) ||
+		   (ARG:2 == 2 && GETBIT(CFLAG:35, 3)) ||
+		   (ARG:2 == 3 && GETBIT(CFLAG:35, 4)) ||
+		   (ARG:2 == 5 && GETBIT(CFLAG:35, 5)) ||
+		   (ARG:2 == 9 && GETBIT(CFLAG:35, 6))
+		}
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ひぎぃ……っ♥　イキっぱなしでビンカンなトコロにぃ……っ♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ひいぃぃっ！？　そこまだイってるのぉ……っ！？」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	
+	; [尻穴狂い][淫乳][淫核][淫壺]持ち時追加口上
+	; りばーす東方触手宮の場合感覚LV3以上
+	IF TALENT:(75 + ARG:2) || (KOJO_8_0_IS_REVERSE() && ABL:(6 + ARG:2) >= 3)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「たりないっ♥　ぜんぜんたりないのぉぉっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そﾞこﾞらﾞめﾞえﾞえﾞぇぇっ♥♥　くﾞるﾞっちﾞゃうﾞっ♥♥　くﾞるﾞっちﾞゃうﾞうﾞぅぅぅっ♥♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おﾞひﾞっ♥♥　あﾞあﾞっ♥♥　んﾞあﾞぁぁぁぁっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「んﾞにﾞゃあああぁっ♥♥　感じすぎっ…てっ♥♥　こわいよぉぉっっ♥♥」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「いぎぃぃっ…っ♥　感じるっ♥　感じるもんですかぁぁっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「まけない…っ♥　こんなのには負けないんだからぁ…っっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おﾞひぃぃ……っ♥♥　んﾞひいぃぃぃっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うあああぁぁぁっ♥♥　カラダぁ♥　いうこときかないよぉぉっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「感じたく…ないのにぃっ♥♥　とまんないっ♥　気持ちよくなるのとまんないぃぃっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひぃぃっ♥　ダメぇぇっ♥♥　熱いっ♥　熱いよおおぉぉ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やめてへぇぇっ♥　そこっ、こわれてるのっ♥　壊されちゃったのぉぉっ♥♥」\n"
+		ENDSELECT
+	ENDIF
+	
+	; おねだり時追加口上
+	IF CFLAG:50 >= 54 && CFLAG:50 <= 58
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「いっぱい、気持ちよくしてください♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（自分からおねだりした所為でしょうか？　なんか、いつもよりドキドキする……）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「たっ、確かにおねだりしたけどっ…　わかりますよね！？\n　あんなの嘘だって！　本気でおねだりなんかするわけないじゃないですか！　離してぇ！」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

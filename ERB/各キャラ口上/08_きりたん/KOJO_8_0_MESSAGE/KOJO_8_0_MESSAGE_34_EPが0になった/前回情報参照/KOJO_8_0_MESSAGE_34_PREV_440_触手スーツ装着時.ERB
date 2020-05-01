@@ -1,0 +1,89 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 34 EPが0になった - 前回情報参照 440 触手スーツ装着時
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_34_PREV_440(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIMS PARTS ; 絶頂部位名称保持用
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_34_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 絶頂部位名称保持
+	SELECTCASE ARG:1
+	CASE 0
+		PARTS = 尻穴
+	CASE 1
+		PARTS = 胸
+	CASE 2
+		IF GET_PENIS(TARGET)
+			PARTS = ふたなりペニス
+		ELSE
+			PARTS = クリトリス
+		ENDIF
+	CASE 3
+		PARTS = 牝穴
+	ENDSELECT
+	
+	; 部位感度がLV3以上であれば欲しがり状態(地の文が『待ちかねた』に変化)
+	; 待ちかねた
+	IF (ARG:1 == 0 && TALENT:101 >= 3) || (ARG:1 == 1 && TALENT:102 >= 3) || (ARG:1 == 2 && TALENT:103 >= 3) || (ARG:1 == 3 && TALENT:104 >= 3)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「この服…ぅ♥　気持ちよすぎて…　ガマン…、できにゃいぃ…♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あﾞーっ♥　ぅあﾞあﾞーっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっとぉっ♥　もっと気持ちいいのちょうだぁぃ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ああっ♥　イクイクイクぅっ♥　イッちゃううぅっっ♥♥」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d艶めかしい喘ぎ声に応え、%CALLNAME:TARGET%の身体を包む淫服は絶頂寸前の%PARTS%を的確に攻め上げた！\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は今にも絶頂しそうな%PARTS%を触手服の上から撫でさすっている\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d服を着たまま艶めかしく腰を揺らし甘い声をあげる%CALLNAME:TARGET%の姿は、まるで見えない誰かに犯されているようだ\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は衣服に擬態した触手を上から圧迫し、今にも絶頂しそうな%PARTS%に押しつけた\d\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「だっ、ダメぇっ！　気持ち悪いのっ！　気持ち良くないよぉっ！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひっ…　あっ…　あああっ…！　もっと…ッ！　もっとぉぉ…ッ！」\n"
+		ENDSELECT
+		
+	; 待ってない
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こっ、これイイのおっ♥　気持ちいいの…からっ、逃げられ…ないぃっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ああっ♥　服にっ…イカされ…っ♥」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「このバカ服…っ！　気持ち悪いから…っ、うぞうぞするな…ぁ！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うっ、動くなぁっ！？　このぉっ！？」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（イカされるっ！？　わたし服なんかにイカされるっ！？）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ふ、服ぅ！？　服の中のぬるぬるがぁ…っ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「きちゃう…ぅっ！？　わたし…っ、服にっ！？　服なんかにぃっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「だ、だめぇ…っ…　こえ、だしたら…っ　がまん、できなく…っ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はぁっ…　あぁっ…　あっ！？　ひっ！？　んぃぃぃっ！？」\n"
+		ENDSELECT
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d身をよじっても逃れられない執拗な責めに、限界を迎えた%CALLNAME:TARGET%は上ずった声を上げた！\d\n"
+	ENDIF
+RETURN 1

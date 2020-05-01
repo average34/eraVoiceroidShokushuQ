@@ -1,0 +1,94 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 20～25 消耗武器攻撃
+; ------------------------------------------------------------------------------
+
+; □ 20 消耗武器攻撃 弱攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_1_20(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上を読み込む
+	CALL KOJO_8_0_SYSTEM_MESSAGE_1_THROW_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 2人以上のPTで行動中、他キャラが行動可能なら追加口上
+	IF GET_MEMBER_SUM() > 1 && ((TARGET != 1 && CHECK_FINE(TARGET)) || (FLAG:10 && FLAG:10 != TARGET && CHECK_FINE(FLAG:10)) || (FLAG:11 && FLAG:11 != TARGET && CHECK_FINE(FLAG:11)))
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「牽制はまかせて！　離れて攻撃できるうちは強気にいきますよ！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 21 消耗武器攻撃 中攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_1_21(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上を読み込む
+	CALL KOJO_8_0_SYSTEM_MESSAGE_1_THROW_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_FIX_MESSAGE
+RETURN RESULT
+
+
+; □ 22 消耗武器攻撃 強攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_1_22(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上を読み込む
+	CALL KOJO_8_0_SYSTEM_MESSAGE_1_THROW_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_FIX_MESSAGE
+RETURN RESULT
+
+
+; □ 23 消耗武器攻撃 節約攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_1_23(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「無くならないよう、大事に扱わないとねー」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 24 消耗武器攻撃 みだれうち
+@KOJO_8_0_SYSTEM_MESSAGE_1_24(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「きりたん砲、全門連続発射ー！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 25 消耗武器攻撃 一点集中
+@KOJO_8_0_SYSTEM_MESSAGE_1_25(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そこだぁっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんだけじっくり狙えば、けっこう効くでしょう」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ XX 消耗武器攻撃 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_1_THROW_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 汎用攻撃口上を読み込む
+	CALL KOJO_8_0_SYSTEM_MESSAGE_1_VERSATILE_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 基本口上
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「どんな武器でも直接殴りかかるよりはマシですねぇ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やっぱり遠くからぺしぺしする方が性に合います\n　攻撃の届かない高台とかから一方的に撃てれば一番いいんですけど」\n"
+	ENDSELECT
+
+	; 武器別追加口上
+	SELECTCASE TFLAG:67
+	; 火炎放射器
+	CASE 3
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっと燃えるがいいや！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「攻撃するのはいいけど、ヤケドに気をつけないと」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃっはー！　汚物は消毒だー！……一度言ってみたかったんですよね」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

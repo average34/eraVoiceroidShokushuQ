@@ -1,0 +1,40 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 47 重度汚染部屋で時間経過
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_47(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d身体中を舐めまわされる感覚に、%CALLNAME:TARGET%はうつろな目のまま息を荒げている…\d\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いいよぉ♥　もっとくにくにしてぇ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ぅぅん♥　きもちい…っ♥　もっと…ぉ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「さわ…っちゃ…っ、だっ…めぇ……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うぁぁ…っ！　ジャマ…しないでぇ…っ！」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「くぅっ…　とっとと戦いを切り上げて、この部屋も綺麗にしないと！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああもう、うざったいっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「どいてください、うっとおしい！」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んぅっ、さわんないで…くださいよぉっ…」\n"
+	ENDSELECT
+RETURN 1

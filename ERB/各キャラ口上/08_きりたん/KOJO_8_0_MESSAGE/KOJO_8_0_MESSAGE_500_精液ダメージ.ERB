@@ -1,0 +1,80 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 500 精液ダメージ
+; ------------------------------------------------------------------------------
+
+; 精液中毒LV2以上で発生するのでLV2, LV3以上で分岐
+@KOJO_8_0_SYSTEM_MESSAGE_500(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中
+	IF CFLAG:25
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んっ♥　あっ♥　あ……うぅんっ♥　うぅ……んっ♥」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は眠っているにも関わらず、子宮全体に精液を塗り込むように腰を動かしている…\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 喪失中
+	IF CFLAG:29
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おま…こ…っ♥　おま…っ♥　おまん…こっ…♥　とけちゃ…っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んっひ…ぃっ♥　はひっ♥　はひい…ぃぃっ♥♥」\n"
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 精液中毒LV2
+	IF ABL:14 == 2
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんなにビュービューしてぇ…　わたしのおまんこ、触手ちんぽのトイレにするつもりぃ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（なかだしされて…ぇ、おまんこが喜んでるよぉ…っ♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「いいよぉっ♥　そのまま…っ、おまんこ精液便所にしてぇぇっ♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ズルイよぉっ…♥　こんなので気持ちよくするのズルイよぉぉっ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしの子宮、ナカ出しされて喜んじゃってるぅ♥　うそぉっ♥　うそおおぉっ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やだ…！？　わたし、膣内射精されて感じてる…っ！？）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「なんでこんなので感じてっ！？　どうなってるんですかコレっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（なんなのぉ…　この感覚ぅ…っ！？）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（イヤなのにっ！？　カラダが欲しがってるっ！？）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あついよぉ…っ！？　おなかの中あついよぉぉっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ナカぁ！？　ナカからゾクゾクってしたぁ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたし…　子宮…　精液でたぷたぷにされて…　感じてる…」\n"
+		ENDSELECT
+		
+	; 精液中毒LV3以上
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（なかだしされて…ぇ、おまんこが喜んでるよぉ…っ♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「すごいィィっ♥　わたしの子宮…精液でパンパンにされちゃったぁ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ねぇ見える？　わたしのおまんこぉ、喜んでひくひくしてるのぉ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「射精ぇ♥　もっといっぱい射精ひてぇッッ♥♥　わたひの子宮っ…精液まみれにしてぇぇッ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「これぇっ♥　これひゅごぃぃ…っ♥　わたしぃっ、精液に気持ちよくされてるぅッ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんなので感じてたら負けちゃうっ…♥　気持ちいいのに負けちゃうよぉっ…♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「なかだしっ♥　なかだしされて…っ、感じちゃってるぅ…っ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「気持ちよくないっ♥　気持ちよくないからぁ♥　もう射精すなあぁぁっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うあああっ♥　もう射精すなぁ♥　バカああぁっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひィ……っ♥　おぉ……っ♥　んおぉ……ぉぉっっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ふっ、深いィっ！？　押しつけないでぇっ！？　押しつけながら射精するのやめてぇぇっ♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

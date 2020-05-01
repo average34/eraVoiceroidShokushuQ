@@ -1,0 +1,29 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 134 白濁泉
+; ------------------------------------------------------------------------------
+
+; □ 0 MP全回復
+@KOJO_8_0_SYSTEM_MESSAGE_200_134_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_ADD_MESSAGE, @"「不思議な水です、飲んでるだけで元気が出てくる」\n"
+	CALL KOJO_8_0_ADD_MESSAGE, @"「疲れたカラダにしみわたりますね」\n"
+RETURN 1
+
+
+; □ 1 睡魔に襲われる
+@KOJO_8_0_SYSTEM_MESSAGE_200_134_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_ADD_MESSAGE, @"「睡眠薬入りの泉なんて…　きいたこと…　ない…　です…よ…　……」\n"
+RETURN 1
+
+
+; □ 2 発情
+@KOJO_8_0_SYSTEM_MESSAGE_200_134_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 発情湧き水イベント(飲んだ)で代用
+	CALL KOJO_8_0_SYSTEM_MESSAGE_200_131_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; □ 6 ふたなり化
+@KOJO_8_0_SYSTEM_MESSAGE_200_134_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_8_0_SYSTEM_MESSAGE_CHINKO_EQUIP(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

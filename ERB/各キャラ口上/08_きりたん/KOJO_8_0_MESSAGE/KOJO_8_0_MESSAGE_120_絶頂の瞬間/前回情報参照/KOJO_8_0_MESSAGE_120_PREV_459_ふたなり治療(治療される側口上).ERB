@@ -1,0 +1,129 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 前回情報参照 459 ふたなり治療(治療される側口上)
+; ------------------------------------------------------------------------------
+
+; ◇ 0 V
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_459_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠時処理
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あぁ……っ！　イキましたぁ……っ！　わたしのおちんぽ、%CALLNAME:1%様のおまんこに屈服しましたぁ……っ！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「射精します……っ　%CALLNAME:1%様の中に、射精させていただきます……っ」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 汎用口上
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「――はッ……あぁ……っ♥　んッ……んぉ……ぉおっ……♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「――ッ♥　――ッ♥♥　――ッッ♥♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「せーし……ッ♥　出るッ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のナカにせーし出るぅッ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「このままっ♥　このまま射精するよぉ……ッ♥♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%の子宮にどぷどぷ射精しちゃうよぉ……ッ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なかだし……っ♥　なかだし……っ♥　なかだし……っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いい……っ……♥　セックス気持ちいい……っ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%の膣内ぁ、最高……っ♥♥」\n"
+	ENDSELECT
+RETURN 1
+
+
+; ◇ 3 M
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_459_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「射精……ッ、するよぉっ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のお口で、わたしのザーメン吸い出してぇっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「せーえき出るよぉ……っ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のお口……っ、わたしのニオイでいっぱいにしたげる……ぅ♥♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なんでっ♥　なんでぇ……っ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のお口……っ、こんなに気持ちいいのぉ……っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おちんちんっ♥　おちんちんっ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%の口の中で爆発するう……っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うあぁぁっ♥　射精るっ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のお口に精液射精しちゃうっ♥」\n"
+	ENDSELECT
+	
+	; 2回目以降なら追加口上
+	IF CFLAG:35
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ザーメン大好きなド変態さん♥　ほらほら、次のが出るわよ♥　こぼさないで味わってね…っ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「またぁっ♥　また射精る…ッ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のお口、なんでこんなに気持ちいいのぉ…っ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「射精したばっか……なのにっ♥　また……っ、また射精しちゃうぅ……っ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「またぁっ♥　また射精るっ♥♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%っ♥　全部っ、全部飲んでぇ……っ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「だっ、ダメぇっ♥　こんなのガマンできないっ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%のお口、凄すぎるよぉぉ♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; ◇ 4 手淫
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_459_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%のお顔、ザーメンまみれにしたげるぅ♥　ほらっ、イクよぉっ♥　射精るよぉっ♥♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%の手、気持ちいいっ♥　イッちゃう、おちんちんイッちゃうっ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%……っ♥　ごめんっ、ごめんねっ♥　%KOJO_8_0_CALLNAME_FROM_ID(1)%の手に……っ♥　射精しちゃう……っ♥♥」\n"
+	ENDSELECT
+RETURN 1

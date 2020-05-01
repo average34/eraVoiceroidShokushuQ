@@ -1,0 +1,100 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 102 遭遇時会話：別れた
+; ------------------------------------------------------------------------------
+
+; □ 通常
+@KOJO_8_0_SYSTEM_MESSAGE_102_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「わたしが好きそうな子がいたら、次会った時に教えてください♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「大丈夫だとは思うけど、万が一って事もあるし　気をつけてくださいね」\n"
+	ENDSELECT
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; ゆかり
+	CASE 3
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ゆかりさんなら１人でも大丈夫、ですかね……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（出来れば一緒に来て欲しいんですけど……）\n"
+	; ずん子
+	CASE 4
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ずん姉様、必ず定期的に会いましょうね！」\n"
+	; ウナ
+	CASE 14
+		CALL KOJO_8_0_ADD_MESSAGE, @"（音街はまだ大丈夫……そうですね）\n"
+	; イタコ
+	CASE 16
+		CALL KOJO_8_0_ADD_MESSAGE, @"「タコ姉様、ずん姉様を見つけたら絶対に教えてくださいよ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 喪失中
+@KOJO_8_0_SYSTEM_MESSAGE_102_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「全部諦めちゃえば楽になれると思いますよ、わたしみたいに\n　じゃ、がんばってくださいね♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（わたしもそのうち……　ああなっちゃうかもしれない……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「悪いけど、今は連れてく余裕ないんです」\n"
+	ENDSELECT
+	
+	
+	; 好感度別、追加口上
+	; 好感度:低
+	IF CFLAG:(ARG:1):5 < 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そのまま倒れてれば犯され放題ですね♪　囮やってる方が役に立ちますよ♪」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ごめんね、%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%」\n"
+		ENDSELECT
+		
+	; 好感度:警戒
+	ELSEIF CFLAG:(ARG:1):5 < 50
+		SELECTCASE KOJO_MODE
+		CASEELSE
+		ENDSELECT
+		
+	; 好感度:通常
+	ELSEIF CFLAG:(ARG:1):5 < 200
+		SELECTCASE KOJO_MODE
+		CASEELSE
+		ENDSELECT
+		
+	; 好感度:高
+	ELSEIF CFLAG:(ARG:1):5 >= 200
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うう……　連れていってあげたいなあ、%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%……」\n"
+		ENDSELECT
+	ENDIF
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; アイ
+	CASE 1
+		CALL KOJO_8_0_ADD_MESSAGE, @"（私より小さい、何とかして連れて帰ってあげたいけど、余裕ないしなあ……　%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%……）\n"
+	; ずん子
+	CASE 4
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ずん姉様！？　助けたいけど、私じゃ姉様を動かせない……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「絶対に助けに来ますから、頑張って下さい姉様」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何とか少しでも安全なところに……いや、アイテムを持ってくる方が早い……？」\n"
+	; 茜
+	CASE 5
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ぼろぼろの茜ちゃんはエロいですねぇ……）\n"
+	; ウナ
+	CASE 14
+		CALL KOJO_8_0_ADD_MESSAGE, @"「音街、絶対助けに来ますからね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「諦めたらダメですよ、音街、絶対助けは来ますから」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（声を掛ける時間も惜しいです、アイテムを探しに行きましょう）\n"
+	; イタコ
+	CASE 16
+		CALL KOJO_8_0_ADD_MESSAGE, @"「タコ姉様、後で必ず助けますから……」\n"
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,266 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 60 先制攻撃・不意打ち発生
+; ------------------------------------------------------------------------------
+
+; □ 先制攻撃
+@KOJO_8_0_SYSTEM_MESSAGE_60_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 戦闘開始時で既に喋っている場合は何もしないで帰る
+	SIF !TFLAG:14
+		RETURN 0
+		
+	; ボス戦は特殊扱い
+	; 遭遇状態に関わらず既に呼び出されている
+	SIF KOJO_8_0_GET_PREV_ARG(0) == 54 && KOJO_8_0_GET_PREV_ARG(1)
+		RETURN 0
+
+	; 状態異常で喋れない場合は何もしないで帰る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; PT人数は一人だけ
+	IF GET_MEMBER_SUM() == 1
+		; MPの状態によって分岐
+		; MP25%以下
+		IF BASE:MP <= (MAXBASE:MP / 4)
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「少しでも休みたい時だってのに……！」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（こっちは一人な上にボロボロだし……　気付かれてないうちに逃げなきゃ……）\n"
+			ENDSELECT
+			
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「有利な状況だけど、ひとりで戦うのは面倒くさいなあ」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「確実に逃げられるなら、とっとと逃げる！　危ないし！」\n"
+			ENDSELECT
+		ENDIF
+		
+	; PT人数より敵の数が多い
+	ELSEIF GET_MEMBER_SUM() < TFLAG:15
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「襲われるのもいいけど、襲っちゃうのもそれはそれで♪」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（数で負けても、不意を突ければ勝機はあるし！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「今がチャンス！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（不意は突けたけど、敵さんのが多いんですよね……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「チャンスの時は逃げるか、逃げるか、逃げるといいと思います」\n"
+		ENDSELECT
+		
+	; PT人数と敵の数は同数
+	ELSEIF GET_MEMBER_SUM() == TFLAG:15
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「い、今いちばん安全な行動は……」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「先手必勝っ！　いけいけー！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「チャンスだけど……　倒すか、逃げるか……」\n"
+		ENDSELECT
+		
+	; PT人数より敵の数は少ない
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「さて、どうやって食べちゃおうかしら♪　それとも食べられちゃう？」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（あ、わたしたちの方が人数多いけど……　万が一って事もあるし……）\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「さて、どうしてくれましょうか？　このノロマ達」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ふっふっふ……　気付いてないうちにバッサリですよ！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「数も、流れも、わたしたちが上！　覚悟しなさい！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（敵の数は少ないし隙だらけ、いけますね！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「さくっとたたんでしまいましょ、こっちの人数のが多い！」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 連戦なら追加口上(戦闘開始時口上を間に挟んだ2つ前の呼び出し口上が「戦闘で勝利」)
+	IF KOJO_8_0_GET_PREV_ARG(0, 2) == 57
+		; MPの状態によって分岐
+		; MP25%以下
+		IF BASE:MP <= (MAXBASE:MP / 4)
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「いい加減にしてよ、疲れてるんです！」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっとは休ませてよ……」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うええ……　まだ居るのー？」\n"
+			ENDSELECT
+			
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「さあて、次を片付けますか！」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「なんですか、まだ居るじゃないですか」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「まったくもう、次から次へと面倒ですねえ」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	
+	; 待ち伏せを行っていた場合追加口上
+	; 1ループ前はARG:0=54(戦闘開始時)が呼び出されている筈なのでチェックするのは2ループ前
+	IF KOJO_8_0_GET_PREV_ARG(0, 2) == 134
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（待ち伏せてるからって本当に敵が出なくてもいいじゃないですか……）\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「飛んで火に入るなんちゃらね！　覚悟！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「待ち伏せ大成功！」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; キャラクター対応 追加口上
+	FOR LCOUNT, 1, CHARANUM
+		; 自分と娘は除外
+		IF !(NO:LCOUNT == NO:(TARGET) || CFLAG:LCOUNT:104 != 0)
+			
+			; PTに居る
+			IF IN_PT(NO:LCOUNT)
+			
+				SELECTCASE NO:LCOUNT
+				; ゆかり
+				CASE 3
+					; 喪失中
+					IF CFLAG:(GET_ID_FROM_NO(NO:LCOUNT)):29
+					; 通常
+					ELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"「ほら%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:LCOUNT))%！　先制攻撃ですよ！　チャンスです、チャンス！」\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"「敵は油断してますよ！　だから%KOJO_8_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:LCOUNT))%、飛びかかって！」\n"
+					ENDIF
+					
+				; ずん子
+				CASE 4
+					; 喪失中
+					IF CFLAG:(GET_ID_FROM_NO(NO:LCOUNT)):29
+					; 通常
+					ELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"「敵は油断している！　つまりはチャンス！　ずん姉様、お願いします！」\n"
+						CALL KOJO_8_0_PARAGRAPH_MESSAGE
+						CALL KOJO_8_0_ADD_MESSAGE, @"\d言うだけ言った後、%CALLNAME:TARGET%はそそくさと%CALLNAME:(GET_ID_FROM_NO(NO:LCOUNT))%の後ろに引っ込んだ\d\n"
+					ENDIF
+				ENDSELECT
+				
+			; PTに居ない
+			ELSE
+
+			ENDIF
+		ENDIF
+	NEXT
+RETURN 1
+
+
+; □ 敵の不意打ち
+@KOJO_8_0_SYSTEM_MESSAGE_60_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 戦闘開始時で既に喋っている場合は何もしないで帰る
+	SIF !TFLAG:14
+		RETURN 0
+		
+	; ボス戦は特殊扱い
+	; 遭遇状態に関わらず既に呼び出されている
+	SIF KOJO_8_0_GET_PREV_ARG(0) == 54 && KOJO_8_0_GET_PREV_ARG(1)
+		RETURN 0
+		
+	; 状態異常で喋れない場合は何もしないで帰る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 隣の部屋から突撃したのに先制された
+	IF KOJO_8_0_GET_PREV_ARG(0, 2) == 132
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やばっ……　身体の火照りで、まわりが見えなくなってる……）\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「まさか先客が居るとは思わなかったです」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっと待ってください！　走ってきて疲れてるんだから！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おかまいなく～　……って、やっぱダメ？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「勢い良く走ってきて不意打ちされるとか、わたし%TACHI()%がバカみたいじゃないですかー！？」\n"
+		ENDSELECT
+
+	; 普通に先制された
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしと気持ちいいことしたいなら、もーちょっと紳士的に襲いかかってきてくださいよ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「追い詰められた小学生の運命は！？　なんてね、期待しちゃう♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃん♥　そんなにがっつかないでよ♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（こ、こんな時に足がすくんで……っ）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うそっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「は、はやく体勢を整えないと……っ」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（さて、どうやって煙に巻きましょうか？）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「早いとこ不利な状況をひっくり返さないと！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もしかしてピンチってやつですか？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あっはっは　不覚をとりましたよ　うっかりうっかり」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（言葉の通じる相手なら話術でなんとか……煽りにしかならないですかね……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「げげっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もうちょっとフェアに闘いましょうよ？　ほらほら下がった下がった……　ダメ？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「この状態は……　かなり……ヤバいかも……」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 連戦なら追加口上(戦闘開始時口上を間に挟んだ2つ前の呼び出し口上が「戦闘で勝利」)
+	; 表示タイミングが限られているので優先口上登録
+	IF KOJO_8_0_GET_PREV_ARG(0, 2) == 57
+		CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おかわりの用意があるなんて♥　もう♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「も、もう終わったと思ったのに……」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「来るなら来なさい！　相手になってあげる！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ったく、次から次へと……！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「イヤなタイミングで出てくるわね……　やっと戦いが終わったと思ったのに……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたし%TACHI()%が戦ってる間隠れてたってワケ……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

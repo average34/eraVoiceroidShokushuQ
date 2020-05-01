@@ -1,0 +1,190 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 57 戦闘で勝利
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_57(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+#DIM ENEMY_TYPE_COUNT
+
+	; 出現した敵種類をカウント
+	ENEMY_TYPE_COUNT = 1
+	FOR LCOUNT, 1, TFLAG:15 + 1
+		SIF DA:(TFLAG:1):0 != DA:(TFLAG:LCOUNT):0
+			ENEMY_TYPE_COUNT++
+	NEXT
+
+	; 敵別専用口上があるならそれを呼び出す(出現した敵が1種類の時のみ)
+	IF ENEMY_TYPE_COUNT == 1
+		CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_8_0_SYSTEM_MESSAGE_57_ENEMY_{DA:(TFLAG:1):0}")
+		SIF KOJO_8_0_GET_IMPORTANT_FLAG()
+			RETURN 1
+	ENDIF
+
+	; 睡眠中(睡眠中に戦闘が終わるって事は多分PTがいるか敵の自滅)
+	IF CFLAG:25
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「え……？　なに……？　どうなったの？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"\dようやく目を覚ました%CALLNAME:TARGET%は、のそのそと起き上がりながら周囲を警戒している\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 喪失中
+	IF CFLAG:29
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おわっ……た……の……？」\n"
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 仲間に抱きついたまま
+	IF CFLAG:50 == 96
+		; ふたなり
+		IF GET_PENIS(TARGET)
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「え～、もう終わり？　もうちょっと楽しみたかったのに～」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は残念そうな表情で、%CALLNAME:(CFLAG:51)%に挿入していたペニスを引き抜いた…\d\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ごっ、ごめん！　%KOJO_8_0_CALLNAME_FROM_ID(CFLAG:51)%、許してっ！　わたしどうかしていたんです……！」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は慌てて、%CALLNAME:(CFLAG:51)%に挿入していたペニスを引き抜いた…\d\n"
+			ENDSELECT
+			
+		; 非ふたなり
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「え～、もう終わり？　もうちょっと楽しみたかったのに～」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は残念そうな表情で、抱きついていた%CALLNAME:(CFLAG:51)%を解放した…\d\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ごっ、ごめん！　%KOJO_8_0_CALLNAME_FROM_ID(CFLAG:51)%、許してっ！　わたしどうかしいてたんです……！」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は慌てて、抱きついていた%CALLNAME:(CFLAG:51)%を解放した…\d\n"
+			ENDSELECT
+		ENDIF
+		CALL KOJO_8_0_FIX_MESSAGE
+		RETURN 1
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「もうちょっと頑張ってほしかったなぁ♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こ、これで……　おわりですよね……？」\n\d周りを見渡した後、発情した身体を抱いて%CALLNAME:TARGET%はその場にへたり込んだ…\d\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ざっとこんなもんですよ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「さーて、次行きますよ次！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なんなの？　見かけ倒しなんですか？」\n"
+	CASEELSE
+		IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「レベルに差がありすぎましたね」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「小学生相手にこのざまなんて、情けなくないんですかー？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「何とかなるものですね」\n"
+		ELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「助かった……ぁ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はぁ……　はぁ……　ギリギリですよ……」\n"
+		ENDIF
+	ENDSELECT
+	
+	; 敵が1体だけ出現なら追加口上
+	IF TFLAG:15 == 1
+		SELECTCASE KOJO_MODE
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ザコが一匹でうろついてるから、こうなるんですよ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「各個撃破成功♪　集団で来られたら面倒ですからね♪」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こうやって少しずつでも倒していかないと」\n"
+		ENDSELECT
+	ENDIF
+	
+	; PT人数が1人なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あれぇ♥　小学生一人だと思って油断しちゃいましたぁ？」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「楽勝♪　楽勝♪　案外一人でもなんとかなるんじゃないですか？」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしってやっぱり指揮官向きですよね～、肉体労働は苦手ですし」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やっぱ一人で戦うのって楽じゃないです」\n"
+		ENDSELECT
+	ENDIF
+	
+	; PT人数より敵の数が多かったなら追加口上
+	IF GET_MEMBER_SUM() < TFLAG:15
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「えっ？　いっぱい居たのに、もう終わりなの？　もっと楽しませてよぉ♥」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ザコが束になってかかってきても、わたし%TACHI()%の敵じゃないっての」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「数が多けりゃ勝てると思いました？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「数のワリに大したことないですね～」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; □ 敵種族別
+; ◆ 005 リビングバイン
+@KOJO_8_0_SYSTEM_MESSAGE_57_ENEMY_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中・喪失中は汎用口上に任せる
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 喋る場合は優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "強気"
+		IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ふん、雑草め！」\n"
+		ELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はぁ……　はぁ……　疲れた……\n　雑草の癖に生意気ですよ」\n"
+		ENDIF
+	CASEELSE
+		IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「草如きにわたしが負けるハズないですよ」\n"
+		ELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「草程度にこんな苦戦するなんて……」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1

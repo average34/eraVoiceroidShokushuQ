@@ -1,0 +1,39 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 503 使い魔
+; ------------------------------------------------------------------------------
+
+; □ 10 戦闘中 使い魔による発情妨害 前
+; 発情中にしか発動しないので淫乱・発情のみ埋めればOK
+@KOJO_8_0_SYSTEM_MESSAGE_503_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いまはおっぱいの時間じゃないでしょう♪」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱいコリコリされたらぁ…コーフンしちゃうじゃないですかぁ…♪」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ふにゃぁっ♥　こんにゃことされたらぁ♥　敵にえっちな顔見られちゃうじゃないですかぁ♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃぁっ！？　余計なコトしなくていいから、じっとしててぇ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やっ、あぁっ…　おっぱい…っ、だめぇ…っ…！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっと邪魔よぉ…っ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うぅっ…　舐めないでぇっ♥　吸わないでぇっ♥♥」\n"
+	CASEELSE
+	ENDSELECT
+RETURN 1

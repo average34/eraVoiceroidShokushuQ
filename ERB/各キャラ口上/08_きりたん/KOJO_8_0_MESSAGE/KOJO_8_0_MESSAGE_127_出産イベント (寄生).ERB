@@ -1,0 +1,153 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 127 出産イベント (寄生)
+; ------------------------------------------------------------------------------
+
+; □ 0 出産開始
+@KOJO_8_0_SYSTEM_MESSAGE_127_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 喪失中
+	IF CFLAG:29
+		; 喪失中は分岐なし
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おﾞ……　あﾞ……　が……　あﾞあﾞぁっ！？」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d羊水に含まれる強力な媚薬が産道を灼くと、常軌を逸した快楽が瞬く間に%CALLNAME:TARGET%の身体を蝕んだ！\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d力尽き倒れたまま強制的に絶頂させられ、%CALLNAME:TARGET%は大股開きで腰を跳りたくっている\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んﾞおﾞっ♥♥　おﾞおﾞぉぉっ♥　いﾞいﾞぃぃっ♥♥　おﾞひぃぃぃいﾞいﾞいﾞっ♥♥」\n"
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 初出産
+	IF EXP:22 == 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「う、産まれる…っ　産まれちゃううぅ！　うぁぁ…っ♥　…っがぁあﾞぁっ♥♥\n　…ひっ！　んひぃっ！？　ひゃうぁぁっ♥　ああああぁぁっ♥\n　赤ちゃん産むのって…っ♥　こんなに気持ちい…っ♥　うああぁっ、赤ちゃんがっ…わたしのえっちなお汁でぬるぬるにぃっ♥」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d通常ではありえない出産の快感を、%CALLNAME:TARGET%の身体は貪欲に覚え込んでいく！\d\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたしっ♥　わたしママになっちゃうっ♥　イキながらママになっちゃうううぅっ♥♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「う、産まれる…っ　産まれちゃううぅ！　やあぁ…！　うぁぁ…！　…っがぁあﾞぁっ！\n　…ひっ！　んひぃっ！？　ひゃうぁぁっ！？　ああああぁぁっ！？\n　何この感覚っ…！？　あついぃっ！？　ジンジン痺れ…てぇつ！？」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d通常ではありえない出産の快感に、%CALLNAME:TARGET%はパニックを起こしている！\d\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やだーっ！！　こんなのいやだああぁぁっっ！！」\n"
+		ENDSELECT
+		
+	; 出産2度目以降
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ああっ♥　きたっ、きたあぁぁっ♥♥　産まれるっ♥　産みながらイクううぅっっ♥♥\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"　赤ちゃんっ♥　赤ちゃん産むとっ♥　お腹の中っ、全部イキっぱなしになるのぉっ♥♥♥」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d羊水に含まれる強力な媚薬が産道を灼くと、常軌を逸した快楽が瞬く間に%CALLNAME:TARGET%の思考を埋め尽くした！\d\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おﾞあﾞあﾞああぁぁっ♥♥　んﾞいﾞいﾞぃぃっ♥♥　いﾞいﾞいﾞイぃィィッ♥♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「う、産まれる…っ　また産んじゃうっ！　子供なんて…ぇっ！　欲しくない…のにぃっ！\n　…ひぃっ！？　うああぁぁっ！？　またこの感覚っ…！？　おなかのなかあついぃっ！？」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d通常ではありえない出産での快感に、%CALLNAME:TARGET%はパニックを起こしている！\d\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「でてこないでぇっ！　うぁあっ！？　ナカぁがぁっ…ヘンになるぅうぅっ！？」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 1 出産完了＋強制授乳
+@KOJO_8_0_SYSTEM_MESSAGE_127_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひゅご…ぉ…♥　しゅっさ…んイキ…ぃ…♥　バカにな…るうぅ…♥♥」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d出産絶頂の余韻も冷めぬまま強引に搾乳された%CALLNAME:TARGET%は、乳房を痙攣させ母乳を噴き出している…\d\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「…うぁ…ぁ……　もう…やめ……　だめぇ……」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d快感を絞り出すような強引な授乳に、%CALLNAME:TARGET%の乳首はひくひくと痙攣を起こしている…\d\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 子供が立ち去った
+@KOJO_8_0_SYSTEM_MESSAGE_127_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 初出産
+	IF EXP:22 == 0
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「わたし…　子供…産んじゃったんだ…\n　あかちゃん…　うまされて……　ううっ…　うあぁぁ……」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d精魂尽き果てた%CALLNAME:TARGET%は、倒れたままの姿勢でしばらくの間泣きじゃくっていた…\d\n"
+		ENDSELECT
+		
+	; 出産2度目以降
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あ…ぁ…♥　はぁ…ぁ…♥♥　しゅごかっ…たぁ……っ♥♥\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"　まだ…ぁ…♥　おなかのなか…イッってる感じ…消えないよぉ♥♥」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d過剰な連続絶頂で腰が抜けた%CALLNAME:TARGET%は、しばらくの間倒れたまま出産の余韻に浸ることにした…\d\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「また…　子供…産んじゃったんだ…\n　また…あかちゃん…　うまされて……　わたし……」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d精魂尽き果てた%CALLNAME:TARGET%は、倒れたままの姿勢でしばらくの間呆然と虚空を眺めていた…\d\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

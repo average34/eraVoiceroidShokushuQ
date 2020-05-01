@@ -1,0 +1,69 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 110 PTから離脱
+; ------------------------------------------------------------------------------
+
+; □ 0 確認
+@KOJO_8_0_SYSTEM_MESSAGE_110_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 別れる側口上・別れた側口上の両方が呼び出される為分岐
+	; 仲間側口上
+	IF ARG:1 == TARGET
+		; 喪失中
+		IF CFLAG:29
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（うそ……　おいて……いかれちゃう？）\n"
+			ENDSELECT
+			
+		; 好感度:普通
+		ELSEIF CFLAG:5 < 200
+
+		; 好感度:高
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「えっ！？　な、なんで急に……」\n"
+			ENDSELECT
+		ENDIF
+		
+	; 主人公側口上
+	ELSE
+	
+	ENDIF
+RETURN 1
+
+
+; □ 1 別れた
+@KOJO_8_0_SYSTEM_MESSAGE_110_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 別れる側口上・別れた側口上の両方が呼び出される為分岐
+	; 仲間側口上
+	IF ARG:1 == TARGET
+		; 喪失中
+		IF CFLAG:29
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「や……やだぁ……　おいて……いかないでぇ……」\n"
+			ENDSELECT
+			
+		; 好感度:普通
+		ELSEIF CFLAG:5 < 200
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%にも考えがあんですよね　ま、仕方ないかな」\n"
+			ENDSELECT
+			
+		; 好感度:高
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ここから出て、外で会いましょうね……」\n"
+			ENDSELECT
+		ENDIF
+			
+	; 主人公側口上
+	ELSE
+	
+	ENDIF
+RETURN 1

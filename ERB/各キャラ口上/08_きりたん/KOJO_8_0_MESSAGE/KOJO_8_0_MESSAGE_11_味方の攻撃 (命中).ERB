@@ -1,0 +1,83 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 11 味方の攻撃 (命中)
+; ------------------------------------------------------------------------------
+
+; □ XX 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_11(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 二段攻撃
+	IF KOJO_8_0_GET_PREV_ARG(0) == 11
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もう一発！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「まだまだいきますよー！！」\n"
+		ENDSELECT
+		
+	; 通常攻撃
+	ELSE
+		
+	ENDIF
+RETURN 1
+
+
+; □ 84 手淫
+@KOJO_8_0_SYSTEM_MESSAGE_11_84(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 性攻撃は他の攻撃と混じらないよう優先口上扱い
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中行動
+	IF KOJO_8_0_IS_HYPNO()
+		RETURN 0
+		
+	; 通常時性攻撃
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ちいさなおててでシコシコしちゃいますよ～♥　いつ出してもいいですからね～♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ほらほら、気持ちよくしてあげるから元気出しちゃいなさい」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 85 フェラチオ
+@KOJO_8_0_SYSTEM_MESSAGE_11_85(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 性攻撃は他の攻撃と混じらないよう優先口上扱い
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中行動
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"（舐めなきゃ……　ぜんぶ舐め取らなきゃ……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「んﾞおﾞっ……　ぢゅるるっ……　ふむﾞうぅ……っ　ぞるるるるぅぅっ……」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+		
+	; 通常時性攻撃
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%ちゃんのエッチなお口で、ヌキヌキしたげるぅ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「気持ちよくされる前に…こっちから気持ちよくしちゃうんだから♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ああっ……♥　おくちっ、おくち気持ちいいよぉ……♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（これぇ……っ、どんどんえっちな気分になってく……っ♥）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んふぅ……♪　意外とこういう攻撃ってぇ……じゅるるっ♪　有効なんじゃないですか？」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d言い訳を口にしながら、%CALLNAME:TARGET%は興奮した表情で触手に舌を這わせている…\d\n"
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,341 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 514 ペットまわり
+; ------------------------------------------------------------------------------
+
+; □ 1 身体を捧げた
+@KOJO_8_0_SYSTEM_MESSAGE_514_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 雌犬
+			IF TALENT:140 || CFLAG:400 >= 90
+				
+				; [ペット]所持時 追加口上
+				IF TALENT:140 == 1
+					CALL KOJO_8_0_ADD_MESSAGE, @"「はっ♥　はっ♥　はっ♥　ペットの身体、無茶苦茶に操って犯してくださいっ♥♥」\n"
+					
+				; [花嫁]所持時 追加口上
+				ELSEIF TALENT:140 == 2
+					CALL KOJO_8_0_ADD_MESSAGE, @"「ああん♥　身体、操られてぇ……♥　いつも以上にお嫁さんのお仕事されられちゃう……♥♥」\n"
+					
+				; [しもべ]所持時 追加口上
+				ELSEIF TALENT:140 == 3
+					CALL KOJO_8_0_ADD_MESSAGE, @"「どっ、どうぞ……っ　わたしの身体、好きにしてください……っ」\n"
+				ENDIF
+				
+			; その他
+			ELSE
+				SELECTCASE CFLAG:400
+				; 堕ちかけ
+				CASE IS >= 70
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"（ああっ……♥　身体操られたまま、食べられちゃう……♥♥）\n"
+					ENDSELECT
+					
+				; 中毒気味
+				CASE IS >= 50
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"（身体操られてるから、これはわたしの意思じゃない……♥　エサやりが気持ちいいとか……♥♥）\n"
+					ENDSELECT
+					
+				; ハマった
+				CASE IS >= 30
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"（コイツ……っ……、エサの食べ方強引ですよぉ……　わたしの自由を奪ってから食べるとか……）\n"
+					ENDSELECT
+					
+				; 清純
+				CASE IS >= 0
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"「ちょ、ちょっと！　身体の自由返してください！　ごはんあげないですよ！」\n"
+					ENDSELECT
+				ENDSELECT
+			ENDIF
+			
+			
+		; 発情・感情操作系
+		CASE 1
+			; 雌犬
+			IF TALENT:140 || CFLAG:400 >= 90
+				
+				; [ペット]所持時 追加口上
+				IF TALENT:140 == 1
+					CALL KOJO_8_0_ADD_MESSAGE, @"「ご主人……さまぁ……♥　食べてぇ……♥　%CALLNAME:TARGET%を食べてぇ……♥♥」\n"
+					
+				; [花嫁]所持時 追加口上
+				ELSEIF TALENT:140 == 2
+					CALL KOJO_8_0_ADD_MESSAGE, @"「あなたぁ……♥　ごはんの時間♥ですよぉ……っ♥♥」\n"
+					
+				; [しもべ]所持時 追加口上
+				ELSEIF TALENT:140 == 3
+					CALL KOJO_8_0_ADD_MESSAGE, @"「下僕……っ♥　下僕のお仕事させてください……っ♥　生ハメお便器ぃ……♥♥」\n"
+				ENDIF
+				
+			; その他
+			ELSE
+				SELECTCASE CFLAG:400
+				; 堕ちかけ
+				CASE IS >= 70
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"（エサやりセックス……♥　エサやりセックス……っっ♥♥）\n"
+					ENDSELECT
+					
+				; 中毒気味
+				CASE IS >= 50
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"（これはただのエサやり♥　ペットとのふれあい……えっち……♥♥）\n"
+					ENDSELECT
+					
+				; ハマった
+				CASE IS >= 30
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"（ごはんあげると、襲われて……気持ちいい……♥　もっと、ごはんあげなきゃ……♥）\n"
+					ENDSELECT
+					
+				; 清純
+				CASE IS >= 0
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"「はやく食べちゃってくださいよ♥　ほら、わたしの身体おもいっきり火照ってるんです♥」\n"
+					ENDSELECT
+				ENDSELECT
+			ENDIF
+			
+		; 無意識・認識操作系
+		CASE 2
+			SELECTCASE CFLAG:43
+			CASE 1
+				; 雌犬
+				IF TALENT:140 || CFLAG:400 >= 90
+					
+					; [ペット]所持時 追加口上
+					IF TALENT:140 == 1
+						CALL KOJO_8_0_ADD_MESSAGE, @"（わたしの主人だからって、頭の中いじくっていいとは言ってないですよ……）\n"
+						
+					; [花嫁]所持時 追加口上
+					ELSEIF TALENT:140 == 2
+						CALL KOJO_8_0_ADD_MESSAGE, @"（んもう、変な術掛けて♥　そんな事しなくても、エッチなお嫁さんはどこにも行きませんよ～♥）\n"
+						
+					; [しもべ]所持時 追加口上
+					ELSEIF TALENT:140 == 3
+						CALL KOJO_8_0_ADD_MESSAGE, @"（こんな術かけなくたって、どうせ逆らえないのに……）\n"
+					ENDIF
+					
+				; その他
+				ELSE
+					SELECTCASE CFLAG:400
+					; 堕ちかけ
+					CASE IS >= 70
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"（頭の奧、しびれて……　身体が、うずく……っ……）\n"
+						ENDSELECT
+						
+					; 中毒気味
+					CASE IS >= 50
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"「うう……っ……、ただのエサやりなのに……何か変……ですよぉ……」\n"
+						ENDSELECT
+						
+					; ハマった
+					CASE IS >= 30
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"（頭の中ぐるぐるする……　コイツに何かされてる……？）\n"
+						ENDSELECT
+						
+					; 清純
+					CASE IS >= 0
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"（なん……です、かこれ……　うまく身体がうごか……ない……）\n"
+						ENDSELECT
+					ENDSELECT
+				ENDIF
+				
+			CASE 2
+				; 雌犬
+				IF TALENT:140 || CFLAG:400 >= 90
+					
+					; [ペット]所持時 追加口上
+					IF TALENT:140 == 1
+						CALL KOJO_8_0_ADD_MESSAGE, @"「わたしは交尾ペット……　イキまくって、ご主人様を楽しませるのがお仕事……」\n"
+						
+					; [花嫁]所持時 追加口上
+					ELSEIF TALENT:140 == 2
+						CALL KOJO_8_0_ADD_MESSAGE, @"「あ・な・たぁ♥　お嫁さんのお便器♥　使ってほしいな～♥」\n"
+						
+					; [しもべ]所持時 追加口上
+					ELSEIF TALENT:140 == 3
+						CALL KOJO_8_0_ADD_MESSAGE, @"「どう……ぞ……　お便器下僕の……身体をお使い……　ください……」\n"
+					ENDIF
+					
+				; その他
+				ELSE
+					SELECTCASE CFLAG:400
+					; 堕ちかけ
+					CASE IS >= 70
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"「ほら……ぁ……、早く食べちゃってくださいよ……　ご主人さまのトロトロおまんこ……」\n"
+						ENDSELECT
+						
+					; 中毒気味
+					CASE IS >= 50
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"（犯されたい……　ペットに犯されて、イキまくりたい……）\n"
+						ENDSELECT
+						
+					; ハマった
+					CASE IS >= 30
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"（気をしっかり持たなきゃ……　わたしはペットにイカされるだけ、不思議な事なんて何もない……）\n"
+						ENDSELECT
+						
+					; 清純
+					CASE IS >= 0
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"（エサやり……　エサ……やり……　レイプ……\n　そうよ！　わたしはペットにレイプされるだけ！　普通の事じゃないですか！）\n"
+						ENDSELECT
+					ENDSELECT
+				ENDIF
+				
+			CASEELSE
+				; 雌犬
+				IF TALENT:140 || CFLAG:400 >= 90
+					
+					; [ペット]所持時 追加口上
+					IF TALENT:140 == 1
+						CALL KOJO_8_0_ADD_MESSAGE, @"「ペットに躾っ♥　エロまんこにっ、ドスケベアナルにぃ♥　躾してぇぇ♥♥」\n"
+						
+					; [花嫁]所持時 追加口上
+					ELSEIF TALENT:140 == 2
+						CALL KOJO_8_0_ADD_MESSAGE, @"「夫の性欲処理はっ♥　変態便器のっ♥　お嫁さんのお仕事♥♥\n　ね～ぇ♥　ハメハメ、ハメハメしよっ♥♥」\n"
+						
+					; [しもべ]所持時 追加口上
+					ELSEIF TALENT:140 == 3
+						CALL KOJO_8_0_ADD_MESSAGE, @"「どうぞ……ぉ♥　お好きなお便所をお使い下さい……ぃ♥♥」\n\d%CALLNAME:TARGET%は両手で性穴をかき回しながら土下座した…\d\n"
+					ENDIF
+					
+				; その他
+				ELSE
+					SELECTCASE CFLAG:400
+					; 堕ちかけ
+					CASE IS >= 70
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"「いい？　わたしはマンコほじられると、バカみたいにイク変態便器なの\n　アンタはわたしのイキ顔オカズにして、容赦なく犯しまくってください」\n"
+						ENDSELECT
+						
+					; 中毒気味
+					CASE IS >= 50
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"「エロメスまんこ、滅茶苦茶に犯していいですよ……　わたし、アナタの便器ですからね……」\n"
+						ENDSELECT
+						
+					; ハマった
+					CASE IS >= 30
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"（ペットにエサをやるには……　確か……\n　おまんこをオナホール扱いされて、はしたなくイキまくる……\n　ううん、尻穴をほじられて情けない声を上げ続ける……だっけ……）\n"
+						ENDSELECT
+						
+					; 清純
+					CASE IS >= 0
+						SELECTCASE KOJO_MODE
+						CASEELSE
+							CALL KOJO_8_0_ADD_MESSAGE, @"「ほら、犯すんですよね？　ご主人様がお交尾イキ肉してあげるんだから、ありがたいと思いってください」\n"
+						ENDSELECT
+					ENDSELECT
+				ENDIF
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	
+	; 雌犬
+	IF TALENT:140 || CFLAG:400 >= 90
+		CALL KOJO_8_0_ADD_MESSAGE, @"「食べてくださいっ♥　わたしがバカみたいにイキ狂うまでたべてくださいっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「はい、どうぞ♥　%PETNAME%様の専用肉便器ですよぉ♥」\n"
+		
+		; [ペット]所持時 追加口上
+		IF TALENT:140 == 1
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ご主人さまぁ♥　%CALLNAME:TARGET%を食べて……お腹いっぱいになってくださいねぇ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「は～っ♥　は～っ♥　はしたないペットをっ♥　いっぱい躾けてくださいぃ～♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ごひゅじんひゃまぁ♥　%CALLNAME:TARGET%はっ♥　%CALLNAME:TARGET%はもうガマンできないんですぅっ♥」\n"
+			
+		; [花嫁]所持時 追加口上
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ご飯にする？　それともわたし？　ってやつ出来ないんですよね、どっち選んでも食べられちゃうし♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ねぇ、あなたぁ♥　わたし、お嫁さんのお仕事したいなぁ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「夫婦の営みしましょ♥　ああっ、口に出したら興奮して……きちゃったぁ……♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「アナタぁ♥　ご飯の時間ですよぉ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はい♥　%CALLNAME:TARGET%は、%PETNAME%様のお嫁さん肉便器です♥♥」\n"
+		
+		; [しもべ]所持時 追加口上
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_8_0_ADD_MESSAGE, @"（今からわたし犯される……のにっ♥　逆らう気力、湧かないっ……♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ご主人様、お食事をどうぞ♥　気が済むまで%CALLNAME:TARGET%を犯し尽くして下さい♥♥」\n"
+		ENDIF
+		
+	; その他
+	ELSE
+		SELECTCASE CFLAG:400
+		; 堕ちかけ
+		CASE IS >= 70
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「エサの時間っ♥　ですよぉ♥\n　あぁ……ぁっ♥　どこから……食べちゃうのぉ♥♥」\n"
+			ENDSELECT
+			
+		; 中毒気味
+		CASE IS >= 50
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ご飯に……しましょう♥　わたし、アナタに食べられるの……やみつきになっちゃった……みたいです♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「お腹へってるでしょう？　見ればわかるんですから\n　たっ、食べられるのが気持ちいいとか……　そんなんじゃないですよ！」\n"
+			ENDSELECT
+			
+		; ハマった
+		CASE IS >= 30
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ほぉら♥　ご主人様のカラダ、好きにしていいんですよ♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ほっ、ほらっ！　ご飯食べるんですよね？　とっととしてください！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「は、はやく食べちゃってくださいよ！　わたしだって恥ずかしいんですからね！」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は赤面した顔を見られないよう俯きながら%ARGS:1%に手招きをした\d\n"
+			ENDSELECT
+			
+		; 清純
+		CASE IS >= 0
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ペットを楽しませるのはご主人様の仕事だもんね♥　ほら、こっち来てください♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うﾞ～……　アナタたちのご飯って、どう考えてもコレですよね……　しかたない……」\n\d%CALLNAME:TARGET%は意を決して自分の服に手を掛けた\d\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「アナタたちだってご飯は必要だもんね\n　ちょっとイヤだけど、飼い主の責任ってのもあるし仕方ないです…」\n"
+			ENDSELECT
+		ENDSELECT
+	ENDIF
+RETURN 1

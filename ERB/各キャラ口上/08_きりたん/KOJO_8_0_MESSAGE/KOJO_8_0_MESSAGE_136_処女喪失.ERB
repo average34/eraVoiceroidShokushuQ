@@ -1,0 +1,410 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 136 処女喪失
+; ------------------------------------------------------------------------------
+
+; □ X 汎用
+; ◆ 1 喪失の直前
+@KOJO_8_0_SYSTEM_MESSAGE_136_X_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 淫乱時は再生処女判定しない
+	IF KOJO_MODE == "淫乱"
+		; オリジナル地の文を使う
+		CALL KOJO_8_0_ADD_MESSAGE, @"\m\d%CALLNAME:TARGET%は処女を奪おうとする触手に対し、勢いよく腰を押しつけた！\d\n"
+	ENDIF
+RETURN 1
+
+
+; ◆ 2 喪失回避
+@KOJO_8_0_SYSTEM_MESSAGE_136_X_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 淫乱時は再生処女判定しない
+	IF KOJO_MODE == "淫乱"
+		; オリジナル地の文を使う
+		{
+		CALL KOJO_8_0_ADD_MESSAGE, @"\m\d挿入された触手は%CALLNAME:TARGET%の処女膜を破らないよう注意しながら、直接子宮に媚薬混じりの粘液を塗り込んでいく\d\n
+		                              \d子宮の熱さに耐えられなくなった%CALLNAME:TARGET%は、触手を押さえつけながら深く腰を落とした！\d\n"
+		}
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おねがいっ♥　わたしのこどもまんこぉ…大人にしてよぉ……っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あげるっ♥　わたしの処女あげるからぁ♥♥　いじわるしないでぇぇっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そんにゃのズルイよぉぉっ♥♥　わたしのおまんこっ、準備できてるのにぃぃっ♥♥」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d処女喪失を期待していた%CALLNAME:TARGET%は、物足りなさそうな顔で股間を擦りつけている\d\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d触手が引き抜かれた%CALLNAME:TARGET%の秘所からは、大量の愛液がこぼれ落ちた…\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 通常処理
+	; 真の処女
+	IF TALENT:0 == 1
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			; 媚薬での発情か 進行での発情かによって変化
+			IF CFLAG:28 != 0
+				CALL KOJO_8_0_ADD_MESSAGE, @"「な……なんとかなった……」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d強制的に発情させられた%CALLNAME:TARGET%は、荒い息をつきながら膨れ上がる肉欲に抗っている\d\n"
+			ELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「だめ……ぇ……♥　処女……ぉ♥　まもらな……きゃ……♥」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d多数の触手に開発され発情しきった%CALLNAME:TARGET%は、膣壁をなめ回される感覚に甘い声をあげ続けている\d\n"
+			ENDIF
+			
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（あ、危なかった……）\n"
+		ENDSELECT
+	
+	; 再生処女
+	ELSEIF TALENT:0 == 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そう何度も破られてたまるものですか！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 0 敵の攻撃
+; ◆ 0 喪失
+; 触手宮とりばーすで処女喪失の反映タイミングが違う(メッセージ表示前と表示後)
+; 現在のTALENTを参照すると正常に処理出来ないので、前回ループ時の値を参照する
+@KOJO_8_0_SYSTEM_MESSAGE_136_0_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠時
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 真の処女
+			IF PREV_TALENT:0 == 1
+				CALL KOJO_8_0_ADD_MESSAGE, @"「処女膜……　やぶりたいんですか……　はい……　どうぞ……」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は汚れを知らぬ女性器を純潔を奪わせる為に拡げると、%KOJO_8_0_GET_PREV_ARGS(1)%の前に晒け出した\d\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				
+				; 地の文表示
+				CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしの……はじめて……奪ってくれて……ありがとうござい……ます……」\n"
+				
+			; 再生処女
+			ELSEIF PREV_TALENT:0 == 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしの……処女……　また……なくなっちゃった……ぁ……」\n"
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 戦意喪失
+	IF CFLAG:29
+		; 真の処女
+		IF PREV_TALENT:0 == 1
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「やだぁ……　こんな……のっ……って、ない……です……ぉっ……\n　もっと……　もっと素敵な……　うああぁぁぁ…………」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d無造作に処女を奪われた事実に、%CALLNAME:TARGET%は大粒の涙を溢れさせ嘆いている…\d\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あ……　あぁ……ぁ……　ぁ…………」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d力尽き、身動きの取れないまま処女を奪われた%CALLNAME:TARGET%は、呻き声を上げながら涙をこぼした…\d\n"
+			ENDSELECT
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	; 諦めた
+	IF TFLAG:16 == 2
+		; 真の処女
+		IF PREV_TALENT:0 == 1
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わかってた……　わかってましたよ……　でも……っ、でもぉ……ぉっ……」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d無抵抗のまま処女を奪われた%CALLNAME:TARGET%は、呻き声を上げながら涙をこぼした…\d\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「そりゃ、こうするためにメスを捕まえるんだもの……　当然ですよね……\n　でも……ぉ……　いや……ぁ……　こんなの嫌あ……ぁぁ……っ……」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d大切な処女を奪われ単なる肉穴として扱われる事に、%CALLNAME:TARGET%は大粒の涙を溢れさせ嘆いている…\d\n"
+			ENDSELECT
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	; 通常時
+	; 真の処女
+	IF PREV_TALENT:0 == 1
+		; おねだり行動中なら地の文前に追加口上
+		IF CFLAG:50 >= 54 && CFLAG:50 <= 58
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥　おねだり…っ♥　演技なのにっ、演技でホントに……っ……♥」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d処女を奪われ、一匹の雌へと堕とされる瞬間を%CALLNAME:TARGET%は上気した顔で眺めている…\d\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ちっ、違うのっ！　これ演技だからっ！　だからやめてっ、やめてええぇぇっ！！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うそっ！　ウソウソウソ！　ウソだからぁっ、ちょっと考えればわかるでしょぉぉっ！？」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%KOJO_8_0_GET_PREV_ARGS(1)%は弁解など意に介さず、おねだりの格好で固まった%CALLNAME:TARGET%の処女膜を一気に突き破った！\d\n"
+			ENDSELECT
+		ENDIF
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		; 地の文表示
+		CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「大事にとっといた処女ぉ……♥　こんなっ、カンタンにぃいっ……♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あははぁ……♥　わたしの処女……　うばわれちゃったぁ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ああぁぁ……っ……　あついぃ……っ……　おまた、あついよおぉ……っ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やだぁ……っ……　こんなことで、わたしのはじめて……がぁ……」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あぐぅぅ……っ！　わたっ、わたしの処女は……高いですよぉ……っ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ぐうぅ……っ！　ああぁぁぁっ！　許さないっ！　絶っ対っ許さないんだからぁぁぁっ！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うそぉ……っ!?　ヤダヤダやだあぁぁぁっ！　わたしのっ、はじめ……てぇ……っ!?」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんな奴にあげる為、処女とっといたワケじゃない……のにぃ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「いﾞぎぃ……っ！？　いたいよ……ぉっ！！　こんなの、やだぁ……ぁっ！？」\n"
+		ENDSELECT
+		
+	; 再生処女
+	ELSEIF PREV_TALENT:0 == 2
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「また処女なくしちゃった……ぁ♥　この刺激、癖になっちゃうかもぉ♥♥」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「再生させといて、また破るなんて……　最ッ低！」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「なんで……っ、処女再生なん……てぇっ！？　こんなの……っ、ムダに痛いだけですよぉ……っ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「一度なくしたものを、もっかいなくしたって…　たいした事……ないですよ……っ」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; 0 敵の攻撃
+; ◆ 2 喪失回避
+@KOJO_8_0_SYSTEM_MESSAGE_136_0_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 残MPによって分岐
+	; 残量大の場合は自身による抵抗
+	IF BASE:MP >= (MAXBASE:MP / 100 * 25)
+		; 催眠中
+		IF KOJO_8_0_IS_HYPNO()
+			; 催眠種類で分岐
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				
+			; 発情・感情操作系
+			CASE 1
+				
+			; 無意識・認識操作系
+			CASE 2
+				; 真の処女
+				IF TALENT:0 == 1
+					CALL KOJO_8_0_ADD_MESSAGE, @"「はい……　まだ新品おまんこのまま、楽しむんですね……」\n"
+				ENDIF
+				RETURN 1
+			ENDSELECT
+		ENDIF
+		
+		; 通常時
+		; 真の処女
+		IF TALENT:0 == 1
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「もっと頑張ってよぉ♥　メスにされる瞬間、待ってたのにぃ♥♥」\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「まだ……大丈夫……　わたしの身体はキレイなまま……」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（こんな奴相手に処女奪われるとか、嫌なハズなのに……ぃ……　身体が勝手に熱くなるよぉ……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（身体が……　おまたの奧が熱いよぉ……　嫌なのに欲しがっちゃってる……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（次またえっちされそうになったら、ガマンできるのかな……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「なんとか守れたけど……っ、次はどうなるか……」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「そう簡単にえっち出来ると思わないでくださいよ！　これでもガード堅いんですから！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あげないですよ！　未来の旦那の為に大事にしてるんだから！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「アナタなんかに、わたしの初めてをあげるものですか！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「セ……セーフ……、危なかったぁ……」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしの処女はそんな安くないんですよ！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしと釣り合う相手じゃないと処女はあげられないです」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「そんな気安く破られてたまるもんですか！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「奥まで挿入れるのはダメですよ、入り口もダメだけど」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ったく……　未通女狙いの変態め……」\n"
+			ENDSELECT
+			
+			; 寸前に絶頂中なら追加口上
+			; 前回値参照出来ないりばーすではMP変動とEP MAXで状態を判断する
+			IF KOJO_8_0_GET_PREV_PURE_ARG(0) == 120 || (KOJO_8_0_IS_REVERSE() && BASE:MP != PREV_BASE:1 && BASE:EP > 0 && PREV_BASE:2 < 0)
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「イカせるだけイカせといて、まだ焦らしちゃうのぉ♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（今のは危なかった……ぁ……　イッちゃって、力入らなかったし……）\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（大丈夫……　イカされただけ、わたしはまだ処女――）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「よ、よかったぁ……　イカされた所為で、力入らなくなってたから……」\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+		
+	; 残量小の場合は敵が膜を破らなかった
+	ELSE
+		; 地の文書き換え
+		; 真の処女
+		IF TALENT:0 == 1
+			CALL KOJO_8_0_ADD_MESSAGE, @"\m\d%KOJO_8_0_GET_PREV_PURE_ARGS(1)%は%CALLNAME:TARGET%の処女膜周辺に媚薬混じりの粘液を塗り込むと、ゆっくりと触手を引き抜いた\d\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d処女喪失と同時に最高の快楽を与えるよう、%CALLNAME:TARGET%の女性器は淫らに造り替えられていく…\d\n"
+		ENDIF
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		; 催眠中
+		IF KOJO_8_0_IS_HYPNO()
+			; 催眠種類で分岐
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				
+			; 発情・感情操作系
+			CASE 1
+				
+			; 無意識・認識操作系
+			CASE 2
+				; 真の処女
+				IF TALENT:0 == 1
+					CALL KOJO_8_0_ADD_MESSAGE, @"「あ……　わたしの処女おまんこは……　お気に召しませんでしたか……？」\n"
+				ENDIF
+				RETURN 1
+			ENDSELECT
+		ENDIF
+		
+		; 通常時
+		; 真の処女
+		IF TALENT:0 == 1
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「焦らさないでぇ……♥　わたしのオマンコ、いじめてよぉ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「寸止め……されちゃったぁ♥　おマンコ、まだ新品だぁ……♥♥」\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うあああぁぁっ♥　お腹……熱いっ……♥　うず……くぅぅっ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（何をされたの……！？　熱い！　熱いよぉ！？）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うあ……ぁ……　お腹の中、びりびりする…ぅ……」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「変なモン塗らないでよ……！　ううっ、お腹ジンジンする……！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「寸止めって奴？　わたし、まだバージン――」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あ……　わたしの処女、無事――！？」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あ、あなた……　わたしの中に何したんですか……！？」\n"
+			ENDSELECT
+			
+			; 寸前に絶頂中なら追加口上
+			; 前回値参照出来ないりばーすではMP変動とEP MAXで状態を判断する
+			IF KOJO_8_0_GET_PREV_ARG(0) == 120 || (KOJO_8_0_IS_REVERSE() && BASE:MP != PREV_BASE:1 && BASE:EP == MAXBASE:EP && PREV_BASE:2 != MAXBASE:EP)
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「またイカせるだけ……なんてぇ……♥♥　きりたんの処女おまんこぉ♥　交尾用に作り替えてぇ♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（だめぇ……っ♥　イキながら処女喪失したいとか、考えちゃだめぇ……っ♥）\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（どうせ奪われるなら、イッてる間なら痛くないかな……　とかちょっと考えちゃいました……）\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 1 自慰
+; ◆ 0 喪失
+@KOJO_8_0_SYSTEM_MESSAGE_136_1_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 真の処女
+	IF TALENT:0 == 1
+		; 道具あり自慰で喪失
+		IF KOJO_8_0_GET_PREV_ARG(0) == 118 && KOJO_8_0_GET_PREV_ARG(2) == 1
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「いﾞづぅ……っ……！？　や、やば……っ！？　ミスったかも……ぉ……っ！？」\n"
+			ENDSELECT
+			
+		; 通常自慰
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うそ……っ、もしかして……やっちゃった……！？」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 2 出産
+; ◆ 0 喪失
+@KOJO_8_0_SYSTEM_MESSAGE_136_2_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んにぃ……っ！？　いいいいぃぃっ！？　いたい……っ、ハズなの……にぃっ！？」\n"
+	ENDSELECT
+RETURN 1

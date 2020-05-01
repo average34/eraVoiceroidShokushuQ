@@ -1,0 +1,56 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0387 コウノトリ見せつけ
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_14_387(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_AFTER("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おねがいします…　いっぱいなかだしして…　にんしんさせてください…」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（あのおちんちんで、お腹の中掻き回されて……\n　子宮の中全部で精液でたぷたぷに……　って何考えてるのわたし！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（やぁ……っ！？　お腹の奧、きゅんきゅんする……っ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ヤダ……ぁ……　あの触手見てると、子作りしたくなってくる……ぅ……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ダメっ、ダメよぉっ！　あんなのと子作りセックスしたらっ、どうなるか解ってるのに……っ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「な……にコレ……っ！？　急に、アソコが疼いて……っ！？」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ええっ！？　なんでわたし子供なんてっ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ちっ、違うっ！？　わたしは子供なんて欲しくないっ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（なんでお腹の奥が熱くぅ…っ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「赤ちゃん……　わたしと触手化物の赤ちゃん……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「赤ちゃんを産むには……　膣内にたくさん射精してもらわないと……」\n"
+	ENDSELECT
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

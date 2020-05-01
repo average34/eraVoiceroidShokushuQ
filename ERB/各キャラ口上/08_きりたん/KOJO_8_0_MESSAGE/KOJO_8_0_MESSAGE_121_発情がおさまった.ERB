@@ -1,0 +1,117 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 121 発情がおさまった
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_121(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 地の文書き換え
+	; 絶頂メッセージ→発情がおさまる→次のメッセージ だとにテンポが悪く感じる事があるので
+	; そういった場合は地の文のみ変更して次のメッセージへとシームレスで繋ぐ
+	
+	; 前のターンにC絶頂 & ふたなりで射精待ち
+	IF KOJO_8_0_GET_PREV_PURE_ARG(0) == 120 && KOJO_8_0_GET_PREV_PURE_ARG(1) == 2
+		; 射精前に発情がおさまると微妙な感じがするので地の文&口上スキップ
+		; 発情がおさまった的な地の文は射精側で表示
+		CALL KOJO_8_0_ADD_MESSAGE, @"\m"
+		RETURN 0
+	
+	; 各種出産開始
+	ELSEIF GROUPMATCH(KOJO_8_0_GET_PREV_ARG(0), 127, 129, 227, 527, 547)
+		CALL KOJO_8_0_ADD_MESSAGE, @"\m\d%CALLNAME:TARGET%の発情が\@(CFLAG:28 == 0) ? 完全に # 少し\@治まったが、異様な出産快楽に翻弄されそれどころではない！\d\n"
+		RETURN 1
+		
+	; 各種産卵開始
+	ELSEIF GROUPMATCH(KOJO_8_0_GET_PREV_ARG(0), 223, 523, 543)
+		CALL KOJO_8_0_ADD_MESSAGE, @"\m\d%CALLNAME:TARGET%の発情が\@(CFLAG:28 == 0) ? 完全に # 少し\@治まったが、異様な産卵快楽に翻弄されそれどころではない！\d\n"
+		RETURN 1
+		
+	; 前のターンに媚薬爆弾が発動した
+	ELSEIF KOJO_8_0_GET_PREV_ARG(0) == 517 && KOJO_8_0_GET_PREV_ARG(1) == 0
+		CALL KOJO_8_0_ADD_MESSAGE, @"\m\d発情が治まるよりも早く、媚薬の毒が%CALLNAME:TARGET%の全身を蝕んでいく！\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 諦めた or 喪失
+	IF TFLAG:16 == 2 || CFLAG:29
+		; 完全に発情がおさまった
+		IF CFLAG:28 == 0
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（こんな状況で冷静になっても辛いだけなのにな……）\n"
+			ENDSELECT
+		; 少し発情がおさまった(まだ発情中)
+		ELSE
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	; 睡眠中は何もしないで帰る
+	SIF CFLAG:25
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 完全に発情がおさまった
+			IF CFLAG:28 == 0
+				CALL KOJO_8_0_ADD_MESSAGE, @"「頭の中…　落ち着いてきました……」\n"
+			; 少し発情がおさまった(まだ発情中)
+			ELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「まだカラダの火照りが残っています…　犯すなら今のうちに…　どうぞ…」\n"
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 通常処理
+	; 完全に発情がおさまった
+	IF CFLAG:28 == 0
+		
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「きもちいいの、おわっちゃったぁ…　身体ゾクゾクしっぱなしで凄かったのに…」\n"
+		CASE "発情"
+			{
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うあぁ…　効果は切れたのに…　なんでぇ…っ！？」\n
+			                              　\d多数の触手に開発された身体は、発情がおさまったにも関わらず疼き続けている…\d\n"
+			}
+			
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やっとおさまったわ…　気持ち悪かった…」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（どうかしてた……わたし……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やっと…　カラダ落ち着いた…ぁ…」\n"
+		ENDSELECT
+		
+	; 少し発情がおさまった(まだ発情中)
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「まだぁ…ゾクゾクするの続いてるうぅ♥　今なら何倍もきもちいからぁ…♥　はやくぅ…っ♥♥」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「不必要に身体がぞわぞわして気持ち悪いったらありゃしないです\n　とっととおさまってくれないかな」\n"
+		CASEELSE
+			
+			; 通常の分岐方法では強制的に発情中が呼び出されてしまうため例外的に『普通』内で分岐する
+			; 発情
+			IF CFLAG:800 <= KOJO_8_0_MIND_BORDER_3
+				CALL KOJO_8_0_ADD_MESSAGE, @"（イヤなのにっ…　まだ、カラダが欲しがってるっ♥）\n"
+				
+			; 普通
+			ELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（少し、おさまった…？）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（まだ…カラダ…あついよう……）\n"
+			ENDIF
+		ENDSELECT
+	ENDIF
+RETURN 1

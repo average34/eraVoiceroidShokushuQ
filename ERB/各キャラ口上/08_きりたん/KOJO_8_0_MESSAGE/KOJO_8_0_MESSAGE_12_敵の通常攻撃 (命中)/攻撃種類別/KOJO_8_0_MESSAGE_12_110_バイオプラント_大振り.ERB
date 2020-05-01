@@ -1,0 +1,44 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 12 敵の通常攻撃 (命中) - 攻撃種類別 0110 バイオプラント 大振り
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_12_110(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時 拘束中(非丸呑み)とそれ以外で地の文が分岐
+	IF (CFLAG:10 || CFLAG:20) && CFLAG:21 == 0
+		; 同地の文のため 敵の通常攻撃(命中) 0109 バイオプラント 通常 におねがい
+		CALL KOJO_8_0_SYSTEM_MESSAGE_12_109(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		RETURN RESULT
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ったく、避けにくいんですよ！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「上下、前後、左右、好き放題攻撃してくれて……　くそ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「見えないとこからばかり攻撃して……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

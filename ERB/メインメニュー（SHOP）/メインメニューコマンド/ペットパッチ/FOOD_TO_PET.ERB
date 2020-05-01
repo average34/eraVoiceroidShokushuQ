@@ -1,10 +1,14 @@
 ﻿@FOOD_TO_PET
 #DIM LCOUNT
+#DIM  TEMP_REDRAW
 ;ペットに餌をくれてやる用関数
 
 ;-------------
 ;アイテム選択
 ;-------------
+CURRENTREDRAW
+TEMP_REDRAW = RESULT
+REDRAW 0
 
 DRAWLINE
 PRINTFORML 何を与えますか？
@@ -14,6 +18,7 @@ PRINTFORML [2] 非消耗武器
 PRINTFORML [3] アクセサリ
 PRINTFORML [4] 回復アイテム等
 PRINTFORML [0] 戻る
+
 $INPUT_LOOP
 INPUT
 ;LOCAL～LOCAL:1までの番号のアイテムを表示
@@ -151,6 +156,8 @@ ELSE
 		GOTO INPUT_LOOP3
 	ENDIF
 ENDIF
+
+REDRAW TEMP_REDRAW
 ;-------------
 ;おわりまで
 ;-------------

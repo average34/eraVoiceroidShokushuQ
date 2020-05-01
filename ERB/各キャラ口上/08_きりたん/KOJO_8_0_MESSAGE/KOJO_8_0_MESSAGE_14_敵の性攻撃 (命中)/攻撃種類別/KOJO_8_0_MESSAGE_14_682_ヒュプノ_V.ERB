@@ -1,0 +1,92 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0682 ヒュプノ V
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_14_682(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_AFTER("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「んもう♥　操らなくても、自分から咥えるのにぃ♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「やあぁぁ……　何で、自分からぁぁぁ……」\n"
+				ENDSELECT
+				
+			CASE 2
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「あは♥　あははぁっ♥　わたしのオマンコ、完全におもちゃ扱いっ♥♥」\n"
+				CASE "強気"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「負けな……いっ！　こんな事くらい、どってことない……っ！」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（こんな激しく動いたら……っ！　子宮、潰れ……っ！　意識飛……）\n"
+				ENDSELECT
+				
+			CASEELSE
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「えへへぇ♥　無料まんこ、もっと使ってぇ♥♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「わたしはぁ……♥　%CALLNAME:TARGET%はぁ……♥　おまんこオナホ女ですぅ……♥♥」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（もう嫌！　抜いて！　抜いてよぉぉぉっ！！）\n"
+				ENDSELECT
+			ENDSELECT
+			
+		; 発情・感情操作系
+		CASE 1
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あぁ～～ぁ……っ♥　これ、好きいぃ……♥　好きぃぃ……っっ♥♥」\n"
+			CASE 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥　いいっ♥　もっと奧、突いてぇぇっ♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「せっくすっ♥　せっく……すぅぅっ♥♥　ぎぼぢいﾞいﾞ～～っﾞッﾞ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（えっちっ♥　生えっちっ♥　おまんこおぉ……っ♥♥）\n"
+			ENDSELECT
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_8_0_ADD_MESSAGE, @"（あ……　えっち、するんだ……）\n"
+			CASE 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"（あ……　おまんこ感じすぎて……　わたし潮吹いてる……）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（おまんこ、とろとろ……　頭の中も、とろとろ……）\n"
+			ENDSELECT
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（もっとっ♥　もっと奥までえぐってぇっ♥\n　そんな弄りかた……　足りないよぉっ♥♥）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（膣内……　かきまわされてるのに……　抵抗、できないっ……！）\n"
+	ENDSELECT
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

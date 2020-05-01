@@ -1,0 +1,86 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 179 結婚式場
+; ------------------------------------------------------------------------------
+
+; □ 2 触手服ウェディングドレス授与
+@KOJO_8_0_SYSTEM_MESSAGE_200_179_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こっ、この服……　もしかして……」\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　わたし、また結婚式挙げちゃう…っ♥♥」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 誓いの公開レイプ
+@KOJO_8_0_SYSTEM_MESSAGE_200_179_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（た、多分これ結婚式だよね？　わたし、ご主人様と結婚しちゃうんだ…）\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（結婚式って事はぁ♥　わたしまた%PETNAME%様と、誓いのセックスするんだぁ♥♥）\n"
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 今のところ結婚宣言は二度目以降も共用
+	{
+		CALL KOJO_8_0_ADD_MESSAGE, @"
+			\d触手ドレスに全身を愛撫され、%CALLNAME:TARGET%は蕩けた声をあげたまま結婚の誓いを口にしはじめた\d\n
+			「おまんこも…っ♥　お尻の穴も、乳首も、\@GET_PENIS(TARGET) ? おちんちん # クリトリス\@も…っ♥　きもちいい所全部、%PETNAME%様のものです♥♥\n
+			　いかなる時でも、%PETNAME%様の性欲を満たす為の専用肉便器としてっ♥\n
+			　あ…たしっ、因幡%CALLNAME:TARGET%はぁっ♥　生涯、%PETNAME%様を愛す事を誓います…うっ…♥♥」\n
+			\d宣言を終えると、%CALLNAME:TARGET%は%PETNAME%の性器に誓いの口づけをした\d\n
+		"
+	}
+
+RETURN 1
+
+
+; □ 8 無視して離れた
+@KOJO_8_0_SYSTEM_MESSAGE_200_179_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ご主人様、そんな場所に行ったら危ないよ」\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そっかぁ♥　わたし達ここで結婚式挙げたんだった♥」\n"
+		ENDSELECT
+		
+	; ペット系素質未所持(きりたん以外の誰かがペット所持)
+	CASEELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そっちは危なそうだから近寄らないの！　ああこら、ペットはご主人様の言う事ききなさい！」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

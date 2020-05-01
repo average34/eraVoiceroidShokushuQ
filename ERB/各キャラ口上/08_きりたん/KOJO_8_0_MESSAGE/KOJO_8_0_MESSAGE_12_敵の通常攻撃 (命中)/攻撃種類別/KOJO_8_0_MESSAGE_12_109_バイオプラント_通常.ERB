@@ -1,0 +1,45 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 12 敵の通常攻撃 (命中) - 攻撃種類別 0109 バイオプラント 通常
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_12_109(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時 拘束中(非丸呑み)とそれ以外で地の文が分岐
+	IF (CFLAG:10 || CFLAG:20) && CFLAG:21 == 0
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はな……せ……　この……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ぐ……　ぐるじ……い……」\n"
+		ENDSELECT
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あうっ……　小さな鞭で叩かれてるみたい……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こういう細かい攻撃は肌が切れちゃうから嫌いです……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

@@ -1,0 +1,50 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 4 後ろに下がる
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_1_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ほ～ら♥　かわいい小学生さんが逃げちゃいますよ～♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ほらほらぁ♥　鬼さんこちら、手の鳴る方へ♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「てっ……敵っ！？　敵の位置近すぎっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああ、怖かったぁ……　もっと距離を取りたい……」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「少し距離を取らないと」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「手早く済ませたかったんですけどね……」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「前に出過ぎで危ないです、ちょっと後退」\n"
+	ENDSELECT
+	
+	; PT人数による追加口上
+	SELECTCASE GET_MEMBER_SUM()
+	; 1人で行動中
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひとりぼっちの小学生さんが無防備に近くに居たのよ♥　襲うチャンスだったのに、残念でした♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（誰も助けてくれない状況で、こんな前に出てるのやっぱり無理……）\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「仲間が居れば、距離を詰めたり離れたり、忙しくしなくていいんんだけどなあ」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「仲間も居ないし、囮みたいな動きはいらないかな」\n"
+		ENDSELECT
+		
+	; 2人以上で行動中
+	CASEELSE
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やっぱり囮役なんてムリだってー！」\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もう囮はいらないでしょう」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そろそろ、わたしも距離を取って攻撃に移ろうかな」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「これで囮はおしまい♪　あとは仲間にお任せよ♪」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やっぱりわたしはサポート役のが向いてると思うんですよ」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,165 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 95 抱きつかれた
+; ------------------------------------------------------------------------------
+
+; □ 0 抱きつかれたまま
+@KOJO_8_0_SYSTEM_MESSAGE_1_95_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「どう？　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%、気持ちいい？」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%……っ！　離れてよぉ……っ！）\n"
+				ENDSELECT
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠に掛かった%CALLNAME:TARGET%の身体は、思考とは裏腹に%CALLNAME:(ARG:2)%への奉仕を続けている…\d\n"
+				CALL KOJO_8_0_FIX_MESSAGE
+				
+				; 相手にペニスありなら追加口上
+				IF GET_PENIS(ARG:2)
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥　ちんぽぉ……っ♥　おちんぽぉ……っ♥」\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"「もっと……っ、もっと犯してぇ……っ　奧まで突いてぇ……っ」\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%……っ　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%のおちんちんが、わたしの中にぃ……）\n"
+					ENDSELECT
+					CALL KOJO_8_0_PARAGRAPH_MESSAGE
+					CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠に掛かった%CALLNAME:TARGET%の身体は、思考とは裏腹に%CALLNAME:(ARG:2)%のペニスへ奉仕を続けている…\d\n"
+					CALL KOJO_8_0_FIX_MESSAGE
+				ENDIF
+				
+			CASE 2
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（わたしの身体……　性欲処理に使われてる……）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%……っ♥　コーフンしすぎ……っ♥♥）\n"
+				ENDSELECT
+				
+				; 相手にペニスありなら追加口上
+				IF GET_PENIS(ARG:2)
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"「そうよ%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%、興奮したちんぽは便器まんこに一杯射精しないと」\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"（精液……ッ♥　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%の精液がわたしの中にぃ……っ♥）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽ勃起、治まるまでは付き合ってあげる　溜まってるの全部膣内に射精して」\n"
+					ENDSELECT
+				ENDIF
+				
+			CASEELSE
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（わたしは性処理奴隷……　わたしは性処理奴隷……）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「好きなだけ……　わたしの身体で……　発散、してください……」\n"
+				ENDSELECT
+				
+				; 相手にペニスありなら追加口上
+				IF GET_PENIS(ARG:2)
+					SELECTCASE KOJO_MODE
+					CASEELSE
+						CALL KOJO_8_0_ADD_MESSAGE, @"（わたしのオマンコはオチンポ便器……　わたしのオマンコはオチンポ便器……）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"「仲間のおちんぽを気持ちよくするのも……　大事なお仕事です……」\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"「いくらでも……お交尾します……から……　中に、おねがいします……」\n"
+					ENDSELECT
+				ENDIF
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああんっ♥　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%、積極的っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%とのセックス♥　敵さんに見せつけてあげましょ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やめて、%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%っ……　そんな事されたらわたし……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%っ！　今は闘わないとっ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ううっ……　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%、興奮しすぎて周り見えてない……っ……）\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんな時に何考えてるんですか！　やるなら敵にやってくださいよ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いくら興奮してるからって、時と場所をわきまえてくださいよ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うぅ……っ……！　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%、後で覚えといてくださいよ……！」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「今こんな事してる場合じゃないですよ！？　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%！　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%っ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%っ！　離して！　離してよぉ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%っ！　正気に戻ってよぉ！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ううっ……　オナニーにわたしの身体、使わないでよぉ……」\n"
+	ENDSELECT
+	
+	; 相手のペニス有無で追加口上
+	; ペニスあり
+	IF GET_PENIS(ARG:2)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「いいっ♥　おちんぽ気持ちいいよぉっ♥　もっと奧まで突いてぇ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%とセックスっ、生セックスっ♥　見られながら生おまんこっ♥♥」\n"
+			
+			; 相手のペニス素質(竿の長さ)
+			SELECTCASE TALENT:(ARG:2):170
+			; 短小
+			CASE -1
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%ったら……♥　ちっちゃいチンポでズコズコ、夢中で腰振っちゃってカ～ワイ～♥♥」\n"
+			; 爆根
+			CASE 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"「はが……っ♥　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%……のッ、チンポぉっ♥　おっきスギ……てっ♥　しきゅ……引きずり出される……ぅッ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「このチンポ……っ♥　おっきすぎてぇ、子宮の奧まで突かれてるみたいっ♥♥」\n"
+			; 超巨根
+			CASE 3
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしの子供まんこじゃ、%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%のチンポなんて先っぽしか入らないよぉ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「そんなバカみたいな大きさの、全部入るわけ……♥　にゃいでしょぉ……♥♥」\n"
+			ENDSELECT
+			
+			; 相手のペニス素質(極太)
+			IF TALENT:(ARG:2):171
+				CALL KOJO_8_0_ADD_MESSAGE, @"「このおチンポ太すぎぃ……っ♥　わたしのオマンコ、開きっぱなしになっちゃうよぉ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「いいっ♥　気持ちいいよぉっ♥　極太ちんぽが……ごりごりっ♥　ごりごりぃっ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「こんな太いの挿入れっぱなしじゃ、わたしの中……　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%の形になっちゃうよぉ♥♥」\n"
+			ENDIF
+			
+			; 相手のペニス素質(恥垢体質)
+			IF TALENT:(ARG:2):174
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うひいぃぃっ♥　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%の汚いチンポが、わたしの中で暴れてるぅ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「チンカスまみれのチンポと交尾なんてぇ♥♥　あひぃっ♥　擦りつけられて……ぇ……♥♥」\n"
+			ENDIF
+			
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%のおちんちんがぁ……っ♥　わたしのオマンコかき回してるぅ……っ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「抜いてっ♥　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%っ♥　おちんちん抜いてぇっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うはぁ…っ♥　はあぁ……っ♥　はあ…っッッ♥♥　おちんちん、ダメぇっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うああぁっ！　抜いてっ！　抜いてよぉっ！　こんな事してる場合じゃないでしょう！？」\n"
+		ENDSELECT
+	
+	; ペニスなし
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あはぁ♥　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%、レズセックス上手～♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%って、女の子同士でこういう事するの好きなんだぁ♥\n　変態さんですね♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（おまた同士……がぁっ、こすれてぇ……っ♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ああっ♥　%KOJO_8_0_CALLNAME_FROM_ID(ARG:2)%のクリと……っ、わたしのクリ……っ♥　こすれてぇ……っ♥♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「離して……よぉっ！　女の子同士の前に、わたしたち仲間でしょぉぉ！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

@@ -1,0 +1,51 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0612 ガーディアン B+
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_14_612(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_AFTER("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠
+	SIF CFLAG:25
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 乳首勃起中
+	IF GET_ERECTION_STATE_B(TARGET)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「乳首ぃ…っ♥　乳首ぃ……っ♥　ひっぱられて、凄い勃起させられてるぅ……っ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「勃起乳首ぃ♥　引っ張られてピクピクしてるっ♥　感じてるの……っ、まるみえっ……♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やっ、やだぁぁっ！？　おっぱいの先っぽっ、ピクピクしてるの丸見えじゃないですか……っ！？）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やぁぁ……っ！？　勃った乳首、引っ張られてぇ……っ！？）\n"
+		ENDSELECT
+	ENDIF
+	
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

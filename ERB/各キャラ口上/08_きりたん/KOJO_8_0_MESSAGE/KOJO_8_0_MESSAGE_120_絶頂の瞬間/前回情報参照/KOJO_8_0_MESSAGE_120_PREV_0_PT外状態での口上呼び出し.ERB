@@ -1,0 +1,181 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 前回情報参照 0 PT外状態での口上呼び出し
+; ------------------------------------------------------------------------------
+; PT外状態での口上呼び出し(遭遇時会話など)が発生した場合、1ターン前のARG:0～ARG:6は突飛な口上を呼び出さないよう0に固定される
+; ここではARG:0～ARG:6が0になっている場合のみ動作する口上を記述する、情報参照が可能な場合は別途分岐を作成する事
+
+; □ ROOT
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_0_0_0_0_0_0_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; りばーす東方触手宮では不具合の可能性がある為無効化
+	SIF KOJO_8_0_IS_REVERSE()
+		RETURN 0
+		
+	; 行動不能時にレイプされた(ARGで管理出来ないのでいろいろと判定 内容は以下の通り)
+	; ※ 非戦闘中, 非PTメンバー, 喪失 or 催眠 or 拘束中, 行動中のPTがレイプ可能条件を満たす(ふたなりか戦意喪失)
+	IF !TFLAG:13 && !(CHECK_MEMBER_FROM_ID(TARGET)) && (CFLAG:29 || KOJO_8_0_IS_HYPNO() || CFLAG:504) && (GET_PENIS(1) && (FLAG:520 == 2 || (FLAG:10 == 0 || (FLAG:11 == 0 && (CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10))) || ((CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10)) && (CFLAG:(FLAG:11):29 || GET_PENIS(FLAG:11))))))
+		; 催眠中
+		IF KOJO_8_0_IS_HYPNO()
+			CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, "KOJO_8_0_SYSTEM_MESSAGE_120_PREV_0_0_0_0_0_0_0_RAPE_HYPNO")
+		; 喪失中
+		ELSEIF CFLAG:29
+			CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, "KOJO_8_0_SYSTEM_MESSAGE_120_PREV_0_0_0_0_0_0_0_RAPE_STEAL")
+		; 拘束中
+		ELSE
+			CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, "KOJO_8_0_SYSTEM_MESSAGE_120_PREV_0_0_0_0_0_0_0_RAPE_BIND")
+		ENDIF
+	ENDIF
+RETURN RESULT
+
+
+; ◆ 行動不能時にレイプされた
+; ◇ 催眠中
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_0_0_0_0_0_0_0_RAPE_HYPNO(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 部位別
+			SELECTCASE ARG:1
+			CASE 3
+				CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽ…　きもちいい、です…　わたしの…　おまんこ…　イッて、ますっ…」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d催眠の力で精液便所にされた%CALLNAME:TARGET%は、絶頂したにも関わらず淫らに腰を振り続けている\d\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「きもちよく…　なれて…　ますか…？」\n"
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		; 部位別
+		SELECTCASE ARG:1
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あ～っ♥♥　イクっ♥　おちんぽイクうぅぅ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひぃっ♥　んひぃぃっ♥　もうダメっ、我慢できないよぉっ♥　射精るっ♥　射精ちゃうぅぅっ♥♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽイクっ♥　おちんぽイクっ♥　おちんぽイクぅぅっ♥♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「すきぃ…♪　きもちいいのぉ、だいすきぃ…♪」\n"
+		ENDSELECT
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「カラダが…勝手に…ぃ…　なんで…　こんなことする…　のぉ！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 行動不能時にレイプされた
+; ◇ 喪失中
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_0_0_0_0_0_0_0_RAPE_STEAL(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「う…　あ…ぁ……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 行動不能時にレイプされた
+; ◇ 拘束中
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_0_0_0_0_0_0_0_RAPE_BIND(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あッ…♥　ふぅ…ぅっ♥\n　わたし…ぃ、見知った顔に犯されて…　イッちゃった…ぁ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うふふ、ごちそうさまー♥」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「絶対…　仕返しして…やるんだから…」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そこらへんのバケモノに犯されたほうがマシだわ……」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「動けないからって、好き勝手しすぎ…よぉ…」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なんで…っ、こんなことするのよ…ぉっ…」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「や…っ…だぁっ！？　わたしは敵じゃない…のにっ！？\n　正気に…戻って、よぉっ…！！」\n"
+	ENDSELECT
+	
+	; 部位別 追加口上
+	SELECTCASE ARG:1
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（こんだけビクビク震えてたらぁ♥　おっぱいイキまくってるの、バレてるわよねぇ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（これぇ、ごほーしじゃなくて…　おちんぽ使ってオナニーしてるだけだぁ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱいがぁ、せーえきでぬるぬるだよぉ♥♥」\n"
+		ENDSELECT
+	
+	CASE 3
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うあぁっ♥　でてるっ♥　なかだしっ♥　なかだしされてるっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やだぁっ♥　わたしっ、バケモノ以外に犯されて…　腰振ってる…っ♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ダメ…っ♥　おちんちん…にっ、気持ちよく…されるぅっ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うっ…　くっ…　ちょっとは遠慮してくださいよ！　このバカチンポ！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ううっ…　バカみたいに…だしてくれちゃって…ぇ……」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

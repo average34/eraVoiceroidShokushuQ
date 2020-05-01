@@ -1,0 +1,99 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 134 部屋を移動：待ち伏せ
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_134(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+#DIM ENEMY_COUNT
+	
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「フェロモンだだ漏れの小学生じゃあ、隠れれても無駄かも♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「さ～て、誰がえっちな小学生を食べに来るのかな～♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「見つかったらコッチから襲っちゃうんだから♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（誰か力になってくれるの来ないかなあ……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ヘタに動くより、少しでも周りの状況を見ないと……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ヘンな生き物より、見知った顔が来てくれたほうが嬉しいんですけどね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「モノカゲに隠れて……っと」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「待ちぶせ中に後ろから……　とかありませんように」\n"
+	ENDSELECT
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 移動前部屋の汚染度で追加口上
+	; 清浄
+	IF FLAG:(50 + FLAG:5) < 10
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「キレイな部屋じゃ、えっちな敵は期待できないかなあ？」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（これだけ綺麗な場所なら、誰かまともな人が通りかかるはず――）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「綺麗すぎる部屋だと敵さん近寄ってこないかもね」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSEIF FLAG:(50 + FLAG:5) < 40
+		
+	; 軽度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 70
+		
+	; 中度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 100
+		
+	; 重度汚染
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんなヒドい場所で待ちぶせなんて、身体にえっちなニオイしみついちゃうよぉ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「待ちぶせる前に部屋を綺麗にした方が良かったかも」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+	; 同室の敵数カウント
+	; 正体未看破ドッペルは敵に見えないので除外
+	VARSET ENEMY_COUNT
+	FOR LCOUNT, 1, FLAG:1
+		IF DA:LCOUNT:4 == FLAG:5 && DA:LCOUNT:1 > 0
+			IF DA:LCOUNT:0 == 18 && !DA:LCOUNT:45
+			ELSE
+				ENEMY_COUNT += 1
+			ENDIF
+		ENDIF
+	NEXT
+	
+	; 同室に敵が居るなら追加口上
+	IF ENEMY_COUNT > 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（近くにえっちな小学生さんが居ますよ～♥）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（すぐ横に敵がぁ……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（うう……　こんな近くに隠れても無駄かも……）\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（すぐ横に隠れてるなんて敵さんも考えないでしょ）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（近くの敵にも見つからないよう身を隠して――）\n"
+		ENDSELECT
+		
+		; ちょっと同室に敵が多すぎる
+		IF ENEMY_COUNT > 3
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（まわり敵だらけ♥　運悪く捕まったら、きっと――♥♥）\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（待ちぶせ……って、敵が多くて動けないよぉ……　今動いたら絶対出口に着く前に襲われちゃう……）\n"
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（ああもう敵だらけ！　いいですよ、相手してやりますよ！　ちょっとは隙を見せてくださいよ！）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（こんだけ敵だらけの場所で待ちぶせとか、自殺行為だったかな……）\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	CALL KOJO_8_0_FIX_MESSAGE
+	
+RETURN 1

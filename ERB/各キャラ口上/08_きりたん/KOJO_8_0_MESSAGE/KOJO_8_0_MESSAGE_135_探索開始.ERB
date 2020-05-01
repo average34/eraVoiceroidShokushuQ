@@ -1,0 +1,138 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 135 探索開始
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_135(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+#DIM WEAPON_COUNT
+
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+
+	; 汎用口上
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何もなさそう、って所に罠が仕掛けてあるんですよ♪　えっちなヤツがね♪」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「頭の中幸せになっちゃうようなモノ、ないかな～♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「イイモノ落ちてないかな♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「少しでもいいものが手に入れば……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「急に襲い掛かられたりしませんように……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「わ、罠なんて無いですよね……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何か見つけたとしても、こんな場所に落ちてるモノとか安全なんですかね……？」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何かしらイイモノが見つかるはず！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「役に立ちそうなモノなんて、大抵そこらへんで見つかるものです」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こういう変な場所って、やたら物が落ちてるんですよね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「何か役に立つ物でも落ちてないかなー」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「宝探しは得意ですよ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「お宝よりも出口が見つかればいいんですけどねぇ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ずんだ餅とか落ちてないですかね、妥協してきりたんぽでもいいです」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なーにか落ちてないかなー」\n"
+	ENDSELECT
+	
+	
+	; 部屋の汚染度で分岐
+	; 清浄
+	IF FLAG:(50 + FLAG:5) < 10
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「この部屋やたら綺麗だし、邪を払う的な道具とかあったりして」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「綺麗な部屋なのはいいけど、こういう場所って大抵探し尽くされてるんですよね～」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSEIF FLAG:(50 + FLAG:5) < 40
+
+
+	; 軽度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 70
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「適度に薄汚れた場所って、何かを隠すには最適なんですよね」\n"
+		ENDSELECT
+		
+	; 中度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 100
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんだけ汚れてると、トラップとか見分け付きにくいんですよね～」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「探索って言うか、物漁りって気分です　ガラクタの中から使えそうなもの探すの」\n"
+		ENDSELECT
+		
+	; 重度汚染
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「モンスターの卵とか落ちてたらやだなぁ……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うっげぇ……　確かに何か埋まってそうだけど、汚くてあんま触りたくないな……」\n"
+		ENDSELECT
+	ENDIF
+	
+	
+	; ソロで行動中なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「誰も見てないし、エッチな道具とか落ちてたら使いたい放題ですね♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「仲間がいれば、もっと効率上がるんだけどなあ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「宝探しとか大勢でやった方が効率いいんんだけどなあ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「仲間も居ないし、せめていいアイテム位ないとね」\n"
+		ENDSELECT
+		
+		; 武器系アイテムストックなし + 装備なしなら追加口上
+		VARSET WEAPON_COUNT
+		FOR LCOUNT, 1, 20
+			WEAPON_COUNT += ITEM:LCOUNT
+		NEXT
+		IF WEAPON_COUNT == 0 && !INRANGE(CFLAG:7, 1, 19) && !INRANGE(CFLAG:8, 1, 19)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「せめて武器として使えるモノでも落ちてればいいんですけど」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「か弱い小学生が一人で、手持ちに武器のひとつも無し……ってのは流石に参ります」\n"
+		ENDIF
+	ENDIF
+	
+	; お札のストックなし + PTに霊夢は居ない なら追加口上
+	IF ITEM:6 == 0 && !(NO:1 == 1 || NO:(FLAG:10) == 1 || NO:(FLAG:11) == 1)
+		CALL KOJO_8_0_ADD_MESSAGE, @"「触手避けのお札とかありませんかねぇ」\n"
+	ENDIF
+	
+	; 媚薬のストックなし + PTメンバーが媚薬を装備していない なら追加口上
+	IF ITEM:39 == 0 && !(CFLAG:1:7 == 39 || CFLAG:1:8 == 39) && !(CFLAG:(FLAG:10):7 == 39 || CFLAG:(FLAG:10):8 == 39) && !(CFLAG:(FLAG:11):7 == 39 || CFLAG:(FLAG:11):8 == 39)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「場所が場所だし、えっちになるお薬とか落ちてると思うんですけどねー♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「どうせこんな場所に落ちてるのはエロくなる薬とかそんなのですよね……」\n"
+		ENDSELECT
+		
+		
+	ENDIF
+	
+	; 服のストックなし + 包帯のストックなし + CP25%以下 なら追加口上
+	IF ITEM:54 == 0 && ITEM:67 == 0 && BASE:3 <= (MAXBASE:3 / 4)
+		CALL KOJO_8_0_ADD_MESSAGE, @"「服！　どっかに服落ちてないですか！\n　とにかく今は服が欲しい！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うう……、肌を隠せるならもう布切れでもいいですよぉ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「まともに着られる物が欲しいなあ……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ボロボロの服でも寒くはないけど、そういう事言ってられる場所でもないし服が要ります」\n"
+	ENDIF
+	
+	; 気付け薬のストックなし + PTの誰かが喪失 なら追加口上
+	IF ITEM:58 == 0 && (CFLAG:1:29 || (FLAG:10 && CFLAG:(FLAG:10):29) || (FLAG:11 && CFLAG:(FLAG:11):29))
+		CALL KOJO_8_0_ADD_MESSAGE, @"「気付け薬なんて永遠亭ならゴロゴロしてそうなのに\n　必要な時に限って見つからないんですよね……」\n"
+	ENDIF
+	
+	; 大人の玩具のストックなし なら追加口上
+	IF ITEM:60 == 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「大人向けの玩具とか落ちてると嬉しいんですけどねー♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（自分なんとかしなきゃいけない……からっ……\n　えっちなおもちゃ……　どこかに、落ちてたり……）\n"
+		CASEELSE
+		ENDSELECT
+	ENDIF
+RETURN 1

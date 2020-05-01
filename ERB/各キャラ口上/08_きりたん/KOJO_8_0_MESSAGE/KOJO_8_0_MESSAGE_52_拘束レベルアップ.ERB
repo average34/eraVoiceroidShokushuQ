@@ -1,0 +1,171 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 52 拘束レベルアップ
+;
+;   拘束レベルは1～5まで
+;   レベル5で一度だけ拘束MAXメッセージを表示
+;   それ以降は 53 拘束レベルMAX継続が呼び出される
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠か喪失なら何もしないで戻る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これじゃあ……　にげられないよねぇ……♥」\n"	
+		CALL KOJO_8_0_ADD_MESSAGE, @"「もうちょっと、やさしくぅ……♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（締め付けられて……　痛いハズ……なのに、何か変な感じが……っ！？）"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		; 発情状態なら地の文追加
+		IF CFLAG:28
+			CALL KOJO_8_0_ADD_MESSAGE, @"\n\d強制的に発情させられた%CALLNAME:TARGET%は、痛み以外の奇妙な感覚に戸惑っている\d"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		ENDIF
+		CALL KOJO_8_0_ADD_MESSAGE, @"\n"
+	CASEELSE
+		IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やめて！　ひっぱらないで！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっと……　締め付けすぎ……っ」\n"
+		ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_8_0_ADD_MESSAGE, @"「くうっ……！　はなせ……ぇ！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「はなしてえ！　おねがいですから！」\n"
+		ELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ゆるしてぇ……　おねがい、ゆるしてぇ…………」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おねがいします……　はなして……　ください……」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1
+
+
+; □ 拘束状態分岐
+; ◆ 0 拘束
+@KOJO_8_0_SYSTEM_MESSAGE_52_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠か喪失なら何もしないで戻る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 拘束レベルによる分岐
+	SELECTCASE ARG:1
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「この位、すぐに抜けてやります！」\n"
+		ENDSELECT
+	CASE 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「簡単に抜けられると考えてたけど、思ったより強い……！」\n"
+		ENDSELECT
+	CASE 3
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（殆ど宙吊りで、うまく抵抗できない……！）\n"
+		ENDSELECT
+	CASE 4
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（どうしよう……　手も、足も殆ど動かせない……）\n"
+		ENDSELECT
+	CASE 5
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もうだめ、動けない……」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+;  拘束状態分岐
+; ◆ 1 丸呑み
+@KOJO_8_0_SYSTEM_MESSAGE_52_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠か喪失なら何もしないで戻る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 拘束レベルによる分岐
+	SELECTCASE ARG:1
+	CASE 1
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「た、食べないでください～！」\n"
+		ENDSELECT
+	CASE 2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「嫌ですっ！　どんどん奧にぃっ！」\n"
+		ENDSELECT
+	CASE 3
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（食べられる……っ！　本当に食べられる……っ！）\n"
+		ENDSELECT
+	CASE 4
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（手足の自由が……　殆ど動けない……）\n"
+		ENDSELECT
+	CASE 5
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やだ……　このままじゃ、わたし……）\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+

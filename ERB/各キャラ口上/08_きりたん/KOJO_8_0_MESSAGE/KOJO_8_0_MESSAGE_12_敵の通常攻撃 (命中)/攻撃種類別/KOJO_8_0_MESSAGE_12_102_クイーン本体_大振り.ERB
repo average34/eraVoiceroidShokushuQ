@@ -1,0 +1,41 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 12 敵の通常攻撃 (命中) - 攻撃種類別 0102 クイーン本体 大振り
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_12_102(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うああっ……♥　あついよぉっ……♥　あついよぉぉっ……♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うはぁ……っ♥　はあぁ……っ♥　はあ……っッッ♥♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ここのボスに……っ、ふさわしい攻撃ですね……ぇっ……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「はーっ……　はーっ……　はーっ……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これ……　絶対身体に悪いです……　ううっ、熱い……っ……」\n"
+	ENDSELECT
+RETURN 1

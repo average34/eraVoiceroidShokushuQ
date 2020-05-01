@@ -1,0 +1,37 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 443 スライムスーツ装着時
+; ------------------------------------------------------------------------------
+
+; □ 0 スライムイベントによる発生
+@KOJO_8_0_SYSTEM_MESSAGE_443_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああ……っ♥　ヌルヌルが身体中にぃ……♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ううっ……　うまく掴めないから、引き剥がせないっ……」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「く……そっ……！　離れろぉ……っ！」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なん……なのぉ……、こいつぅ……っ！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 スライム系の敵を倒した
+@KOJO_8_0_SYSTEM_MESSAGE_443_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あんっ♥　最後までエッチな生き物ぉ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ちゃ、ちゃんと倒せてなかった？）\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああもう！　汚いなあ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「コレだからスライム系の敵は嫌なんですよ！」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うわっ……　汚い……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「往生際の悪い……ッ！」\n"
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,76 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 34 EPが0になった - 前回情報参照 461 ふたなり治療(治療する側)
+; ------------------------------------------------------------------------------
+
+; □ 0 V (治療する側)
+@KOJO_8_0_SYSTEM_MESSAGE_34_PREV_461_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_34_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は腰を押しつけ一際深くペニスをくわえ込むと、絶頂寸前の子宮口へ密着させた\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んふふ♥　もーっと可愛がってあげるからねえ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そろそろぉ…　わたしのおまんこ、本気モードで治療しちゃいますよ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（治療なんて建前、交尾はじめたらどうでもよくなっちゃう……っ♥♥　おちんちん好きいぃぃっ♥♥）\n"
+		
+		; 妊娠していない or 妊娠中(判明前)なら追加口上
+		IF !CFLAG:36 || CFLAG:36 == 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「このまま射精したらぁ♥　赤ちゃん出来ちゃいますねえ♥♥」\n"
+		ENDIF
+		
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は無意識のうちに子宮口をペニスを密着させ、艶めかしく腰を動かしている\d\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は無意識のうちに子宮口をペニスを密着させ、流し込まれる精液を待ち構えている\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「イ、イクっ♥　イッちゃう♥　イッちゃうっ♥♥　イッちゃうっ♥♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（抜かなきゃっ！　抜かなきゃダメなのに…っ！　わたしの子宮、精液…ほしがってるぅ…っ！？）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（抜かないとぉ……っ♥　抜かないとコレぇ……ただのセックスになっちゃうぅっ♥♥\n　ダメなのにぃっ……♥　気持ちいいっ♥　きもちいいよおおおぉぉぉッッ♥♥♥）\n"
+		
+		; 妊娠していない or 妊娠中(判明前)なら追加口上
+		IF !CFLAG:36 || CFLAG:36 == 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"（こっ……このままじゃ妊娠しちゃうぅっ♥♥　でも……っ、とまんないよぉぉぉっ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「抜いてっ♥　抜いてぇっ♥♥　赤ちゃん出来ちゃう♥♥　妊娠しちゃうっっ♥♥」\n"
+		ENDIF
+
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なか…ぁ…　ジンジンしびれ…てぇっ♥　もう、だめぇぇっ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ち、治療なのにっ♥　わたしの方が先に、ガマン出来なくなっちゃ…っ♥」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 M (治療する側)
+@KOJO_8_0_SYSTEM_MESSAGE_34_PREV_461_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_34_DESCRIPTION_BEFORE")
+	
+	CALL KOJO_8_0_ADD_MESSAGE, @"\d口内の快感が限界を迎え、%CALLNAME:TARGET%はヨダレや鼻水を垂らしながら目の前のペニスを貪っている…\d\n"
+RETURN 1

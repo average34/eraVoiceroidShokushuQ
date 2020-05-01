@@ -1,0 +1,34 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 130 部屋の浄化実行
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_130(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 部屋の状態:清浄～通常
+	IF FLAG:(50 + FLAG:5) < 40
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あんまり汚れてなかったけど、一応ね」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は浄化された部屋を満足気に眺めている…\d\n"
+		ENDSELECT
+		
+	; 部屋の状態:軽度汚染～重度汚染
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あーあ、もったいない…」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は浄化される部屋を物欲しげに眺めている…\d\n"
+		CASE "強気"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やっぱり禍根は元から断つべきですよね！」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は浄化された部屋を満足気に眺めている…\d\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「健康には清潔なのが一番、あんな部屋じゃ病気になりそうだし…」\n"
+			CALL KOJO_8_0_PARAGRAPH_MESSAGE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は浄化された部屋を満足気に眺めている…\d\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

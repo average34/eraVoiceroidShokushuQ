@@ -1,0 +1,40 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 510 バストサイズ変化
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_510(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 媚薬爆弾
+	IF KOJO_8_0_GET_PREV_ARG(0, 2) == 517 && KOJO_8_0_GET_PREV_ARG(1, 2) == 1
+		; 媚薬爆弾後は強制発情中なので発情以上のみの記述でOK
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱい、おっきくなっちゃったぁ…♥♥　まだジンジンしてる…っ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あ…いﾞっ♥　ひぐぅ…っっ♥♥　おっぱい…がぁ♥♥　あついいぃ…っっ♥♥」\n"
+		ENDSELECT
+		
+	; 通常処理
+	ELSE
+		; 巨乳化
+		IF ARG:2 < ARG:3
+			SELECTCASE ARG:3
+			; 巨乳
+			CASE 1
+				CALL KOJO_8_0_ADD_MESSAGE, @"「いくら大きくなったからって、素直に喜べる気がしないです…」\n"
+			; 爆乳
+			CASE 2
+				CALL KOJO_8_0_ADD_MESSAGE, @"「お…重い…　おっぱいが、重い…」\n"
+			ENDSELECT
+			
+		; 貧乳化
+		ELSE
+			SELECTCASE ARG:3
+			; 貧乳
+			CASE -1
+				CALL KOJO_8_0_ADD_MESSAGE, @"「何だかんだで、いつも通りが一番ですよね　ちょっとだけ残念ですけど」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1

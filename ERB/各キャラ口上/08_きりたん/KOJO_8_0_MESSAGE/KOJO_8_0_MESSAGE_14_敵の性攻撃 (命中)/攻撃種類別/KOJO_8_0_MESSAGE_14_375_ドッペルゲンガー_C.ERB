@@ -1,0 +1,102 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0375 ドッペルゲンガー C
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_14_375(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_AFTER("KOJO_8_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うぁ…っ…♥　手つき、やらし…ぃ…♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（そんな触りかた……　された……らぁ……　声でちゃう……っ）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「や…ぁ…　こすらないで…ぇ…」\n"
+	ENDSELECT
+	
+	; CP参照で地の文が変化 全裸なら追加口上
+	IF BASE <= 0
+		; ふたなり
+		IF GET_PENIS(TARGET)
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽ気持ちよくしてくれるんですね♥　ふふ、いい子いい子♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「吸っちゃだめぇっ…！　おちんちん、気持ちよくしないでぇ…っ！」\n"
+			ENDSELECT
+			
+		; 通常
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「離れろ…ぉっ…！　うぅっ、うあぁぁぁっ！！　ひっ、引っ張らないでぇぇっ！？」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	
+	; 攻撃キャラが自分の娘なら追加口上
+	; 現在攻撃を行っている敵を把握する為の情報はないので敵の名前で判別する
+	; "CALLNAME:TARGET + の娘" なら自分の娘として扱う
+	; 他のキャラに同名の名前を付けられると判別が不可能になるけれど、そうそう無い可能性なので考えない
+	IF ARGS:1 == CALLNAME:TARGET + "の娘"
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（この動き…っ♥　わたしの気持ちいいトコ、全部知ってる動きだ…ぁっ♥♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やぁ…っ！？　やめなさいっ！　やめないと、おかあさん怒りますよぉ…っ！」\n"
+		ENDSELECT
+		
+		; CP参照で地の文が変化 全裸なら追加口上
+		IF BASE:3 <= 0
+			; ふたなり
+			IF GET_PENIS(TARGET)
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「あっ♥　いいっ♥　いいですよっ♥　ママのおちんぽ汁、いっぱい飲ませてあげる♥♥」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「やっぱりわたしの娘ですね～♥　よしよし、おちんぽ大好きだもんね♥♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（自分の娘に、おちんちんしゃぶられて…っ！？　ダメなのに…っ、興奮しちゃってるっ…！？）\n"
+				ENDSELECT
+				
+			; 通常
+			ELSE
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「ママのクリトリスおっきくして、いけない子ですねえ♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（自分の…っ…　自分の娘に、クリトリス弄りまわされてる…っ！？）\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+	CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

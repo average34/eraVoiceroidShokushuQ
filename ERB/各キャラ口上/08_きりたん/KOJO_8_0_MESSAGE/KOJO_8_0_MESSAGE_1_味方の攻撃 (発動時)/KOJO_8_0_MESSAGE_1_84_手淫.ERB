@@ -1,0 +1,98 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 84 手淫
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_1_84(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中行動
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（手が……！　手が勝手にぃ……！）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（ううっ、汚い……　汚いよぉ……）\n"
+				ENDSELECT
+			CASE 2
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（早くしたり、遅くしたりっ……　人の身体を玩具みたいに……）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（嫌だと思うほど、手が早く動く……っ）\n"
+				ENDSELECT
+			CASEELSE
+				; オリジナル地の文表示を行う為、システムメッセージ側の地の文キャンセル
+				CALL KOJO_8_0_ADD_MESSAGE, @"\m"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（もうやだ……！　もうやだぁ……！！）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（返して……！　身体の自由返してよぉ……！！）\n"
+				ENDSELECT
+				
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は触手の先端に舌を垂らし、触手をこする手を早めた！\d\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は粘液まみれの触手に頬ずりながら、こすり上げる速度を速めていく…\d\n"
+			ENDSELECT
+			
+		; 発情・感情操作系
+		CASE 1
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あぁん♥　ヌルヌルしてぇ、えっちな音ひびくぅ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「硬くて、太くて、すごく立派ぁ♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「シコシコ♥　シコシコ♥　気持ちいいですか～♥♥」\n"
+			ENDSELECT
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（こんな事させて、何のつもり！？）\n"
+				ENDSELECT
+			CASE 2
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（シコシコしなきゃ……！　もっとシコシコしなきゃ……！！）\n"
+				ENDSELECT
+			CASEELSE
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「いつでも……　好きなときに出して……ください……」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「わたしの手は……　気持ちいい……ですか？」\n"
+				ENDSELECT
+			ENDSELECT
+		ENDSELECT
+		
+	; 通常時性攻撃
+	ELSE
+		; 性攻撃時は地の文を書き換える
+		CALL KOJO_8_0_ADD_MESSAGE, @"\m"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_8_0_ADD_MESSAGE, @"\g%CALLNAME:TARGET%は\g"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_8_0_ADD_MESSAGE, @"\g何かを期待する表情で\g"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\gうっとりした顔で\g"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\gまき散らされる淫臭を嗅ぎながら\g"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_8_0_ADD_MESSAGE, @"\g触手を\g"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_8_0_ADD_MESSAGE, @"\gこすりはじめた！\g\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\gなでまわした！\g\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"\gもてあそんだ！\g\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+	ENDIF
+RETURN 1

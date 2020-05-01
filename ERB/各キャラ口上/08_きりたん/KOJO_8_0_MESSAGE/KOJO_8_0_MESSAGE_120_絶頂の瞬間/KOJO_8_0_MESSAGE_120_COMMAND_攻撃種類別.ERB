@@ -1,0 +1,42 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 攻撃種類別
+; ------------------------------------------------------------------------------
+; ペットによる攻撃も含むので、基本的に戦闘中分岐は不要
+
+; □ 387 コウノトリ見せつけ
+@KOJO_8_0_SYSTEM_MESSAGE_120_COMMAND_387(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「見てるだけなの…にっ♥　なんですかぁ…これ…ぇっ♥　うぁあ…っ♥\n　しゅご…ぉっ、しゅごいよぉっ♥　見るだけでイクうぅ…っ♥　カラダ…勝手に…ぃっ…♥♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なんっ…でぇっ！？　触られて…ないのにぃっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んひぃっ！？　カラダぁ…　勝手にビクビクって…ぇ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んぁぁっ！？　うぁああああっ！？　なんでっイカされてぇ…っ！？」\n"
+	ENDSELECT
+RETURN 1

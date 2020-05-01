@@ -1,0 +1,295 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 101 迷宮内で他のキャラと会った
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+@KOJO_8_0_SYSTEM_MESSAGE_101_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; キャラクター別口上呼び出し
+	CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_8_0_SYSTEM_MESSAGE_101_X_0_CHARA_{NO:(ARG:1)}")
+	SIF KOJO_8_0_GET_IMPORTANT_FLAG()
+		RETURN 1
+		
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+		; 出会ったキャラがそこそこ強い(初期戦闘素質50以上)
+		IF ABL:(ARG:1):98 >= 50
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（どんなに強くても、こうなったらタダの肉穴ですねえ♥）\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（たっ、助けなきゃ……　でも、わたしなんかの力で何とかなるの……？）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（助けたら力になってくれますかね…？）\n"
+			ENDSELECT
+			
+		; 出会ったキャラはそんなに強くない
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あれぇ？　こんな所で捕まっちゃったんですかぁ？\n　性欲処理用の肉便器？　それとも繁殖用の苗床ですかー♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「こんなトコで動けないなんて、バケモノから見ればいい玩具ですね」\n"
+			ENDSELECT
+		ENDIF
+		
+		; レイプ可能 + ((発情 + 射精中毒Lv2以上) or(射精中毒Lv3))で追加口上
+		IF ((GET_PENIS(1)) && (FLAG:520 == 2 || (FLAG:10 == 0 || (FLAG:11 == 0 && (CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10))) || ((CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10)) && (CFLAG:(FLAG:11):29 || GET_PENIS(FLAG:11))))) && ((ABL:12 == 2 && CFLAG:28) || ABL:12 >= 3))
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%…　抵抗できない……　わたしが何しても、逃げられないんですよね…）\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は熱い吐息を漏らしながら、身動きの取れない%ARGS:1%を無言で見つめている…\n"
+			ENDSELECT
+		ENDIF
+		
+		; PT人数限界
+		IF GET_MEMBER_SUM()  == 3
+			SELECTCASE KOJO_MODE
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（悪いですが、ここに敵を引きつける囮になってもらった方が……）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（助けてあげたいけど、これ以上大人数で動くの危なそうです）\n"
+			ENDSELECT
+		ENDIF
+		
+	; 催眠行動中
+	ELSEIF CFLAG:(ARG:1):43 == 1
+		; 汎用口上
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%、なんかふらふらしてない？　大丈夫？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あれ？　もしかして%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%、催眠にかかってる？」\n"
+		
+		; 催眠種類で分岐 追加口上
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_8_0_ADD_MESSAGE, @"「い、今の%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%って…　わたしの言うとおりに動くんですよね…？」\n"
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_8_0_ADD_MESSAGE, @"（あの%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%が…　『私はえっちな事が大好きです』って顔で発情してる…）\n（見てるこっちがゾクゾクしてきちゃう…　催眠術、すごいかも…）\n"
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"「い、今の%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%って…　何させても、疑問すら持たないんですよね…　性欲処理…とか…　させても…」\n"
+		ENDSELECT
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == PARTY_NO:1 || ARG:1 == PARTY_NO:2
+		; このきりたんは現金なので相手の強さで行動を変えます
+		; 出会ったキャラがそこそこ強い(初期戦闘素質50以上)
+		IF ABL:(ARG:1):98 >= 50
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「先ほどはご協力ありがとうございました、おかげで助かりました」\n\d相手の強さを察知してか、%CALLNAME:TARGET%は下手に出ている…\d\n"
+			ENDSELECT
+			
+		; 出会ったキャラはそんなに強くない
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「さっきはありがとうです、助かりましたー」\n"
+			ENDSELECT
+		ENDIF
+	
+	; 通常行動中
+	ELSE
+		; 対象のキャラとは初遭遇
+		IF KOJO_8_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「迷い人発見！」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「どっかで見た顔ですね」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「意外な人物が居たものです」\n"
+			ENDSELECT
+			
+		; 二度目以降の遭遇
+		ELSE
+			; この小学生は現金なので相手の強さで行動を変えます
+			; 出会ったキャラがそこそこ強い(初期戦闘素質50以上)
+			IF ABL:(ARG:1):98 >= 50
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					; 冷めた目でこちらを見ている
+					IF CFLAG:(ARG:1):5 < 0
+						CALL KOJO_8_0_ADD_MESSAGE, @"（うう…　視線が痛いです…）\n"
+					; こちらを警戒している
+					ELSEIF CFLAG:(ARG:1):5 < 50
+						CALL KOJO_8_0_ADD_MESSAGE, @"（すっごく警戒してる…　思い至ることがあるようなないような…）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"（あれ？　なんかすっごい警戒されてますか？）\n"
+					; 通常
+					ELSEIF CFLAG:(ARG:1):5 < 200
+						CALL KOJO_8_0_ADD_MESSAGE, @"（うまく話を進められれば、ちょっとは事態が好転するかも！）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"（さて、どうやって交渉しましょうか……）\n"
+					; 笑顔で近づいてきた
+					ELSEIF CFLAG:(ARG:1):5 >= 200
+						CALL KOJO_8_0_ADD_MESSAGE, @"「いい所で会いましたね」\n"
+					ENDIF
+				ENDSELECT
+				
+			; 出会ったキャラはそんなに強くない
+			ELSE
+				SELECTCASE KOJO_MODE
+				CASEELSE
+					; 冷めた目でこちらを見ている
+					IF CFLAG:(ARG:1):5 < 0
+						CALL KOJO_8_0_ADD_MESSAGE, @"（く、空気が重いです…）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"（し、視線が痛いです…）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"（なんて目で見るんですかー…）\n"
+					; こちらを警戒している
+					ELSEIF CFLAG:(ARG:1):5 < 50
+						CALL KOJO_8_0_ADD_MESSAGE, @"（そんなビクビクして、わたしをなんだと思ってるんですか）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"（そんなに警戒しなくてもいいんですよ？）\n"
+					; 通常
+					ELSEIF CFLAG:(ARG:1):5 < 200
+						CALL KOJO_8_0_ADD_MESSAGE, @"（どうやって騙して……　そんなことしてる場合じゃないですね）\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"「まともな人がいると安心しますね」\n"
+					; 笑顔で近づいてきた
+					ELSEIF CFLAG:(ARG:1):5 >= 200
+						CALL KOJO_8_0_ADD_MESSAGE, @"「調子はどうですか？　いい情報でもあれば歓迎ですよ」\n"
+						CALL KOJO_8_0_ADD_MESSAGE, @"「元気ですか？」\n"
+					ENDIF
+				ENDSELECT
+			ENDIF
+			
+			; 相手がふたなり & 射精中毒LV3以上なら追加口上
+			; 射精中毒LV3以上に設定したのは、これ以上なら確実に出会い頭治療が発生する為
+			; それ以下のLVでもランダムで発生するが確実ではない為回避
+			IF GET_PENIS(ARG:1) && ABL:(ARG:1):12 >= 3
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（ふふ……♥　おちんちん辛いですって顔してます♥）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「おちんちん付けられた上に、興奮止まらなくなっちゃったんです？　大変ですねえ♪」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（なんだか……　危ない感じが……）\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（なんか……　危ない目でわたしを見てる……）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「そ、そんなにじり寄って来ないでくださいよ……」\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; 他のキャラと出会った
+; □ 1 喪失中
+@KOJO_8_0_SYSTEM_MESSAGE_101_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; キャラクター別口上呼び出し
+	CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_8_0_SYSTEM_MESSAGE_101_X_1_CHARA_{NO:(ARG:1)}")
+	SIF KOJO_8_0_GET_IMPORTANT_FLAG()
+		RETURN 1
+		
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504 == 1
+		; 出会ったキャラがそこそこ強い(初期戦闘素質50以上)
+		IF ABL:(ARG:1):98 >= 50
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（力尽きて連れていけないので、拘束して触手の巣に放置しました！）\n（…ってバレたら、後でかなり酷い事されそうだけど事実だし）\n"
+			ENDSELECT
+			
+		; 出会ったキャラはそんなに強くない
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「すごいですね、この拘束具\n　普通なら、多分…　とっくに死んでる…」\n"
+			ENDSELECT
+		ENDIF
+		
+		; レイプ可能 + ((発情 + 射精中毒Lv2以上) or(射精中毒Lv3))で追加口上
+		IF (GET_PENIS(1) && (FLAG:520 == 2 || (FLAG:10 == 0 || (FLAG:11 == 0 && (CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10))) || ((CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10)) && (CFLAG:(FLAG:11):29 || GET_PENIS(FLAG:11))))) && ((ABL:12 == 2 && CFLAG:28) || ABL:12 >= 3))
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「身動き出来なようにつながれて…　たまーに可愛がられて…　まるで愛玩動物ですよねぇ…♥」\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は勃起したふたなりペニスをゆっくりと扱きながら、うっとりした顔で%ARGS:1%を見つめている…\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（知り合いが倒れてる…のに…　見てると…　おちんちん…　うずいて…くるっ…）\n"
+				CALL KOJO_8_0_PARAGRAPH_MESSAGE
+				CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は勃起したふたなりペニスを無意識に撫でさすりながら、力尽きた%ARGS:1%を見つめている…\n"
+			ENDSELECT
+		ENDIF
+		
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == PARTY_NO:1 || ARG:1 == PARTY_NO:2
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「助けに入ってくれたのは嬉しいんですけどねえ……」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSE
+		; 出会ったキャラがそこそこ強い(初期戦闘素質50以上)
+		IF ABL:(ARG:1):98 >= 50
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「いつもより…ずっとかわいい顔してるぅ♥\n　どんなに強くても、いっぱい気持ちいいことされたらこうなっちゃうんだぁ♥」\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「こんなに強い人でも…ここじゃ無力なんだ…\n　じゃあ…そのうち…わたしも…」\n"
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「いくら力が強くても、こうなっちゃオシマイですねー\n　やっぱり必要なのは力より知恵ですね」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「たしか%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%って…そこそこ強かったですよね…\n　わたしはココから出られるのかな…」\n"
+			ENDSELECT
+			
+		; 出会ったキャラはそんなに強くない
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「壊れるまで犯されるのって…どんな気持ちですかね……\n　うっわぁ……♥　考えるだけで興奮してきちゃう……♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うわ……\n　わたしはこうならないようにしないと……」\n"
+			ENDSELECT
+		ENDIF
+		
+		; レイプ可能 + ((発情 + 射精中毒Lv2以上) or(射精中毒Lv3))で追加口上
+		IF (GET_PENIS(1) && (FLAG:520 == 2 || (FLAG:10 == 0 || (FLAG:11 == 0 && (CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10))) || ((CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10)) && (CFLAG:(FLAG:11):29 || GET_PENIS(FLAG:11))))) && ((ABL:12 == 2 && CFLAG:28) || ABL:12 >= 3))
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（やだ……　こんな時に、おちんちんおっきくなってきた……）\n（%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%…　酷いことになってるのに……　見てると、ドキドキしてくる……っ）\n"
+			ENDSELECT
+		ENDIF
+		
+		; 相手がふたなりなら追加口上
+		IF GET_PENIS(ARG:1)  & 3
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「力尽きてる%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%に忠告♪\n　おちんちんそんなに大きくしてたら、悪いメスに食べられちゃいますよ♪」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「倒れてるのに下の方は元気ですねえ♪　疲れマラの凄い奴ですか？」\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（力尽きて倒れてるのに……　下はあんなに反り返って……）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うわぁ……　おちんちんだけビクビクしてる……」\n"
+			ENDSELECT
+			
+			; V治療可能
+			IF ABL:14 > 2
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%からエッチなちんぽのニオイがしますよぉ♥\n　おまんこ、欲しくなっちゃいますよぉ♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%のおちんちんでセックス……ッ！？\n　な、何考えてるんですわたし！？）\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（おちんちん直視しないように……　おまた、疼いちゃう……）\n"
+				ENDSELECT
+			ENDIF
+			
+			; AB治療可能
+			IF ABL:14 > 1
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「あっ、%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%のコレ♪　ば、か、ち、ん、ぽって奴でしょう♪\n　勃起止まらなくて大変ですねえ、私が気持ちよくしてあげよっか？」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「ねえねえ、%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%♪　大きくなったソレ気持ちよくしてあげよっか？\n　身体動かないみたいだから、お勃起ちんぽでお返事してくださいね♥\n　%CALLNAME:TARGET%のとろとろアナルでセックスして、びゅーびゅーお射精したいですか～♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（おちんちん……　く、苦しそうだし胸でこすってあげる位なら……）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%のおちんちん……　つらそう……\n　お、おしりでしげあげる位なら子供も出来ないし……　いいかも……）\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%……　ムリヤリつけられたおちんちん苦しそう……\n　わたしのおっぱいで毒を吐き出させる位なら……）\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"（%KOJO_8_0_CALLNAME_FROM_ID(ARG:1)%……　ボロボロなのに、おちんちんだけ凄いビクビクしてる……\n　わたしのおしりの穴使えば、ちょっとは楽になるかな……）\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 1

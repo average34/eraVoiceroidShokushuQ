@@ -1,0 +1,56 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 140 PTに勧誘された
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+; ◆ 0 失敗
+@KOJO_8_0_SYSTEM_MESSAGE_140_0_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「大勢で動くのって危ない気がするんですよね～」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ん～　考えておきます、また今度誘ってください」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ん～　もうちょっと一人で動くからいいです」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 0 通常
+; ◆ 1 成功
+@KOJO_8_0_SYSTEM_MESSAGE_140_0_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「へぇ～　わたしの力が必要なんですねぇ♪」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そんなに頼まれちゃ仕方ないないですねえ♪」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いいです、一緒に行ってあげますよ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 共闘
+; ◆ 0 失敗
+@KOJO_8_0_SYSTEM_MESSAGE_140_1_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は近づいてくる敵を目にした瞬間、声を掛ける%ARGS:0%を差し置いて一目散に逃げ出した！\d\n"
+	ENDSELECT
+RETURN 1
+
+
+; 1 共闘
+; ◆ 1 成功
+@KOJO_8_0_SYSTEM_MESSAGE_140_1_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_MODE
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「よーし！　この%CALLNAME:TARGET%にまっかせなさーい！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「運が良かったですね、通りがけにわたしが居るなんて！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おおっと！　この%CALLNAME:TARGET%の出番かなー？」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「たまたまわたしが居るなんて運が良いですね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「仕方ないですねえ、わたしの手伝いは高いですよ」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっと手伝うだけ、危なくなったら逃げますよ」\n"
+	ENDSELECT
+RETURN 1
+
+

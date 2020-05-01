@@ -1,0 +1,55 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 12 敵の通常攻撃 (命中) - 攻撃種類別 0111 リビングバイン 通常
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_12_111(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時 状況によって地の文が変化
+	; 拘束中(非丸呑み)
+	IF CFLAG:20 && CFLAG:21 == 0
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ぐうっ……　まるで拷問ですね……」\n"
+		ENDSELECT
+		
+	; HP0又は全裸
+	ELSEIF BASE:0 <= 0 || BASE:3 <= 0
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「痣にでもなったらどうしてくれるんですか……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もっと優しくしてくださいよ……　小学生は雑草と違って繊細なんですよ……」\n"
+		ENDSELECT
+		
+	; その他状況
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「植物なのに女の子の裸に興味あるんですか？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やめてください！　破れちゃうじゃないですか！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

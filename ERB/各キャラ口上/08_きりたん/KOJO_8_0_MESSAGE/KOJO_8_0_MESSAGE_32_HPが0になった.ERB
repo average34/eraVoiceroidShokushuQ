@@ -1,0 +1,103 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 32 HPが0になった
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_32(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「きもち……よすぎてぇ……　からだに、ちから……　はいらないですぅ……♪」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あとは気力で動くしかないか……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（くそ……　疲労が足にキてますね……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「近いうちに筋肉痛ですね、これは……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっと……　これ……本気でまずい……かも……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 前回情報参照
+; ◆ 012 敵の通常攻撃(命中)
+@KOJO_8_0_SYSTEM_MESSAGE_32_PREV_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「襲うなら……　エッチな事すればいいのに……」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（痛い……　怖い……　うまく動けない……）\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんな奴に、やられる……ワケには……」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「頭脳労働担当は、やっぱり前線に出るべきじゃないです……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いった……ぁ……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 前回情報参照
+; ◆ 451 ふたなり：射精した
+@KOJO_8_0_SYSTEM_MESSAGE_32_PREV_451(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽイキすぎて……ぇ……♪　ちから、抜けちゃったぁ……♪」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（なんか……身体……　だるい……かも……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（オスの絶頂って、こんなに疲れるの……？）\n"
+	ENDSELECT
+RETURN 1

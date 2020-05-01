@@ -1,0 +1,831 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 160 MAP表示時
+; ------------------------------------------------------------------------------
+
+; □ MAP表示時 - ROOT
+@KOJO_8_0_SYSTEM_MESSAGE_160(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM FUNCTION_COUNT
+	;初期化
+	VARSET FUNCTION_COUNT
+	
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+	
+	; りばーす東方触手宮では「131 眠気が進行」「160 MAP表示時」が連続して表示される
+	; 違和感があるので片方だけ表示するよう調整
+	; りばーす東方触手宮プレイ 兼 無印触手宮モードで口上が動作している時のみ
+	IF KOJO_8_0_IS_REVERSE() && CFLAG:811 == 1
+		SIF KOJO_8_0_GET_PREV_ARG(0) == 131 && GROUPMATCH(KOJO_8_0_GET_PREV_ARG(1), 3, 7, 11, 15)
+			RETURN 0
+	ENDIF
+	
+	; MAP表示時口上を一括で読み込み
+	WHILE (1)
+		CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_{FUNCTION_COUNT}")
+		IF RESULT:1
+			FUNCTION_COUNT++
+		ELSE
+			; 呼び出し先関数無し、全部のメッセージは読み込んだ
+			BREAK
+		ENDIF
+
+		; 読み込み中に優先口上があったら抜ける
+		SIF KOJO_8_0_GET_IMPORTANT_FLAG()
+			RETURN 1
+	WEND
+RETURN 1
+
+; □ MAP表示時 - 会話(初日)
+; 初日会話は初日以外の表示が行われない為口上優先度を上げる
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; ゲーム開始直後だけ特別扱いで喋る
+	SIF !(DAY:0 == 1 && TIME:0 == 0)
+		RETURN 0
+		
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+
+	; コンフィグ設定によって初回メッセージを変化させる
+	; 爆乳 + 母乳体質 + ふたなり
+	IF GET_BUST(TARGET) == 2 && TALENT:130 && CFLAG:42
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d肥大しきった胸は母乳で服を濡らし、反り返った男根はスカートの上からでもわかるほどビクビクと脈打っている\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「うう、悪趣味にも程があります……　わたしが何をしたって言うんですか……」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d奇妙に作り替えられた自分の身体を見ながら、%CALLNAME:TARGET%はぶつぶつと文句を漏らしている…\d\n"
+	
+	; 爆乳 + ふたなり
+	ELSEIF GET_BUST(TARGET) == 2 && CFLAG:42
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%の胸は服から溢れんばかりに肥大し、下腹部にはグロテスクな男根がビクビクと脈打っている…\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これは夢です、バカげた夢！　こんな事ありえないです……」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d奇妙に作り替えられた自分の身体を見ながら、%CALLNAME:TARGET%はぶつぶつと文句を漏らしている…\d\n\n"
+		
+	; 爆乳 + 母乳体質
+	ELSEIF GET_BUST(TARGET) == 2 && TALENT:130
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%の小さな体躯に対して不釣り合いな大きさに肥大した胸から母乳が滴っている\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「なんですかこの胸、服がびちゃびちゃになっちゃうじゃないですか……」\n"
+		
+	; 爆乳
+	ELSEIF GET_BUST(TARGET) == 2
+		CALL KOJO_8_0_ADD_MESSAGE, @"「夢……じゃないですよね…？　これなら姉様に負けないかも……」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d小さな体躯に対して不釣り合いな大きさに成長した胸を、揉んだり揺らしたりしながら%CALLNAME:TARGET%は感嘆の声を上げている\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「…………飽きた！　いざ大きくなると邪魔なだけです！」\n"
+		
+	; ふたなり寄生済
+	ELSEIF CFLAG:42
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d下腹部に違和感を感じた%CALLNAME:TARGET%は慌ててスカートをまくり上げた！\n%CALLNAME:TARGET%の股間から屹立したグロテスクな男根が、下着を持ち上げビクビクと脈打っている…\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（う、うそっ！？　なんですかこれぇっ！？）\n"
+		
+	; 通常時
+	ELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「周りを見渡してもタダのだだっぴろい部屋だし、耳をすませば変な音ばかりするし……\n　何でこんな目に遭うんですかね？　普段の行いは完璧なのに」\d\n"
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(通常)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（お家に帰ったら、姉様たちにオマンコの良さ教えなきゃ♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ここから出るの勿体ないなぁ♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ここから出れたとして、外の世界じゃ刺激が足りないよぉ♥）\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ホントにここ……　出られるの……？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（かえりたい……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いつになったらココから出られるんですかね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「姉様達、わたしのことを心配していますよね……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんなとこに、ずんだ餅……なんてあるわけないか……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こういう場所って、俯瞰視点なら楽ですけど、実際に歩くとなると迷いますね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「壁に目印を書いておきたいですが、ここは目印がすぐなくなっちゃいますね」\n"
+	ENDSELECT
+RETURN 1
+
+; □ MAP表示時 - 会話(はいてない)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; はいてる！
+	SIF !CFLAG:44
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ぱんつ……）\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「下着つけてないって、犯されたいアピールみたいなもんですね♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（服の下に何もつけないで出歩くの、ちょっと興奮するかも♥）\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（下着もつけてない状態で襲われたら……わたし……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「早いところ着替えないと……　下着……」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「新しい下着が欲しいけど、落ちてるのを履くのもねえ……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「どっかに下着の替えは無いですかね？　すーすーして心もとない……」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「着物は下着を着けないって人もいますけど、私は着ける派だからないと不安ですね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（下着落ちてないかなぁ……　いや、下着だけ落ちてるのは怪しいか……）\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ MAP表示時 - 会話(発情)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 発情してない
+	SIF !CFLAG:28
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（歩くだけで……おまた擦れて、感じちゃうよぉ♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（カラダ……すっごい火照ってる……　誰でもいいから……わたしを……♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（うぅっ♥　ああぁっ♥　ほしぃ……っ♥　きもちいいの、ほしいよぉ♥）\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（誰かに襲われる前に……　この火照り、なんとかしないと……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（なんだか……むずむずする……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（うあぁ……　カラダ……　あついよぅ……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ううっ……　カラダが……っ、欲しがっちゃってるっ！　ダメなの……にぃっ！）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（気を抜いたらぁっ、えっちな声漏れちゃう……っ♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（疼きが、消えないよぉっ♥　だれか……助けてええぇ♥♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ダメなの……っ♥　えっちなことされて、喜びたくないの……っ♥♥）\n"
+	CASEELSE
+		; 発情以上の口上しか呼ばれないので普通口上なし
+	ENDSELECT
+RETURN 1
+
+; □ MAP表示時 - 会話(ふたなり)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; はえてない！
+	SIF !GET_PENIS(TARGET)
+		RETURN 0
+			
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 射精中毒 Lv0
+	IF ABL:12 == 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（射精するのって……　気持ちよかったなぁ……♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「股間にぶらさがってるコレ、なんとかなんないかな」\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv1
+	ELSEIF ABL:12 == 1
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（オスってずるいです、射精なんて気持ちいいこと秘密にしてるんだもの）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（このままおちんちん付きっぱなしだと、多分わたし……射精にドハマリしちゃう♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（おちんちんがある状態で歩くのって、どうにも落ち着かないです）\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv2
+	ELSEIF ABL:12 == 2
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（えっちな事なんて考えてなかったのに、かってにちんぽ勃っちゃうとか反則ですよぉ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（……あっ♥　……おちんちん、ちょっと勃ってきちゃった♥♥）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（だめぇっ♥　おちんちんがっ、きもちいいの欲しがってるっ♥♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は勃起したペニスを無意識に\@(BASE:3 == 0) ? しごいている # 服の上から撫で回している \@…\d\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしには雄のモノなんてついてない……　射精は気持ちよくない……　そう思い込まないと！）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（――ッ！？　わたし今、おちんちん射精するコトばかり考えてたっ！？）\n"
+			
+		ENDSELECT
+		
+	; 射精中毒 Lv3以上
+	ELSEIF ABL:12 >= 3 || TALENT:121
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（えっちな事ばっか考えてるオスの気持ちが、わかった気がするわ……\n　ちんぽの所為で、わたしも……♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（誰かわたしのおちんぽ……　いじめてくれないかなぁ♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（どうしよ……っ♥　おちんぽ射精っ♥　したくなってきちゃったぁ♥♥）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（やだぁっ♥　やだあぁぁっ♥　わたしの頭ぁ……ちんぽに支配されちゃう……っ♥♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（おちんぽパンパンに張って……っ……！　誰でもいいから犯したいっ！！）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ううっ……　射精したい……っ　おちんちん射精したいぃっ……っ）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（うううっ……！　なんでっ……おちんちん……っ　勝手に勃起して……っ！？）\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(尿意)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 黄金水パッチOFF
+	SIF FLAG:522 != 1
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; [正常]
+	IF BASE:6 <= 60
+		
+	; [尿意]
+	ELSEIF BASE:6 <= 80
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんなトコにトイレ――なんてあるわけないですよね……」\n"
+		ENDSELECT
+		
+	; [限界]
+	ELSEIF BASE:6 <= 90
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おしっこもれちゃう……っ！　もれちゃううぅっっ……っ！！」\n"
+		ENDSELECT
+		
+	; [決壊]
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ほんとう……に……っ……　もれちゃう……よぉ……っ……！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ぅぅうっ……　と……といれ……ぇ……！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(ソロプレイ)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; PTメンバーが居るなら別会話をしましょう
+	SIF GET_MEMBER_SUM() != 1
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（ひとりぼっちって、犯されてる時だーれも助けてくれないんだよねぇ♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（仲間が居ない今、襲われたら……♥　わたし……♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（独りで居るって事は、気持ちいいのも独り占め出来るって事ですよね～♪）\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（誰か一人だけでも、一緒に戦ってくれるのを見つけないと……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（仲間が居ないのは、本格的にヤバイかも……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「か弱い小学生一人でうろつくには、ちょっとハードだと思います」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「わたしみたいなかわいい子が一人歩きなんて、襲われちゃったらどうするんですか」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「どっかに仲間になってくれそうなの、いないかなぁ」\n"
+	ENDSELECT
+RETURN 1
+
+; □ MAP表示時 - 会話(ペット関連)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; ペットが居ないなら帰りましょう
+	SIF !PET:0
+		RETURN 0
+
+	; 雌犬
+	IF TALENT:140 || CFLAG:400 >= 90
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は主人である%PETNAME%を横目に見ながら息を荒げている…\d\n"
+		
+		; [ペット]所持時 追加口上
+		IF TALENT:140 == 1
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ご、ご主人様お腹減ってないかな♥　わたしのこと食べたくなってないかな♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（や、やだぁ♥　ご主人様の事考えてたら……っ、ドキドキしてきた……♥）\n"
+			
+			; 発情中
+			IF CFLAG:28
+				CALL KOJO_8_0_ADD_MESSAGE, @"（犯されたいっ♥　ご主人様にえっちな躾して欲しいっ♥）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%PETNAME%様ぁ♥　はしたない発情ペットに躾をお願いしますぅ♥♥」\n"
+			ENDIF
+			
+		; [花嫁]所持時 追加口上
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_8_0_ADD_MESSAGE, @"（%PETNAME%様ってどんなセックスしたら喜ぶんだろ……♥　奥さんとしては気になる……♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（えへへ♥　旦那様と一緒ってだけで、勝手に顔がにやけちゃうわ♥）\n"
+			
+			; 発情中
+			IF CFLAG:28
+				CALL KOJO_8_0_ADD_MESSAGE, @"（お腹の中、ジンジンして止まんない♥　お嫁さんの仕事、したいなぁ♥♥）\n"
+			ENDIF
+			
+		; [しもべ]所持時 追加口上
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしは%PETNAME%様の下僕……♥　悦んで絶頂するだけの変態マゾ奴隷……♥♥）\n"
+			
+			; 発情中
+			IF CFLAG:28
+				CALL KOJO_8_0_ADD_MESSAGE, @"（使って……っ♥　今すぐ使って欲しいっ♥\n　%PETNAME%様専用のオナホまんこっ♥　変態奴隷まんこぉ……っ♥）\n"
+			ENDIF
+		ENDIF
+		
+	; その他
+	ELSE
+		SELECTCASE CFLAG:400
+		; 堕ちかけ
+		CASE IS >= 70
+			CALL KOJO_8_0_ADD_MESSAGE, @"（%PETNAME%にごはん、あげちゃおっかな♥）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ごはん……♥　ペットには、ごはんをあげなきゃ……♥♥）\n"
+
+		; 中毒気味
+		CASE IS >= 50
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ペットに食べられるトコ想像して……っ♥　これじゃどっちがペットだかわかりゃしないです……♥）\n"
+			
+		; ハマった
+		CASE IS >= 30
+			CALL KOJO_8_0_ADD_MESSAGE, @"（%PETNAME%の餌やり……　ちょっと、気持ちよかった……かも……）\n"
+
+		; 清純
+		CASE IS >= 0
+			CALL KOJO_8_0_ADD_MESSAGE, @"「小学生がペットを飼うなんて考えてもみなかったですわ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ペットなんて言っても元々敵の触手だし……　ちゃんと役に立つんですかね？）\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(乳勃)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 乳勃じゃないなら帰る
+	SIF !(TALENT:159 && GET_ERECTION_STATE_B(TARGET))
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（えへへ……♥　わたしの陥没ちくび、興奮しっぱなしだぁ♥）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（あはぁ……っ♥　発情ちくびぃ……気持ちいいの欲しがってる……ぅ♥）\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（やだぁ……っ♥　おっぱい……っ、さきっぽがぁっ……じんじんするぅ……っ♥）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（乳首……弱いんだからぁ……　はやく……鎮まってよぉ……）\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（こんな場所で乳首とがらせてっ！　……これじゃ弱点むきだしじゃないですか！）\n"
+	ENDSELECT
+	
+	; 着衣状態
+	IF BASE:CP
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（あはっ♥　わたしの乳首、服の上からでもビンビンになってるの丸見えっ♥）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（だめ……ぇ……、勃った乳首……服に擦れて感じちゃう……っ）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（勃起乳首……、服に擦れて……ぇ……）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（乳首勃ってるの、服の上からでもわかるよぉ……）\n"
+		ENDSELECT
+	; 裸
+	ELSEIF BASE:CP <= 0
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（こんな格好じゃ、おっぱいの先っぽビンビンになってるの丸見えですよぉ♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（早く服着なきゃ！　えっちなおっぱい、見られちゃう！）\n"
+		ENDSELECT
+	ENDIF
+	
+	; [淫乳]所持 または りばーす東方触手宮でB感覚LV3以上
+	IF TALENT:76 || (KOJO_8_0_IS_REVERSE() && ABL:7 >= 3)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（わたしのおっぱい、バカみたいに勃起してイカされるの待ってるぅ♥）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（おっぱいの感度壊れちゃってる……っ♥　やだぁ……勝手に勃起して……ぇっ♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（おっぱいの先っぽ……完全に壊れちゃってる……　バカみたいにおっきいし、すぐに勃起するし……）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（おっぱいの先っぽ勝手に勃ってる……　触ったら気持ちよくなっちゃうし、どうしろって言うんですか……）\n"
+		ENDSELECT
+	ENDIF
+	
+	; 自慰中毒LV3以上
+	IF ABL:10 >= 3
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（おなにーしたい♥　勃起ちくび思いっきりコリコリしたいっ♥♥）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（手……とめなきゃ……♥　乳首弄って……気持ちよくなるの……とめなきゃ……♥♥）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"（この尖った乳首でオナニーしたら、絶対きもちいい……っ）\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ビンビンになった乳首……っ、思いっきりいじりたいっ……！！）\n"
+		ENDSELECT
+		
+		; PT人数は2人以上
+		IF GET_MEMBER_SUM() >= 2
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（一緒に行動してる仲間だもん、気付かれちゃってるよね……♥\n　オナニーしたくてビンビンになってる、わたしのお勃起ちくび♥）\n"
+			CASE "発情"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（乳首こりこりしてるの……　周りの人に気付かれてない……よね……？）\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（勃起乳首オナニー……　一人で行動してたら、絶対我慢できなくなってる……）\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(部屋汚染度に関して)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_9(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 部屋の汚染度で分岐
+	; 清浄
+	IF FLAG:(50 + FLAG:5) < 10
+		SELECTCASE KOJO_MODE
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（今は綺麗な部屋だけど、多分すぐ触手でいっぱいになっちゃうんだろうな……）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「こんな感じに綺麗な場所ばっかりならいいのにね」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSEIF FLAG:(50 + FLAG:5) < 40
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「見渡す限り普通の部屋ですね、害が無いのはいいことです」\n"
+		ENDSELECT
+
+	; 軽度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 70
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ぅうん♥　この部屋、いやらしいニオイがするよぉ♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっとしたゴミを片付けないと、あっというまに汚れるんですよね　この部屋も不安ですね……」\n"
+		ENDSELECT
+		
+		; 部屋の浄化が可能
+		IF FLAG:6 >= 100
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「掃除し甲斐いのありそうな部屋だこと」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「汚れなんて健康の敵以外の何者でもないし、誰か掃除しないかな」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「余り酷くなる前に、この辺り綺麗にした方がいいかもね」\n"
+			ENDSELECT
+		ENDIF
+		
+	; 中度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 100
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（ひどい部屋♪　ちょっとでも気を抜いたら襲われちゃうんじゃないですか？）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（この部屋やだぁ……　ちっちゃい触手がいっぱい……）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひっどい部屋……　今後を考えて少しキレイにするか、さっさと別の部屋に行くか……」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「なんでこんなに汚すかなー、そのうち病気になりますよ」\n"
+		ENDSELECT
+		
+		; 部屋の浄化が可能
+		IF FLAG:6 >= 100
+			SELECTCASE KOJO_MODE
+			CASE "強気"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「汚い部屋だなあ、辺り一面吹き飛ばしてやりたい」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ひっどい部屋……　今後を考えて少しキレイにするか、さっさと別の部屋に行くか……」\n"
+			ENDSELECT
+		ENDIF
+		
+	; 重度汚染
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「部屋中から興奮したオスの気配がするよぉ♥」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（部屋中から狙われてる感じ♪　わたしの準備はいつでもいいですよ♪　……なんてね）\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"（はやく他の部屋に行かないと……　この部屋の触手、わたし%TACHI()%の事狙ってる……）\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うえぇ……酷い部屋だなぁ……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(眠気)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 眠気によって分岐
+	IF FLAG:7 <= 3
+		
+	ELSEIF FLAG:7 <= 7
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「蚊帳の触手避けバージョンみたいなの欲しいです、そうすればたっぷり眠れるし」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ふわぁぁ……　干したての布団が恋しいです……」\n"
+		ENDSELECT
+		
+	ELSEIF FLAG:7 <= 11
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「目がしょぼしょぼする～　ねむい～」\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「眠すぎてふらふらするわよ～」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「うぅ～　眠すぎて倒れそうですよ……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(服関連)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_11(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM PERCENT
+
+	; 触装状態
+	IF CFLAG:40
+		; 催眠中
+		IF KOJO_8_0_IS_HYPNO()
+			; 催眠種類で分岐
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				
+			; 発情・感情操作系
+			CASE 1
+				
+			; 無意識・認識操作系
+			CASE 2
+				RETURN 0
+			ENDSELECT
+		ENDIF
+		
+		; 通常時
+		; 触手中毒LVによって分岐
+		SELECTCASE ABL:11
+		CASE 0
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「こんな服、脱げたら焼き払ってやりますよ！」\n"
+			ENDSELECT
+			
+		CASE 1
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「この服ぅ……　どうやったら脱げるんですかぁ……」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（この服……　わたしのカラダ、なでまわしてるっ……）\n"
+			ENDSELECT
+			
+		CASE 2
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（この服のせいで、ずっと全身愛撫されてるみたい……っ……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（やだ、わたし……　服に気持ちよくされるの……待ってる……）\n"
+			ENDSELECT
+			
+		CASE 3
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（触手の……服っ……　ぞわぞわして……　気持ちい……い……っ……）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（この服、次はいつ気持ちいいの来るかなぁ？）\n"
+			ENDSELECT
+		ENDSELECT
+
+	; 通常の服を装備
+	ELSE
+		; 催眠中
+		IF KOJO_8_0_IS_HYPNO()
+			; 催眠種類で分岐
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				
+			; 発情・感情操作系
+			CASE 1
+				
+			; 無意識・認識操作系
+			CASE 2
+				RETURN 0
+			ENDSELECT
+		ENDIF
+		
+		; 衣服状態によって分岐
+		PERCENT = BASE:CP * 100 / MAXBASE:CP
+		; 大破
+		IF BASE:CP <= 0
+			; 着替えセットのストックあり
+			IF ITEM:(73) >= 1
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「替えの服はあるけど、もーちょっと裸でもいいかなーなんて♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「替えの服はあるんだから、着た方がいいですよね……」\n"
+				ENDSELECT
+				
+			; 着替えセットのストックなし
+			ELSE
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「着替えもないし、裸でいるのはしょうがないですよね♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「素っ裸で歩き回るとか、襲ってくれって言ってるみたいなものですよね……」\n"
+				ENDSELECT
+			ENDIF
+			
+		; 濡透
+		ELSEIF BASE:CP - (BASE:5 * 4) <= 0
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「こんなにスケスケの服じゃ、大事なトコ全部見えちゃう～♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「スケスケの服って、相手の興奮煽ったりしないかな♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うええ、服がペタペタして気持ち悪い～」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「こんな服着てたら健康に悪いよ～」\n"
+			ENDSELECT
+			
+		ELSE
+			; 新品
+			IF PERCENT >= 100
+			; 通常
+			ELSEIF PERCENT > 66
+			; 損傷
+			ELSEIF PERCENT > 33
+				CALL KOJO_8_0_ADD_MESSAGE, @"「破れてる服って不安だなあ、どっから入ってくるか知れたもんじゃないし」\n"
+			; 中破
+			ELSE
+				; 着替えセットのストックなし
+				IF ITEM:(73) == 0
+					CALL KOJO_8_0_ADD_MESSAGE, @"「替えの服さえあれば、とっとと着替えるんですけど……」\n"
+				; 着替えセットのストック多い
+				ELSEIF ITEM:(73) == (GET_ITEM_MAX(73) / 2)
+					CALL KOJO_8_0_ADD_MESSAGE, @"「替えの服はいっぱいあるし、ボロボロの服なんか着なくてもいいと思うな」\n"
+				; 着替えセットのストック少ない
+				ELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「この服不安だなあ、替えの服がいっぱいあるならすぐ着替えるんですけど」\n"
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 1
+
+; □ MAP表示時 - 会話(PTメンバー関連)
+@KOJO_8_0_SYSTEM_MESSAGE_160_MAPTALK_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+
+RETURN 1
+

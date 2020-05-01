@@ -1,0 +1,202 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 前回情報参照 114 睡眠開始時
+; ------------------------------------------------------------------------------
+
+; □ ROOT
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_114(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 自分が主人公の場合 PTの誰かに襲われた
+	IF NO:1 == 27
+		CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, "KOJO_8_0_SYSTEM_MESSAGE_120_PREV_114_SLEEP_0")
+	; 自分がPTメンバーの場合 主人公を襲った
+	ELSE
+		CALL KOJO_8_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, "KOJO_8_0_SYSTEM_MESSAGE_120_PREV_114_SLEEP_1")
+	ENDIF
+RETURN RESULT
+
+
+; ◆ PTの誰かに襲われた
+; ※ CFLAG:951にレイプ犯No
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_114_SLEEP_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 好感度：それほど高くない
+	IF CFLAG:(CFLAG:951):5 < 400 && CFLAG:951 != 0
+		; 睡姦絶頂1回目
+		IF !CFLAG:35
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「付き合ってあげるから…っ♥　わたしも楽しませてくださいねぇ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「おちんぽに負けて、誰でもいいから犯したい…って顔してる♥　情けない♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「いやぁっ…！　仲間同士で、なんで…こんなコトぉ…っ！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"（ううっ…　気持ちよさそうな顔しながら犯してくれちゃって…っ）\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「わたしは…っ、%KOJO_8_0_CALLNAME_FROM_ID(CFLAG:951)%のオナホールじゃないんですよ…っ」\n"
+			ENDSELECT
+		; 触手による強制連続性交
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「あはぁ♥　イッちゃうっ♥♥　%KOJO_8_0_CALLNAME_FROM_ID(CFLAG:951)%のおちんぽに突かれてイッちゃうっ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(CFLAG:951)%のおちんぽ、気持ちよくてぇ♥　わたしのおまんこふやけちゃいそぉ♥♥」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ほらぁ、もっと射精してぇ♥　こうしたくてわたしを犯したんでしょう♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「もうやめてぇ…！　おねがい…、おねがいだからぁ…！」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「もう射精さないでぇ…　わたしの…なか…　破裂しちゃう…っ…」\n"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっとは遠慮してくださいよぉ…っ！　ああっ、また中でおっきくなってる…ぅっ！」\n"
+			ENDSELECT
+		ENDIF
+		
+	; 好感度：普通(or 犯人不明)
+	ELSEIF CFLAG:(CFLAG:951):5 < 800 || CFLAG:951 == 0
+		; 睡姦絶頂1回目
+		IF !CFLAG:35
+			
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ふーん？　仲間を襲っちゃうくらい溜まってたんですかぁ？\n　ほらぁ…いいですよぉ…♥　もっと奥までぴったりくっつけて、精液…びゅーびゅーしてぇ♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ガマンできないなら…　しょうがないけどさぁ…」\n"
+			ENDSELECT
+		; 触手による強制連続性交
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ああっぁああ～っ♥　またぁ…♥　またイクうぅっ♥\n　おちんぽぉ…されすぎ…てぇっ♥　おまんこ、ふやけちゃうよぉ♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「すこし…やすませてぇ…　イキっぱなしぃ…キツ…ぃい…っ…」\n"
+			ENDSELECT
+		ENDIF
+	; 好感度：高い
+	ELSE
+		; 睡姦絶頂1回目
+		IF !CFLAG:35
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(CFLAG:951)%のちんぽぉ♥　ビクビクってぇ…あばれてるぅ…♥\n　あふれちゃうくらい、い～っぱい膣内射精してくださいねぇ♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(CFLAG:951)%…のっ、おちんちん…　きもちよさそうに…　ヒクヒクしてる…ぅ」\n"
+			ENDSELECT
+		; 触手による強制連続性交
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_8_0_ADD_MESSAGE, @"「おまんこ射精すきぃっ♥　…っひっ…またナカにぃ♥　どぷどぷ…ってぇ…♥\n　ぃいい…よぉ…っ♥　射精されながら…イクのぉ…♥　すごい…いいよぉぉ…っ♥♥」\n"
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃうぅん♥　またぁ…　またイカされちゃったぁ…♥」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; ◆ 主人公を襲った
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_114_SLEEP_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 好感度：それほど高くない
+	IF CFLAG:5 < 400
+		; 睡姦絶頂1回目
+		IF !CFLAG:35
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「ちょっとだけ…っ　ちょっとだけだからぁ…っ」\n"
+			ENDSELECT
+		; 触手による強制連続性交
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「うあぁっ！？　またぁっ、また射精るぅっ！　射精ちゃうぅっ！」\n"
+			ENDSELECT
+		ENDIF
+	
+	; 好感度：普通
+	ELSEIF CFLAG:5 < 800
+			; 睡姦絶頂1回目
+			IF !CFLAG:35
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「無防備なおまんこでぇ…たぁくさん射精しちゃうんだからぁ♥\n　でぇるよぉ…　でちゃうよぉ…♥　ほぉら…ぁ♥　ほ…らぁっ♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「ひゃ…う…ぁっ…　ぬるぬるいいっ！　気持ちいいよぉっ！\n　射精るっ！　このまま膣内に射精しちゃうよぉっ！」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「ごめんね…っ　どうしても…我慢…できなくてぇっ…！」\n"
+				ENDSELECT
+			; 触手による強制連続性交
+			ELSE
+				SELECTCASE KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「きたぁっ♥　またきたぁっ♥　おちんぽ射精きたぁぁっ♥♥」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「おまんこぉ♥　きもちよすぎ…てぇ…♥　おちんぽ、とけちゃい…ますぅ♥」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「わたしのせーしでぇ…　ナカぁ…　どろどろになってるぅ…♪」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「%CALLNAME:1%…のっ…　おまんこぉ…　きもちよすぎで、ズルイ…よぉ…♪」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「射精ちゃうっ♥　またぁっ、膣内射精しちゃうぅ…っ♥」\n"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「あﾞ～～っ♥　あﾞぁﾞ～～っ♥　イクぅっ♥　イクイクイクイクぅっ♥♥」\n"
+				CASE "発情"
+					CALL KOJO_8_0_ADD_MESSAGE, @"「また射精るぅっ♥　射精しちゃううっっ♥\n　これ以上…したらぁ…♥　おかしくなっちゃうよぉぉっ…♥」\n"
+				CASEELSE
+					CALL KOJO_8_0_ADD_MESSAGE, @"「とまんにゃいっ！？　むりやりセックス…っ、とまんにゃいよぉっ！！」\n"
+				ENDSELECT
+			ENDIF
+			
+	; 好感度：高い
+	ELSE
+		; 睡姦絶頂1回目
+		IF !CFLAG:35
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「%CALLNAME:1%のナカぁ…♥　すっごい…きもちいいよ…ぉ♥」\n"
+			ENDSELECT
+		; 触手による強制連続性交
+		ELSE
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"「とけちゃう…っ♥　わたしのちんちんっ、ぬるぬるにとかされちゃう…っ♥」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1

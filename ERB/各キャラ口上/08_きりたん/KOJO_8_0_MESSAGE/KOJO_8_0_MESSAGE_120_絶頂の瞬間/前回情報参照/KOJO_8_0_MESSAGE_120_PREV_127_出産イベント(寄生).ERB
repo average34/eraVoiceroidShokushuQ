@@ -1,0 +1,96 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 前回情報参照 129 出産イベント(妊娠)
+; ------------------------------------------------------------------------------
+
+; □ 0 出産開始 V絶頂
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_127_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「んﾞおﾞぉおﾞ…ぉっ♥　おﾞまﾞ…っ♥　おﾞまﾞん…こぉっ♥　おﾞまﾞんこぉぉっ♥♥\n　にゃからからぁ…っ…♥　えぐられて…ぇぇっ♥　ひゅごぉっ♥　ひゅごいのぉぉ…ぉっ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ひぃィ…ッ♥　ひぎィ…ぃぃっ…♥　やら…ぁ…♥\n　イキたく…ぅっ！？　にゃぁっ…♥　にゃいのにぃ……♥　とまんにゃい…のぉぉっ♥♥」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「やだやだやだぁ！！　イッてないっ！　気持ちいいはずないよぉっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「くるうっ！？　ナカからキちゃうっ！？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「助げてええっっ！！　ひぎゃぁっっっ…！　うぁぁああﾞあﾞぁぁ…っ！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「とめてぇッッーッッ！　壊れぢゃうーっっ…！！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「イイッキだぐないいぃィ～っ…♥　イキたぐなイのォーーッ♥♥」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 出産完了＋強制授乳 B絶頂
+@KOJO_8_0_SYSTEM_MESSAGE_120_PREV_127_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_8_0_REGIST_DESCRIPTION_BEFORE("KOJO_8_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 連続で胸絶頂していないなら授乳
+	IF !(KOJO_8_0_GET_PREV_PURE_ARG(0) == 120 && KOJO_8_0_GET_PREV_PURE_ARG(1) == 1)
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「ひ…ッ♥　あぁ…っ♥♥　授乳ぅ…、気持ちい…ッ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「そんなイヤらしい吸い方しちゃ…だめ…ぇっ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱいとめ…てぇッッ～♥　ビュービューとまんないっーーッ♥♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱいヘンっ！？　熱いっ！熱いよぉっ！？」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「もう吸わないでぇっ！！　これ以上吸っちゃダメえぇぇっ！！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「しぼらないでェっ！　壊れちゃうっっ！ごわれぢゃううぅゥ――っ！！」\n"
+		ENDSELECT
+	
+	; 連続で胸絶頂しているなら触手スーツに追加の母乳を絞られた
+	ELSE
+		SELECTCASE KOJO_MODE
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「だめぇ…　もう…　しぼらないでぇ……っ」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おっぱいぃ…っ！？　ばかになっちゃうよぉ…っ！」\n"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「やだ…ぁ…　ぼにゅ…　とめて…ぇ…」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

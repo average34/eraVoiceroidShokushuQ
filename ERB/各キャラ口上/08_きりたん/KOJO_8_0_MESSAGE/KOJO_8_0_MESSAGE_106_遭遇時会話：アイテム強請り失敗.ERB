@@ -1,0 +1,34 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 106 遭遇時会話：アイテム強請り失敗
+; ------------------------------------------------------------------------------
+
+; □ 相手は通常行動中
+@KOJO_8_0_SYSTEM_MESSAGE_106_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そ、そうですよね……　急に言われても困りますよね……」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「むぅ……　残念……」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「いらなくなったものが出たら、いつでも歓迎ですよ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 相手は喪失中
+; 喪失中相手への失敗は「何も持っていなかった」と表現される
+; 相手への友好度0未満が確定した状態なので、対応は冷たくなる
+@KOJO_8_0_SYSTEM_MESSAGE_106_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「身ぐるみ剥がれて、動けないとか♪　あとは苗床にされるの待ちでしょう♪」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「手ぶらで歩いてたら、犯して欲しいで言ってるみたなものですよね♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「う～ん、役に立たないなあ……」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「う～ん、使えない」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そんな装備で生き残れると思ってたんですか？　甘いです」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そんな装備でうろついてるからヤられちゃうですよ」\n"
+	ENDSELECT
+RETURN 1

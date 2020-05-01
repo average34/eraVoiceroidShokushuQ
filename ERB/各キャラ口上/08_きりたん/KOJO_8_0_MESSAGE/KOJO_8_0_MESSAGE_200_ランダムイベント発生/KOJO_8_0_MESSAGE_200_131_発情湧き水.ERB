@@ -1,0 +1,24 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 131 発情湧き水
+; ------------------------------------------------------------------------------
+
+; □ 0 飲んだ
+@KOJO_8_0_SYSTEM_MESSAGE_200_131_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あはぁ…　この水…　おいしぃ……♥」\n\d%CALLNAME:TARGET%は荒い息を吐きながら、とろんとした目つきで手に掬った水を舐めている…\d\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「げほっ！　げほっ！　こっ、この水変！？\n　うああぁぁっ……　カラダの火照り、強くなる…ぅっ……　熱いっ……　あついですぅっ……」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「げっ！？　なんですかこの水…　変な薬でも…っ　まじってんじゃ…ないんですかぁ…」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 飲まない
+@KOJO_8_0_SYSTEM_MESSAGE_200_131_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 飲まなかった口上で差があると各種湧き水のどれかがバレるので 全快湧き水口上(飲まない)で統一
+	CALL KOJO_8_0_SYSTEM_MESSAGE_200_130_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

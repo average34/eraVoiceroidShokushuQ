@@ -1,0 +1,53 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 63 仲間に見捨てられて逃げられた
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_63(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 諦めたor喪失
+	IF TFLAG:16 == 2 || CFLAG:29
+		SELECTCASE KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_8_0_ADD_MESSAGE, @"「あはは…えっちな…ぬるぬる…ひとりじめだぁ……♥」\n"
+		CASEELSE
+			CALL KOJO_8_0_ADD_MESSAGE, @"「おねが……　助…け……」\n"
+		ENDSELECT
+		
+		; 捕食中のきりたんを助ける戦闘だった場合 追加口上
+		IF TEMP_FLAG:0
+			SELECTCASE KOJO_MODE
+			CASEELSE
+				CALL KOJO_8_0_ADD_MESSAGE, @"（助けて貰おうなんて…　ムシが良すぎたかもしれませんね……）\n"
+			ENDSELECT
+		ENDIF
+		
+		RETURN 1
+	ENDIF
+
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「みんな居なくなっちゃった…気持ちいいのが嫌なんて、ヘンなの…？」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「今度会ったら覚えててくださいね！　絶対仕返しますからー！」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ぬな！？　わたし大変なことになってるんですけど！？」\n"
+	ENDSELECT
+RETURN 1

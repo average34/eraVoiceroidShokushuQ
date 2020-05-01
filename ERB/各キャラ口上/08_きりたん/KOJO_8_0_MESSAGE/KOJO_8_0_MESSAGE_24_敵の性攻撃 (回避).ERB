@@ -1,0 +1,79 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 24 敵の性攻撃 (回避)
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_24(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+		
+	; 敵の通常攻撃(回避) 汎用口上 も併用する
+	CALL KOJO_8_0_SYSTEM_MESSAGE_22(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		
+	; 催眠中
+	IF KOJO_8_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そんな腑抜けた攻撃じゃ、ちゃんと気持ちよくなれないでしょう♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああん♥　避けちゃったの勿体なかったかなぁ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ざんね～ん♥　えっちな小学生さんはこっちですよ～♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「当たらないように手加減してるの？　そういうプレイ？」\n"
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「そういう事したいなら、ちゃんと相手を捕まえてからの方がいいんじゃないですか？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「おいたが過ぎますねえ、エロ馬鹿！」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「かわいい小学生にえっちな事したいのは解るけど、当たるわけにはいかないです！」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ったく、ここの奴等はすぐエロ攻撃してくる」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「変な攻撃、当たったらどうするんですか」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「当たらなくてよかった～、嫌な攻撃ですね」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 攻撃種類別
+; ◆ 0404 フレッシュゴーレム V全体
+@KOJO_8_0_SYSTEM_MESSAGE_24_404(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	SIF KOJO_8_0_IS_HYPNO()
+		RETURN 0
+
+	; 通常時
+	SELECTCASE KOJO_MODE
+	CASE "強気"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「デカい図体の癖に、やる事は細かいんですね」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「数で攻めればイケると思いました？」\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「これで統制が取れてたら怖い敵、烏合の衆で助かります」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ああもう、デカいだけでも厄介なのに」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0405 フレッシュゴーレム A全体
+@KOJO_8_0_SYSTEM_MESSAGE_24_405(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 0404 フレッシュゴーレム V全体 にお願い
+	CALL KOJO_8_0_SYSTEM_MESSAGE_24_404(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
