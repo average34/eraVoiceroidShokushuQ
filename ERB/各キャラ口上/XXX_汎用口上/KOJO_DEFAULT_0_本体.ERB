@@ -3457,16 +3457,16 @@ RETURN 1
 		ENDSELECT
 	ENDSELECT
 	
-	; 緑茶・玉露共に所持数0なら追加口上
+	; 握り飯・太巻き共に所持数0なら追加口上
 	IF ITEM:50 == 0 && ITEM:51 == 0
-		CALL ADD_RAND_MESSAGE, @"「飲み物が欲しいわ、小休止用にお酒じゃないやつ」"
-		CALL ADD_RAND_MESSAGE, @"「ああ……　喉が渇いた……」"
+		CALL ADD_RAND_MESSAGE, @"「食べ物が欲しいですね、」"
+		CALL ADD_RAND_MESSAGE, @"「ああ……　おなかすいた……」"
 		
 		; 性格別 追加口上
-		SELECTCASE CFLAG:100
-		CASE 性格_おてんば
-			CALL ADD_RAND_MESSAGE, @"「お～い……お茶！　　　出るわけねぇか……」"
-		ENDSELECT
+		;SELECTCASE CFLAG:100
+		;CASE 性格_おてんば
+		;	CALL ADD_RAND_MESSAGE, @"「お～い……お茶！　　　出るわけねぇか……」"
+		;ENDSELECT
 	ENDIF
 	
 	; 着替えセット所持数0なら追加口上
@@ -3952,12 +3952,12 @@ RETURN 1
 RETURN 1
 
 ; ////////////////////////////
-; / ARG:0  502    ◆偽酒
-; / ARG:1    0    偽酒飲み開始
+; / ARG:0  502    ◆偽ポーション
+; / ARG:1    0    偽ポーション飲み開始
 ; / ARGS:0        自分の名前
 @KOJO_DEFAULT_502_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 
-	CALL ADD_RAND_MESSAGE, @"「嫌なことはお酒を飲んで忘れるに限るわ」"
+	CALL ADD_RAND_MESSAGE, @"「嫌なことはドリンクを飲んで忘れるに限りますね」"
 RETURN 1
 
 ; ////////////////////////////

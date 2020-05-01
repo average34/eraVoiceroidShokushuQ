@@ -1,4 +1,4 @@
-﻿; AI戦闘コマンド アイテム 薬酒
+﻿; AI戦闘コマンド アイテム 治療ポーション
 ; コマンドの実行率を0.00%～100.00%で返す
 ; emueraは小数が使えないので*100した値(0-10000)を扱う
 @GET_COMMAND_EXECUTION_RATE_2_57(CHARA_ID, TARGET_ID)
@@ -30,7 +30,7 @@
 		
 	; ひるみ・睡眠・煙幕・砂煙・速度低下・命中低下・回避低下・ダメージ低下
 	; いずれかのバッドステータスに冒されている時のみ処理
-	; 薬酒で回復する寄生・侵食に関しては戦闘に関係ないので考慮しない
+	; 治療ポーションで回復する寄生・侵食に関しては戦闘に関係ないので考慮しない
 	SIF GROUPMATCH(0, CFLAG:TARGET_ID:24, CFLAG:TARGET_ID:25, CFLAG:TARGET_ID:26, CFLAG:TARGET_ID:27, CFLAG:TARGET_ID:300, CFLAG:TARGET_ID:301, CFLAG:TARGET_ID:302, CFLAG:TARGET_ID:303) == 8
 		RETURN 0
 
@@ -53,7 +53,7 @@
 	DATA_TABLE:12:0 =  3300,   3700,   4100,   4500,   4900  ; 12:ひっこみじあん
 	RATE = AI_COMMAND_DATATABLE_TO_RATE(CHARA_ID, DATA_TABLE)
 	
-	; 薬酒は優先度高め
+	; 治療ポーションは優先度高め
 	TIMES RATE, 2.0
 	
 	; バッドステータス複数で倍率アップ

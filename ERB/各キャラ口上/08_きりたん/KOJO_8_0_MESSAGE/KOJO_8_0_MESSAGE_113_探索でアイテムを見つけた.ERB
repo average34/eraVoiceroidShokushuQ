@@ -23,14 +23,14 @@
 	ENDSELECT
 RETURN 1
 
-; □ 10 こんぼう
+; □ 10 ナイフ
 @KOJO_8_0_SYSTEM_MESSAGE_113_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 
 	; 喪失中は何もしないで帰る
 	SIF CFLAG:29
 		RETURN 0
 		
-	; ゲーム開始直後に探索すると こんぼうが落ちてるらしいな
+	; ゲーム開始直後に探索すると ナイフが落ちてるらしいな
 	IF DAY:0 == 1 && TIME:0 == 0
 		CALL KOJO_8_0_ADD_MESSAGE, @"「よくわかんない場所にほっぽり出されて、とりあえず辺りを見渡したら\n　目の前に武器が落ちてるとか、これ見よがし……って感じですねえ」\n"
 
@@ -88,7 +88,7 @@ RETURN 1
 RETURN 1
 
 
-; □ 50 緑茶
+; □ 50 握り飯
 @KOJO_8_0_SYSTEM_MESSAGE_113_50(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 
 	; 喪失中は何もしないで帰る
@@ -102,7 +102,7 @@ RETURN 1
 RETURN 1
 
 
-; □ 51 玉露
+; □ 51 太巻き
 @KOJO_8_0_SYSTEM_MESSAGE_113_51(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 
 	; 喪失中は何もしないで帰る
@@ -117,7 +117,7 @@ RETURN 1
 RETURN 1
 
 
-; □ 52 日本酒
+; □ 52 エナジードリンク
 @KOJO_8_0_SYSTEM_MESSAGE_113_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 #DIM LCOUNT
 
@@ -133,7 +133,7 @@ RETURN 1
 RETURN 1
 
 
-; □ 53 神酒
+; □ 53 回復ポーション
 @KOJO_8_0_SYSTEM_MESSAGE_113_53(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 #DIM LCOUNT
 
@@ -144,8 +144,8 @@ RETURN 1
 	SELECTCASE KOJO_MODE
 	CASEELSE
 		CALL KOJO_8_0_ADD_MESSAGE, @"「うっわ、高そうなお酒」\n"
-		CALL KOJO_8_0_ADD_MESSAGE, @"「儀式とかに使うようなお神酒ですかね？」\n"
-		CALL KOJO_8_0_ADD_MESSAGE, @"「お神酒ですか…　聖水代わりにそこらへんの奴にぶちまけた方が効果的なんじゃないですか？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「儀式とかに使うようなお回復ポーションですかね？」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「お回復ポーションですか…　聖水代わりにそこらへんの奴にぶちまけた方が効果的なんじゃないですか？」\n"
 	ENDSELECT
 
 RETURN 1
