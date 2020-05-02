@@ -40,7 +40,6 @@ https://seesaawiki.jp/eraseries/d/eraVoiceroid
 ## 共有ボタン
 
 [<img src="https://help.twitter.com/content/dam/help-twitter/brand/logo.png" width="40" alt="Twitterで共有">](https://twitter.com/share?url=https://github.com/average34/eraVoiceroidA/blob/master/README.md&hashtags=eraVoiceroid&text=eraVoiceroidA%0D%0Aテキストのみで進める、ボイロを監禁調教するゲーム。%0D%0A "Twitterで共有")
-<a href="https://b.hatena.ne.jp/entry/s/github.com/average34/for_test/blob/master/README.md" class="hatena-bookmark-button" data-hatena-bookmark-layout="touch-counter" title="このエントリーをはてなブックマークに追加">
 ※R-18,R-18Gな投稿が可能な場でのみの共有をお願いします。
 
 ## 連絡先  
