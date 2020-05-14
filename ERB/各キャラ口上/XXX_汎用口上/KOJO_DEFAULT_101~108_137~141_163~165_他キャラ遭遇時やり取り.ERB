@@ -7,15 +7,15 @@
 ; / ARGS:1        遭遇キャラの名前 
 @KOJO_DEFAULT_101(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 	IF ARG:2 == 0
-		CALL ADD_RAND_MESSAGE, @"「こんな所に迷い込むなんて、お互い運が悪いですね」"
+		CALL ADD_RAND_MESSAGE, @"「こんな所に迷い込むなんて、お互い運が悪い%KOJO_GOBI("ですね")%」"
 		CALL ADD_RAND_MESSAGE, @"「意思疎通が出来る相手ってのは落ち着きますね」"
-		CALL ADD_RAND_MESSAGE, @"「あら、他にも迷い込んだ方が居たんですね」"
+		CALL ADD_RAND_MESSAGE, @"「あら、他にも迷い込んだ方が居たん%KOJO_GOBI("ですね")%」"
 			
 
 	ELSEIF ARG:2 == 1
-		CALL ADD_RAND_MESSAGE, @"「運が悪かったようですね…」"
-		CALL ADD_RAND_MESSAGE, @"「返事は……期待できないですね」"
-		CALL ADD_RAND_MESSAGE, @"「あら、他にも迷い込んだ方が居たんですね」"
+		CALL ADD_RAND_MESSAGE, @"「運が悪かったよう%KOJO_GOBI("ですね")%…」"
+		CALL ADD_RAND_MESSAGE, @"「返事は……期待できない%KOJO_GOBI("ですね")%」"
+		CALL ADD_RAND_MESSAGE, @"「あら、他にも迷い込んだ方が居たん%KOJO_GOBI("ですね")%」"
 		CALL ADD_RAND_MESSAGE, @"「このままじゃ、まずいけど…」"
 		CALL ADD_RAND_MESSAGE, @"「もう少し早く会いたかった…」"
 		; 性格別 追加口上
@@ -92,7 +92,7 @@ RETURN 1
 
 	ELSE
 		CALL ADD_RAND_MESSAGE, @"「役に立つ情報があればいいですけど」"
-		CALL ADD_RAND_MESSAGE, @"「こっちの情報はこんなところですね」"
+		CALL ADD_RAND_MESSAGE, @"「こっちの情報はこんなところ%KOJO_GOBI("ですね")%」"
 		CALL ADD_RAND_MESSAGE, @"「どう？　お役に立てそうですか？」"
 		CALL ADD_RAND_MESSAGE, @"「なるほど、ということは……」"
 
@@ -122,7 +122,7 @@ RETURN 1
 ; / ARGS:1        遭遇キャラの名前
 @KOJO_DEFAULT_106_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 	
-	CALL ADD_RAND_MESSAGE, @"「まあ、仕方ないですね……」"
+	CALL ADD_RAND_MESSAGE, @"「まあ、仕方ない%KOJO_GOBI("ですね")%……」"
 	CALL ADD_RAND_MESSAGE, @"「お互い精一杯ですものね……　いいですよ、気にしないで」"
 	
 RETURN 1
@@ -156,7 +156,7 @@ RETURN 1
 	; 好感度別 追加口上
 	; 冷めた目でこちらを見ている
 	IF CFLAG:5 < 0
-		CALL ADD_RAND_MESSAGE, @"「一緒に行動したくないのですね……　まあ、仕方ないかな……」"
+		CALL ADD_RAND_MESSAGE, @"「一緒に行動したくない%KOJO_GOBI("のですね")%……　まあ、仕方ないかな……」"
 		CALL ADD_RAND_MESSAGE, @"「ご、ごめんなさい……」"
 		
 	; こちらを警戒している
@@ -269,7 +269,7 @@ RETURN 1
 	; 冷めた目でこちらを見ている…
 	IF CFLAG:5 < 0
 		CALL ADD_RAND_MESSAGE, @"「あなたと一緒に行動する位なら一人のがマシよ」"
-		CALL ADD_RAND_MESSAGE, @"「あなたの仲間に？　冗談でしょ？」"
+		CALL ADD_RAND_MESSAGE, @"「あなたの仲間に？　冗談%KOJO_GOBI("でしょ")%？」"
 		
 	; こちらを警戒している…
 	ELSEIF CFLAG:5 < 50
@@ -337,7 +337,7 @@ RETURN 1
 	; 性格別 追加口上
 	SELECTCASE CFLAG:100
 	CASE 性格_おせっかい
-		CALL ADD_RAND_MESSAGE, @"「手助けが必要でしょ？」"
+		CALL ADD_RAND_MESSAGE, @"「手助けが必要%KOJO_GOBI("でしょ")%？」"
 		CALL ADD_RAND_MESSAGE, @"「手早く終わらせましょう」"
 
 		CALL ADD_RAND_MESSAGE, @"「さっさと済ませましょうか」"
@@ -507,7 +507,7 @@ RETURN 1
 		; 性格別 追加口上
 		SELECTCASE CFLAG:100
 			CASE 性格_おせっかい
-				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってるでしょう？」"
+				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってる%KOJO_GOBI("でしょう")%？」"
 				CALL ADD_RAND_MESSAGE, @"「あの娘の姿を利用するなんて許せない！」"
 			CASE 性格_おてんば
 				CALL ADD_RAND_MESSAGE, @"「あの娘の姿を利用するなんて許せない！」"
@@ -517,7 +517,7 @@ RETURN 1
 			CASE 性格_がんばりや
 				CALL ADD_RAND_MESSAGE, @"「あの娘の姿を利用するなんて許せない！」"
 			CASE 性格_きれもの
-				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってるでしょう？」"
+				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってる%KOJO_GOBI("でしょう")%？」"
 				CALL ADD_RAND_MESSAGE, @"「くっ、手の込んだ真似を！」"
 
 				CALL ADD_RAND_MESSAGE, @"「疑心暗鬼による共倒れ狙いとはね……」"
@@ -541,7 +541,7 @@ RETURN 1
 				CALL ADD_RAND_MESSAGE, @"「おもしろい手だと思います。でもね、形だけの人形相手なんて、ゴメンなんですよ！」"
 
 			CASE 性格_ぬけめがない
-				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってるでしょう？」"
+				CALL ADD_RAND_MESSAGE, @"「……せっかくですから、案内してもらいましょう。どこって、それは決まってる%KOJO_GOBI("でしょう")%？」"
 				CALL ADD_RAND_MESSAGE, @"「疑心暗鬼による共倒れ狙いとはね……」"
 				CALL ADD_RAND_MESSAGE, @"「くっ、手の込んだ真似を！」"
 			CASE 性格_ねっけつかん

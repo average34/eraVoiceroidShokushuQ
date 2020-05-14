@@ -153,7 +153,7 @@ ENDIF
 		CALL ADD_RAND_MESSAGE, @"「あッ……」"
 		CALL ADD_RAND_MESSAGE, @"「いっ、今は……」"
 		CALL ADD_RAND_MESSAGE, @"「いっ、イったばかりで……」"
-		CALL ADD_RAND_MESSAGE, @"「おっ、落ち着くのよ……」"
+		CALL ADD_RAND_MESSAGE, @"「おっ、落ち着かなきゃ……」"
 		CALL ADD_RAND_MESSAGE, @"「かっ、からだが言うことを……」"
 		CALL ADD_RAND_MESSAGE, @"「き、気をしっかりもたないと……」"
 		CALL ADD_RAND_MESSAGE, @"「くぅ……」"
@@ -165,9 +165,9 @@ ENDIF
 		CALL ADD_RAND_MESSAGE, @"「ひぅッ……」"
 		CALL ADD_RAND_MESSAGE, @"「ふ、防がないと……」"
 		CALL ADD_RAND_MESSAGE, @"「ふ、防ぎきれるかしら……」"
-		CALL ADD_RAND_MESSAGE, @"「ま、マズイわよ、今は……」"
+		CALL ADD_RAND_MESSAGE, @"「ま、マズイ、今は……」"
 		CALL ADD_RAND_MESSAGE, @"「ま、待って、まだ……」"
-		CALL ADD_RAND_MESSAGE, @"「む、無理よ、今は……」"
+		CALL ADD_RAND_MESSAGE, @"「む、無理、今は……」"
 		CALL ADD_RAND_MESSAGE, @"「も、もう少しだけ時間を……」"
 		CALL ADD_RAND_MESSAGE, @"「だ、だめッ……」"
 
@@ -210,7 +210,7 @@ SELECTCASE CFLAG:108
 	CASE 0
 		SELECTCASE Gobi
 			;名詞接続＋終止形・連体形 食事です！
-			;形容動詞の未然形もくっつくことがある　静かです！
+			;形容動詞の語幹もくっつくことがある　静かです！
 			CASE "です"
 				RETURNF "です"
 			;食事ですか
@@ -222,10 +222,19 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "ですよ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "ですけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "ですかね"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
 				RETURNF "でしょう"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "でしょ"
 			;食事でしょうか
 			CASE "でしょうか"
 				RETURNF "でしょうか"
@@ -235,6 +244,9 @@ SELECTCASE CFLAG:108
 			;食事でしょうよ
 			CASE "でしょうよ"
 				RETURNF "でしょうよ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "でしょうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
@@ -248,9 +260,12 @@ SELECTCASE CFLAG:108
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "でしたよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "でしたけど"
 
 
-			;動詞の撥音便接続 食べるんです！
+			;助詞「の」の撥音便接続 食べるんです！
 			CASE "んです"
 				RETURNF "んです"
 			;食べるんですか
@@ -262,6 +277,9 @@ SELECTCASE CFLAG:108
 			;食べるんですよ
 			CASE "んですよ"
 				RETURNF "んですよ"
+			;食べるんですけど
+			CASE "んですけど"
+				RETURNF "んですけど"
 				
 			;形容詞接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
 			CASE "いです"
@@ -275,6 +293,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いですよ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いですけど"
 
 
 
@@ -302,10 +323,19 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "だよ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "だけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かね"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
 				RETURNF "だろうね"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "だろ"
 			;食事でしょうか
 			CASE "でしょうか"
 				RETURNF "かな"
@@ -314,20 +344,26 @@ SELECTCASE CFLAG:108
 				RETURNF "だろうね"
 			;食事でしょうよ
 			CASE "でしょうよ"
-				RETURNF "だよ"
+				RETURNF "だろうよ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "だろうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
 				RETURNF "だったね"
 			;シカでしたか
 			CASE "でしたか"
-				RETURNF "だったかな"
+				RETURNF "だったか"
 			;シカでしたね
 			CASE "でしたね"
 				RETURNF "だったね"
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "だったよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "だったけど"
 
 
 			;動詞の撥音便接続 食べるんです！
@@ -342,8 +378,11 @@ SELECTCASE CFLAG:108
 			;食べるんですよ
 			CASE "んですよ"
 				RETURNF "んだよ"
+			;食べるんですけど
+			CASE "んですけど"
+				RETURNF "んだけど"
 				
-			;形容詞接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
+			;形容詞の終止系接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
 			CASE "いです"
 				RETURNF "いね"
 			;おいしいですか
@@ -355,6 +394,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いよ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いんだけど"
 
 
 			CASEELSE
@@ -383,10 +425,19 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "だよ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "だけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かね"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
-				RETURNF "だろうな"
+				RETURNF "だろう"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "だろ"
 			;食事でしょうか
 			CASE "でしょうか"
 				RETURNF "かな"
@@ -396,19 +447,25 @@ SELECTCASE CFLAG:108
 			;食事でしょうよ
 			CASE "でしょうよ"
 				RETURNF "だろうよ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "だろうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
 				RETURNF "だったな"
 			;シカでしたか
 			CASE "でしたか"
-				RETURNF "だったかな"
+				RETURNF "だったか"
 			;シカでしたね
 			CASE "でしたね"
 				RETURNF "だったな"
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "だったよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "だったけど"
 
 
 			;動詞の撥音便接続 食べるんです！
@@ -423,6 +480,9 @@ SELECTCASE CFLAG:108
 			;食べるんですよ
 			CASE "んですよ"
 				RETURNF "んだよ"
+			;食べるんですけど
+			CASE "んですけど"
+				RETURNF "んだけど"
 				
 			;形容詞接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
 			CASE "いです"
@@ -436,6 +496,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いな"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いが"
 
 
 			CASEELSE
@@ -445,7 +508,7 @@ SELECTCASE CFLAG:108
 
 ;---------------------------------------
 ;だわ系
-;現代お嬢様系、くだけた広島系
+;現代お嬢様系、くだけた広島系　Fateの遠坂凛とか、プリコネのキャルとか
 ;---------------------------------------
 ;ルール　です→だ 変換が基本だが、更に「だ」「だね」→「だわ」 「か」→「かな」の置換が入る
 	CASE 3
@@ -462,10 +525,19 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "よ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "だけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かしらね"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
-				RETURNF "だろうね"
+				RETURNF "だわ"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "だわ"
 			;食事でしょうか
 			CASE "でしょうか"
 				RETURNF "かしら"
@@ -475,6 +547,9 @@ SELECTCASE CFLAG:108
 			;食事でしょうよ
 			CASE "でしょうよ"
 				RETURNF "よ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "だろうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
@@ -488,6 +563,9 @@ SELECTCASE CFLAG:108
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "だったわよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "だったけど"
 
 
 			;動詞の撥音便接続 食べるんです！
@@ -502,6 +580,9 @@ SELECTCASE CFLAG:108
 			;食べるんですよ
 			CASE "んですよ"
 				RETURNF "のよ"
+			;食べるんですけど
+			CASE "んですけど"
+				RETURNF "んですけど"
 				
 			;形容詞接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
 			CASE "いです"
@@ -515,6 +596,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いわよ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いんだけど"
 
 
 			CASEELSE
@@ -540,10 +624,19 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "ですわよ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "ですけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かしらね"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
 				RETURNF "でしょうね"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "でしょ"
 			;食事でしょうか
 			CASE "でしょうか"
 				RETURNF "かしら"
@@ -553,6 +646,9 @@ SELECTCASE CFLAG:108
 			;食事でしょうよ
 			CASE "でしょうよ"
 				RETURNF "でしょうよ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "でしょうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
@@ -566,6 +662,9 @@ SELECTCASE CFLAG:108
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "でしたわよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "でしたけど"
 
 
 			;動詞の撥音便接続 食べるんです！
@@ -580,6 +679,9 @@ SELECTCASE CFLAG:108
 			;食べるんですよ
 			CASE "んですよ"
 				RETURNF "んですのよ"
+			;食べるんですけど
+			CASE "んですけど"
+				RETURNF "んですけど"
 				
 			;形容詞接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
 			CASE "いです"
@@ -593,6 +695,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いですわよ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いですけど"
 
 
 			CASEELSE
@@ -618,9 +723,18 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "やよ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "やけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かね"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
+				RETURNF "やろ"
+			;食事でしょ
+			CASE "でしょ"
 				RETURNF "やろ"
 			;食事でしょうか
 			CASE "でしょうか"
@@ -631,6 +745,9 @@ SELECTCASE CFLAG:108
 			;食事でしょうよ
 			CASE "でしょうよ"
 				RETURNF "やろ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "やろうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
@@ -644,6 +761,9 @@ SELECTCASE CFLAG:108
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "やったよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "やったけど"
 
 
 			;動詞の撥音便接続 食べるんです！
@@ -658,6 +778,9 @@ SELECTCASE CFLAG:108
 			;食べるんですよ
 			CASE "んですよ"
 				RETURNF "んよ"
+			;食べるんですけど
+			CASE "んですけど"
+				RETURNF "んやけど"
 				
 			;形容詞接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
 			CASE "いです"
@@ -671,6 +794,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いよ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いけど"
 
 
 			CASEELSE
@@ -697,10 +823,19 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "だぜ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "だけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かな"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
 				RETURNF "だろうな"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "だろ"
 			;食事でしょうか
 			CASE "でしょうか"
 				RETURNF "だろうか"
@@ -710,6 +845,9 @@ SELECTCASE CFLAG:108
 			;食事でしょうよ
 			CASE "でしょうよ"
 				RETURNF "だろうよ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "だろうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
@@ -723,6 +861,9 @@ SELECTCASE CFLAG:108
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "だったよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "だったが"
 
 
 			;動詞の撥音便接続 食べるんです！
@@ -750,6 +891,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いんだ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いんだが"
 
 
 			CASEELSE
@@ -775,10 +919,19 @@ SELECTCASE CFLAG:108
 			;食事ですよ
 			CASE "ですよ"
 				RETURNF "だぞ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "だけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かな"
 
 			;名詞接続＋未然形 食事でしょう！
 			CASE "でしょう"
 				RETURNF "だろうな"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "だろ"
 			;食事でしょうか
 			CASE "でしょうか"
 				RETURNF "だろうか"
@@ -788,6 +941,9 @@ SELECTCASE CFLAG:108
 			;食事でしょうよ
 			CASE "でしょうよ"
 				RETURNF "だろうよ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "だろうけど"
 
 			;名詞接続＋連用形 シカでした！
 			CASE "でした"
@@ -801,6 +957,9 @@ SELECTCASE CFLAG:108
 			;シカでしたよ
 			CASE "でしたよ"
 				RETURNF "だったよ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "だったが"
 
 
 			;動詞の撥音便接続 食べるんです！
@@ -828,6 +987,9 @@ SELECTCASE CFLAG:108
 			;おいしいですよ
 			CASE "いですよ"
 				RETURNF "いんだぞ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いんだが"
 
 
 			CASEELSE

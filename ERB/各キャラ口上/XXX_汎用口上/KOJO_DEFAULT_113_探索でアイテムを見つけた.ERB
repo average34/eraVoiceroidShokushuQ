@@ -22,13 +22,13 @@
 	; まだ持てる
 	ELSE
 		CALL ADD_RAND_MESSAGE, @"「あら、何か落ちてますね」"
-		CALL ADD_RAND_MESSAGE, @"「誰が落としたのかしら」"
-		CALL ADD_RAND_MESSAGE, @"「何でこんなものが落ちてるのかしら」"
+		CALL ADD_RAND_MESSAGE, @"「誰が落とした%KOJO_GOBI("んですか")%」"
+		CALL ADD_RAND_MESSAGE, @"「何でこんなものが落ちてる%KOJO_GOBI("んですか")%」"
 		
 		; 性格別 追加口上
 		SELECTCASE CFLAG:100
 		CASE 性格_おせっかい
-			CALL ADD_RAND_MESSAGE, @"「酷い散らかりようですね…　あら、これは使えるかも？」"
+			CALL ADD_RAND_MESSAGE, @"「酷い散らかりよう%KOJO_GOBI("ですね")%…　あら、これは使えるかも？」"
 		CASE 性格_おてんば
 			CALL ADD_RAND_MESSAGE, @"「いいもの拾ったー♪」"
 			CALL ADD_RAND_MESSAGE, @"「やった！　いいもんめーっけ！」"
@@ -37,7 +37,7 @@
 		CASE 性格_くろうにん
 			CALL ADD_RAND_MESSAGE, @"「落ちてる物の周りに罠とかないでしょうね……」"
 		CASE 性格_しあわせもの
-			CALL ADD_RAND_MESSAGE, @"「使えそうな物が落ちてる、普段の行いの賜物ですね」"
+			CALL ADD_RAND_MESSAGE, @"「使えそうな物が落ちてる、普段の行いの賜物%KOJO_GOBI("ですね")%」"
 		CASE 性格_ぬけめがない
 			CALL ADD_RAND_MESSAGE, @"「物陰に隠れるように何か落ちて……」"
 			CALL ADD_RAND_MESSAGE, @"「これは何かの役に立つかな」"
@@ -124,7 +124,7 @@ RETURN 1
 	CASE 性格_のんきもの
 		CALL ADD_RAND_MESSAGE, @"「お酒が落ちてるとか気前が良いわね」"
 	CASE 性格_ひっこみじあん
-		CALL ADD_RAND_MESSAGE, @"「こんな所にお酒とか、誰が置いたのかしら」"
+		CALL ADD_RAND_MESSAGE, @"「こんな所に飲み物とか、誰が置いた%KOJO_GOBI("んですか")%」"
 	ENDSELECT
 RETURN 1
 
