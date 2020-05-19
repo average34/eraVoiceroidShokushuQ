@@ -52,8 +52,9 @@ NEXT
 
 ;末尾に移動した削除対象を消去
 FOR LOCAL:1, 0, VARSIZE("DA", 1)
-	DA:(FLAG:1):(LOCAL:1) = 0
+	DA:(FLAG:1 - 1):(LOCAL:1) = 0
 NEXT
+SAVESTR:(FLAG:1 - 1) = ""
 
 ;敵の数を減らす
 FLAG:1 -= 1

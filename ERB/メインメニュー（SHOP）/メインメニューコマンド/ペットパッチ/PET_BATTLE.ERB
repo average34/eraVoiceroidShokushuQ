@@ -444,7 +444,7 @@ FOR LCOUNT:1, 0, PET:94
 NEXT
 
 ;ペットの攻撃で敵が死亡
-IF DA:(PET:51):1 <= 0 && PET:92 == 0
+IF PET:92 == 0 && DA:(PET:51):1 <= 0
 	;主人公が倒した扱い
 	CALL PRINT_MESSAGE(1, 31, PET:51, CALLNAME:1, SAVESTR:(PET:51))
 	DA:(LOCAL:(LOCAL:0)):1 = 0

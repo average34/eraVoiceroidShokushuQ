@@ -202,45 +202,7 @@ IF FLAG:524 == 0 && CFLAG:(ARG:0):29 == 1 && DA:(ARG:1):0 >= 5 && RAND:100 < 10
 		CALL ADD_ABL_EXP(13,(ARG:0), 50 + RAND:500)
 		CFLAG:(ARG:0):502 += 1
 	CASE 4 TO 5
-		FOR LOCAL:0, 0, 100
-			;通常沸きする敵の番号が5～95なのでそこをランダムに指定し敵データ呼び込み　データがなければ戻る
-			LOCAL:4 = 5 + RAND:91
-			
-			;娘とドッペルは処理が特殊なのでパスする
-			SIF LOCAL:4 == 18 || LOCAL:4 == 19
-				CONTINUE
-			TRYCCALLFORM SET_ENEMY_DATA_{LOCAL:4}(FLAG:1)
-			CATCH
-				CONTINUE
-			ENDCATCH
-			
-			;湧かないランク7は弾く
-			IF DA:(FLAG:1):86 == 7
-				CONTINUE
-			;コンフィグ設定している場合は敵の系統で湧き制御
-			ELSEIF FLAG:527 > 0 && (DA:(FLAG:1):85 & FLAG:527) == 0
-				CONTINUE
-			;敵の種類でフィルターを掛けたものを弾く
-			ELSEIF FLAG:536 > 0 && (DA:(FLAG:1):85 & FLAG:536) && FLAG:536 != 63
-				CONTINUE
-			;男もONでなければ弾く
-			ELSEIF (FLAG:512 & 1) == 0 && (DA:(FLAG:1):85 & 128)
-				CONTINUE
-			;個別フィルターを掛けたものを弾く
-			ELSEIF FLAG:(LOCAL:4 + 700) < 0
-				CONTINUE
-			ENDIF
-			IF LOCAL:4
-				CALL CREATE_ENEMY(LOCAL:4, GET_CENTER_ROOM(), FLAG:5)
-			ENDIF
-			BREAK
-		NEXT
-		
-		;後片付け
-		FOR LOCAL:0, 0, VARSIZE("DA", 1)
-			DA:(FLAG:1):(LOCAL:0) = 0
-		NEXT
-				
+		CALL REPOP_SELECT(0)
 		CFLAG:(ARG:0):502 += 1
 	CASE 6 TO 7
 		CALL ADD_ABL_EXP(6,(ARG:0), RAND:5000)

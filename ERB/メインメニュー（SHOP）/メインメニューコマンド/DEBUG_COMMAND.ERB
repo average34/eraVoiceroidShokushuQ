@@ -1433,9 +1433,9 @@ WEND
 		LOCALS = %""%
 		SELECTCASE LCOUNT
 			CASE 100
-				LOCALS = ナイフ入手
+				LOCALS = こんぼう入手
 			CASE 101
-				LOCALS = フライパン入手
+				LOCALS = 白狼刀入手
 			CASE 102
 				LOCALS = 陰陽玉入手
 			CASE 103
@@ -1443,11 +1443,11 @@ WEND
 			CASE 104
 				LOCALS = 博麗の御札入手
 			CASE 105
-				LOCALS = メリケンサック入手
+				LOCALS = 簡易魔法陣入手
 			CASE 106
 				LOCALS = 使い魔入手
 			CASE 107
-				LOCALS = 不思議な時計入手
+				LOCALS = 咲夜の時計入手
 			CASE 108
 				LOCALS = 媚薬入手
 			CASE 109
@@ -3881,53 +3881,15 @@ FLAG:513 = TEMPFLG
 ;LAST_ENEMY_NUM	最後の敵番号
 ;LAST_PAGE		最後の敵番号があるページ数
 ;LIST_NUM		1ページに表示する敵の種類
-;USAGE			リストの用途 0:敵生成 1:ペット追加 2:ペット追加(制限なし) 3:妊娠と寄生の管理
+;USAGE			リストの用途 0:敵生成 1:ペット追加 2:ペット追加(制限なし) 3:妊娠と寄生の管理 -1:エネミー図鑑 -2:敵フィルタ
 ;
 ;LOCAL
-;0	リスト最終要素1 要素カウント
-;1	リスト最終要素2 連続か否かの判断
-;2	リスト最終要素3 カウントロック
+;0	敵の表示スタイル 0:???表示 1:灰色 2:通常
 ;LOCALS
 ;0	敵の名前
 
-LOCAL:0 = 0
-LOCAL:2 = 0
-
-;最後の敵番号の確認用ループ
-FOR LCOUNT, 98, 500
-	;ロックがかかっていない場合
-	IF LOCAL:2 == 0
-		;敵データ呼び出し
-		TRYCCALLFORM SET_ENEMY_DATA_{LCOUNT}(FLAG:1)
-		CATCH
-		ENDCATCH
-		LOCALS:0 = %ENEMY_NAME(LCOUNT)%
-		;連続でバグ触手だったら1加算。そうでないなら0に戻す
-		IF ENEMY_NAME(LCOUNT) == "バグ触手" && LOCAL:1 + 1 == LCOUNT && LOCAL:2 == 0
-			LOCAL:0 += 1
-		ELSE
-			LOCAL:0 = 0
-		ENDIF
-		;10回バグ触手が続いたら以降リストするものなしと見なして、最後の要素だった番号を記録。以降はカウントしない
-		IF LOCAL:0 == 10
-			LAST_ENEMY_NUM = LCOUNT - 10
-			LOCAL:0 = 0
-			;ロック
-			LOCAL:2 = 1
-		ENDIF
-		LOCAL:1 = LCOUNT
-
-		;処理が終わったら後始末
-		FOR LCOUNT:1, 0, VARSIZE("DA", 1)
-			DA:(FLAG:1):(LCOUNT:1) = 0
-		NEXT
-	;ロックならループ終了
-	ELSEIF LOCAL:2 == 1
-		BREAK
-	ENDIF
-NEXT
-
-DRAWLINE
+SIF USAGE >= 0
+	DRAWLINE
 ;リスト部分を表示
 FOR LCOUNT, (1+LIST_NUM*PAGE), ((1+LIST_NUM)+LIST_NUM*PAGE)
 	;敵データ呼び出し
@@ -3935,29 +3897,55 @@ FOR LCOUNT, (1+LIST_NUM*PAGE), ((1+LIST_NUM)+LIST_NUM*PAGE)
 	CATCH
 	ENDCATCH
 	LOCALS:0 = %ENEMY_NAME(LCOUNT)%
-	;敵生成用　表示条件を満たした敵は選択肢表示　満たしていない部分は？？？表示　ボス等の特定の敵は選択不能に
-	IF (USAGE == 0 || USAGE == 3) && (LCOUNT < 4 || LCOUNT == 19 || (LCOUNT >= 99 && LCOUNT <= 105))
-		SETCOLOR 0x555555
-		PRINTPLAINFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
-		RESETCOLOR
-	;ペット追加用1 通常ペットにできない種類は選択不能
-	ELSEIF USAGE == 1 && ENEMY_NAME(LCOUNT) != "バグ触手" && DA:(FLAG:1):88 == 1
-		SETCOLOR 0x555555
-		PRINTPLAINFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
-		RESETCOLOR
-	;ペット追加用2 バグ触手以外はどれでもペット可にする
-	ELSEIF USAGE == 2 && ENEMY_NAME(LCOUNT) != "バグ触手"
-		PRINTFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
-	ELSEIF ENEMY_NAME(LCOUNT) != "バグ触手"
-		PRINTFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
-	ELSE
-		;灰色表示
-		LOCALS:0 = ？？？
 
-		SETCOLOR 0x333333
-		PRINTPLAINFORM [{LCOUNT,2}]    %LOCALS:0, 40, LEFT%
-		RESETCOLOR
+	IF LOCALS:0 == "バグ触手"
+		LOCAL:0 = 0
+	ELSE
+		LOCAL:0 = 2
+		SELECTCASE USAGE
+			;敵生成用　表示条件を満たした敵は選択肢表示　満たしていない部分は？？？表示　ボス等の特定の敵は選択不能に
+			CASE 0, 3
+				SIF (LCOUNT < 4 || LCOUNT == 19 || (LCOUNT >= 99 && LCOUNT <= 105))
+					LOCAL:0 = 1
+			;ペット追加用1 通常ペットにできない種類は選択不能
+			CASE 1
+				SIF DA:(FLAG:1):88 == 1
+					LOCAL:0 = 1
+			;ペット追加用2 バグ触手以外はどれでもペット可にする
+			CASE 2
+				LOCAL:0 = 2
+			;エネミー図鑑用 出会ったことのない敵は除外　ただし99番触手と100番淫虫は最初から見られる
+			CASE -1
+				SIF !GET_ENEMY_WIKI_REGISTERED(LCOUNT) && LCOUNT != 99 && LCOUNT != 100
+					LOCAL:0 = 0
+			;敵フィルタ用 ボス・ランク7以上・出会ったことのない敵は除外
+			CASE -2
+				IF LCOUNT <= 4 || DA:(FLAG:1):86 >= 7 || !GET_ENEMY_WIKI_REGISTERED(LCOUNT)
+					LOCAL:0 = 0
+				ELSEIF IS_FILTERED_ENEMY(LCOUNT)
+					LOCAL:0 = 12
+				ENDIF
+		ENDSELECT
 	ENDIF
+
+	SELECTCASE LOCAL:0
+		CASE 0 ;???表示（選択不能）
+			;灰色表示
+			LOCALS:0 = ？？？
+			SETCOLOR 0x333333
+			PRINTPLAINFORM [{LCOUNT,3}]    %LOCALS:0, 40, LEFT%
+			RESETCOLOR
+		CASE 1 ;グレー表示（選択不能）
+			SETCOLOR 0x555555
+			PRINTPLAINFORM [{LCOUNT,3}]    %LOCALS:0, 40, LEFT%
+			RESETCOLOR
+		CASE 2 ;通常表示（選択可能）
+			PRINTFORM [{LCOUNT,3}]    %LOCALS:0, 40, LEFT%
+		CASE 12 ;X付き通常表示（選択可能）
+			PRINTFORM [{LCOUNT,3}] × %LOCALS, 40, LEFT%
+		CASEELSE
+			
+	ENDSELECT
 	
 	;処理が終わったら後始末
 	FOR LCOUNT:1, 0, VARSIZE("DA", 1)
@@ -3976,6 +3964,7 @@ FOR LCOUNT, (1+LIST_NUM*PAGE), ((1+LIST_NUM)+LIST_NUM*PAGE)
 NEXT
 
 ;最後の要素があるページ数を出す
+LAST_ENEMY_NUM = GET_ENEMY_NO_MAX()
 LAST_PAGE = LAST_ENEMY_NUM / LIST_NUM
 
 DRAWLINE

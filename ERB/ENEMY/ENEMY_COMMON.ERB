@@ -289,4 +289,18 @@ CATCH
 ENDCATCH
 
 
+;敵が何番まで登録されているかを返す。
+@GET_ENEMY_NO_MAX()
+#FUNCTION
+#DIM RET ; 何番まで登録されてるか
+#DIM LCOUNT
 
+RET = 97
+FOR LCOUNT, 98, 1001 ;とりあえず1000番まで
+	;敵データ呼び出し
+	IF ENEMY_NAME(LCOUNT) != "バグ触手"
+		RET = LCOUNT
+	ENDIF
+NEXT
+
+RETURNF RET

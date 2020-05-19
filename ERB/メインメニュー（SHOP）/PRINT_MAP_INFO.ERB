@@ -847,18 +847,16 @@ ENDIF
 IF FLAG:9 || CHECK_NEXT(FLAG:5, ARG:0)
 	IF LOCAL:2 == 1
 		FOR LOCAL:0, 1, FLAG:1
-			;ドッペルは弾く
-			IF DA:(LOCAL:0):4 == ARG:0 && (DA:(LOCAL:0):0 != 18 || DA:(LOCAL:0):45 == 1)
+			;ドッペル、罠系は弾く
+			IF (DA:(LOCAL:0):4 == ARG:0) && (DA:(LOCAL:0):0 != 18 || DA:(LOCAL:0):45 == 1) && (DA:(LOCAL:0):0 != 97) && !(DA:(LOCAL:0):85 & 256)
 				LOCAL:1 = 2
 				BREAK
 			ENDIF
-			;罠系は弾く
-			SIF DA:(LOCAL:0):0 == 97 || (DA:(LOCAL:0):85 & 256)
-				BREAK
 		NEXT
 	ELSEIF LOCAL:2 >= 2
 		FOR LOCAL:0, 1, FLAG:1
-			IF DA:(LOCAL:0):4 == ARG:0 && (DA:(LOCAL:0):0 != 18 || DA:(LOCAL:0):45 == 1)
+			;ドッペル、罠系は弾く
+			IF (DA:(LOCAL:0):4 == ARG:0) && (DA:(LOCAL:0):0 != 18 || DA:(LOCAL:0):45 == 1) && (DA:(LOCAL:0):0 != 97) && !(DA:(LOCAL:0):85 & 256)
 				IF LOCAL:1 == 3
 					LOCAL:1 = 5
 				ELSE
@@ -866,9 +864,6 @@ IF FLAG:9 || CHECK_NEXT(FLAG:5, ARG:0)
 				ENDIF
 				BREAK
 			ENDIF
-			;罠系は弾く
-			SIF DA:(LOCAL:0):0 == 97 || (DA:(LOCAL:0):85 & 256)
-				BREAK
 		NEXT
 	ENDIF
 ENDIF

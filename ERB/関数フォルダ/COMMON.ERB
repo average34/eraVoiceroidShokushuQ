@@ -13,6 +13,7 @@
 ;	@HEART_BREAK(ARG:0)									戦意喪失処理
 ;	@TACHI												PTの「達」表示用
 ;	@SELECT_PT_TARGET(ARG:0)							味方の中から１人を選択
+;	@SELECT_PT_TARGET2(ARG:0)							味方の中から１人を選択(大きいバージョン)
 ;	@MSG_WAIT(ARG:0)									メッセージスキップ処理
 ;	@IN_PT(ARG:0)										PT内に居るかどうかチェック
 ;	@CHECK_ENEMY_EXIST(ARG:0, ARG:1 = 0)				指定した部屋に指定した敵がいるか確かめる　引数を省略したときは指定した部屋に敵がいるかを判定する
@@ -368,6 +369,69 @@ ENDIF
 
 
 
+;味方の中から１人を選択(大きいバージョン)
+;ARG:0	指定した状態異常のキャラを除外、-1ならふたなり化不可能なキャラを除外
+;RETURN	選んだキャラのID　0ならキャンセル
+@SELECT_PT_TARGET2(ARG:0)
+;LOCAL
+;0		LOOP
+;1-3	対象キャラが選択可能かどうか
+;4		TEMP
+
+FOR LOCAL:0, 1, 4
+	LOCAL:(LOCAL:0) = 0
+NEXT
+
+IF ARG:0 == -1
+	IF FLAG:520 == 1 || FLAG:520 == 2
+		LOCAL:1 = 1
+	ENDIF
+	IF FLAG:520 == 1 || FLAG:520 == 3
+		LOCAL:2 = FLAG:10
+		LOCAL:3 = FLAG:11
+	ENDIF
+	IF LOCAL:1 + LOCAL:2 + LOCAL:3 == 0
+		PRINTFORML 与えられるキャラクターがいません
+	ENDIF
+ELSE
+	IF CFLAG:1:(ARG:0) == 0
+		LOCAL:1 = 1
+	ENDIF
+	IF FLAG:10 && CFLAG:(FLAG:10):(ARG:0) == 0
+		LOCAL:2 = FLAG:10
+	ENDIF
+	IF FLAG:11 && CFLAG:(FLAG:11):(ARG:0) == 0
+		LOCAL:3 = FLAG:11
+	ENDIF
+ENDIF
+
+IF LOCAL:1
+	PRINTFORM [1] 
+	CALL SHOW_SIMPLE_STATUS(1)
+ENDIF
+IF LOCAL:2
+	PRINTFORM [2] 
+	CALL SHOW_SIMPLE_STATUS(FLAG:10)
+ENDIF
+IF LOCAL:3
+	PRINTFORM [3] 
+	CALL SHOW_SIMPLE_STATUS(FLAG:11)
+ENDIF
+PRINTL [0] 戻る
+$INPUT_LOOP
+INPUT
+
+IF RESULT == 0
+	RETURN 0
+ELSEIF LOCAL:(RESULT)
+	RETURN LOCAL:(RESULT)
+ELSE
+	REUSELASTLINE 入力値が不正です。再入力してください
+	GOTO INPUT_LOOP
+ENDIF
+
+
+
 ;メッセージスキップ処理
 ;ARG:0	スキップレベル
 @MSG_WAIT(ARG:0)
@@ -494,7 +558,7 @@ ENDIF
 ;ARG:0	NPCのID
 @GET_NPC_POWER(ARG:0)
 #function
-#DIM 攻撃戦闘攻撃力
+#DIM 弾幕戦闘攻撃力
 #DIM 道具戦闘攻撃力
 #DIM 戦闘攻撃力
 #DIM 速さ
@@ -509,18 +573,18 @@ IF ARG:0 <= 1 || CHARANUM <= ARG:0
 	RETURNF -1
 ENDIF
 
-攻撃戦闘攻撃力 = ABL:(ARG:0):98
+弾幕戦闘攻撃力 = ABL:(ARG:0):98
 IF ABL:(ARG:0):3 == 0
-	攻撃戦闘攻撃力 += 0
+	弾幕戦闘攻撃力 += 0
 ELSEIF ABL:(ARG:0):3 == 1
-	攻撃戦闘攻撃力 = 攻撃戦闘攻撃力 * 11 / 10 + 5
+	弾幕戦闘攻撃力 = 弾幕戦闘攻撃力 * 11 / 10 + 5
 ELSEIF ABL:(ARG:0):3 == 2
-	攻撃戦闘攻撃力 = 攻撃戦闘攻撃力 * 25 / 20 + 13
+	弾幕戦闘攻撃力 = 弾幕戦闘攻撃力 * 25 / 20 + 13
 ELSE
-	攻撃戦闘攻撃力 = 攻撃戦闘攻撃力 * 15 / 10 + 25
+	弾幕戦闘攻撃力 = 弾幕戦闘攻撃力 * 15 / 10 + 25
 ENDIF
 
-攻撃戦闘攻撃力 += CFLAG:(ARG:0):120
+弾幕戦闘攻撃力 += CFLAG:(ARG:0):120
 
 
 道具戦闘攻撃力 = ABL:(ARG:0):98 / 2 + 25
@@ -546,8 +610,8 @@ ENDIF
 道具戦闘攻撃力 += CFLAG:(ARG:0):121
 
 
-IF 攻撃戦闘攻撃力 >= 道具戦闘攻撃力
-	戦闘攻撃力 = 攻撃戦闘攻撃力
+IF 弾幕戦闘攻撃力 >= 道具戦闘攻撃力
+	戦闘攻撃力 = 弾幕戦闘攻撃力
 ELSE
 	戦闘攻撃力 = 道具戦闘攻撃力
 ENDIF
@@ -608,3 +672,43 @@ NEXT
 
 ;出て来るLOCAL:0はBREAKでも+1されるので合計-2する
 FLAG:2 = LOCAL:0 - 2
+
+
+;0以上ARG未満の被らない乱数のリストを生成し、呼ぶたびに要素を順に返す。
+;末尾まで達していたりARG<0なら-1を返す。
+;前と別のARGを渡したらリストを再編成。
+;例: --->
+;ARG 10 10 10 10 10  3  3  3  3  3 -1 -1  7  7
+;RET  7  9  0  8  6  2  0  1 -1 -1 -1 -1  6  4
+@UNIQUE_RANDOM(ARG)
+#FUNCTION
+#DIM RAND_LIST, 10000 ;生成した乱数列のリスト
+#DIM INDEX            ;何番目の要素まで返したか
+#DIM LCOUNT           ;ループカウンタ
+#DIM DEST             ;SWAPを行う対象
+#DIM LAST_ARG         ;前のARG
+
+IF ARG < 0
+	LAST_ARG = ARG
+	RETURNF -1
+ENDIF
+
+;乱数列生成
+IF ARG != LAST_ARG
+	INDEX = -1
+	VARSET RAND_LIST, -1
+	;まず0,1,...,ARG-1の列を作る
+	FOR LCOUNT, 0, ARG
+		RAND_LIST:LCOUNT = LCOUNT
+	NEXT
+	;先頭から、「今見ている数値とそれより右の数値を交換する」ことを順に行う
+	FOR LCOUNT, 0, ARG
+		DEST = LCOUNT + RAND:(ARG - LCOUNT)
+		SWAP RAND_LIST:LCOUNT, RAND_LIST:DEST
+	NEXT
+ENDIF
+
+LAST_ARG = ARG
+;乱数を返す処理
+INDEX++
+RETURNF RAND_LIST:INDEX

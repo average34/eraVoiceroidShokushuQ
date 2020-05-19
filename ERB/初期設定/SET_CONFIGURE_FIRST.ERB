@@ -44,35 +44,36 @@ CONF_BIT = 0
 		IF FLAG:520 == 1
 			SIF GETBIT(CONF_BIT, 2)
 				SETCOLOR 0x9999FF
-			PRINTFORM [2] すでに全員寄生されてます
+			PRINTFORML [2] すでに全員寄生されてます
 			RESETCOLOR
 			SIF GETBIT(CONF_BIT, 3)
 				SETCOLOR 0x9999FF
-			PRINTFORM [3] ここに迷いこむ前から全員生えていました
+			PRINTFORML [3] ここに迷いこむ前から全員生えていました
 			RESETCOLOR
 		ELSEIF FLAG:520 == 2
 			SIF GETBIT(CONF_BIT, 2)
 				SETCOLOR 0x9999FF
-			PRINTFORM [2] 主人公は寄生されています
+			PRINTFORML [2] 主人公は寄生されています
 			RESETCOLOR
 			SIF GETBIT(CONF_BIT, 3)
 				SETCOLOR 0x9999FF
-			PRINTFORM [3] ここに迷いこむ前から主人公には生えていました
+			PRINTFORML [3] ここに迷いこむ前から主人公には生えていました
 			RESETCOLOR
 		ELSEIF FLAG:520 == 3
 			SIF GETBIT(CONF_BIT, 2)
 				SETCOLOR 0x9999FF
-			PRINTFORM [2] 主人公以外はすでに寄生されています
+			PRINTFORML [2] 主人公以外はすでに寄生されています
 			RESETCOLOR
 			SIF GETBIT(CONF_BIT, 3)
 				SETCOLOR 0x9999FF
-			PRINTFORM [3] ここに迷いこむ前から主人公以外の全員に生えていました
+			PRINTFORML [3] ここに迷いこむ前から主人公以外の全員に生えていました
 			RESETCOLOR
 		ENDIF
 		SIF GETBIT(CONF_BIT, 4)
 			SETCOLOR 0x9999FF
-		PRINTFORM [4] 生えていたり生えていなかったりします
+		PRINTFORML [4] 生えていたり生えていなかったりします
 		RESETCOLOR
+		PRINTFORML
 	ENDIF
 	PRINTFORML ■ 全キャラの体質を変化させることができます (複数選択可)
 	SIF GETBIT(CONF_BIT, 5)
@@ -118,11 +119,7 @@ CONF_BIT = 0
 		CLEARLINE 1
 		GOTO INPUT_LOOP
 	ENDIF
-	IF RESULT != 101
-		CLEARLINE LINECOUNT - DEL_LINE
-		GOTO START
-	ENDIF
-
+	
 	SIF GETBIT(CONF_BIT, 0)
 		FLAG:545 = 1
 	SIF GETBIT(CONF_BIT, 1)
@@ -137,6 +134,11 @@ CONF_BIT = 0
 		FLAG:547 = 1
 	SIF GETBIT(CONF_BIT, 6)
 		FLAG:548 = 1
+	IF RESULT != 101
+		CLEARLINE LINECOUNT - DEL_LINE
+		GOTO START
+	ENDIF
+
 
 
 ;メッセージ表示など操作性の変更

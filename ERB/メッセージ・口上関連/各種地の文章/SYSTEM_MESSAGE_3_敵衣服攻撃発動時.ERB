@@ -402,6 +402,10 @@ SELECTCASE ARG:1
 		ELSE
 			PRINTFORML %ARGS:1%は口を開け、%ARGS:0%に吸いつこうとしてきた！
 		ENDIF
+	CASE 2206
+		PRINTFORML %ARGS:1%から水しぶきが上がり、周囲に雨を降らせ始めた！
+	CASE 2207
+		PRINTFORML %ARGS:1%は手にした針で、%ARGS:0%に狙いをつけている！
 
 	CASE 2211
 			PRINTFORML 不思議な鬼火が%ARGS:1%の周囲に揺らめきだす！
@@ -425,6 +429,37 @@ SELECTCASE ARG:1
 		PRINTFORML %ARGS:1%の操る糸が、%ARGS:0%の胸を狙って放たれた！
 	CASE 2217
 		PRINTFORML %ARGS:1%の多脚が動きを速め、%ARGS:0%との距離を詰める！
+	CASE 2218
+		IF BASE:3 > 0
+			PRINTFORML %ARGS:1%は、%ARGS:0%の衣服を狙って襲い掛かってきた！
+		ELSE
+			PRINTFORML %ARGS:1%は、%ARGS:0%に襲い掛かってきた！
+		ENDIF
+
+	CASE 2219
+		PRINTFORML 数匹の%ARGS:1%が%ARGS:0%に纏わりついていく……
+
+	CASE 2220
+
+		PRINTFORML %ARGS:1%は指先をゆっくりと%ARGS:0%に向けた。
+		PRINTFORML 次の瞬間、%ARGS:1%の爪が瞬時に伸び%ARGS:0%に襲い掛かった！
+
+
+	CASE 2221
+		IF BASE:(ARG:2):3 <= 0
+
+			PRINTFORML %ARGS:1%は不規則な動きで%ARGS:0%に近づくと、素早く飛びかかってきた！
+
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML %ARGS:1%は不規則な動きで%ARGS:0%に接近した！
+				CASE 1
+					PRINTFORML %ARGS:1%は長い体を活かして%ARGS:0%に襲いかかった！
+				CASEELSE
+
+			ENDSELECT
+		ENDIF
 
 	CASEELSE
 		IF BASE:(ARG:2):3 <= 0

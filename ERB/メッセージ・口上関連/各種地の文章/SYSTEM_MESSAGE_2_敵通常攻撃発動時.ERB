@@ -362,6 +362,14 @@ SELECTCASE ARG:1
 		ENDIF
 	CASE 2103
 		PRINTFORML %ARGS:1%から一本の触手が素早く伸びる！
+	CASE 2104
+		PRINTFORML %ARGS:1%は%ARGS:0%に跳びかかった！
+	CASE 2105
+		IF BASE:(ARG:2):0 <= 0
+			PRINTFORML %ARGS:1%の触手が%ARGS:0%の身体を打ちのめそうと迫る！
+		ELSE
+			PRINTFORML %ARGS:1%の触手が%ARGS:0%を引きずり倒そうとしてきた！
+		ENDIF
 
 	CASE 2113
 		PRINTFORML %ARGS:1%は%ARGS:0%の背後に回り込もうとした！
@@ -377,6 +385,20 @@ SELECTCASE ARG:1
 
 	CASE 2117
 		PRINTFORML %ARGS:1%の長い髪の毛がざわめきだすと、%ARGS:0%に向かってさらに伸びていく！
+	CASE 2120
+		PRINTFORML 数匹の%ARGS:1%が%ARGS:0%に纏わりついていく……
+
+	CASE 2121
+
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML %ARGS:1%は不規則な動きで%ARGS:0%に接近した！
+			CASE 1
+				PRINTFORML %ARGS:1%は長い体を活かして%ARGS:0%に襲いかかった！
+			CASEELSE
+
+		ENDSELECT
+
 	CASEELSE
 		PRINTFORML %ARGS:1%の攻撃！
 ENDSELECT
