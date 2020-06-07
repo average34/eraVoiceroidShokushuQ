@@ -1,0 +1,1274 @@
+﻿;茜のイベント用口上（外付け）です。
+;この口上は美鈴口上を抜粋、改変して製作させていただきました。
+;
+;【この口上限定のFLAG】
+;CFLAG:951⇒自販機遭遇済みフラグ
+;CFLAG:952⇒祭壇お風呂の発情済みフラグ
+;CFLAG:953⇒ケモミミの実（動物耳）体験済みフラグ
+;CFLAG:954⇒動物耳の除去経験フラグ
+;CFLAG:955⇒石碑の既読フラグ
+;CFLAG:956⇒薬草入手フラグ
+;（新設順のためCASEの順番通りの番号振りではありません。ややこしいですがご了承ください）
+
+@EVENT_AKANE_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+	SELECTCASE ARG:0
+	;通常の固定イベント
+	CASE 200
+	;ARG:1にイベントID　ARG:2で同じイベントの詳細分岐
+	;※イベントIDは固定イベント.ERDのIDと同一
+
+		SELECTCASE ARG:1
+			;美味しい湧き水（飲むとHP・MP・EP全快、飲まなかった場合は残る）
+			CASE 130
+				SELECTCASE ARG:2
+					CASE 0
+					PRINTFORMW 「ごくっ…これは…！」
+					PRINTFORMW 「美味すぎるっ！この迷宮にこんなおいしい水があるなんて…！」
+					CASE 1
+					PRINTFORMW （いやいやこんなんどう見たって罠やろ…）
+				ENDSELECT
+			;Hな湧き水（飲むとEPが1になる、飲まなかった場合は残る）
+			CASE 131
+				SELECTCASE ARG:2
+					CASE 0
+					PRINTFORMW 「ごくっ…これは…！」
+					PRINTFORMW 「…ぺっ、ぺっ！…変な味や～…」
+					PRINTFORMW 「うっ、なんやコレっ！？…身体が…熱いぃ…っ❤」
+					CASE 1
+					PRINTFORMW （いやいやこんなのどう見たって罠やろ…）
+				ENDSELECT
+			;活力の湧き水（飲むと最大HPが上昇）
+			CASE 132
+				SELECTCASE ARG:2
+					CASE 0
+					PRINTFORMW 「ごくっ…これは…！」
+					PRINTFORMW 「うーん、あんまり美味しくあらへんなぁ…」
+					PRINTFORMW 「…おぉ？！　なんか元気が湧いてきたで！」
+					CASE 1
+					PRINTFORMW （いやいやこんなのどう見たって罠やろ…）
+				ENDSELECT
+			;澄んだ泉（飲むとMP25％回復、入るとEP50％回復　無制限に使えるため拠点用）
+			CASE 133
+				SELECTCASE ARG:2
+					;飲んでMP回復
+					CASE 0
+						PRINTFORMW 「ごくっ…これは…！」
+						PRINTFORMW 「なかなか美味しい水やな」
+					;入ってEP回復
+					CASE 1
+						PRINTFORML 「水や、水や！」（ｻﾞｯﾊﾟｧﾝ!）
+						PRINTFORMW 「ふぃ～全身に染み渡るわぁ…」
+					;無視
+					CASE 2
+						PRINTFORMW （いやいやこんなのどう見たって罠やろ…）
+					;喪失から回復（させる側）
+					CASE 3
+						PRINTFORMW 「今水を飲ませたるからな！」
+					;喪失から回復（する側）
+					CASE 4
+						PRINTFORMDL %CALLNAME:TARGET%は顔から全身に水を浴びせられた！
+						PRINTFORMW （ｼﾞｬﾊﾞﾊﾞﾊﾞ…）「うぷっ！…ウエッホ、ゲホッ…」
+						PRINTFORML 「っはぁ！…助かったわ…ありがとうな…」
+						PRINTFORMDW どうやら正気を取り戻したようだ
+					;薬草を入手
+					CASE 5
+						;前にゲットした
+						IF CFLAG:956
+							PRINTFORMW 「お、生えとる生えとる。時間が経てばまた採れるのは便利やな」
+						;初ゲット
+						ELSE
+							PRINTFORMW 「ん、これは…薬になりそうな野草やな」
+							PRINTFORMW 「綺麗な水場の側やし、摘んだ後からも結構生えとるな」
+							CFLAG:956 = 1
+						ENDIF
+				ENDSELECT
+			;白濁した泉（飲むとMP全快or発情、入ると速度+5or寄生（種類はランダム））
+			CASE 134 
+				SELECTCASE ARG:2
+					;飲んでMP全回復
+					CASE 0
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「いただきます❤」
+							PRINTFORMW （ｽﾞｽﾞｽﾞｯ）「…なんや、元気になるだけか～…」
+						;それ以外
+						ELSE
+							PRINTFORMW 「あんまり飲みたくあらへんけどなぁ…」
+							PRINTFORMW （ｺﾞｸｯ）「…甘い…この水、滋養強壮効果があるみたいやな」
+						ENDIF
+					;飲んで眠気
+					CASE 1
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「いただきます❤」
+							PRINTFORMW （ｽﾞｽﾞｽﾞｯ）「…ん、あれ…なんか…眠いな…」
+						;それ以外
+						ELSE
+							PRINTFORMW 「あんまり飲みたくあらへんけどなぁ…」
+							PRINTFORMW （ｺﾞｸｯ）「…うっ！これ…睡眠…薬の…やった…か…」
+						ENDIF
+					;飲んで発情
+					CASE 2
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「いただきます❤」
+							PRINTFORMW （ｽﾞｽﾞｽﾞｯ）「…っ！ふあっ❤身体が、火照ってっ❤気持ちいひぃ❤❤」
+						;それ以外
+						ELSE
+							PRINTFORMW 「あんまり飲みたくあらへんけどなぁ…」
+							PRINTFORMW （ｺﾞｸｯ）「……っ？！ひゃうっ❤身体っ❤熱ちゅいっ❤❤」
+						ENDIF
+					;入って基礎速度UP
+					CASE 3
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「あは♪どうなるか楽しみやな❤」（ｻﾞﾊﾟﾝ!）
+							PRINTFORMW 「………なんや、つまらんな～」
+						;それ以外
+						ELSE
+							PRINTFORMW 「何か危なそうやけど…」（ｻﾞﾌﾟﾝ…）
+							PRINTFORMW 「…！！身体がちょいとだけ軽くなったで！見かけによらず秘湯やね」
+						ENDIF
+					;入って寄生
+					CASE 4
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「あは♪どうなるか楽しみやな～❤」（ｻﾞﾊﾟﾝ!）
+							PRINTFORMW 「ひんっ❤何か❤入って来るぅ❤❤」
+						;それ以外
+						ELSE
+							PRINTFORMW 「何か危なそうなんやけど…」（ｻﾞﾌﾟﾝ…）
+							PRINTFORMW 「…ひっ！なんかいる！？入ってこんといてぇっ…！」
+						ENDIF
+					;何もせず無視
+					CASE 5
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「ちょっと残念やけど…また今度やな❤」
+						;それ以外
+						ELSE
+							PRINTFORMW （いやいやこんなのどう見たって罠やろ…）
+						ENDIF
+					;入ってふたなる
+					CASE 6
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「あは♪どうなるか楽しみやな❤」（ｻﾞﾊﾟﾝ!）
+							;既にふたなりだった
+							IF CFLAG:42
+								PRINTFORML 「…んっ❤ひやっ❤おちんぽに刺激がっ❤❤」
+								PRINTFORMDW %CALLNAME:TARGET%は既にふたなりだったため、あまり効果が無かったようだ
+							ELSE
+								PRINTFORML 「んっ❤…クリがっ❤なんか変やっ❤…ひああっっ❤」
+								PRINTFORMDW なんと%CALLNAME:TARGET%の股間に陰茎が生えた！
+							ENDIF
+						;それ以外
+						ELSE
+							PRINTFORMW 「何か危なそうなんやけど…」（ｻﾞﾌﾟﾝ…）
+							IF CFLAG:42
+								PRINTFORML 「…ひっ❤股間にっ❤刺激がっ❤❤」
+								PRINTFORMDW %CALLNAME:TARGET%は既にふたなりだったため、あまり効果が無かったようだ
+							ELSE
+								PRINTFORMW 「…ひあっ、なんか股間が変にっ！…んひあっ❤！！」
+								PRINTFORML 「…ひぃ…ひぃ…！？　な、なんやコレぇ？！」
+								PRINTFORMDW なんと%CALLNAME:TARGET%の股間に陰茎が生えた！
+							ENDIF
+						ENDIF
+				ENDSELECT
+			;不思議な泉（飲むとHP・MP・EP全快、入ると寄生を含む全状態異常治療＆処女ありモードの場合処女も回復）
+			CASE 135
+				SELECTCASE ARG:2
+					;飲んでHP・MP・EP全快
+					CASE 0
+						PRINTFORMW 「ごくっ…これは…！」
+						PRINTFORMW 「おおっ、凄い！体に力が漲ってくるんがわかるで…！」
+					;入って全状態異常治療
+					CASE 1
+						PRINTFORMW 「ちょいと失礼して…」（ｻﾞﾌﾟﾝ…）
+						PRINTFORMW 「ん～♪体の不調が流れ出てく気がするわ…」
+					;無視
+					CASE 2
+						PRINTFORMW 「今は遠慮しとくかな…」
+				ENDSELECT
+			;天井からスライム（危機回避判定失敗でCPが0＝丸裸に）
+			CASE 136
+				SELECTCASE ARG:2
+					;回避失敗
+					CASE 1
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「あっ❤これ、プルプルしてて好きかもしれん❤」
+						;全裸
+						ELSEIF BASE:CP == 0
+							PRINTFORMW 「ひえっ…ヌメヌメが直に伝わって気持ち悪っ！！」
+						;その他
+						ELSE
+							PRINTFORML 「んぶえっ！？　急に何や！？」
+							PRINTFORMW 「あ～！　服がぜーんぶ溶かされてもうた！」
+						ENDIF
+					;回避成功
+					CASE 2
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW （…ちょっと惜しかったかもしれんなぁ…）
+						ELSE
+							PRINTFORMW 「ひゃあ！…あんなんに圧し掛かられるとかゾッとするわ…」
+						ENDIF
+				ENDSELECT
+			;壁から触手　危機回避判定失敗で数回ランダム箇所絶頂
+			CASE 137
+				SELECTCASE ARG:2
+					;回避失敗
+					CASE 1
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「そこ❤そこ好きや❤お願い❤もっとぉ❤」
+						ELSE
+							PRINTFORMW 「ちょっ！？壁がっ……んぐぅ～！」
+						ENDIF
+					;回避成功
+					CASE 2
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「もう…するならちゃんと当てーや…❤」
+						ELSE
+							PRINTFORMW 「壁が…っ！　危ない危ない…」
+						ENDIF
+				ENDSELECT
+			;落とし穴・触手（危機回避判定（易しめ）失敗で多数ランダム絶頂＋寄生攻撃）
+			CASE 138
+				SELECTCASE ARG:2
+					;回避失敗
+					CASE 1
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「へ？……ひあぁ～～！！」
+							PRINTFORMDL 真っ直ぐに落ちた茜は触手に絡みつかれた！
+							PRINTFORML 「やんっ❤そないにがっつかんといて❤…あひぃっ❤」
+							PRINTFORMW （ひぁっ♪いい❤ぜんぶきもちいぃ❤）
+						ELSE
+							PRINTFORMW 「へ？……ひあぁ～～！！」
+							PRINTFORMDL 真っ直ぐに落ちた茜は触手に絡みつかれた！
+							PRINTFORMW 「嫌～っ！触らんといて…はひゃぁんっ❤」
+						ENDIF
+					;回避成功
+					CASE 2
+						;発情中
+						IF CFLAG:28
+							PRINTFORMDL 幸か不幸か茜は落ちずに済んだようだ
+							PRINTFORMW 「逃げ場が無いのは流石にな❤」
+						ELSE
+							PRINTFORMDL 茜はすんでのところで避けた！
+							PRINTFORMW 「う～わ、グッチョグチョの触手まみれやん…気持ち悪っ…」
+						ENDIF
+					;寄生（CASE 1（回避失敗）から繋がる）
+					CASE 3
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「何か…んっ❤来とるっ❤あかんのにぃ❤」
+						ELSE
+							PRINTFORMW 「ひぃい！？…やめて、入ってこんといて…いやぁあっ！！」
+						ENDIF
+				ENDSELECT
+			;桃色催淫ガス（自慰中毒判定失敗で強制自慰）
+			CASE 139
+				SELECTCASE ARG:2
+					;回避失敗
+					CASE 1
+						;発情中
+						IF CFLAG:28
+							PRINTFORML 「うっ、この香りは…❤」
+							PRINTFORMW 「あっ❤おまんこっ、熱くなっとるぅ❤」
+						ELSE
+							PRINTFORML 「しまっ…、ゲッホ、ゴホ…！」
+							PRINTFORMW 「何や……っ！？あそこが、熱いぃ…❤」
+						ENDIF
+					;回避成功
+					CASE 2
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW （思わず息止めてもうたけど、ちょっと惜しかったかもしれんなぁ…）
+						ELSE
+							PRINTFORML 「…ぷはぁ、何とかなったみたいやな？」
+							PRINTFORMW （明らかにアレな色しとった…危ない危ない）
+						ENDIF
+				ENDSELECT
+			;誰かの落とし物（荷物袋が落ちている。開けると着替えセット（54）と日本酒（52）を入手。無視した場合は残る）
+			CASE 140
+				SELECTCASE ARG:2
+					;拾った
+					CASE 0
+						PRINTFORML 「慌てて落っことしたんか、あえて置いて行ったんか、それとも…」
+						PRINTFORMW 「まぁ、ありがたく頂いとくで」
+					;放置した
+					CASE 1
+						PRINTFORMW 「な～んか、怪しいなぁ…一旦置いとこ」
+				ENDSELECT
+			;罠の落とし物（荷物袋が落ちている。が、こちらは中から触手。雑魚一体orヒュプノ＋相手側先制で強制戦闘。無視した場合は残る）
+			CASE 141
+				SELECTCASE ARG:2
+					;拾った
+					CASE 0
+						;発情時
+						IF CFLAG:28
+							PRINTFORML 「さて、中身は…って敵や！？」
+							PRINTFORMW （でも、ある意味プレゼントかも…しれへん❤）
+						ELSE
+							PRINTFORMW 「さて、中身は…って敵！？騙されたぁ！！」
+						ENDIF
+					;放置した
+					CASE 1
+						PRINTFORMW 「な～んか、怪しいなぁ…一旦置いとこ」
+				ENDSELECT
+			;喋る触手（A・B・C・Vそれぞれ感覚Lv3を連れて行くとエロイベント後レアアイテムをくれる。コンプリートで全武器１つずつゲット＋喋る触手撤退）
+			CASE 142
+				SELECTCASE ARG:2
+					;開始
+					;ARG:3が0は尻、1は胸、2はC、3は膣
+					CASE 0
+
+					;終了
+					CASE 3
+						SELECTCASE ARG:3
+						;A
+						CASE 0
+							PRINTFORM 「あひぃぃいぎゅぅうぅ
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　あひゅっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　おひり…おひり熱ゅぃいぃ
+							CALL HEARTCB(0xD02830, 2)
+							PRINTFORMW 」
+						;B
+						CASE 1
+							PRINTFORM 「んひぃぃぃっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　うちのっおっぱぃいっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　もっひょ淫ッ乱っ！にぃぃぃっ
+							CALL HEARTCB(0xD02830, 2)
+							PRINTFORMW ！！」
+						;C
+						CASE 2
+							;ふたなり
+							IF CFLAG:42 || TALENT:121
+								PRINTFORM 「ほぎょぉぉぉっっ
+								CALL HEARTCB(0xD02830)
+								PRINTFORM 　おぉお、おちんっちん……こ…こわりぇちゃ……ッ
+								CALL HEARTCB(0xD02830)
+								PRINTFORMW ！！」
+								PRINTFORMDW 茜のペニスは、そよ風に撫でられただけで射精するほど敏感に開発されてしまった。
+								
+							ELSE
+								PRINTFORM 「ぅぅああぁ……あんっ
+								CALL HEARTCB(0xD02830)
+								PRINTFORM 　おお、お豆ぇ……痺れが…取れへんよぉっ
+								CALL HEARTCB(0xD02830)
+								PRINTFORMW 」
+							ENDIF
+						;V
+						CASE 3
+							PRINTFORM 「へえあぁ……
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　うちの、お、おまんこぉ…
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　こわされて…もうたぁ……
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						ENDSELECT
+					;だが断る
+					CASE 4
+						PRINTFORMW 「絶対にお断りや!!」
+						
+					;コンプ
+					CASE 5
+						PRINTFORMW 「待て…待って…やぁ……♥　こないな身体にした…責任っ……♥♥」
+						PRINTFORML 淫らに疼きながら雄を誘うフェロモンをまき散らす雌穴
+						PRINTFORML 第二の雌穴として完全に開発され蕩けきったアナル
+						PRINTFORML 獣欲を貪る為だけの器官として作り替えられた醜く肥大した乳首
+						PRINTFORML 感度のリミッターを破壊され無様に勃起する\@GET_PENIS(TARGET) ? ふたなりペニス # 巨大クリトリス\@
+						PRINTFORMW その全てが、%CALLNAME:TARGET%の思考を淫らに支配していく
+						PRINTFORML 「やあぁ♥　ヘンっ♥　あたまヘンになるうぅっ♥♥　うああぁぁぁあぁ♥♥
+						PRINTFORMW 　たふけ…っ♥　たふけて……ぇぇぇ♥♥　うひいぃぃ……ぃぃっ♥♥♥」
+				ENDSELECT
+			;不思議なガス（危機回避判定失敗で「眠気+2」「全員発情」「全員強制自慰」「全員TP200（テンション↑）」「全員TP0（テンション↓）」がランダムで発生
+			CASE 143
+				SELECTCASE ARG:2
+					;眠気
+					CASE 1
+						PRINTFORMW 「うわっ、何やこのガス…！」
+						PRINTFORMW 「ゴホッ…うぐ、眠気が…」
+					;発情
+					CASE 2
+						PRINTFORMW 「うわっ、何やこのガス…！」
+						PRINTFORMW 「ハァ…ハァ…うぅっ❤体が、火照るぅ❤」
+					;自慰
+					CASE 3
+						PRINTFORMW 「うわっ、何やこのガス…！」
+						PRINTFORML 「ゲホッゲホ……ひうっ！？」
+						PRINTFORMW （お股がっ❤急に、疼いてぇっ❤我慢できひんっ❤❤）
+					;テンション上昇
+					CASE 4
+						PRINTFORMW 「うわっ、何やこのガス…！」
+						PRINTFORMW 「…なんか無性にやる気が湧いて来たわ！」
+					;テンション下降
+					CASE 5
+						PRINTFORMW 「うわっ、何やこのガス…！」
+						PRINTFORMW 「…なんか、すっごく、だるくなってきたな…」
+					;回避
+					CASE 6
+						PRINTFORMW 「危うく変なん吸い込むとこやった…」
+				ENDSELECT
+			;柔らかい壁（高難易度のみ壁のある部屋で発生、体当たり成功で通路追加・失敗でエロイベント　失敗か放置の場合は残る）
+			CASE 144
+				SELECTCASE ARG:2
+					;あっさり崩れた
+					CASE 1
+						PRINTFORMW 「ふぅ～…結構あっさり崩れたなぁ」
+					;ヤられた
+					CASE 2
+						PRINTFORML 「…嘘っ？！…いやぁあぁあぁああっ！！」
+						PRINTFORMDW 壁に絡めとられた茜は情けない声を上げている…
+				ENDSELECT
+			;スッキリ草（使うと眠気を０にしてくれる薬草（効果はあらかじめ分かる）使わなかった場合は残る）
+			CASE 145
+				SELECTCASE ARG:2
+					;使った
+					CASE 1
+						PRINTFORMW 「この草、香りも味も超スッキリや…！凄い爽快感！」
+						PRINTFORMW 「…でも疲れはそのままか～、残念や」
+					;放置
+					CASE 2
+						PRINTFORMW 「まだとっとこ…」
+				ENDSELECT
+			;淫蟲の大群・尻責め（EPにA属性ダメージ　絶頂時MPに大ダメージ）
+			CASE 146
+				PRINTFORMW 「ひグウぅうッ！尻穴に潜り込んじゃらめやあああぁ❤！！」
+			;淫蟲の大群・乳責め（EPにB属性ダメージ　母乳体質持ちはEP・MPダメージ倍）
+			CASE 147
+				IF TALENT:130
+					PRINTFORML 「ひあっ…あひいいぃ～～❤！！」
+					PRINTFORMDW 茜は母乳を噴きながら悶えている！
+				ELSE
+					PRINTFORMW 「やめっ、やっ…ああぁあぁああぁ～～❤！！」
+				ENDIF
+			;淫蟲の大群・クリ責め（C属性EPダメージ　それなりの確率で発情）
+			CASE 148
+				SELECTCASE ARG:2
+					;受けた時
+					CASE 1
+						PRINTFORML 「そんなとこ、触らんといて…くぅっ❤」
+						PRINTFORMW 「あぁあ！剥いたらあかん！うひぅう～っ❤！！」
+					;発情（↑から連続で発生するので被りに注意）
+					CASE 2
+						PRINTFORML 「うっ…ヒィッ…❤」
+						PRINTFORMW （こないにされたのに…身体、熱いぃ…❤）
+					;ふたなりになった瞬間…のはず
+					CASE 3
+						PRINTFORMW 「その形、まさか…ひっ！嫌ぁ！引っ付かんといてぇ！」
+						PRINTFORML 
+						PRINTFORMW 「………うぅ…こんなん、どう見てもおちんちんやないか…！」
+						PRINTFORMDL 茜はどうにか剥がそうとした…
+						PRINTFORMW 「っくぅっ…❤　くっ付いてもうて、取れへん…」
+				ENDSELECT
+			;淫蟲の大群・膣責め（V属性EPダメージ　稀に寄生）
+			CASE 149
+				SELECTCASE ARG:2
+					;受けた時
+					CASE 1
+						PRINTFORML 「おごっ！ひぐううぅうぅう～！！」
+						PRINTFORMDW 茜は淫蟲に群がられ悲鳴を上げている
+					;寄生（↑から連続で発生するので被りに注意）
+					CASE 2
+						PRINTFORMDL 茜の膣口に蟲が潜り込んでいく…！
+						PRINTFORMW 「んぎぃっ…嫌ぁ～！」
+				ENDSELECT
+			;落石（危機回避判定、失敗でHPダメージ）
+			CASE 150
+				SELECTCASE ARG:2
+					;回避失敗
+					CASE 1
+						PRINTFORMW （ｺﾞｽﾝ！）「いだぁっ！　…痛ぅ～、星が見えたわ…」
+					;回避成功
+					CASE 2
+						PRINTFORMW （ｶﾞﾗｶﾞﾗｯ…）「…ひぇ～、危ないとこやったわ…」
+				ENDSELECT
+			;ふたなり淫蟲
+			CASE 152
+				;ふたなり化（非ふたなり状態のとき発生）
+				IF ARG:2 == 1
+					PRINTFORML 「あ、あぁ……やぁ……」
+					PRINTFORMDW 茜は様変わりした自分の股間を呆然と見ている…
+				;ふたなり攻め（既にふたなり状態のとき発生）
+				ELSEIF ARG:2 == 2
+					PRINTFORMW 「あひぃ！ひううぅう～～❤！！」
+				;回避
+				ELSEIF ARG:2 == 3
+					PRINTFORMW 「…見るからに怪しい蟲…危ないとこやったわ」
+				ENDIF
+			;祭壇、という名の自販機（MATCH飲みたい）
+				CASE 160
+				SELECTCASE ARG:2
+					;遭遇（さいだんがあらわれた！▼）
+					CASE 0
+						;二度目以降
+						IF CFLAG:951
+							PRINTFORMW 「相変わらず周りとの違和感が激しい代物やな…」
+						ELSE
+						;初遭遇
+							PRINTFORMW 「自販機？……こんな所に？　電源どうなっとるんや」
+							CFLAG:951 = 1
+						ENDIF
+					;服を着る（着せられるのは触手服だがな！）
+					CASE 1
+					;装着中
+					IF ARG:3 == 0
+						;触手中毒LV3
+						IF ABL:11 >= 3
+							PRINTFORM 「はぁ～…はぁ～～～ッッ
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　はやくっ、触手服ちょうらいぃっ、もう我慢できひんよぉぉ
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						;触手中毒LV2
+						ELSEIF ABL:11 >= 2
+							PRINTFORMW 「ううっ、あぁっくそ！……他に着るものはないんかっ」
+							PRINTFORM （……なんでうちは、これを着せられる事を期待しとるんや
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW )」
+						ELSEIF ABL:11 >= 1
+							PRINTFORMW 「……うぅーん、他に着るものもないし……」
+							PRINTFORMW 「そ、そうやな…何も着ないよりはええんや」
+						ELSE
+							PRINTFORML 「え、っちょ！それは服なんかじゃ…」
+							PRINTFORMW 「……や、やめ……やめてぇっ！！」
+							PRINTFORM 「ひいぃぃやあぁぁああんんっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						ENDIF
+					;装着完了
+					ELSE
+						;触手中毒LV3
+						IF ABL:11 >= 3
+							PRINTFORM 「へえあぁ…
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　あひぃっ…
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　これ…これやあぁぁっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						;触手中毒LV2
+							ELSEIF ABL:11 >= 2
+							PRINTFORM 「はぁ～
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　あは、だめ…なのにぃい
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　気持ちよすぎて……立ってられへんよぉ
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 」
+						ELSE
+							PRINTFORM 「ひんっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORML 　あぁ…あぁああ……これ、内側が…」
+							PRINTFORM 「！！――ひいんぅっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 　ううっっ…動、くなあぁ……」
+						ENDIF
+					ENDIF
+					;お腹を満たす（だが満たされるのは子宮だ）
+					CASE 2
+					;挿入中
+					IF ARG:3 == 0
+						;触手中毒LV2以上
+						IF ABL:11 >= 2
+							PRINTFORM 「ふうぐぉぉおぉが
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　う、うちの子宮こじあけて…
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　奥にぃっ！せいえき注がれとるうぅぅ
+							CALL HEARTCB(0xD02830, 2)
+							PRINTFORMW ！！」
+						ELSE
+							PRINTFORMW 「ふぐぅああぁあ？！やめ、やめてええぇえ！」
+							PRINTFORML 「なかは…中はあか……
+							PRINTFORMDW 　―――――――　ドッビュっ！　――――――
+							PRINTFORMW 「―――っうわア゛ァ゛ア゛ぁあああああっっ！！」
+
+						ENDIF
+					;たぽたぽ
+					ELSE
+						;触手中毒LV2以上
+						IF ABL:11 >= 2
+							PRINTFORM 「はひっ
+							CALL HEARTCB(0xD02830)
+							PRINTFORM 　はひぃぃっ
+							CALL HEARTCB(0xD02830, 2)
+							PRINTFORMW 」
+							PRINTFORM 「うちのお腹あぁ…せいえきに征服されひゃいまひたぁ
+							CALL HEARTCB(0xD02830, 3)
+							PRINTFORMW 」
+						ELSE
+							PRINTFORMW 「おおぉ…おふぁぁあがッ」
+							PRINTFORMW 「も…やめ……もう中に……出さんといて……」
+						ENDIF
+					ENDIF
+					;飲み物（×温かい飲み物　○体が火照る飲み物）
+					CASE 3
+						;注ぎ込み中
+						IF ARG:3 == 0
+							PRINTFORMW 「え、何…んぉごっ？！うぐうぅんぅ！！」
+						;注入終了
+						ELSE
+							PRINTFORML 「ごほっ…げぅ…う、ぐぇえ…」
+							PRINTFORMDW 咳き込む茜だが、その体は熱を帯び始めている…
+						ENDIF
+					;能力強化（player select）
+					CASE 4
+						;茜がプレイヤーで他の人を選ぶ（人任せ）
+						IF ARG:3 == 0
+							PRINTFORMW 「…じゃあ、あとは頼むわ～」
+						;他の人がプレイヤーで茜を選ぶ（ｼﾞｬｱﾜﾀｼｶﾞ⇒ﾄﾞｳｿﾞﾄﾞｳｿﾞ）
+						ELSEIF ARG:3 == 1
+							PRINTFORMW 「……えっ！？うち！？」
+						;茜がプレイヤーで自分を選ぶ（代打、俺）
+						ELSE
+							PRINTFORMW 「強くなれるんなら、手段は選べへんよな…」
+						ENDIF
+					;能力強化（どこを強化するか選ぶドン！）
+					CASE 5
+						;Ａぱわーあっぷ
+						IF ARG:3 == 0
+							PRINTFORML 「は、入ってくるぅっ！…ふぎぃいぃっ！？」
+							PRINTFORMW 「おほぉっ、んほおぉおお！　そないにっ激しくせんといてへええぇえ❤」
+						;Ｂぱわーあっぷ
+						ELSEIF ARG:3 == 1
+						PRINTFORM 「ひいぃあぁあっっ
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　おっぱいっっ
+						CALL HEARTCB(0xD02830, 3)
+						PRINTFORM 　おっぱいらめえぇえぇっ
+						CALL HEARTCB(0xD02830, 3)
+						PRINTFORMW 」
+						PRINTFORM 「うちのおっぱいっっ
+						CALL HEARTCB(0xD02830, 2)
+						PRINTFORM 　弱いのにぃぃ
+						CALL HEARTCB(0xD02830, 3)
+						PRINTFORM 　もっと、敏っ感にぃぃ
+						CALL HEARTCB(0xD02830, 4)
+						PRINTFORMW 」
+						;Ｃぱわーあっぷ
+						ELSEIF ARG:3 == 2
+							;ふたなり状態
+							IF CFLAG:42
+								PRINTFORMW 「あひぃい～！せーえき全部絞られてまうぅ～！❤」
+							ELSE
+								PRINTFORMW 「ひきゅうぅううぅ～～！クリ凄ひぃっ❤」
+							ENDIF
+						;Ｖぱわーあっぷ
+						ELSEIF ARG:3 == 3
+							PRINTFORML 「ふぎゅうぅ…ぐひぃいぃいいぃ～～！」
+							PRINTFORMW 「ごわされるぅ❤おまんこ壊れてまうよぉ˝！！❤」
+						;Ｂさいずだうん（縮乳）
+						ELSE
+							PRINTFORML 「んぎゅうっ、ふぎゅううぅう～～❤！」
+							PRINTFORMW （ふわあぁあ…！おっぱい揉み揉み気持ちえぇ❤）
+						ENDIF
+					;能力強化（回避率up選択時のみココ）
+					CASE 6
+						;APTX4869投与中
+						IF ARG:3 == 0
+							PRINTFORM 「ンンンーーっっ！！！
+							CALL HEARTCB(0xD02830)
+							PRINTFORMW 　んぎぃぃぃ―――――！！！！」
+						;体が子供に
+						ELSE
+							PRINTFORMW 「ゲホォ…うぅ…苦しいし、くたびれるし、酷い目にあったで…」
+								;（仲間存在で分岐）
+								IF FLAG:10
+									PRINTFORMW 「ありゃ？なんかみんな大きくなってへん？」
+								ELSE
+									PRINTFORMW 「ありゃ？なんか周りが大きく見えるで…？」
+								ENDIF
+							PRINTFORMW 「…って、何やこれ！　うち、縮んでもうたんか？！」
+						ENDIF
+					;武器追加（ご立派な武器♂ですね）
+					CASE 7
+					PRINTFORM 「んほぉぉおぉぉっ
+					CALL HEARTCB(0xD02830)
+					PRINTFORM 　く、クリ…気持ちよすぎてぇ
+					CALL HEARTCB(0xD02830)
+					PRINTFORM 　爆発しちゃぅぅっ
+					CALL HEARTCB(0xD02830)
+					PRINTFORMW 」
+					PRINTFORM 「あぁあっらめ
+					CALL HEARTCB(0xD02830)
+					PRINTFORM 　おちんちんは…武器ちゃうよおおぉぉ
+					CALL HEARTCB(0xD02830)
+					PRINTFORM 　ふぎぃぃぃぃいいっ
+					CALL HEARTCB(0xD02830, 2)
+					PRINTFORMW ！」
+					;帰れ（・∀・）ｶｴﾚ！
+					CASE 8
+						PRINTFORMW 「気にはなるけど…こないな場所にある物、絶対ロクなもんやないやろ…」
+					;残弾補充（アパム！アパム！弾！弾持ってこい！アパーーーム！）
+					CASE 9
+						;がんばれ❤がんばれ❤（物理）
+					SELECTCASE ARG:3
+					;開始
+					CASE 0
+						PRINTFORM 「へあぁあがががぁが
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　おおぉぉっおちんぽ穴ぁあ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+						PRINTFORM 「逆っっ流してぇえ
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　おちんぽにぃぃ
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　どっくどくはいってくりゅうぅ
+						CALL HEARTCB(0xD02830, 2)
+						PRINTFORMW 」
+					;終了
+					CASE 1
+						PRINTFORM 「あぁ、あひぃぃ
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　うちのおちんぽ……
+						CALL HEARTCB(0xD02830)
+						PRINTFORM 　ますます、ギンギンになってもうたよぉ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					ENDSELECT
+					;母乳止め（吸引力の変わらない、ただ一つの祭壇）
+					CASE 10
+						PRINTFORMW 「うあはぁっ❤凄い吸い付きぃ❤お乳絞り取られてイッてまうぅ！！❤」
+					;お風呂（乳白色の名湯）
+					CASE 11
+						;入る前
+						IF ARG:3 == 0
+							PRINTFORMW 「そうやね…お風呂なんかもええな」
+						;入浴中…
+						ELSEIF ARG:3 == 1
+							;（発情分岐セリフ）
+							IF CFLAG:28
+								PRINTFORML （ひやぁ♪こないに沢山…！！
+								PRINTFORMW 　ちょっと乱暴やけど…大盤振る舞いや❤）
+								CFLAG:952 = 1
+							ELSE
+								PRINTFORMW （ｼﾞｬﾌﾞｼﾞｬﾌﾞ）「おぶぅっ？！」
+								PRINTFORMW （ｶﾞﾎﾞﾎﾞｯ）「…ぶぐぶぅっ！！」
+								PRINTFORMW （ｺﾞﾎﾞｺﾞﾎﾞｺﾞﾎﾞﾎﾞﾎﾞ）「ぐぼっぶご～っ！？」
+								PRINTFORMW （ﾌﾞｸﾌﾞｸﾌﾞｸ…）「………………」
+							ENDIF
+						;風呂上り
+						ELSEIF ARG:3 == 2
+							;（発情分岐セリフ）
+							IF CFLAG:952
+								PRINTFORMW 「んっ…ふぅ…ええ『お湯』やった♪　身体の奥まで暖かぁい…❤」
+								CFLAG:952 = 0
+							ELSE
+								PRINTFORMW 「は…う……ひぃっ❤…身体…あちゅいぃ…❤」
+							ENDIF
+						ENDIF
+					;寄生除去（ドンドン吸い込むなう）
+					CASE 12
+						;おまんこバキューム中
+						IF ARG:3 == 0 || ARG:3 == 2
+							PRINTFORML 「ふんぐぃっ…おごごごぉ…！！」
+							PRINTFORMW （スゴイ…っ力で…おまんこっ…吸われ、てぇっ❤）
+						;アナルバキューム中
+						ELSEIF ARG:3 == 1 || ARG:3 == 3
+							PRINTFORML 「んっ、んぎぎっ！んひぅうぅいいぃ！！」
+							PRINTFORMW （お尻っ、めいっぱい吸い出されてめくれるぅ❤）
+						;お掃除完了
+						ELSEIF ARG:3 == 4
+							PRINTFORML 「はぁ…はっ…あ…」
+							PRINTFORMW （お…終わった…みたい、やな…）
+						ENDIF
+					;武器の改造（ジャンボきゅうり♂）
+					CASE 13
+						;お手入れ中
+						IF ARG:3 == 0
+							PRINTFORMW 「ふへぇえ！そこだめやぁ❤…んひゅいぃいいぃ！！」
+						;ご立派様になりました
+						ELSE
+							PRINTFORMW 「ハァ…ハァ…❤　おちんぽ、改造されてもうた…♪」
+						ENDIF
+				ENDSELECT
+			;親睦（という名の押し倒し）
+			CASE 161
+				;仲間（ケダモノ）に襲われる
+				IF ARG:2 == 0
+					SELECTCASE ARG:3
+						;されるがまま（2人と3人で若干変わる）
+						CASE 0
+							;発情時
+							IF CFLAG:28
+								;（3人で乱交）
+								IF FLAG:11 && !CFLAG:(FLAG:10):28 && !CFLAG:(FLAG:11):28
+									PRINTFORMW 「んっ❤…わかったから、二人ともちょっと待ってな❤」
+									PRINTFORMW 「折角だし、三人で仲よくイチャイチャしよや？…な♪」
+								;（2人でラヴ）
+								ELSE
+									PRINTFORMW 「そないにシたかったんか？　もう、しょうがあらへんな～❤」
+									PRINTFORMW 「ほら、許したるから…一緒に楽しもうや♪」
+								ENDIF
+							;それ以外
+							ELSE
+								;（3人で乱交）
+								IF FLAG:11 && !CFLAG:(FLAG:10):28 && !CFLAG:(FLAG:11):28
+									PRINTFORMW 「何や！？二人ともどうしたん？！…ムギュウッ！！」
+									PRINTFORMW 「誰か～！助け…ひゃあぁあぁ～～！！」
+								;（2人でラヴ）
+								ELSE
+									PRINTFORMW 「ちょっ、何や…きゅぅっ！？」
+									PRINTFORMW 「やあぁっ！仲間内でこんなことしとる場合や…ムグゥ～～！！」
+								ENDIF
+							ENDIF
+						;ナイスヘルプ（3人時に回避）
+						CASE 1
+							;発情時
+							IF CFLAG:28
+								PRINTFORMW 「幾らなんでもいきなり押し倒すのはひどいよなぁ？」
+								PRINTFORMW 「え？…あ・か・ん❤一人でしろって言われたやろ？ちゃんとするまで許さへんよ❤」
+							;それ以外
+							ELSE
+								PRINTFORML 「あ、ありがと…助かったわ」
+								PRINTFORMW （二人きりだったら危ないところやった…）
+							ENDIF
+						;オナニー観賞タイム（2人時に回避）
+						CASE 2
+							;発情時
+							IF CFLAG:28
+								PRINTFORML 「そんな急に押し倒したら危ないやろ！」
+								PRINTFORMW 「罰として…そこで一人エッチしてもらおうかな～❤」
+								PRINTFORMW 「大丈夫や、ちゃんと見とったる♪」
+							;それ以外
+							ELSE
+								PRINTFORML 「うわっ！ちょっと急に何や？！」
+								PRINTFORMW 「全くもう…そないにしたいなら一人でしぃよー…」
+								PRINTFORMW 「…………！……」（うわ、本当にしとる～…）
+								PRINTFORMDL 茜は仲間の自慰行為を横目で見ている
+								PRINTFORMDW 悪いと思いつつも目が離せないようだ…
+							ENDIF
+					ENDSELECT
+				;こっちがルパンダイブ
+				ELSEIF ARG:2 == 1
+					SELECTCASE ARG:3
+						;飛びかかり中
+						CASE 0
+							PRINTFORML 「…なぁ…%CALLNAME:1%の顔見てたら、その…我慢できなくなってもうた…」
+							PRINTFORMW 「やからさ…責任取って、セックスして❤」
+						;お預け＋罰ゲーム
+						CASE 1
+							PRINTFORMW 「ちょっとくらいええやん、ケチぃ～」
+							PRINTFORMW 「わかったわ、一人でするわ…」
+							PRINTFORML 「よいしょ……んっ❤…あっ、ふぁっ…❤」
+							PRINTFORMW （絶対見られとる…///　でも、止められへん♪）
+						;イタダキマス
+						CASE 2
+							;（もう一人の仲間と3人で乱交）
+							IF FLAG:11 && !CFLAG:(FLAG:10):28 && !CFLAG:(FLAG:11):28
+								PRINTFORML 「ほら、三人中二人もエッチしたいって言っとるんやからさ～…」
+								PRINTFORML 「な？遠慮せんと…%CALLNAME:1%も混ざりぃよ❤」
+								PRINTFORMW 「安心してや♪一人だけ仲間はずれなんかにせんから❤」
+							;（主人公と2人でラヴ）
+							ELSE
+								PRINTFORML （ハァ…ハァ…%CALLNAME:1%、カワイイ…犯したい…もう我慢できひん…❤）
+								PRINTFORMW 「ええよな！%CALLNAME:1%のことレイプしてまうけどええよな！？」
+								PRINTFORMW 「大丈夫！痛くしぃひんから！絶対気持ちよくしたるから！」
+							ENDIF
+					ENDSELECT
+				ENDIF
+			;きゅうり畑
+			CASE 170
+
+			;動物耳（ケモミミの実）
+			;「動物耳」は素質TALENT:124
+			;※本体側の文章が先に出る
+			;何の動物かはご想像にお任せします
+			CASE 173
+				SELECTCASE ARG:2
+					;食べて発情（耳付き状態でのみ発生）
+					CASE 1
+						;動物耳が消せるのを知っている
+						IF CFLAG:954
+							PRINTFORMW （ﾑｼｬﾑｼｬ）「ふにぃ？！❤…しまった…変なのにあたってもうた、みたいやな…❤」
+						;動物耳が消せるのを知らない
+						ELSE
+							PRINTFORMW （ﾑｼｬﾑｼｬ）「わひゃぁ？！❤　なんでっ…前と違うやないかっ…❤」
+							PRINTFORMW 「ダメ元で食べたんやけど…止めときゃよかった…うっ❤」
+						ENDIF
+					;動物耳が生える（動物耳状態でないときに100％発生）
+					CASE 2
+						;前に食べて生えた経験あり
+						IF CFLAG:953
+							PRINTFORMW （ﾆｭｯ）「おっ、また生えたな」
+							PRINTFORML 「動物耳か…このまま帰ったら大騒ぎやんな」
+							PRINTFORMW 「まあ、適当なタイミングで元に戻ればええよな♪」
+						;初めて生えた
+						ELSE
+							PRINTFORMW 「ん～食べたことあらへん味やけど、いけるいける♪」
+							;喪失状態でない仲間がいる
+							IF FLAG:10 && !CFLAG:(FLAG:10):29 || FLAG:11 && !CFLAG:(FLAG:11):29
+								PRINTFORMW 「へ、何？うちの頭？頭が何やー…」
+								PRINTFORMW （ﾅﾃﾞﾅﾃﾞ）「……ええぇ嘘やろぉ！耳ぃ！？」
+							;会話できる仲間がいない
+							ELSE
+								PRINTFORMW 「あれ…なんか頭が妙にムズムズし出したなぁ…」
+								PRINTFORMW （ﾜｼﾜｼ）「……んん？頭に何かくっついとる…？」
+								PRINTFORMW （ｸﾞｲｯ！）「痛っ！？…ってことはこれ、…うちの耳！？」
+							ENDIF
+							PRINTFORMW 「うぅ…こんなの生えたままじゃ帰れへんよぉ…」
+							CFLAG:953 = 1
+						ENDIF
+					;食べずに放置
+					CASE 3
+						;耳付き＋消せる知識有
+						IF TALENT:124 && CFLAG:954
+							PRINTFORMW 「まだ消さんでもええかな～、一応メリットもあるみたいやし」
+						;耳付きだけど消せるのを知らない
+						ELSEIF TALENT:124
+							PRINTFORMW 「もうこれ以上なんか起きたら嫌やし、触らんとこ…」
+						;前に食べたけど今は動物耳無し
+						ELSEIF CFLAG:953
+							PRINTFORML 「うーん、今は別にそんな気分やないな～」
+							PRINTFORMW 「いつでも生やせるみたいやし、また今度や」
+						;まだ食べたことが無い
+						ELSE
+							PRINTFORMW 「こんなところの果物なんて怪しいやろ、常識的に考えて…」
+						ENDIF
+					;動物耳消失
+					CASE 4
+						;一度消したことがある
+						IF CFLAG:954 
+							PRINTFORMW 「うん、消えたみたいやな。　自由に付け消しできるのは便利やな」
+						;消えるのを初めて知った
+						ELSE
+							PRINTFORMW 「こうなりゃ自棄や！耳なんか幾つでも生やしたるわ！」
+							PRINTFORMW 　～～～～～～数分後～～～～～～
+							PRINTFORMW （ﾅﾃﾞｸﾘ）「……ん？生えてへん…？　というか、前のも消えとる！？」
+							PRINTFORMW 「よかったぁ～！　ずっとあのままだったら帰るに帰れへんところやったで…」
+							CFLAG:954 = 1
+						ENDIF
+					;HP回復（耳付き状態でのみ発生）
+					CASE 5
+						;動物耳が消せるのを知っている
+						IF CFLAG:954
+							PRINTFORMW 「あれ、耳が消えへん？　ならこれ違う実ぃやったみたいやな」
+							PRINTFORMW 「見た目じゃどれが何の効果か分からへんわ…」
+						;動物耳が消せるのを知らない
+						ELSE
+							PRINTFORMW 「ううぅ、引っ込んでくれへんよ～…」
+							PRINTFORMW 「もう一回食べるんじゃあかんかなぁ…」
+						ENDIF
+				ENDSELECT
+			;落とし穴・媚薬風呂
+			;※回避時は「落とし穴・触手」（この口上のCASE 138）のが使われる。
+			CASE 174
+				PRINTFORMW 「え？……ひあぁ～～！！」
+				PRINTFORMW （ﾎﾞﾁｬﾝ）「…ぷふぅ！　はぁ、下が水で助かった…っ！？」
+				PRINTFORMW 「あひっ❤身体がっ❤…この水、なんか変や？！…うひぁ❤」
+			;落とし穴・白濁風呂
+			;※こちらも回避時は「落とし穴・触手」（この口上のCASE 138）のが使われる。
+			CASE 175
+				;発情中
+				IF CFLAG:28
+					PRINTFORMW 「え？……ひあぁ～～！！」
+					PRINTFORMW （ﾄﾞﾌﾟﾝ）「ぷぇ…んぶぅ…ドロドロでくっさいのが沢山…❤」
+					PRINTFORMW 「ふあぁ！？特濃ザーメンシャワー来たぁ❤❤」
+				ELSE
+					PRINTFORMW 「え？……ひあぁ～～！！」
+					PRINTFORMW （ﾄﾞﾌﾟﾝ）「ぷぇ…やぁっ！臭いぃ～！？」
+					PRINTFORMW 「嫌や～っ！早く出してぇ～～っ！？臭いが染みついてまう～っ！！」
+				ENDIF
+			;壁尻スライム
+			CASE 176
+				SELECTCASE ARG:2
+					;スライムに捕まった（搾乳）
+					CASE 0
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「くぅ…全然動けへん…スライムの癖にい～っ…」
+							PRINTFORMW  ─────…1分後…────
+							PRINTFORML 「ふああっ❤スライムしゃまの悪口言ってごめんなしゃい～っ❤」
+							PRINTFORMW 「茜はおバカで生意気でひたぁ❤おゆるしをぉ❤…ふぁ❤また乳イキすりゅう❤」
+							PRINTFORMDW 徹底的なお仕置き搾乳をされ息も絶え絶えなようだ…
+						ELSE
+							PRINTFORML 「ひっ…何やコレ！？放してぇ！」
+							PRINTFORMW 「ヤダぁ！こんな体勢恥ずかしい～～！！///」
+							PRINTFORML 「ぐうっ、胸に何か吸い付いて…ひぃいぃ！？」
+							PRINTFORMDW どうやら搾乳して無理やり黙らせる気のようだ
+						ENDIF
+					;壁尻利用（される側）
+					CASE 1
+						;発情中
+						IF CFLAG:28
+							PRINTFORML 「あぁっ❤仲間おちんぽ来たぁ♪」
+							PRINTFORMW （うちのおまんこ見てたら、我慢できなくなっちゃったみたいやな❤）
+							PRINTFORMW 「ええよぉ…無様まんこ、好きに使ってええから…気持ち良くしてなぁ…❤」
+						ELSE
+							PRINTFORMW 「嘘っ…何するんや…！ひきゅうぅ？！」
+							PRINTFORMW 「誰やぁ？！こんな時にっ、おっ❤おちんちん突っ込むなんてぇ…っはんっ❤」
+						ENDIF
+					;壁尻利用（積極的にする側・主人公）
+					;※利用はする側全員がふたなりじゃないと選択肢自体が出ない
+					CASE 2
+						;発情中
+						IF CFLAG:28
+							PRINTFORML 「あ～あ～、無様におまんこ晒してもうて…❤」
+							PRINTFORMW 「そんな無防備だとシたくなってまうなー……おりゃっ❤」（ｽﾞﾌﾟｳｯ❤）
+							PRINTFORMW （ﾊﾟﾝｯﾊﾟﾝｯ！）「あっ❤あっ❤凄いっ、吸い付き♪欲しがり屋さんやな❤」
+							PRINTFORML 「こんなかっこしてよくじょーする変態さんは…こうやっ❤」（ﾊﾟﾝ♪ﾊﾟﾝ♪ﾊﾟﾝ♪ﾊﾟﾝｯ❤）
+							PRINTFORMDW 相手が抵抗しないのをいいことにスピードを上げていく…！
+						ELSE
+							PRINTFORMW 「……………」（ｺﾞｸﾘ…）
+							PRINTFORMW 「えーっと、その～、うち今こんな状態やからさ、我慢できんくなって…」
+							PRINTFORML 「やから、ゴメン…悪いけど、使わせてもらうで…」（ﾂﾌﾟｩ❤）
+							PRINTFORMDW 目の前で揺れる尻を見て耐え切れなくなったようだ…
+						ENDIF
+					;壁尻利用（ついでにする側・パーティーメンバー）
+					CASE 3
+						;発情中
+						IF CFLAG:28
+							PRINTFORMW 「あっ、ずるいで！うちもシたいのに！」
+							PRINTFORMW 「え？ええの？やった♪…じゃ、いただきまーす❤」（ﾇﾌﾟﾝ❤）
+							PRINTFORML 「あはぁっ❤すっごい、絡みつくぅっ❤❤」
+							PRINTFORMW （さっき気持ち良さげだったから期待しとったけど…想像以上や❤）
+						ELSE
+							PRINTFORML 「い、いきなり何しとるん…」
+							PRINTFORMW （…でも…すっごく気持ちよさそうや…）
+							PRINTFORMW 「え、うちも？そりゃまぁ、こんな状態やけど…」
+							PRINTFORMW 「……そうやな。うちもちょっと、失礼させてもらうわ…んっ❤」（ｽﾞﾌﾟｯ❤）
+						ENDIF
+				ENDSELECT
+			;石碑（脱出方法諸々の説明が書かれてるヤツ）
+			CASE 201
+				;解読できる
+				IF ARG:2 == 1
+					;既に読んでた
+					IF CFLAG:955
+						PRINTFORMW 「読み損ないは…無さげやな。もう新情報は無いな」
+					;辞書で解読した（辞書イベント消化済み）
+					ELSEIF FLAG:207 == 0
+						PRINTFORML 「ん、これは…辞書の文字と一緒やな」
+						PRINTFORMW 「はは～ん、拾った辞書はこの為の物やったんか…」
+						CFLAG:955 = 1
+					;まさかの自力解読
+					ELSE
+						;茜主人公（読めるぞ！うちにも石碑が読める！）
+						IF NO == 5
+							PRINTFORMDW 茜は『未知の石碑の文字が読める筈は無い』と見る前から諦めかけた…
+							PRINTFORMDL ＿人人人人人人人人人人人人人人人人＿
+							PRINTFORMDL ＞　しかし　茜に電流走る…！　＜
+							PRINTFORMDW ￣Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y￣
+							;会話可能な仲間がいる
+							IF FLAG:10 && !CFLAG:(FLAG:10):29 || FLAG:11 && !CFLAG:(FLAG:11):29
+								PRINTFORML 「…これ…読める…かもしれへん…」
+								PRINTFORMDW 茜は容易く読み解いた！
+								PRINTFORML 「え？なんで読めたかって？……わからへん、どうして読めたんやろ…？」
+							;圧倒的独壇場ッ……！
+							ELSE
+								PRINTFORML 「…あれ…読める…なんで？知らへんはずなのに、どうして読めるんや…？？」
+							
+							ENDIF
+							PRINTFORMDW 茜は自らの未知の知識に戸惑いを隠せないようだ…
+						;茜パーティーメンバー（知っているのか雷電！）
+						;※主人公が読んだ扱い
+						ELSE
+							;知っているのかゆかり！
+							IF NO == 3
+								PRINTFORMW 「ゆかりってこんな知識もあったんやな…」
+								PRINTFORML 「え、違う？たまたま読めた？！」
+								PRINTFORMW （うむむ、どこかのゲームで出て来たんか？）
+							;知っているのかずん子！
+							ELSEIF NO == 4
+								PRINTFORMW 「ずんちゃん読めるんか！？　勉強家やな、ずんちゃんは」
+							;知っているのか葵
+							ELSEIF NO == 6
+								PRINTFORMW 「…葵、読めたんか？凄いやないか！」
+								PRINTFORMW 「うち？いや～こういうんは専門外やし…助かったわ」
+							;知っているのかきりたん！
+							ELSEIF NO == 8
+								PRINTFORML 「いや～、きりたんがここまで博識とは思わんかったわ！」
+								PRINTFORMW 「さすがやな！　ちょっ、ここぞとばかりに煽らんといて…」
+							;知っているのかあかり！
+							ELSEIF NO == 15
+								PRINTFORML （まさかあかりがこないに頭がえぇとは…）
+								PRINTFORMW （ここは知ってた振りせんと先輩の威厳が…！）
+							;知っているのかマキ！
+							ELSEIF NO == 2
+								PRINTFORMW （しめた、ここは褒めちぎりポイントや…！）
+								PRINTFORML 「さすがはマキマキやな！博学やな！！」
+								PRINTFORMDW 茜はマキをヨイショしている
+							ENDIF
+						ENDIF
+					CFLAG:955 = 1
+					ENDIF
+				;解読できない
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「なんかゴチャゴチャ書いてあるけど…まるで訳が分からへん…」
+							PRINTFORMW 「ウムムム…どうにも、古文は苦手や」
+						CASE 1
+							PRINTFORMW 「見たことあらへん言語だってのは分かるわ！…それ以外は何とも…」
+					ENDSELECT
+				ENDIF
+			;石版（赤・青・黄で纏める）
+			CASE 202 TO 204
+				SELECTCASE ARG:2
+					;一切のことはわかりません！
+					CASE 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「こういうのは専門外やからチンプンカンプンや…」
+							CASE 1
+								PRINTFORMW 「…少なくとも学校の授業では習ってないはずや！　…たぶん」
+						ENDSELECT
+					;呪文詠唱済み
+					CASE 1
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「え～と？…ここは既に見た後やな」
+								PRINTFORMW 「どうやら他にもあるようやし、そっちを回ろうかな」
+							CASE 1
+								PRINTFORMW 「ここのはもう読んでるから、別のところに行くべきやな」
+						ENDSELECT
+					;渦出てるけど放っとく
+					CASE 2
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「あら、消えてもうた…」
+								PRINTFORMW 「どうやら躊躇しとると消えてまうみたいやな…」
+							CASE 1
+								PRINTFORMW 「出現したら一気に行く必要がある、と…覚悟が必要やな」
+						ENDSELECT
+					;唱えられるけど止めとく
+					CASE 3
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「そうやなぁ…今はまだ止めとくで」
+								PRINTFORMW 「順番も大事みたいだし、慎重にいかへんとな」
+							CASE 1
+								PRINTFORML 「ここやないような気ぃする、と思う…ような…」
+								PRINTFORMW 「むぅ…自信あらへんし、今は置いとこ」
+						ENDSELECT
+				ENDSELECT
+			;石版（緑は別　いわゆるダミー）
+			CASE 205
+				SELECTCASE ARG:2
+					;一切のことはわかりません！（赤・青・黄と同じ）
+					CASE 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「こういうのは専門外やからチンプンカンプンや…」
+							CASE 1
+								PRINTFORMW 「…少なくとも学校の授業では習ってないはずや！　…たぶん」
+						ENDSELECT
+					;不用品だと判明
+					CASE 1
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「…緑？　緑色のことって書いてあったか？」
+								PRINTFORMW 「書いてある模様も違うっぽいし…これは放っとくか」
+							CASE 1
+								PRINTFORMW 「え～と？…って、これは関係ない石版やないか！」
+						ENDSELECT
+				ENDSELECT
+			;統一言語辞書（石碑が読めるようになるひみつ道具）
+			CASE 207
+					PRINTFORMW 「うへぇ、なんかよく分からへん字ばっかの本やなぁ…」
+					PRINTFORMW 「あ、本やないな。たぶん辞書みたいな物やコレ」
+		ENDSELECT
+	;テレポート魔法陣（仲間と分断される）
+	CASE 201
+		SELECTCASE ARG:2
+		;飛ぶ直前
+		CASE 0
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「ひ、光がっ…？！」
+				CASE 1
+					PRINTFORMW 「えっ、ちょ、体が浮いとる！？」
+			ENDSELECT
+		;着陸後
+		CASE 1
+			;仲間が二人いた
+			IF FLAG:10 && FLAG:11
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「うぅ、一体何が起きたんや…？」
+						PRINTFORMW 「えっ…皆は、どこや…？」
+					CASE 1
+						PRINTFORMW （ﾄﾞｼﾝ！）「イタタタ…どうやらさっきとは違うところに出たみたいやな…」
+						PRINTFORMW 「…って、嘘…二人とも消えてもうた…」
+						PRINTFORMW 「もしかして、一人きりの今ってピンチなんじゃ…」
+				ENDSELECT
+			;仲間が一人だけいた
+			ELSEIF FLAG:10
+				PRINTFORMW 「…えっ、ここは…？」
+				;ここから仲間によって分岐
+				;ゆかりとはぐれた
+				IF FLAG:10 == 3
+					PRINTFORMW （ｷｮﾛｷｮﾛ）「ゆかり？どこいったんや～？」
+					PRINTFORMW 「…しまった、ものすごい不安や…これからどうするべきやろ…」
+				;ずん子とはぐれた
+				ELSEIF FLAG:10 == 4
+					PRINTFORMW 「しまった、ずんちゃんも見当たらへんってことは…」
+					PRINTFORMW 「はぐれさせる為の罠やったんか…！」
+				;葵とはぐれた
+				ELSEIF FLAG:10 == 6
+					PRINTFORMW 「葵、大丈夫か？…葵？？」
+					PRINTFORMW 「嘘やろっ！…おらへん…！」
+				;茜の娘とはぐれた
+				ELSEIF FLAG:10 == 5 && CFLAG:(FLAG:10):104 == 1
+					PRINTFORMW 「えっ、あれ、あの子は？！」
+					;娘が喪失状態だった
+					IF CFLAG:(FLAG:10):29
+						PRINTFORMW 「こんな時に分断なんて、タイミングの悪い！」
+						PRINTFORMW 「とにかくさっさと探してあげないと不味いな…」
+					ELSE
+						PRINTFORMW 「ほっといたらまたなんか仕出かしてそうやし、早く見つけ出さな…！」
+					ENDIF
+				;きりたんとはぐれた
+				ELSEIF FLAG:10 == 8
+					PRINTFORMW 「…きりたん？返事せぇ？…おらんのか…？」
+					;きりたんが喪失状態だった
+					IF CFLAG:(FLAG:10):29
+						PRINTFORMW 「やばいで…あんな状態やと…！」
+					ELSE
+						PRINTFORMW 「う～ん、きりたんのことやから何とかするとは思うけど…心配や」
+					ENDIF
+				;あかりとはぐれた
+				ELSEIF FLAG:10 == 15
+					PRINTFORMW 「あれ、あかりが消えた…？」
+					PRINTFORMW （…大丈夫か？　変な場所に飛ばれてへんとええが…）
+				;マキとはぐれた
+				ELSEIF FLAG:10 == 2
+					PRINTFORMW 「…マキマキ？おらんのか～？」
+					PRINTFORMW 「…はぐれたかぁ…そないに軟やないから平気…だと思いたいわ」
+				;ほかの人とはぐれた
+				ELSE
+					PRINTFORMW 「あれ、仲間がおらん…うち一人…？」
+					PRINTFORMW 「う～ぬぬ、分断されたみたいや…」
+				ENDIF
+			;一人旅だった
+			ELSE
+				SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「…え？ここ、どこや…？」
+					PRINTFORMW 「どこか別のところにワープしたみたいやな…そのまま勢いで外に出れればええのに」
+				CASE 1
+					PRINTFORMW 「さっきと違う場所やな…うーん、あれは強制転移装置やったか…」
+					PRINTFORMW 「まぁ奴らの巣とか、変な場所に飛ぶよりはマシやな」
+				ENDSELECT
+			ENDIF
+		ENDSELECT
+		
+	ENDSELECT
+	
+RETURN
+
+

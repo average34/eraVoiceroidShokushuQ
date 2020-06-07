@@ -1,0 +1,4927 @@
+﻿;茜の口上です。改変可。
+;素人制作なのでなんか変だったらごめんなさい。
+;あと一部明らかにテンプレ・改変元そのままの部分がありますが仕様です。
+;技術力不足で迂闊に変更できないんです。
+;記述方式が色々安定しないのは仕様です。
+
+;◇一言メモ
+;『ELSE』は明記しているところ以外は全般的に「それ以外」「その他」を意味してますよ
+
+;【この口上限定のFLAG】
+;CFLAG:801～878⇒アイテム発見済みフラグ
+;CFLAG:891～899⇒探索者発見済みフラグ（喪失状態）（899から逆順に使用）
+;CFLAG:881～889⇒探索者発見済みフラグ（通常）（889から逆順に使用）
+;CFLAG:901⇒キュウリ賞味済みフラグ
+;CFLAG:902⇒出産回数フラグ
+;CFLAG:903⇒キュウリポイントフラグ
+
+;外付け口上にも950番以降の限定FLAGを使用しております。
+
+;口上選択時のタイトル
+@KOJO_TITLE_5_0
+RESULTS = 茜ちゃん口上【色々口上改変＋パッチワーク式加筆】
+
+
+;口上選択時の詳細説明
+@KOJO_DETAIL_5_0
+PRINTFORML 初心者が作った茜口上です（娘口上付き）。
+PRINTFORML 強気でスケベェな茜ちゃんです。
+PRINTFORML 詳しい性格付け・元にした口上など、詳しくはリードミーにて。
+PRINTFORML 注:この口上にはふたなり表現が含まれています。
+
+;デフォルトの文字色を返す関数
+;これが無い場合、デフォルトはシステムカラー（白文字）になります
+@KOJO_DEFAULT_COLOR_5_0
+
+;文字色設定
+	;娘以降（茜本人より青寄り）
+	IF CFLAG:104
+		RETURN RGBCOLOR(70, 220, 245)
+	;茜本人（なんか青緑っぽい。目に優しい）
+	ELSE
+		RETURN RGBCOLOR(235, 83, 120)
+	ENDIF
+
+;口上本体
+@KOJO_5_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;孫以降は汎用口上送り
+;（この部分はゆかり口上を参考にさせていただきました）
+IF CFLAG:104 >= 2
+	RESETCOLOR
+	RETURN 0
+ENDIF
+
+;デフォルトの地の文を表示するコマンドです
+;ただし、オープニング・エンディング・ゲームオーバーは元の文を排除します
+;（この部分もゆかり口上を参考にさせていただきました）
+SIF ARG:0 != 203 && ARG:0 != 206 && ARG:0 != 208 && ARG:0 != 210 && ARG:0 != 157
+	CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;
+
+;戦意喪失時はCASE21以上149以下か160以上なら一部を除いて逃がす（口上表示させない）
+;↓ここで逃がさないもの（＝除外してRETURN 1させないもの）↓
+;戦闘中（20以下） MP0(33) 服が破ける(35) ターン終了時自慰(48) 戦闘開始(54) 逃走成功(55) 戦闘敗北(56) 誰かに取り残される(63)
+;自慰メッセージ(118) 自慰で絶頂失敗(119) 戦意喪失中に絶頂(122) 母乳を吸われる(123) 妊娠(125) 寄生(126) 出産系イベント(127と129)
+;処女喪失(136) PTに勧誘された(140) 喪失中に気付け薬を使われた(144) 捕食とか復活とかゲームオーバーとかオープニング（150～159)
+;MAP上でのセリフ(160) 遺品発見(フラグのみ回収する・202) 204（囮脱出）以外の主人公エンディング(206、208、210) 性欲発散される(458)
+;（この記述は「触手宮テンプレートうどんげ口上版＋α」のものを元にしています）【テンプレ元から除外するものを増やしているので注意！】
+SIF CFLAG:29 && ARG:0 != 33 && ARG:0 != 48 && ARG:0 != 54 && ARG:0 != 55 && ARG:0 != 56 && ARG:0 != 63 && ARG:0 != 118 && ARG:0 != 119 && ARG:0 != 122 && ARG:0 != 123 && ARG:0 != 125 && ARG:0 != 126 && ARG:0 != 127 && ARG:0 != 129 && ARG:0 != 136 && ARG:0 != 140 && ARG:0 != 144 && ARG:0 != 160 && ARG:0 != 202 && ARG:0 != 206 && ARG:0 != 208 && ARG:0 != 210 && ARG:0 != 458 && ((ARG:0 > 20 && ARG:0 < 150) || ARG:0 >= 160)
+	RETURN 1
+
+;仔うちはこっちに
+IF CFLAG:104 == 1
+	CALL KOJO_koakane(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	RETURN 1
+ENDIF
+
+;そのキャラの口上の文字色を反映します
+SETCOLOR CFLAG:700
+
+
+
+;↓↓↓　　ここから口上のメイン処理　　↓↓↓
+
+;睡眠用口上（睡眠中に攻撃を受けた場合が主）
+;ただし叩き起こされたとき・逃走成功時・MAP上で寝てる場合は例外処理
+;（この記述は「触手宮テンプレートうどんげ口上版＋α」のものを元に改編しています）
+IF CFLAG:25 && ARG:0 != 41  && ARG:0 != 55 && ARG:0 != 160
+	IF RAND:4 == 0
+		PRINTFORMW 「ん…くぅ…」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「うぐ……Zzz…」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「んぅ～…」
+	ELSE
+		PRINTFORMW 「……すぅ……んんぅ……」
+	ENDIF
+		RESETCOLOR
+	;口上記入済み
+	RETURN 1
+ENDIF
+
+;ARG:0 や ARG:1 の内容で分岐をかけます
+;それぞれの値の意味は「資料とか\PRINT_MESSAGE(口上)フラグ一覧.txt」を参照してください
+SELECTCASE ARG:0
+	
+	;戦闘中・こちらの行動
+	CASE 1
+		SELECTCASE ARG:1
+			;防御
+			CASE 1
+				;発情
+				IF CFLAG:28
+					PRINTFORML （このままやと…何されるんやろか……❤）
+					PRINTFORMDW %CALLNAME:TARGET%は火照った体を抑え込んでいる…
+				;拘束・丸呑み時
+				ELSEIF CFLAG:20 || CFLAG:21
+					PRINTFORML 「…耐えろ、耐えるんや…」
+					PRINTFORMDW %CALLNAME:TARGET%は辛うじて防御態勢をとっている…
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「も…もうやめてやぁ…」
+							PRINTFORMDW %CALLNAME:TARGET%は何とか防御している
+						CASEELSE
+							PRINTFORML （これ以上攻撃されたらあかん…！）
+							PRINTFORMDW %CALLNAME:TARGET%は必死に体を丸めた！
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「危なっ！」
+							PRINTFORMDW %CALLNAME:TARGET%は防御した！
+						CASEELSE
+							PRINTFORML 「ここは…防御や！」
+							PRINTFORMDW %CALLNAME:TARGET%は体を丸めた！
+					ENDSELECT
+				ENDIF
+				;アイテム使用
+				CASE 2
+					;※ARG:2に使用アイテム、ARG:3に対象だがキャラIDなので特定のキャラで分岐するならNO:(ARG:3)で
+					;専用のみ
+					;煙玉
+					IF ARG:2 == 59
+						;誰も捕まっていない
+						IF !(CFLAG:(FLAG:10):20) && !(CFLAG:(FLAG:11):20)
+							SELECTCASE RAND:2
+							CASE 1
+								PRINTFORML 「いくで！　忍法煙玉！」
+								PRINTFORMDL 茜は心なしか楽しそうだ…
+							CASE 0
+								PRINTFORML 「煙幕を張って逃げるで！」
+							ENDSELECT
+						;見捨てる /捕まっている所に遭遇して…の場合はどうしようか
+						ELSE
+							PRINTFORML 「\@ CFLAG:(FLAG:10):20 ? %CALLNAME:(FLAG:10)%、 #  \@\@ CFLAG:(FLAG:11):20 ? %CALLNAME:(FLAG:11)%!　 #  \@ごめん！」
+						ENDIF
+					;自分に使用
+					ELSEIF TARGET == ARG:3
+						;アイテム毎
+						IF RAND:2 == 0
+							SELECTCASE ARG:2
+							;飲料
+							CASE 50 to 53,57
+								SELECTCASE RAND:3
+								CASE 2
+									PRINTFORML 「ゆっくり味わうべきやと思うんやけどな」
+								CASE 1
+									PRINTFORML 「んく…ん…ぷあ」
+									PRINTFORML 「よし、元気出てきた」
+								CASE 0
+									PRINTFORML 「んぐ……けほっ、けほっ！」
+									PRINTFORML 「うく…一気飲みなんてするもんじゃあらへんな」
+								ENDSELECT
+							;着替えセット
+							CASE 54
+								PRINTDATAL
+									DATAFORM 「綺麗に着とる暇はあらへん」
+									DATAFORM 「急いで着替えんと…！」
+								ENDDATA
+							;鎮静剤
+							CASE 55
+								PRINTDATAL
+									DATAFORM 「今は落ち着かな」
+									DATAFORM 「薬に頼るんはなぁ…」
+								ENDDATA
+							;興奮剤
+							CASE 56
+								PRINTDATAL
+									DATAFORM 「とりあえず空元気だけでも…」
+									DATAFORM 「薬に頼るんはなぁ…」
+								ENDDATA
+							ENDSELECT
+						;汎用
+						ELSE
+							PRINTDATAL
+								DATAFORM 「今のうちに…」
+								DATAFORM 「立て直さへんと…」
+								DATAFORM 「どこにしまっとったっけ……おった！」
+								DATAFORM 「これを使うときやな！」
+							ENDDATA
+						ENDIF
+					;仲間に
+					ELSE
+						;アイテム毎
+						IF RAND:2 == 0
+							SELECTCASE ARG:2
+							;飲料
+							CASE 50 to 53,57
+								PRINTDATAL
+									DATAFORM 「これ飲みい！」
+									DATAFORM 「調子整えるにはこれやな！」
+								ENDDATA
+							;着替えセット
+							CASE 54
+								PRINTDATAL
+									DATAFORM 「ほれ、早くその服なんとかしぃや」
+									DATAFORM 「これ着とき！」
+								ENDDATA
+							;鎮静剤
+							CASE 55
+								PRINTDATAL
+									DATAFORM 「これで冷静になりや！」
+									DATAFORM 「落ち着き…！　ちょうどええもんがあるで！」
+								ENDDATA
+							;興奮剤
+							CASE 56
+								PRINTDATAL
+									DATAFORM 「ほいこれ！　とりあえず気合でなんとかしてや！」
+									DATAFORM 「ほい！　この状況を勢いで突破するで！」
+								ENDDATA
+							;気付け薬
+							CASE 58
+								;対象が喪失
+								IF CFLAG:(ARG:3):29
+									SELECTCASE RAND:2
+									CASE 1
+										PRINTFORML 「しっかりし！　これを…！」
+										PRINTFORMDL 茜は%CALLNAME:(ARG:3)%に駆け寄ると気付け薬を飲ませた
+									CASE 0
+										PRINTFORML 「早く起きや！　敵は目の前やで！」
+									ENDSELECT
+								ELSE
+								ENDIF
+							ENDSELECT
+						;汎用
+						ELSE
+							PRINTDATAL
+								DATAFORM 「受け取り！」
+								DATAFORM 「ほれっ！」
+								DATAFORM 「落とすんやないで？」
+								DATAFORM 「%CALLNAME:(ARG:3)%！　これもらっとき！」
+							ENDDATA
+						ENDIF
+					ENDIF
+				;前進
+				CASE 3
+					IF CFLAG:28
+						SELECTCASE RAND:5
+						CASE 4
+							PRINTFORML 「早よ…終わらせへんと…❤」
+						CASE 3
+							PRINTFORML 「距離くらいは詰めへんと上手く当てられへんからな…❤」
+							PRINTFORMDL なにか呟きながら前へ進んでいく…
+						CASE 2
+							PRINTFORML 「近づいたら狙われるやろうけど…っ❤」
+						CASE 1
+							PRINTFORML 「前…前に……❤　あれ？　なんでやっけ…」
+						CASE 0
+							PRINTFORML 「はぁ…はぁ…あ…❤」
+							PRINTFORMDL ふらふらと前に出るその目はどこか虚ろになっている…
+						ENDSELECT
+					ELSE
+						SELECTCASE RAND:5
+						CASE 4
+							PRINTFORML 「ちょーっと危ないかもしれへんけどな」
+						CASE 3
+							PRINTFORML 「距離を詰めて確実にどつく！」
+						CASE 2
+							PRINTFORML 「インファイトは得意分野や」
+						CASE 1
+							PRINTFORML 「ほれ、うちはこっちやで！」
+						CASE 0
+							PRINTFORML 「直接ぶたへんと気が済まんで」
+						ENDSELECT
+					ENDIF
+				;後退
+				CASE 4
+					IF CFLAG:28
+						SELECTCASE RAND:5
+						CASE 4
+							PRINTFORML 「～～❤　近くおったらあかん…っ」
+						CASE 3
+							PRINTFORML 「近くじゃ臭い…きつすぎやって…っ❤」
+							PRINTFORMDL 茜は赤らんだ顔で距離をとった…
+						CASE 2
+							PRINTFORML 「あかん…近くじゃ戦ってられへん❤」
+						CASE 1
+							PRINTFORML 「無理…一度離れへんと…っ」
+						CASE 0
+							PRINTFORML 「距離を…ん、ううっ❤」
+						ENDSELECT
+					ELSE
+						SELECTCASE RAND:5
+						CASE 4
+							PRINTFORML 「遠距離戦の方がよさげやな」
+						CASE 3
+							PRINTFORML 「もうちょい戦況を見れる位置に行くか」
+						CASE 2
+							PRINTFORML 「よっと！　…さて」
+							PRINTFORMDL 一気に飛び退き体勢を立て直した
+						CASE 1
+							PRINTFORML 「一回下がっとくべきやな…」
+						CASE 0
+							PRINTFORML 「流石に前、出すぎやな」
+						ENDSELECT
+					ENDIF
+			;逃走行動
+			CASE 5
+				;逃走の可否判定は「ARG:2」で判断する
+				;※この個所は他の方の修正版を参考に、新たに導入させていただきました。
+				;逃走失敗時
+				IF ARG:2 == 0
+				;発情
+					IF CFLAG:28
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML （せやな、こんな獲物逃さへんよな…❤）
+							CASE 1
+								PRINTFORML 「あ…ああぁ…❤」
+								PRINTFORML （こいつ、絶対うちを堕とす気や…❤）
+						ENDSELECT
+					;ピンチ（MP1/4以下またはHP0）
+					ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「あ…そんな…」
+							CASE 1
+								PRINTFORML 「い、いややぁ…助けてぇっ…！」
+						ENDSELECT
+					;その他
+					ELSE
+						SELECTCASE RAND:3
+							CASE 0
+								PRINTFORML 「げぇ！ば、ばれてもうた！」
+							CASE 1
+								PRINTFORML 「ちょっと、退いてや～！」
+							CASE 2
+								PRINTFORML 「おとなしく逃げとったら痛い目、合わず済んだんやで…！」
+								PRINTFORMDL %CALLNAME:TARGET%は虚勢を張った
+						ENDSELECT
+					ENDIF
+				;逃走成功時
+				ELSEIF ARG:2 == 1
+					IF CFLAG:28
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「ひぃ、ひいぃ～っ…❤」
+							CASE 1
+								PRINTFORML 「捕まえられるもんなら捕まえてみぃ！」
+								PRINTFORML （…いや捕まったら困るから、本当に…❤）
+						ENDSELECT
+					;ピンチ（MP1/4以下またはHP0）
+					ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「タースケテー！？」
+							CASE 1
+								PRINTFORML 「もう無理や！うち逃げるぅ！」
+						ENDSELECT
+					;その他
+					ELSE
+						SELECTCASE RAND:3
+							CASE 0
+								PRINTFORML 「逃げるは恥やないで…！」
+							CASE 1
+								PRINTFORML 「チャーンス、脱兎のごとく！」
+							CASE 2
+								PRINTFORML 「ｱﾚﾊﾅﾝﾔ!…今やぁ！」
+						ENDSELECT
+					ENDIF
+				ENDIF
+			
+			;弾幕攻撃
+			;弱弾幕
+			CASE 10
+				;発情
+				IF CFLAG:28
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「大技なんて撃てへん❤」
+						CASE 1
+							PRINTFORML 「ひぅう～…❤」
+							PRINTFORMDW %CALLNAME:TARGET%はどうにかこうにか攻撃しているようだ…
+					ENDSELECT
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「大技が撃てへんー…」
+					CASE 1
+						PRINTFORML 「ひぅ～…」
+						PRINTFORMDW %CALLNAME:TARGET%はどうにかこうにか攻撃しているようだ…
+					ENDSELECT
+				ELSE
+				;通常
+						SELECTCASE RAND:6
+						CASE 5
+							PRINTFORML 「大技狙っとる余裕も無し。　なら！」
+						CASE 4
+							PRINTFORML 「今は当たればそれでええわ」
+						CASE 3
+							PRINTFORML 「こんだけ狙う時間がもらえればな！」
+						CASE 2
+							PRINTFORML 「よっと！」
+						CASE 1
+							PRINTFORML 「軽くいってみよか」
+						CASE 0
+							PRINTFORML 「ふっ！」
+						ENDSELECT
+					
+				ENDIF
+
+			;中弾幕
+			CASE 11
+				;発情
+				IF CFLAG:28
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「うぅ…身体がうずきよる…❤」
+					CASE 1
+						PRINTFORML 「ふぅ、ふぅう～❤」
+						PRINTFORMDW %CALLNAME:TARGET%は熱い息をあげている…
+					ENDSELECT
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「これで…どや！」
+					CASE 1
+						PRINTFORML 「ふぅ…ふぅ…」
+						PRINTFORMDW %CALLNAME:TARGET%は荒い息をあげている…
+					ENDSELECT
+				;通常
+				ELSE
+						SELECTCASE RAND:3
+						CASE 2
+							PRINTFORML 「せやぁ！」
+						CASE 1
+							PRINTFORML 「それっ！」
+						CASE 0
+							PRINTFORML 「てい！」
+						ENDSELECT
+				ENDIF
+			;強弾幕
+			CASE 12
+				;発情
+				IF CFLAG:28
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「早よぉ、終わらせんとぉ…❤」
+					CASE 1
+						PRINTFORML 「はぁ～っ❤、はぁ～っ❤❤」
+						PRINTFORMDW %CALLNAME:TARGET%は真っ赤な顔で攻撃している…
+					ENDSELECT
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「早よぉ、終わらせんと…」
+					CASE 1
+						PRINTFORML 「ぜぇ～っ、はぁ～っ…」
+						PRINTFORMDW %CALLNAME:TARGET%は青ざめた顔で攻撃している…
+					ENDSELECT
+				ENDIF
+				;通常
+					;拘束中 == 霊撃使用
+					IF CFLAG:20
+						SELECTCASE RAND:5
+						CASE 4
+							PRINTFORML 「全部まとめて振り払ったる…はあっ！！」
+						CASE 3
+							PRINTFORML 「こうなったら奥の手や…せやあああっ！！」
+						CASE 2
+							PRINTFORML 「引きちぎったる！」
+						CASE 1
+							PRINTFORML 「はああああぁあああッ！！」
+						CASE 0
+							PRINTFORML 「いつまでも捕まっとると思うとったら…！」
+						ENDSELECT
+					;丸呑み
+					ELSEIF CFLAG:21
+						SELECTCASE RAND:5
+						CASE 4
+							PRINTFORML 「見境なく呑みこんだら酷い目に会うって教えたるわ！」
+						CASE 3
+							PRINTFORML 「あんたが食うたもんは"悪いもん"や！」
+						CASE 2
+							PRINTFORML 「胃に針程度じゃ済まさへんで…っ！」
+						CASE 1
+							PRINTFORML 「体ん中からぶち破ったる…！」
+						CASE 0
+							PRINTFORML 「んん…！　やああ！」
+						ENDSELECT
+					ELSE
+						SELECTCASE RAND:6
+						CASE 5
+							PRINTFORML 「消し飛び！」
+						CASE 4
+							PRINTFORML 「喰らい！！」
+						CASE 3
+							PRINTFORML 「やけどじゃ済まさへんで！」
+						CASE 2
+							PRINTFORML 「とりゃあ！」
+						CASE 1
+							PRINTFORML 「茜ちゃんブレイド！」
+						CASE 0
+							PRINTFORML 「大技、いくで！」
+						ENDSELECT
+				ENDIF
+			;溜め撃ち
+			CASE 13
+				;溜め
+				IF CFLAG:31 == 2
+					;発情
+					IF CFLAG:28
+						SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW （体が疼いて…集中できひん…❤）
+						CASE 1
+							PRINTFORML 「うっ…ぐうぅー❤」
+							PRINTFORMDW %CALLNAME:TARGET%はもじもじしながら力を溜めている…
+						ENDSELECT
+					;ピンチ（MP1/4以下またはHP0）
+					ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+						SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「一か八かや…っ」
+						CASE 1
+							PRINTFORML 「力、残っとるかな…」
+							PRINTFORMDW %CALLNAME:TARGET%は疲労した体をなんとか支え力を溜めている…
+						ENDSELECT
+					;通常
+					ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ここは大技で！」
+						CASE 1
+							PRINTFORMW 「集中集中…」
+						ENDSELECT
+					ENDIF
+				;発射
+				ELSE
+					;発情
+						IF CFLAG:28
+							SELECTCASE RAND:3
+							CASE 2
+								PRINTFORML 「"喰らえ"ええぇっ❤！」
+								SIF BASE:3 > 0
+								PRINTFORMDL 濡れた下着が陰核に擦れて茜の声が上ずった！
+							CASE 1
+								PRINTFORML 「早く倒れろやあ❤！！」
+								PRINTFORMDL 体中の疼きを振りきって茜は腕を振るう！
+							CASE 0
+								PRINTFORML 「ふううっ！　あああぁ❤！」
+								PRINTFORMDL 不意に襲ってきた軽い絶頂感のせいで体勢を崩しながらの攻撃になってしまう…
+							ENDSELECT
+					;ピンチ（MP1/4以下またはHP0）
+					ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+						SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「いったれぇっ…！！」
+						CASE 1
+							PRINTFORMW 「よっしゃ、当たれぇ！！」
+						ENDSELECT
+					;通常
+					ELSE
+						SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「喰らいっ！！」
+						CASE 1
+							PRINTFORMW 「当たれっ！！！」
+						ENDSELECT
+					ENDIF
+				ENDIF
+			;ばらまき弾
+			CASE 14
+				;発情
+				IF CFLAG:28
+						SELECTCASE RAND:2
+						CASE 1
+							PRINTFORML 「動き止めてからやないと戦えへん…っ❤」
+						CASE 0
+							PRINTFORML 「んんっ❤　集中できひんくても…これやったら…！」
+						ENDSELECT
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「動き止めへんと…！」
+				;通常
+						SELECTCASE RAND:6
+						CASE 3
+							PRINTFORML 「下手に動くと危ないで」
+						CASE 2
+							PRINTFORML 「こんだけ大量に撃ちこんだれば上手く動けへんやろ！」
+						CASE 1
+							PRINTFORML 「はッ！！」
+						CASE 0
+							PRINTFORML 「逃げ場はないで…」
+						ENDSELECT
+				ENDIF
+			;貫通弾
+			CASE 15
+				;発情
+				IF CFLAG:28
+					SELECTCASE RAND:2
+					CASE 1
+						PRINTFORML 「まとめて倒したるんやからぁ…❤」
+						PRINTFORMDL 鼻にかかった声をあげながら茜は攻撃を撃ちこんだ！
+					CASE 0
+						PRINTFORML 「ふうっ❤　死んでまえ…っ！」
+						PRINTFORMDL ぬるつく股間を気にしながら茜は攻撃をうった！
+					ENDSELECT
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「一匹ぐらいやったら倒せるはずや…！」
+				;通常
+				ELSE
+					PRINTFORMW 「こんなもんまとめてやってまえばええんや！」
+				ENDIF
+			;消耗武器
+			CASE 20 to 25
+					IF CFLAG:28
+						SELECTCASE RAND:3
+						CASE 2
+							PRINTFORML 「くう…❤　上手く狙えへん…っ」
+						CASE 1
+							PRINTFORML 「ちゃんと構えへんと…っ❤」
+						CASE 0
+							PRINTFORML 「ぶち込んだる…！　うぅ…っ❤」
+							PRINTFORMDL 茜は腰を震わせながら攻撃した…
+						ENDSELECT
+					ENDIF
+			;弱攻撃
+			CASE 20
+				;ピンチ（MP1/4以下またはHP0）
+				IF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+						PRINTFORMW 「い、今やったらこれぐらいで許したるで？」
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ちょっとした威嚇射撃や」
+						CASE 1
+							PRINTFORMW 「命中重視で…と」
+					ENDSELECT
+				ENDIF
+			;中攻撃
+			CASE 21
+				;ピンチ（MP1/4以下またはHP0）
+				IF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「ピンチやからこそよく狙わへんと…！」
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「そこや！　発射！」
+						CASE 1
+							PRINTFORMW 「よーく狙って…そこやぁ！」
+					ENDSELECT
+				ENDIF
+			;強攻撃
+			CASE 22
+				;ピンチ（MP1/4以下またはHP0）
+				IF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「まだ残弾残っとるよな…？」
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「撃ち抜く！」
+						CASE 1
+							PRINTFORMW 「ここをこうすると、弾の節約なるな…」
+							PRINTFORML 「あれ？……うひゃあ！」
+							PRINTFORMDW 武器が何故か暴発した！
+						ENDSELECT
+				ENDIF
+			;節約攻撃
+			CASE 23
+				;ピンチ（MP1/4以下またはHP0）
+				IF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「無駄打ちは出来ひん…」
+						CASE 1
+							PRINTFORMW 「お願いや、これで起きんとって！」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「こんくらいで十分かな？」
+						CASE 1
+							PRINTFORMW 「本当はこんなせせこましいことしたくないんやけど」
+					ENDSELECT
+				ENDIF
+			;みだれうち
+			CASE 24
+				;ピンチ（MP1/4以下またはHP0）
+				IF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORML 「状況を打破するためや！」
+					PRINTFORMDW %CALLNAME:TARGET%は物理的に弾幕を展開した！
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「うちに近寄んなーーー！！！」
+							PRINTFORMDW %CALLNAME:TARGET%は狙いも付けず乱射している！
+						CASE 1
+							PRINTFORMW 「吹き飛び！」
+					ENDSELECT
+				ENDIF
+			;一点集中
+			CASE 25
+				;ピンチ（MP1/4以下またはHP0）
+				IF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「射線が定まらへんけど、いけるやろか…？」
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ブチ抜く！」
+						CASE 1
+							PRINTFORMW 「ダメージを集中させれば…」
+					ENDSELECT
+				ENDIF
+				
+			;非消耗武器
+			;弱攻撃
+			CASE 30
+				;発情
+				IF CFLAG:28
+					PRINTFORMW 「力、入らへん…❤」
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「あた、れぇ！」
+						CASE 1
+							PRINTFORMW 「力がいまいち乗らへんっ…！」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ちょっとずつ…確実に…」
+						CASE 1
+							PRINTFORMW 「踏み込み過ぎるんも危ないしな」
+					ENDSELECT
+				ENDIF
+			;中攻撃
+			CASE 31
+				;発情
+				IF CFLAG:28
+					PRINTFORMW 「嫌やっ❤来んいてぇ❤（ﾌﾞﾝﾌﾞﾝ）」
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「くっ…うりゃぁ！」
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「せやっ！」
+						CASE 1
+							PRINTFORMW 「これでどうや！」
+					ENDSELECT
+				ENDIF
+				
+			;強攻撃
+			CASE 32
+				;発情
+				IF CFLAG:28
+					PRINTFORML 「寄るな来んなぁっ❤」
+					PRINTFORMDW %CALLNAME:TARGET%は焦りからか武器をひたすら振り回している…
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「相手のどっか当たって！」
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「一撃！」
+						CASE 1
+							PRINTFORMW 「叩きのめす！　まだのめす！　さらにのめす！」
+					ENDSELECT
+				ENDIF
+			
+			;下段狙い
+			CASE 33
+				;発情
+				IF CFLAG:28
+					PRINTFORMW 「近付きたくないんやけどぉ…❤」
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「これでもうちょい、逃げやすくなったんちゃうか？」
+				;その他
+				ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「足元注意や！」
+					CASEELSE
+						PRINTFORMW 「払い切りっ！」
+					ENDSELECT
+				ENDIF
+			;急所狙い
+			CASE 34
+				;発情
+				IF CFLAG:28
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「急所、急所――っ❤」
+						PRINTFORMW （こんな時に何を考えとるんや？！　落ち着けうち…❤）
+					CASE 1
+						PRINTFORMW 「頼むからこれで止まってくれ…」
+					ENDSELECT
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					PRINTFORMW 「これで、逃げやすくなればええな」
+				;その他
+				ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「弱点みっけたで！」
+					CASEELSE
+						PRINTFORMW 「そこや！」
+					ENDSELECT
+				ENDIF
+			;拘束離脱
+			CASE 42
+				;（ARG:3が0＝判定前　1＝絶頂による脱出失敗　2＝脱出完了　3＝拘束が緩む　4＝絶頂以外で脱出失敗）
+				IF ARG:3 == 0
+					;絶頂中（丸呑み・通常共通）
+					IF CFLAG:35 != 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「ひぁ❤…あ……♪」
+								PRINTFORMDW %CALLNAME:TARGET%は脱出することを忘れ余韻に浸っている…
+							CASEELSE
+								PRINTFORML 「…あ、あうぅ…❤」
+								PRINTFORMW （こんなんじゃ、脱出なんかできひんわぁ❤）
+						ENDSELECT
+					;丸呑み拘束
+					ELSEIF CFLAG:21
+						;ピンチ（MP1/4以下またはHP0）
+						IF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+							SELECTCASE RAND:2
+								CASE 0
+									PRINTFORML 「出せぇ！…出してやぁ！」
+									PRINTFORMDW %CALLNAME:TARGET%は必死にもがいている…
+								CASEELSE
+									PRINTFORML 「■＃※δ◎～！」
+									PRINTFORMDW %CALLNAME:TARGET%は声にならない悲鳴を上げている…
+							ENDSELECT
+						;発情
+						ELSEIF CFLAG:28
+							SELECTCASE RAND:2
+								CASE 0
+									PRINTFORML 「うええ～…ぬめっとるわぁ❤」
+									PRINTFORMDW …心なしか楽しそうだ
+								CASE 1
+									PRINTFORML 「このまま…おいしくいただかれてまうんか…？❤」
+									PRINTFORMDW 邪な考えが%CALLNAME:TARGET%の頭をよぎる…
+							ENDSELECT
+						;その他
+						ELSE
+							SELECTCASE RAND:2
+								CASE 0
+									PRINTFORMW 「うちなんか美味しくないに決まっとるやろ～！」
+								CASEELSE
+									PRINTFORML 「一刻も早く出えへんと…ドロドロに溶かされてまう～！？」
+									PRINTFORMDW 出られなければおそらく別の意味でドロドロにされるだろう…
+							ENDSELECT
+						ENDIF
+					;通常の拘束
+					ELSE
+						;発情
+						IF CFLAG:28
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「うぐ、動けへん…❤」
+								PRINTFORMW （今から何されるんやろ…❤）
+								PRINTFORMW （…っ期待なんかしてへん！してへん！！）
+							CASE 1
+								PRINTFORML 「嫌やぁ…放してぇな～…❤」
+								PRINTFORMDW そういう%CALLNAME:TARGET%の顔はほんの僅かににやけている…
+						ENDSELECT
+						;ピンチ（MP1/4以下またはHP0）
+						ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「嫌やっ、放してぇな！！」
+								PRINTFORMDW %CALLNAME:TARGET%は心底怯えている！
+							CASEELSE
+								PRINTFORML 「うぎゅうぅ～…」
+								PRINTFORMDW %CALLNAME:TARGET%は苦しそうだ…
+						ENDSELECT
+						;その他
+						ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「ぐう、早く出えへんと…」
+							CASEELSE
+								PRINTFORMW 「さっさと放せ～！」
+						ENDSELECT
+						ENDIF
+					ENDIF
+				ENDIF
+			;力溜め
+			CASE 43
+				;溜めようとしたけど絶頂で失敗
+				IF CFLAG:35 != 0
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「あっ…❤　ひぃっ…♪」
+							PRINTFORMW （無理やぁ❤力抜けるぅ❤）
+						CASEELSE
+							PRINTFORML 「んぅ❤…ぐ…ふぅ～❤…」
+							PRINTFORMDW どうやらイッた時に力が抜けきったようだ…
+					ENDSELECT
+				;発情中
+				ELSEIF CFLAG:28
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW （早く抜け出さへんと――犯されてまうぅ❤）
+						CASE 1
+							PRINTFORML 「密着すんなや～…❤」
+							PRINTFORMDW 熱を帯びた体が小刻みに震えている…
+					ENDSELECT
+				;ピンチ（MP1/4以下またはHP0）
+				ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW （一気に抜け出さへんと、一生出られへんかも…）
+					CASE 1
+						PRINTFORMW 「まだや――まだチャンスはあるはずや…！」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「ぐぬぬ～っ！」
+					CASE 1
+						PRINTFORMW 「離さないなら、こっちにも考えがあるんやからな…！」
+					ENDSELECT
+				ENDIF
+			;諦め
+			CASE 44
+				IF ARG:2 == 0
+					PRINTFORML （あ――もうあかん…❤　うち、気持ち良いのに負けて…❤）
+					PRINTFORMW （おまんこ、欲しがっとる…❤　期待してもうとるよぉ…♪）
+					PRINTFORML 「……ええよぉ❤…ほら…来てぇ♪」
+					PRINTFORMDL 
+					PRINTFORMDW %CALLNAME:TARGET%は脱出を諦め、相手におねだりを始めた…
+				ENDIF
+			;行動キャンセル自慰
+			CASE 46
+				;（催眠時を弾く）
+				IF !CFLAG:43
+					;発情
+					IF CFLAG:28
+						SELECTCASE RAND:3
+							CASE 0
+								PRINTFORML 「敵…倒さな…でも…❤」
+								PRINTFORMW 「――あっ、いいっ！見られながらオナニー気持ち良い❤」
+							CASE 1
+								PRINTFORML 「無理ぃ…待つん無理ぃ❤　今したいんやぁ…❤」
+								PRINTFORMW 「一回だけイッたら止めるからぁ❤」
+							CASEELSE
+								PRINTFORML 「えへぇ～…❤　おまんこさわさわ気持ち良い…❤」（ﾁｭｸﾞﾁｭｸﾞ）
+								PRINTFORMDW %CALLNAME:TARGET%は敵そっちのけで股間をまさぐっている…
+						ENDSELECT
+					ELSE
+						SELECTCASE RAND:3
+							CASE 0
+								PRINTFORML 「本当はしたくないんやぁ…」
+								PRINTFORMW 「…くぅっ…うっ…はううっ❤」
+							CASE 1
+								PRINTFORMW 「このままやと戦えへんから、ちょっとだけ…本当にちょっと、だけ…♪」
+							CASEELSE
+								PRINTFORMW （…頭、ぼ～っとして…？）（ｸﾁｭｸﾁｭｯ）
+						ENDSELECT
+					ENDIF
+				ENDIF
+			;Ａを守る
+			CASE 50
+				;発情または喪失
+				IF CFLAG:28 || CFLAG:29
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW （お尻…あかん…調教されてまう…❤）
+						CASEELSE
+							PRINTFORMW 「あかん…お尻弄られてまうぅ❤」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「やあぁ！変態～～っ！！」
+						CASEELSE
+							PRINTFORMW 「アンタ、うちのお尻狙おうとか考えてへんよな！？」
+					ENDSELECT
+				ENDIF
+			;Ｂを守る
+			CASE 51
+				;発情または喪失
+				IF CFLAG:28 || CFLAG:29
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW （今乳首弄られたら…頭おかしなるぅ…❤）
+						CASEELSE
+							PRINTFORMW 「うちのお乳堪能したいん？　…だ～め❤」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「見んな！触んな！近よんなぁ！！」
+						CASEELSE
+							PRINTFORML 「～～～っっ！！」
+							PRINTFORMDW %CALLNAME:TARGET%は真っ赤な顔で胸を隠している…
+					ENDSELECT
+				ENDIF
+			;Ｃを守る
+			CASE 52
+				;発情または喪失
+				IF CFLAG:28 || CFLAG:29
+					SELECTCASE RAND:2
+						CASE 0
+							;（ふたなり状態で分岐）
+							IF CFLAG:42
+								PRINTFORMW 「ちんちん苛めんといてぇ❤」
+							ELSE
+								PRINTFORMW 「クリクリ苛めんといてぇ❤」
+							ENDIF
+						CASEELSE
+							PRINTFORMW 「今弄られたら…どうかなってまうぅ❤…」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「気安く触んなや！！」
+						CASEELSE
+							PRINTFORMW 「ち…近よったらどつき回すで！」
+					ENDSELECT
+				ENDIF
+			;Ｖを守る
+			CASE 53
+				;発情または喪失
+				IF CFLAG:28 || CFLAG:29
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW （あかん…今欲しなったら…戻れんくなってまう…❤）
+						CASE 1
+							PRINTFORMW 「…挿れたい欲望が見え見えやで…？」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「っ、嫌やっ！怪物のなんて嫌ぁ！」
+						CASEELSE
+							PRINTFORMW 「こいつら…何考えとるんや…？！」
+					ENDSELECT
+				ENDIF
+			;Ａにおねだり
+			CASE 54
+				;発情中または喪失中または諦め状態
+				IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「ケツ穴っ❤ケツ穴を弄ってください、お願いや❤」（ﾌﾘﾌﾘ❤）
+							PRINTFORMDW %CALLNAME:TARGET%は尻を振ってアピールしている
+						CASE 1
+							PRINTFORMW 「もう戻れんくなってもいい❤やからぁ…うちのお尻弄ってぇ❤」
+					ENDSELECT
+				ELSE
+				;それ以外
+					PRINTFORMW （ひぅ～…恥ずかしいけど、作戦やし…///）
+				ENDIF
+			;Ｂにおねだり
+			CASE 55
+				;発情中または喪失中または諦め状態
+				IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「フニフニおっぱい、味わってみてほしいんやけどな～…❤」
+						CASE 1
+							PRINTFORML 「今なら、優しく挟んであげるで❤」（ﾑﾆﾑﾆ❤）
+							PRINTFORMDW %CALLNAME:TARGET%は胸を寄せアピールしている
+					ENDSELECT
+				ELSE
+					PRINTFORML （うーん、うちので効果あるんかな～…）
+					PRINTFORMDW %CALLNAME:TARGET%はあまり自信がないようだ
+				ENDIF
+			;Ｃにおねだり
+			CASE 56
+				;発情中または喪失中または諦め状態
+				IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+					;（ふたなり状態で分岐）
+					IF CFLAG:42
+						PRINTFORMW 「ちんぽが疼いて…しょうがないんよぉ❤」
+					ELSE
+						PRINTFORMW 「お願いや…うちのお豆、弄繰り回してぇなぁ…早よぉ❤」
+					ENDIF
+				ELSE
+					PRINTFORML （こんなところ差し出すのはイヤ…やけどぉ～…❤）
+					PRINTFORMDW %CALLNAME:TARGET%は嫌がり半分興味半分といった様子だ
+				ENDIF
+			;Ｖにおねだり
+			CASE 57
+				;発情中または喪失中または諦め状態
+				IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+					;妊娠（本人自覚後）
+					IF CFLAG:36 >= 3
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「今、赤ちゃんおるから…優しくしてや❤」
+							CASE 1
+								PRINTFORML （ボテ腹晒しとるのに、欲しくて堪らへんよぉ❤）
+								PRINTFORMW （妊婦まんこｽﾞﾌﾟｽﾞﾌﾟしてえ…❤❤）
+						ENDSELECT
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「おねがいや…発情まんこに子種をぎょーさんくれへんか…❤」
+								PRINTFORMW 「沢山パンパンして…触手赤ちゃん孕ませてぇ…❤」
+							CASE 1
+								PRINTFORML （犯してぇ…❤　うちをめちゃくちゃにして欲しいんよぉ❤❤）
+								PRINTFORMDW %CALLNAME:TARGET%は股を開き腰をくねらせている…
+						ENDSELECT
+					ENDIF
+				ELSE
+					IF CFLAG:36 >= 3
+					;妊娠（本人自覚後）
+						PRINTFORML （誘って隙を狙ってみるか～…どうせ孕んどるし…）
+						PRINTFORMDW %CALLNAME:TARGET%は破れかぶれになっているようだ
+					ELSE
+						PRINTFORML （うち何やっとるんやろ…下手したら孕んでまうのに…）
+						PRINTFORMDW %CALLNAME:TARGET%は股を開いている…
+					ENDIF
+				ENDIF
+			;～ここから催眠中がメインの行動～
+			;FLAG:526が――0：肉体操作（デフォはこれ、嫌々する）　1：感情操作（エロ大好きモード）　2：認識操作（自分が何をやってるか理解してない）
+			;発情状態・喪失中の場合は催眠内容にかかわらずエロ大好きモード(1)に移行します
+			;平常行動
+			CASE 71
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「か…体がうまく…動かへん～…」
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORMW 「そないに焦らさんといて…❤」
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW 「ふ～一休み一休みと…」
+				ENDIF
+			;自慰
+			CASE 72
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「う、腕がっ！……っくぅ…んっ…❤」
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORML 「うん❤うちおまんこ弄るから見ててや❤」
+					PRINTFORMW 「はぁっ、ええ❤命令オナニー好きやわ～❤」
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW 「…ちょっとおまんこ痒い…」
+				ENDIF
+			CASE 73
+			;仲間に襲い掛かる
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「な！体が勝手に…よ、避けぇ！」
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORML （どないしよ、%ARGS:1%のこと……犯したい❤）
+					PRINTFORMW 「なぁ%ARGS:1%～…うちと一緒に気持ちええことしよ？❤」
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW 「あ、抱き枕見っけたで～」
+				ENDIF
+			;お着替え
+			CASE 74
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORML 「あっちょいまち…服脱がさんといてぇな！」
+					PRINTFORMDW 脱いでるのは自分自身だ
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORMW 「もお❤服なんて邪魔や邪魔❤」
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW 「お風呂入らな…」
+				ENDIF
+			;逃げる
+			CASE 75
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「なんや雲行き怪しいし、逃げよ…」
+					PRINTFORML 「ってあれ…あ、足が～！」
+					PRINTFORMDW %CALLNAME:TARGET%は足をもつれさせながら敵に向かっていく…
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORMW 「逃げるやなんて勿体ないし…来てもうた❤」
+				ELSEIF FLAG:526 == 2
+					PRINTFORML 「葵…ちょっとええか……？」
+					PRINTFORMDW %CALLNAME:TARGET%は敵を葵だと思い近づいていく…
+				ENDIF
+			;寝る
+			CASE 76
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「あかん…急に眠気がぁ……すぅ…」
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORML 「分かったわ…先に寝るな…」
+					PRINTFORMW 「じゃ、おやすみ……❤」
+					PRINTFORMW （寝とる間にめちゃくちゃされてまうんかな…❤）
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW 「なんかだるいし、もう寝よ…」
+				ENDIF
+			;精神抵抗
+			CASE 77
+				IF FLAG:526 == 0
+					PRINTFORML 「うぅ、早よ催眠解かな…！」
+					PRINTFORMW %CALLNAME:TARGET%はプルプル頭を振っている…
+				ELSEIF FLAG:526 == 1
+					PRINTFORML 「うう～ちゃう…うちこんな淫乱やない…❤」
+					PRINTFORMDW %CALLNAME:TARGET%は必死に自分を取り戻そうとしている
+				ELSEIF FLAG:526 == 2
+					PRINTFORML 「ここは…どこやったっけ…？」
+					PRINTFORMW 「うち…何してたんやっけ…あれぇ？？」
+				ENDIF
+			;踏みつけ
+			CASE 80
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「こ、このこの！さっさと催眠解けや！」
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORMW 「えいえい❤踏み踏み気持ちええ？」
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW 「うわっ、こんなところで寝とるから踏んでもうたやないか…」
+				ENDIF
+			;ビンタ
+			CASE 81
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「離れろ！離れろや！！」
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORMW 「おちんぽペチペチされて喜んどるんか？…変態さんやな❤」
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW 「なーんかテレビの調子がおかしいな～…（ﾊﾞｼﾊﾞｼ）」
+				ENDIF
+			;折る
+			CASE 82
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29
+					PRINTFORMW 「ええ加減にせえへんと変な方向に曲げてまうからな！？」
+				ELSEIF FLAG:526 == 1 || CFLAG:28 || CFLAG:29
+					PRINTFORMW 「あは❤グネグネ曲がっておもろい❤」
+				ELSEIF FLAG:526 == 2
+					PRINTFORMW （ｸﾞｲｸﾞｲ）「あれ？　このチューペット上手く折れへんな…」
+				ENDIF
+			;キス
+			;（ここから96までは催眠じゃなくても出るぞ！※失敗談）
+			CASE 83
+				;（以下三つは催眠時＋発情・喪失時）
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29 && CFLAG:43 >= 1
+					PRINTFORML 「むぐぅ！？……んう～！！」
+					PRINTFORMDW %CALLNAME:TARGET%は強制的に口づけされ涙目になっている…
+				ELSEIF FLAG:526 == 1 && CFLAG:43 >= 1 || CFLAG:28 || CFLAG:29
+					PRINTFORML （んちゅ～❤…れろぉ～❤）
+					PRINTFORMW 「…ぷは…❤うちディープキス好きやぁ❤❤」
+				ELSEIF FLAG:526 == 2 && CFLAG:43 >= 1
+					PRINTFORML 「…んぐ…？？？」
+					PRINTFORMDW %CALLNAME:TARGET%は自分がキスしているということに全く気付いていない…
+				;それ以外
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ほら、キスしたるからさっさと顔貸しぃや…❤」
+						CASE 1
+							PRINTFORMW 「倒す前にええ思いさせたるわ…❤」
+					ENDSELECT
+				ENDIF
+				;（以下同じ）
+			;手淫
+			CASE 84
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29 && CFLAG:43 >= 1
+					PRINTFORMW 「うわぁ…なんか脈打ってるやん…」
+				ELSEIF FLAG:526 == 1 && CFLAG:43 >= 1 || CFLAG:28 || CFLAG:29
+					PRINTFORML 「…じゃあ、いくで…❤」
+					PRINTFORMW 「…どうや？おちんぽさわさわ気持ちええ？」
+				ELSEIF FLAG:526 == 2 && CFLAG:43 >= 1
+					PRINTFORMW 「ムムム、擦ってもなかなか汚れが落ちへんな…」
+				;それ以外
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ほら、しごいたるからさっさとチンコ出しぃや…❤」
+						CASE 1
+							PRINTFORMW 「ふん、こっちから搾り取ったるわ♪」
+					ENDSELECT
+				ENDIF
+			;フェラ
+			CASE 85
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29 && CFLAG:43 >= 1
+					PRINTFORMW 「や、やめぇや…ムグウゥッ！？」
+					PRINTFORMW 「ングー！ムゴォー！！」（オエェー！死ぬぅー！！）
+				ELSEIF FLAG:526 == 1 && CFLAG:43 >= 1 || CFLAG:28 || CFLAG:29
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「そんじゃ、失礼して…あむっ❤」
+							PRINTFORML 「んっ、んっ、んっ、んっ、んっ❤❤…んふっ、んんぅっ❤（ｼﾞｭﾙﾙﾙｯ）」
+							PRINTFORMDW %CALLNAME:TARGET%は下品な音を立てて吸っている…
+						CASE 1
+							PRINTFORMW 「触手おちんちん、いただきま～す❤」
+							PRINTFORML 「はむっ…んぐっ…ちゅぷっ…れろっ…じゅぽっ❤」
+							PRINTFORMW （早くぅ❤　おちんぽミルク…待ちきれへんよぉ❤）
+					ENDSELECT
+				ELSEIF FLAG:526 == 2 && CFLAG:43 >= 1
+					PRINTFORML 「うんぐぐ…」（噛み切れへん…）
+					PRINTFORMDW %CALLNAME:TARGET%は食事をしてるつもりのようだ
+				;それ以外
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ほら、しゃぶったるからさっさとチンコ出しぃや…❤」
+						CASE 1
+							PRINTFORML 「ふぉあ、ふぁっふぁふぉふっふぁいふぁーめんふぁひわふぁい❤」
+							PRINTFORMW （おら、さっさとクッサいザーメン出しぃや❤）
+					ENDSELECT
+				ENDIF
+			;パイズリ
+			CASE 86
+				IF FLAG:526 == 0 && !CFLAG:28 && !CFLAG:29 && CFLAG:43 >= 1
+					PRINTFORML （わざわざ胸で擦らせるとか何なん…）
+					PRINTFORMW 「うぇ…鼻の近くに来たからくっさい…」
+				ELSEIF FLAG:526 == 1 && CFLAG:43 >= 1 || CFLAG:28 || CFLAG:29
+					PRINTFORML 「パイズリすればええんか❤」
+					PRINTFORMW 「それじゃ、…柔らかっぱい、参りま～す❤」
+					PRINTFORMW （フニッ…ニュプ…コシコシ…クニュクニュ…ニュププッ…）
+				ELSEIF FLAG:526 == 2 && CFLAG:43 >= 1
+					PRINTFORML 「うんしょ、うんしょ…」
+					PRINTFORMW （…あれ、なんでうち豊乳マッサージなんか始めたんやっけ？）
+				;それ以外
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ほら、挟んだるからさっさとチンコ出しぃや…❤」
+						CASE 1
+							PRINTFORMW 「ふん、こっちから搾り取ったるわ♪」
+					ENDSELECT
+				ENDIF
+			;仲間に襲われてる
+			CASE 95
+				;解放してくれた
+				IF ARG:3 == 2
+					;（茜側が）発情もしくは喪失中もしくは催眠（感情操作モード）
+					IF CFLAG:28 || CFLAG:29 || FLAG:526 == 1 && CFLAG:43 >= 1
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「なーんや、止めてまうん？」
+								PRINTFORMDW %CALLNAME:TARGET%は残念そうだ…
+							CASEELSE
+								PRINTFORMW 「もぅ…せっかく盛り上がってきたとこやったのに～❤」
+						ENDSELECT
+					;その他
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「ハァ…やっと目ぇ覚めたんか？」
+							CASEELSE
+								PRINTFORML 「っと、大丈夫かいな？…大丈夫みたいやな」
+								PRINTFORMW 「じゃあサッサとあいつをやっつけへんとな」
+						ENDSELECT
+					ENDIF
+				;自力で脱出を？
+				ELSEIF ARG:3 == 1
+					;（茜側が）発情もしくは催眠（感情操作モード）
+					IF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+						PRINTFORMW 「もっとシッカリ抱いてくれんと～❤」
+					ELSE
+						IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+							PRINTFORMW 「よしっ、抜け出せた～！」
+							PRINTFORML 「…次襲ってきたら『メッ！』やからな！」
+							PRINTFORMDW %CALLNAME:TARGET%は%ARGS:1%を叱った
+						ELSE
+							PRINTFORMW 「よしっ、抜け出せた～！」
+							PRINTFORML 「…次襲ってきたら引っ叩くからな！！」
+							PRINTFORMDW %CALLNAME:TARGET%は%ARGS:1%を叱った
+						ENDIF
+					ENDIF
+				;犯されっぱなし
+				ELSE
+					;（茜側が）発情もしくは喪失中もしくは催眠（感情操作モード）
+					IF CFLAG:28 || CFLAG:29 || FLAG:526 == 1 && CFLAG:43 >= 1
+						;相手が娘
+						IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104 == 1
+							PRINTFORML 「んっ❤はっ❤ひあぁっ❤　凄いっ❤激しいぃ❤」
+							PRINTFORMW （どーしよ、自分の娘なのに好きになってまうかも…❤）
+						;相手が孫以降
+						ELSEIF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+							PRINTFORML 「んっ❤はっ❤ひあぁっ❤　凄いっ❤激しいぃ❤」
+							PRINTFORMW （どーしよ、娘同然の子なのに好きになってまうかも…❤）
+						ELSE
+							PRINTFORML 「んっ❤はっ❤ひあぁっ❤　凄いっ❤激しいぃ❤」
+							PRINTFORMW （どーしよ、%ARGS:1%のこと本気で好きになってまうかも…❤）
+						ENDIF
+					;その他
+					ELSE
+						;相手が娘・孫以降
+						IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+							PRINTFORML 「ちょっ、放しぃや……ひゃあぁ！？」
+							PRINTFORMW （嫌やぁ…！近親相姦は嫌っ…）
+						ELSE
+							PRINTFORML 「ちょっ、放しぃや……ひゃあぁ！？」
+							PRINTFORMW （嫌やぁ…！仲間に犯されるなんて…）
+						ENDIF
+					ENDIF
+				ENDIF
+			;仲間を押し倒して襲ってる
+			;※ARG:2がキャラクターID　ARG:3が状況
+			CASE 96
+				;茜が催眠（肉体操作モード）かつ発情・喪失でない
+				IF FLAG:526 == 0 && CFLAG:43 >= 1 && !CFLAG:28 && !CFLAG:29
+					;押し倒した瞬間
+					IF ARG:3 == 3 || ARG:3 == 2
+						PRINTFORMW 「あっ、ちっ、ちゃうんや！体が勝手に…！」
+					;ふたなり挿入
+					ELSEIF ARG:3 == 1
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「ゴメンな…うちがこんなんつけとるせいで…！」
+								PRINTFORMDW %CALLNAME:TARGET%は謝りながら%ARGS:1%を犯している…
+							CASEELSE
+								;相手が茜の血縁者
+								IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+									PRINTFORMW 「ちゃうっ、ちゃうやぁ！うち、操られて…くぅ…」
+									PRINTFORMW （近親相姦させるなんてっ…どんだけ悪趣味なん…！）
+								ELSE
+									PRINTFORML 「違うっ、違うのぉ！うち、操られて…くぅ…」
+									PRINTFORMW （うっ…あかん…このままやと%ARGS:1%の中に出してまう…）
+								ENDIF
+						ENDSELECT
+					;通常（レズレイプ）
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「うう…ごめんな、操られたせいで、こんなことになって…」
+							CASEELSE
+								;相手が茜の血縁者
+								IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+									PRINTFORMW （血縁者同士で…っく❤　こんなんさせるなんて…！）
+								ELSE
+									PRINTFORMW （女同士で…っく❤　こんなんさせるなんて…！）
+								ENDIF
+						ENDSELECT
+					ENDIF
+				;茜が催眠（感情操作モード）もしくは発情・喪失
+				ELSEIF FLAG:526 == 1 && CFLAG:43 >= 1 || CFLAG:28 || CFLAG:29
+					;押し倒した瞬間（3＝ふたなり　2＝通常）
+					IF ARG:3 == 3 || ARG:3 == 2
+						;相手が茜の娘
+						IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104 == 1
+							PRINTFORMW 「捕まえたで❤…ウフフ、うちの娘は可愛いな～❤」
+						;相手が茜の孫以降
+						ELSEIF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+							PRINTFORMW 「捕まえたで❤…ウフフ、娘同然だもの、可愛いな～❤」
+						ELSE
+							PRINTFORMW 「捕まえたで❤…ウフフ、%ARGS:1%は可愛いな～❤」
+						ENDIF
+					;ふたなり挿入
+					ELSEIF ARG:3 == 1
+						SELECTCASE RAND:2
+							CASE 0
+								;相手が茜の娘
+								IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104 == 1
+									PRINTFORMW 「挿れるで？ええよな？…えいっ❤」（ｽﾞﾌﾟｩｯ❤）
+									PRINTFORMW 「あっ❤凄い❤娘の膣内（なか）っ❤キツキツ❤」
+								;相手が茜の孫以降
+								ELSEIF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+									PRINTFORMW 「挿れるで？ええよな？…えいっ❤」（ｽﾞﾌﾟｩｯ❤）
+									PRINTFORMW 「あっ❤凄い❤この子の膣内（なか）っ❤キツキツ❤」
+								ELSE
+									PRINTFORMW 「挿れるで？ええよな？…えいっ❤」（ｽﾞﾌﾟｩｯ❤）
+									PRINTFORMW 「あっ❤凄い❤%ARGS:1%の膣内（なか）っ❤名器すぎ❤」
+								ENDIF
+							CASEELSE
+								;相手が茜の娘
+								IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104 == 1
+									PRINTFORML 「はっ❤はぁっ❤…あぁ、娘が可愛くて仕方ないわぁ❤」
+									PRINTFORMW 「孕めっ❤ふたなり種付けプレスであんたもママになるんやで❤」（ﾊﾟﾝｯﾊﾟﾝｯ❤）
+								;相手が茜の孫以降
+								ELSEIF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+									PRINTFORML 「はっ❤はぁっ❤…あぁ、この子も可愛くて仕方ないわぁ❤」
+									PRINTFORMW 「孕めっ❤ふたなり種付けプレスでどんどん淫乱子孫増やしたれ❤」（ﾊﾟﾝｯﾊﾟﾝｯ❤）
+								ELSE
+									PRINTFORML 「はっ❤はぁっ❤…あぁ、%ARGS:1%ちゃんステキやでぇ❤」
+									PRINTFORMW 「孕めっ❤ふたなり種付けプレスでうちの子孕んみぃ❤」（ﾊﾟﾝｯﾊﾟﾝｯ❤）
+								ENDIF
+						ENDSELECT
+					;通常（レズレイプ）
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								;相手が茜の娘
+								IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104 == 1
+									PRINTFORMW 「えいえいっ❤おかぁさんのおまんこの心地はどうや？」
+									PRINTFORML 「…甘えた顔しよって～❤それじゃあ家族サービスや❤❤」
+									PRINTFORMDW %CALLNAME:TARGET%はより激しく腰を動かした！
+								;相手が茜の孫以降
+								ELSEIF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+									PRINTFORMW 「えいえいっ❤おまんこ合わせの心地はどうや？」
+									PRINTFORML 「…甘えた顔しよって～❤それじゃあ家族サービスや❤❤」
+									PRINTFORMDW %CALLNAME:TARGET%はより激しく腰を動かした！
+								ELSE
+									PRINTFORMW 「えいえいっ❤うちのまんこの心地はどうや？」
+									PRINTFORML 「…とろけた顔しよって～❤それじゃあ特別サービスや❤❤」
+									PRINTFORMDW %CALLNAME:TARGET%はより激しく腰を動かした！
+								ENDIF
+							CASEELSE
+								;相手が茜の娘
+								IF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104 == 1
+									PRINTFORMW 「おかぁさんと一緒に、エッチなお勉強しよな❤」
+									PRINTFORMW 「ほ～ら❤これが『貝合わせ』やでー❤」（ｸﾞﾘｯｸﾞﾘｯ❤）
+								;相手が茜の孫以降
+								ELSEIF NO:(ARG:2) == 40 && CFLAG:(ARG:2):104
+									PRINTFORMW 「あんたも家族やもんな…可愛がったる❤」
+									PRINTFORMW 「ほ～らほら❤おまんこちゅっちゅ❤」（ｸﾞﾘｯｸﾞﾘｯ❤）
+								ELSE
+									PRINTFORMW 「アハッ❤おまんこ合わせも気持ちええよなー❤」（ｸﾞﾘｯｸﾞﾘｯ❤）
+								ENDIF
+						ENDSELECT
+					ENDIF
+				;茜が催眠（精神操さモード）
+				ELSEIF FLAG:526 == 2 && CFLAG:43 >= 1
+						;押し倒した瞬間
+					IF ARG:3 == 3 || ARG:3 == 2
+						PRINTFORMW 「えへへ、葵ちゃんは抱き心地ええな～！」
+					;ふたなり挿入
+					ELSEIF ARG:3 == 1
+						PRINTFORMW 「んっ…葵ちゃん…抱き心地ええわ～❤」
+					;通常（レズレイプ）
+					ELSE
+						PRINTFORML 「葵ちゃんはほんま軟らかいなぁ❤」
+						PRINTFORMDW %CALLNAME:TARGET%は%ARGS:1%にギュッと抱き付き離れない！
+					ENDIF
+				ENDIF
+		ENDSELECT
+		
+	
+;◇◇◇◇◇◇◇◇悪堕ち時の行動（別冊子起動コマンド）◇◇◇◇◇◇◇◇
+	;CASE 9（今はまだ張りぼて）
+	;	CALL AKUOTI_AKANE_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+	
+	;HPダメージ
+	CASE 12
+		;喪失中または諦め状態
+		IF CFLAG:29 || TFLAG:16 == 2
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「うげぇっ…❤　も、もっと優しくしてぇな❤」
+					
+				CASE 1
+					PRINTFORML 「グゴッ…ゴホッ」
+					PRINTFORMW 「…っ、激しいのが、好きなんやな…❤」
+				CASEELSE
+					PRINTFORML 「っ……！　ぅ…❤」
+					PRINTFORMDW %CALLNAME:TARGET%は痛みすら快楽に変えている…
+			ENDSELECT
+		;発情時または催眠（感情操作）
+		ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「あっ❤　はっ❤　あんっ❤」
+					PRINTFORMDW %CALLNAME:TARGET%は攻撃に合わせ官能的な声を上げている…
+				CASE 1
+					PRINTFORML 「んっ…こういうんが好きなん…？❤」
+					PRINTFORMDW %CALLNAME:TARGET%は頬を紅潮させている…
+				CASEELSE
+					PRINTFORML 「痛っ❤いたい～❤」
+					PRINTFORMW 「うぅ…ヒリヒリするでぇ…❤」
+			ENDSELECT
+		;HPがない
+		ELSEIF BASE:HP == 0
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「痛ッ…うっ…ぅ…」
+					PRINTFORMDW 防御すらままならない状態のようだ
+				CASE 1
+					PRINTFORML 「ぼぐふっ…！　っえぅぅ…」
+					PRINTFORMDW %CALLNAME:TARGET%はちょっと泣いている…
+				CASEELSE
+					PRINTFORML 「ごぼっ…！」
+					PRINTFORMW （こ、このまま…殴られ続けたら…死んでまうよぉ…）
+			ENDSELECT
+		;とっても痛い
+		ELSEIF ARG:2 >= 1500
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「……ぶぐぇっ？！」
+					PRINTFORMDW 想像以上の衝撃が%CALLNAME:TARGET%を襲う！
+				CASE 1
+					PRINTFORML 「ひっぐうっ！？」
+					PRINTFORMDW %CALLNAME:TARGET%は涙目だ…
+				CASEELSE
+					PRINTFORMW 「ぐっ…げ、かはっ……」
+			ENDSELECT
+		;割と痛い
+		ELSEIF ARG:2 >= 500
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「ぐっ！？　痛ったあっ…」
+				CASE 1
+					PRINTFORMW 「っ！　ひうぅ～…」
+				CASEELSE
+					PRINTFORMW 「げふうっ！」
+			ENDSELECT
+		;少し痛い
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「いだだだ！」
+				CASE 1
+					PRINTFORMW 「…こんなん掠り傷や！」
+				CASEELSE
+					PRINTFORMW 「ひぎゃ！」
+			ENDSELECT
+		ENDIF
+	;EPダメージ
+	CASE 14
+		;ARG:1に個別の敵の攻撃内容（吸収攻撃・全体攻撃など）
+		;コウノトリ・フコウノトリの見せつけ攻撃
+		IF ARG:1 == 387 || ARG:1 == 388
+			;喪失中・諦めまたは催眠（感情操作）状態
+			IF CFLAG:29 || TFLAG:16 == 2 || FLAG:526 == 1 && CFLAG:43 >= 1
+				PRINTFORML （めっちゃ逞しくて…カッコええなぁ…❤）
+				PRINTFORMDW %CALLNAME:TARGET%はウットリした表情で見ている…
+			;発情中
+			ELSEIF CFLAG:28
+				PRINTFORML 「ひゃっ…急に何なん…///」
+				PRINTFORMDW %CALLNAME:TARGET%は赤面しながら横目で見つめている…
+			ELSE
+				PRINTFORML 「なっ、なんてもんを見せとるんや！？」
+				PRINTFORMDW そう言いながらも目が離せないようだ
+			ENDIF
+		;ナインテイルスの尻尾Ａ挿入
+		ELSEIF ARG:1 == 394
+			;喪失中・諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				PRINTFORMW （んおっ❤…小っこいのに…おっほぉ❤っ、テクニシャンや❤…んほぉ❤）
+			;発情中
+			ELSEIF CFLAG:28
+				;（裸分岐セリフ）
+				IF BASE:CP == 0
+					PRINTFORMW 「ケツ穴っ❤こんなちびっ子に❤モフモフされとるぅ❤❤」
+				ELSE
+					PRINTFORMW 「ひぃっ❤尻穴弄らないでぇ❤お願いぃ❤」
+				ENDIF
+			ELSE
+				PRINTFORMW 「この、っ…がきんちょ…ひぃっ❤」
+			ENDIF
+		;ナインテイルスのおっぱいおねだり
+		ELSEIF ARG:1 == 395
+			;喪失中・諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				PRINTFORML （あぁ…おっぱいチュウチュウ吸われとる…❤）
+				PRINTFORMW 「…どぉ？美味しいか？…よかった…❤」
+			;発情中
+			ELSEIF CFLAG:28
+				;（母乳体質分岐セリフ）
+				IF TALENT:130
+					PRINTFORMW 「おっぱい欲しいんか？　ええで♪タップリ飲みや～❤」
+				ELSE
+					PRINTFORML 「ミルク出ぇへんけど、ええんか？」
+					PRINTFORMW 「じゃぁ、ほら、来てええよ❤」
+				ENDIF
+			ELSE
+				;（母乳体質分岐セリフ）
+				IF TALENT:130
+					PRINTFORMW （思わず抱いちゃったけど…どないしよ、可愛ええ…❤）
+				ELSE
+					PRINTFORMW 「もう～、吸っても出ぇへんのに…」
+				ENDIF
+			ENDIF
+		;ナインテイルスのＣ攻撃
+		ELSEIF ARG:1 == 396
+			;喪失中・諦めまたは催眠（感情操作）状態
+			IF CFLAG:29 || TFLAG:16 == 2 || FLAG:526 == 1 && CFLAG:43 >= 1
+				;（ふたなり分岐セリフ）
+				IF CFLAG:42
+					PRINTFORML （この子っ❤、ちんぽの扱い上手しゅぎるうぅううぅ❤）
+					PRINTFORMW （必死なフェラ顔も可愛ええし…虜になってまうぅ❤❤）
+				ELSE
+					PRINTFORMW （イッてまうっ❤マン汁ペロペロされてまたイッてまう❤）
+				ENDIF
+			;発情中
+			ELSEIF CFLAG:28
+				;（ふたなり分岐セリフ）
+				IF CFLAG:42
+					PRINTFORML 「おほォ❤おちんぽっ❤気持ちいひ…❤」
+					PRINTFORMW （可愛い…❤この子やらしいのに、可愛いわぁ❤）
+				ELSE
+					PRINTFORMW 「んひぃい❤クリクリ舐め舐めしちゃらめえぇ❤」
+				ENDIF
+			ELSE
+				;（ふたなり分岐セリフ）
+				IF CFLAG:42
+					PRINTFORML 「やめ…あっ！はぁっ❤」
+					PRINTFORMW （うぅ…そんな顔で見んといてぇ…❤）
+				ELSE
+					PRINTFORMW 「ひあぁ！そんなとこ舐めんといてえぇ❤」
+				ENDIF
+			ENDIF
+		
+		;（ここから個別に設定した物以外の攻撃）
+		;ARG:2に属性（0＝A攻撃　1＝B攻撃　2＝C攻撃　3＝V攻撃）が入っています
+		;A攻撃された
+		ELSEIF ARG:2 == 0
+			;喪失中または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「……お˝っ…んおぉっ……おほぉ～…❤」
+						PRINTFORMDW %CALLNAME:TARGET%は尻穴を蹂躙され悶えている…
+					CASEELSE
+						PRINTFORML （おっ❤ほっ❤お尻っ❤ズポズポされとる…❤
+						PRINTFORMW 　うちのアナル、第二まんこに開発されてまうぅ❤）
+				ENDSELECT
+			;発情または催眠（感情操作）状態
+			ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「んおぉ❤❤　おっほおぉおおぉおっ❤❤❤！！！」
+							PRINTFORMDW 想像を絶する快楽が%CALLNAME:TARGET%の尻穴を駆け巡る！
+						CASE 1
+							PRINTFORMW 「イく！イグぅっ❤！　発情ケツ穴ほじくられてイッてまうぅううぅ❤❤❤！！」
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「うちの中が全部裏返ってまうっ❤」
+						CASE 1
+							PRINTFORMW 「これ以上お尻弄らんといてぇ❤癖になってまうんよぉ❤」
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW （アナル攻めされてぇ❤気持ち良ぉなっとるぅ❤）
+						CASEELSE
+							PRINTFORMW 「うちのお尻を狙うやなんて…物好きやなぁ❤」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「んぐぅ❤」
+						CASE 1
+							PRINTFORMW 「おほぉ❤」
+					ENDSELECT
+				ENDIF
+			;通常
+			ELSE
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「んお˝お˝おおおおっ❤！！」
+							PRINTFORMDW %CALLNAME:TARGET%はアナルを強烈に責められ悶えている！
+						CASE 1
+							PRINTFORMW 「んひぎいいいっいいぃ！！」
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「おぐぅっ！　んぎぃっ！」
+							PRINTFORMDW %CALLNAME:TARGET%は無理やり挿れられ苦しんでいる…
+						CASEELSE
+							PRINTFORMW 「やめっ…嫌やっ…尻穴、広がってまう…」
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひぎぃ…！」
+						CASEELSE
+							PRINTFORML 「お尻狙うとか…んっ❤…あ、頭おかしいんとちゃう！？」
+							PRINTFORMDW %CALLNAME:TARGET%は悪態をついている
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「んぎゅっ！」
+						CASE 1
+							PRINTFORMW 「おごっ！」
+					ENDSELECT
+				ENDIF
+			ENDIF
+		;B攻撃された
+		ELSEIF ARG:2 == 1
+			;喪失中または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「おっぱい、吸われるの、気持ち良い…♪」
+						PRINTFORMDW %CALLNAME:TARGET%は虚ろな目をしてはにかんでいる…
+					CASEELSE
+						PRINTFORML （うち…このまま…ミルクサーバーにされてまうんかなぁ…❤）
+						PRINTFORMW （そしたら、毎日おっぱい絞られて……んふふぅ❤）
+				ENDSELECT
+			;発情または催眠（感情操作）状態
+			ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「イクっ！イクぅ❤　おっぱいいじくられてイッてまううううう❤❤」
+						CASE 1
+							PRINTFORML 「乳首っ❤乳首イきっ❤ぎもぢい˝い˝いいいぃ❤❤」
+							PRINTFORMDW %CALLNAME:TARGET%の精神が擦り切れていく…
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひうっ…❤おっぱい揉みしだかれてイッてまうぅ❤」
+						CASE 1
+							PRINTFORMW 「絞られるぅ❤絞られてうちミルク出てまうぅ❤」
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「そないにっ必死におっぱい揉まんといてぇなぁ❤」
+						CASEELSE
+							PRINTFORMW 「んふふ❤そないにミルク飲みたいのぉ？❤」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「んっ…ふふっ❤」
+							PRINTFORMDW 心なしか嬉しそうだ…
+						CASE 1
+							PRINTFORMW 「ひゃあぁ❤」
+					ENDSELECT
+				ENDIF
+			;通常
+			ELSE
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひぎゅううううううううう！？」
+						CASE 1
+							PRINTFORMDL %CALLNAME:TARGET%はとんでもない力で胸部をいじられた！
+							PRINTFORMW 「いやあああ！おっぱい千切れりゅうううう！！」
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「んああっ！おっぱい壊れてまうぅ！！」
+						CASEELSE
+							PRINTFORMW 「乳首あかん！いやあああぁぁ！！」
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「あんっ…そ…そないに強く揉んだらあかん…」
+						CASEELSE
+							PRINTFORML 「んぐ…ぐうううっ…！」
+							PRINTFORMDW %CALLNAME:TARGET%は胸を弄ばれて呼吸が苦しそうだ
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひんっ…」
+						CASE 1
+							PRINTFORMW 「さ、触んなぁ！」
+					ENDSELECT
+				ENDIF
+			ENDIF
+		;C攻撃された
+		ELSEIF ARG:2 == 2
+			;喪失中または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW （イグっ❤イグうう❤　クリクリこねこねキモチイイ❤❤）
+					CASEELSE
+						PRINTFORML 「イッ❤…ひっ❤…！」（ﾋｸｯﾋｸｯ…❤）
+						PRINTFORMDW 度重なる凌辱で壊れかけている…
+				ENDSELECT
+			;発情または催眠（感情操作）状態
+			ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「イグゥぅっ！うち、クリイきしましゅううううううううう！！❤❤」
+						CASE 1
+							PRINTFORMW （んひいぃ❤…自分でいじくるのより何倍も気持ち良い…❤❤）
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひっ❤…うっ❤…ぁん❤❤…」
+						CASE 1
+							PRINTFORML 「はっ…あああ…❤」
+							PRINTFORMW （クリ責め…すっかり癖になっとるよぉ❤）
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「お豆苛めないでぇ❤　戻んなくなってまう❤」
+						CASEELSE
+							PRINTFORMW 「ぅひいいぃっ❤」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「あ…っ❤」
+						CASE 1
+							PRINTFORMW 「んぅっ❤」
+					ENDSELECT
+				ENDIF
+			;通常
+			ELSE
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「やめてぇ…　今弄られたら…　うち…壊れちゃ…」
+							PRINTFORMW 「ふあ…❤　あぁああぁあああぁああぁ❤❤❤！！！」
+						CASE 1
+							PRINTFORML 「嫌！イきとおないっ！もぅイぎたぐないんよおお！んひいぃいぃいいい！！」
+							PRINTFORMDW %CALLNAME:TARGET%は発狂寸前だ…
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「んやっああぁああっ！」
+						CASEELSE
+							PRINTFORMW （耐えられへん…頭真っ白になってまううぅ❤）
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひぐうぅううっ…！！」
+						CASEELSE
+							PRINTFORMW 「んくっ！…あうぅっ！！」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「うぁ…ん…」
+						CASE 1
+							PRINTFORMW 「ひきゅう！」
+					ENDSELECT
+				ENDIF
+			ENDIF
+		;V攻撃された
+		ELSEIF ARG:2 == 3
+			;喪失中または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「ぐっ❤げっ❤がっ❤ごっ❤ぎっ❤」
+						PRINTFORMW （うち…触手専用オナホにされとるぅ❤）
+					CASEELSE
+						PRINTFORMW （遠慮なんかせんといて、好きに使ってええんやで❤）
+				ENDSELECT
+			;発情または催眠（感情操作）状態
+			ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「おっきぃんがぁ…❤　子宮にズンズン響いてくるぅ❤」
+						CASE 1
+							PRINTFORMW 「あぅっ❤…激しっ❤…おまんこっ❤…広がってまうっ❤❤」
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ええっ❤ええでぇ❤おまんこズコズコめっちゃ好きやわぁ❤❤」
+						CASE 1
+							PRINTFORMW 「あかん❤…そこ弱くてぇ❤…腰砕けになってまう…♪」
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「そう❤そこっ❤そこが好きやねん❤❤」
+						CASEELSE
+							PRINTFORMW 「ほぉら❤もっと頑張り♪まだ満足出来ひんよぉ❤」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「もっと…奥まで来ぃ❤」
+						CASE 1
+							PRINTFORMW 「そないうちのキツキツまんこ味わいたいんか？❤」
+					ENDSELECT
+				ENDIF
+			;通常
+			ELSE
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ぎぁあぁああぁ！！裂けぢゃぅっううあぁああぁ！！」
+						CASE 1
+							PRINTFORML 「ふぐぎぃっ！！いぎゃがあぁああぁ！！」
+							PRINTFORMW （嫌ぁ…触手に挿れられるの嫌らぁ…）
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「ひぎぃいいぃぃい…！！」
+							PRINTFORMDW %CALLNAME:TARGET%の身体はガクガク揺れている…
+						CASEELSE
+							PRINTFORMW 「嫌や嫌やいやあぁ！！早よ抜いてぇええ！！」
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「せ、せめて…っく、もっと優しくしてぇ～…」
+						CASEELSE
+							PRINTFORMW 「うげっ、おげぇっ……」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひやああ！」
+						CASE 1
+							PRINTFORML 「ひ、ひいぃ…」
+							PRINTFORMDW %CALLNAME:TARGET%は恐怖している…
+					ENDSELECT
+				ENDIF
+			ENDIF
+		;ABCV以外の攻撃って何かあったかな…
+		ELSE
+		;あった。
+			;喪失中または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「…ぁは…♪」
+						PRINTFORMW （うちぃ…玩具にされて、喜んどるぅ…❤）
+					CASEELSE
+						PRINTFORMW （ええよぉ❤…もっと遊ぼか…❤）
+				ENDSELECT
+			;発情または催眠（感情操作）状態
+			ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「あひっ、❤ひああぁああぁあっ❤❤」
+						CASE 1
+							PRINTFORML 「おっ、おごほおぉおおぉ～～～！！！❤❤」
+							PRINTFORMW （壊れるっ❤あたまこわされてまうぅうううぅ❤）
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「んいっ！んひゅいいぃい！❤」
+						CASE 1
+							PRINTFORML 「えひっ❤　んあっ❤　おほぉっ❤　ひぐっ❤」
+							PRINTFORMDW %CALLNAME:TARGET%は小刻みに喘いでいる…
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「そこ、らめなのぉ❤」
+						CASEELSE
+							PRINTFORMW 「やめへぇ…へぎゅうぅう❤」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「きゅぅうん❤」
+						CASE 1
+							PRINTFORMW 「んひやぁ♪」
+					ENDSELECT
+				ENDIF
+			;通常
+			ELSE
+				;EPダメージ10000オーバー
+				IF ARG:3 >= 10000 
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「やめぇ、やっ…いひゃああぁあぁあぁああ！！」
+						CASE 1
+							PRINTFORMW 「ふぎっ…ひぐうぅううううぅうぅ！！」
+					ENDSELECT
+				;EPダメージ6000以上
+				ELSEIF ARG:3 >= 6000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「ひぎぃいいぃぃい！！」
+						CASEELSE
+							PRINTFORML 「ひくぅ…！くふぅううぅ…！！」
+							PRINTFORMDW %CALLNAME:TARGET%は息も絶え絶えのようだ…
+					ENDSELECT
+				;EPダメージ3000以上
+				ELSEIF ARG:3 >= 3000
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「あんっ…嫌やぁっ…！」
+						CASEELSE
+							PRINTFORMW 「触らん…といてぇ…」
+					ENDSELECT
+				;EPダメージ3000未満
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「やぁっ…」
+						CASE 1
+							PRINTFORMW 「ひぃっ…くうっ…」
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ENDIF
+	;敵の拘束攻撃命中
+	CASE 15
+		;喪失中または諦めまたは催眠（感情操作）状態
+		IF CFLAG:29 || TFLAG:16 == 2 || FLAG:526 == 1 && CFLAG:43 >= 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「うちが欲しいんか？…ええよぉ❤来ぃ…❤」
+					PRINTFORMDW %CALLNAME:TARGET%は抵抗することなく捕らえられた…
+				CASEELSE
+					PRINTFORML 「……あはぁっ❤」
+					PRINTFORMDW %CALLNAME:TARGET%は怯えるどころか、むしろ期待している…
+			ENDSELECT
+		;発情時
+			ELSEIF CFLAG:28
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「う、あかっ…❤」
+					PRINTFORMW （あかん、変なこと考えてまう❤…早よ逃げ出さないとぉ…っ❤）
+				CASEELSE
+					PRINTFORMW 「やあっ❤もっと優しぃしてぇ！❤」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMDL %CALLNAME:TARGET%の体に触手が絡みつく…！
+					PRINTFORMW 「ぐっ！？　んんぶ…！！」
+				CASE 1
+					PRINTFORMW 「なっ…ちょっ、放しぃ～！？」
+				CASEELSE
+					PRINTFORMW 「うわっ、しくじったっ！」
+			ENDSELECT
+		ENDIF
+	;敵の寄生攻撃命中
+	CASE 16
+		;喪失中または諦め状態
+		IF CFLAG:29 || TFLAG:16 == 2
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「は…ぁ……ん…♪」
+					PRINTFORMW （熱ぅて、濃厚なん……子宮にドクドク、流し込まれとるぅ❤❤…）
+				CASEELSE
+					PRINTFORML 「んあっ❤……遠慮せんといてぇ❤…もっと注いでもええんやで…？❤」
+					PRINTFORMW 「うちのトロットロおまんこに、タップリ孕ませ汁ちょうだい…❤❤❤」
+			ENDSELECT
+		;発情または催眠（感情操作）状態
+			ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「イクううぅ！！発情おまんこにせーえきビュービューきとるうぅう❤❤！！」
+						;（寄生・妊娠中分岐セリフ）
+						IF CFLAG:22 && CFLAG:36 == 0 || CFLAG:36 >= 3
+							PRINTFORMW 「お腹に赤ちゃんいるのにぃ❤孕ませレイプでイッてまうぅううぅ❤❤」
+						ELSE
+							PRINTFORMW 「できてまうぅ……無責任射精で触手赤ちゃん孕んでまううううぅうう❤❤」
+						ENDIF
+				CASEELSE
+					PRINTFORML 「んほぉおおぉお❤　深いっ❤深いのぉ❤❤」
+						;（寄生・妊娠中分岐セリフ）
+						IF CFLAG:22 && CFLAG:36 == 0 || CFLAG:36 >= 3
+							PRINTFORMW （うち、妊娠お構いなしに射精されて喜んどるう❤❤）
+						ELSE
+							PRINTFORMW （こない激しぃされたら、うち孕まされてママになってまう❤❤）
+						ENDIF
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「やぁああああ！！中出しは嫌やあああぁぁ…！！」
+				CASEELSE
+					PRINTFORMW 「あかん…来んといてえ！！」
+					PRINTFORML 「…っおぐっ！おごおぉあぁあああぁああ！！」
+					;（寄生・妊娠中分岐セリフ）
+						IF CFLAG:22 && CFLAG:36 == 0 || CFLAG:36 >= 3
+							PRINTFORMW （妊娠しとるのにぃ…もうヤダぁ…！！）
+						ELSE
+							PRINTFORMW （嫌ぁ…触手に孕まされるのは嫌やぁ…）
+						ENDIF
+			ENDSELECT
+		ENDIF
+	;敵の特殊攻撃
+	CASE 17
+		;ARG:1に個別の敵の攻撃内容
+		;砂煙・煙幕
+		IF ARG:1 == 10 || ARG:1 == 11
+			PRINTFORMW 「ぶわっ、目がぁっ！？」
+		;アルラウネ・ドリアードの花粉（睡眠誘発）
+		ELSEIF ARG:1 == 12 || ARG:1 == 14
+			PRINTFORMW 「何っ、この粉…！」
+			PRINTFORML 「う…ふあぁ…っ…」
+			PRINTFORMW （急に、眠く…！）
+		;アルラウネ・ドリアードの花粉（催淫誘発）
+		ELSEIF ARG:1 == 13 || ARG:1 == 15
+			PRINTFORMW 「何やっ、この粉…！」
+			PRINTFORML 「ん、ふあぁ…っ❤…」
+			PRINTFORMW （急に、変な気分にぃ…❤）
+		;吸収攻撃（絶頂含む）
+		ELSEIF ARG:1 == 18 || ARG:1 == 19
+			;発情中・喪失中・諦め状態
+			IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+				PRINTFORMW （ひぃ❤なんか吸われとる…❤）
+			ELSE
+				PRINTFORMW （ぐぅ…なんか吸われとる…！？）
+			ENDIF
+		;催眠攻撃ヒット
+		ELSEIF ARG:1 == 22 || ARG:1 == 25
+			;肉体操作（無理矢理モード）
+			IF CFLAG:526 == 0
+				;深い催眠（深度3以上）
+				IF CFLAG:43 >= 3
+					;発情中・喪失中・諦め状態
+					IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+						PRINTFORMW 「…こんなんしいひんくてもしたるのに…❤」
+					ELSE
+						PRINTFORML （うぎぎ～…全然身体が動かせへん…！）
+						PRINTFORMDW %CALLNAME:TARGET%はもう小指一つすら動かせないようだ
+					ENDIF
+				ELSE
+					;発情中・喪失中・諦め状態
+					IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2
+						PRINTFORML 「な、何する気や…？」
+						PRINTFORMDW 硬直する身体とは裏腹に%CALLNAME:TARGET%の顔は少し緩んでいる…
+					ELSE
+						PRINTFORMDL %CALLNAME:TARGET%の意思に反し身体が硬直した！
+						PRINTFORMW 「ぐっ…な、動かへん！？」
+					ENDIF
+				ENDIF
+			;精神操作（エロ大好きモード）
+			ELSEIF CFLAG:526 == 1
+				;深い催眠（深度3以上）
+				IF CFLAG:43 >= 3
+					PRINTFORML 「はい、勿論…もっとたくさんご奉仕させて頂きますね❤」
+					PRINTFORML （見つめられると、おまんこムズムズするぅ…❤）
+					PRINTFORMDW %CALLNAME:TARGET%の顔は蕩けきっている…
+				ELSE
+					PRINTFORML 「…ひゃあっ！？❤」
+					PRINTFORMDW 眼光に射抜かれた瞬間%CALLNAME:TARGET%の身体が跳ねた！
+				ENDIF
+			;認識操作（理解できないモード）
+			ELSEIF CFLAG:526 == 2
+				;深い催眠（深度3以上）
+				IF CFLAG:43 >= 3
+					PRINTFORML （ｳﾁﾊ…　ｳﾁﾊ…　ｳﾁﾊ…　ﾅﾆｦ…　ﾅﾆｦ…）
+					PRINTFORMDW 敵は尚も暗示をかけ続けている…！
+				ELSE
+					PRINTFORMDL 強烈な暗示が%CALLNAME:TARGET%を襲う！
+					PRINTFORML （ここは…うちの部屋…？　ここは…部屋。　ココハ、ヘヤ。　コ　コ　ハ…）
+					PRINTFORMW 「……さて、昨日の続きを…と」 
+				ENDIF
+			ENDIF
+		;ナインテイルズの自慰見せつけ
+		ELSEIF ARG:1 == 26
+			IF CFLAG:28
+				PRINTFORML （…気持ちよさそうやな～…❤）
+				PRINTFORMDW %CALLNAME:TARGET%の目線は敵の自慰行為に釘付けだ！
+			ELSE
+				PRINTFORML 「こいつ、何を……？」
+				PRINTFORMDW 予想外の行動に%CALLNAME:TARGET%は目を逸らすことを忘れている…
+			ENDIF
+		;～～ここから追加拡張分（攻撃コマンド一覧参照）～～
+		;汚染攻撃（全身）
+		ELSEIF ARG:1 == 950
+			;発情中・喪失中・諦め・催眠（感情操作）状態
+			IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || FLAG:526 == 1 && CFLAG:43 >= 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「やぁっ、ベトベトぉ…❤」
+						PRINTFORMDW 何故か%CALLNAME:TARGET%はにやけている…
+					CASE 1
+						PRINTFORMW （やだぁ、めっちゃ臭い…❤）
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「うげぇ、汚っ！しかも臭うー！」
+					CASE 1
+						PRINTFORMW 「うへぇ、ベトベト～…」
+				ENDSELECT
+			ENDIF
+		;汚染攻撃（顔と胸）
+		ELSEIF ARG:1 == 951
+			;発情中・喪失中・諦め・催眠（感情操作）状態
+			IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || FLAG:526 == 1 && CFLAG:43 >= 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「やぁっ、ベトベトぉ…❤」
+						PRINTFORMDW 何故か%CALLNAME:TARGET%はにやけている…
+					CASE 1
+						PRINTFORMW （うわ…めっちゃ濃厚…❤）
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「うげぇ、汚っ！しかも臭うー！」
+					CASE 1
+						PRINTFORMW 「うぶぇっ！クッサ！」
+				ENDSELECT
+			ENDIF
+		;汚染攻撃（顔）
+		ELSEIF ARG:1 == 952
+			;発情中・喪失中・諦め・催眠（感情操作）状態
+			IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || FLAG:526 == 1 && CFLAG:43 >= 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「やぁっ、ベトベトぉ…❤」
+						PRINTFORMDW 何故か%CALLNAME:TARGET%はにやけている…
+					CASE 1
+						PRINTFORMW 「うぶぇ…臭っさぁい❤」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「うげぇ、汚っ！しかも臭うー！」
+					CASE 1
+						PRINTFORMW （ちょっと嘗めてもうた…おえぇ…！）
+				ENDSELECT
+			ENDIF
+		;汚染攻撃（口内）
+		ELSEIF ARG:1 == 953
+			;発情中・喪失中・諦め・催眠（感情操作）状態
+			IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || FLAG:526 == 1 && CFLAG:43 >= 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMDL %CALLNAME:TARGET%は粘液を飲み下した…
+						PRINTFORMW 「ぷえ…なんてもん飲ますんや…❤」
+					CASE 1
+						PRINTFORML 「うぶっ！…んぐ…んう～…❤（ｺｸｯｺｸｯ❤）」
+						PRINTFORMW （不味い…けど…止められへん…❤）
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「ングゥ！ウモゴゴッ、グェ～！！」
+						PRINTFORMDW %CALLNAME:TARGET%は悶絶している…
+					CASE 1
+						PRINTFORML 「ウゲッ、ゲホ…おえぇ～っ！」
+						PRINTFORMDW %CALLNAME:TARGET%は涙目でえずいている…
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;攻撃回避
+	;※22～27までがそれぞれ攻撃を避けた時の処理。26（寄生攻撃）以外は全部同じ口上としてまとめて処理。
+	CASE 22 TO 25, 27
+		;喪失時
+		IF CFLAG:29 || TFLAG:16 == 2
+			;（喪失時は喋らせない）
+		;発情時または催眠（感情操作）
+		ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「ふーっ、ふーっ…❤」
+					PRINTFORMDW %CALLNAME:TARGET%は火照った体を何とか動かし避けた！
+				CASE 1
+					PRINTFORMW （い、今のを食らっとったら――うち、どうなっとたんやろ…❤）
+				CASE 2
+					PRINTFORML 「ふふ、そんなん当たらへんで…❤」
+					PRINTFORMW （やばっ❤急に動いたらちょっと気持ち良くなってもうた…❤）
+			ENDSELECT
+		;ピンチ（MP1/4以下またはHP0）
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「ひいっ！」
+					PRINTFORMW （こんなん直撃くらったら…まともじゃ済まへん…！）
+				CASE 1
+					PRINTFORML 「まだや…まだいけるわ！」
+					PRINTFORMDW そういう%CALLNAME:TARGET%だが額に冷や汗をかいている…
+				CASE 2
+					PRINTFORMW 「間一髪で回避ぃ！」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORML 「見切ったあ！」
+					PRINTFORMW （か、紙一重やった…）
+				CASE 1
+					PRINTFORMW 「余裕っ！」
+				CASE 2
+					PRINTFORML 「それで全力かぁ？」
+					PRINTFORMDW %CALLNAME:TARGET%は調子に乗って挑発している…
+				CASEELSE
+					PRINTFORMW 「危ないわ！」
+			ENDSELECT
+		ENDIF
+	;敵を一体撃破
+	CASE 31
+		;発情時または催眠（感情操作）
+		IF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「そない軟弱じゃ～、うちの相手なんか務まらへんで❤」
+				CASEELSE
+					PRINTFORML 「あっ……た、倒せたやったで～！…」
+					PRINTFORMW （言えへん…『突っついたらシてくれるかも❤』とか思ってたなんて…）
+			ENDSELECT
+		;ピンチ（MP1/4以下またはHP0）
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「見たかっ、うちにも意地があんねん！」
+				CASE 1
+					PRINTFORMW 「よぉ～し、まだやれるで…！」
+				CASE 2
+					PRINTFORML 「手負いのうちは怖いで～！」
+					PRINTFORMW （って言ってれば奴ら逃げてくれへんかな…無理か）
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML 「こちとら遊びじゃないんや！」
+					PRINTFORMDW %CALLNAME:TARGET%は凄んでいる
+				CASE 1
+					PRINTFORMW 「なんや、弱いやん」
+				CASE 2
+					PRINTFORMW 「そんなんじゃうちには勝てへんで」
+				CASE 3
+					PRINTFORMW 「案外あっけないなぁ～」
+				CASE 4
+					PRINTFORMW 「おとなしく土に還りぃ。…ここに土は無いか」
+			ENDSELECT
+		ENDIF
+	;MPが0（喪失）になった
+	CASE 33
+		;発情中または催眠状態（感情操作）
+		IF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+			PRINTFORML 「もうらめぇ❤　こっ…こうしゃんしますぅ❤」
+			PRINTFORMW 「うちはぁ、触手様に降伏しましゅううぅ…❤❤」
+			PRINTFORMDW %CALLNAME:TARGET%は快楽に負けた…
+		;その他
+		ELSE
+			PRINTFORML 「…ひ…ぐぅ❤……うああぁ❤…ぁ❤❤」
+			PRINTFORMW （もう…あかん…頭も…体も…動か――）
+			PRINTFORML （―――――…あ……ぁ…❤）
+			PRINTFORMDW %CALLNAME:TARGET%は快楽に負けた…
+		ENDIF
+	;CPダメージ（服が破かれる）
+	CASE 35
+		;喪失中または諦め状態
+		IF CFLAG:29 || TFLAG:16 == 2
+			PRINTFORML 「…ぅ…？　……ぇへへ～❤……」
+			PRINTFORMDL %CALLNAME:TARGET%は服が破れても気にしていない
+			PRINTFORMDW それどころか、むしろ喜んでいるようだ…
+		;発情中または催眠状態（感情操作）
+		ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+			SELECTCASE ARG:1
+			;全裸にされる
+			CASE 0
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「あは…❤　すっぽんぽんにされてもうたぁ❤」
+					CASE 1
+						PRINTFORMW 「いやや、みんなに裸見られてまう❤」
+					CASEELSE
+						PRINTFORML （……あっ…これ、ほんのちょっとだけ、気持ち良い…）
+						PRINTFORMW （どうしよ……見られるの、癖になってまうかも…❤❤）
+				ENDSELECT
+			;半裸にされる
+			CASE 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「あかん…❤身ぐるみ剥がされてまう❤」
+					CASE 1
+						PRINTFORMW （うちのこと、犯す気満々やな❤）
+					CASEELSE
+						PRINTFORMW 「やぁん♪がっつき過ぎや❤」
+				ENDSELECT
+			;破れ始める
+			CASE 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW （うかうかしとると、ひん剥かれてまうよぉ…❤）
+					CASEELSE
+						PRINTFORMW 「も～…す～ぐそうやって乱暴する～…❤」
+				ENDSELECT
+			ENDSELECT
+		ELSE
+			SELECTCASE ARG:1
+			;全裸にされる
+			CASE 0
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「あぁ、上から下まで全部丸見えに……」
+					CASE 1
+						PRINTFORML （恥ずかしい恥ずかしい恥ずかしい恥ずかしい恥ずかしい…）
+						PRINTFORMDW %CALLNAME:TARGET%の頭の中は羞恥心でいっぱいだ！
+					CASEELSE
+						PRINTFORMW 「うわぁ！……バカ！アホォ！この変態ぃ！！」
+				ENDSELECT
+			;半裸にされる
+			CASE 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「こんなとこで裸はイヤヤ～！」
+						PRINTFORMDW %CALLNAME:TARGET%は残りの服で必死に体を隠そうとしている…
+					CASE 1
+						PRINTFORMW （これ以上はまずい…おっぱいとかお尻とか、全部見えてまう…！）
+					CASEELSE
+						PRINTFORMW 「うぅ…服がどんどん布きれになっていく…」
+				ENDSELECT
+			;破れ始める
+			CASE 2
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW （ヤバい、服が解れてきた…！）
+					CASE 1
+						PRINTFORMW 「丸裸にして美味しく頂こうってわけやな…そうはさせへん！」
+					CASEELSE
+						PRINTFORMW 「あ～！なにするんや！」
+				ENDSELECT
+			ENDSELECT
+		ENDIF
+	;マップ上でアイテムを使用
+	;（使用前に口上が出る模様）
+	;※この個所は輝夜口上を参考にさせていただきました。
+	CASE 36
+		SELECTCASE ARG:1
+			;着替えセット
+			CASE 54
+				;CFLAG:501が着用している（ここでは“する”）衣服の種類
+				;服装データは「CLOTH_DATA」（ERBフォルダ→アイテム画面→CLOTH→CLOTH_DATA）を参照
+				SELECTCASE CFLAG:501
+					;いつもの服
+					CASE 0
+						PRINTFORML 「ん、やっぱこの服やな！」
+						PRINTFORML （なんでこの服がここにあるんかは気にせんとこ…）
+					;普通の服（町娘のミニスカ）
+					CASE 1
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「ちょっと…太ももが、スースーするかなぁ…❤」
+						ELSE
+							PRINTFORML 「ふーん、こういう服も可愛くてええな。…スカートの丈が気になるけど」
+						ENDIF
+					;体操着
+					CASE 2
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「んっ…ちょっと、キツイ…///」
+						ELSE
+							PRINTFORML 「動きやすいのはええけど、微妙にサイズが合わへんなぁ…」
+						ENDIF
+					;メイド服
+					CASE 3
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「…『ご主人様ぁ～♪』なんて、なー…」
+							PRINTFORML （危ないあぶない…イケナイ扉、開きそうになったわ…❤）
+						ELSE
+							PRINTFORML 「…コスプレ用にしては生地がしっかりしとるなぁ」
+						ENDIF
+					;パジャマ
+					CASE 4
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「スカスカで頼りない…おまけにむ、胸見えそうやし…❤」
+						ELSE
+							PRINTFORML 「ちょっ…胸見えてまうやんこれ？！」
+						ENDIF
+					;巫女服
+					CASE 5
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「こ、この巫女服、胸元ザックリしとる…///」
+						ELSE
+							PRINTFORML 「ついなちゃんのとは違うみたい…結構種類があるんか」
+						ENDIF
+					;スクール水着
+					CASE 6
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「スクール水着、…ひらがな…で名前、ねらっとるなぁ」
+							PRINTFORMDL ゼッケンには[あかね]と書かれている…
+							PRINTFORML 「…ここでは水以外で泳ぐ事になりそうやなぁ❤」
+						ELSE
+							PRINTFORML 「これはスクール水着か…」
+							PRINTFORMDL ゼッケンには[あかね]と書かれている…
+							PRINTFORML 「…なんでうちの名前が…態々ひらがなで…気味悪いなぁ」
+						ENDIF
+					;マイクロビキニ
+					CASE 7
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「うわ…なんやこれ、嘘やろ…」
+							PRINTFORML （こんな服…いやもうほとんど下着やけど…
+							PRINTFORML 　こんなん着て歩いてたらうち、変態みたいやん…❤）
+						ELSE
+							PRINTFORML 「…なんや、これ…ビキニ？しかもマイクロ？他に何か無いんか？！」
+							PRINTFORML 「あとは…羽織るための布だけかぁ…ハズレや、これ…」
+						ENDIF
+					;ボディスーツ
+					CASE 8
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「な、なんやこのピッチピチな全身スーツ…ちょっと、キツい…///」
+							PRINTFORML （でもこの拘束感…嫌いやない、かも…❤）
+						ELSE
+							PRINTFORML 「わ、ピッチピチ…体全体を守れるのはええけど、その、ボディラインが…///」
+						ENDIF
+					;セーラー服
+					CASE 9
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「涼しげな服やな。…ちょっと隙が多そうやけど…❤」
+						ELSE
+							PRINTFORML 「涼しげな服やな。やけどこの場所にはちょっと似合ってへんかな～」
+							PRINTFORML （まぁ、ここに似合う服なんか変なんしか無いやろうけど…）
+						ENDIF
+					;半ズボン
+					CASE 10
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「どう見たって小っちゃな男の子向けやな、これは」
+							PRINTFORML 「……『僕、女の子やないもん…』って感じかな～❤…」
+							PRINTFORML 「…言ってて恥ずかしくなったわ…言わんかったらよかった…///」
+						ELSE
+							PRINTFORML 「ハーフパンツ…じゃなくて完全に男の子用やないか？」
+						ENDIF
+					;妊婦服
+					CASE 11
+						;妊娠時
+						IF CFLAG:22 && CFLAG:36 == 0 || CFLAG:36 >= 3
+							;（発情分岐セリフ）
+							IF CFLAG:28
+								PRINTFORML 「うーん、気遣われとるんかな、これ…❤」
+							ELSE
+								PRINTFORML 「随分と都合がええな～…って逆に腹が立つわ！」
+							ENDIF
+						ELSE
+							;（発情分岐セリフ）
+							IF CFLAG:28
+								PRINTFORML （この服着てたら、妊娠する気満々な風に見られそうや…❤）
+							ELSE
+								PRINTFORML 「あ、妊婦服かこれ。道理でお腹がダボッとしとる訳や」
+							ENDIF
+						ENDIF
+					;ランジェリードレス
+					CASE 12
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「つい着てもうたけど…下手したら裸より恥ずかしいで…///」
+						ELSE
+							PRINTFORML 「…どう見ても誘っとるようにしか見えへんやろ…やめよかなこの服…」
+						ENDIF
+					;セーター（タートルネック＋ノースリーブ）
+					CASE 13
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「…なんか胸をアピールしすぎてへん？この服…❤」
+						ELSE
+							PRINTFORML 「暖かいのはいいけど、胸が、ちょっと…」
+						ENDIF
+					;チャイナドレス
+					CASE 14
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML （隙間から何かされそう…いや絶対してくるで…❤）
+						ELSE
+							PRINTFORML 「動きやすいのはいいけど、肝心な所が守られてへんなぁ…」
+						ENDIF
+					;貞操帯
+					CASE 15
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「い、勢いに任せちゃいそうやから、気を引き締める意味でもええ装備やな…」
+						ELSE
+							PRINTFORML 「えーと？服の下につければええんか？」（ｶﾞﾁｬｶﾞﾁｬ…）
+							PRINTFORML 「…よし。大袈裟かもしれへんけど、用心に越した事は無いからな～」
+						ENDIF
+					;ポイントアーマー
+					CASE 16
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「今のうちには丁度いい重装備やな…」
+							PRINTFORML 「…いやでも、結構隙間多くないか？…大丈夫かなぁ…？❤」
+						ELSE
+							PRINTFORML 「ガッチガチの服、というか防具やな…意外と隙多そうやけど」
+						ENDIF
+					;園児服
+					CASE 17
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「えぇ…これ着なきゃあかん…？」
+							PRINTFORML （ｺﾞｿｺﾞｿ…）「あぁ、着てもうた…❤」
+							PRINTFORML （これで『うちな、茜！4しゃいっ！』とか言ったら…罪や、犯罪級…！）
+						ELSE
+							PRINTFORML 「なんやこれ？ふざけとるんか？それとも嫌がらせか！？」
+							PRINTFORML 「う～、でも出てきとるしなぁ…しゃーない、恥ずかしいけど着よ」
+							PRINTFORML （ｺﾞｿｺﾞｿ…）「…あかん、犯罪的すぎる…鏡が無いのが救いや」
+						ENDIF
+					;エプロン
+					CASE 18
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「服とエプロンか…ん、注意書きか」
+							PRINTFORML 「何々…『魔法防壁エプロン：本製品は特殊加工しており下に着た服が無くなるまで
+							PRINTFORML 　決して破れません。安心・安全なクッキングをお楽しみ下さい！』…」
+							PRINTFORML 「…裸エプロンにしようって作戦やな…全くやらしい事を思いつく奴らやな…❤」
+						ELSE
+							PRINTFORML 「これは、エプロンか…うん？なんか書いてある」
+							PRINTFORML 「何々…『魔法防壁エプロン：本製品は特殊加工しており下に着た服が無くなるまで
+							PRINTFORML 　決して破れません。安心・安全なクッキングをお楽しみ下さい！』…」
+							PRINTFORML 「…てことはそのうち裸エプロンになってまうやん！大きなお世話やで全く…！」
+						ENDIF
+					;ローブ
+					CASE 19
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「服っていうか羽織る布みたいやな。動いたら中見えるんやないか…❤」
+						ELSE
+							PRINTFORML 「なんや魔法使いとか、魔術師用の服やな。あんまり似合いそうに無いなぁ」
+							PRINTFORML 「野暮ったい服は嫌いなんよな、動きにくいし」
+						ENDIF
+					;ウェディングドレス
+					CASE 20
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「…綺麗…！　結婚相手は…」
+							PRINTFORML （こんなん置いとくって事は…やっぱり、そういうことなんかな…❤）
+						ELSE
+							PRINTFORML 「わぁ、素敵なドレス…！こんなんが落ちとるなんてな～」
+							PRINTFORML 「…拾ったのがここじゃなけりゃなぁ…ハァ～…」
+						ENDIF
+					;＿人人人人人人＿
+					;＞ふんどし！！＜
+					;￣Y^Y^Y^Y^Y^Y^￣
+					CASE 21
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「ふんどし…女性でも祭りの時は付ける事はあるって聞くけど…」
+							PRINTFORML 「触手の液とかをもろに吸収しそうやな…❤」
+						ELSE
+							PRINTFORML 「こ、これは……ふんどし！！」
+							PRINTFORML 「うん、気合が入るな！　ってうちは女や！」
+						ENDIF
+					;触手服
+					CASE 22
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「…これ、まさか…触手製…？」
+							PRINTFORML 「着たくない…でも出しちゃったし、着なあかんよな…」
+							PRINTFORML （あぁ、こんなん着たら、気持ち良すぎておかしくなってまうかも…❤）
+						ELSE
+							PRINTFORML 「え、えぇ～、なんかウネウネ言っとるんやけど…」
+							PRINTFORML 「着なあかん？絶対？何があっても？…うぅ、ハズレにしたって酷過ぎる…」
+							PRINTFORML 「あ、あぁ…ニュルニュル…ひっついてっ…ひぃいぃ！」
+						ENDIF
+					;スリングショット
+					CASE 23
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「普通の服と、布きれ？…いや、材質的に水着か」
+							PRINTFORML 「…つまりこれを下に着ろってこと、か…」
+							PRINTFORML （ある意味裸より恥ずかしいやん、これ…❤）
+						ELSE
+							PRINTFORML 「えぇ、これ水着？ほとんど裸みたいなものやん…！」
+							PRINTFORML 「…あ、普通の服も入っとった。要するに下着代わりに着ろってことやな」
+						ENDIF
+					;着ぐるみ
+					CASE 24
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「可愛い服…動物モチーフなんか」
+							PRINTFORML （快適に眠れそうやけど、寝てたら危ないやろうなぁ…❤）
+						ELSE
+							PRINTFORML 「可愛い服…動物モチーフなんか」
+							PRINTFORML 「快適に眠れそうやけど、ここじゃおちおち寝てられへんしなぁ…」
+						ENDIF
+					;忍者服
+					CASE 24
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「わ…これ忍者服やなぁ」
+							PRINTFORML （下着の代わりに網タイツって…大胆…❤）
+						ELSE
+							PRINTFORML 「忍者服って…しかも、ちゃんとくノ一型なんか」
+							PRINTFORML （ｺﾞｿｺﾞｿ）「なんや、手裏剣とかまきびしとかは無いんか…残念」
+						ENDIF
+					;～以下着替えでは出ない特殊服装（出ないと思うけど一応記述）～
+					;包帯
+					CASE 100
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「ちゃ、ちゃんと全部隠せたんかな❤…見えてへん…？」
+						ELSE
+							PRINTFORML 「ま、無いよりマシや、無いよりマシ…」
+							PRINTFORML 「大事な部分も隠せるし、中々便利やな」
+						ENDIF
+					;靴下のみ
+					CASE 101
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「え？靴下だけしかないん…？」
+							PRINTFORML （は、裸靴下…変態や変態っ…❤）
+						ELSE
+							PRINTFORML 「……………もー、嫌！」
+							PRINTFORMDL %CALLNAME:TARGET%は渋々入ってた靴下だけ履いた…
+						ENDIF
+					;魔法少女
+					CASE 102
+						;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「ま、眩しいっ！…へ？ふ、服が新しなっとる…！」
+							PRINTFORML 「やけど、なんか子供っぽくて落ち着かへん…❤」
+						ELSE
+							PRINTFORML 「ま、眩しいっ！　…あぇ？いつの間にか服が…！」
+							PRINTFORML 「なんかヒラヒラしとる…こういうの似合わへんと思うんやけどなぁ…」
+						ENDIF
+				ENDSELECT
+		ENDSELECT
+	;裸で時間経過（戦闘中に出るので呑気なセリフは変になるぞ！気をつけろぉ！）
+	CASE 46
+		;喪失時
+		IF CFLAG:29
+			;（台詞無し）
+		;発情時または催眠（感情操作）
+		ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+			;5回に1回程度で喋るように
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORMW （全部…丸見え…❤）
+			ENDSELECT
+		;ARG:1に羞恥フラグ（0：恥薄い　1：通常　2：恥じらい）　ARG:2にMPダメージ
+		ELSEIF ARG:1 == 1 || ARG:1 == 2
+			;5回に1回程度で喋るように
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORMW （恥ずかしい恥ずかしい恥ずかしい…）
+			ENDSELECT
+		ELSEIF ARG:1 == 0
+			;5回に1回程度で喋るように
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORMW （…流石にちょっと視線が気になる…）
+			ENDSELECT
+		ENDIF
+	;ターン終了時の自慰
+	CASE 48
+		
+	;戦闘開始
+	CASE 54
+		;喪失中
+		IF CFLAG:29
+			PRINTFORML 「……敵ぃ…？　…うへへ❤…」
+			PRINTFORMDW %CALLNAME:TARGET%は何かを期待している…
+		;みんな寝込み
+		ELSEIF TFLAG:14 == 3
+			PRINTFORMDL %CALLNAME:TARGET%はまだ寝ている…
+			PRINTFORMW 「すやすや…」
+		;BOSS戦
+		ELSEIF ARG:1
+			;発情中
+			IF CFLAG:28
+				PRINTFORMW （ﾄﾞｸﾝ❤）「！…あかん、ここで流されたらあかんっ…❤」
+			;ピンチ（MP1/4以下またはHP0）
+			ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+				PRINTFORMW 「こんな敵…今のうちで倒せるんか…？」
+			ELSE
+				PRINTFORMW 「これが、迷宮の元締めってわけやな…！」
+			ENDIF
+		;不意打ち
+		ELSEIF TFLAG:14 == 2
+			;発情中
+			IF CFLAG:28
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「まずいっ、今何かされたら…❤」
+					CASE 1
+						PRINTFORMW （うわ、『ヤりたい』って気持ち満々や❤）
+				ENDSELECT
+			;ピンチ（MP1/4以下またはHP0）
+			ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「こんな時を狙うなんてっ…なんて奴！！」
+					CASE 1
+						PRINTFORMW （ひょっとして、大ピンチってやつか…？！）
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「しまった、バックアタック！？」
+					CASE 1
+						PRINTFORMW 「げげ、敵！？」
+					CASE 2
+						PRINTFORMW 「不意打ちなんて、卑怯や～！」
+				ENDSELECT
+			ENDIF
+		;先制
+		ELSEIF TFLAG:14 == 1
+			;発情中
+			IF CFLAG:28
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「早よ倒さへんと、自分で抑えきれんくなりそう…❤」
+					CASE 1
+						PRINTFORMW （…こっちから襲っちゃおうかな～…）
+				ENDSELECT
+			;ピンチ（MP1/4以下またはHP0）
+			ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「やられる前に…やったるっ！」
+					CASE 1
+						PRINTFORMW （よし、何とか先手は取れた…！）
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「汚い？…褒め言葉や！」
+					CASE 1
+						PRINTFORMW 「隙有りゃあ！」
+					CASEELSE
+						PRINTFORMW 「貰った！」
+				ENDSELECT
+			ENDIF
+		;通常の戦闘開始
+		ELSEIF TFLAG:14 == 0
+			;発情中
+			IF CFLAG:28
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW （…こんな状態なんに、戦えるんかな…❤）
+					CASE 1
+						PRINTFORMW 「まずい…うち、恰好の獲物やん❤」
+				ENDSELECT
+			;ピンチ（MP1/4以下またはHP0）
+			ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「ちょっとまずい状況…かな…」
+					CASE 1
+						PRINTFORMW （ヤバい、体制が整ってへんのに…！）
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「やるしかないようやな…！」
+					CASE 1
+						PRINTFORMW 「よぉ～し、行くで！」
+					CASEELSE
+						PRINTFORMW 「悪いけど、倒させてもらうで！」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;逃走成功
+	CASE 55
+		;戦意喪失
+		IF CFLAG:29
+			PRINTFORML 「う…あぅ…？」
+			PRINTFORMDW 逃げる際に%CALLNAME:TARGET%は仲間に引きずられている…
+		;睡眠
+		ELSEIF CFLAG:25
+			PRINTFORML 「んむぅ…Zzz…」
+			PRINTFORMDW %CALLNAME:TARGET%は仲間に担がれたお蔭で助かった！
+		;発情
+		ELSEIF CFLAG:28
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「こない状態の女の子を追ってこおへんなんて…軟弱やな～♪」
+				CASE 1
+					PRINTFORML 「ふぅう…逃げられたみたいやな…」
+					PRINTFORMW （でもちょっとだけ…っいやそんなことは…❤）
+			ENDSELECT
+		;ピンチ（MP1/4以下またはHP0）
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「あ、危ういところやった…！」
+				CASEELSE
+					PRINTFORML 「早よ、回復、せん、と…」（ｾﾞｪｰｯｾﾞｪｰｯ）
+					PRINTFORMDW 必死で逃げたために%CALLNAME:TARGET%は息を切らしている
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「無用な戦いは避けなあかんね」
+				CASE 1
+					PRINTFORMW 「逃げも戦闘手段の一つや！」
+				CASEELSE
+					PRINTFORMW 「トンズラこいたけど大丈夫やったかな…？」
+			ENDSELECT
+		ENDIF
+	;敵に勝利
+	CASE 57
+		;発情時
+		IF CFLAG:28
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「そない弱かったら、うちはあげられへんなぁ…　な～んて❤」
+				CASEELSE
+					PRINTFORML 「べ…別にそんな、残念やったとか、思ってへんし…♪」
+					PRINTFORMDW しかし去り際に少し振り返ってしまう%CALLNAME:TARGET%であった
+			ENDSELECT
+		;ピンチ（MP1/4以下またはHP0）
+		ELSEIF MAXBASE:MP/4 >= BASE:MP || BASE:HP == 0
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「何とかなった…かぁ」
+					PRINTFORMW （でもこのままだとジリ貧やなぁ…）
+				CASE 1
+					PRINTFORML 「ふゅうぅ～……え、あれ？終わったんか？」
+					PRINTFORMDW うずくまった%CALLNAME:TARGET%は戦いが終わったことに気づいていなかった！
+				CASE 2
+					PRINTFORMW 「勝てたし、まぁ、良しとしよか…」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORMDW 【MISSION COMPLETE！】
+				CASE 1
+					PRINTFORMW 「終わり終わりっと」
+				CASE 2
+					PRINTFORML 「これ、なんかに使えるかな」
+					PRINTFORMW 「…いやいや何起きるかわからんし、やめとこ」
+				CASE 3
+					PRINTFORMW 「ふん、うちにかかればこんなもんや！」
+				CASE 4
+					PRINTFORMW 「まったく…邪魔や邪魔！」
+			ENDSELECT
+		ENDIF
+;	CASE 60　【CASE 54に移動。】
+;	;先制攻撃・不意打ち発生　ARG:2に状況(1で先制 2で不意打ち 3で寝込み)
+;	;ARG:1にイベントID(1でクイーン 2でガーディアン)
+;		;不意打ち
+;		IF ARG:2 == 2
+;			SELECTCASE RAND:3
+;				CASE 0
+;					PRINTFORMW 「しまった、バックアタック！？」
+;				CASE 1
+;					PRINTFORMW 「げ！？、敵か！」
+;				CASE 2
+;					PRINTFORMW 「ひ、卑怯やぞ！」
+;			ENDSELECT
+;		;寝込み
+;		ELSEIF ARG:2 == 3
+;			PRINTFORMDL %CALLNAME:TARGET%はまだ寝ている…
+;			PRINTFORMW 「すやすや…」
+;		;睡眠
+;		ELSEIF CFLAG:25
+;			PRINTFORMW 「くぅ…くぅ…」
+;		;先制
+;		ELSEIF ARG:2 == 1
+;			SELECTCASE RAND:3
+;				CASE 0
+;					PRINTFORMW 「汚い？…褒め言葉や！」
+;				CASE 1
+;					PRINTFORMW 「隙有りゃあ！」
+;				CASEELSE
+;					PRINTFORMW 「貰った！」
+;			ENDSELECT
+;		ENDIF
+	;敵に初遭遇時
+	CASE 61
+		
+	;誰かを残して逃走
+	CASE 62
+		;催眠ま
+		IF CFLAG:43
+			;（ﾑｺﾞｰﾝ）
+		;（ARG:2とARG:3に残したキャラ）
+		;ゆかりを置いていく
+		ELSEIF NO:(ARG:2) == 3 && CFLAG:(ARG:2):104 == 0 || NO:(ARG:3) == 3 && CFLAG:(ARG:3):104 == 0
+			PRINTFORML 「あっ、ゆかりが…！」
+			PRINTFORMW （しまった…立て直してから、どうにかしないと、ね）
+		;きりたんを置いていく
+		ELSEIF NO:(ARG:2) == 8 && CFLAG:(ARG:2):104 == 0 || NO:(ARG:3) == 8 && CFLAG:(ARG:3):104 == 0
+			PRINTFORML （このままじゃきりたんが…　でも…うぅ～…）
+			PRINTFORMW 「……ホンマに、ゴメンッ！許してや！！」
+		;葵を置いていく
+		ELSEIF NO:(ARG:2) == 6 && CFLAG:(ARG:2):104 == 0 || NO:(ARG:3) == 6 && CFLAG:(ARG:3):104 == 0
+			PRINTFORML （し、しまった、葵がっ…）
+			PRINTFORMW 「…必ず助けるし、待っててな…！」
+		;自分の娘・孫以降を置いていく
+		ELSEIF NO:(ARG:2) == 5 && CFLAG:(ARG:2):104 >= 1 || NO:(ARG:3) == 5 && CFLAG:(ARG:3):104 >= 1
+			PRINTFORML （っ！　しくじった…身内を置いてくるなんて…！）
+			PRINTFORMW 「早めに助けへんと…な」
+		;あかりを置いていく
+		ELSEIF NO:(ARG:2) == 15 && CFLAG:(ARG:2):104 == 0 || NO:(ARG:3) == 15 && CFLAG:(ARG:3):104 == 0
+			PRINTFORML （あ、あかりが捕まっとるのに…逃げるんか…？）
+			PRINTFORML （いや、体制を整えてから救出すれば…）
+			PRINTFORMW 「…すまんっ…きっと助けに来るからな！」
+		;マキを置いていく
+		ELSEIF NO:(ARG:2) == 2 && CFLAG:(ARG:2):104 == 0 || NO:(ARG:3) == 2 && CFLAG:(ARG:3):104 == 0
+			PRINTFORML （いくらマキでも、このまま置いてくのは…でも…）
+			PRINTFORMW （…あとで助けに来るから、今は…）
+		;ずん子を置いていく
+		ELSEIF NO:(ARG:2) == 4 && CFLAG:(ARG:2):104 == 0 || NO:(ARG:3) == 4 && CFLAG:(ARG:3):104 == 0
+			PRINTFORMW （まずい、ずんちゃんを置いてきちゃった…必ず助けに来るからな…）
+		ELSE
+			PRINTFORML （救出できる隙が無いわ…！）
+			PRINTFORMW 「…ゴメン、許してや！」
+		ENDIF
+	;誰かに取り残された
+	CASE 63
+		;戦意喪失または諦め状態
+		IF CFLAG:29 || TFLAG:16 == 2
+			PRINTFORML 「えへぇ…もっとぉ…❤」
+			PRINTFORMDW %CALLNAME:TARGET%は仲間に置いて行かれたことに気づいていない…
+		;（ARG:2とARG:3に逃げてったキャラ）
+		ELSE
+			PRINTFORMW 「そ、そんな。…置いてかんといて…」
+		ENDIF
+	;迷宮内で誰かに会った
+	CASE 101
+		;相手側が喪失中
+		;※（ARG:1にキャラクターID　ARG:2が1で喪失判定）
+		;※喪失遭遇フラグは「CFLAG:89?」で統一
+		IF ARG:2
+			;ゆかり
+			IF NO:(ARG:1) == 3 && CFLAG:(ARG:1):104 == 0
+				;（以前に喪失状態のゆかりを見ていた場合。以降同じ）
+				IF CFLAG:899
+					PRINTFORML 「そのうちヒョッコリ起き上がって…来るわけないか」
+					PRINTFORMW 「ゆかりとは言え、この状態じゃぁなぁ…」
+				;（初めて喪失状態のゆかりを見た場合。以降同じ）
+				ELSE
+					PRINTFORML 「！？……いやいやそんな馬鹿な…ゆかりが倒れとるなんてまさか…」
+					PRINTFORMW 「…ひょっとして…マジか？」
+					;（喪失遭遇フラグ立て。以降同じ）
+					CFLAG:899 = 1
+					;（同時に通常の遭遇フラグも立てる）
+					CFLAG:889 = 1
+				ENDIF
+			;葵
+			ELSEIF NO:(ARG:1) == 6 && CFLAG:(ARG:1):104 == 0
+				IF CFLAG:898
+					PRINTFORMW （何度も見たいものやないわ…葵のこんな姿なんて…！）
+				ELSE
+					PRINTFORMW 「…葵？…寝とるんよな？…返事してくれ、なあ葵…？」
+					PRINTFORML 「嘘や……そんな…………い、嫌あぁああぁあぁっ！！」
+					PRINTFORMDW %CALLNAME:TARGET%は恐怖でパニックに陥った！
+					PRINTFORMDW ――――――十数分後――――――
+					PRINTFORMW 「…（ﾊｧｯ）…落ち、着か……（ﾊｧｯ）な……（ﾊｧｯ）…」
+					PRINTFORML 「…………息は…しとる……みたい…やな…良かったぁ…」
+					PRINTFORMDW 何とか平常心を取り戻したようだ…
+					CFLAG:898 = 1
+					CFLAG:888 = 1
+				ENDIF
+			;きりたん
+			ELSEIF NO:(ARG:1) == 8 && CFLAG:(ARG:1):104 == 0
+				IF CFLAG:897
+					PRINTFORMW 「きりたん、大丈夫…なわけないよな…」
+				ELSE
+					PRINTFORML 「…冗談やろ！？…しっかりしぃ！」
+					PRINTFORMW （いくら想像の上で慣れてても、実際にやられるのは…！）
+					PRINTFORMW 「と、とにかくどうにかせな…きりたんが死んでまう！？」
+					CFLAG:897 = 1
+					CFLAG:887 = 1
+				ENDIF
+			;あかり
+			ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+				IF CFLAG:895
+					PRINTFORMW 「放っといたって治るわけない…そんなんは分かっとるけど…」
+				ELSE
+					PRINTFORMW 「まさか、そんな……あかり！生きとるか！？」
+					PRINTFORML 「…呼吸は…ある！……あるけど……」
+					PRINTFORMDW このまま放っておけばさらに深刻な事態になるのは目に見えている…
+					CFLAG:895 = 1
+					CFLAG:885 = 1
+				ENDIF
+			;ずん子
+			ELSEIF NO:(ARG:1) == 4 && CFLAG:(ARG:1):104 == 0
+				IF CFLAG:893
+					PRINTFORMW 「何度見ても、ちょっと信じられへんわ…」
+				ELSE
+					PRINTFORMW 「…ずんちゃんが倒れとる…」
+					PRINTFORML 「ここのバケモノってそんな強いんか…？」
+					PRINTFORMDW %CALLNAME:TARGET%は少し背筋が寒くなった…
+					CFLAG:893 = 1
+					CFLAG:883 = 1
+			ENDIF
+			;そのほかの人
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「…もしもーし…生きとるか～？」
+						PRINTFORMW 「…辛うじて息はあるようやけど…」
+					CASE 1
+						PRINTFORMW 「し、死体やないよな？！」
+						PRINTFORMDW 幸い、まだ僅かに反応があるようだ
+				ENDSELECT
+			ENDIF
+		;相手が会話できる状態
+		;※遭遇フラグは「CFLAG:88?」で統一
+		ELSE
+			;ゆかり
+			IF NO:(ARG:1) == 3 && CFLAG:(ARG:1):104 == 0
+				;（以前にゆかりに会っていた場合。以降同じ）
+				IF CFLAG:889
+					PRINTFORMW 「よーゆかり、また会うたな～」
+				;（初めてゆかりに会った場合。以降同じ）
+				ELSE
+					PRINTFORMW 「おおっゆかり発見～！　ここがどこかしらへんか？」
+					;（遭遇フラグ立て。以降同じ）
+					CFLAG:889 = 1
+				ENDIF
+			;葵
+			ELSEIF NO:(ARG:1) == 6 && CFLAG:(ARG:1):104 == 0
+				IF CFLAG:888
+					PRINTFORMW 「葵、そっちの調子はどうや？」
+				ELSE
+					PRINTFORML 「葵、葵やないか！」
+					PRINTFORMW 「どうしてここに…葵も迷いこんだんか？」
+					CFLAG:888 = 1
+				ENDIF
+			;きりたん
+			ELSEIF NO:(ARG:1) == 8 && CFLAG:(ARG:1):104 == 0
+				IF CFLAG:887
+					PRINTFORMW 「あぁきりたん、そっちは大丈夫か？」
+				ELSE
+					PRINTFORML 「あっ、きりたん！きりたんもここにおったんか～…」
+					PRINTFORMW （ここで出会えたのは不幸中の幸い、かな）
+					CFLAG:887 = 1
+				ENDIF
+			;あかり
+			ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+				IF CFLAG:885
+					PRINTFORMW 「あっあかり、しばらくぶりやな～」
+				ELSE
+					PRINTFORMW 「お、あかりや！あかりもここにおったんやな～」
+					CFLAG:885 = 1
+				ENDIF
+			;そのほかの人
+			ELSE
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORMW 「や～こんにちは。…それともこんばんは…かな？」
+					CASE 1
+						PRINTFORML 「おやおや、お仲間さんかな？」
+						PRINTFORMW 「情報交換とか、どうや？　こんな場所や、協力していこうや」
+					CASE 2
+						PRINTFORML 「おっ、迷い人発見や！」
+						PRINTFORMW 「いやー同じ境遇の人がいると安心するなー」
+						PRINTFORMW 「…他意なんて無いって、信じてや」
+					CASEELSE
+						PRINTFORML 「お、人や。お～い！」
+						PRINTFORMW 「ふぅ、会話ができるって幸せやなぁ」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;誰かと会った後離れる
+	CASE 102
+		;相手側が喪失中
+		IF ARG:2
+			;ゆかり
+			IF NO:(ARG:1) == 3 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「…ちょっと、今は手の施しようがないな…」
+			;葵
+			ELSEIF NO:(ARG:1) == 6 && CFLAG:(ARG:1):104 == 0
+				PRINTFORML 「……ごめんな、葵…許して……ホンマにごめん…！」
+				PRINTFORMDW %CALLNAME:TARGET%は後ろ髪を引かれながらその場を離れた…
+			;きりたん
+			ELSEIF NO:(ARG:1) == 8 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「今は…どうしようもないんや…」
+			;あかり
+			ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「治せるようになったらすぐ治すから…今はごめんな…？」
+			;ずん子
+			ELSEIF NO:(ARG:1) == 4 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「…ずんちゃん気をしっかりな、必ず助けるからな…」
+			ELSE
+			;そのほかの人
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「悪いけど、今治せる余裕がないんや…」
+					CASE 1
+						PRINTFORMW 「うちには治せへんけど…許してな？」
+				ENDSELECT
+			ENDIF
+		;相手が健在
+		ELSE
+			;ゆかり
+			IF NO:(ARG:1) == 3 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「……脱出目指して頑張ろうな」
+			;葵
+			ELSEIF NO:(ARG:1) == 6 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「ほなな、葵。また後でな～」
+			;きりたん
+			ELSEIF NO:(ARG:1) == 8 && CFLAG:(ARG:1):104 == 0
+				PRINTFORML （正直かな～り心配なんやけど…大丈夫か？）
+				PRINTFORMDW %CALLNAME:TARGET%は後姿を見送った…
+			;あかり
+			ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+				PRINTFORML 「またな、あかり！　帰ったらまた一緒に遊ぼうな～」
+				PRINTFORMDW 盛大にフラグを立てる%CALLNAME:TARGET%であった。
+			;ずん子
+			ELSEIF NO:(ARG:1) == 4 && CFLAG:(ARG:1):104 == 0
+				PRINTFORMW 「じゃあなずんちゃん、元気でまた会おうな」
+			;そのほかの人
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「ほな、また今度～」
+					CASE 1
+						PRINTFORML 「じゃ～ぼちぼち散会しよか」
+						PRINTFORMW 「お互い、脱出に向けて頑張ろな」
+					CASEELSE
+						PRINTFORML 「一息ついたし、そろそろ行くわ」
+						PRINTFORMW 「そっちも気ぃ付けてな～」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;会話（雑談）
+	CASE 103
+		;茜が主人公の時のみ発言
+		IF TARGET == 1
+			;発情時
+			IF CFLAG:28
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「なんか様子がおかしいって？…ちょっと、色々あってな…❤」
+					CASE 1
+					;（裸分岐セリフ）
+						IF BASE:CP <= 0
+							PRINTFORMW （全部、見られとる…恥ずかしぃ…❤）
+						ELSE
+							PRINTFORMW （服があって良かった…無かったら色々見られてたかもな…❤）
+						ENDIF
+					CASE 2
+						;（ふたなり分岐セリフ）
+						IF CFLAG:42
+							PRINTFORML 「あぁ、“コレ”？…気にせんといて❤」
+							PRINTFORMDW そういう%CALLNAME:TARGET%だが、イチモツはしっかり相手に反応している…
+						ELSE
+							PRINTFORMDW %CALLNAME:TARGET%は会話しながらも気づかれないようモジモジしている…
+						ENDIF
+					CASE 3
+						PRINTFORMW 「ここにいると変な気分になりがちで困るんよなぁ❤」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:6
+					CASE 0
+						PRINTFORMW 「え、時間？…時計が止まっとるみたいでな…」
+					CASE 1
+						IF BASE:CP <= 0
+							PRINTFORML 「すまんな、こないな格好で…」
+							PRINTFORMW （やっぱり恥ずかしいわ…）
+						ELSE
+							PRINTFORMW 「ここはどうにも過ごしにくくてあかんな」
+						ENDIF
+					CASE 2
+						PRINTFORMW 「ここは遊ぶ物も録に無くてつまらんわ」
+					CASE 3
+						PRINTFORMW 「なんか脱出の手がかりあったんか？」
+						PRINTFORMW 「…見かけへんかった？そうか～…」
+					CASE 4
+						PRINTFORMW 「どうにも気が滅入るわ、日の光も差し込まんしな」
+				ENDSELECT
+			ENDIF
+		ELSE
+		;（主人公以外ならしゃべらない）
+		ENDIF
+	CASE 105
+	;人からアイテムもらう
+		;プレイヤーの時
+		IF TARGET == 1
+			;相手が喪失（強奪）
+			IF ARG:3
+				PRINTFORML 「……生き残るためや……」
+				PRINTFORMDW そう言う%CALLNAME:TARGET%の心中は罪悪感でいっぱいだ…
+			;相手が元気（受け渡し）
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「え、くれるんか？…後で『返して』って言われても返さへんで？」
+						PRINTFORMW 「じゃあ、ありがたく頂くわ」
+					CASE 1
+						PRINTFORMW 「助かるわ！　物資の補給は大事やからな～」
+				ENDSELECT
+			ENDIF
+		;仲間の時
+		ELSEIF TARGET != 1
+			;相手が喪失（強奪）
+			IF ARG:3
+				PRINTFORML 「これってうちも『共犯』ってことやね？」
+				PRINTFORML 「……ええで、うちも同じことしてたと思うで…」
+				PRINTFORMDW %CALLNAME:TARGET%は仲間を気遣っている…
+			ENDIF
+		ENDIF
+	CASE 107
+	;勧誘⇒成功
+	;自分→相手(CASE109)の順で出る
+	;140 → 107 →109
+		;主人公時
+		IF TARGET == 1
+			IF ARG:2
+			;相手が喪失
+				;ゆかりを連れていく
+				IF NO:(ARG:1) == 3 && CFLAG:(ARG:1):104 == 0
+					PRINTFORMW 「一人で行動するよりええよな」
+				;葵を連れていく
+				ELSEIF NO:(ARG:1) == 6 && CFLAG:(ARG:1):104 == 0
+					PRINTFORML 「……放っとける訳ないやろ！」
+					PRINTFORMDW %CALLNAME:TARGET%は葵を背負って歩き出した…
+				;きりたんを連れていく
+				ELSEIF NO:(ARG:1) == 8 && CFLAG:(ARG:1):104 == 0
+					PRINTFORMW 「とにかく、一人やと不味いし連れてかなな…」
+				;あかりを連れていく
+				ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+					PRINTFORMW 「あんたうちより体力あるやろ！しっかりしてや～！」
+				;ずん子を連れていく
+				ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+					PRINTFORMW 「ここでほっとくわけにもいかんし、連れてくか…」
+				;そのほかの人を連れていく
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「…せっかくやし連れてくか～…」
+							PRINTFORMW 「っよいしょ…っと」
+						CASE 1
+							PRINTFORML 「このままほっとくのもアレやしなぁ」
+							PRINTFORMDW %CALLNAME:TARGET%は相手を連れていくようだ。
+					ENDSELECT
+				ENDIF
+			;相手が健在
+			ELSE
+				;ゆかりを勧誘成功
+				IF NO:(ARG:1) == 3 && CFLAG:(ARG:1):104 == 0
+					PRINTFORML 「ゆかりがいるなら勝ったも同然や～！」
+					PRINTFORMDW %CALLNAME:TARGET%はおだてている…
+				;葵を勧誘成功
+				ELSEIF NO:(ARG:1) == 6 && CFLAG:(ARG:1):104 == 0
+					PRINTFORML 「名コンビ復活！」
+					PRINTFORMW 「頼りにしとるで、我が妹！」
+				;きりたんを勧誘成功
+				ELSEIF NO:(ARG:1) == 8 && CFLAG:(ARG:1):104 == 0
+					PRINTFORMW 「一人じゃ不安やろうし、一緒に行くか？」
+				;あかりを勧誘成功
+				ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+					PRINTFORMW 「前衛は宜しく！その代り、援護射撃は任せてや！」
+				;ずん子を勧誘成功
+				ELSEIF NO:(ARG:1) == 4 && CFLAG:(ARG:1):104 == 0
+					PRINTFORMW 「いやーずんちゃんが一緒やと安心やな」
+				;そのほかの人を勧誘成功
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMW 「じゃあ、今後ともよろしくやで」
+						CASE 1
+							PRINTFORML 「旅は道連れ世は情け、ってな～」
+							PRINTFORMW 「道連れじゃ困る？…確かにそうやな」
+						CASEELSE
+							PRINTFORMW 「よぉ～し、それじゃ早速探索再開や！」
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ENDIF
+	CASE 108
+	;勧誘⇒失敗
+	;ARG:1に遭遇キャラ
+		;ゆかりを勧誘失敗
+		IF NO:(ARG:1) == 3 && CFLAG:(ARG:1):104 == 0
+			PRINTFORML 「同行しよか？…いらない？さよか…」
+			PRINTFORMW （傷つくわー…）
+		;葵を勧誘失敗
+		ELSEIF NO:(ARG:1) == 6 && CFLAG:(ARG:1):104 == 0
+			PRINTFORML 「え、一人で行く？…ふ～ん、そうか…」
+			PRINTFORML （まぁ、葵の考えとることだし、きっと大丈夫や…）
+			PRINTFORMDW %CALLNAME:TARGET%は若干寂しそうだ…
+		;きりたんを勧誘失敗
+		ELSEIF NO:(ARG:1) == 8 && CFLAG:(ARG:1):104 == 0
+			PRINTFORML 「一緒に行くか？…え、平気なん？ホンマに？」
+			PRINTFORMW （…ちょっとショックやな～…）
+		;あかりを勧誘失敗
+		ELSEIF NO:(ARG:1) == 15 && CFLAG:(ARG:1):104 == 0
+			PRINTFORMW 「…しなきゃいけない事がある？そうか、それならしゃーないな…」
+		;ずん子を勧誘失敗
+		ELSEIF NO:(ARG:1) == 4 && CFLAG:(ARG:1):104 == 0
+			PRINTFORML 「他にやることがある？　そか、じゃあな」
+			PRINTFORMW （…他の姉妹を探すんかな…）
+		;そのほかの人を勧誘失敗
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「よければお供するで？」
+					PRINTFORMW 「…不要なんか、そーなんか…」
+				CASE 1
+					PRINTFORMW 「一緒に行ってくれへんか？」
+					PRINTFORMW 「……あかん？　いけずやなぁ」
+				CASEELSE
+					PRINTFORMW 「どうやら忙しいようやな…しゃーない」
+			ENDSELECT
+		ENDIF
+	;PTに加入した
+	CASE 109
+		;ここはCASE140を使用するので不使用とします
+		
+	;探索でアイテムゲット
+	CASE 113
+		;ARG:1にアイテムID（IDは『キャラ一覧など』フォルダの『EraData Summary』を参照。後半部は他の口上を参考に。）
+		;CFLAG:8??はアイテム発見済みかどうかのフラグに使っています（ゆかり口上を参考）。
+		;※仲間に関しての記述は修正版の方が正確なようなので、そのまま使わせていただきました。
+		;（以前の記述はダミーデータを参照してしまっていたようです…）
+		
+		;主人公時のみコメント
+		IF TARGET == 1
+			;戦意喪失以外のみコメント
+			IF CFLAG:29 == 0
+				SELECTCASE ARG:1
+					;クロスボウ入手
+					CASE 1
+						;（入手済み。以降同じ）
+						IF CFLAG:801
+							PRINTFORMW 「また落ちとる…誰かが使っとったんかな」
+						;（未入手。以降同じ）
+						ELSE
+							PRINTFORMW 「ボウガンみたいなもんか？」
+							;（入手フラグ立て。以降同じ）
+							CFLAG:801 = 1
+						ENDIF
+					;弓矢入手
+					CASE 2
+						IF CFLAG:802
+							PRINTFORMW 「また落ちとる…矢が増えるんは有難いけどな」
+						ELSE
+							PRINTFORMW 「弓矢かぁ、使いこなせるんかな～…」
+							CFLAG:802 = 1
+						ENDIF
+					;火炎放射器入手
+					CASE 3
+						IF CFLAG:803
+							PRINTFORMW 「お、またあの機械や。燃料もちゃんとあるようやな」
+						ELSE
+							PRINTFORMW 「これで奴らをこんがりウェルダンにできるって訳やな！」
+							CFLAG:803 = 1
+						ENDIF
+					;拳銃入手
+					CASE 4
+						IF CFLAG:804
+								PRINTFORMW 「また拳銃か、こないポンポン落ちとるもんやないやろ…」
+						ELSE
+								PRINTFORMW 「拳銃！？　誰がこんなもの持ち込んだんや」
+								CFLAG:804 = 1
+						ENDIF
+					;グレラン入手
+					CASE 5
+						IF CFLAG:805
+								PRINTFORMW 「またグレランかー、誤爆が怖いなー」
+							ELSE
+								PRINTFORMW 「こんな重火器が落ちとるなんてとんでもないな……」
+								CFLAG:805 = 1
+						ENDIF
+					;ナイフ入手（必ず初期位置に置いてある）
+					CASE 10
+						IF CFLAG:809
+							PRINTFORMW 「またナイフか、触手切るには役不足なんよなぁ」
+						ELSE
+							PRINTFORMW 「ナイフ、誰かが持ち込んだんか？」
+							CFLAG:809 = 1
+						ENDIF
+
+					;お守り入手
+					CASE 20
+						IF CFLAG:820
+							PRINTFORMW 「またあった…効果が重複するとええな～」
+						ELSE
+							PRINTFORMW 「お守りか、何かの足しになればええな…」
+							CFLAG:820 = 1
+						ENDIF
+					;使い魔入手
+					CASE 22
+						IF CFLAG:822
+							PRINTFORMW 「うおっと、こいつも使い魔みたいやな」
+						ELSE
+							PRINTFORMW 「なんやこれ？…うわ、変なん出てきおった！？」
+							PRINTFORML 「ふむふむ、どうやら使い魔？　って言うものらしいな、一緒に戦ってくれるんか」
+							PRINTFORMW  （でもあんまり信用できそうにないなぁ…）
+							CFLAG:822 = 1
+						ENDIF
+					;媚薬入手
+					CASE 39
+						IF CFLAG:838
+							PRINTFORML 「こない落ちとるなんて…全く、どうかしとるわ」
+							PRINTFORMW （いちいち拾ううちもうちかなぁ…）
+						ELSE
+							PRINTFORMW 「うわー、見るからに怪しい薬～…」
+							PRINTFORML （ﾁｮｲｯ…ｸﾝｸﾝ）「…ううん、なんか心なしか身体が火照ってくるような…」
+							PRINTFORMW （一応、仕舞っておくか…）
+							CFLAG:838 = 1
+						ENDIF
+					;握り飯入手
+					CASE 50
+						IF CFLAG:850
+							PRINTFORMW 「またあった。よく落ちとるなぁ」
+						ELSE
+							PRINTFORMW 「普通のおにぎりやな。…普通なんが逆に怪しいけど」
+							CFLAG:850 = 1
+						ENDIF
+					;エナドリ入手
+					CASE 52
+						IF CFLAG:852
+							PRINTFORMW 「またエナドリか、本来はあんまり頼るもんちゃうけどなぁ」
+						ELSE
+							PRINTFORML 「うーん、ごく普通のエナドリみたいやな」
+							PRINTFORMW 「折角拾ったんやし持って行くか」
+							CFLAG:852 = 1
+						ENDIF
+					;回復ポーション入手
+					CASE 53
+						IF CFLAG:853
+							PRINTFORML 「おっ、前に見つけたポーションやな！」
+							PRINTFORMW 「すぐに効果あるアイテムは貴重やからな～♪」
+						ELSE
+							PRINTFORML 「この見た目、この香り…まさかポーションか！」
+							PRINTFORMW 「本当に効果があるかわからんけど大事に仕舞っておくか」
+							CFLAG:853 = 1
+						ENDIF
+					;着替えセット入手
+					CASE 54
+						IF CFLAG:854
+							PRINTFORMW 「おっと、着替えや。無いと困るし、ありがたく拾っとくか」
+						ELSE
+							PRINTFORML 「む？中身は…服みたいやな」
+							PRINTFORMW 「こないなとこに落ちとるのは怪しいけど…使わへん訳にもいかんしなぁ…」
+							CFLAG:854 = 1
+						ENDIF
+					;治療ポーション入手
+					CASE 57
+						IF CFLAG:857
+							PRINTFORMW 「おっ、状態異常回復のポーションやな…前に拾ったのと効能は一緒かな」
+						ELSE
+							PRINTFORML 「なんやなんや？　状態異常を回復するポーション？」
+							PRINTFORMW 「こないなとこに落ちとると逆に状態異常になりそうで怖いわ」
+							CFLAG:857 = 1
+						ENDIF
+					;気付け薬入手
+					CASE 58
+						IF CFLAG:858
+							PRINTFORMW 「お、ここにも緊急用の薬が…」
+						ELSE
+							PRINTFORML 「ふむむ…結構強めな薬みたいやな～」
+							PRINTFORMW （いざという時に使ってみるか…）
+							CFLAG:858 = 1
+						ENDIF
+					;煙玉入手
+					CASE 59
+						IF CFLAG:859
+							PRINTFORMW 「おっと煙幕や、ありがたくもらっとこ」
+						ELSE
+							PRINTFORML 「かんしゃく玉か？」
+							PRINTFORMW 「…いやちゃうな、これは…地面に叩き付けて使う煙幕やな」
+							CFLAG:859 = 1
+						ENDIF
+					;大人の玩具（60）入手
+					CASE 60
+						IF CFLAG:860
+							PRINTFORML 「うわぁ、また落ちとるわ…ご丁寧に形が違うし…」
+							PRINTFORMW （いちいち持ってかなくてもええんやけど…放っとくのもアレだし…ｺﾞﾆｮｺﾞﾆｮ）
+							
+						ELSE
+							PRINTFORML 「…これって…例のアレ…やんなぁ…」
+							PRINTFORMW （うわ…ごっついカタチしとる…エグイなぁ…さっさと仕舞おう…）
+							CFLAG:860 = 1
+						ENDIF
+					;種3種入手
+					CASE 61 TO 63 
+						IF CFLAG:861
+							PRINTFORML 「コレ、前に拾った種と似とるなぁ」
+							PRINTFORMW （帰ったら葵に育てて貰おうかな？…いや、変なん育ってまうかな…）
+							
+						ELSE
+							PRINTFORML 「見たことあらへん変な種やな…」
+							PRINTFORMW 「まあ、種なんてひまわりの種ぐらいしか見たことないんやけど」
+							CFLAG:861 = 1
+						ENDIF
+					;包帯入手
+					CASE 67
+						IF CFLAG:867
+							PRINTFORMW 「包帯や！万一ってこともあるやろうし拾っとこ」
+						ELSE
+							PRINTFORML 「包帯かぁ、あると便利そうやし頂いとこ」
+							PRINTFORMW 「…でもこんなところに落ちとる割には、妙に清潔やな？」
+							CFLAG:867 = 1
+						ENDIF
+					;（CASE 68は存在しない罠）
+					CASEELSE
+						PRINTFORMW 「役に立ちそうやし、仕舞っておきますか」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;休息睡眠時に自慰
+	CASE 117
+		;仲間がいる
+		IF FLAG:10
+			;喪失状態または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				;no comment
+			;発情状態
+			ELSEIF CFLAG:28
+				PRINTFORMW 「寝とる…よな？　それじゃ～…❤」
+				PRINTFORMW （ｺﾞｿｺﾞｿｯ…）「…あぁ、ええ❤内緒オナニー凄いっ❤」
+			ELSE
+				PRINTFORMW （…身体…熱い…寝付けへん…）
+				PRINTFORMDL %CALLNAME:TARGET%の手が自然と股間に伸びていく…
+				PRINTFORMW （お願い…気づかんとって…）「…は…ぁ…くぅ…っ❤」
+			ENDIF
+		;ぼっち（ペットは除く）
+		ELSE
+			;喪失状態または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				;no comment
+			;発情状態
+			ELSEIF CFLAG:28
+				PRINTFORML 「そうや、寝る前にオナニーしよか❤」
+				PRINTFORMW 「…んぁっ、はっ❤…あんっ❤」
+			ELSE
+				PRINTFORML （眠れへんから…仕方なくやっとるんや…これはしょうがあらへん…❤）
+				PRINTFORMW 「んんっ…は、あっ❤」
+			ENDIF
+		ENDIF
+	;自慰で絶頂失敗
+	CASE 119
+		;喪失状態または諦め状態
+		IF CFLAG:29 || TFLAG:16 == 2
+			;no comment
+		;発情状態
+		ELSEIF CFLAG:28
+			PRINTFORMW 「むぅ…イけんかった…後でやりなおそ…」
+		ELSE
+			PRINTFORMW 「うぅ…恥いしイけへんし、最悪や…」
+		ENDIF
+	;絶頂
+	CASE 120
+		;諦め状態（CASE 122「喪失中に絶頂」と同じなのでカット）
+; 		IF TFLAG:16 == 2
+;			SELECTCASE RAND:3
+;				CASE 0
+;					PRINTFORML 「ひあっ❤ひあぁあ～～❤❤」
+;					PRINTFORMDW %CALLNAME:TARGET%は呆けた顔をしている…
+;				CASE 1
+;					PRINTFORMW （めっちゃ、気持ちいーの、来とるぅ❤しあわせぇ～…❤❤）
+;				CASE 2
+;					PRINTFORML 「んっ❤　ふあぁ…っ❤」
+;					PRINTFORMDW %CALLNAME:TARGET%は体を小さく震わせ悦に浸っている…
+;			ENDSELECT
+		;催眠（認識操作）状態
+		IF FLAG:526 == 2 && CFLAG:43 >= 1
+			SELECTCASE RAND:2
+				CASE 0
+					;（ふたなり分岐セリフ）
+					IF CFLAG:42
+						PRINTFORML （ﾋﾞｸｯ、ﾋﾞｭﾙｩ❤）「…？」
+						PRINTFORMDW %CALLNAME:TARGET%は真顔のまま射精している…
+					ELSE
+						PRINTFORML （ﾋﾞｸｯ、ﾌﾟｼｨｯ❤）「…？」
+						PRINTFORMDW %CALLNAME:TARGET%は真顔のまま潮を吹いている…
+					ENDIF
+				CASE 1
+					PRINTFORML 「んっ！？」（ｶﾞｸｯﾋﾞｸﾝ❤）
+					PRINTFORML 「…あれ、うち今、何しようとしたんやっけ？」
+					PRINTFORMW %CALLNAME:TARGET%は自分がイかされた事に気付いていない！
+			ENDSELECT
+		;催眠（感情操作）状態or発情状態
+		ELSEIF FLAG:526 == 1 && CFLAG:43 >= 1 || CFLAG:28
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORMW 「ヒぐっ！いグぅううウゥう！！❤❤」
+				CASE 1
+					PRINTFORMW 「らめぇ❤らめなのおおぉおぉおおぉっ❤❤」
+				CASE 2
+					PRINTFORML （いいっ❤すっごく、キモチイイよぉおぉ❤）
+					PRINTFORMDW %CALLNAME:TARGET%は全身で快楽を味わっている…
+				CASE 3
+					PRINTFORML 「ひゅいぃいぃいいぃいん❤❤」
+					PRINTFORMW （あかんのにぃ❤気持ちイイの好きになってまうぅ❤）
+				CASE 4
+					PRINTFORMW 「クる、キてまうぅ❤……イックうぅうううぅうぅ❤❤」
+				CASE 5
+					PRINTFORML 「ほおぉっ❤んおおぉおおぉっ❤❤」
+					PRINTFORMW （トンぢゃうぁ…❤　あたま壊されてまうのほぉ❤）
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORMW 「おごっ❤おほおぉおおおぉ！！❤」
+				CASE 1
+					PRINTFORMW 「もう、あかんっ…イクうぅうぅううぅっ！！❤」
+				CASE 2
+					PRINTFORMDW %CALLNAME:TARGET%は体をガクガクさせて絶頂している！
+				CASE 3
+					PRINTFORMW 「やっ、ぁっ、ああぁあぁあぁぁ～～！！❤」
+				CASE 4
+					PRINTFORML 「んひっ、ひいぃいぃいいぃい！❤」
+					PRINTFORMW （こんなん…オカシクなってまうぅ…）
+				CASE 5
+					PRINTFORMW 「イクっ、イグうぅ！…ひあぁああぁぁあぁ！！❤」
+			ENDSELECT
+		ENDIF
+	;喪失中に絶頂
+	CASE 122
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「ひあっ❤ひはあぁあ～～❤❤」
+				PRINTFORMDW %CALLNAME:TARGET%は呆けた顔をしている…
+			CASE 1
+				PRINTFORMW （すんごい、気持ちいーの、来とるぅ❤しあわせぇ～…❤❤）
+			CASE 2
+				PRINTFORML 「んっ❤　ふあぁ…っ❤」
+				PRINTFORMDW %CALLNAME:TARGET%は体を小さく震わせ悦に浸っている…
+		ENDSELECT
+	;妊娠
+	CASE 125
+		;ARG:1 == 出産までのタイムリミット
+		IF ARG:1 == 11
+			;喪失中
+			IF CFLAG:29
+				PRINTFORML 「……ぁっ❤」
+				PRINTFORMDW 力なく倒れている%CALLNAME:TARGET%は少し身じろぎした…
+			;発情時
+			ELSEIF CFLAG:28
+				PRINTFORML 「……？」
+				PRINTFORMDW %CALLNAME:TARGET%は体調の変化に気づき始めた…
+			;通常時
+			ELSE
+				PRINTFORML 「うぅ…なんかちょっと具合悪いかも…」
+				PRINTFORMW 「…こんなとこに何日もおればそうなるわな…」
+			ENDIF
+		ELSEIF ARG:1 == 8
+			;なんでもなかった
+			IF CFLAG:36 == 1
+				IF CFLAG:29
+					PRINTFORMW （…？　…なぁんや、気のせいかぁ…）
+				;発情時
+				ELSEIF CFLAG:28
+					PRINTFORMW 「変かと思っとったけど何ともなかったん…かな？」
+					PRINTFORMW 「全く、体が変になっててよく分からへんくて困ってまうで…❤」
+				;通常時
+				ELSE
+					PRINTFORMW 「知らんうちに体調が治まったみたいやな…　良かった良かった」
+					PRINTFORMW 「こんなとこで倒れたら良くて苗床、悪けりゃ餌やからな～…」
+				ENDIF
+			;お目出度
+			ELSE
+				IF CFLAG:29
+					PRINTFORMW （あぁ…うち、孕んでるぅ❤…触手の子供妊娠しとるぅ❤❤）
+				;発情時
+				ELSEIF CFLAG:28
+					PRINTFORMW 「…まさか…できちゃったんか？❤」
+					PRINTFORML 「あんだけ好き放題中出しされたら、そうなるわな…♪」
+					PRINTFORMDW %CALLNAME:TARGET%はなぜか嬉しそうだ
+				;通常時
+				ELSE
+					PRINTFORMW 「……………」
+					PRINTFORML 「…これ、絶対妊娠しとる…」
+					PRINTFORMDW %CALLNAME:TARGET%は青ざめている…
+				ENDIF
+			ENDIF
+		ELSEIF ARG:1 == 3
+			;喪失中
+			IF CFLAG:29
+				PRINTFORML （お腹…膨らんできとる❤　…元気にすくすく、育っとるな❤）
+				PRINTFORMDW %CALLNAME:TARGET%は自分の腹に向かって話しかけている…
+			;発情時
+			ELSEIF CFLAG:28
+				PRINTFORML 「あぁ、赤ちゃんおっきくなってきとる～❤」
+				PRINTFORMW （うち、無様なボテ腹姿晒しとるよぉ❤）
+			;通常時
+			ELSE
+				PRINTFORMW 「これ、どう考えても産んだら不味いよな……」
+				PRINTFORML 「…でも今から堕胎すんのは倫理的にどうかと…（ﾌﾞﾂﾌﾞﾂ）」
+				PRINTFORMDW %CALLNAME:TARGET%は葛藤している…
+			ENDIF
+		ELSEIF ARG:1 == 1
+			;喪失中
+			IF CFLAG:29
+				PRINTFORML （あっ♪あっ♪陣痛来とるぅ❤『産まれたい』って言っとるぅ❤❤）
+				PRINTFORMW （来る❤来てまう❤オメデタ絶頂しちゃう❤❤）
+			;発情時
+			ELSEIF CFLAG:28
+				PRINTFORMW 「うっ、ふぅ❤……もうすぐにでも…産まれそぉ…❤」
+			;通常時
+			ELSE
+				PRINTFORMW 「痛っ……今の、陣痛…やろか…」
+				PRINTFORML 「……決めた……産むわ、うち…」
+				PRINTFORMDW %CALLNAME:TARGET%は覚悟を決めた…！
+			ENDIF
+		ENDIF
+	;寄生（出産と大体同じ）
+	CASE 126
+		IF ARG:1 == 8
+			IF CFLAG:29
+				PRINTFORMW （あぁ…うち、孕んでるぅ❤…触手の子供妊娠しとるぅ❤❤）
+			;発情時
+			ELSEIF CFLAG:28
+				PRINTFORMW 「…まさか…できちゃったんか？❤」
+				PRINTFORML 「あんだけ好き放題中出しされたら、そうなるわな…♪」
+				PRINTFORMDW %CALLNAME:TARGET%はなぜか嬉しそうだ
+			;通常時
+			ELSE
+				PRINTFORMW 「……………」
+				PRINTFORML 「…これ、絶対妊娠しとる…」
+				PRINTFORMDW %CALLNAME:TARGET%は青ざめている…
+			ENDIF
+		ELSEIF ARG:1 == 3
+			;喪失中
+			IF CFLAG:29
+				PRINTFORML （お腹…膨らんできとる❤　…元気にすくすく、育っとるな～❤）
+				PRINTFORMDW %CALLNAME:TARGET%は自分の腹に向かって話しかけている…
+			;発情時
+			ELSEIF CFLAG:28
+				PRINTFORML 「あぁ、赤ちゃんおっきくなってきとる～❤」
+				PRINTFORMW （うち、無様なボテ腹姿晒しとるよぉ❤）
+			;通常時
+			ELSE
+				PRINTFORMW 「これ、どう考えても産んだら不味いよな……」
+				PRINTFORML 「…でも今から堕胎すんのは倫理的にどうかと…（ﾌﾞﾂﾌﾞﾂ）」
+				PRINTFORMDW %CALLNAME:TARGET%は葛藤している…
+			ENDIF
+		ELSEIF ARG:1 == 1
+			;喪失中
+			IF CFLAG:29
+				PRINTFORML （あっ♪あっ♪陣痛来とるぅ❤『産まれたい』って言っとるぅ❤❤）
+				PRINTFORMW （来る❤来てまう❤オメデタ絶頂しちゃう❤❤）
+			;発情時
+			ELSEIF CFLAG:28
+				PRINTFORMW 「うっ、ふぅ❤……もうすぐにでも…産まれそぉ…❤」
+			;通常時
+			ELSE
+				PRINTFORMW 「痛っ……今の、陣痛…やろか…」
+				PRINTFORML 「……生むしか…無いようやな……」
+				PRINTFORMDW %CALLNAME:TARGET%は覚悟を決めた…！
+			ENDIF
+		ENDIF
+	;出産（妊娠・寄生両用）
+	;今回はどっちも同じものとして扱います
+	CASE 127 TO 129
+	;ARG:1に状況　（ARG:1が　0：最初　1：産まれた　2：吸われた）
+		;喪失中
+		IF CFLAG:29
+			IF ARG:1 == 0
+				PRINTFORMW 「ぎぅう❤…うぁ！…うあはああぁっ❤❤！！」
+				PRINTFORMDW 子宮の奥からやってくる痛みと快楽に%CALLNAME:TARGET%は陶酔している…！
+			ELSEIF ARG:1 == 1
+				PRINTFORMW 「あぁあ❤❤！…うあぁあぁっああ❤❤！！！」
+			ELSEIF ARG:1 == 2
+				PRINTFORML 「あ❤…ふ…へぇえぇ～❤…」
+				PRINTFORMW （出産……ぎもぢいぃ…❤❤…もっかい、したいわぁ…❤）
+			ENDIF
+		;発情時
+		ELSEIF CFLAG:28
+			IF ARG:1 == 0
+				PRINTFORMW 「…ぐひぃい……来たぁ❤赤ちゃんきとるう❤❤」
+			ELSEIF ARG:1 == 1
+				PRINTFORMW 「ぎゅっう、ぅひぎいいぃいぃい❤❤！！！」
+			ELSEIF ARG:1 == 2
+				PRINTFORML 「あはぁ…出産アクメ…気持ちよかった…ぁ…」
+				PRINTFORMDW 息も絶え絶えだが、%CALLNAME:TARGET%は満足感に浸っている…
+			ENDIF
+		;通常時
+		ELSE
+			IF ARG:1 == 0
+				PRINTFORMW 「うぐ…ぐうぅ…ぁああ…」
+			ELSEIF ARG:1 == 1
+				PRINTFORMW 「おっぐっ…ぉおあ˝あ˝ぁああっっ❤！」
+			ELSEIF ARG:1 == 2
+				PRINTFORMW 「う˝…うぅ……お、終わった…んか……？」
+				PRINTFORML （……あれと、そのうち…出会ったら…自分で、倒さなきゃ…あかん、の…かなぁ……）
+				PRINTFORMDW そんなことを考えながら、%CALLNAME:TARGET%は床に倒れ伏した…
+			ENDIF
+		ENDIF
+		;各口上後出産回数フラグを1つ追加
+		CFLAG:902 += 1
+	;部屋浄化
+	CASE 130
+		;茜がプレイヤーの時
+		IF TARGET == 1
+			;発情時
+			IF CFLAG:28
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「……ちょっと勿体なかったかな…❤」
+					CASE 1
+						PRINTFORML 「ふぅ～換気終了～…」
+						PRINTFORMW （……でもなんか、物足りない感じ…❤）
+				ENDSELECT
+			;通常時
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「ん～スッキリしたなぁ！」
+						PRINTFORMDW %CALLNAME:TARGET%はグッと背伸びした。
+					CASE 1
+						PRINTFORMW 「空気清浄機があったら便利そうやなぁ」
+						PRINTFORMW 「折角だし、今度作ってみようかな」
+					CASEELSE
+						PRINTFORMW 「ｽｰ、ﾊｰ…爽やかミントの香り～」
+				ENDSELECT
+			ENDIF
+		;仲間の時
+		ELSEIF TARGET != 1
+			;発情時
+			IF CFLAG:28
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「悪いな～　うち、今こんな状態やからさ…❤」
+					CASE 1
+						PRINTFORML 「お風呂にする？寝る？…それともわ・た・し？❤」
+						PRINTFORMW 「なーんて冗談や、じょ～だん！」
+						PRINTFORMW （………本当は、ちょっとだけ…❤）
+				ENDSELECT
+			;通常時
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「いやぁ、助かるわ～！」
+						PRINTFORMDW %CALLNAME:TARGET%は人任せにしている…
+					CASEELSE
+						PRINTFORMW 「これでひと安心できそうやな」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;眠気が進行
+	CASE 131
+		;ARG:1に眠気
+		IF ARG:1 == 6
+			PRINTFORML 「…ぁふぅ…眠い…」
+		ELSEIF ARG:1 == 9
+			PRINTFORML （…ﾝﾆｬﾑﾆｬ…）
+			PRINTFORML 「…ふぇ！？…寝てない寝てない大丈夫…」
+		ELSE
+		;
+		ENDIF
+	;部屋移動(突撃)
+	CASE 132
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「突撃ぃ～！！」
+			CASE 1
+				PRINTFORMW 「押し通おーーる！」
+			CASE 2
+				PRINTFORMW 「ルームチェックの時間だオラァ！」
+		ENDSELECT
+	;部屋を移動(慎重)
+	CASE 133
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORMW 「右良し、左良し、忍び足…」
+			CASE 1
+				PRINTFORMW 「クリアリングは大事やんな～」
+			CASE 2
+				PRINTFORMW 「だい、じょーぶ、かなー？」
+			CASEELSE
+				PRINTFORMW 「…おはようございますぅ～」
+		ENDSELECT
+	;部屋を移動(待ち伏せ)
+	CASE 134
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「ｽﾃﾝﾊﾞｰｲ…ｽﾃﾝﾊﾞｰｲ…」
+			CASE 1
+				PRINTFORMW 「アンブッシュは一回のみ許される…二度目はない」
+			CASE 2
+				PRINTFORMW 「なんか怪しいし、待ってみよか」
+		ENDSELECT
+	;部屋を移動(その場で探索)
+	CASE 135
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML 「家探しは楽しいなぁ～♪」（ｺﾞｿｺﾞｿ）
+			CASE 1
+				PRINTFORML 「アイテム探しは基本やな！」
+			CASE 2
+				PRINTFORML 「アイテム探知機とかあれば便利なんやけどなぁ…」
+			CASE 3
+				PRINTFORML 「チェーック！」
+		ENDSELECT
+	;処女喪失
+	CASE 136
+		;敵による喪失
+		IF ARG:1 == 0
+			;ARG:3が2⇒狙いが定められた
+			IF ARG:3 == 2
+				;戦意喪失時または諦め状態
+				IF CFLAG:29 || TFLAG:16 == 2
+					PRINTFORMW （あ…これ…処女膜狙われとる…❤）
+				;発情中または催眠状態（感情操作）
+				ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+					PRINTFORMW 「…もしかして、狙っとる…？」
+				;通常時
+				ELSE
+					PRINTFORMW 「っ！まさかこいつ…狙っとるの…？！」
+				ENDIF
+			;ARG:3が1⇒ぎりぎり回避
+			ELSEIF ARG:3 == 1
+				;戦意喪失時または諦め状態
+				IF CFLAG:29 || TFLAG:16 == 2
+					PRINTFORMW （当たっとる❤…処女膜に触手ちんぽがツンツン当たっとるぅ❤）
+				;発情中または催眠状態（感情操作）
+				ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+					PRINTFORMW 「…どおしよ～…うちの初めて貰われてまうよぉ❤」
+				;通常時
+				ELSE
+					PRINTFORMW 「嫌や～！こんなん相手に初めては嫌ぁ～！」
+				ENDIF
+			;ARG:3が0⇒残念ながら貫通
+			ELSEIF ARG:3 == 0
+				;戦意喪失時または諦め状態
+				IF CFLAG:29 || TFLAG:16 == 2
+					PRINTFORML （あ…❤今メリッて言った❤おまんこ開通してもうたぁ❤）
+					PRINTFORMW （これからうち…おまんこズポズポ調教されて、苗床に改造されてまうんやぁ❤❤）
+				;発情中または催眠状態（感情操作）
+				ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+					PRINTFORMW 「あっ、はっ……入れられちゃったぁ…うちのおまんこ中古になっちゃったんや…❤」
+					PRINTFORMW 「……ちゃんと責任、とって欲しいな～❤」
+				;通常時
+				ELSE
+					PRINTFORMW 「ひっぎっ………ひぐっ、ぐすっ……うぅ～…」
+					PRINTFORMW 「…絶対、許さへんで……！」
+				ENDIF
+			ELSE
+			;
+			ENDIF
+		;自分で自慰中に処女喪失
+		ELSEIF ARG:1 == 1
+			;戦意喪失時または諦め状態
+			IF CFLAG:29 || TFLAG:16 == 2
+				PRINTFORML 「あ…やり過ぎてもうたぁ」
+				PRINTFORMW （まあええわ、そのうち孕ませ調教されるやろうし同じ同じ♪）
+			;発情時もしくは催眠状態（感情操作）
+			ELSEIF CFLAG:28 || FLAG:526 == 1 && CFLAG:43 >= 1
+				PRINTFORMW 「はぁ～❤……あれ、もしかしてやり過ぎたか？」
+				PRINTFORMW 「うーん、割と勿体ない事してもうたなぁ…」
+			;通常時
+			ELSE
+				PRINTFORMW 「ふぅ～…ん、え？……し、しまったっこんな事でぇっ！？」
+				PRINTFORML 「…まぁ、変なん相手に“初めて”よりはまだマシやろ…」
+				PRINTFORMDW 茜は自分に言い聞かせている
+			ENDIF
+		;出産時に処女喪失
+		ELSEIF ARG:1 == 2
+		;（レアパターンのため割愛）
+		ENDIF
+	;PTに勧誘された
+	;※「主人公時」ではなく、「主人公に誘われてパーティーメンバーになる」際の口上
+	CASE 140
+		;ARG:1に状況　（ARG:1が0：通常　1：共闘）　ARG:2が0：失敗　1：成功
+		;非戦闘中（通常時）
+		IF ARG:1 == 0 && ARG:2 == 1
+			;喪失中に勧誘される（というか拾われる）
+			IF CFLAG:29
+				PRINTFORML 「……んぅ……？」
+				PRINTFORMDW %CALLNAME:TARGET%は訳も分からないまま連れられる事になった。
+			;葵に勧誘される
+			ELSEIF NO:1 == 6
+				PRINTFORML 「他ならぬ妹の頼みや、もちろん一緒に行くで！」
+				PRINTFORMDW %CALLNAME:TARGET%は喜んでいる。
+			;きりたんに勧誘される
+			ELSEIF NO:1 == 8
+				PRINTFORMW 「一人やと心配やし、一緒に行こか」
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「仲間の誘いか！よろしくや」
+					CASE 1
+						PRINTFORMW 「せっかくやから、うちも同行させてもらうで！」
+					CASEELSE
+						PRINTFORMW 「…うちが居れば100人力！　やとええなぁ」
+				ENDSELECT
+			ENDIF
+		;戦闘中（相手が援軍として参加）
+		ELSEIF ARG:1 == 1 && ARG:2 == 1
+			;喪失中に誰かが援軍（というか救出に来た）
+			IF CFLAG:29
+				PRINTFORML 「……だれや…？」
+				PRINTFORMDW %CALLNAME:TARGET%は誰が来たのか分かっていないようだ…
+			;ゆかりが援軍
+			ELSEIF NO:1 == 3
+				PRINTFORML 「ゆかり！？　ありがとな！！」
+				PRINTFORMDW %CALLNAME:TARGET%はゆかりの救援に歓喜している。
+			;葵が援軍
+			ELSEIF NO:1 == 6
+				PRINTFORML 「…葵！助けに来てくれたんか？！」
+				PRINTFORML 「さっすが我が妹や！」
+				PRINTFORMDW %CALLNAME:TARGET%は感激しているようだ。
+			;きりたんが援軍
+			ELSEIF NO:1 == 8
+				PRINTFORMW 「あっ、きりたん！お願いヘルプミ～！」
+			;あかりが援軍
+			ELSEIF NO:1 == 15
+				PRINTFORMW 「助かったであかり！　戦いは苦手で参ってたんや！」
+			;ずん子が援軍
+			ELSEIF NO:1 == 4
+				PRINTFORML 「うを！？ずんちゃん！？」
+				PRINTFORMW 「…救援？有り難い！」
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「救援感謝するわ！」
+					CASE 1
+						PRINTFORMW 「ありがとう！今戦力不足に悩んでたところや」
+					CASEELSE
+						PRINTFORML 「援軍が来で…これであんたたちの勝機はなくなった！」
+						PRINTFORMDW %CALLNAME:TARGET%は既に勝ち誇っている…
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;入浴
+	;※娘を参照する記述は修正版の方が正確なようなのでそのまま使わせていただきました。
+	;（CASE113と同じく、以前の記述はダミーデータを参照してしまっていたようです…）
+	CASE 149
+		;発情時
+		IF CFLAG:28
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「う～ん体の火照りは治らへんか～…参ってまうな～❤」
+				CASEELSE
+					PRINTFORML 「…せっかくだやし、イケナイところも洗ってまお❤」
+					PRINTFORMDW 何が『せっかく』なのだろうか
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORML 「ふぃ～貴重な湯浴みタイムやわぁ～♪（ｻﾞﾌﾞｻﾞﾌﾞｽｨｰ）」
+					PRINTFORMDW %CALLNAME:TARGET%は風呂で泳いでいる
+					;（仲間に娘で追加セリフ）
+					IF (FLAG:10 > 0 && NO:(FLAG:10) == 40 && CFLAG:(FLAG:10):104 == 1 && CFLAG:(FLAG:10):29 == 0) || (FLAG:11 > 0 && NO:(FLAG:11) == 40 && CFLAG:(FLAG:11):104 == 1 && CFLAG:(FLAG:10):29 == 0)
+						PRINTFORMDL %CALLNAME:TARGET%は娘の目線に気が付いた
+						PRINTFORMW 「…コホン、えーと…普段はマネしちゃあかんからな」
+					ENDIF
+				CASE 1
+					PRINTFORMW 「はー、風呂は命の洗濯やなー」
+					;（仲間に娘で追加セリフ）
+					IF (FLAG:10 > 0 && NO:(FLAG:10) == 40 && CFLAG:(FLAG:10):104 == 1 && CFLAG:(FLAG:10):29 == 0) || (FLAG:11 > 0 && NO:(FLAG:11) == 40 && CFLAG:(FLAG:11):104 == 1 && CFLAG:(FLAG:10):29 == 0)
+						PRINTFORML 「早々入浴する機会もないんやから、ちゃんと入浴しぃや」
+						PRINTFORMDW %CALLNAME:TARGET%は娘に言い聞かせている
+					ENDIF
+				CASE 2
+					PRINTFORMW 「湯沸かし器があったらもっと簡単なんやけどな～…」
+					;（仲間に娘で追加セリフ）
+					IF (FLAG:10 > 0 && NO:(FLAG:10) == 40 && CFLAG:(FLAG:10):104 == 1 && CFLAG:(FLAG:10):29 == 0) || (FLAG:11 > 0 && NO:(FLAG:11) == 40 && CFLAG:(FLAG:11):104 == 1 && CFLAG:(FLAG:10):29 == 0)
+						PRINTFORMW 「まぁでもこの子が手伝ってくれたし、ええか」
+					ENDIF
+				CASEELSE
+					PRINTFORMW 「何がくっ付いとるか分からへんし、よ～く洗っとこ」
+					;（仲間に娘で追加セリフ）
+					IF (FLAG:10 > 0 && NO:(FLAG:10) == 40 && CFLAG:(FLAG:10):104 == 1 && CFLAG:(FLAG:10):29 == 0) || (FLAG:11 > 0 && NO:(FLAG:11) == 40 && CFLAG:(FLAG:11):104 == 1 && CFLAG:(FLAG:10):29 == 0)
+						PRINTFORML 「ほ～ら、あんたもしっかり汚れを落としぃ…」
+						PRINTFORMDW %CALLNAME:TARGET%は娘の髪を梳いている
+					ENDIF
+			ENDSELECT
+		ENDIF
+	;捕食されきった（リタイア）
+	CASE 152
+		PRINTFORML （……あ…うち…もう葵の所に…帰れないんや…）
+		PRINTFORMW （ここで一生……苗床として飼われてまうんやぁ…）
+		PRINTFORML （葵、ゆかりやきりたん…みんな、ごめんな…）
+		PRINTFORMDW 茜は触手に完全服従し、奴隷に堕ちる道を選んだ……
+	
+	
+;◇◇◇◇◇◇◇◇リタイア後（ゲームオーバー）（別冊子起動コマンド）◇◇◇◇◇◇◇◇
+	CASE 157;（今はまだ張りぼて）
+		CALL END_AKANE_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+;
+	;復活（喪失から復帰）
+	CASE 158
+		SELECTCASE ARG:1
+			;誰かから助けてもらった
+			CASE 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「ぅ…うぅん……あれ…？」
+						PRINTFORML 「…（ﾊｯ）………あうぅ～…///」
+						PRINTFORMDW 正気を取り戻した%CALLNAME:TARGET%は喪失中の痴態を思い出し顔を真っ赤にしている
+					CASE 1
+						PRINTFORML 「うっ…ひぅ…うん？」
+						PRINTFORMDW どうやら満身創痍寸前だが、正気に戻ったようだ…
+				ENDSELECT
+			;敵に打ち捨てられて助かった
+			CASE 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「ひっ…ぁ…？」
+						PRINTFORMW （うち、生きとるの…？）
+					CASE 1
+						PRINTFORMW （ﾍﾞﾁｬｯ）「…………」（ﾋﾞｸｯﾋﾞｸｯ）
+						PRINTFORMDW その後%CALLNAME:TARGET%は辛うじて立ち上がった…
+				ENDSELECT
+		ENDSELECT
+	;ゲーム開始時
+	CASE 159
+		;「強気で抜け目のない性格」に性格変更
+		CFLAG:12 = 22
+		CFLAG:100 = 9
+		
+	;MAPにて
+	CASE 160
+		;開始時一発目
+		IF DAY == 1 && TIME:0 == 0
+			PRINTFORML 「ともかく、色々調査してみよか…なんか見つかるかもしれへんしな」
+		;ランダム（たまに喋るシステム。3回に1回の頻度になってるはず）
+		ELSEIF RAND:3 == 0
+			;喪失中
+			IF CFLAG:29
+				SELECTCASE RAND:3
+					CASE 0
+					;（ふたなり分岐セリフ）
+					IF CFLAG:42
+							PRINTFORML （おちんぽ♪おちんぽぉ♪）（ｺﾞｼｺﾞｼ❤）
+							PRINTFORMDL %CALLNAME:TARGET%は自らの陰茎を慰めることしか考えていない…
+						ELSE
+							PRINTFORML （おまんこ♪おまんこぉ♪）（ｸﾞﾁｭｯ❤ｸﾁｭｯ❤）
+							PRINTFORMDL %CALLNAME:TARGET%は自らの膣を弄ることしか考えていない…
+						ENDIF
+					CASE 1
+						PRINTFORML （えへへぇ❤おなにぃ、気持ちええなー❤）
+					CASE 2
+						PRINTFORML （オッパイ、きもちええな～❤）
+						PRINTFORMDL %CALLNAME:TARGET%は自分の胸を揉みしだいている…
+				ENDSELECT
+			;睡眠中
+			ELSEIF CFLAG:25
+				SELECTCASE RAND:6
+					CASE 0
+						PRINTFORMDL %CALLNAME:TARGET%はうなされている…
+						PRINTFORML 「うぅ…無茶振りせんといてくれんかゆかりぃ…ｸﾞｩ…」
+					CASE 1
+					;（発情分岐セリフ）
+						IF CFLAG:28
+							PRINTFORML 「んっ、…んぅ…っ❤」
+							PRINTFORMDL %CALLNAME:TARGET%は眠りながら股間をいじっている…
+						ELSE
+							PRINTFORML （無理ぃ…あと30分…）
+						ENDIF
+					CASE 2
+						PRINTFORML 「やからぁ…『オーボエは食べ物やない』って、いつも言っとるやろ～…ﾑﾆｬ」
+					CASE 3
+						PRINTFORML 「右足？…そう、右足が軸足なんか…Zzz…」
+					CASE 4
+						PRINTFORML 「そのチョコミントはあかん……醤油味やから…ｽﾔｧ…」
+					CASE 5
+						PRINTFORML 「（ｽﾔｽﾔ）…葵ー…葵ー…、うちはここやでー…（ｸﾞｳｸﾞｳ）」
+				ENDSELECT
+			;発情中
+			ELSEIF CFLAG:28
+				SELECTCASE RAND:6
+					CASE 0
+						;（裸分岐セリフ）
+						IF BASE:CP <= 0
+							PRINTFORML （すっぽんぽんでうろつくの…癖になってまうかも❤）
+						ELSE
+							PRINTFORML 「ぅう～…ムラムラ止まらへん…❤」
+						ENDIF
+					CASE 1
+						PRINTFORML （…めっちゃオナニーしたい…❤）
+							;（ふたなり追加セリフ）
+							IF CFLAG:42
+								PRINTFORML （せっかくおちんぽ生えとるんやし、ちょっとだけならええか…）
+							ENDIF
+					CASE 2
+						;（ふたなり分岐セリフ）
+						IF CFLAG:42
+							PRINTFORML 「さて、どないしよかな…❤（ｼｺｼｺ♪）」
+							PRINTFORMDL %CALLNAME:TARGET%はちんぽをこすりながら考えている…
+						ELSE
+							PRINTFORML 「さて、どないしよかな…❤（ｸﾁｭｸﾁｭ♪）」
+							PRINTFORMDL %CALLNAME:TARGET%は股間をまさぐりながら考えている…
+						ENDIF
+					CASE 3
+						PRINTFORML 「とりあえず…この火照りをどうにかせんと、やな…」
+						PRINTFORML （さっさと治さへんと…自分で抑えが効かなくなってまうし…❤）
+					CASE 4
+						PRINTFORML （どうしよ…すっごいシたい…おまんこ、ズコズコして欲しい❤）
+						PRINTFORMDL %CALLNAME:TARGET%は股間から愛液を垂らしている…
+						;（裸追加セリフ）
+							IF BASE:CP <= 0
+								PRINTFORML （このまま裸で歩けば、誰か寄ってくるんやないか…❤）
+							ENDIF
+					CASE 5
+					;（妊娠・寄生分岐セリフ）
+						IF CFLAG:22 && CFLAG:36 == 0 || CFLAG:36 >= 3
+							PRINTFORML 「うち、すっかりボテ腹になっちゃったね～❤」
+							PRINTFORMDL %CALLNAME:TARGET%はお腹を優しく撫でている…
+						ELSE
+							PRINTFORML （うぅ…子宮がキュンキュンして…切ないわぁ❤）
+						ENDIF
+				ENDSELECT
+			;ふたなり
+			ELSEIF CFLAG:42
+				SELECTCASE RAND:5
+					CASE 0
+						;（ふたなり永久化時分岐セリフ）
+						IF ABL:12 == 3
+							PRINTFORML 「もうおちんちんがあっても、歩き辛さは無くなった…やろか」
+							PRINTFORML （こんなんに慣れたくなかったけどな…）
+						ELSE
+							PRINTFORML 「どうにも歩きにくいねんな～…」
+							PRINTFORMDL %CALLNAME:TARGET%は邪魔そうに股間の起立を見た…
+						ENDIF
+					CASE 1
+						;（ふたなり永久化時分岐セリフ）
+						IF ABL:12 == 3
+							PRINTFORML 「どうにか、取れへんかな？」
+							PRINTFORML （ｷﾞｭｳｯ！）「いだだだ…っ！　…無理かぁ…」
+						ELSE
+							PRINTFORML 「コレ、いつ取れるんやろ…」
+							PRINTFORML 「…まさか、一生取れへんとかないやんな？」
+						ENDIF
+					CASE 2
+						;（裸分岐セリフ）
+						IF BASE:CP == 0
+							PRINTFORML （こんなんぶら下げて素っ裸で出歩くとか…完全に変質者やな…）
+						ELSE
+							PRINTFORML 「うわ、服の上からでも見えてまうやん…」
+							PRINTFORMDL 股間の一物は存在を主張するかのように勃起している…
+						ENDIF
+					CASE 3
+						;（裸分岐セリフ）
+						IF BASE:CP == 0
+							PRINTFORML 「歩くたび揺れて、気になってしょうがないわ～…」
+						ELSE
+							PRINTFORML 「うひぃ！」
+							PRINTFORML （布っ、擦れてぇ…っ❤）
+						ENDIF
+					CASE 4
+						;（ふたなり永久化時分岐セリフ）
+						IF ABL:12 == 3
+							PRINTFORML （ｸﾞｲｸﾞｲ）「やっぱり、取れへんくなってもうたな～…」
+							PRINTFORML （こんなんつけて帰ったら皆驚くで…それ以前に出られるんかなぁ…）
+						ELSE
+							PRINTFORML （ｸﾞﾆｸﾞﾆ）「…やっぱ、簡単には取れへんか～…」
+							PRINTFORML （感覚もまだしっかりある…ちょっとだけ、気持ちよかった）
+						ENDIF
+				ENDSELECT
+			;眠い（要睡眠以上）
+			ELSEIF FLAG:7 >= 7
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「寝不足は頭の回転悪くなるから嫌やなぁ…」
+					CASE 1
+						PRINTFORML （さっさと安全確保して…とっとと寝よ…）
+							;（寄生・妊娠中追加セリフ）
+							IF CFLAG:22 && CFLAG:36 == 0 || CFLAG:36 >= 3
+								PRINTFORML （こんなお腹じゃ戦いづらいやろうし…な）
+							ENDIF
+					CASE 2
+						PRINTFORML 「ふぁあ～…あふ…」
+						PRINTFORMDL %CALLNAME:TARGET%は大あくびをしている
+					CASE 3
+						PRINTFORML 「横になりたいけど…不用心に寝たら危険やな」
+							;（裸追加セリフ）
+							IF BASE:CP <= 0
+								PRINTFORML 「おまけに服も無しじゃあ『犯してくれ』って言っとるようなもんやし…」
+							ENDIF
+				ENDSELECT
+			;寄生・妊娠中
+			ELSEIF CFLAG:22 && CFLAG:36 == 0 || CFLAG:36 >= 3
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「お腹重い…」
+					CASE 1
+						PRINTFORML 「ふぅ、ふぅぅ…」
+						PRINTFORML （やっぱりいつもより身体が重い…！）
+					CASE 2
+						PRINTFORML 「こんなん、嘘であってほしいわ…」
+						PRINTFORMDL %CALLNAME:TARGET%は恨めしそうに自分の腹を見ている…
+					CASE 3
+						PRINTFORML 「だるい～、しんどい～…」
+				ENDSELECT
+			;全裸
+			ELSEIF BASE:CP <= 0
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORML 「胸も股間も丸出しなんて、知り合いには見られたくない姿やな…」
+					CASE 1
+						;（素質恥薄い分岐セリフ）
+						IF TALENT:36
+							PRINTFORML 「ちょっと平気になったとはいえ、流石に敵に襲われたらマズイよな…」
+						ELSE
+							PRINTFORML （こんな状態で出歩いてたら…いつ襲われるかわかったもんやない！）
+						ENDIF
+					CASE 2
+						;（素質恥薄い分岐セリフ）
+						IF TALENT:36
+							PRINTFORML 「しょっちゅう裸やからすっかり慣れてもうたなぁ…慣れたくなかったけど」
+						ELSE
+							PRINTFORML 「早くなんか着たいなぁ」
+							PRINTFORML （どうせ新しく着てもすぐ破かれるんやろうけどな…）
+						ENDIF
+					CASE 3
+						;（素質恥薄い分岐セリフ）
+						IF TALENT:36
+							PRINTFORML 「…裸でも平気になってきた…毒されとるんかなぁ、うち…」
+						ELSE
+							PRINTFORML 「一枚の布で良いから欲しいなぁ」
+						ENDIF
+					CASE 4
+						PRINTFORML 「不思議と寒くはないんやな…とても『快適』とは言えへんけど」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:7
+					CASE 0
+						PRINTFORML 「ここはジメジメしてて嫌やなぁ～…」
+						PRINTFORML 「適度な湿り気ならええんやけど、なんか快適さが無いというか…」
+					CASE 1
+						PRINTFORML 「照明が見当たらへんけど、どこから光を取り込んでるんやろ？」
+					CASE 2
+						PRINTFORML 「道が分かりにくくて困るわ」
+						PRINTFORML （そもそもどっちが北側かもよくわからへん…）
+					CASE 3
+						PRINTFORML 「葵は大丈夫かな…ここに来てへんかったらええけど」
+					CASE 4
+						PRINTFORML 「あー、せめて水遊びしたい！」
+					CASE 5
+						PRINTFORML 「油断はしてない！…つもりや」
+					CASE 6
+						PRINTFORML 「せめて太陽が見えたらなぁ」
+				ENDSELECT
+			ENDIF
+		ENDIF
+;		
+;◇◇◇◇◇◇◇◆固定イベント関連（別冊子起動コマンド）◆◇◇◇◇◇◇◇
+	CASE 200 TO 201
+		CALL EVENT_AKANE_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+;
+	;オープニング
+	CASE 203
+		IF TARGET == 1
+		;長いです。書いてる内に調子に乗りました。
+			DRAWLINE
+			PRINTFORMDW 日本のとある学校。
+			PRINTFORMDL 
+			PRINTFORMDW ここでは少女達が学舎に集い、日々勉学や部活動に勤しむ場所。
+			PRINTFORMDL その集団の一人「琴葉茜」は、粒揃いの少女たちの中でも指折りの容姿。
+			PRINTFORMDW 今日も今日とて双子の妹と通学をしており、今はお昼休みに中庭で妹お手製のお弁当を友人達と食べている最中だ。
+			PRINTFORMDL 
+			PRINTFORMDL 「茜、調子悪いみたいね？」
+			PRINTFORMDW と学友のゆかりに聞かれ、ばつが悪そうに
+			PRINTFORML 「せやな…なんかこう、ちょっともやもやするというか…な」
+			PRINTFORMDW と答えた。というのも、ここ最近ずっとこの調子であった。
+			PRINTFORMDL 
+			PRINTFORMDW 珍しい不調に、自身も思うところがあったのか、
+			PRINTFORML 「ちょっと、気分転換に散歩に行ってくるわ！」
+			PRINTFORMDW そう明るく言い残し、中庭を離れ一人校舎裏に向かうのだった。
+			PRINTFORMDW 
+			PRINTFORMDW しばらく歩いた後、その辺りに置いてあるベンチに腰掛ける。
+			PRINTFORML （一人になるためとはいえ…校舎裏に来る必要はなかったかな…）
+			PRINTFORMDW 後悔しかけたその時、木の洞から奇妙な蔦のような物が顔を覗かせているのに気付く。
+			PRINTFORMDW 何故か妙に気になった茜は、深く考えずに近寄った。
+			PRINTFORMDL 
+			PRINTFORMDL ……その洞が、ほんの数瞬ほど前に“造られた”物だった事に気付けなかったのは
+			PRINTFORMDW 非日常など一切体験したことが無い少女故致し方なかったのだろう。
+			PRINTFORMDL 
+			PRINTFORMW 「？？なんやろ？このうねうね……」
+			;（二回振動させる）
+			CALL QUAKE(2)
+			PRINTFORMW 「…ひっ？！…うぐゅっ！…んぅ～！！…」
+			PRINTFORMW 「…………………………」
+			PRINTFORMDL 
+			PRINTFORMDL 不用意に近づく獲物を捕らえた洞穴は、何事も無かったかのように静かに消え去り、
+			PRINTFORMDW そこに残ったのは悲鳴の余韻と静寂だけだった。
+			PRINTFORMDW 
+			PRINTFORMW 「うぅ、んぐ、…離せっ！このぉ！！」
+			PRINTFORMW 「……いででで……ん、え、あれ…ここは？」
+			PRINTFORMDL 何とか強引に動かした腕で蔦を振り払う事に成功した茜が見たものは、蠢く肉の壁。
+			PRINTFORMDW それが一面に広がり、おおよそ現実とは思えないおぞましい様相を呈していた。
+			PRINTFORMDL 
+			PRINTFORML 「うわぁ…何やここ、なんか変なん出てきそう…」
+			PRINTFORMDW 異様な雰囲気に僅かに怯んだものの、気を取り直し状況を確認する。が。
+			PRINTFORML 「上が見えへんな………葵やゆかりが助けてにきてくれる可能性は低いか？」
+			PRINTFORMW 「おまけに着の身着のまま、鞄も教室においてままで食料もあらへん…」
+			PRINTFORMDW 予想以上に事態は深刻だった。早々に落ち込む茜。だが心は折れていなかった。
+			PRINTFORMDL 
+			PRINTFORMW （酸素はしっかりある、入り口があそこ一カ所とは思えへん…！）
+			PRINTFORMDW そう信じ、この迷宮を探索することを決めたのだった。
+			PRINTFORMDL 
+			PRINTFORMW 「それにまぁ、葵やゆかりが警察呼んでくれるかも知れへんしな。　…今から怒られるんがちょっと憂鬱や」
+			PRINTFORMDW しかし、この茜の楽観は早々に打ち砕かれることとなる……
+			DRAWLINE
+		ENDIF
+	
+;◇◇◇◇◇◇◇◇エンディング（別冊子起動コマンド）◇◇◇◇◇◇◇◇
+	CASE 204 TO 212
+		CALL END_AKANE_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+
+	;EXモードのオープニング （対象：Extra、Phantasm）
+	;※残念だが作り途中だ。
+	CASE 299
+		IF TARGET == 1
+		;前半は通常OPの簡略化したものを使う
+		DRAWLINE
+			PRINTFORMDW 日本のとある学校。
+			PRINTFORMDL 
+			PRINTFORMDW ここでは少女達が学舎に集い、日々勉学や趣味に勤しむ場所。
+			PRINTFORMDL その集団の一人「琴葉茜」は、美少女揃いの少女たちの中でも指折りの容姿。
+			PRINTFORMDW 今日も今日とて双子の妹と通学をしており、今は授業の合間の休憩中だ。
+			PRINTFORMDL 
+			PRINTFORMDL 「茜、調子悪いみたいね？」
+			PRINTFORMDW と学友のゆかりに聞かれ、ばつが悪そうに
+			PRINTFORML 「せや…なんかこう、ちょっともやもやするというか…な」
+			PRINTFORMDW と答えた。というのも、ここ最近ずっとこの調子であった。
+			PRINTFORMDL 
+			PRINTFORMDW 珍しい不調に、自身も思うところがあったのか、
+			PRINTFORML 「ちょっと、気分転換に散歩に行ってくるわ！」
+			PRINTFORMDW そう明るく言い残し、教室を離れ一人校舎裏に向かうのだった。
+			PRINTFORMDW 
+			PRINTFORMDW しばらく歩いた後、その辺りに置いてあるベンチに腰掛ける。
+			PRINTFORML （一人になるためとはいえ…校舎裏に来る必要はなかったかな…）
+			PRINTFORMDW 後悔しかけたその時、木の洞から奇妙な蔦のような物が顔を覗かせているのに気付く。
+			PRINTFORMDW 何故か妙に気になった茜は、深く考えずに近寄った。
+			PRINTFORMDL 
+			PRINTFORMDL ……その洞が、ほんの数瞬ほど前に“造られた”物だった事に気付けなかったのは
+			PRINTFORMDW 非日常など一切体験したことが無い少女故致し方なかったのだろう。
+			PRINTFORMDL 
+			PRINTFORMW 「？？なんやろ？このうねうね……」
+			;（二回振動させる）
+			CALL QUAKE(2)
+			PRINTFORMW 「…ひっ？！…うぐゅっ！…んぅ～！！……」
+			PRINTFORMW 「…………………………」
+			PRINTFORMDL 
+			PRINTFORMDL 不用意に近づく獲物を捕らえた洞穴は、何事も無かったかのように静かに消え去り、
+			PRINTFORMDW そこに残ったのは悲鳴の余韻と静寂だけだった。
+			PRINTFORMDW
+			PRINTFORMDW あっけなく捕まった茜を待っていたのは凌辱の日々だった。
+			PRINTFORMW 「おっ❤ひあっ❤ひゃめてぇ❤イっとるっ❤イっとるからっ❤」
+			PRINTFORMW 「もう❤むりぃっ❤おねがいっ❤ゆるしへっ❤たしゅけてぇっ❤」
+			PRINTFORMW 「ひぎいっ❤死ぬっ❤イキ殺されるっ❤…お˝っ❤イグうぅっ❤❤」
+			PRINTFORMDW 何度目かわからない絶頂、幾度となく続く膣内射精が精神をすり減らす。
+			PRINTFORMW 
+			PRINTFORMDW 茜の身体の限界直前で、ようやく「今日の分」が終わった。
+			PRINTFORMW 「…うえ……やっと終わったか…はぁ、もうやだ…」
+			PRINTFORMDW 茜はおもむろに立ち上がり、しゃがんだ体制で下腹部に力を入れた。
+			PRINTFORMW 「よい、しょっ……ふうっ…ふんっ、うっ❤」
+			PRINTFORMDW ブピュブピュと下品な音を立て、射精したての精液が膣や尻穴から溢れ出る。
+			PRINTFORMW 「あっ❤ヤバっ❤イクっ、余韻イキくるっ❤…はうぅ♪」
+			PRINTFORMW 「……ふぅ……全部、出たかな…くそぉ、いつまでこんなこと…」
+			PRINTFORMW 「落ち着いたら腹が立ってきた…あいつら好き放題してタダで済むと……んん？」
+			PRINTFORMW 「ひょっとしてここからなら逃げ出せるかも。そうと決まればっ…！」
+			PRINTFORMW 「よっ…ぐううっ、狭いっ…あっ、ちょっ、触手っ❤触手がぁ❤」
+			PRINTFORMW 「へあぁ❤…やっと出られた…」
+			PRINTFORMW 「とにかく、ようやっと地上付近まで出られたみたいやな」
+			PRINTFORMW 「ふ、ふふ…これが最後のチャンス…こんなとことっととオサラバしたる！」
+			PRINTFORMDW かくして茜の脱出劇は幕を開けた。
+			
+		ENDIF
+;-------------------------------------------------------------------------------------------------
+;触手服関係
+;-------------------------------------------------------------------------------------------------
+	;触手服装着時
+	CASE 440
+		SELECTCASE ARG:1
+			;触手服と判明＋最初の攻め
+			CASE 0
+				PRINTFORM 「しまったっ！これは触手――❤
+				PRINTFORM 　ひぃいぃぃ～～ッッ❤
+				PRINTFORMW ！！」
+				PRINTFORMW 「――助けてぇ！誰か取って！お願いやコレ外してぇーーッッ！！」
+			;触手服に抵抗
+			CASE 2
+				IF RAND:2 == 0
+					PRINTFORM 「っ！負けるか、この――ッ❤
+				ELSE
+					PRINTFORM 「触手なんかに、絶対負けな――ッ❤❤❤
+				ENDIF
+				PRINTFORM  んひゃあぁああぃいぃ❤❤
+				PRINTFORMW ！！」
+				PRINTFORM 「ほへぁあぁ❤
+				PRINTFORM 　あひゃぁぁあひいいぃぃ❤❤
+				PRINTFORMW 」
+			;触手服からの報復Ａ
+			CASE 4
+				IF RAND:2 == 0
+					PRINTFORM 「りゃめっ！りゃめぇぇえっ❤❤
+					PRINTFORM 　おお、おひりぃいやめぇえ❤❤
+					PRINTFORMW 」
+				ELSE
+					PRINTFORM 「んひょぉおぉおぉ❤
+					PRINTFORM 　おおぉぉおひりいぃぃっっ❤❤
+					PRINTFORMW 」
+				ENDIF
+			;触手服からの報復Ｂ
+			CASE 8
+				IF RAND:2 == 0
+					PRINTFORM 「んにゃア゛ア゛アァァ❤❤
+					PRINTFORM 　おっぱいぃぃあかんのぉぉぉっ❤
+					PRINTFORMW 」
+				ELSE
+					PRINTFORM 「ひぎゅぅぅぐおっぱいぃぃ❤❤
+					PRINTFORM 　おっぱい虐めにゃいでぇえぇ❤❤
+					PRINTFORMW 」
+				ENDIF
+			;触手服からの報復Ｃ
+			CASE 10
+				;非ふたなり
+				IF CFLAG:42 == 0 && TALENT:121 == 0
+					IF RAND:2 == 0
+						PRINTFORM 「んんんぁぁぁあぅ❤
+						PRINTFORM 　クリッ！クリがあぁ壊れてまうぅぅ❤❤
+						PRINTFORMW 」
+					ELSE
+						PRINTFORM 「ほええあぁぁぁクリぃいぃ❤
+						PRINTFORM 　うちのクリが破裂してまううぅ❤
+						PRINTFORMW 」
+					ENDIF
+				;魔改造オンバシラ
+				ELSEIF TALENT:170 == 3 && TALENT:171 == 1 && TALENT:172 == 2 && TALENT:177 == 1 && TALENT:178 == 1 && TALENT:180 == 4 && TALENT:185 == 2 && TALENT:186 == 2 && TALENT:187 == 1
+					PRINTFORMDW %CALLNAME:(TARGET)%の醜く開発されてしまったペニスを、無数の触手が容赦なく蹂躙する！
+					PRINTFORMDW 血管を浮かび上がらせビクビクと痙攣する、身の丈にも及ぶ巨大な竿は幾本もの触手によって、まるでボンレスハムのように、扱き縛り上げられ
+					PRINTFORMDW 真っ黒な亀頭の先に蓋をする、滴る事のない超粘質カウパーを掻き分けるように、竿の内部にまで極細触手が侵入し嬲られ
+					PRINTFORMDW その付け根にぶら下がる、煮え滾る溶岩のような精液を蓄えた巨大な睾丸まで、口の付いた触手でシャブられている。
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORM 「ほぎゃぁっ…ぉ゛お゛ぉぉっ❤
+							PRINTFORM 　んがぁあが❤
+							PRINTFORM 　あぎゃひぃぃイ゛っ❤❤
+							PRINTFORMW 」
+							PRINTFORMDW その極悪な快感の暴虐の前に、茜は為す術もなく白目を剥き、舌を突き出して無様に喘ぎ、呼吸すらままならない有様だ。
+						CASEELSE
+							PRINTFORM 「お゛ッん゛ん゛んぅぅぅッッ❤
+							PRINTFORM 　ひゃぃいぃぎ❤
+							PRINTFORM 　おごがぁ……んがっ❤❤
+							PRINTFORMW 」
+							PRINTFORMDW その極悪な快感の暴虐の前に、快楽を求めるだけの器官と成り果てた%CALLNAME:(TARGET)%のペニスはすぐにも射精してしまいそうだ。
+						ENDSELECT
+				;それ以外のふたなり
+				ELSE
+					IF RAND:2 == 0
+						PRINTFORM 「んおおぉおぉおおぉぉ❤
+						PRINTFORM 　おぉおっおちんちんはだめぇえぇ❤
+						PRINTFORMW 」
+					ELSE
+						PRINTFORM 「んえああぁあぁぎいぃぃ❤
+						PRINTFORM 　おちんっちん敏感にゃのぉぉぉ❤❤
+						PRINTFORMW 」
+					ENDIF
+				ENDIF
+			;触手服からの報復Ｖ
+			CASE 12
+				IF RAND:2 == 0
+					PRINTFORM 「ぐひぃぃぃぎいっ❤
+					PRINTFORM 　おおっおまんこりゃめてえぇえ❤❤
+					PRINTFORMW 」
+				ELSE
+					PRINTFORM 「りゃめえぇえぇ！おまんこぉぉっ❤
+					PRINTFORM 　うちのおまんこぶっ壊れてまうぅぅぅっ❤❤
+					PRINTFORMW 」
+				ENDIF
+			;触手服からの報復全部のせ
+			CASE 17
+				PRINTFORMW 「あかんっ！あかんって！全部一編になんて無理やあぁぁぁっ！！」
+				IF RAND:2 == 0
+					PRINTFORM 「ふぎいぁぁあがああっ❤
+					PRINTFORM ！！　んひっっ❤
+					PRINTFORM 　あヒィィィッッ❤❤
+					PRINTFORMW ！！」
+				ELSE
+					PRINTFORM 「んぎゅぅううぐぅ❤
+					PRINTFORM 　うぅぎひぃぃ❤
+					PRINTFORM 　あ゛ぁあっんああぁあぁっっ❤❤
+					PRINTFORMW ！！」
+				ENDIF
+			;触手服に完全敗北(最後まで抵抗した後屈服)
+			CASE 5
+				PRINTFORM  「んぎひぃ❤
+				PRINTFORM  ひっ…あひぃぃッ❤
+				PRINTFORM  ご、ごめんにゃ、しゃいぃぃ❤❤
+				PRINTFORMW 」
+				PRINTFORM 「もう…さからわんからぁ❤
+				PRINTFORM 　これ以ッ…上……イぐのぉ❤❤
+				PRINTFORMW 許ひて、くりゃひゃいぃ……」
+			;触手服に諦め
+			CASE 14
+				PRINTFORMW 「んんっ！……こない、ふざけた服なんかにぃっ❤❤」
+				PRINTFORMDW 茜は生地の内側で蠢く触手の感触に震えつつ、それに屈っするしかない自分の不甲斐なさを感じている。
+		ENDSELECT
+	;触手服常駐時
+	CASE 441
+		SELECTCASE ARG:1
+			;電撃攻めからのとどめまで　フラッシュ多用したら確実に目やられるので最初はシェイクのみ
+			CASE 15
+				CALL QUAKE(1)
+				PRINTFORMW 「アアッ！」
+				CALL QUAKE(1)
+				PRINTFORMW 「うぎゃぁああがッッ」
+				CALL QUAKE(1)
+				PRINTFORMW 「やめ、アアア゛ア゛ァッ」
+				CALL QUAKE(1)
+				PRINTFORMW 「ひぐぁあぁがあああ！！」
+				PRINTFORMW 「……ぜぇ…ハァ……ひぃ、ぅぅ…」
+				WAIT
+				CALL FLASH(1, 0xCCFFFF)
+				CALL QUAKE(3)
+				PRINTFORMW 「ふぎゃあぁあああがああぁ！！！あひいィィィ―――ッッ！！」
+			;電撃攻めとどめさされた
+			CASE 16
+				PRINTFORML 「―――ヒッ……ァ゛おっ…」
+				PRINTFORMW 「おお゛ぉん゛ッ……んご、ぅ……」
+			;ＮＦ
+			CASE 20
+			;乳腺拡張度
+				IF TALENT:162 >= 3 && GET_BUST(TARGET) >= 1
+					PRINTFORM  「ほぎぃっ❤
+					PRINTFORM  きもちっ…きぼちぃいぃっ！❤
+					PRINTFORM  もっとおっぱい犯してぇぇっ❤❤
+					PRINTFORMW 」
+					PRINTFORM 「うちの淫乱おっぱいマンコ❤
+					PRINTFORM 　中にぃっ！一杯種付けしてぇ❤❤
+					PRINTFORML 乳房妊娠させてくりゃしゃいぃぃっ❤❤
+					PRINTFORMW 」
+				ELSEIF TALENT:162 >= 2
+					PRINTFORM  「はひぃぃっ❤
+					PRINTFORM  おおっおっぱい姦しゅごぃのぉっ！❤
+					PRINTFORMW 」
+					PRINTFORM 「うちの乳首っ奥まで入ってきとるよぉ❤
+					PRINTFORM 　ほごぉっ！中で動いてるのっ！おっぱい穿られていぐぅぅぅっ！❤❤
+					PRINTFORMW 」
+				ELSEIF TALENT:162 >= 1
+					PRINTFORM  「ほぎぃぃっ！やめ…やめてぇぇ❤
+					PRINTFORM  おっぱいレイプ許してぇぇっ！❤
+					PRINTFORM  こりぇぇ、癖になってまうよぉぉ❤❤
+					PRINTFORMW 」
+				ELSE
+					PRINTFORMW 「――ひあぁあっ？！やめっ、そないな所に入るなッッ！！」
+					PRINTFORMW 「あぎぃぃっ？！乳房の中で動いて……嫌やあぁぁああっ！」
+				ENDIF
+			;射乳時エフェクト、何度も出ると目に来るので苦手な人は切った方がいいかも
+			CASE 21
+		ENDSELECT
+;-------------------------------------------------------------------------------------------------
+;スライム服関係
+;-------------------------------------------------------------------------------------------------
+	CASE 440
+		SELECTCASE ARG:1
+			;ＮＦ
+			CASE 20
+			;乳腺拡張度
+				IF TALENT:162 >= 3 && GET_BUST(TARGET) >= 1
+					PRINTFORM  「ほぎぃっ❤
+					PRINTFORM  きもちっ…きぼちぃいぃっ！❤
+					PRINTFORM  もっとおっぱい犯してぇぇっ❤❤
+					PRINTFORMW 」
+					PRINTFORM 「うちのおっぱいマンコ❤
+					PRINTFORM 　中でぐじゅぐじゅかき回してぇ❤❤
+					PRINTFORML いぐっっ乳イキしましゅうぅぅっ❤❤
+					PRINTFORMW 」
+				ELSEIF TALENT:162 >= 2
+					PRINTFORM  「はひぃぃっ❤
+					PRINTFORM  おおっおっぱい姦すごぃのぉっ！❤
+					PRINTFORMW 」
+					PRINTFORM 「うちの乳首っ奥まで入ってもうてるよぉ❤
+					PRINTFORM 　ほごぉっ！中で動いてるのっ！おっぱい穿られていぐぅぅぅっ！❤❤
+					PRINTFORMW 」
+				ELSEIF TALENT:162 >= 1
+					PRINTFORM  「ほぎぃぃっ！やめ…やめてぇぇ❤
+					PRINTFORM  おっぱい許してぇぇっ！❤
+					PRINTFORM  これぇ、癖ににゃってまうよぉぉ❤❤
+					PRINTFORMW 」
+				ELSE
+					PRINTFORMW 「――ひあぁあっ？！やめっ、そんな所に入るなッッ！！」
+					PRINTFORMW 「あぎぃぃっ？！乳房の中で動いて……嫌やあぁぁああっ！」
+				ENDIF
+			;射乳時エフェクト、何度も出ると目に来るので苦手な人は切った方がいいかも
+			CASE 17
+		ENDSELECT
+	CASE 441
+		SELECTCASE ARG:1
+		ENDSELECT
+		
+;◇◇◇◇◇◇◇◆ふたなり関連（別冊子起動コマンド）◆◇◇◇◇◇◇◇
+	CASE 451 TO 461
+		CALL FUTANARI_AKANE_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+		
+	;それ以外（スルーで）
+	CASEELSE
+		;汎用　行あけ区分のためこっちから戻す
+		RESETCOLOR
+		;口上記入済み
+		RETURN 1
+
+ENDSELECT
+
+;↑↑↑　　ここまで口上のメイン処理　　↑↑↑
+
+
+
+;表示が終わったら文字の色をリセットしておきましょう
+RESETCOLOR
+
+;自分で口上を書いた場合は RETURN 1 になります　　基本的にこのままにしておいてください
+RETURN 1
+
