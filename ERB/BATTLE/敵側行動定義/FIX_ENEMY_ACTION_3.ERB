@@ -1,0 +1,81 @@
+﻿@FIX_ENEMY_ACTION_3(ARG:0)
+#DIM PERCENT
+;ARG:0 敵のＩＤ
+;TFLAG:97 投げ飛ばされる味方のＩＤを入れる
+;
+
+;まず誰を拘束中か調べ、TFLAG:97に記憶
+;解放されるキャラクターが、ターゲットになっているわけではない
+IF DA:(ARG:0):10
+	TFLAG:97 = DA:(ARG:0):10
+	CALL STATUS_RENEW_RELEASE(DA:(ARG:0):10, 0, 1)
+ELSEIF DA:(ARG:0):20
+	TFLAG:97 = DA:(ARG:0):20
+	CALL STATUS_RENEW_RELEASE(DA:(ARG:0):20, 0, 1)
+ENDIF
+
+TFLAG:52 = ARG:0
+TFLAG:54 = TFLAG:97 ;まず拘束されているキャラを対象にダメージ処理
+TFLAG:55 = 1
+TFLAG:59 = 0
+TFLAG:60 = 1
+
+TFLAG:57 = DA:(ARG:0):5
+
+TFLAG:63 = 5
+
+TFLAG:58 = 50 ;投げつけられた側が受け止めるのでダメージ緩和
+TFLAG:61 = 120 ;戦意喪失中の筈なので回避不能
+
+TFLAG:64 = 70
+
+TFLAG:99 = 3
+
+;TFLAG:54は投げられる側のダメージ処理に使っているので使用不可
+CALL ACTION_FILTER(-1, 7, 3, CALLNAME:(DA:(ARG:0):51), SAVESTR:(ARG:0), DA:(ARG:0):51)
+
+
+IF ABL:(TFLAG:97):14 >= 1
+	;ダメージは中毒の2乗・肌感度に比例
+	LOCAL:1 = CALC_SENSITIVITY(TFLAG:97, TFLAG:63, 100) / 10
+	;淫乱持ちは最大MPの割合でダメージ増加
+	SIF TALENT:(TFLAG:97):74 == 1
+		LOCAL:1 = LOCAL:1 * (MAXBASE:(TFLAG:97):MP / (1500 + RAND:500))
+	;触手服かCP33％以下だと二倍
+	PERCENT = BASE:(TFLAG:97):CP * 100 / MAXBASE:(TFLAG:97):CP
+	SIF CFLAG:(TFLAG:97):37 || PERCENT <= 33
+		LOCAL:1 = LOCAL:1 * 2
+	CALL DAMAGE_COMMON(TFLAG:97, 2, LOCAL:1 + RAND:600, 100)
+ENDIF
+
+;拘束者を解放
+DA:(ARG:0):70 = 0
+DA:(ARG:0):71 = 0
+DA:(ARG:0):72 = 0
+DA:(ARG:0):36 = 0
+
+;投げつけられる側の処理を行う
+@EXTRA_ACTION_3(ARG:0,ARG:1)
+#DIM PERCENT
+TFLAG:52 = ARG:0
+TFLAG:54 = DA:(ARG:0):51 ;次は投げつけられる側の処理
+TFLAG:55 = 1
+TFLAG:59 = 0
+TFLAG:60 = 1
+TFLAG:57 = DA:(ARG:0):5
+
+TFLAG:58 = 100
+TFLAG:61 = 120 ;仲間を庇うので回避不能
+
+TFLAG:64 = 70
+
+CALL ACTION_FILTER(-1, 17, 3, CALLNAME:(TFLAG:54), SAVESTR:(ARG:0), TFLAG:54)
+CALL DAMAGE_COMMON(TFLAG:54, 0, 300 + RAND:200)
+
+
+;ＴＰ変化
+CALL CHANGE_TP(TFLAG:54, 24)
+
+;念のためTFLAG;97を掃除
+TFLAG:97 = 0
+

@@ -480,7 +480,7 @@ ELSEIF LOCAL:1 == 3
 	ENDIF
 	LOCAL:5 = 0
 	FOR LCOUNT, 1, FLAG:1
-		IF CFLAG:1:4 == DA:(LCOUNT):4 && DA:(LCOUNT):1 > 0 && DA:(LCOUNT):0 == 18 && DA:(LCOUNT):45 == 0 && LOCAL:4
+		IF CFLAG:1:4 == DA:(LCOUNT):4 && DA:(LCOUNT):1 > 0 && DA:(LCOUNT):0 == 18 && DA:(LCOUNT):45 == 0 && LOCAL:4 && CFLAG:1:58 == 0
 			IF CFLAG:1:10
 				PRINTFORML %SAVESTR:(LCOUNT)%に助けを乞いますか？
 			ELSE
@@ -513,7 +513,7 @@ ELSEIF LOCAL:1 == 3
 				PRINTFORML %CALLNAME:(LCOUNT)%は拘束されて動けないようだ…
 			ELSEIF LOCAL:4 <= 0
 				;パーティーがいっぱいならもう誘えない
-			ELSE
+			ELSEIF CFLAG:1:58 == 0
 				IF CFLAG:1:10
 					PRINTFORML %CALLNAME:(LCOUNT)%に助けを乞いますか？
 				ELSE

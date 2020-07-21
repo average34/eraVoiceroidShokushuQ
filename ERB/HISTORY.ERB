@@ -518,7 +518,36 @@ FOR LCOUNT,0, FLAG:8998
 			ENDSELECT
 
 		ENDIF
+		
+		IF FLAG:(9300 + LCOUNT) == 18
+			PRINTFORM {FLAG:(9000 + LCOUNT)}日目　%CALLNAME:(FLAG:(9100 + LCOUNT))%が　%ENEMY_NAME(FLAG:(9200 + LCOUNT))%
 
+			SELECTCASE RAND:11
+			CASE 0
+				PRINTFORML に囚われあっけなく殺害される 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 1
+				PRINTFORML にトドメを刺され物言わぬ死体と化す 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 2
+				PRINTFORML の一撃で脳を完全に破壊される 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 3
+				PRINTFORML にあっさりと壊される 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 4
+				PRINTFORML の攻撃で惨めに殺される 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 5
+				PRINTFORML の苛烈な責めで潮を噴きながら死亡する 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 6
+				PRINTFORML に殺され物言わぬ肉塊と化す 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 7
+				PRINTFORML に殺害されてアへ顔を晒す 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 8
+				PRINTFORML に脳を破壊され最期の嬌声を晒す 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 9
+				PRINTFORML によって無力に殺害される 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+			CASE 10
+				PRINTFORML の一撃で惨めな死体と化す 迷宮内での絶頂回数：{EXP:(FLAG:(9100 + LCOUNT)):20}回
+
+			ENDSELECT
+		ENDIF
 	ENDIF
 
 NEXT

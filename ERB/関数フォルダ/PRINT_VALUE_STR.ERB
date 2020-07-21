@@ -626,11 +626,13 @@ ELSEIF CFLAG:(ARG:0):28 >= 5
 ENDIF
 
 ;=======================
-;喪失
+;喪失・死亡
 ;=======================
 @PRINT_CONDITION_14(ARG:0)
 
-IF CFLAG:(ARG:0):29
+IF CFLAG:(ARG:0):58
+	RESULTS = 死亡
+ELSEIF CFLAG:(ARG:0):29
 	RESULTS = 喪失
 ENDIF
 
@@ -639,7 +641,9 @@ ENDIF
 ;=======================
 @PRINT_CONDITION_14S(ARG:0)
 
-IF CFLAG:(ARG:0):29
+IF CFLAG:(ARG:0):58
+	RESULTS = 死
+ELSEIF CFLAG:(ARG:0):29
 	RESULTS = 喪
 ENDIF
 
