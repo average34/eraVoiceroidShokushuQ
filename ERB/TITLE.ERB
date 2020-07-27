@@ -59,7 +59,13 @@ ALIGNMENT LEFT
 DRAWLINE 
 
 ;文字化けチェック
-CALL MOJIBAKE_CHECK_START
+RESULT = 99
+TRYCALLFORM MOJIBAKE_CHECK_START
+IF RESULT != 0
+	PRINTFORML ファイルが文字化けしています。「7-zip」を用いて解凍してください。
+	PRINTFORML https://sevenzip.osdn.jp/download.html
+	THROW ファイルが文字化けしています。「7-zip」を用いて解凍してください。
+ENDIF
 
 ;選択肢表示。_Rename.csvで指定した値を読むことはできないのでここで指定する必要がある。
 $TITLE_SELECT

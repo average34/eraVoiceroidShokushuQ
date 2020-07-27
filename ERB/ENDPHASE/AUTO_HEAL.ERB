@@ -159,7 +159,7 @@ RETURN
 
 	BASE:CHARA_ID:MP = LIMIT(BASE:CHARA_ID:MP + RECOVERY_VALUE, 0, MAXBASE:CHARA_ID:MP)
 	
-	;PTに居ないキャラはMPが減りすぎると一定確率でお酒を飲む
+	;PTに居ないキャラはMPが減りすぎると一定確率でドリンクを飲む
 	IF IN_PT(CHARA_ID) == 0
 		IF BASE:CHARA_ID:MP * 100 / MAXBASE:CHARA_ID:MP <= 15
 			SIF RAND:(8 + FLAG:4) == 0
