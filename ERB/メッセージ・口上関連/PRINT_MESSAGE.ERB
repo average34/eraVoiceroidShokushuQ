@@ -98,7 +98,7 @@ ELSE
 	STR:0 = %NAME:TARGET%
 	STR:1 = {D_ARG:1}
 	STR:2 = {D_ARG:2}
-	
+	STR:3 = {D_ARG:3}
 	
 	SPRITECREATED @"ANIME00_%STR:0%_%STR:1%_%STR:2%"
 	IF RESULT && D_ARG:0 > 0
@@ -108,36 +108,110 @@ ELSE
 		IF RESULT && D_ARG:0 > 0
 			CALL ANIMATION
 		ELSE
-			SPRITECREATED @"%STR:0%_%STR:1%"
-			IF RESULT
+			SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%_%STR:3%"
+			
+			IF RESULT && D_ARG:0 > 0
 				IF BASE:(D_ARG:0):CP > 500
-					SPRITECREATED @"%STR:0%正常_%STR:1%"
+					SPRITECREATED @"%STR:0%正常_%STR:1%_%STR:2%_%STR:3%"
 					IF RESULT
-						HTML_PRINT @"<img src='%STR:0+"正常_"+STR:1%' height='2500'>"
+						HTML_PRINT @"<img src='%STR:0+"正常_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
 					ELSE
-						SPRITECREATED @"%STR:0%_%STR:1%"
+						SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
 						IF RESULT
-							HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+							HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
 						ENDIF
 					ENDIF
 				ELSEIF BASE:(D_ARG:0):CP > 0 && BASE:(D_ARG:0):CP <= 500
-					SPRITECREATED @"%STR:0%半裸_%STR:1%"
+					SPRITECREATED @"%STR:0%半裸_%STR:1%_%STR:2%_%STR:3%"
 					IF RESULT
-						HTML_PRINT @"<img src='%STR:0+"半裸_"+STR:1%' height='2500'>"
+						HTML_PRINT @"<img src='%STR:0+"半裸_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
 					ELSE
-						SPRITECREATED @"%STR:0%_%STR:1%"
+						SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%_%STR:3%"
 						IF RESULT
-							HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+							HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
 						ENDIF
 					ENDIF
 				ELSE
-					HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+					HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
 				ENDIF
 				
 				FOR LOCAL , 0 , 23
 					PRINTL 
 				NEXT
 				PRINTW 
+			ELSE
+				SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
+				IF RESULT && D_ARG:0 > 0
+					IF BASE:(D_ARG:0):CP > 500
+						SPRITECREATED @"%STR:0%正常_%STR:1%_%STR:2%"
+						IF RESULT
+							HTML_PRINT @"<img src='%STR:0+"正常_"+STR:1+"_"+STR:2%' height='2500'>"
+						ELSE
+							SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
+							IF RESULT
+								HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2%' height='2500'>"
+							ENDIF
+						ENDIF
+					ELSEIF BASE:(D_ARG:0):CP > 0 && BASE:(D_ARG:0):CP <= 500
+						SPRITECREATED @"%STR:0%半裸_%STR:1%_%STR:2%"
+						IF RESULT
+							HTML_PRINT @"<img src='%STR:0+"半裸_"+STR:1+"_"+STR:2%' height='2500'>"
+						ELSE
+							SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
+							IF RESULT
+								HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2%' height='2500'>"
+							ENDIF
+						ENDIF
+					ELSE
+						HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2%' height='2500'>"
+					ENDIF
+					
+					FOR LOCAL , 0 , 23
+						PRINTL 
+					NEXT
+					PRINTW 
+				ELSEIF D_ARG:0 > 0
+					SPRITECREATED @"XXX_%STR:1%_%STR:2%"
+					IF RESULT
+						HTML_PRINT @"<img src='%"XXX_"+STR:1+"_"+STR:2%' height='2500'>"
+						FOR LOCAL , 0 , 23
+							PRINTL 
+						NEXT
+						PRINTW 
+					ELSE
+						SPRITECREATED @"%STR:0%_%STR:1%"
+						IF RESULT
+							IF BASE:(D_ARG:0):CP > 500
+								SPRITECREATED @"%STR:0%正常_%STR:1%"
+								IF RESULT
+									HTML_PRINT @"<img src='%STR:0+"正常_"+STR:1%' height='2500'>"
+								ELSE
+									SPRITECREATED @"%STR:0%_%STR:1%"
+									IF RESULT
+										HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+									ENDIF
+								ENDIF
+							ELSEIF BASE:(D_ARG:0):CP > 0 && BASE:(D_ARG:0):CP <= 500
+								SPRITECREATED @"%STR:0%半裸_%STR:1%"
+								IF RESULT
+									HTML_PRINT @"<img src='%STR:0+"半裸_"+STR:1%' height='2500'>"
+								ELSE
+									SPRITECREATED @"%STR:0%_%STR:1%"
+									IF RESULT
+										HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+									ENDIF
+								ENDIF
+							ELSE
+								HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+							ENDIF
+							
+							FOR LOCAL , 0 , 23
+								PRINTL 
+							NEXT
+							PRINTW 
+						ENDIF
+					ENDIF
+				ENDIF
 			ENDIF
 		ENDIF
 	ENDIF

@@ -159,8 +159,8 @@ IF CFLAG:(ARG:0):174 <= 0
 	;出産回数追加
 	EXP:(ARG:0):22 += 1
 
-	;玉ありのコンフィグなら肥大化
-	IF TALENT:(ARG:0):180 < 4 && FLAG:580 && RAND:2 == 0
+	;玉ありなら肥大化
+	IF TALENT:(ARG:0):180 < 4 && TALENT:(ARG:0):180 > 0 && RAND:2 == 0
 		TALENT:(ARG:0):180 += 1
 		CALL PRINT_MESSAGE(ARG:0, 550, 0, CALLNAME:(ARG:0), "")
 	ENDIF
