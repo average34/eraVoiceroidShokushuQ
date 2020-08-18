@@ -1,0 +1,61 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 1868 プロトクリーナー M
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_1868(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+	
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 残MPによって地の文が変化
+	; 多分喪失状態の判定だけどSYSTEM_MESSAGEにあわせてBASEで判定
+	IF BASE:1 < 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おご…っ…！？　おっ、ごぼ…ぉっ…！？」\n"
+		ENDSELECT
+		
+	; 通常時
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱", "発情"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「な…なんですか」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			; SYSTEM_MESSAGEの地の文を口上で挟む
+			CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わぷ…っ！？　なんですかコレ…！？」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

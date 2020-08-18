@@ -1,0 +1,30 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 137 壁触手
+; ------------------------------------------------------------------------------
+
+; □ 1 回避失敗
+@KOJO_4_0_SYSTEM_MESSAGE_200_137_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あはっ♥　捕まっちゃいましたっ♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「きゃあぁっ！　壁に擬態して……っ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（こ、こんなのに気づかないなんて……注意力が散漫になってます……っ）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「かっ、壁からっ！？　こ、この……っ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひっ！？　ど、どうして壁から触手が…！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「くぅっ！　き、気付けませんでした……っ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「離してっ！　離してください…っ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 回避成功
+@KOJO_4_0_SYSTEM_MESSAGE_200_137_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「罠というのは、もっと相手が避けられない位置に来てから発動させるものですよ」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そんな見え透いた罠、避けられないわけがありません」\n"
+	ENDSELECT
+RETURN 1

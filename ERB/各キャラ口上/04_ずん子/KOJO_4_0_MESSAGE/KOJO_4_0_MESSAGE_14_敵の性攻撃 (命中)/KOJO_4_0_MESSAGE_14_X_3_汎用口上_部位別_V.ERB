@@ -1,0 +1,144 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 3 汎用口上 部位別 V
+; ------------------------------------------------------------------------------
+
+; ついつい射精された的口上を書きがちだが、情報を得ることが出来ないので書かないこと 書きたいなら寄生攻撃で
+@KOJO_4_0_SYSTEM_MESSAGE_14_X_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時, 諦めた
+	SIF CFLAG:25 || TFLAG:16 == 2
+		RETURN 0
+
+	; 戦意喪失
+	IF CFLAG:29
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おﾞまっ…っ♥♥　んﾞこ……っ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もっと…♥　もっと……突い…てっ♥　奥まで……いじめ…♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（あは……は…♥　わたしの…おまんこ…、おもちゃにされて…♥♥）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（おまんこが…っ♥　わたしのおまんこがぐちゃぐちゃに……っ♥♥）\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d少しでも多く快感を貪ろうと、%CALLNAME:TARGET%は蕩けきった顔で腰を振っている…\d\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d抽送が繰り返されるたび、発情しきった%CALLNAME:TARGET%の女性器からは愛液が噴きこぼれている\d\n"
+		CASEELSE
+		ENDSELECT
+		RETURN 1
+	ENDIF
+		
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"（どうして、抵抗できないの……っっ！？）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（ナカはダメっ、だからっ！　腰が勝手に動いて……っ　いやっ、いやぁっ……！）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（なんか変っ！？　変ですっ！？　嫌なことされてる……のにっ！　頭がおかしく……なってるっ！？）\n"
+				; 真の処女なら追加口上
+				IF TALENT:0 ==1
+					CALL KOJO_4_0_ADD_MESSAGE, @"（何これっ！？　頭がっ！？　頭の中がおかしい……っ！？\n　嫌なのに、犯されたいっ！？　誰でもいいから、わたしの処女を奪って欲しいっ！？）\n"
+				ENDIF
+				
+			CASE 2
+				CALL KOJO_4_0_ADD_MESSAGE, @"（わたしは性欲処理用の公衆便所……　わたしは性欲処理用の公衆便所……）\n（大丈夫……　まだわたしは変になってません……）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（わたしのおまんこは……　おちんぽを気持ちよく……　させるために……　あるから……）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「わたしのおまんこが……っ、精液便所だから……！　くぅぅっ！？　腰がっ、勝手に動いてっ！？」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「くぅ……っ……！！　はやく、わたしのオナホまんこ……っ！　掻き回して……くださいっ……！！」\n"
+				; 真の処女なら追加口上
+				IF TALENT:0 ==1
+					CALL KOJO_4_0_ADD_MESSAGE, @"「処女なんて要りませんっ！　いつまでも未通女だとちゃんと使ってくれなく……っ！」\n"
+					CALL KOJO_4_0_ADD_MESSAGE, @"（捧げないと……　わたしの大事な処女、捧げないと……　性欲処理に使えるようにしないと……）\n"
+				ENDIF
+				
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「すきなだけ……　おまんこで……　気持ちよくなってくださいね……」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「わたしは……　おまんこを……　ほじられてよろこぶ……　えっちな女……です……」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ありがとうございます♥　おまんこ、ありがとうございますっ♥♥」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「変態淫乱おまんこをご利用いただきまして、ありがとうございます♥」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「……ずぼずぼされるの、気持ちいい……です」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「……おまんこ……ぬるぬるになってます……」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「はい……　もっと、気持ちよくなれるよう……　おまんこ開発、おねがいします……」\n"
+				
+				; 真の処女なら追加口上
+				IF TALENT:0 ==1
+					CALL KOJO_4_0_ADD_MESSAGE, @"「わたしの処女まんこ……　たくさん掻き回して……　立派な雌にしてください……」\n"
+					CALL KOJO_4_0_ADD_MESSAGE, @"（わたしのおまんこ……　性欲処理用なのに、どうして処女なんでしょう……？）\n"
+				ENDIF
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あは…んぁ♥　もっと、やさしく…♥」\n\d%CALLNAME:TARGET%は艶かしく腰を振りながら、挿入された触手をしごくように撫でている\d\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「奥ぅ…っ♥　奥まで入ってきて…ますっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（わたし、マン汁とろとろ溢れさ…せてっ♥　感じて…ますっ♥♥）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いい…です……っ♪　もっと、めちゃくちゃ…にぃっ♪　貴方のカタチを覚えるぐらい…っ、かきまわしてっ♪」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「きもちいいっ♥　きもちいい…っ♥♥　もっと、子宮の奥までイジメください…っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はへぇっ♥　入っへぇ♥　触手ひんぽ入ッへますっ……♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そんなにしたらっ、おまんこっ♥　おﾞまﾞんﾞごﾞ拡がッでぇええええッ♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（うそ…っ！？　勝手に腰…うごいて…っ！？）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（イヤなのに…　掻き回されてると…　すごく、あつく…）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「抜いてっ♥　抜いてくださいっ♥　ナカ…ぁ、かき回しちゃ…っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そんなにっ、はいらないからっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「だっ、だめっ…♥　はいってこない…でっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いやっ♥　触手おちんちんなんて嫌なんですっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んﾞぎﾞぃぃっ♥　とけぇっ…♥　どげるぅぅっ♥　わたしの意識が、快楽でどげるぅぅぅっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そこだめっ♥　かんじ…かんじすぎるからッ♥♥　うごかないでっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んﾞッ♥　んﾞんﾞッッッ♥♥　んﾞんﾞ～～～ッッッ♥♥♥」\n\d%CALLNAME:TARGET%は両手で口を押さえ、淫らな声が漏れないよう涙目で耐えている…\d\n"
+
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「うそですよね……！？　これ…ぇ、太すぎ…です……っ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（まず…いっ　奥まで…えぐられてっ…　意識…飛……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いや…っ！　そこは、ダメなんですっ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そこは…っ、大事なところだから触っちゃ…ダメっ！」\n"
+	ENDSELECT
+	
+	; 真の処女なら追加口上
+	IF TALENT:0 == 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わた…っ、わたしっ処女なのに…っ♥　大事なところいじめられて、感じてます…っ♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やめ……て…っ！　わたし、はじめて…だからっ！」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あなたなんか…にっ…　わたしのはじめて、奪われるわけには……っ！」\n"
+		ENDSELECT
+	ENDIF
+
+	; [淫壺]所持 または りばーす東方触手宮でV感覚LV3以上
+	IF TALENT:78 || (KOJO_4_0_IS_REVERSE() && ABL:9 >= 3)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おまんこっ♥　とまんないっ♥　おまんことまんないっ♥　おまんことまんないぃっっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「んﾞおﾞぉっ♥　おﾞまﾞんﾞこﾞ…っ♥　おﾞまﾞんﾞこﾞ灼けﾞちﾞゃあﾞぁぁっっっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だめっ♥　おまんこダメだからっ♥　こわされ…て、あたま、こわれそうだか…らぁっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そこはダメぇっ♥　挿入れないで……っ♥♥　動かないでぇええええっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やめて…くださいっ…♥　ああぁぁっ♥　エッチな音、えっちな音がじゅぷじゅぷって……っ♥♥」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

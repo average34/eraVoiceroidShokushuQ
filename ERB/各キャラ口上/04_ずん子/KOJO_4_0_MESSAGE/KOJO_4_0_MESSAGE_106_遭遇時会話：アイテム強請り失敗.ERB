@@ -1,0 +1,34 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 106 遭遇時会話：アイテム強請り失敗
+; ------------------------------------------------------------------------------
+
+; □ 相手は通常行動中
+@KOJO_4_0_SYSTEM_MESSAGE_106_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ、えっと……　忘れてください……」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ふむ……　まあ、言ってみただけです」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あはは…冗談ですよ、冗談」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 相手は喪失中
+; 喪失中相手への失敗は「何も持っていなかった」と表現される
+; 相手への友好度0未満が確定した状態なので、対応は冷たくなる
+@KOJO_4_0_SYSTEM_MESSAGE_106_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「わかりました、苗床願望があるんですね！　魔物さんが来るように誘導しておきます♪」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そんな状態で歩いてたら、犯されても文句言えませんね♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「流石に何か持ってると思ったんですが…」\n"
+	CASE "強気"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「何もない、と」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「明日は我が身…貴方のようにならないよう、反面教師とさせていただきます」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「食べ物も飲み物も無し…この迷宮で生き残るには、彼女では厳しすぎたのかもしれません」\n"
+	ENDSELECT
+RETURN 1

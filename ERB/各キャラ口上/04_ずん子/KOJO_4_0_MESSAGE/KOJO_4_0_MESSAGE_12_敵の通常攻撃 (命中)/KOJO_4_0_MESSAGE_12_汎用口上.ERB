@@ -1,0 +1,163 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 12 敵の通常攻撃 (命中) - 汎用口上
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠
+	IF CFLAG:25
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「んぁ……　ぅんっ……」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d攻撃された痛みにもかかわらず、%CALLNAME:TARGET%は目を覚まさない…\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 喪失、諦めた
+	IF CFLAG:29 || TFLAG:16 == 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もう……　殴らないで…ください…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もう抵抗しません……から、痛いのはやめて…ください…！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ごめんなさい……　ごめんなさい……　もう、許してください……」\n\d%CALLNAME:TARGET%は%ARGS:1%に無意味な謝罪を繰り返している…\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_4_0_ADD_MESSAGE, @"（う、動けないところを攻撃、ですか……）\n"
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あぐっ……♥　殴って……♥　もっと、痛くしてください……♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「本当は痛いハズ……なんですが……♥　攻撃された場所から、快感がのぼってきてる…っ♥♥」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠の力で感覚が狂った%CALLNAME:TARGET%は、痛めつけられる事に悦びを感じている…\d\n"
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「攻撃されるの好きですっ♥　痛いのが気持ちいいんですっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もっと……　もっと攻撃してください……♪」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「痛いﾞぃﾞぃっ♥♥　痛み、で……♥　あたまのてっぺんまでっ、しびれてますっっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いたいのが……♥　きもちいいっ…ですね…♥」\n"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d開発されきった%CALLNAME:TARGET%の身体は、痛みすら蕩けるような快感に変えてしまうようだ\d\n"
+		
+	CASE "強気"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「女の子の肌に傷をつけようとする行為が、どれほど罪深い事か思い知らせてあげます！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「……っつぅ！　ギリギリ避けられませんでした」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「覚えていてください、絶対報復してあげますから」\n"
+		
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「痛いのは…勘弁願いたいのですが…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「くぅっ、女性相手に容赦ありませんね……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いっ……た……ぁ！！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ぐぅ……っ……　避けられません……でした……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「……っつぅ！　読み、間違えました」\n"
+	ENDSELECT
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	
+	; 残りHPによる追加口上
+	SELECTCASE (BASE:HP - ARG:2)
+	CASE IS >= (MAXBASE:HP / 100 * 75)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「体力的には、まだまだ大丈夫そうです」\n"
+		ENDSELECT
+		
+	CASE IS >= (MAXBASE:HP / 100 * 50)
+		
+	CASE IS >= (MAXBASE:HP / 100 * 25)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「疲労で身体が上手く動かない……　こんな攻撃も避けられない……なんて……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「……もう、身体がボロボロですね……」\n"
+		ENDSELECT
+		
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（痛みで身体の感覚がマヒしてきてますね……）\n"
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	
+	; HPダメージ量による追加口上(最大HPを基準とした割合で)
+	SELECTCASE ARG:2
+	CASE IS >= (MAXBASE:HP / 100 * 75)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「……ッ！　…………ッッッ！！！」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"\dあまりの衝撃に、%CALLNAME:TARGET%は言葉を失い目を白黒させている…\d\n"
+		ENDSELECT
+		
+	CASE IS >= (MAXBASE:HP / 100 * 50)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「がはっ！げほ……っ……　な、んですか、その攻撃…………っ！」\n"
+		ENDSELECT
+		
+	CASE IS >= (MAXBASE:HP / 100 * 25)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もう少し加減してくださると助かります」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「何度も食らうとまずいかもしれません……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…っ……　ずきずき、します……」\n"
+		ENDSELECT
+		
+	CASE IS >= (MAXBASE:HP / 100 * 10)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「まだ我慢できる範囲、です」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「この程度なら、我慢です」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（この位なら、まだ我慢出来ます）\n"
+		ENDSELECT
+		
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そよ風が当たったみたいな感覚です」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あんまり痛くありませんが、注意するに越したことはありませんね」\n"
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	
+	; 選択コマンド別追加口上
+	SELECTCASE CFLAG:50
+	; 発情抱きつき
+	CASE 96
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ちゃんと相手してあげますから、しばしお待ちください♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「えっちの邪魔するとか、空気が読めないんですか？」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今いい所なんだから、邪魔しないでください……」\n"
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d%ARGS:1%の攻撃を耐えながら、%CALLNAME:TARGET%は%CALLNAME:(CFLAG:51)%を犯し続けている…\d\n"
+	ENDSELECT
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+RETURN 1

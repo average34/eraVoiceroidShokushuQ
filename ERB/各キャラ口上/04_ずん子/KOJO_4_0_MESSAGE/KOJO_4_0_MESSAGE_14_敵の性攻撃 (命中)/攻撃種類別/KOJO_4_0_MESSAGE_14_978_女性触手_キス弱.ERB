@@ -1,0 +1,130 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0978 女性触手 キス弱
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_978(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+	
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; M感覚で分岐
+	SELECTCASE ABL:15
+	CASE 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（優しいのに、凄くいやらしいキスです……♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたしの唇、いじめないでください……っ）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「同性でも、お構いなし……なんですね…っ」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（気を抜いたら…口の中に舌が侵入してきそう…っ）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（くぅっ、何がしたいんでしょうかこの魔物っ……）\n"
+		ENDSELECT
+		
+		; キス魔所持なら追加口上
+		IF TALENT:79
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（あっ♥　そんな焦らすみたいなキス…っ♥）\n"
+			CASE "発情"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（優しいキスなのにっ♥　頭の中ビリビリして……♥）\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（どうしてキスされるだけで、こんなに気持ちいいの……？）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（感じちゃうからっ、唇はやめてくださいっ……）\n"
+			ENDSELECT
+		ENDIF
+		
+	CASE 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（キスだけで頭の中とろけそう……♥♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（女の子同士でキスしてるだけ……なのにっ……　頭の中しびれて……っ……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（ダメ……　女の子同士…なのに…）\n"
+		ENDSELECT
+		
+		; キス魔所持なら追加口上
+		IF TALENT:79
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「はーっ♥　はーっ♥　もっとキスしてぇ♥♥　わたし、コレ大好きぃ……♥♥」\n"
+			CASE "発情"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「んっ♥　んんんっ♥　ちゅぅ……っ♥　キス、だめぇ……っ♥　んむうぅぅっ♥♥」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（わたしの唇、キスだけで感じちゃうから……♥）\n"
+			ENDSELECT
+		ENDIF
+		
+	CASE 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（そんなにされたら、唇が痺れて…っ♥）\n"
+		CASE "発情"
+		CASEELSE
+		ENDSELECT
+		
+		; キス魔所持なら追加口上
+		IF TALENT:79
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+			CASE "発情"
+			CASEELSE
+			ENDSELECT
+		ENDIF
+		
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（おくち……もっといじめてくださいっ……♥♥　キスでのうみそトロトロに…………♥♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（感じますっ♥　ただの、キスなのにっ♥♥　キス……っ♥♥　キスぅ……っっ♥♥）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（やめ……♥　口はダメなんですっ♥　気持ちよくなっちゃうからっ♥♥）\n"
+		ENDSELECT
+		
+		; キス魔所持なら追加口上
+		IF TALENT:79
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（あはっ……♥♥　キスだけでイケる変態女でよかった……♥♥）\n"
+			CASE "発情"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（くちでイク方法……♥　一度おぼえてしまった……からっ……♥　もう、ダメ……ぇ♥）\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（ああぁぁっ……♥　キスイキ……っ♥　このままキスイキさせてください……っ♥♥）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「キス……は……だめ……ッ♥　くち……がぁ♥　ひぐ……ぅっ♥\n　ちゅ……っ♥　ああぁっ……♥♥　ちゅっ♥　ちゅうぅぅぅっ♥　きもちいい……っ……です……っ♥♥」\n"
+			ENDSELECT
+		ENDIF
+	ENDSELECT
+
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

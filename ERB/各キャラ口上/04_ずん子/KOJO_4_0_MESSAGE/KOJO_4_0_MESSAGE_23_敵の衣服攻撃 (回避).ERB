@@ -1,0 +1,194 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 23 敵の衣服攻撃 (回避)
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_23(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 服:大破
+	IF BASE:CP <= 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もう裸ですよ私」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もう脱がせるものなんて何もありません！」\n"
+		ENDSELECT
+		
+	; 服:新品
+	ELSEIF (BASE:CP * 100 / MAXBASE:CP) >= 100
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「きゃっ！\n　……今、わたしの服を狙った…？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「服を破ろうとするなんて、えっちな敵ですね…！」\n"
+		ENDSELECT
+		
+	; 服:通常
+	ELSEIF (BASE:CP * 100 / MAXBASE:CP) > 66
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「危ないっ！　服ばっかり狙わないでください！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「どうして服ばかり狙うんでしょう…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そんな攻撃で、何がしたかったんです？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もうちょっとちゃんと狙った方が良いと思います」\n"
+		ENDSELECT
+		
+	; 服:損傷
+	ELSEIF (BASE:CP * 100 / MAXBASE:CP) > 33
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ！こ、これ以上破られたら大事なところが…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「集中……集中しないと…」\n"
+		ENDSELECT
+		
+	; 服:中破
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「こ、こんな場所で裸にされるなんてまっぴらごめんです……！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やめてください！　ただでさえ服が無いんですから！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 攻撃種類別
+; ◆ 0211 リビングバインBV
+@KOJO_4_0_SYSTEM_MESSAGE_23_211(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時
+	IF CFLAG:25
+		RETURN 0
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+		
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		; CPの状態で地の文が変化
+		IF BASE:CP <= 0
+			IF ARG:2 == 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"「植物なのに、私のおっぱいを狙って来た…？」\n"
+			ELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「植物は地面から栄養を貰うべきです　女性を狙うなんてお門違いも甚だしいですよ！」\n"
+			ENDIF
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「その程度で破ける軟な服では無いとは思いますが」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0213 スカーレットバイン BV
+@KOJO_4_0_SYSTEM_MESSAGE_23_213(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 0211 スカーレットバイン BV におねがい
+	CALL KOJO_4_0_SYSTEM_MESSAGE_23_211(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0228 スライム 全体AB
+@KOJO_4_0_SYSTEM_MESSAGE_23_228(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時
+	IF CFLAG:25
+		RETURN 0
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「きゃっ！？ヘンな液体飛ばさないでください！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0237 ドッペルゲンガー RAND
+@KOJO_4_0_SYSTEM_MESSAGE_23_237(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時
+	IF CFLAG:25
+		RETURN 0
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; テキスト表現 HARD以上で変化
+	IF FLAG:507 >= 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ！　肌ごと切り刻まれそうでした…」\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「私の服を破って、どうするつもりなんですか？♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そう簡単に脱がされはしません！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

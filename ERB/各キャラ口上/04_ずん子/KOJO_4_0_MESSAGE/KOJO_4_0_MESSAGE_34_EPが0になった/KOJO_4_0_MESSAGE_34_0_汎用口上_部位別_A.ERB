@@ -1,0 +1,112 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 34 EPが0になった - 0 汎用口上 部位別 A
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_34_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_34_DESCRIPTION_BEFORE")
+	
+	; 睡眠 or 喪失時は喋らずに帰る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 寸止め回数によって分岐
+	; 1回目の寸止めは自慰誘発でも使っているので、絶頂寸止め以外の表現が必要
+	SELECTCASE CFLAG:820
+	CASE 0 TO 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			; A感覚 + 素質[淫乱] + 素質[尻穴狂い] で分岐
+			SELECTCASE (ABL:6 + TALENT:74 + TALENT:75)
+			CASE 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　あっあっあﾞっ♥　すごおぉぉっ♥♥　お尻の穴ってこんなに気持ちいいんですね……っ♥♥」\n"
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"「きた……っ♥　ぞくぞくってっ♥　アナルほじくり回されてっ♥　はしたなくイっちゃいますっ♥♥」\n"
+			CASE 2
+				CALL KOJO_4_0_ADD_MESSAGE, @"「あはっ♥♥　イクぅぅっ♥♥　ケツ穴イっぢゃうぅぅっ♥♥♥」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ひううっっぅっっっ♥　おケツマンコいイィィィグぅぅぅぅっ♥　もうイッぢゃああああぁぁぁッ♥♥♥」\n"
+			ENDSELECT
+
+		CASE "発情"
+			; A感覚 + 素質[淫乱] + 素質[尻穴狂い] で分岐
+			SELECTCASE (ABL:6 + TALENT:74 + TALENT:75)
+			CASE 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"「うそです……　わたし、おしりで感じちゃって……？　いやああぁぁぁぁっ！！」\n"
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"「いやあぁぁぁっ！　イキたくないんですっ！　おしりでなんかああああぁぁぁぁっ！！」\n"
+			CASE 2
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ごめんなさいっ♥　えっちなおしりの穴でごめんなさいっ♥　イカせるの許してくださいぃっ♥♥」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「イクっ♥　イクっ♥　イクううぅぅぅっ♥♥　だめなのっ♥♥　えっちなおしりいじいじするのだめぇぇえええぇっっ♥♥♥」\n"
+			ENDSELECT
+			
+		CASEELSE
+			; A感覚 + 素質[淫乱] + 素質[尻穴狂い] で分岐
+			SELECTCASE (ABL:6 + TALENT:74 + TALENT:75)
+			CASE 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"「何…ですか…っ！？　おしりの穴が、ぞわぞわ……して……っ！？」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「う、ウソですよね……！？　どうしておしりの穴なんかで、こんな――！？」\n"
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"「お尻の穴でこんなに感じるなんていやなんですっ！　イキたく、イキたくなあぁぁぁっ！！」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「いや……いやなんです……！！　おしりの穴で感じるなんて、おかしいからあああぁぁぁっ……！！」\n"
+			CASE 2
+				CALL KOJO_4_0_ADD_MESSAGE, @"「感じでないからっ♥　おしりで気持ちよくなってなんか……ひぎっ♥♥」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「キちゃうっ……！！　またお尻で、お尻で気持ちよくなっちゃああぁぁぁっ……！！」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ふーっ♥　ふーっ♥　お…おしり、がぁ……♥　おﾞじりﾞ、がぁﾞぁﾞぁﾞっ……♥♥」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「クるうぅっ♥　またお尻で快楽が爆発しちゃあああぁぁぁああっ♥♥」\n"
+			ENDSELECT
+		ENDSELECT
+		
+	CASE 2 TO 3
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おしりでっ……なのに……っ、気持ちいいのがどんどん……溜まって……る……♥\n　寸止めで、おかしくされてる……っ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（くぅ……っ♥　どうして、イかせてくれないんですか……っ！　おしりが…ムズムズ……しちゃって……っ♥）\n"
+		ENDSELECT
+		
+	CASE 4 TO 5
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もうガマンできないんですっ♥♥　イキたいっ♥♥　おしりでイキたいんですうぅぅっ♥♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（おしりで……っ♥　おしりでイキたい……っっ♥　お願いします……っ♥♥　早く、早く……っ♥♥）\n"
+		ENDSELECT
+		
+	CASE 6 TO 8
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ケツ穴セックスっッッっ……でっ、無様イキっしますッ……から…っ♥♥\n　もうイかせてえええぇぇぇっ♥♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あはははッ♥♥　尻穴寸止めえぇェっ♥♥♥　脳みそがオぉかしくっっ♥♥♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ぐぅぅっぅぅっ♥♥　イカ…せてくださいっ♥♥　おしりの穴もっと、もっとほじってえぇぇぇええっ♥♥」\n"
+		ENDSELECT
+	
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「イイぃぃっ♥♥　気持ちいいイイぃぃィぃっ♥♥\n　ケツ穴マンコもう壊れぇえええエエエッ♥♥　壊れちゃぁあああああアアアアぁぁあああッ♥♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「イカ……へて……♥♥　もう……イケれば、お尻の穴でも……にゃんでも……いいからあああぁぁっ♥♥」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,21 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 427 出産時豊乳化
+; ------------------------------------------------------------------------------
+
+@KOJO_8_0_SYSTEM_MESSAGE_427(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 豊乳化原因によって地の文を追加する
+	; 口上は 510 バストサイズ変化 で記述すること
+	SELECTCASE KOJO_8_0_GET_PREV_ARG(0)
+	
+	; 媚薬爆弾
+	CASE 517
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d媚薬の毒に乳腺を侵し尽くされ、%CALLNAME:TARGET%の胸は内側から淫らに作り替えられた！\d\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		
+	ENDSELECT
+	
+	; 地の文表示
+	CALL KOJO_8_0_ADD_MESSAGE, @"\M"
+RETURN 1

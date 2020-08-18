@@ -1,0 +1,48 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 12 敵の通常攻撃 (命中) - 攻撃種類別 0115 ワーム 通常
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_12_115(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時 状況によって地の文が変化
+	; HP0又は全裸
+	IF BASE:0 <= 0 || BASE:3 <= 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「げほっ……！　ごほ…っ！　ごほっ……　油断、しました……！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「がはっ……！　う…っ……あっ……　お、おぇぇ……っ」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「―――っ！　ぁ……………っ！　げほっ…ごほっ…！！！」\n"
+		ENDSELECT
+	; その他状況
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ぐっ……！？　はぁっ……！　はぁっ……！　服、が…！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「しまっ……！　ちょく、げき……！？」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

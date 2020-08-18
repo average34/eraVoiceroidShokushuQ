@@ -1,0 +1,54 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0681 ヒュプノ C
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_681(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はぁっ……　はぁっ……」\n"
+			
+			; ふたなり用追加口上
+			IF GET_PENIS(TARGET)
+				CALL KOJO_4_0_ADD_MESSAGE, @"「おちんちん……　しこしこ…　ありがとうございます……」\n"
+			; 通常時用追加口上
+			ELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「お豆さん…　いじりやすいように…　皮をむいて…　手で押さえて……」\n"
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（もっと…っ♥　激しくしごいてください…っ♥　ん…う……、カラダ動かない…っ♥♥）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"（どうして…っ……　足、閉じられない……）\n"
+	ENDSELECT
+	
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

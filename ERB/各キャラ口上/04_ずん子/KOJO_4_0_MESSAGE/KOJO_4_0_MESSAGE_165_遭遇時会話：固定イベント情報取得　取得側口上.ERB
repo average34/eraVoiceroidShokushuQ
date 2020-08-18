@@ -1,0 +1,443 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 165 遭遇時会話：固定イベント情報取得　取得側口上
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_165(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 好感度によって分岐
+	; 好感度:低
+	IF CFLAG:(ARG:1):5 < 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%の話が役に立つかは怪しいですが……）\n"
+		ENDSELECT
+		
+	; 好感度:警戒
+	ELSEIF CFLAG:(ARG:1):5 < 50
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（まあ、話半分に聞きましょう……）\n"
+		ENDSELECT
+		
+	; 好感度:通常
+	ELSEIF CFLAG:(ARG:1):5 < 200
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（些細なことでも覚えておけば、何かの役に立つはず……）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「役に立つかはわかりませんが、覚えておきますね」\n"
+		ENDSELECT
+		
+	; 好感度:高
+	ELSEIF CFLAG:(ARG:1):5 >= 200
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「情報ありがとうございます♪」\n"
+		ENDSELECT
+	ENDIF
+	
+	
+	; 取得した情報によって分岐
+	SELECTCASE ARG:2
+	; キャラクタの捕食状況
+	CASE 0 TO 99
+		; 声を聞いただけ
+		IF ARG:3 == 0
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（部屋の外まで響く声ですか………ふふっ♥）\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（誰かがそこに居るのであれば、見に行くのも……）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（敵か味方か判りませんね…近くに行ったら気配を探った方がいいかもしれません）\n"
+			ENDSELECT
+			
+		; 捕まってる
+		ELSE
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（ふむ……　早く助けないと、魔物の孕み袋にされちゃうかな♥）\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（助けてあげたいですが、わたしの力が及ぶでしょうか…）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（……早く助けないと、魔物の苗床に……！）\n"
+			ENDSELECT
+		ENDIF
+	
+	; アイテム情報
+	CASE 108, 109, 110, 111, 119, 169
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「まともな道具が落ちてるといいですが……」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたしが行くまで残ってるといいですが」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+; □ 取得した情報
+; ◆ 108 媚薬
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「この迷宮に落ちてる薬ですし、効果はあっちの方、ですよね♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「一応覚えときますが、落ちてるものを飲むのは気が引けますね……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「薬、ですか……　危険な香りしかしませんが……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 109 万能薬
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_109(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 108 媚薬 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 110 気付け薬
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_110(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 108 媚薬 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 111 大人の玩具
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_111(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そういう道具も落ちてるんですねこの迷宮♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「な、何かに使えるかも、しれません、ね　…なにか、に」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「なっ！　なんの情報を言ってるんですか！　もうっ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 119 胡蝶夢丸
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_119(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 108 媚薬 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 133 澄んだ泉
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_133(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 清潔な状態
+	IF BASE:5 < 30
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「泉ですか、水浴びとかできる水質だと良いのですが」\n"
+		ENDSELECT
+		
+	; 触手の体液や自らの愛液で汚されている
+	ELSEIF BASE:5 < 60
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「泉……そろそろ水浴びしたいんですよね」\n"
+		ENDSELECT
+		
+	; 染み付いた体液が甘い香りを放っている
+	ELSEIF BASE:5 < 100
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「情報ありがとうございます　すぐにでも水浴びに行きたいところだったので」\n"
+		ENDSELECT
+	
+	; 強烈な雌の臭いが漂っている
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「泉ですか、私にしみついてるこの臭いも落とせるといいのですが……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; 取得した情報
+; ◆ 134 白濁泉
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_134(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 133 澄んだ泉 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_133(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 136 スライム
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_136(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（恐らく命にかかわるようなタイプのスライムでは無いと思いますが…警戒は必要ですね）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「頭上注意、ですね　気を付けないと…」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 137 壁触手
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_137(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あは……♥　ちょっと面白そうです♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「擬態しているとなると…少しやっかいですね……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 138 落とし穴
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_138(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「落とし穴ですか……そんなに明るい場所じゃないですし、気を付けないといけませんね」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 139 桃色ガス
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_139(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（少し気になります♥　この迷宮の事ですから、きっとえっちなガスです）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"（吸った本人が無事って事は、死に至る系統では無いって事ですね）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こういう密閉空間ではガスは回避が難しいので助かります」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 142 にょろーん
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_142(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 未遭遇
+	IF FLAG:142 < 100
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「意思疎通ができるなら、何か情報を貰えるかもしれませんね」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ふむ、そんな魔物も居るんですね」\n"
+		ENDSELECT
+		
+	; 遭遇済み
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「知ってます、その魔物♥　身体を差し出すとエッチな開発されちゃうんですよ♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「その魔物……　会った事あります……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; 取得した情報
+; ◆ 143 不思議なガス
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_143(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 139 桃色ガス にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_139(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 146 淫蟲A
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_146(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いい事聞きました、ありがとうございます♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ふーん……♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（そ、そんな場所に知らずに近付いたらわたし……）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…遠くから焼き殺せれば楽なんですが」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「……蟲がわさわさ…迂回して進むようにします……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そういう巣もありますよね……こういう場所ですから」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 147 淫蟲B
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_147(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 146 淫蟲A にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_146(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+
+; 取得した情報
+; ◆ 148 淫蟲C
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_148(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 146 淫蟲A にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_146(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+
+; 取得した情報
+; ◆ 149 淫蟲V
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_149(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 146 淫蟲A にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_146(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 150 落石
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_150(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「直撃したら死が見えそうです……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もし近づくことがあったら気をつけます　…気を付けてどうにかればいいんですが」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 152 C寄生淫蟲
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_152(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 146 淫蟲A にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_146(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 160 自販機
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_160(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…おそらく壊れてると思いますが、うーん」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 161 親睦
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_161(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	IF ARGS:1 == CALLNAME:TARGET + "の娘"
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			; 相手ペニスの有無で追加口上
+			; ついてる
+			IF GET_PENIS(ARG:1)
+				CALL KOJO_4_0_ADD_MESSAGE, @"（…その股の間にある立派なモノで、犯すつもりなんでしょうか…♥）\n"
+			; ついてない
+			ELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「貴方にはおとこの人のモノが無いみたいですし、少し安心しました」\n"
+			ENDIF
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（もしかして私の娘ってそっちの趣味…？）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「えっと…その感情は忘れましょ？　ね？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（…人の性欲を一時的に増幅させる部屋、でしょうか？）\n"
+		ENDSELECT
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「……？　%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%って女の子が好きなんですか？」\n"
+			
+			; 相手ペニスの有無で追加口上
+			; ついてる
+			IF GET_PENIS(ARG:1)
+				CALL KOJO_4_0_ADD_MESSAGE, @"「その立派なモノで、犯しちゃえばいいんじゃないですか？♥」\n"
+			; ついてない
+			ELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%におとこの人のモノがあれば良かったんですが♥」\n"
+			ENDIF
+			
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（もしかして%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%ってそっち系の趣味なんでしょうか？）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（…人の性欲を一時的に増幅させる部屋、でしょうか？）\n"
+		ENDSELECT
+	ENDIF
+
+RETURN 1
+
+
+; 取得した情報
+; ◆ 169 縮乳薬
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_169(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 108 媚薬 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 170 キュウリ畑
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_170(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「怪しい植物……　今この周辺を見回しただけでも結構ありますが…」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 172 敵ガチャ
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_172(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 160 自販機 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_160(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 173 動物耳
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_173(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 170 キュウリ畑 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_170(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 177 C寄生淫蟲
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_177(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 146 淫蟲A にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_146(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1
+
+
+; 取得した情報
+; ◆ 178 親睦位置固定
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_178(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 161 親睦 にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_165_X_161(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 取得した情報
+; ◆ 179 結婚式場
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_179(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「危険な魔物を呼び出す祭壇、でしょうか…近づかないのが良さそうです」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「……その場所で、犠牲者を呼び出してるんでしょうか」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 180 入れ替わり
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_180(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「危なそうなら壊したり封印したい、ですが…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「外に出るために転移魔法陣であれば、みんなに教えて回るんですが…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「魔方陣……　転移系か、召喚系か…それとも…？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 取得した情報
+; ◆ 206 隠しチェックポイント
+@KOJO_4_0_SYSTEM_MESSAGE_165_X_206(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「怪しげなモノには手を出すべきでは無いですが……」\n"
+	ENDSELECT
+RETURN 1
+

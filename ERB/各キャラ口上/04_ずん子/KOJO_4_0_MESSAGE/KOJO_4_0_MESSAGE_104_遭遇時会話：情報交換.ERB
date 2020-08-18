@@ -1,0 +1,79 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 104 遭遇時会話：情報交換
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_104(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 初日の場合、情報を持ってる風のセリフは違和感があるので分岐
+	IF DAY:0 == 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「目が覚めたらこの迷宮に居たんです。この迷宮はなんなんでしょうか…？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「情報交換したいところですが……私、まだ何もわかってないんです」\n"
+		ENDSELECT
+		
+	; 2日目以降
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ｺｯｼｮﾘな目にあう情報とかありませんか？♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「えっちな情報と、やらしい情報♪　どっちが聞きたいです？♪」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（今は少しでも情報が欲しい…です…）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「や、役に立つかはわかりませんが……」\n"
+		CASE "強気"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「情報は力です。情報を制する者がこの世…この場合は迷宮ですね。迷宮を制するんです」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ずんだの豆知識とかどうですか？」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ずんだ餅でも食べながら、ゆっくりお話ししませんか？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「何処かに枝豆とか群生してませんでしたか？」\n"
+		ENDSELECT
+				
+		; DPが高いと遭遇キャラが頬を染める、な追加口上
+		IF BASE:DP >= 100
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「少し前にｺｯｼｮﾘな目にあったんです♥　とっても気持ちよ…大変でした♥」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「どうしました？　わたしのエッチなニオイが気になるんですか？」\n"
+			CASE "発情"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（…わたしからエッチなニオイ出してるから仕方ない…ですね…）\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（私のえっちなにおい、ばれちゃってます、ね……）\n"
+			ENDSELECT
+		ENDIF
+		
+		; 好感度別、追加口上
+		; 好感度:低
+		IF CFLAG:(ARG:1):5 < 0
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%に本当の事教えてあげる必要なんてないでは……？）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（正直、あまり信用できませんが……）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%の情報なんか、本当に信用出来るんでしょうか……）\n"
+			ENDSELECT
+			
+		; 好感度:警戒
+		ELSEIF CFLAG:(ARG:1):5 < 50
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（聞くだけ聞いて、真贋見極めるのは後でやりましょう）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（嘘の可能性も考慮しないと）\n"
+			ENDSELECT
+			
+		; 好感度:通常
+		ELSEIF CFLAG:(ARG:1):5 < 200
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+			ENDSELECT
+			
+		; 好感度:高
+		ELSEIF CFLAG:(ARG:1):5 >= 200
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「助かりました♪　ありがとうございます、%KOJO_4_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%♪」\n"
+			ENDSELECT
+		ENDIF
+		
+	ENDIF
+RETURN 1

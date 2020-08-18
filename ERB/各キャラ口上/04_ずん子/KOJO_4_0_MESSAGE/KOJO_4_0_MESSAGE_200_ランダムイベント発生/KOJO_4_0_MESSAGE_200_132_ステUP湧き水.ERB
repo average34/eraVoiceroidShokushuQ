@@ -1,0 +1,21 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 132 ステUP湧き水
+; ------------------------------------------------------------------------------
+
+; □ 0 飲んだ
+@KOJO_4_0_SYSTEM_MESSAGE_200_132_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「……ふむ　少し、身体が軽くなった気がします」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「何でしょう、余り感じた事無い力を身体の奥底から感じます」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 飲まない
+@KOJO_4_0_SYSTEM_MESSAGE_200_132_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 飲まなかった口上で差があると各種湧き水のどれかがバレるので 全快湧き水口上(飲まない)で統一
+	CALL KOJO_4_0_SYSTEM_MESSAGE_200_130_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

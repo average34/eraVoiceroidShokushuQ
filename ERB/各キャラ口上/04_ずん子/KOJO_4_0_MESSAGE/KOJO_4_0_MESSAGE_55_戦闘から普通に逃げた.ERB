@@ -1,0 +1,140 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 55 戦闘から普通に逃げた
+; ------------------------------------------------------------------------------
+
+; □ X 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_55(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 仲間に見捨てられている場合は何も言わない
+	SIF KOJO_4_0_GET_PREV_ARG(0) == 63
+		RETURN 0
+	
+	; 睡眠中
+	IF CFLAG:25
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「えっ、あれ？　なにかあったんです？」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 喪失中
+	IF CFLAG:29
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "強気"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（ごめんなさい……　お手数、おかけしてしまって……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ぁ……　わた……し……　いきて……る……？」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		; 残MPで分岐
+		IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「残念でした♥　私と遊びたかったらまた追ってきてくださいね♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もう少し、楽しんでからでも良かったかもしれません」\n"
+		ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もっと快楽で満たしてくれたら、私を孕み袋に出来たんですけどね♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「うーん、追ってきて欲しかったんですが…」\n"
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ふらふら……です……♥　次に襲われたら…わたし…♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「逃げ回る弱った獲物を追うというのも、魔物さんは好きですよね…？」\n"
+		ENDIF
+		
+		; 発情中なら追加口上
+		IF CFLAG:28
+			CALL KOJO_4_0_ADD_MESSAGE, @"（んぁ……♥　ぜんぜん、物足りないです……っ♥\n　もっともっと凄いのが欲しくなって……っ♥　この疼きを誰か止めて下さい……っ♥♥）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「逃げられました、けど……子宮が…ズキズキしてる……♥」\n"
+		ENDIF
+	CASEELSE
+		; 残MPで分岐
+		IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+			CALL KOJO_4_0_ADD_MESSAGE, @"（真っ正面から戦うのが正解ではありませんからね）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今はまだ戦うときではない……　ですね」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おそらく倒せたと思いますが…今は探索が優先です」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「戦略的撤退です。体力は温存するに越したことはありませんからね」\n"
+		ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ふぅ、なんとか撒けましたか……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「三十六計逃げるに如かず　不利を感じたら逃げるのが正解です」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はぁ……はぁ……　魔物の相手は思ったより厄介ですね……」\n"
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「なんとか撒けましたね……　今のうちに態勢を整えなければ……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今は…生き延びる事が最優先です…！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「な、なんとか逃げられました……」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 クイーン戦
+@KOJO_4_0_SYSTEM_MESSAGE_55_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 仲間に見捨てられている場合は何も言わない
+	SIF KOJO_4_0_GET_PREV_ARG(0) == 63
+		RETURN 0
+		
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; 喪失中
+	IF CFLAG:29
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ゴメン……なさい……　私、お荷物…ですね……」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「作戦を練らないと…真正面からはまず無理ですし……」\n"
+	CASE "強気"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「一旦引きます！　次は…必ず！」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あの魔物の後ろに出口っぽいのが見えますが…道のりは遠い…ですね」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 ガーディアン戦
+@KOJO_4_0_SYSTEM_MESSAGE_55_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 1 クイーン戦にお願い
+	CALL KOJO_4_0_SYSTEM_MESSAGE_55_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

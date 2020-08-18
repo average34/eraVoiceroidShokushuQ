@@ -1,0 +1,73 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 9 性複合属性 AV
+;    ARG参照外分岐 汎用口上から直接呼び出されるので注意
+; ------------------------------------------------------------------------------
+
+; ついつい射精された的口上を書きがちだが、情報を得ることが出来ないので書かないこと 書きたいなら寄生攻撃で
+@KOJO_4_0_SYSTEM_MESSAGE_14_MULTIPLE_9(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時, 諦めた
+	SIF CFLAG:25 || TFLAG:16 == 2
+		RETURN 0
+		
+	; 戦意喪失
+	SIF CFLAG:29
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おまんこと…おしりの穴…　いっしょにかき回されて…感じます……」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥♥　前と後ろ一緒にほじられて…、中で…ごりごりって…ッ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おまんこもっ♥　おしりもっ♥　両方気持ちよく…されてますっ…っ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひぐっ　あがっ　前も…後ろも…っ！、一緒になんてぇ……　普通じゃない…っ……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひぎぃぃっ！！　抜いてっ、抜いてくださっいっ！！　中で擦れて、こわれ、こわれちゃ…っ！！」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…ぁっ…　中で…ごりごりするの…やめ……て…っ…！！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「二箇所同時…っ…！？　やめて…っ……くださっ……！？」\n"
+	ENDSELECT
+	
+	; ペットに身体を捧げているなら追加口上
+	IF KOJO_4_0_TEMP_FLAG:1
+		; [ペット]所持時 追加口上
+		IF TALENT:140 == 1
+			CALL KOJO_4_0_ADD_MESSAGE, @"「前と後ろ同時……ですかっ…♥　ご主人様の食べ方、凄いっですっ♥♥」\n"
+		
+		; [花嫁]所持時 追加口上
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おしりとおまんこ一緒にぃ♥　わたし%PETNAME%様のお嫁さんで良かったぁ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「前も後ろも全部%PETNAME%様のでいっぱいっ♥　気持ちいいので、満たされて……っ♥♥」\n"
+
+		; [しもべ]所持時 追加口上
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ご主人様の為ならっ♥　二穴責めだって、受け入れますっ♥　ごりごりって、奥の奥まで壊してっ♥♥」\n"
+		ENDIF
+	ENDIF
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

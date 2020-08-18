@@ -1,0 +1,118 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 1 防御
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_1_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「わたしが欲しいなら、頑張って貫通してください♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「気持ちいいのは好きですが、欲しいかどうかはわたしが決めます♪」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（今は、攻撃を防ぐことに専念しないと…）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（くぅ……　身体が上手く動かない状態で戦うのは……）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「守る事も大事です」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（冷静に、相手の動きを見極める…！）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「状況確認もするのが大事です……！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「攻めるだけが戦いじゃありません」\n"
+	ENDSELECT
+	
+	
+	; 拘束中なら追加口上
+	IF CFLAG:20
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「無駄な抵抗かもしれませんが、魔物さんにとって興奮材料になったりしませんか？♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（身を守っていれば、長く攻めてもらえるかもしれません…♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（もがくと相手の攻めが強くなるから……　今はじっと身を守るべきです……）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（この火照った身体、弄られたらおかしくなる、から……）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（身を守って、隙を…隙を探さないと……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「くっ、動きにくい…ですが！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今は耐えるときですっ！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（心を落ち着けて冷静に……　拘束が緩んだ瞬間を探すんです……！）\n"
+		ENDSELECT
+	ENDIF
+	
+	
+	; 部屋の汚染度による追加口上
+	SELECTCASE BATTLE_POLUTION()
+	; 敵が苦しむ程度
+	CASE 0, 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…？　なんだか敵さん苦しそう…？　ほら、はやく襲ってください♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（清浄な場所ですから、専守防衛でもなんとなるはず……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「清浄な空間だと少しずつ弱る　あなた方魔物の唯一にして最大の弱点です！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（これだけ部屋が清浄なら、何もしなくても敵は弱っていく…！）\n"
+		ENDSELECT
+	
+	; 敵が回復する程度
+	CASE 3, 4
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ギラギラした目でこっちを見てます♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（…魔物の傷、どんどん回復してるようです）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（この敵……　どんどん元気になってますね）\n"
+		ENDSELECT
+		
+	; 汚染度MAX
+	CASE 5
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あは♪　敵さんがどんどん元気になってます♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「魔物に有利な場所で戦うのは、得策ではないですが…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（この空間で、じっと動かないのは悪手かもしれません）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（この部屋まずい、ですね　魔物も元気ですし……　小さな触手も邪魔してきますし……）\n"
+		ENDSELECT
+	ENDSELECT
+		
+		
+	; 残りMP参照 追加口上
+	; 残りMP 100%
+	IF BASE:1 == MAXBASE:1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…強力な攻撃が飛んでくる可能性もありますからね」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今の状態で身を守るのは、少し受け身過ぎるかも……」\n"
+		ENDSELECT
+		
+	; 残りMP 66%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 66)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「少し休憩させて貰います」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「余裕のある時こそ、余裕を持った行動を……します」\n"
+		ENDSELECT
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「本気でえっちするには、休むのも大切です♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「少し、休ませて……っ」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（カラダを休めながら相手の出方を見る事は、立派な戦術です……）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「身を守りながらチャンスを伺います……！」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ちょっと、今動くのは辛いので……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（くっ……　カラダが重い……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（身体が動くうちに、次の手を…）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「この状況は、マズいです…！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

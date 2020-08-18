@@ -1,0 +1,34 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 163 遭遇時会話：アイテムをあげた
+; ------------------------------------------------------------------------------
+
+; □ XX 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_163(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうぞ！ついでにずんだ餅もどうですか？」\n"
+	ENDSELECT
+	
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 39 媚薬
+@KOJO_4_0_SYSTEM_MESSAGE_163_X_39(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「私と同じようになりたかったら、是非使ってみてくださいね♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「コレあげます　や、厄介なのを引き取って欲しいとかそういうのじゃありませんよ？」\n"
+	ENDSELECT
+
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+RETURN 1

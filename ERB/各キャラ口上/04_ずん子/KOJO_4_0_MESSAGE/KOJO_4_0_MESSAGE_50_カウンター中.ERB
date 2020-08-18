@@ -1,0 +1,43 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 50 カウンター中
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_50(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 残りMPによって分岐
+	IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（上手く力が入らなくても、タイミングを合わせればきっと……！）\n"
+		CASE "強気"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（相手の力を利用して、鋭い一撃を叩き込んで見せます！）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「いつでもどうぞ　私は、準備万端です」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（呼吸を整えて…相手の隙をついて見せます…！）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「相手の動きをよく見て……」\n"
+		ENDSELECT
+		
+	ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（今の力じゃ、待つのが最善です……！）\n"
+		CASE "強気"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（力押しだけが戦いではありませんからね）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（敵の攻撃を上手く誘導できれば、勝機はあります！）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（相手の力を利用して、打ち穿つ…！）\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "強気"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（相手を効率的に仕留める方法だけを考えないと…！）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（出来るだけ相手の力を利用して攻撃を……！）\n"
+		ENDSELECT
+	ENDIF
+		
+		
+	
+RETURN 1

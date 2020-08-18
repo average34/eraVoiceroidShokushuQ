@@ -1,0 +1,75 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 456 性欲発散 (便乗して輪姦)
+; ------------------------------------------------------------------------------
+
+; ◆ X 汎用口上
+@KOJO_8_0_SYSTEM_MESSAGE_456(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 輪姦に参加しない場合は汎用口上を表示しない
+	SIF GROUPMATCH(ARG:1, 30, 31)
+		RETURN 0
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(1)%ばっかり……　ずるいです……！\n　わらひもっ……　まぜて……くださいっ……♥」\n"
+	ENDSELECT
+	
+RETURN 1
+
+
+; ◆ 0 V, 対象キャラ喪失中
+@KOJO_8_0_SYSTEM_MESSAGE_456_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「あはっ♥　ナカダシされた精液、ぐちゃぐちゃにされて泡立ってます……っ♥♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「もっと……っ♥　もっと膣内に射精してお腹たぷたぷにしてあげますね……っっ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（おまんこから精液ごぽごぽって垂らして……っ♥　えっちすぎる%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%が悪いんですよ……っ♥）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「%KOJO_8_0_CALLNAME_FROM_ID(ARG:3)%ッ……♥　わたしもっ、おちんちん止まらなくて……ッ♥」\n"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ごめんなさい……♥　おちんぽが、おちんぽが疼いて疼いて仕方ないから……ッ♥」\n"
+	ENDSELECT
+RETURN 1
+
+
+; ◆ 1 V, 対象キャラ拘束中
+@KOJO_8_0_SYSTEM_MESSAGE_456_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 0 V, 対象キャラ喪失中におねがい
+	CALL KOJO_8_0_SYSTEM_MESSAGE_456_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; ◆ 30 PTメンバーによる行為後掃除
+@KOJO_8_0_SYSTEM_MESSAGE_456_30(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"「ｼﾞｭﾙﾙ……♪　ふふっ♥　イったばかりのおちんぽ……♪　びくびくってしてます……♪\n　ほら、キレイにしてあげますから大人しくしてくださいっ♪」\n"
+	CASE "発情"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（おっきいの……がぁ……　ひくひく、ふるえて…ます…っ♪　えっちもニオイがいっぱい……いっぱい……♪）\n（おちんちん……っ♪　わたし……っ、%KOJO_8_0_CALLNAME_FROM_ID(1)%のおちんちん舐めてますっ……♪）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"「こんな……に……あむ…　えっちな匂いだしてたら……ﾁｭﾙ…♥　触手が、寄ってきちゃいますよ……？」\n"
+		CALL KOJO_8_0_PARAGRAPH_MESSAGE
+		CALL KOJO_8_0_ADD_MESSAGE, @"\d悪態をつきながらも、%CALLNAME:TARGET%は満更でもない様子で精液まみれのペニスを舐めとっている\n"
+	ENDSELECT
+RETURN 1
+
+
+; ◆ 31 PTメンバーによる行為後侮蔑
+@KOJO_8_0_SYSTEM_MESSAGE_456_31(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_8_0_SET_IMPORTANT_FLAG()
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_8_0_ADD_MESSAGE, @"（仲間を犯さなくても、魔物という最高の相手が居ると思うのですが……）\n"
+	CASEELSE
+		CALL KOJO_8_0_ADD_MESSAGE, @"（迷宮のせいで、みんなおかしくなってきてます……\n　早く、早くなんとかしないと……）\n"
+	ENDSELECT
+RETURN 1
+

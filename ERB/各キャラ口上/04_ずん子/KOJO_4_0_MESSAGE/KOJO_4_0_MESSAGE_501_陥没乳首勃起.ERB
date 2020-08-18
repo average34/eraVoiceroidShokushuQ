@@ -1,0 +1,166 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 501 陥没乳首勃起
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_501(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 喪失中
+	IF CFLAG:29
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ……　ちくび……でちゃってます……」\n"
+		
+		; 戦闘中なら追加口上
+		IF TFLAG:13
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だめ……　そこ、よわいから……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今勃ったら……　いじめ……られちゃいます……」\n"
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 戦闘中なら追加口上
+			IF TFLAG:13
+					SELECTCASE KOJO_4_0_KOJO_MODE
+					CASE "淫乱"
+						CALL KOJO_4_0_ADD_MESSAGE, @"「催眠術って結構万能なんですね♥　強制的に勃起させるとか、良い趣味してます♥♥」\n"
+						CALL KOJO_4_0_ADD_MESSAGE, @"「おっぱいの先っぽを無理矢理勃起させられたっ！？♥　あっ、これっ♥　絶対気持ちよくされちゃうっ♥♥」\n"
+						CALL KOJO_4_0_ADD_MESSAGE, @"「陥没おっぱい、操られて飛び出しちゃったッ♥　熱いですッ♥♥　敏感乳首あつくなってる……っッッ♥♥」\n"
+					CASEELSE
+						CALL KOJO_4_0_ADD_MESSAGE, @"「うそ……ですよねっ……！？　身体が……勝手にっ……！？　だ、ダメっ！！　勃っちゃだめえぇぇっ！！」\n"
+						CALL KOJO_4_0_ADD_MESSAGE, @"「ううぅ……っ……　催眠のせいで……ぇっ！！　わたしの身体が勝手にっ！！　ひぐっ！　先っぽ出てくるぅ……っ！！」\n"
+						CALL KOJO_4_0_ADD_MESSAGE, @"「うあぁぁぁっ！！　熱い……っ！！　おっぱいの先っぽ、操られて勝手に勃っちゃいますぅ……っっ！！」\n"
+					ENDSELECT
+			ENDIF
+		; 発情・感情操作系
+		CASE 1
+			; 戦闘中なら追加口上、催眠深度依存
+			IF TFLAG:13
+				SELECTCASE CFLAG:43
+
+				; 催眠強度1
+				CASE 1
+					CALL KOJO_4_0_ADD_MESSAGE, @"「頭の中トロトロにされて……ぇ……♥　乳首まで勃起させられて……♥♥　わたし、おかしく……♥♥」\n"
+					
+
+				; 催眠強度2以上
+				CASEELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥　勃起乳首、イキたいっ♥♥　敏感乳首ッ、コリコリされてイき狂いたい……っッ♥♥」\n"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠で脳のトロけた%CALLNAME:TARGET%は、乳首で絶頂する事しか考えられなくなっている……\d\n"
+				ENDSELECT
+			ENDIF
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あ……　おっぱい……　勃起、してます……」\n"
+			
+			; 戦闘中なら追加口上、催眠深度依存
+			IF TFLAG:13
+				SELECTCASE CFLAG:43
+
+				; 催眠強度1
+				CASE 1
+					CALL KOJO_4_0_ADD_MESSAGE, @"「陥没乳首、勃起しました……　わたしの胸……　気持ちよくされて興奮してます……」\n"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「陥没乳首、勃起しました……　敏感な部分なので、念入りに刺激してくださいね……」\n"
+
+				; 催眠強度2
+				CASE 2
+					CALL KOJO_4_0_ADD_MESSAGE, @"「ドすけべ陥没乳首、お勃起しました……　イカせやすいボーナスタイム、存分にお楽しみください……」\n"
+				; 催眠強度最大
+				CASEELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"「ちっ……くび……っ♥　勃起して……っ、先っぽ……いじりやすく……♥　なりました……ぁ……♥♥\n　ここからは……ぁ……ぁっ、敏感乳首イキ♥顔も……っ、お楽しみください……ぃ♥♥」\n"
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あは……ぁ♥　勃起ちくび……ぃ、出てきちゃった……♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んあぁ……っ♥　おっぱい……感じてます……♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あひぁ……ぁっ♥　ちくび……勃っちゃった…♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひっ……♥　ああぁ……っ♥　ちくび……が……あっ……♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひっ……♥　ひぃィっ……♥　おっぱい……っ、おかしくなっちゃうぅ♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"（だっ、だめですっ！　わたしっ、乳首弱いからぁ……っ！）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ああぁ……ぁっ！？　だめぇっ！？　今はだめですっ！！\n　弱点になっちゃうから、勃っちゃだめなんですっ！！」\n"
+	ENDSELECT
+	
+	; 戦闘中なら追加口上
+	IF TFLAG:13
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あははっ♥　わたしの乳首、虐めて欲しいみたいですっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたしの陥没ちくび、気持ちよすぎて勃起しちゃいました♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だめ……ですっ♥　勃起、したら……っ♥」\n"
+		ENDSELECT
+	ENDIF
+	
+	; [淫乳]所持 または りばーす東方触手宮でB感覚LV3以上
+	IF TALENT:76 || (KOJO_4_0_IS_REVERSE() && ABL:7 >= 3)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「んいぃ……っ♥　クリトリスより敏感な、改造ちくび……が…♥　勃起させられちゃいました…♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あ…は……ぁ♥　改造勃起ちくび……ぃ、虐め、られちゃう……♥♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はにゃぁああ……あぁっ♥　改造……乳首……っ♥　空気に触れただけで……感じてます……っ♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 前回情報参照
+; ◆ 120 絶頂の瞬間
+@KOJO_4_0_SYSTEM_MESSAGE_501_PREV_120(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 喪失中
+	IF CFLAG:29
+		RETURN 0
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+		; 発情・感情操作系
+		CASE 1
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あは♥　おっぱい、もっと気持ちいいの……欲しがってますぅ……♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ちく……びぃ……♥　イったせいで、勃起しちゃいました……♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（イったせい……で……　乳首、勃っちゃいました……ぁ……）\n"
+	ENDSELECT
+	
+	; 戦闘中なら追加口上
+	IF TFLAG:13
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あの……っ♥　もっとおっぱい気持ちよくしてください……♥　勃起ちくびをコリコリって……♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたしの勃起乳首どうですか♥　虐めてくれたら、簡単にイっちゃいますよ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（いや……ぁっ……　おっぱい、勃起させられて……っ……）\n"
+		ENDSELECT
+	ENDIF
+	
+RETURN 1

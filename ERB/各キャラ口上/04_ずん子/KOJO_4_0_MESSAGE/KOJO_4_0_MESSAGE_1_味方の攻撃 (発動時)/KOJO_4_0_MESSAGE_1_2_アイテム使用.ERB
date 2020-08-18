@@ -1,0 +1,37 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 2 アイテム使用
+; ------------------------------------------------------------------------------
+
+; □ 54 着替えセット
+@KOJO_4_0_SYSTEM_MESSAGE_1_2_54(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 自分が着替える
+	IF ARG:3 == TARGET
+	
+	; 他キャラに着替えセットを使う
+	ELSE
+		; 服状態による口上分岐
+		; 裸だった
+		IF BASE:(ARG:3):3 == 0
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:3)%！　これを着てください！」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「替えの服はありますから、遠慮せずに着てください！」\n"
+			ENDSELECT
+			
+		; 新品だった
+		ELSEIF BASE:(ARG:3):3 == MAXBASE:(ARG:3):3
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:3)%には、こっちの服の方が似合うと思います」\n"
+			ENDSELECT
+		
+		; 破れていた
+		ELSE
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「もう少しマシな服を着てくださいっ」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1

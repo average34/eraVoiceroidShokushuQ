@@ -1,0 +1,503 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 113 探索でアイテムを見つけた
+; ------------------------------------------------------------------------------
+
+; □ XX 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_113(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上
+	; アイテムを複数個拾う場合汎用口上が連続するので表示は1回だけ
+	;SIF KOJO_4_0_GET_PREV_ARG(0) == 113
+	;	RETURN 0
+		
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+	
+	;種類増やせば良いよねと言う事で沢山増やした
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「これは…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「宝探しみたいで少し楽しいですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「使えるモノがあると良いのですが」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「結構色んな物が落ちているようですが…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「道具は多いに越した事はありませんし」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「鬼が出るか蛇が出るか…はてさて」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「何か落ちてるようです」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ずんだ餅…では無いですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「誰かの落とし物…？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「誰かの遺品なのか、それとも…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「本音を言えば、この迷宮の道具には嫌な雰囲気しか感じないので触りたくはないのですが…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「道具を拾うという動作をした瞬間襲われる、という可能性も考えるべきですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…敵は居ないようです　拾うなら今ですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「探索は基本中の基本　何もしないのは状況の悪化しか産みませんから」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうしてこんなものが落ちてるのでしょうか…？」\n"
+	ENDSELECT
+	
+	;喪失していない仲間が要る場合
+	IF (FLAG:10 && CHECK_FINE(FLAG:10))||(FLAG:11 && CHECK_FINE(FLAG:11))
+		CALL KOJO_4_0_ADD_MESSAGE, @"「仲間が要ると探すのも楽になりますね」\n"
+	ENDIF
+	
+	;主人公では無い時
+	IF (NO:1 != 4 )
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(1)%、私を呼びましたか？　…え、これが落ちてたのですか…？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(1)%、何か見つけたんですか？　ちょっと見せて下さい」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(1)%、私が拾いますので周りの警戒をお願いします」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうしましたか、%KOJO_4_0_CALLNAME_FROM_ID(1)%　え、何か見つけた？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「むむ…%KOJO_4_0_CALLNAME_FROM_ID(1)%、これ何かわかりますか？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「何か見つかりましたか、%KOJO_4_0_CALLNAME_FROM_ID(1)%\n　ふむ、道具を見つけるのが上手ですね、%KOJO_4_0_CALLNAME_FROM_ID(1)%は」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(1)%、そこに落ちてる道具を拾ってくれませんか？\n　その間、わたしが周りを警戒してますので」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(1)%が道具を拾ってくれてますので、わたしは周りを警戒することにしましょう）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(1)%が道具探しに躍起になって警戒を怠ってるみたいなので、\n　わたしは周りを警戒することにしましょう）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(1)%、探すのは良いですが余り離れると…\n　って、え？何か見つかったんです？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「私は周りを警戒してるので、拾うのは%KOJO_4_0_CALLNAME_FROM_ID(1)%にお任せします」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうですか、%KOJO_4_0_CALLNAME_FROM_ID(1)%　何かありましたか？」\n"
+	ENDIF
+	
+	;一人目の仲間が喪失状態では無い
+	IF (FLAG:10 && CHECK_FINE(FLAG:10) && CALLNAME:(FLAG:10)!=CSVCALLNAME(4) )
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%、私を呼びましたか？　…え、これが落ちてたのですか…？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%、何か見つけたんですか？　ちょっと見せて下さい」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%、私が拾いますので周りの警戒をお願いします」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうしましたか、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%　え、何か見つけた？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「むむ…%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%、これ何かわかりますか？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「何か見つかりましたか、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%\n　ふむ、道具を見つけるのが上手ですね、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%は」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%、そこに落ちてる道具を拾ってくれませんか？\n　その間、わたしが周りを警戒してますので」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%が道具を拾ってくれてますので、わたしは周りを警戒することにしましょう）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%が道具探しに躍起になって警戒を怠ってるみたいなので、\n　わたしは周りを警戒することにしましょう）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%、探すのは良いですが余り離れちゃ駄目ですよ？\n　って、え？何か見つかったんです？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「私は周りを警戒してるので、拾うのは%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%にお任せします」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうですか、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:10)%　何かありましたか？」\n"
+	ENDIF
+	
+	;二人目の仲間が喪失状態では無い
+	IF (FLAG:11 && CHECK_FINE(FLAG:11) && CALLNAME:(FLAG:11)!=CSVCALLNAME(4) )
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%、私を呼びましたか？　…え、これが落ちてたのですか…？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%、何か見つけたんですか？　ちょっと見せて下さい」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%、私が拾いますので周りの警戒をお願いします」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうしましたか、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%　え、何か見つけた？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「むむ…%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%、これ何かわかりますか？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「何か見つかりましたか、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%\n　ふむ、道具を見つけるのが上手ですね、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%は」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%、そこに落ちてる道具を拾ってくれませんか？\n　その間、わたしが周りを警戒してますので」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%が道具を拾ってくれてますので、わたしは周りを警戒することにしましょう）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%が道具探しに躍起になって警戒を怠ってるみたいなので、\n　わたしは周りを警戒することにしましょう）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%、探すのは良いですが余り離れちゃ駄目ですよ？\n　って、え？何か見つかったんです？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「私は周りを警戒してるので、拾うのは%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%にお任せします」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうですか、%KOJO_4_0_CALLNAME_FROM_ID(FLAG:11)%　何かありましたか？」\n"
+	ENDIF
+	
+RETURN 1
+
+; □ 3 火炎放射器
+@KOJO_4_0_SYSTEM_MESSAGE_113_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「きりたんが良く、汚物は消毒だー！って遊んでますね　…ゲームの中ですけど」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「これを使えば、細かい触手も纏めて焼き払えるかも…？」\n"
+	ENDSELECT
+RETURN 1
+
+; □ 8 拘束具
+@KOJO_4_0_SYSTEM_MESSAGE_113_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…拘束具？　調教が趣味の魔物でもいるのでしょうか…」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 10 ナイフ
+@KOJO_4_0_SYSTEM_MESSAGE_113_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	; ゲーム開始直後に探索すると こんぼうが落ちてるらしいな
+	IF DAY:0 == 1 && TIME:0 == 0
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こういうものってその辺に落ちているものなんでしょうか」\n"
+
+	; 普通に見つける
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「魔物相手に素手は辛いですが、これで何とかなるのでしょうか」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 22 使い魔
+@KOJO_4_0_SYSTEM_MESSAGE_113_22(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「なんでしょうこの生き物…私に懐いているみたいですが…」\n"
+	ENDSELECT
+RETURN 1
+
+; □ 26 不思議な時計
+@KOJO_4_0_SYSTEM_MESSAGE_113_26(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…懐中時計…？　何か不思議な力を感じますが…時間でも止められるのでしょうか」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…一時的に時間を操作出来る道具だったり？」\n"
+	ENDSELECT
+RETURN 1
+
+; □ 28 天使の翼
+@KOJO_4_0_SYSTEM_MESSAGE_113_28(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「天使の羽…？　えっと、コスプレセットでしょうか…？」\n"
+	ENDSELECT
+RETURN 1
+
+; □ 33 回復の腕輪
+@KOJO_4_0_SYSTEM_MESSAGE_113_33(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「これは…身に着けているだけで心が安らぐような…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「この迷宮には似つかわしくないぐらい神聖な力を感じる腕輪ですね」\n"
+	ENDSELECT
+RETURN 1
+
+; □ 39 媚薬
+@KOJO_4_0_SYSTEM_MESSAGE_113_39(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 初発見
+	IF KOJO_4_0_GET_ITEMGET_COUNT(ARG:1) == 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もっと快感を得たいのなら、使ってみるのも選択肢ですね♪」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ど、どうしてこんなのが落ちているんでしょう……」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「なんだか独特の雰囲気があるお薬……でしょうか？」\n"
+		ENDSELECT
+		
+	; 2つめ以降
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「沢山落ちてるみたいですし、みんなでえっちになるのも良いかもしれません♪」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「この薬…誰が生成しているんでしょうか。もしかして魔物が…？」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 50 握り飯
+@KOJO_4_0_SYSTEM_MESSAGE_113_50(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「誰かが落としたお握りでしょうか…？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 51 ふとまき
+@KOJO_4_0_SYSTEM_MESSAGE_113_51(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「この迷宮に似つかわしくない食べ物ですね。体力を回復するには持ってこいだと思いますが」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 52 エナジードリンク
+@KOJO_4_0_SYSTEM_MESSAGE_113_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「見た事ないパッケージですが、これは…エナドリですね。」\n"
+	ENDSELECT
+
+RETURN 1
+
+
+; □ 53 回復ポーション
+@KOJO_4_0_SYSTEM_MESSAGE_113_53(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「何だか貴重そうな飲み物に見えますが、これはいったい…？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「高濃度の清浄な力を感じるね」\n"
+	ENDSELECT
+
+RETURN 1
+
+
+; □ 54 着替えセット
+@KOJO_4_0_SYSTEM_MESSAGE_113_54(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+	
+	; 服のストックなし
+	IF ITEM:54 == 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「服が落ちているのも不思議ですが、助かりました」\n"
+		ENDSELECT
+		
+		; 自身のCPも低いなら追加口上
+		IF BASE:CP <= (MAXBASE:CP / 100 * 25)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今着ている服はボロボロですし、早く着替えたいです」\n"
+		ENDIF
+		
+	; 服のストックあり
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ここの魔物は服を破りたがるので、ストックは必要ですね」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「自分の普段着そっくりなものが落ちているのには違和感がありますが…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「この迷宮の影響を受けて、変な事になってないと良いんですが」\n"
+		ENDSELECT
+		
+		IF BASE:CP <= (MAXBASE:CP / 100 * 25)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ボロボロの服で歩くのは恥ずかしいですし、安全が確保出来次第着替えましょうか」\n"
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 55 鎮静剤
+@KOJO_4_0_SYSTEM_MESSAGE_113_55(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「興奮してる人を強制的に落ち着かせる薬…有るに越したことは無いですが、使わないといけない状況には遭遇したくありませんね」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 56 興奮剤
+@KOJO_4_0_SYSTEM_MESSAGE_113_56(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「発情させる薬！？さ、流石に使い道が思いつきませんね…」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 58 気付け薬
+@KOJO_4_0_SYSTEM_MESSAGE_113_58(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「この迷宮で気絶するのは危険ですし、出来るだけ早くこの薬で起こしてあげないと」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 60 大人の玩具
+@KOJO_4_0_SYSTEM_MESSAGE_113_60(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（これを使えば、火照った身体……　少しは……　おさまるでしょうか……？）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「……な、何かに使えるかもしれないので持っていきましょうか！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 61 生命の種
+@KOJO_4_0_SYSTEM_MESSAGE_113_61(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「なんの種でしょうか。こんなとこで育てるわけにも行きませんし…むー」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 62 魔力の種
+@KOJO_4_0_SYSTEM_MESSAGE_113_62(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 61 生命の種 にお任せ
+	CALL KOJO_4_0_SYSTEM_MESSAGE_113_61()
+RETURN RESULT
+
+
+; □ 63 敏捷の種
+@KOJO_4_0_SYSTEM_MESSAGE_113_63(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 61 生命の種 にお任せ
+	CALL KOJO_4_0_SYSTEM_MESSAGE_113_61()
+RETURN RESULT
+
+
+; □ 64 不死鳥の羽
+@KOJO_4_0_SYSTEM_MESSAGE_113_64(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「不思議な力を感じます…持っていると何か御利益があるかもしれません」\n"
+	ENDSELECT
+
+RETURN 1
+
+
+; □ 67 包帯
+@KOJO_4_0_SYSTEM_MESSAGE_113_67(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ちょっとした怪我をしたら、使ってみるのも一つの手ですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうして新品の包帯がこんなところに…？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 69 縮乳薬
+@KOJO_4_0_SYSTEM_MESSAGE_113_69(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE GET_BUST(TARGET)
+	; 絶壁 or 貧乳
+	CASE -2, -1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今の私には不要なものですね」\n"
+		ENDSELECT
+	
+	; 普乳
+	CASE 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「確かに弓を撃つ際には胸は邪魔ですが……」\n"
+		ENDSELECT
+		
+	; 爆乳 or 巨乳
+	CASE 1, 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「動きにくいので、これを飲んで身軽になりたいです…副作用が心配ですが」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今の胸だと、そのうち抉れそうなんですよね…胸当てが窮屈ですし」\n"
+		ENDSELECT
+	
+	; 超乳以上
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「渡りに船。丁度困ってました！」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+; □ 70 アオカン
+@KOJO_4_0_SYSTEM_MESSAGE_113_70(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ペット用の食べ物……？こんなところでペットと歩いてた人が居たんでしょうか？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 72 すけーるゴーグル
+@KOJO_4_0_SYSTEM_MESSAGE_113_72(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中は何もしないで帰る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「この辺りに湖でもあるんでしょうか」\n"
+	ENDSELECT
+RETURN 1

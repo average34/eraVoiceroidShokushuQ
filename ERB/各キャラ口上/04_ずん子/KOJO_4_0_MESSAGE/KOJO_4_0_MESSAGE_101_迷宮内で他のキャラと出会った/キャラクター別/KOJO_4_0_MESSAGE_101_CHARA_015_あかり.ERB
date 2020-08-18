@@ -1,0 +1,45 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 101 迷宮内で他のキャラと会った - キャラクター別 015 絆星あかり
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+@KOJO_4_0_SYSTEM_MESSAGE_101_X_0_CHARA_15(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+	
+	; 催眠行動中
+	ELSEIF CFLAG:(ARG:1):43 == 1
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_4_0_PARTY_NO:1 || ARG:1 == KOJO_4_0_PARTY_NO:2
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%、結構良い身のこなしでした」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あの…それは食べない方が良いと思いますよ…？」\n"
+		
+	; 通常行動中
+	ELSE
+		; 対象のキャラとは初遭遇
+		; 表示タイミングが一度しかない口上、優先口上として処理する
+		IF KOJO_4_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+			CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%？どうして、こんなところに…？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%、いくらお腹が空いたと言っても、触手は……あ、違うんですね　安心しました」\n"
+			RETURN 1
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失中
+@KOJO_4_0_SYSTEM_MESSAGE_101_X_1_CHARA_15(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_4_0_PARTY_NO:1 || ARG:1 == KOJO_4_0_PARTY_NO:2
+	
+	; 通常行動中
+	ELSE
+
+	ENDIF
+RETURN 1

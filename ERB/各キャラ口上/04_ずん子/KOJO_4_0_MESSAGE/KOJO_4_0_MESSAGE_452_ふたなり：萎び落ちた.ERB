@@ -1,0 +1,59 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 452 ふたなり：萎び落ちた
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_452(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 射精中毒 Lv0
+	IF ABL:12 == 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「残念です。もう少しあの快感を味わってみたかったんですが」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（と、とれました…　もしずっと付いてたら…　私、きっと……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「た、助かりました……　もう、しばらく男性のものは見たくありません…」\n"
+		ENDSELECT
+		
+	; 射精中毒 Lv1
+	ELSEIF ABL:12 == 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「むむぅ…あのびゅるびゅる射精する快感気持ち良かったんですが」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（…どうしてわたし、残念だと思ってるの…？）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やっと…とれ…ましたっ……」\n"
+		ENDSELECT
+			
+	; 射精中毒 Lv2(Lv3以上はとれないのでここまで)
+	ELSEIF ABL:12 == 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「どうしてっ　どうして無くなっちゃったの…！　は、はやく誰かにおちんぽ様付けてもらわなきゃ…♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（またっ…とれちゃいました…っ…　射精を、射精をしたくて仕方ないのに…っ…）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（おちんちんっ…　次のおちんちん、探さないと…っ…　私もう、射精できないとおかしく…っ…！）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（…おちんちん、とれちゃいましたね）\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

@@ -1,0 +1,96 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 102 遭遇時会話：別れた
+; ------------------------------------------------------------------------------
+
+; □ 通常
+@KOJO_4_0_SYSTEM_MESSAGE_102_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ちょっと、はしたなすぎたでしょうか」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「大丈夫だとは思いますが、気をつけてください」\n"
+	ENDSELECT
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; 茜
+	CASE 5
+		CALL KOJO_4_0_ADD_MESSAGE, @"「茜ちゃんは結構ぼーっとしてる時があるので、罠とかに細心の注意を払ってくださいね」\n"
+	; 葵
+	CASE 6
+		CALL KOJO_4_0_ADD_MESSAGE, @"「危なくなったら逃げる。これを肝に銘じて下さいね葵ちゃん」\n"
+	; きりたん
+	CASE 8
+		CALL KOJO_4_0_ADD_MESSAGE, @"「きりたん、また後でね」\n"
+	; イタコ
+	CASE 16
+		CALL KOJO_4_0_ADD_MESSAGE, @"「また後で合流しましょう、タコ姉さま」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 喪失中
+@KOJO_4_0_SYSTEM_MESSAGE_102_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「全部受け入れるのも一つの選択です\n　…待ってますからね♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（わたしもそのうち……　こうなってしまうんでしょうか………）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ごめんなさい…後で必ず助けてあげますから…」\n"
+	ENDSELECT
+	
+	
+	; 好感度別、追加口上
+	; 好感度:低
+	IF CFLAG:(ARG:1):5 < 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あ、そうだ、魔物さんをこの部屋に誘導しておきますね♪　私からのささやかな手向けです♪」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…ごめんね」\n"
+		ENDSELECT
+		
+	; 好感度:警戒
+	ELSEIF CFLAG:(ARG:1):5 < 50
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+		ENDSELECT
+		
+	; 好感度:通常
+	ELSEIF CFLAG:(ARG:1):5 < 200
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+		ENDSELECT
+		
+	; 好感度:高
+	ELSEIF CFLAG:(ARG:1):5 >= 200
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「……　連れていってあげたい。でも……」\n"
+		ENDSELECT
+	ENDIF
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; アイ
+	CASE 1
+		CALL KOJO_4_0_ADD_MESSAGE, @"（こんな小さい子を置いていくなんて、私、何してるんでしょう……）\n"
+	; きりたん
+	CASE 8
+		CALL KOJO_4_0_ADD_MESSAGE, @"「絶対に助けに来るから、もう少しだけ頑張って」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「アイテムさえあれば、きりたんを助けられるんですが……」\n"
+	; 茜
+	CASE 5
+		CALL KOJO_4_0_ADD_MESSAGE, @"（あんなに元気な茜ちゃんがこんな姿になるなんて……）\n"
+	; あかりん
+	CASE 15
+		CALL KOJO_4_0_ADD_MESSAGE, @"（…あかりちゃん、すっごいえっちですね…同性なのに、なんだか…　って！何を考えてるんですか東北ずん子！）\n"
+	; イタコ
+	CASE 16
+		CALL KOJO_4_0_ADD_MESSAGE, @"「イタコ姉様、少し待っててくださいね…！」\n"
+	ENDSELECT
+RETURN 1

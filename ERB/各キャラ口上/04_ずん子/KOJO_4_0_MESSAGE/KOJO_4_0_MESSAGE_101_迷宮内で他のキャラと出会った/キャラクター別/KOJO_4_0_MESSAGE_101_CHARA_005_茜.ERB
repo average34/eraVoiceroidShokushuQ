@@ -1,0 +1,85 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 101 迷宮内で他のキャラと会った - キャラクター別 005 琴葉茜
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+@KOJO_4_0_SYSTEM_MESSAGE_101_X_0_CHARA_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"「実は風の噂で聞いた事あるんです　%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%はよくそういう目にあってるって…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（…拘束具状態で身体が出来るだけ痛まない体勢を自然としてますね　まるで、拘束され慣れてるかのように）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…実はその拘束具を付けたの、葵ちゃんだったりしませんか？」\n"
+		
+	; 催眠行動中
+	ELSEIF CFLAG:(ARG:1):43 == 1
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%、足元がおぼつかないようですが…」\n"
+	
+		
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_4_0_PARTY_NO:1 || ARG:1 == KOJO_4_0_PARTY_NO:2
+		; 対象のキャラとは初遭遇
+		; 表示タイミングが一度しかない口上、優先口上として処理する
+		IF KOJO_4_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+			CALL KOJO_4_0_ADD_MESSAGE, @"「お姉ちゃんの底力、ということでしょうか」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「良いですね、その思い切りの良さ」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「姉としての矜持、見させていただきました」\n"
+			RETURN 1
+		ENDIF
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"「良い動きでした　ただのゲーマーだと思ってましたが、力も結構あったんですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「肉を切らせて骨を断つ　%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%はそういう感じの戦い方ですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「猪突猛進…いえ、なんでもありません」\n"
+		
+		
+	; 通常行動中
+	ELSE
+		; 対象のキャラとは初遭遇
+		; 表示タイミングが一度しかない口上、優先口上として処理する
+		IF KOJO_4_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+			CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%もこの迷宮に来てたのですね？」\n"
+			RETURN 1
+		ENDIF
+		
+		; パーティーに葵ちゃんが居ないなら追加口上
+		IF !(CHECK_MEMBER_FROM_NO(6))
+			CALL KOJO_4_0_ADD_MESSAGE, @"「葵ちゃんとは会えましたか？」\n"
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「葵ちゃん、%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%が居ましたよ！」\n"
+		ENDIF
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%は、いつも元気一杯ですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こんな暗くてジメジメした場所でも、%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%は元気そうでなによりです」\n"
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失中
+@KOJO_4_0_SYSTEM_MESSAGE_101_X_1_CHARA_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_4_0_PARTY_NO:1 || ARG:1 == KOJO_4_0_PARTY_NO:2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ふふっ…♪　いい機会ですし、このまま%KOJO_4_0_CALLNAME_FROM_ID(ARG:1)%を魔物さんへのプレゼントにするというのも…♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「同じ一人のお姉ちゃんとして、妹に見られる前に回復させてあげたいですが…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「攻撃は最大の防御とも言いますが、それが最善手とは限らないんですよ」\n"
+		ENDSELECT
+		
+	; 通常行動中
+	ELSE
+		; パーティーに葵ちゃんが居ないなら追加口上
+		IF !(CHECK_MEMBER_FROM_NO(6))
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…こんなところで寝てたら、葵ちゃんが悲しみますよ…？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…葵ちゃんにこんな姿を見られたら………襲われてしまいますよ」\n"
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…葵ちゃん　襲っちゃ駄目ですよ」\n\dボロボロに犯し尽くされた茜を見て、葵は興奮している\n\d"
+		ENDIF
+	ENDIF
+RETURN 1

@@ -1,0 +1,77 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 126 妊娠が進行
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_126(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 少し体の調子が悪いようだ…
+	IF ARG:1 >= 11
+		CALL KOJO_4_0_ADD_MESSAGE, @"（…生理はまだのはずですが…）\n"
+		
+	; 顔色が悪い…体調がよくないのだろうか
+	ELSEIF ARG:1 >= 9
+		; 出産経験なし
+		IF EXP:22 == 0
+			CALL KOJO_4_0_ADD_MESSAGE, @"「うぷ…　腐ったずんだでも食べたのでしょうか私…」\n"
+		; 出産経験あり
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（この感じは…　気のせい、気のせいに決まってます…！）\n"
+		ENDIF
+		
+	; 妊娠発覚
+	ELSEIF ARG:1 >= 8
+		; 妊娠は気のせい
+		IF CFLAG:36 == 1
+			CALL KOJO_4_0_ADD_MESSAGE, @"（いつのまにか、吐き気が収まりました…なんだったんでしょう…）\n"
+			
+		; 妊娠した
+		ELSE
+			; 出産経験なし
+			IF EXP:22 == 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"（う…嘘、です…！　わたしが、子供を孕まされるなんてっ…！？）\n"
+				
+				; [ペット]所持時 追加口上
+				IF TALENT:140 == 1
+					CALL KOJO_4_0_ADD_MESSAGE, @"（わたし妊娠したんですね…♥　ご主人様の子供だったら幸せなんですが…♥）\n"
+					
+				; [花嫁]所持時 追加口上
+				ELSEIF TALENT:140 == 2
+					CALL KOJO_4_0_ADD_MESSAGE, @"（わたし妊娠したんですね…♥　%PETNAME%様の子供だったら大切にしないと…♥）\n"
+				
+				; [しもべ]所持時 追加口上
+				ELSEIF TALENT:140 == 3
+					CALL KOJO_4_0_ADD_MESSAGE, @"（わたし妊娠したんですね…♥　もし%PETNAME%様の子供だったら、私…お腹の中から犯されちゃうんじゃ…♥）\n"
+				ENDIF
+				
+			; 出産経験あり
+			ELSE
+				SELECTCASE KOJO_4_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_4_0_ADD_MESSAGE, @"（あは♥　わたしまた妊娠させられちゃったんですね♥♥）\n"
+				CASEELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"「もう、子供なんて産みたくないのに…」\n"
+					CALL KOJO_4_0_ADD_MESSAGE, @"（いや…っ！　また、子供を…産まされちゃう…っ…）\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+		
+	; お腹が大きくなってきた…
+	ELSEIF ARG:1 >= 5
+	
+	; お腹は、もはやはっきり分かるほどに大きくなっている
+	ELSEIF ARG:1 >= 3
+	
+	; 陣痛
+	ELSEIF ARG:1 >= 1
+		; 【母乳体質】取得済 陣痛に苦しんでいる… 
+		IF TALENT:130
+		; 【母乳体質】未取得 陣痛に苦しむ%ARGS:0%の胸から、母乳が滲み始めている…
+		ELSE
+		ENDIF
+	ENDIF
+RETURN 1

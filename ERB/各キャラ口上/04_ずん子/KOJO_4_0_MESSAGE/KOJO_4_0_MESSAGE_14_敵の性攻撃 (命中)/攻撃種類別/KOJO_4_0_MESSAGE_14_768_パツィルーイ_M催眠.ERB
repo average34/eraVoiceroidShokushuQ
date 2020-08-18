@@ -1,0 +1,65 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0768 パツィルーイ M催眠
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_768(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+	
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; パツィルーイ催眠キスが命中すると必ず催眠状態となるので催眠口上のみ記述
+	; 催眠種類で分岐
+	SELECTCASE FLAG:526
+	; 拘束・肉体操作系
+	CASE 0
+		; 通常時
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（ヒトの事操ってディープキスとか♥　悪趣味ですね♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたしキスしてますっ！？　女の子同士でディープキスっ！　どうしてっ！？）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（ウソっ、口が勝手にっ！？　やめっ！　わたしはこんな事したくないのっ！！）\n"
+		ENDSELECT
+		
+	; 発情・感情操作系
+	CASE 1
+		; 通常時
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（あははっ♥　おくちで気持ちよくなちゃってる♥　ディープキス、きもちいい…♥♥）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（キス好きっ♥　大好きっ♥　子作りセックスと同じくらい好きですっ♥♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（キスっ♥　キス凄いっ♥　もっと舌吸ってっ♥　ヨダレ、搦めてっ♥）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（相手のベロ食べちゃうみたいな、こんなはしたないキスっ……　おかしくなっちゃう……）\n"
+		ENDSELECT
+		
+	; 無意識・認識操作系
+	CASE 2
+		; 通常時
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（そんな目の前に舌垂らしたら…食べちゃいますよ…♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（そうです……　わたしはキスだけでイク変態にならないと……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（そうです、キスしなきゃ……　舌入れ本気キスで快感を貪らないと……）\n"
+		ENDSELECT
+	ENDSELECT
+	
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

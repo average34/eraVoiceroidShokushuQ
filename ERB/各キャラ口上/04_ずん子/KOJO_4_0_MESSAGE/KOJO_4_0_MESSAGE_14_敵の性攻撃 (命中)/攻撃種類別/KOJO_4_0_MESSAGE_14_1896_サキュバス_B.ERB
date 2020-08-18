@@ -1,0 +1,67 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 1896 サキュバス B
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_1896(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+	
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 汎用口上
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ああぁ……っ♥　焦らさ……ないで……っ♥\n　もっとっ♥　思いっきり吸ってください……っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んっ……あっ…♥　同姓相手の責め方も、上手……なんですね♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「くうっ、異性を襲う魔物のはずなのに……」\n"
+	ENDSELECT
+	
+	; ペットに身体を捧げているなら追加口上
+	IF KOJO_4_0_TEMP_FLAG:1
+		; ペット系素質未所持
+		IF !TALENT:140
+			; [母乳体質] 非所持時 追加口上
+			IF !TALENT:130
+				SELECTCASE KOJO_4_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「どうぞ♥　淫魔って、えっちな先っぽから精気吸うんですよね？♥」\n"
+				CASEELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"「ごはん……って、わたしの胸からミルクは出ないのですが……」\n"
+				ENDSELECT
+				
+			; [母乳体質] 所持時 追加口上
+			ELSE
+				SELECTCASE KOJO_4_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「おっぱい飲みたいなら、もっと吸い付かないとダメですよ♥」\n"
+				CASEELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"「うっ……　えっちな舐め方のせいで、おっぱい張ってきました……」\n"
+				ENDSELECT
+			ENDIF
+		
+		; ペット系素質所持
+		ELSEIF TALENT:140
+			; 汎用口上
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おっぱいっ♥　おっぱい気持ちいいですっ♥　ご主人様ぁ……♥♥」\n"
+			
+			; [花嫁]所持時 追加口上
+			IF TALENT:140 == 2
+
+			; [しもべ]所持時 追加口上
+			ELSEIF TALENT:140 == 3
+				CALL KOJO_4_0_ADD_MESSAGE, @"「げぼくっ……♥　はしたない下僕おっぱいっ♥　好きなだけ虐めてくださいっ……♥♥」\n"
+			ENDIF
+		ENDIF
+	ENDIF
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 追加地の文側で\nするので口上側は\nで終わること
+RETURN 1

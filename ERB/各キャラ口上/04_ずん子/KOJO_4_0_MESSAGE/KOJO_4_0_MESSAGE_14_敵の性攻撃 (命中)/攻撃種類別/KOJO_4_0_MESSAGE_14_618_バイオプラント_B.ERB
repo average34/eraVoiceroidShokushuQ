@@ -1,0 +1,53 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0618 バイオプラント B
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_618(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠
+	SIF CFLAG:25
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こわれ…っ♥　おっぱいこわれちゃう…ぅぅッ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（何か塗り込まれて…ぇ♥　乳首の感度、すっごい、ことに…♥♥）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「胸っ♥　わたしの胸がっっ♥♥　すごいことに、なって…♥♥」\n"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d触手に覆い尽くされ責め立てられる胸が見えない事が、%CALLNAME:TARGET%の興奮を一層強く煽り立てた！\d\n"
+		
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ぐぅぅっ！　やめ…っ！　わたしのおっぱいにっ、何を…っ！！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（ちっ、乳首に…っ！？　何か塗り込まれてる…っ！？）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（胸が…っ！？　おかしくっ、おかしくされてますっ！？）\n"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d触手に覆い尽くされ責め立てられる胸が見えない事が、%CALLNAME:TARGET%の恐怖心を一層強く煽り立てた！\d\n"
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

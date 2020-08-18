@@ -1,0 +1,178 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 33 MPが0になった
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_33(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"（こんな所で倒れたら……　頭の中まで……完全に、壊されちゃう…のに…）\n"
+			CASE 2
+				CALL KOJO_4_0_ADD_MESSAGE, @"（あ……ぁ……　もっと……ご奉仕しないと……いけない……のに……）\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（もう……動けません……　せめて、生オナホとして……使って……くだ……さい……）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（申し訳……ありません……　もう……意識……が……）\n"
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もうだめです♥　あたまのなか……トロットロに……　とけて……しまいましたぁ……♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もうだめっ♥　こうさんっ♥　こうさんです…っ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（もうこの魔物に逆らえないんだ……　わたし……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（ああ……　身体に力が、はいりません……）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"（まずいです……　あたまが……　ぼやけて……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（わたしの幸せ……　どこ……いっちゃったんでしょう……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（だめ……　もう、動けま……せん……）\n"
+	ENDSELECT
+	
+	; まだ行動中の味方がいるなら追加口上
+	IF (TARGET != 1 && CHECK_FINE(1)) || (FLAG:10 && TARGET != FLAG:10 && CHECK_FINE(FLAG:10)) || (FLAG:11 && TARGET != FLAG:11 && CHECK_FINE(FLAG:11))
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたしがｺｯｼｮﾘな目に合ってる間、頑張ってくださいね……♥）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（他の方が頑張ってますし、わたしは快楽を貪っても良い……ですよね……♥）\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたしはもう……ダメなようです……　後を、お願いします……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（後は……　任せ……ました……）\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 前回情報参照
+; ◆ 014 敵の性攻撃(命中)
+; ◇ 攻撃種類別
+; ● 0713 アグーAV複合
+@KOJO_4_0_SYSTEM_MESSAGE_33_PREV_14_713(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱", "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（わたしの理性……　豚のおちんぽ様に敗北しちゃいました…♥♥）\n"
+	ENDSELECT
+RETURN 1
+
+
+; 前回情報参照
+; 014 敵の性攻撃(命中)
+; ◇ 部位別
+; ● A
+@KOJO_4_0_SYSTEM_MESSAGE_33_PREV_14_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（お尻の穴で……気絶するほど気持ちよくなるなんて…♥　わたし、変態なんでしょうか…♥♥）\n"
+	ENDSELECT
+RETURN 1
+
+
+; 前回情報参照
+; ◆ 016 敵の寄生攻撃(命中)
+@KOJO_4_0_SYSTEM_MESSAGE_33_PREV_16(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 寄生攻撃
+	IF KOJO_4_0_GET_PREV_ARG(2) == 0
+	
+	; 妊娠攻撃
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（頭の中まで、精液快楽で…満たされてしまいました…♥♥）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「いっぱい……♥　なかだし……♥　されて…しまいました…♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; 前回情報参照
+; ◆ 127 出産イベント(寄生)
+; ◇ 0 出産開始
+@KOJO_4_0_SYSTEM_MESSAGE_33_PREV_127_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; うめき声のみ
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おﾞご……っ♥　ぁ……っ♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あぁ……　あ……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 前回情報参照
+; ◆ 129 出産イベント(妊娠)
+; ◇ 0 出産開始
+@KOJO_4_0_SYSTEM_MESSAGE_33_PREV_129_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	;127 出産イベント(寄生) - 0 出産開始 におねがい
+	CALL KOJO_4_0_SYSTEM_MESSAGE_33_PREV_127_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

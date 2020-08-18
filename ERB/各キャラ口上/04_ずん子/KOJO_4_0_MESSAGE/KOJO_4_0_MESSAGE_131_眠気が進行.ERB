@@ -1,0 +1,69 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 131 眠気が進行
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_131(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 1ループ前に睡眠開始 つまりは起きたばっかり
+	; 重度汚染部屋で睡眠(気絶かも)でも起きたばっかり
+	; もしくは眠気MAXで気絶してた
+	IF KOJO_4_0_GET_PREV_ARG(0) == 114 || KOJO_4_0_GET_PREV_ARG(0) == 116 || (KOJO_4_0_GET_PREV_ARG(0) == 131 && KOJO_4_0_GET_PREV_ARG(1) == 15)
+		SELECTCASE ARG:1
+		CASE 3
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もうちょっと眠りたい…です」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「まだ、眠いです……」\n"
+		CASE 7
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ふわぁ…全然寝足りませんね……」\n"
+		CASE 11
+			CALL KOJO_4_0_ADD_MESSAGE, @"「起きたばかりなのに……　ふらふら…ですね…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もっと……　寝ないと……」\n"
+		ENDSELECT
+		
+		; 眠気MAX気絶の場合は追加口上あり
+		IF KOJO_4_0_GET_PREV_ARG(0) == 131 && KOJO_4_0_GET_PREV_ARG(1) == 15
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「油断…ですね……　早く安全な場所を探し出して休まないと……また…」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「気を張り過ぎなんでしょうか……　睡眠は大事な事は重々承知しているのですが…」\n"
+			ENDSELECT
+		ENDIF
+		
+	; 通常処理
+	ELSE
+		SELECTCASE ARG:1
+		CASE 3
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「少し眠気を感じますが、まだまだ動けます」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「まだ眠らなくても平気です」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「安全な場所があれば、今のうちから休むのもいいかもしれません」\n"
+			ENDSELECT
+		CASE 7
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「先が見えませんし、少し余裕があるうちに休まないと…」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「もう休むことを考えないと、何かがあったときに危ないかもしれません」\n"
+			ENDSELECT
+		CASE 11
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「こんな場所で寝落ちしたら、絶対襲われてしまいます……」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ふかふかのお布団で……眠りたいです……」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ん…なんだかふらふらします……」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「早く…安全に眠れそうな場所を……」\n"
+			ENDSELECT
+		CASE 15
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「こんな場所で気絶した…ら…襲われて…しまいます……」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「うう……　もう限界…です…」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「もう……　だめ……　です……」\n"
+			ENDSELECT
+		ENDSELECT
+	ENDIF
+RETURN 1

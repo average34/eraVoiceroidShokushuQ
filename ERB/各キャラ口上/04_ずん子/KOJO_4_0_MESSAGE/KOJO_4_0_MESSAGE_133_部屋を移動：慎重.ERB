@@ -1,0 +1,68 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 133 部屋を移動：慎重
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_133(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（大丈夫……　大丈夫です……　いつも通り、落ち着いて行動すればきっと……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（魔物が居ませんように…）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「次の部屋には何があるでしょうか」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（物音を立てないよう、慎重に……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「至る所から嫌な音が聞こえますし、慎重にならざるを得ません……」\n"
+	ENDSELECT
+	
+	; 移動前部屋の汚染度で追加口上
+	; 清浄
+	IF FLAG:(50 + FLAG:5) < 10
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「次の部屋も綺麗だと良いのですが」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSEIF FLAG:(50 + FLAG:5) < 40
+		
+	; 軽度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 70
+		
+	; 中度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 100
+		
+	; 重度汚染
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「この部屋に長居したら、頭がおかしくなりそうです……」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「粘液だらけで、変な匂いに不快な音。もうこの部屋には来たくありません…」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 眠気による追加口上
+	IF FLAG:7 <= 3
+		
+	ELSEIF FLAG:7 <= 7
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「少し眠気を感じますが、これぐらいなら恐らく…」\n"
+		ENDSELECT
+		
+	ELSEIF FLAG:7 <= 11
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（頭がぼーっとしてます…注意力散漫になってますし、まずいかもしれません……）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（どれだけ気を張っても、この眠気は少し……まずいです……）\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ふわぁ……　えっと……　慎重に……進まないと…………すぅ…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「すぅ…すぅ…………はっ」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

@@ -1,0 +1,136 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 3 汎用口上 部位別 V
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_120_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 連続絶頂時 or 寸止め時 追加口上
+			IF GETBIT(ARG:3, 4) || CFLAG:820
+				SELECTCASE KOJO_4_0_KOJO_MODE
+				; 淫乱, 発情
+				CASE "淫乱", "発情"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「イッてるっ、もうイッてるからっ♥♥　とめてへぇぇっ♥　わたしの子宮とけちゃうっっ♥♥♥」\n"
+				CASEELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"「とめてぇっ！　もうとめてくださいぃっ！　イッてますっ、イッてますからあぁぁっ！！」\n"
+				ENDSELECT
+				CALL KOJO_4_0_PARAGRAPH_MESSAGE
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d肉体を操られている%CALLNAME:TARGET%は、ガクガクと絶頂に震える腰を淫らに動かし続けている！\d\n"
+			ENDIF
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「んんっ……　おまん…こっ…　絶頂しました…ぁっ」\n"
+			
+			; 連続絶頂時 or 寸止め時 追加口上
+			IF GETBIT(ARG:3, 4) || CFLAG:820
+				CALL KOJO_4_0_ADD_MESSAGE, @"「わたしの淫乱まんこ…っ　イキっぱなしです…っ……」\n"
+			ENDIF
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠状態の%CALLNAME:TARGET%は、顔を上気させながら事務的に絶頂したことを伝えた\d\n"
+			CALL KOJO_4_0_FIX_MESSAGE
+			
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おまんこっ♥　おまんこイクっ♥♥　あはっ、気持ちいいっっ♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んひぃ…ぃっ！？　ナカが、じんじん…して…っ！？」\n"
+	ENDSELECT
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; 連続絶頂時 or 寸止め時 追加口上
+	IF GETBIT(ARG:3, 4) || CFLAG:820
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おまん…こっ♥　ひくひく…って、よろこんでます…♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おまんこぉ…♥　おまんこぉ…ぉ…♥　イキすぎて、壊れちゃいます…っ♥♥」\n\d%CALLNAME:TARGET%は少しでも快感を引き延ばそうと、絶頂したばかりの雌穴をかき回している…\d\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「壊れっ！？　わたしのアソコ壊れちゃうからぁぁぁっ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もうイヤああぁっ！？　イキたくないっ！イキたくないんですっ！！　わたしのアソコおかし…く……っ！！」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; ペット関連 追加口上
+	; ペットに身体を捧げている
+	IF KOJO_4_0_TEMP_FLAG:1
+		; ペット系素質所持時
+		IF TALENT:140
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたしのオマンコ、完璧にしつけられてますっ♥♥）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あは……っ♥♥　ご主人さまっ♥♥　子作りっ、気持ちいいです……っ♥♥」\n"
+		ENDIF
+		
+		; [ペット]所持時
+		IF TALENT:140 == 1
+			CALL KOJO_4_0_ADD_MESSAGE, @"（好きです……っ♥　ご主人様にオマンコかき回される大好きです……っ♥♥）\n"
+			
+		; [花嫁]所持時
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「いぐっ、いぐぅぅぅっ♥　わたし%PETNAME%様のお嫁さんで幸せです……っ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あなた……ぁ……♥　子作り、じょうず……です……♥♥」\n"
+		
+		; [しもべ]所持時
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_4_0_ADD_MESSAGE, @"「イって……ます……っ♥　%PETNAME%様専用オナホール……っ♥　イって……ます……ッ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたしのオマンコ……っ♥　オナニーの道具みたいに使われて……悦んでます…♥♥）\n"
+		ENDIF
+	
+	; ペット以外に身体を弄られている
+	ELSE
+		; ペット系素質所持時
+		IF TALENT:140
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ご主人様以外におまんこほじられてイぐうぅぅぅ♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ごめんなさいご主人様……っ♥　%CALLNAME:TARGET%のオマンコはもうガマンが……っ♥」\n"
+		ENDIF
+		
+		; [ペット]所持時
+		IF TALENT:140 == 1
+			
+		; [花嫁]所持時
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「旦那様以外に犯されてイっちゃだめっ♥　いっちゃだめえええええっ♥♥」\n"
+		
+		; [しもべ]所持時
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あああぁっ……♥　イッちゃいました……♥　こらえ性のないオナホールおまんこ……♥♥」\n"
+		ENDIF
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; 多重絶頂時 追加口上
+	IF ARG:3 && !GETBIT(ARG:3, 4)
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「他にもイッてるのにぃ♥　おまんこまでイッちゃったぁぁ……♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おまんこっ♥　おまんこもイッちゃうぅっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（他にイッてるのにっ、アソコまで……っ！？）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「いやぁぁっ♥　もう気持ちよくしないでくださいっ♥　アソコ……までぇぇぇっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ダメぇっ！　あそこもイクっ！　イクううぅぅぅっ！！」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+RETURN 1

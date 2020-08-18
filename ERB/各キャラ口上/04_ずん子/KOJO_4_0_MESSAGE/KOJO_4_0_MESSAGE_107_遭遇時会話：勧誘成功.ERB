@@ -1,0 +1,109 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 107 遭遇時会話：勧誘成功
+; ------------------------------------------------------------------------------
+; 遭遇時会話：勧誘成功 は主人公時のみ呼び出されるので判定はそれに準じて
+
+; □ 0 通常
+@KOJO_4_0_SYSTEM_MESSAGE_107_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「協力してこの迷宮から抜け出しましょう！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「せっかくですし、ずんだ餅食べますか？」\n"
+	ENDSELECT
+	
+	; 相手の初期戦闘素質が、自分の初期戦闘素質より高いなら追加口上
+	IF ABL:(ARG:1):98 > ABL:98
+		CALL KOJO_4_0_ADD_MESSAGE, @"（…凄い力を感じます）\n"
+	ENDIF
+	
+	
+	; 2人目勧誘成功なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「仲間も増えましたし、しっかり役割分担していきましょう」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ずんだ好きの仲間が増えて嬉しいです♪　…え、違う？そうですか…」\n"
+		ENDSELECT
+		
+	ENDIF
+	
+	; 3人目勧誘成なら追加口上
+	IF GET_MEMBER_SUM() == 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「多くも無く少なくもなく、いい感じの人数です」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「人数が揃うと少し安心しますね」\n"
+		ENDSELECT
+	ENDIF
+	
+	; キャラクター対応 追加口上　考えるのが面倒になりました（本音）
+	;SELECTCASE NO:(ARG:1)
+	; ずん子
+	;CASE 4
+	; ウナ
+	;CASE 14
+	;	CALL KOJO_4_0_ADD_MESSAGE, @"「」\n"
+	; イタコ
+	;CASE 16
+	;	CALL KOJO_4_0_ADD_MESSAGE, @"「」\n"
+	;ENDSELECT
+RETURN 1
+
+
+; □ 1 喪失キャラを連れていく
+@KOJO_4_0_SYSTEM_MESSAGE_107_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「余裕はありませんが、せめて安全な場所に連れていってあげないと…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「このまま放置しておくのは寝覚めが悪いですし……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ここよりも、安全な場所に……！」\n"
+	ENDSELECT
+	
+	; 相手の初期戦闘素質が、自分の初期戦闘素質より高いなら追加口上
+	IF ABL:(ARG:1):98 > ABL:98
+		CALL KOJO_4_0_ADD_MESSAGE, @"（私より強そうな人でも…こんな事に…）\n"
+	ENDIF
+	
+	
+	; 2人目勧誘成功なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「回復してあげられれば、探索も楽になる…はず」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 3人目勧誘成なら追加口上
+	IF GET_MEMBER_SUM() == 2
+		; 現在PTに居る仲間は行動可能
+		IF CHECK_FINE(FLAG:10)
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(FLAG:10)))%、折角だから連れて行ってあげましょうか」\n"
+			ENDSELECT
+			
+		; 現在PTに居る仲間は行動不能
+		ELSE
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「生き残るためには見捨てる事も重要、それはわかってるんですけど…」\n\d%CALLNAME:TARGET%は行動不能に陥った%CALLNAME:(FLAG:10)%に続き、力尽きた%ARGS:1%の手を握った\d\n"
+			ENDSELECT
+			
+		ENDIF
+	ENDIF
+	
+	; キャラクター対応 追加口上（同上）
+	;SELECTCASE NO:(ARG:1)
+	; ずん子
+	;CASE 4
+	;	CALL KOJO_4_0_ADD_MESSAGE, @"「」\n"
+	;	CALL KOJO_4_0_ADD_MESSAGE, @"「」\n"
+	; ウナ
+	;CASE 14
+	;	CALL KOJO_4_0_ADD_MESSAGE, @"「」\n"
+	;	CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%がダウンするって事は」\n"
+	;ENDSELECT
+RETURN 1

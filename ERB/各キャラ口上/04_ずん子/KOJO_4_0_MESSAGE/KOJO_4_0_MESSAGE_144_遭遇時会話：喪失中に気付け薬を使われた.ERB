@@ -1,0 +1,279 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 144 遭遇時会話：喪失中に気付け薬を使われた
+; ------------------------------------------------------------------------------
+
+; □ 06 乳搾り(強制)
+@KOJO_4_0_SYSTEM_MESSAGE_144_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中
+	IF CFLAG:29
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「や、やめて…ください…　おっぱい、が……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「うぁぁ…ぁ…　すわない…　で……ぇ……♥」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+		
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　あっ♥　私のおっぱい、びゅーびゅー出ちゃってるっ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いやぁっ！？　吸わない、でぇっ！　とまらないっ、私のおっぱい止まらなくなってるぅぅっ！！」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「い、いやっ…　なに、するんですか…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「だめっ…だめですっ！　気持ちよくなっちゃうから…！　ダメなのに、気持ちよくなっちゃうから…っ！！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 07 乳搾り(同意)
+@KOJO_4_0_SYSTEM_MESSAGE_144_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もう、わたしは貴方%TACHI()%のお母さんじゃないのに♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「良いですよ♥　わたしのえっちなミルク、沢山搾り取ってください♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あの…えっと…恥ずかしい、ですけど……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「す、少しだけなら…　いい、ですよ…？」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「え、えっと…　顔、見ないで下さいね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「は、早く終わらせてください！」\n"
+	ENDSELECT
+	
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 08 乳搾り(好感度低の為失敗)
+@KOJO_4_0_SYSTEM_MESSAGE_144_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 汎用口上
+	CALL KOJO_4_0_ADD_MESSAGE, @"「そういうのは他の子に言ってくださいね」\n"
+	CALL KOJO_4_0_ADD_MESSAGE, @"「そういう趣味を否定はしませんが、相手を考えるべきですね」\n"
+		
+	; 相手の体質によって分岐
+	; 相手が母乳体質
+	IF TALENT:1:130
+		CALL KOJO_4_0_ADD_MESSAGE, @"「貴方のおっぱいも母乳が染み出してるみたいですし、自分のを絞ってみるのも一つの手だと思います」\n"
+	; 相手が非母乳体質
+	ELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…この迷宮なら、母乳が出るように調教・改造された子が居ると思います　その人達の胸を絞ってみたらどうでしょうか」\n"
+	ENDIF
+RETURN 1
+
+
+; □ 10 強制射精開始
+@KOJO_4_0_SYSTEM_MESSAGE_144_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 戦意喪失中
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 射精中毒 Lv0
+	IF ABL:12 == 0
+		
+	; 射精中毒 Lv1
+	ELSEIF ABL:12 == 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おほ…ぉっ♥　おちんちん踏まれるの、気持ちいいっ…♥」\n"
+		CASEELSE
+		ENDSELECT
+		
+	; 射精中毒 Lv2
+	ELSEIF ABL:12 == 2
+		
+	; 射精中毒 Lv3以上
+	ELSEIF ABL:12 >= 3 || TALENT:121
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もっとぉっ…♥　もっと踏んで下さいっ♥　ドプドプっておちんぽミルク出したいんです…っ♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 11 強制射精終了
+@KOJO_4_0_SYSTEM_MESSAGE_144_11(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		; まだふたなり
+		IF GET_PENIS(TARGET)
+			CALL KOJO_4_0_ADD_MESSAGE, @"\dぐったりと倒れているにも関わらず、%CALLNAME:TARGET%のペニスは噴水のように射精を続けている…\d\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d治療によって幾度も吐精したにも関わらず、%CALLNAME:TARGET%のペニスは激しく屹立し脈打っている…\d\n"
+		; 治療中にちんぽとれた
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d治療で元に戻ったクリトリスを弄り回し、%CALLNAME:TARGET%は連続絶頂の余韻に浸っている…\d\n"
+		ENDIF
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d精を搾り尽くされた%CALLNAME:TARGET%は、自らの汚液にまみれ倒れ伏している…\d\n"
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 地の文を表示
+			CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おちんぽ…♥　あははぁ…♥　おちんぽ…ぉぉ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（これ、ダメ…です…　自分の精液のニオイいっぱいで、またイっちゃう…！）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ぅ…ぁ……　もう…　でない…で…す……」\n"
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+
+	; 地の文を表示
+	CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 12 乳搾り終了
+@KOJO_4_0_SYSTEM_MESSAGE_144_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は胸に吸い付いた%ARGS:0%の頭を優しく撫でた…\d\n"
+		
+		; B絶頂してるなら分岐追加
+		IF KOJO_4_0_ORGASM_COUNT:1
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%の母乳と%ARGS:0%の唾液でぬるぬるになった乳房は、ひくひくと痙攣し絶頂を続けている\d\n"
+		ENDIF
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いやらしい吸い方するので、たくさんいイカされちゃいました…♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうですか？　私のおっぱいおいしかったですか？」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はぁ♥　はぁ♥　まだおっぱい、ﾋﾞｸﾋﾞｸって、しびれて…ます…♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は胸に吸い付いた%ARGS:0%を引き剥がした\d\n"
+		
+		; B絶頂してるなら分岐追加
+		IF KOJO_4_0_ORGASM_COUNT:1
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は授乳絶頂した顔を見られないよう気をつけながら、%ARGS:0%を引き剥がした\d\n"
+		ENDIF
+		
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お、おわりですっ！　もう出ないので！」\n"
+		
+	ENDSELECT
+	
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 13 魔法の拘束具を使われた
+@KOJO_4_0_SYSTEM_MESSAGE_144_13(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…　わたし…　玩具に…　されちゃ………」\n"
+	ENDSELECT
+RETURN 1

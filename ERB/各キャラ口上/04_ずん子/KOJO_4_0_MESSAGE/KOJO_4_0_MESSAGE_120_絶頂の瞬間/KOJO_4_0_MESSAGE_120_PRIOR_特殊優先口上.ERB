@@ -1,0 +1,62 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 特殊優先口上
+; ------------------------------------------------------------------------------
+; どのような状況でも優先される呼び出し先
+; 特定条件下で一度だけ発生する場合などに使用する事
+
+; □ ROOT
+@KOJO_4_0_SYSTEM_MESSAGE_120_PRIOR(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	RESULT = 0
+	
+	; 精通(C絶頂 + 射精経験0) ふたなり時のみ
+	IF ARG:1 == 2 && EXP:12 == 0 && GET_PENIS(TARGET)
+		CALL KOJO_4_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, "KOJO_4_0_SYSTEM_MESSAGE_120_PRIOR_0")
+	ENDIF
+RETURN RESULT
+
+
+; ◆ 精通
+; こちらは射精前のC絶頂描写のみ
+; 精通の詳細描写は 451 ふたなり：射精した で行う
+@KOJO_4_0_SYSTEM_MESSAGE_120_PRIOR_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 睡眠中・喪失中は何も喋らずに帰る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おちんぽ絶頂しまし……た……？　あれ……　なにか……　違和感が……」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「き…ましたぁっ♥　コレっ…待ってたんです…っ♥\n　オスちんぽでっ、射精っ…してみたかったの…っ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もう我慢できませんっ！　おちんちんっ、おちんちんから出ちゃうっ！！　わたしっ、女の子なの…にっ！！」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「うっ…嘘ですッ…！？　この感じ…　まさか…ぁっ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おとこの人のがっ！？　おとこの人の部分がヘンですっ！？　何か、のぼって……っ！？」\n"
+	ENDSELECT
+RETURN 1

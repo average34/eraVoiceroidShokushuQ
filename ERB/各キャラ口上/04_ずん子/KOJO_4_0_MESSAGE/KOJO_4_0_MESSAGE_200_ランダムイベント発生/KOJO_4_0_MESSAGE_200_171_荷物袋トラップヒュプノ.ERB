@@ -1,0 +1,19 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 171 荷物袋トラップヒュプノ
+; ------------------------------------------------------------------------------
+
+; □ 0 荷物袋を開ける
+@KOJO_4_0_SYSTEM_MESSAGE_200_171_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"(私の全神経がこれは危険だって警告してます……っ！)\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 荷物袋を開けない
+@KOJO_4_0_SYSTEM_MESSAGE_200_171_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 荷物袋の中身によって口上が変化するとマズいので、通常荷物袋の口上を呼び出す
+	CALL KOJO_4_0_SYSTEM_MESSAGE_200_140_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1

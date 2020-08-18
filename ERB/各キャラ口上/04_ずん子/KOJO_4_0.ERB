@@ -1,0 +1,1334 @@
+﻿
+; ========================================
+;  eraVoiceroid触手宮 東北ずん子口上
+;                     Author : ふぅりすと/hito/rakurai
+; ========================================
+
+; ------------------------------------------------------------------------------
+; ■ 口上情報
+; ------------------------------------------------------------------------------
+
+; □ 口上選択時のタイトル
+@KOJO_TITLE_4_0
+RESULTS = eraVoiceroid触手宮　東北ずん子口上
+RETURN 1
+
+; □ 口上選択時の詳細説明
+@KOJO_DETAIL_4_0
+PRINTFORML 凛々しいお姉さんを堕落させる口上
+PRINTFORML エロい事ばかりされていると雌堕ちします
+PRINTFORML 直前の行動で喋る内容が変化するのが特徴
+RETURN 1
+
+
+; □ キャラクタ文字色指定
+@KOJO_DEFAULT_COLOR_4_0
+
+	; 世代によって分岐
+	; オリジナル
+	IF CFLAG:104 == 0
+		RETURN RGBCOLOR(40, 206, 100)
+	
+	; 娘以降世代
+	ELSE
+		; 娘の種族によって分岐
+		; 種族詳細に関してはSHOW_FAMILY_LIST.ERBを参照
+		SELECTCASE CFLAG:107
+		
+		; 触手宮に存在する種族由来
+		CASE 1, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 45, 50, 51, 52, 53, 54
+			; オリジナルずん子 と BAD色(赤) の中間色
+			RETURN RGBCOLOR(122, 142, 61)
+			
+		; 幻想郷や月などに存在する種族由来
+		CASE 20, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+			; オリジナルずん子 と GOOD色(青) の中間色
+			RETURN RGBCOLOR(14, 142, 162)
+		
+		; その他種族由来(未定義などは全部ここ)
+		CASEELSE
+			; オリジナルずん子 と システム色(白) の中間色
+			RETURN RGBCOLOR(130, 193, 162)
+		ENDSELECT
+	ENDIF
+	
+	; ここに来ることはないハズだけど一応対策でシステムカラー返しておく
+	GETDEFCOLOR
+	
+RETURN RESULT
+
+; ------------------------------------------------------------------------------
+; ■ 口上
+; ------------------------------------------------------------------------------
+
+; □ 口上ROOT
+@KOJO_4_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 口上の有無チェック時は何も行わずに戻る
+	SIF ARG:0 == 0
+		RETURN 0
+		
+	; 娘は汎用口上に任せる
+	IF CFLAG:104 != 0
+		;IF RAND:100 <= 50
+		;	CALL KOJO_DEFAULT_COLOR_4_0
+		;	SETCOLOR RESULT
+		;	PRINTFORML 「ずんだー」
+		;	RESETCOLOR
+		;	RETURN 1
+		;ELSE
+			RETURN 0
+		;ENDIF
+	ENDIF
+		
+	; 素質[男の娘]所持 & 口上を表示しないモード
+	; 口上の違和感を消す為の処理なので、汎用口上も利用しない
+	; 汎用口上側の処理がなくなるので地の文の表示だけ行う
+	CALL KOJO_4_0_CHECK_OTOKONOKO(ARG:0)
+	IF TALENT:122 && CFLAG:810 == 2
+		CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		RETURN 1
+	ENDIF
+	
+	; りばーす東方触手宮での口上モード指定
+	CALL KOJO_4_0_SET_REVERSE_KOJO_MODE(ARG:0)
+		
+	; 初期化
+	CALL KOJO_4_0_INIT(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; デバッグ情報表示
+	CALL KOJO_4_0_SHOW_DEBUG_INFO(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 口上が呼び出される前に行う追加処理
+	CALL KOJO_4_0_BEFORE_SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 口上処理 + パラメータ変動
+	CALL KOJO_4_0_SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	;クイーン撃破時はシステムメッセージをスキップ
+	IF ARG:0 == 210
+		CALL KOJO_4_0_SET_TEXT_SKIP(1)
+	ENDIF
+	
+	; 表示処理
+	CALL KOJO_4_0_PRINT_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 終了処理
+	CALL KOJO_4_0_CLEANUP(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	
+RETURN 1
+
+; □ 初期化
+@KOJO_4_0_INIT(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+	
+	; メッセージ表示関連変数初期化
+	CALL KOJO_4_0_CLEAR_MESSAGE
+	
+	; 地の文スキップフラグ初期化
+	CALL KOJO_4_0_SET_TEXT_SKIP(0)
+	
+	; システムメッセージ表示済フラグを初期化
+	CALL KOJO_4_0_SET_PRINTED_SYSYTEM_MESSAGE(0)
+	
+	; 各キャラの呼び名を初期化
+	CALL KOJO_4_0_INIT_CALLNAME()
+	
+	; KOJO_4_0_TURN_FINALIZE発生中かどうか確認する
+	SIF !KOJO_4_0_TURN_FINALIZE
+		KOJO_4_0_TURN_FINALIZE = KOJO_4_0_IS_TURN_FINALIZE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 寸止めインクリメント
+	; 前ターン自慰をしたのに絶頂を阻まれた
+	; 絶頂に失敗するとEP1になる、自慰で偶然EP1になる事は殆どないので処理を簡略化
+	; 二連続自慰メッセージの呼び出しは、母乳飲みなので除外する
+	IF KOJO_4_0_GET_PREV_PURE_ARG(0) == 118 && BASE:EP == 1 && ARG:0 != 118
+		CFLAG:820++
+	; 前ターンに絶頂の瞬間が呼び出されているのに、このターン絶頂出来なかった
+	ELSEIF KOJO_4_0_GET_PREV_PURE_ARG(0) == 34 && ARG:0 != 120
+		CFLAG:820++
+	; 前ターンに自慰、2ターン前に強制自慰が発生した上で、このターン絶頂出来なかった
+	ELSEIF KOJO_4_0_GET_PREV_PURE_ARG(0) == 118 && (KOJO_4_0_GET_PREV_PURE_ARG(0, 2) == 1 && KOJO_4_0_GET_PREV_PURE_ARG(1, 2) == 46) && ARG:0 != 120
+		CFLAG:820++
+	ENDIF
+		
+	; 戦闘中 ターンの切り替わりを確認
+	IF KOJO_4_0_KEEP_TURN != TFLAG:11
+	
+		; KOJO_4_0_TURN_FINALIZE発生中フラグをOFF
+		VARSET KOJO_4_0_TURN_FINALIZE
+		
+		; ペットによるレイプが発生していた場合のフラグOFF
+		KOJO_4_0_TEMP_FLAG:1 = 0
+		
+		; 保持ターン数更新
+		KOJO_4_0_KEEP_TURN = TFLAG:11
+	ENDIF
+	
+	; 日常パート(捕食中含む)で戦闘中利用の各種カウンタリセット
+	; 非PT時は口上の最終呼び出し日時と現在の日時を比較(保持してる値と違う日になっているならリセット)
+	; 出産イベント直前にも一応リセット
+	IF ARG:0 == 151 || ARG:0 == 160  || (!(CHECK_MEMBER_FROM_ID(TARGET)) && !(CFLAG:830 == DAY && CFLAG:831 == TIME:0)) || ((ARG:0 == 127 || ARG:0 == 129) && ARG:1 == 0)
+
+		; PT外状態で各種カウンタをリセット
+		IF (!(CHECK_MEMBER_FROM_ID(TARGET)) && !(CFLAG:830 == DAY && CFLAG:831 == TIME:0))
+			; PT外状態リセット時に無意味なARG情報を追記しておく
+			; 遥か過去のARG情報を参照して口上が狂わないようにする為
+			CALL KOJO_4_0_SAVE_ARG(0, 0, "", "", 0, 0, 0, 0, 0)
+			
+			; 一応確認の為に
+			[IF_DEBUG]
+				SETCOLOR 0x444444
+				PRINTFORML PT外状態で各種カウンタをリセットしました
+				RESETCOLOR
+			[ENDIF]
+		ENDIF
+		
+		; 膣内射精カウンタ・戦闘中絶頂カウンタ・戦闘中受性攻撃カウンタ・一時利用変数群
+		VARSET KOJO_4_0_CREAMPIE_COUNT
+		VARSET KOJO_4_0_ORGASM_COUNT
+		VARSET KOJO_4_0_SEXUAL_ASSAULT_COUNT
+		VARSET KOJO_4_0_TEMP_FLAG
+		
+		; 被レイプチェック用の一時保持変数群
+		FOR LCOUNT, 0, 49
+			CFLAG:(951 + LCOUNT) = 0
+		NEXT
+		
+		; 暗示フラグOFF
+		CLEARBIT CFLAG:900, 0
+		
+		; 戦闘中チェック用一時フラグOFF
+		VARSET KOJO_4_0_TURN_FINALIZE
+		
+		; 仲間Noをクリア
+		VARSET KOJO_4_0_PARTY_NO
+	ENDIF
+	
+	; 理性度の増減メッセージ表示
+	CALL KOJO_4_0_MIND_SHIFT_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 理性度の増減を実際に行う(RESULTに増減値)
+	CALL KOJO_4_0_MIND_MAPPING(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CFLAG:800 += RESULT
+	
+	; 理性度確定後に口上モード初期化
+	KOJO_4_0_KOJO_MODE = %KOJO_4_0_MIND_SET(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)%
+	
+	; このループ中の情報を保存する
+	; PT外状態でのエラー対策後に現情報を保存しないと動作が狂う為、初期化の最後で情報保存
+	CALL KOJO_4_0_SAVE_ARG(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1
+
+; □ 理性度の初期化
+@KOJO_4_0_MIND_INIT()
+	CFLAG:805 = 0						; 淫乱堕ちのスイッチ(0で標準 1で淫乱堕ち)
+	CFLAG:800 = KOJO_4_0_MIND_DEFAULT	; 理性度
+RETURN 1
+
+; □ 理性度の増減
+@KOJO_4_0_MIND_MAPPING(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM CONST RAISE = 100000 ; 小数点計算用の底上げ値
+#DIM VALUE
+
+	; 初期化
+	VARSET VALUE
+	
+	; 復活フラグが立っている間は理性度の増減を行ってはならない
+	SIF CFLAG:800 == __INT_MAX__
+		RETURN 0
+		
+	SELECTCASE ARG:0
+	
+	; 初期値であれば何もしないで戻る
+	CASE 0
+		RETURN 0
+	
+	; 味方行動
+	CASE 1
+		SELECTCASE ARG:1
+		; おねだり
+		CASE 54 TO 58
+			VALUE -= 3
+			
+		; 拘束からの離脱
+		CASE 42
+			SELECTCASE ARG:3
+			CASE 1
+				; 絶頂で脱力
+				VALUE -= 2
+			CASE 2
+				; 離脱成功
+				VALUE += 2
+			CASE 3
+				; 少しだけ離脱
+				VALUE += 1
+			CASE 4
+				; 離脱失敗
+				VALUE -= 2
+			ENDSELECT
+			
+		; 諦める(全滅まで放置)
+		CASE 44
+			; 諦めた瞬間にのみ数値反映
+			SIF TFLAG:16 != 2
+				VALUE -= 5
+			
+		; 強制自慰(下にある各種自慰と数値をあわせる)
+		CASE 46
+			VALUE -= 1
+		ENDSELECT
+		
+	; 味方の攻撃(カウンター待ちも)
+	CASE 11, 50
+		VALUE += 2
+	
+	; 敵の通常攻撃, 衣服攻撃, 拘束攻撃(命中)
+	CASE 12, 13, 15
+		VALUE -= 1
+		
+	; 敵の性攻撃(命中) - 感度ボーナスあり
+	CASE 14
+		VALUE -= 1
+		
+		; 淫乱持ちなら
+		IF TALENT:74
+			VALUE -= 3
+		ENDIF
+		
+		; 部位ごとに感度ボーナス
+		IF TALENT:(101 + ARG:2) <= -1
+			; 鈍感
+			VALUE -= 0
+		ELSEIF TALENT:(101 + ARG:2) == 1
+			; 敏感
+			VALUE -= 1
+		ELSEIF TALENT:(101 + ARG:2) == 2
+			; 過敏
+			VALUE -= 2
+		ELSEIF TALENT:(101 + ARG:2) >= 3
+			; 異常過敏
+			VALUE -= 3
+		ENDIF
+		
+		; 淫～系素質ボーナス
+		IF TALENT:(75 + ARG:2)
+			VALUE -= 1
+		ENDIF
+	
+	; 敵の寄生攻撃(命中)
+	CASE 16
+		VALUE -= 2
+	
+	; 味方の攻撃(回避)
+	CASE 16
+		VALUE -= 1
+		
+	;敵の攻撃を回避
+	CASE 22 TO 27
+		VALUE += 1
+		
+	; 敵を撃破
+	CASE 31
+		VALUE += 4
+		
+	; HPが0になった, MPが0になった
+	CASE 32, 33
+		VALUE -= 2
+		
+	; 寄生された
+	CASE 40
+		VALUE -= 3
+		
+	; 裸で時間経過
+	CASE 46
+		SELECTCASE ARG:1
+		CASE 0
+			; 恥薄いので何も
+		CASE 1
+			VALUE -= 1
+		CASE 2
+			VALUE -= 2
+		ENDSELECT
+		
+	; 重度汚染部屋で時間経過
+	CASE 47
+		VALUE -= 1
+		
+	; カウンター発動
+	CASE 51
+		VALUE += 2
+		
+	; 戦闘から逃げた
+;	CASE 55
+;		VALUE ++
+
+	; 戦闘で敗北
+	CASE 56
+		VALUE -= 3
+		
+	; 戦闘に勝利
+	CASE 57
+		VALUE += 6
+		
+	; 先制攻撃・不意打ち発生
+	CASE 60
+		; 先制攻撃
+		IF ARG:2 == 1
+			VALUE += 2
+		; 不意打ち
+		ELSEIF ARG:2 == 2
+			;VALUE -= 1
+		ENDIF
+		
+	; 仲間を見捨てて逃げた
+	CASE 62
+		;VALUE -= 2
+		
+	; 仲間に見捨てられた
+	CASE 63
+		VALUE -= 3
+		
+	; 遭遇時会話 雑談・情報交換・アイテム強請り成功・勧誘成功 PT加入
+	CASE 103, 104, 105, 107, 109
+		VALUE += 2
+	
+	; 遭遇時逆襲
+	CASE 111, 112
+		VALUE -= 2
+			
+	; 探索でアイテムを見つけた
+	CASE 113
+		VALUE += 2
+		
+	; 睡眠開始
+	CASE 114
+		VALUE += 2
+		
+	; 重度汚染部屋で睡眠開始
+	CASE 115
+		VALUE -= 1
+		
+	; 自慰
+	CASE 118
+		VALUE -= 1
+		
+	; EPが0になった 各種絶頂 - 感度ボーナスあり(強制自慰で絶頂すると34が呼び出されないので120)
+	CASE 120
+		VALUE -= 3
+	
+		; 淫乱持ちなら
+		IF TALENT:74
+			VALUE -= 3
+		ENDIF
+		
+		; 部位ごとに感度ボーナス
+		IF TALENT:(101 + ARG:1) <= -1
+			; 鈍感
+			VALUE -= 1
+		ELSEIF TALENT:(101 + ARG:1) == 1
+			; 敏感
+			VALUE -= 2
+		ELSEIF TALENT:(101 + ARG:1) == 2
+			; 過敏
+			VALUE -= 3
+		ELSEIF TALENT:(101 + ARG:1) >= 3
+			; 異常過敏
+			VALUE -= 4
+		ENDIF
+		
+		; 淫～系素質ボーナス
+		IF TALENT:(75 + ARG:1)
+			VALUE -= 1
+		ENDIF
+	
+	; 妊娠が進行
+	CASE 126
+		; VALUE -= 2
+			
+	; 寄生出産・妊娠出産
+	CASE 127, 129
+		VALUE -= 3
+		
+	; 部屋の浄化
+	CASE 130
+		VALUE += 3
+		
+	; 処女喪失(大マイナス)
+	CASE 136
+		; 真の処女
+		IF TALENT:0 == 1
+			; 通常の触手宮
+			IF ARG:3 == 0 && !KOJO_4_0_IS_REVERSE()
+				VALUE -= 50
+			; りばーす触手宮(りばーすは復活時の理性度リセットなしにしてるので 大マイナスを低めに)
+			ELSEIF ARG:3 == 0
+				VALUE -= 15
+			ENDIF
+			
+		; 再生処女
+		ELSEIF TALENT:0 == 2
+			; 通常の触手宮
+			IF ARG:3 == 0 && !KOJO_4_0_IS_REVERSE()
+				VALUE -= 25
+			; りばーす触手宮(りばーすは復活時の理性度リセットなしにしてるので 大マイナスを低めに)
+			ELSEIF ARG:3 == 0
+				VALUE -= 10
+			ENDIF
+		ENDIF
+		
+	; 喪失キャラに気付け薬を使った
+	CASE 143
+		VALUE += 3
+	
+	; 喪失キャラに気付け薬を使われた
+	CASE 144
+		VALUE += 3
+				
+	; 部屋に結界を張った+入浴(中回復)
+	CASE 149
+		VALUE += 30
+		
+	; 捕食されている
+	CASE 151
+		VALUE -= 2
+			
+	; 好感度低下によるPT離脱
+	CASE 161
+		VALUE -= 3
+		
+	; 寄生された(固定イベント)
+	CASE 200
+		SIF ARG:1 ==138 || ARG:1 == 149
+			VALUE -= 3
+		
+	; 射精した(絶頂とは別にカウント, ふたなり分のペナルティということで)
+	CASE 451
+		VALUE -= 3
+		
+	; 触手包帯による時間経過ダメージ
+	CASE 508
+		SIF ARG:1 == 1
+			VALUE -= 1
+	ENDSELECT
+	
+	; 各種補正倍率計算
+	; 小数計算用に桁を大きめに
+	VALUE = VALUE * RAISE
+	
+	; 基本的に倍率変動はマイナス時のみ
+	IF VALUE < 0
+		; 倍率変動(異常状態)
+		; 発情時 or 喪失時は2倍
+		IF CFLAG:28 || CFLAG:29
+			TIMES VALUE, 2.0
+		; 媚薬2個装備時は3倍
+		ELSEIF CFLAG:7 == 39 && CFLAG:8 == 39
+			TIMES VALUE, 3.0
+		; 通常時は1倍
+		ELSE
+			TIMES VALUE, 1.0
+		ENDIF
+
+		; 倍率変動(ゲーム難易度)
+		; 難度が低いと平然と【強気】を維持する為 難度が低いほど変動値大きめ
+		SELECTCASE FLAG:4
+		; Easy(2.5倍)
+		CASE 0
+			TIMES VALUE, 2.5
+		; Normal, Extra(2.0倍)
+		CASE 1
+			TIMES VALUE, 2.0
+		; Hard(1.5倍)
+		CASE 2
+			TIMES VALUE, 1.5
+		; Lunatic, Phantasm(1.0倍)
+		CASE 3
+			TIMES VALUE, 1.0
+		ENDSELECT
+	
+		; 睡眠・喪失・諦め時は倍率をちょっと高めに
+		SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+			TIMES VALUE, 1.5
+	ENDIF
+	
+	; りばーす触手宮の場合、さらに倍率変動
+	; こちらはプラスマイナス両方変動させる
+	IF KOJO_4_0_IS_REVERSE()
+		IF VALUE < 0
+			TIMES VALUE, 1.5
+		ELSE
+			TIMES VALUE, 1.4
+		ENDIF
+	ENDIF
+
+	; 小数計算終了、桁を戻す
+	VALUE = VALUE / RAISE
+	
+;	[IF_DEBUG]
+;		SETCOLOR 0x444444
+;		PRINTFORML 理性度増減値：{VALUE}
+;		SETCOLOR CFLAG:700
+;	[ENDIF]
+	
+RETURN VALUE
+
+
+; □ 理性度の増減メッセージ表示
+; あくまでメッセージの表示を行うだけで理性度の増減は終了処理で行う
+@KOJO_4_0_MIND_SHIFT_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM MIND_VARY
+
+	; システムメッセージ処理前に、口上の特殊呼び出しをするのでスキップフラグをONにしておく
+	CALL KOJO_4_0_SET_TEXT_SKIP(1)
+	
+	; 何かしらの理由で復活 正常な理性を手に入れる(りばーす触手宮ではリセットなし)
+	IF ARG:0 == 160 && CFLAG:800 == __INT_MAX__ && !KOJO_4_0_IS_REVERSE()
+		
+		; 理性度初期化
+		CALL KOJO_4_0_MIND_INIT()
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"\g%CALLNAME:TARGET%は霞がかった思考が晴れ渡るのを感じた！\g\n「あれ？　わたし、生きてる？」\n"
+
+		RESETCOLOR
+		RETURN 1
+	ENDIF
+	
+	; 理性度の増減値を確認
+	CALL KOJO_4_0_MIND_MAPPING(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	MIND_VARY = RESULT
+	
+	; 理性度増減メッセージ(淫乱堕ちしているか, 死亡しているか, ゲーム開始時 1つでも該当するならスキップ)
+	IF !CFLAG:805 && CFLAG:800 != __INT_MAX__ && !(DAY:0 == 1 && TIME:0 == 0)
+		; プラス(催眠中はプラス表現があっても表示しない)
+		IF MIND_VARY > 0 && !KOJO_4_0_IS_HYPNO()
+			; 理性度が1200を超える
+			IF CFLAG:800 < KOJO_4_0_MIND_BORDER_0 && (CFLAG:800 + MIND_VARY) >= KOJO_4_0_MIND_BORDER_0
+				CALL KOJO_4_0_ADD_MESSAGE, @"\g臆する事なく障害を打ち倒してきた%CALLNAME:TARGET%は、今や自信に満ちあふれている！\g\n"
+			
+			; 理性度が1100を超える
+			ELSEIF CFLAG:800 < ((KOJO_4_0_MIND_BORDER_0 + KOJO_4_0_MIND_BORDER_1) / 2) && (CFLAG:800 + MIND_VARY) >= ((KOJO_4_0_MIND_BORDER_0 + KOJO_4_0_MIND_BORDER_1) / 2)
+				CALL KOJO_4_0_ADD_MESSAGE, @"\g理不尽な状況でも何とかやっていける事に、%CALLNAME:TARGET%は自信を持ち始めた\g\n"
+				
+			; 理性度が750を超える
+			ELSEIF CFLAG:800 < ((KOJO_4_0_MIND_BORDER_1 + KOJO_4_0_MIND_BORDER_2) / 2) && (CFLAG:800 + MIND_VARY) >= ((KOJO_4_0_MIND_BORDER_1 + KOJO_4_0_MIND_BORDER_2) / 2)
+				CALL KOJO_4_0_ADD_MESSAGE, @"\g%CALLNAME:TARGET%は淫らな霧に閉ざされた思考が晴れるのを感じた\g\n"
+			ENDIF
+			RESETCOLOR
+
+		; マイナス
+		ELSE
+			; 理性度が0を割ると淫乱堕ち
+			IF CFLAG:800 > KOJO_4_0_MIND_BORDER_4 && (CFLAG:800 + MIND_VARY) <= KOJO_4_0_MIND_BORDER_4
+				; 睡眠中
+				IF CFLAG:25
+					{
+					CALL KOJO_4_0_ADD_MESSAGE, @"「うっ……　あっ……　あﾞあﾞぁﾞっ……！！\n
+					                              　あが……いぃぎぃぎいいぃぃぃ……っ！！　あがあぁぁ……っっッッッ……！！！」\w
+					                              \d%CALLNAME:TARGET%は一際大きく身を震わせると、そのまま脱力した……\d\w
+					                              \b眠ったままの%CALLNAME:TARGET%は、意識も出来ぬ間に理性を完全に破壊された！\b\w"
+					}
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+					CALL KOJO_4_0_ADD_MESSAGE, @"「おﾞッ……♥　おﾞごッ……ッ♥♥　おﾞおﾞぉﾞッ……♥♥♥」\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は弛緩した膀胱から尿を垂れ流し、無意識のまま腰を振りたくっている……\d\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"「は……っ♥　はひゃ……ぁっ……♥♥」\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d目を覚ます頃には性欲に支配された哀れな存在へと成り果てているだろう……\d\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+				
+				; 催眠中
+				ELSEIF KOJO_4_0_IS_HYPNO()
+					; 催眠種類で分岐
+					SELECTCASE FLAG:526
+					; 拘束・肉体操作系
+					CASE 0
+						{
+						CALL KOJO_4_0_ADD_MESSAGE, @"「どうして…どうして私の身体動かないの…っ！　お願いだから、解放してください…っ！\n
+						                              　もう……　もうだめです……　もう限界なんですっ！　気持ちよくしないでっ！\n
+						                              　これ以上は！　これ以上はダメっ！　狂っちゃいますからっ！　本当に狂っちゃ――」\w
+						                              \d%CALLNAME:TARGET%は一際大きく身を震わせると、そのまま脱力した……\d\w
+						                              \b催眠の力で操られ快感を受け続けた%CALLNAME:TARGET%は、本能に逆らうことが出来なくなった！\b\w"
+						}
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"「あ…♥　わ、わたしは、こんなエッチな女の子になりたくなかったのに♥♥」\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"\d頭の芯まで性欲に支配された%CALLNAME:TARGET%は、涙と涎まみれの顔で淫らな笑みを浮かべている……\d\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"「子宮がズキズキします…♥　交尾したい……♥　お腹の中に沢山注ぎ込まれたい……♥♥」\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は尽きる事のない肉欲に飲み込まれた……\d\w"
+						
+					; 発情・感情操作系
+					CASE 1
+						{
+						CALL KOJO_4_0_ADD_MESSAGE, @"「んぁっ、この、感覚っ♥　これ以上行ったら戻れないの、わかっちゃう♥♥\n
+						                              　でも止められないっ♥　頭の中が快楽で埋め尽くされちゃうっ♥♥　壊されちゃう♥♥♥　壊れ――」\w
+						                              \d%CALLNAME:TARGET%は一際大きく身を震わせると、そのまま脱力した……\d\w"
+						
+						}
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b%CALLNAME:TARGET%の思考を狂わせていた催眠の力が、遂に最後の理性を焼き尽くした！\b\w"
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b正常な思考を奪われたまま、%CALLNAME:TARGET%の理性は完全に破壊された！\nイキ狂う事を悦びとする、淫らな生き物としての記憶が定着してしまった……\b\w"
+						
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"「あ、あはは……ぇ♥　セックスだけ出来れば、もう他に何もいりません…♥」\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"\d思考を交尾の快感に埋め尽くされた姿は、最早色狂いの女性でしかなかった……\d\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"「もっと、た～っくさん気持ちいいこと、しましょ…？♥」\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は次の相手を見定めると、淫らな表情で舌なめずりをした……\d\w"
+						
+					; 無意識・認識操作系
+					CASE 2
+						{
+						CALL KOJO_4_0_ADD_MESSAGE, @"「もう限界……です……\n
+						                              　これ以上は……　わたしの頭が、おかしくなって……　本当にただの孕み袋に……\n
+						                              　もう、私を好きなだけ………　犯しつづけて……ください……　わたしは……もう――」\w
+						                              \d%CALLNAME:TARGET%は一際大きく身を震わせると、そのまま脱力した…\d\w
+						                              \b催眠の力で性欲の捌け口として使われたまま、%CALLNAME:TARGET%の理性は焼き切られた！\b\w"
+						}
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"「あ……ぁ……♥　うぁ……ぁ……♥♥」\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠の力で従っていた時とは違い、%CALLNAME:TARGET%は心からの言葉で奉仕を願い出た……\d\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"「え……♥　えへへぇ……♥♥　わたし、貴方の孕み袋だから……♥♥」\w"
+						CALL KOJO_4_0_ADD_MESSAGE, @"「さあ続けましょう♥　今までよりもっと気持ちよくなってくださいね♥♥」\w"
+						CALL KOJO_4_0_PARAGRAPH_MESSAGE
+						
+						CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%の脳は無意識のうちに破壊され、性欲に忠実な一匹の雌へ堕とされた……\d\w"
+					ENDSELECT
+					
+				; 喪失中
+				ELSEIF CFLAG:29
+					{
+					CALL KOJO_4_0_ADD_MESSAGE, @"「うあ……ぁぁ……　もう……いや……　いやです……ぁ…ぁああ…っ！！\n
+					                              　もうムリです……　こんなのムリですっ……！！　いや、いやああああああ…………ッ！！」\w
+					                              \d%CALLNAME:TARGET%は一際大きく身を震わせると、そのまま脱力した……\d\w
+					                              \b限界を超えた痛みや恐怖によって、%CALLNAME:TARGET%の理性は完全に破壊された！\b\w"
+					}
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					{
+					CALL KOJO_4_0_ADD_MESSAGE, @"（わかりました……\n
+					                              　所詮メスなんて……オスを悦ばせるだけの存在なんですね……♥♥\n
+					                              　おちんぽ様に媚びて……孕まされるだけで……♥♥）\w"
+					}
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d優しい光を湛えた%CALLNAME:TARGET%の瞳が、暗く濁っていく……\d\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"（さようなら、今までのわたし……♥♥）\w"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「もう……♥　好きにして下さい……♥♥」\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d逆らわなければ痛い思いをしなくていい……\n%CALLNAME:TARGET%は抵抗の無意味さを悟り、性欲処理の便器として生きる幸せを受け入れた……\d\w"
+					
+				; 通常時
+				ELSE
+					{
+					CALL KOJO_4_0_ADD_MESSAGE, @"「もう……　もうだめです……　もう限界……　こんなの……！　ムリ、ですっ……！！\n
+					                              　あﾞ…あﾞぁぁぁっ！？　おがじぐなっぢゃぅっ！？　いやあﾞぁっっっ！　狂っちゃうっ！　狂っちゃ――」\w
+					                              \d%CALLNAME:TARGET%は一際大きく身を震わせると、そのまま脱力した……\d\w
+					                              \b気が狂うような快感に晒され続けた%CALLNAME:TARGET%の理性は、ついに焼ききれてしまった！\b\w"
+					}
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"「やっと、わかりました……ぁ♥♥\n　あ……ぁ……♥　おちんぽの奴隷になるのって……幸せなんですね………♥♥」\w"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「あははぁ……♥　わたしぃ……こわれちゃいましたぁ……♥　ヘンタイさんにされちゃいました……♥」\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d頭の芯まで性欲に支配された%CALLNAME:TARGET%は、涙と涎まみれの顔で淫らな笑みを浮かべている……\d\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"「あは……♥　おまんこセックス大好きぃ♥♥」\w"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「精液……♥　精液欲しいです……♥♥」\w"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「もう……　ガマンしません……♥」\w"
+					CALL KOJO_4_0_PARAGRAPH_MESSAGE
+					
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は尽きる事のない肉欲に飲み込まれた……\d\w"
+				ENDIF
+				
+				CFLAG:805 = 1
+				
+			; 理性度が300を割る(発情状態に)
+			ELSEIF CFLAG:800 > KOJO_4_0_MIND_BORDER_3 && (CFLAG:800 + MIND_VARY) <= KOJO_4_0_MIND_BORDER_3
+				; 催眠中
+				IF KOJO_4_0_IS_HYPNO()
+					; 催眠種類で分岐
+					SELECTCASE FLAG:526
+					; 拘束・肉体操作系
+					CASE 0
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b操られた身体で快感を得る度、%CALLNAME:TARGET%の理性は限界に近付いていく……\b\n"
+					; 発情・感情操作系
+					CASE 1
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b催眠の力が身体の隅々を冒し、強烈な肉の疼きが%CALLNAME:TARGET%を支配し始めた……\b\n"
+					; 無意識・認識操作系
+					CASE 2
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b%CALLNAME:TARGET%は肉便器として操られる喜びを感じ、打ち震えている……\b\n"
+					ENDSELECT
+				; 通常時
+				ELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"\b僅かに残る理性で、%CALLNAME:TARGET%は肉の疼きに耐えている……\b\n"
+				ENDIF
+			
+			; 理性度が500を割る(普通と発情)
+			ELSEIF CFLAG:800 > KOJO_4_0_MIND_BORDER_2 && (CFLAG:800 + MIND_VARY) <= KOJO_4_0_MIND_BORDER_2
+				; 催眠中
+				IF KOJO_4_0_IS_HYPNO()
+					; 催眠種類で分岐
+					SELECTCASE FLAG:526
+					; 拘束・肉体操作系
+					CASE 0
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b操られた身体で快感を得る%CALLNAME:TARGET%は、嫌悪感が薄れてきた事に気付き愕然とした……\b\n"
+					; 発情・感情操作系
+					CASE 1
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b催眠術の力がじわじわと身体を冒し、%CALLNAME:TARGET%の顔は発情した雌そのものになってきた……\b\n"
+					; 無意識・認識操作系
+					CASE 2
+						CALL KOJO_4_0_ADD_MESSAGE, @"\b催眠術で思考を操られた%CALLNAME:TARGET%は、性欲処理用の肉穴になれる事が本気で幸せだと感じ始めた……\b\n"
+					ENDSELECT
+				; 通常時
+				ELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"\b少しずつ蕩かされた%CALLNAME:TARGET%の理性は、無意識に快楽を受け入れ始めている……\b\n"
+				ENDIF
+				
+			; 理性度が1000を割る(普通状態に)
+			ELSEIF CFLAG:800 > KOJO_4_0_MIND_BORDER_1 && (CFLAG:800 + MIND_VARY) <= KOJO_4_0_MIND_BORDER_1
+				CALL KOJO_4_0_ADD_MESSAGE, @"\b%CALLNAME:TARGET%は何とか保っていた自信を失い、少しずつ恐怖を感じ始めた……\b\n"
+			ENDIF
+		ENDIF
+	ENDIF
+	
+	; 表示処理
+	; 口上ROOTとは別にこの関数内だけで完結している部分を先に表示する
+	CALL KOJO_4_0_PRINT_MESSAGE()
+	
+	; 特殊処理は終わったので通常のシステムメッセージが処理されるようスキップフラグを元に戻しておく
+	CALL KOJO_4_0_SET_TEXT_SKIP(0)
+RETURN 1
+
+
+; □ 口上が呼び出される前に行う追加処理
+@KOJO_4_0_BEFORE_SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; システムメッセージ処理前に、口上の特殊呼び出しをするのでスキップフラグをONにしておく
+	CALL KOJO_4_0_SET_TEXT_SKIP(1)
+	
+	; 暗示がとける(味方行動で解除) ※判定は戦闘中のみ
+	IF ARG:0 == 1 && GETBIT(CFLAG:900, 0) && !CFLAG:43 && TFLAG:13
+
+		; 特定のコマンド実行時は対象外とする
+		SELECTCASE ARG:1
+		; 44    : 諦める
+		; 45    : 何もしない
+		; 46    : 強制自慰
+		; 54-58 : 各種おねだり
+		CASE 44, 45, 46, 54, 55, 56, 57, 58
+			; 何もしない
+			
+		; 通常処理
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\g%CALLNAME:TARGET%にかかっていた暗示がとけた！\g\n"
+		
+			; 暗示フラグをOFF
+			CLEARBIT CFLAG:900, 0
+		ENDSELECT
+	ENDIF
+	
+	; 催眠がとける(ターン終了時に自動解除) ※判定は戦闘中のみ
+	; レッサーヒュプノの単体催眠用、本家ヒュプノの催眠は永続するので解けない
+	IF !CFLAG:43 && KOJO_4_0_PREV_CFLAG:43 && TFLAG:13
+		; 催眠コンフィグによって変化
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_4_0_ADD_MESSAGE, @"\g催眠が解除され、%CALLNAME:TARGET%の身体は自由を取り戻した！\g\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「あら？　私の身体で遊ぶのはもうおしまいですか…？」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「やっと、身体がちゃんと動くようになりましたか…」\n"
+			ENDSELECT
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_4_0_ADD_MESSAGE, @"\g催眠が解除され、%CALLNAME:TARGET%は正気を取り戻した！\g\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「えっちになる魔法がとけても何も変わりませんよ♥」\n"
+			CASE "発情"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「え、や、やだ…！？　わたし…何やってたの…！？」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「はっ…！？　わ、わたし…何を…！？」\n"
+			ENDSELECT
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"\g催眠が解除され、%CALLNAME:TARGET%は正常な思考を取り戻した！\g\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ふふっ♥　変な術を使わなくても孕み袋くらいやってあげますよ♥」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ぐっ…っ！　よくもヘンな事してくれましたねっ！！」\n"
+			ENDSELECT
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	ENDIF
+		
+	; 暗示時 地の文を追加
+	; 拘束・肉体操作系
+	IF GETBIT(CFLAG:900, 0) && !CFLAG:43 && FLAG:526 == 0 && ARG:0 >= 12 && ARG:0 <= 17
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d暗示にかかった%CALLNAME:TARGET%は、自由を奪われ思うように動くことができない！\d\n"
+	; 発情・感情操作系
+	ELSEIF GETBIT(CFLAG:900, 0) && !CFLAG:43 && FLAG:526 == 1 && ARG:0 >= 12 && ARG:0 <= 17
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d暗示にかかった%CALLNAME:TARGET%は、発情しきった雌の顔で触手を受け入れている…\d\n"
+	; 無意識・認識操作系
+	ELSEIF GETBIT(CFLAG:900, 0) && !CFLAG:43 && FLAG:526 == 2 && ARG:0 >= 12 && ARG:0 <= 17
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d暗示にかかった%CALLNAME:TARGET%は、呆けた顔でされるがままになっている…\d\n"
+	ENDIF
+	
+	; 催眠時 地の文を追加
+	; 催眠攻撃の命中時は、地の文を表示すると不自然なので表示しない
+	; 拘束・肉体操作系
+	IF CFLAG:43 && FLAG:526 == 0 && !(ARG:0 == 17 && ARG:1==22)
+		; 敵攻撃命中時
+		IF ARG:0 >= 12 && ARG:0 <= 17
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠にかかった%CALLNAME:TARGET%は、自由を奪われ思うように動くことができない！\d\n"
+		; 味方行動時
+		ELSEIF ARG:0 == 1 || ARG:0 == 118
+			SELECTCASE ARG:1
+			; 催眠時コマンド一覧
+			CASE 54, 55, 56, 57, 58, 71, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%の意識とは無関係に、催眠にかかった身体は操られるまま動いている…\d\n"
+			ENDSELECT
+		ENDIF
+	
+	; 発情・感情操作系
+	ELSEIF CFLAG:43 && FLAG:526 == 1 && !(ARG:0 == 17 && ARG:1==22)
+		; 敵攻撃命中時
+		IF ARG:0 >= 12 && ARG:0 <= 17
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠にかかった%CALLNAME:TARGET%は、発情しきった雌の顔で触手を受け入れている…\d\n"
+		; 味方行動時
+		ELSEIF ARG:0 == 1 || ARG:0 == 118
+			SELECTCASE ARG:1
+			; 催眠時コマンド一覧
+			CASE 54, 55, 56, 57, 58, 71, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠にかかった%CALLNAME:TARGET%は、発情しきった雌の顔で触手を見つめている…\d\n"
+			ENDSELECT
+		ENDIF
+	
+	; 無意識・認識操作系
+	ELSEIF CFLAG:43 && FLAG:526 == 2 && !(ARG:0 == 17 && ARG:1==22)
+		; 敵攻撃命中時
+		IF ARG:0 >= 12 && ARG:0 <= 17
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠の力で認識力を歪められ、%CALLNAME:TARGET%の思考・言動・行動全てがバラバラだ…\d\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠にかかった%CALLNAME:TARGET%の身体は、自分の意思を無視して動いている…\d\n"
+			CASE 2
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠にかかった%CALLNAME:TARGET%は、まともにモノを考えられなくなっている…\d\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠にかかった%CALLNAME:TARGET%は、自分を性欲処理用の肉便器だと思い込んでいる…\d\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d性欲処理用の肉便器に成り果てた%CALLNAME:TARGET%は、幸せそうな顔で快感を受け入れている…\d\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	
+	; 睡眠時にレイプされた場合 相手のNoを一時的に記憶する(絶頂時)
+	IF KOJO_4_0_GET_PREV_ARG(0) == 114 && ARG:0 == 120
+		FOR LCOUNT, 2, LIMIT(CHARANUM, 2, 49)
+			SIF CFLAG:(950 + LCOUNT) != CFLAG:(LCOUNT):5
+				CFLAG:951 = LCOUNT
+		NEXT
+		; 同意モードに入っている場合好感度が変動しないので苦し紛れ(PTメンバーのみ判定)
+		IF CFLAG:951 == 0
+			SIF CFLAG:(FLAG:10):5 >= 800 && GET_PENIS(FLAG:10)
+				CFLAG:951 = FLAG:10
+			SIF CFLAG:(FLAG:11):5 >= 800 && GET_PENIS(FLAG:11)
+				CFLAG:951 = FLAG:11
+			;(PTメンバー両方が条件を満たすか、PTメンバー外からのレイプだとどうしようもない)
+		ENDIF
+		; CFLAG:951 == 0 ならレイプ犯不明(変数上限を超えた)
+	ENDIF
+	
+	; 表示処理
+	; 口上ROOTとは別にこの関数内だけで完結している部分を先に表示する
+	CALL KOJO_4_0_PRINT_MESSAGE()
+	
+	; 特殊処理は終わったので通常のシステムメッセージが処理されるようスキップフラグを元に戻しておく
+	CALL KOJO_4_0_SET_TEXT_SKIP(0)
+RETURN 1
+
+
+; □ 口上表示 + パラメータ変動
+@KOJO_4_0_SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 標準関数名の口上を呼び出す
+	CALL KOJO_4_0_DEPLOY_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, "KOJO_4_0_SYSTEM_MESSAGE_")
+	
+	; 各種変数・パラメータ変動
+	SELECTCASE ARG:0
+
+	; 敵の性攻撃(発動時)
+	CASE 4
+		SELECTCASE ARG:1
+			; 催眠系攻撃時 暗示フラグON
+			CASE 379, 380, 381, 382, 383, 384, 385, 386, 679, 680, 681, 682, 683
+			SETBIT CFLAG:900, 0
+		ENDSELECT
+	
+	; 敵の拘束攻撃(発動時)
+	CASE 5
+		SELECTCASE ARG:1
+			; 催眠系攻撃時 暗示フラグON
+			CASE 542, 543
+			SETBIT CFLAG:900, 0
+		ENDSELECT
+		
+	; 敵の衣服攻撃(命中)
+	CASE 13
+		; 戦闘中 受性攻撃回数カウント(裸の場合のみ)
+		SIF BASE:CP <= 0
+			KOJO_4_0_SEXUAL_ASSAULT_COUNT:(ARG:2)++
+		
+	; 敵の性攻撃(命中)
+	CASE 14
+		; 戦闘中 受性攻撃回数カウント
+		KOJO_4_0_SEXUAL_ASSAULT_COUNT:(ARG:2)++
+		
+	; 敵の寄生攻撃(命中)
+	CASE 16
+		; 戦闘中 受性攻撃回数カウント(V固定)
+		KOJO_4_0_SEXUAL_ASSAULT_COUNT:3++
+		; 膣内射精カウント
+		KOJO_4_0_CREAMPIE_COUNT++
+		
+	; 敵のその他攻撃(命中)
+	CASE 17
+		SELECTCASE ARG:1
+		; 敵の自慰誘発行動
+		CASE 16, 20
+			; 寸止めインクリメント
+			CFLAG:820++
+		ENDSELECT
+		
+	; 重度汚染部屋で時間経過
+	CASE 47
+		; 戦闘中 受性攻撃回数カウント
+		KOJO_4_0_SEXUAL_ASSAULT_COUNT:(ARG:1)++
+		
+	; 戦闘開始時
+	CASE 54
+		; 捕食中のまま戦闘に入った場合、フラグを保持する
+		SIF CFLAG:20
+			KOJO_4_0_TEMP_FLAG:0 = 1
+		
+	; 迷宮内で他のキャラと会った
+	CASE 101
+		[IF_DEBUG]
+			SETCOLOR 0x444444
+			PRINTFORML %ARGS:1%との遭遇回数:{KOJO_4_0_GET_ENCOUNTER_COUNT(ARG:1)}
+			RESETCOLOR
+		[ENDIF]
+	
+		; 遭遇回数保存
+		CALL KOJO_4_0_SAVE_ENCOUNTER_COUNT(ARG:1)
+
+	; 探索でアイテムを見つけた
+	CASE 113
+		[IF_DEBUG]
+			SETCOLOR 0x444444
+			PRINTFORML %ITEMNAME:(ARG:1)%の取得回数:{KOJO_4_0_GET_ITEMGET_COUNT(ARG:1)}
+			RESETCOLOR
+		[ENDIF]
+		
+		; アイテムの発見個数を保存
+		CALL KOJO_4_0_SAVE_ITEMGET_COUNT(ARG:1)
+		
+	; 睡眠開始
+	CASE 114
+		; 誰かにレイプされるかもしれない、ずん子は全員の好感度をしっかりと覚える
+		FOR LCOUNT:0, 2, LIMIT(CHARANUM, 2, 49)
+			CFLAG:(950 + LCOUNT:0) = CFLAG:(LCOUNT:0):5
+		NEXT
+	
+	; 自慰で絶頂失敗
+	CASE 119
+		; 寸止めカウンタインクリメント
+		CFLAG:820++
+	
+	; 絶頂の瞬間
+	CASE 120
+		
+		; 寸止めカウントリセット
+		CFLAG:820 = 0
+			
+		; 部位絶頂カウント
+		KOJO_4_0_ORGASM_COUNT:(ARG:1)++
+
+	; 捕食された
+	CASE 152
+		; バカは死ななきゃ治らない、つまり死んだら治るんです(死亡→復活時に理性度をリセットするフラグ)]
+		; りばーす触手宮では動作しないようにする
+		SIF (CFLAG:800 < KOJO_4_0_MIND_DEFAULT) && !KOJO_4_0_IS_REVERSE()
+			CFLAG:800 = __INT_MAX__
+	
+	; ゲーム開始時
+	CASE 159
+		; 理性度初期化
+		CALL KOJO_4_0_MIND_INIT()
+		
+	; ランダムイベント発生
+	CASE 200
+		SELECTCASE ARG:1
+		; 結婚式場
+		CASE 179
+			; 結婚式中は身体を捧げた扱いとする
+			SIF ARG:2 == 1
+				KOJO_4_0_TEMP_FLAG:1 = 1
+		ENDSELECT
+			
+	; 触手が服に擬態
+	CASE 440
+		SELECTCASE ARG:1
+		; 触手が服に擬態
+		CASE 0
+			; 触手スーツ経験フラグON
+			SETBIT CFLAG:900, 2
+		ENDSELECT
+		
+	; ペット関連
+	CASE 514
+		SELECTCASE ARG:1
+		CASE 0, 1
+			; ペットによるレイプ、又はペットに身体を捧げた
+			KOJO_4_0_TEMP_FLAG:1 = 1
+		ENDSELECT
+		
+	ENDSELECT
+RETURN RESULT
+
+; □ 口上表示率の制御
+@KOJO_4_0_TALK_PERCENT(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#FUNCTION
+
+	; りばーす東方触手宮は特別扱い
+	; 戦闘以外の口上表示回数が少ないので、常に喋るよう設定
+	SIF KOJO_4_0_IS_REVERSE()
+		RETURNF 100
+		
+	SELECTCASE ARG:0
+		
+	; 部屋を移動(突撃)
+	CASE 132
+		; 喋る確率はTP依存(最低でも10%は保証)
+		RETURNF LIMIT((BASE:4 / 2), 100, 100)
+		
+	; 部屋を移動(慎重)
+	CASE 133
+		; 喋る確率はTP依存(最低でも10%は保証)
+		RETURNF LIMIT((BASE:4 / 2), 100, 100)
+		
+	; 部屋を移動(待ちぶせ)
+	CASE 134
+		; 喋る確率はTP依存(最低でも10%は保証)
+		RETURNF LIMIT((BASE:4 / 2), 100, 100)
+	
+	; MAP表示時
+	CASE 160
+		; ゲーム開始直後だけ特別扱いで100%
+		IF DAY:0 == 1 && TIME:0 == 0
+			RETURNF 100
+		; 通常時
+		ELSE
+			; 喋る確率はTP依存(最低でも10%は保証)
+			RETURNF LIMIT((BASE:4 / 2), 100, 100)
+		ENDIF
+		
+	; 触手包帯
+	CASE 508
+		SELECTCASE ARG:1
+		; B責め
+		CASE 1
+			; 頻繁に同じ事を喋ってしまうので25%程度に低減
+			RETURNF 25
+		CASEELSE
+			RETURNF 100
+		ENDSELECT
+		
+	CASEELSE
+		RETURNF 100
+	ENDSELECT
+RETURNF 0
+
+; □ 表示処理
+@KOJO_4_0_PRINT_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM  LCOUNT, 2                                                  ; ループ用
+#DIM  FIND_ARRAY_COUNT, VARSIZE("KOJO_4_0_STOCK_MESSAGE_ARRAY") ; ストック別適合数
+#DIM  FIND_ARRAY_COUNT_MIN
+#DIMS RESOLUTION_TEXT                                            ; 確定した口上
+#DIM  KOJO_RAND_NUM
+#DIM  KOJO_PROBABILITY
+#DIM  TEMP_REDRAW
+#DIMS DEBUG_TEXT
+
+
+	; 初期化
+	VARSET FIND_ARRAY_COUNT
+		
+	; 一時口上ストック確認
+	; 何かしらの文字列が入っていれば口上に追加しておく
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; デバッグモード専用 登録口上一覧確認
+	[IF_DEBUG]
+		IF KOJO_4_0_SHOW_REGIST_MESSAGE()
+			CURRENTREDRAW
+			TEMP_REDRAW = RESULT
+			REDRAW 0
+			FOR LCOUNT:0, 0, KOJO_4_0_STOCK_MESSAGE_COUNT
+				DEBUG_TEXT = %KOJO_4_0_STOCK_MESSAGE_ARRAY:(LCOUNT:0)%
+				SETCOLOR 0x333355
+				REPLACE DEBUG_TEXT, "\n", "n"
+				PRINTFORML 口上登録：%RESULTS%
+				RESETCOLOR
+			NEXT
+			REDRAW TEMP_REDRAW
+		ENDIF
+	[ENDIF]
+	
+	; 口上非表示処理 地の文だけ表示してストックを空にして帰る
+	; 口上表示率確認 一定数以下、口上ストックが空
+	IF !(RAND:100 <= KOJO_4_0_TALK_PERCENT(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)) || KOJO_4_0_STOCK_MESSAGE_COUNT == 0
+		CALL KOJO_4_0_PRINT_SYSTEM_MESSAGE()
+		CALL KOJO_4_0_CLEAR_MESSAGE
+		RETURN 0
+	ENDIF
+	
+	; 過去ログとストック口上を比較、過去に表示された口上の数をカウント
+	; ただし、登録口上が多い場合(大抵はランダム文節結合での肥大化)はカウントしない
+	; 似たような口上なので、読む方が気にしないだろうと言う事と処理高速化の為
+	IF KOJO_4_0_STOCK_MESSAGE_COUNT <= 80
+		FOR LCOUNT:0, 0, VARSIZE("KOJO_4_0_MESSAGE_LOG")
+			FOR LCOUNT:1, 0, KOJO_4_0_STOCK_MESSAGE_COUNT
+				SIF KOJO_4_0_STOCK_MESSAGE_ARRAY:(LCOUNT:1) == KOJO_4_0_MESSAGE_LOG:(LCOUNT:0)
+					FIND_ARRAY_COUNT:(LCOUNT:1)++
+			NEXT
+		NEXT
+		
+		; 過去ログ表示回数の最小値を算出
+		; 後続のランダム選出で処理を軽減するため、登録口上から最小値分を引いておく
+		; (※全ての口上が2回表示されているなら、4回表示の口上は2回、2回表示の口上は0回の扱いとする)
+		FIND_ARRAY_COUNT_MIN = __INT_MAX__
+		FOR LCOUNT:0, 0, KOJO_4_0_STOCK_MESSAGE_COUNT
+			SIF FIND_ARRAY_COUNT_MIN > FIND_ARRAY_COUNT:(LCOUNT:0)
+				FIND_ARRAY_COUNT_MIN = FIND_ARRAY_COUNT:(LCOUNT:0)
+			SIF FIND_ARRAY_COUNT_MIN == 0
+				BREAK
+		NEXT
+		IF FIND_ARRAY_COUNT_MIN != 0
+			FOR LCOUNT:0, 0, KOJO_4_0_STOCK_MESSAGE_COUNT
+				FIND_ARRAY_COUNT:(LCOUNT:0) -= FIND_ARRAY_COUNT_MIN
+			NEXT
+		ENDIF
+	ENDIF
+
+	; 口上ランダム選出
+	WHILE 1
+		KOJO_RAND_NUM = RAND:KOJO_4_0_STOCK_MESSAGE_COUNT
+		; 一度も表示されていない口上、もしくは登録口上が1種類しかないので確定
+		IF FIND_ARRAY_COUNT:KOJO_RAND_NUM == 0 || KOJO_4_0_STOCK_MESSAGE_COUNT == 1
+			RESOLUTION_TEXT = %KOJO_4_0_STOCK_MESSAGE_ARRAY:(KOJO_RAND_NUM)%
+			BREAK
+			
+		; ログに残っている物と同一の口上は発生確率を下げる
+		ELSE
+			VARSET KOJO_PROBABILITY
+			FOR LCOUNT:0, 0, (FIND_ARRAY_COUNT:KOJO_RAND_NUM + 1)
+				KOJO_PROBABILITY += RAND:(FIND_ARRAY_COUNT:KOJO_RAND_NUM + 2)
+			NEXT
+			IF RAND:(KOJO_PROBABILITY + 1) == 0
+				RESOLUTION_TEXT = %KOJO_4_0_STOCK_MESSAGE_ARRAY:(KOJO_RAND_NUM)%
+				BREAK
+			ENDIF
+		ENDIF
+	WEND
+	
+	ARRAYSHIFT KOJO_4_0_MESSAGE_LOG, 1, ""
+	KOJO_4_0_MESSAGE_LOG:0 = %RESOLUTION_TEXT%
+
+	; メッセージ表示処理
+	CURRENTREDRAW
+	TEMP_REDRAW = RESULT
+	REDRAW 0
+	CALL KOJO_4_0_PRINT_ESCAPE(RESOLUTION_TEXT)
+	REDRAW TEMP_REDRAW
+	
+	RESETCOLOR
+
+	; メッセージ表示関連変数初期化
+	; KOJO_4_0_PRINT_MESSAGEが複数回呼び出された場合、同じメッセージを二重表示してしまうので
+	; それを避ける為、表示済のメッセージは消去する
+	CALL KOJO_4_0_CLEAR_MESSAGE
+RETURN 1
+
+; □ 終了処理
+@KOJO_4_0_CLEANUP(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+
+	; 口上が呼び出さされた最終日時を保存する
+	CFLAG:830	= DAY
+	CFLAG:831	= TIME:0
+	
+	; 仲間1, 2のNoを保持する
+	KOJO_4_0_PARTY_NO:1	= FLAG:10
+	KOJO_4_0_PARTY_NO:2	= FLAG:11
+	
+	; BASE値保持
+	FOR LCOUNT, 0, VARSIZE("KOJO_4_0_PREV_BASE")
+		KOJO_4_0_PREV_BASE:LCOUNT = BASE:LCOUNT
+	NEXT
+	
+	; FLAG値保存
+	FOR LCOUNT, 0, VARSIZE("KOJO_4_0_PREV_FLAG")
+		KOJO_4_0_PREV_FLAG:LCOUNT = FLAG:LCOUNT
+	NEXT
+	
+	; CFLAG値保存
+	FOR LCOUNT, 0, VARSIZE("KOJO_4_0_PREV_CFLAG")
+		KOJO_4_0_PREV_CFLAG:LCOUNT = CFLAG:LCOUNT
+	NEXT
+	
+	; TALENT値保存
+	FOR LCOUNT, 0, VARSIZE("KOJO_4_0_PREV_TALENT")
+		KOJO_4_0_PREV_TALENT:LCOUNT = TALENT:LCOUNT
+	NEXT
+RETURN 1
+

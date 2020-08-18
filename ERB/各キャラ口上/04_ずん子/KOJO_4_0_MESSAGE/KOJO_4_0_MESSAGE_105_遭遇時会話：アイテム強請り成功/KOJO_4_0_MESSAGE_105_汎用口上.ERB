@@ -1,0 +1,41 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 105 遭遇時会話：アイテム強請り成功 - 汎用口上
+; ------------------------------------------------------------------------------
+
+; □ 0 通常交渉
+@KOJO_4_0_SYSTEM_MESSAGE_105_X_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ、ありがとうございます……　本当に助かりました……」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ふふっ、助かりました」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（本当に貰えるとは思いませんでした）\n"
+	ENDSELECT
+	
+	; 非睡眠 & 非発情 & 非喪失 & 裸 の条件が揃うと地の文が変化する
+	; 対応追加口上
+	IF !CFLAG:25 && !CFLAG:28 && !CFLAG:29 && BASE:CP <= 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（し、視線が気になりますね……仕方ないとは思いますが）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「え、えっと…あまり、見ないでいただけると助かります……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失キャラから強奪
+@KOJO_4_0_SYSTEM_MESSAGE_105_X_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お礼に魔物さんを呼んであげても良いかもしれません……っ♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（今は…生き残る事を……　最優先に……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ごめんなさい……　後で、ちゃんと返すので……」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…ごめん、なさい」\n"
+	ENDSELECT
+RETURN 1

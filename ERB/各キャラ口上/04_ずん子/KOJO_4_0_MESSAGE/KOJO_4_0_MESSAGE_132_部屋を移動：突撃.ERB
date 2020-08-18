@@ -1,0 +1,42 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 132 部屋を移動：突撃
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_132(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（意識を正面に…身体の火照りは意識の外に……！）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いきます！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「時には勢い任せも大事です！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ずんだー！」\n"
+	ENDSELECT
+	
+	; 移動前部屋の汚染度で追加口上
+	; 清浄
+	IF FLAG:(50 + FLAG:5) < 10
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「次の部屋は綺麗でしょうか…？」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSEIF FLAG:(50 + FLAG:5) < 40
+		
+	; 軽度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 70
+		
+	; 中度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 100
+		
+	; 重度汚染
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「早く、もっときれいな場所に…！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「次は綺麗な部屋だと良いのですが」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

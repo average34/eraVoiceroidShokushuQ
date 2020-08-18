@@ -1,0 +1,65 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0979 女性触手 キス強
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_979(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+	
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（は、激しい…♥　キスだけでイカせる気ですね…♥）\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（えっちなキスっ……　抵抗、出来ませんっ……）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（離れないといけないのに、力が入りません……）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"（女の子同士でっ、こんな激しいキスされるなんて…！）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（舌いれないでっ！　離してくださいっ！　わたしの口がっ……変に…！）\n"
+	ENDSELECT
+	
+	; キス魔所持なら追加口上
+	IF TALENT:79
+		; 通常時
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「じゅるっ♥　にゅぷ♥　くぷぷっ♥　もっと…♥　んんんっ♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（キスっ♥　いやらしいキス、もっとくださいっ♥）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（こんな事したらダメなのに、わたし自分から……っ）\n"
+		ENDSELECT
+	ENDIF
+	
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

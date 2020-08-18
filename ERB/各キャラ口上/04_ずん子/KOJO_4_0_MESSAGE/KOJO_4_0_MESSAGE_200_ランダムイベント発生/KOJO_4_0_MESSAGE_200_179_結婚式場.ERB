@@ -1,0 +1,86 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 179 結婚式場
+; ------------------------------------------------------------------------------
+
+; □ 2 触手服ウェディングドレス授与
+@KOJO_4_0_SYSTEM_MESSAGE_200_179_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「こっ、この服は……　まさか……」\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　わたし、また結婚式挙げるんですね…っ♥♥」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 誓いの公開レイプ
+@KOJO_4_0_SYSTEM_MESSAGE_200_179_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（…これは…結婚式、ですよね？　わたし、ご主人様と…結婚、しちゃうの…？）\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（結婚、式…っ♥　あぁ…っ♥♥　また%PETNAME%様に、滅茶苦茶に犯して貰える…っ♥♥）\n"
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 今のところ結婚宣言は二度目以降も共用
+	{
+		CALL KOJO_4_0_ADD_MESSAGE, @"
+			\d触手ドレスに全身を愛撫され、%CALLNAME:TARGET%は蕩けた声をあげたまま結婚の誓いを口にしはじめた\d\n
+			「あそこも…っ♥　お尻の穴も、おっぱいも、\@GET_PENIS(TARGET) ? おちんちん # クリトリス\@も…っ♥　きもちいい所すべて、%PETNAME%様のものです♥♥\n
+			　いかなる時でも、%PETNAME%様の性欲を満たす為の専用肉便器としてっ♥\n
+			　わたしっ…！　%CALLNAME:TARGET%はっ♥　生涯、%PETNAME%様を愛し続ける事を誓います…っ…♥♥」\n
+			\d宣言を終えると、%CALLNAME:TARGET%は%PETNAME%の性器に誓いの口づけをした\d\n
+		"
+	}
+
+RETURN 1
+
+
+; □ 8 無視して離れた
+@KOJO_4_0_SYSTEM_MESSAGE_200_179_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ご主人様、そっちに、何かあるんですか…？」\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あ…♥　わたし、ここで結婚式挙げたのですね…♥」\n"
+		ENDSELECT
+		
+	; ペット系素質未所持(ずん子以外の誰かがペット所持)
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そっちはダメです！　嫌な……嫌な気配しかしないんです……っ！」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

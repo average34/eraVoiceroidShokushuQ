@@ -1,0 +1,589 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 16 敵の寄生攻撃 (命中)
+; ------------------------------------------------------------------------------
+
+; □ 追加地の文(前)
+@KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIMS PARTS
+
+	; 防御部位名称 保持
+	SELECTCASE CFLAG:50
+	CASE 50
+		PARTS = 尻
+	CASE 51
+		PARTS = 胸
+	CASE 52
+		PARTS = \@GET_PENIS(TARGET) ? 陰茎 # クリトリス\@
+	CASE 53
+		PARTS = 膣
+	ENDSELECT
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; メイン性属性によって分岐
+	; 妊娠攻撃が発生するのはVのみ
+	SELECTCASE TFLAG:63
+	; A
+	CASE 0
+		; 行動コマンドによって分岐
+		SELECTCASE CFLAG:50
+		; 防御 or 尻を守る
+		CASE 1, 50
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d必死に身を守る%CALLNAME:TARGET%を無視して、%ARGS:1%は尻穴を蹂躙している…\d\n"
+			
+		; 見当違いの所を防御
+		CASE 51, 52, 53
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ！だ、だめ…っ！！」\n"
+			ENDSELECT
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%PARTS%を守る%CALLNAME:TARGET%を横目に、%ARGS:1%は無防備な尻穴を蹂躙している…\d\n"
+		ENDSELECT
+		
+	; B
+	CASE 1
+		; 行動コマンドによって分岐
+		SELECTCASE CFLAG:50
+		; 防御 or 胸を守る
+		CASE 1, 51
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d必死に身を守る%CALLNAME:TARGET%を無視して、%ARGS:1%は胸を蹂躙している…\d\n"
+			
+		; 見当違いの所を防御
+		CASE 50, 52, 53
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ！だ、だめ…っ！！」\n"
+			ENDSELECT
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%PARTS%を守る%CALLNAME:TARGET%を横目に、%ARGS:1%は無防備な胸を蹂躙している…\d\n"
+		ENDSELECT
+		
+	; C
+	CASE 2
+		; C寄生はペニス所持時のみ発生するが
+		; 将来的にクリ寄生とか出てくる可能性は残っているので一応両対応とする
+		
+		; 行動コマンドによって分岐
+		SELECTCASE CFLAG:50
+		; 防御 or クリ・ペニスを守る
+		CASE 1, 52
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d必死に身を守る%CALLNAME:TARGET%を無視して、%ARGS:1%は\@GET_PENIS(TARGET) ? ペニス # クリトリス\@を蹂躙している…\d\n"
+			
+		; 見当違いの所を防御
+		CASE 50, 51, 53
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ！だ、だめ…っ！！」\n"
+			ENDSELECT
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%PARTS%を守る%CALLNAME:TARGET%を横目に、%ARGS:1%は無防備な\@GET_PENIS(TARGET) ? ペニス # クリトリス\@を蹂躙している…\d\n"
+		ENDSELECT
+		
+	; V
+	CASE 3
+		; 行動コマンドによって分岐
+		SELECTCASE CFLAG:50
+		; 防御 or 性交を防ぐ
+		CASE 1, 53
+			; 寄生攻撃
+			IF ARG:2 == 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d必死に身を守る%CALLNAME:TARGET%を無視して、%ARGS:1%は膣内を蹂躙している…\d\n"
+			; 妊娠攻撃
+			ELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d必死に身を守る%CALLNAME:TARGET%を無視して、%ARGS:1%は膣内射精を繰り返している…\d\n"
+			ENDIF
+			
+		; 見当違いの所を防御
+		CASE 50, 51, 52
+			SELECTCASE KOJO_4_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「そっちはダメぇ…っ！！」\n"
+			ENDSELECT
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+			; 寄生攻撃
+			IF ARG:2 == 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d%PARTS%を守る%CALLNAME:TARGET%を横目に、%ARGS:1%は無防備な膣を蹂躙している…\d\n"
+			; 妊娠攻撃
+			ELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d%PARTS%を守る%CALLNAME:TARGET%を横目に、%ARGS:1%は無防備な膣への射精を続けている…\d\n"
+			ENDIF
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+RETURN 1
+
+; □ 汎用口上
+; ◆ 汎用口上
+@KOJO_4_0_SYSTEM_MESSAGE_16(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; ARG分岐が出来ないので汎用口上から分岐口上を呼び出す
+	; 寄生攻撃
+	IF !ARG:2
+		CALL KOJO_4_0_SYSTEM_MESSAGE_16_NORMAL_PARASITE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 妊娠攻撃
+	ELSE
+		CALL KOJO_4_0_SYSTEM_MESSAGE_16_NORMAL_PREGNANCY(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE")
+	
+	; 睡眠
+	IF CFLAG:25
+		CALL KOJO_4_0_ADD_MESSAGE, @"「すぅ……　すぅ……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ん……　ぁ……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「うぁ……　ぁぅ…ん……。」\n"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		
+		; 追加地の文
+		; 寄生
+		IF !ARG:2
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d膣内に異物を注ぎ込まれたにもかかわらず、%CALLNAME:TARGET%はぐっすりと眠り続けている…\d\n"
+		; 妊娠
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d執拗な膣内射精にもかかわらず、%CALLNAME:TARGET%はぐっすりと眠り続けている…\d\n"
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	; 喪失
+	IF CFLAG:29
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（何だかあたたかい……）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ん……く…ぅうっっ…！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あっ…！　うぅ…っ！」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 諦めた
+	IF TFLAG:16 == 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたし…　魔物の赤ちゃん孕んじゃいました…♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ふふっ♥　私のおなか、いっぱいです♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「んっ…♥　わたしのおなかの中、もっともっと使ってください……♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「魔物の子供…なんて…　産みたくない…のに…」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おまんこの奥深くまで…　挿れさせて…貰います……ね…！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「お腹のナカ…　いっぱい…」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃぁっ♥　すごい…です…♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「私の子宮　精液でいっぱいにされちゃう…♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（どぷんっどぷんって…　奥の奥までまでたくさん、流し込まれてます…♥）\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いや…っ！　う、うそです…っ！？　私のナカにっ！？　いやっ♥　いやあああああぁぁっ♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「な、何をするんですか…っ！？　離れて下さいっ！!」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「っ！、放して！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…このベタベタする液体、もしかして…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「最悪、ですね…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あぐっ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もうやめて…っ！　壊れるっ！　こわれてしまいますっ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…あ…！　お腹の中が…　あつい…っ！！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 汎用口上
+; ◆ 寄生口上
+@KOJO_4_0_SYSTEM_MESSAGE_16_NORMAL_PARASITE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め時
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「かわいい子供だと…　いいな…」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 寄生時はV攻撃とは限らないので注意
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「せっかく産み付けるのなら、私にも気持ちよくさせてくださいね」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ！？　なにかっ、なにかが私の中にっ！？　抜いてっ！　抜いてくださいっっっ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「わたしのお腹になにをっ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ナカにっ！？　ナカになにかが出されてますっ！！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 汎用口上
+; ◆ 妊娠口上
+@KOJO_4_0_SYSTEM_MESSAGE_16_NORMAL_PREGNANCY(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め時
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「…わたしの子宮は…　触手専用苗床です…から…　いっぱい膣内射精して…くれると…　うれしい、です…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「触手様の子を孕ませて貰える…　わたしは、幸せ者です…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたしのメス穴で…　たくさん…　性欲処理してください…」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　私のおまんこ、ぐちゃぐちゃにされちゃった…♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もっと♥　もっとわたしの子宮を弄んでください♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こんなに射精されたら、触手の赤ちゃん出来ちゃいますよっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んっ♥　全部飲みますから♥　そのままナカに注ぎ込んでくださいっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いいですっ♥　もっともっと…射精しながら、ぐちゃぐちゃにかき混ぜてください…♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（いや…っ…　拡張されてっ…　だされてるっ！？　精液注ぎ込まれてるっ！？）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「しきゅう…まで…届いてぇ…っ　あたま…なかが…白く…なって……っ……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（だめぇ…　だめなはずなのにっ…！　ナカに射精されて…　どうして‥‥気持ちよく…っ…！？）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お腹の中…ぁ…　ピストンしない…　でっ…♪　ひぐ…ぁっ♪　ぉぁあっ…♪　もうださない…で…っ♪」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうして…わたしっ…　腰、うごかしてるの…♪　とめないと…♪　とめなきゃいけないのに…♪」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「精液だめ♥　精液はだめええぇっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「うあぁ……っ♥　いやっ♥　いやぁぁっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「出てる…ぅ…　しゃせぇ…しながらぁ…　ずぽずぽ…してる…ぅ……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いやぁ……っ……　子作りなんてしたくない……のにぃ……っ……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「出さないでぇっ、もう出さないでくださいっ……　わたし、おかしくなっちゃいますっ……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（中に出されて、わたしの身体……悦んでるっ　何でこんなになっちゃってるのぉ……）\n"
+		; 妊娠していない(寄生含む)なら追加口上
+		IF !(CFLAG:22 || CFLAG:36)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だっ……っ♥　だめぇぇ……っ♥　妊娠っ、妊娠しちゃうぅっ♥」\n"
+		ENDIF
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d膣内射精される度、発情しきった%CALLNAME:TARGET%の声は甘く蕩けていく…\d\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d子宮に精液を流し込まれる度、雌の本能が%CALLNAME:TARGET%の思考を蝕んでいく…\d\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d発情した%CALLNAME:TARGET%の身体は勝手に快楽を求め、精液を吐き出す男性器に子宮口を押しつけている…\d\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d子宮に精液が注がれる度、%CALLNAME:TARGET%の口からだらしない嬌声が漏れ出ている…\d\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%の下半身は動物の本能に負け、精液を注ぎ込む男性器をしっかりとくわえ込んでいる…\d\n"
+
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ナカで…びくびくしてるっ　射精てる…　射精されてる…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「膣内っ！？　膣内はダメえぇっ！　抜いてっ！　抜いてくださいいぃっ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「すごい…精液の量…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ウソ…でしょ！？　こんな濃いのが…わたしのナカに…っ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「うぐ…っ…　多すぎです、この化け物っ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「うあぁ…ぁっ　もう…射精さないでください…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「いやぁ……　妊娠…いやなんです………」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もう…　膣内に射精すの…　やめてください…」\n"
+	ENDSELECT
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; 真の処女なら追加口上
+	IF TALENT:0 == 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（処女なのにっ♥　わたしまだ処女なのにっ♥　射精されてお腹の奧、疼いてるぅ……っ♥♥）\n"
+		CASE "強気"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やめてください……ぁっ！　射精だめ……ですっ！　処女のまま、赤ちゃんが出来てしまいます……っ！！」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（この触手、わたしを孕ませる気……！？　処女のまま、お母さんにされちゃうの……っ！？）\n"
+		ENDSELECT
+	ENDIF
+	
+	; 経産婦ならちょこっと追加
+	IF EXP:22 > 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「この私が何回も妊娠されるなんて♥\n　子宮がすっごい疼いちゃうぅ♥♥　だからほら、もっとナカに射精してください♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　またぁっ♥　また妊娠しちゃいますうっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「いやああぁぁぁ！！　妊娠いやああぁっ！！　もう孕ませないでえええぇぇっ！！」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	; ペット関連 追加口上
+	; ペットに身体を捧げている
+	IF KOJO_4_0_TEMP_FLAG:1
+		; ペット系素質所持時
+		IF TALENT:140
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ああぁ……♥　ご主人様の精液、染みこんできます……♥♥」\n"
+		ENDIF
+		
+		; [ペット]所持時
+		IF TALENT:140 == 1
+			
+		; [花嫁]所持時
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「旦那様の子供を孕むのは、奥さんのお仕事ですよね♥♥」\n"
+			
+		; [しもべ]所持時
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ご主人様の精液なら、いつでも大歓迎です♥♥」\n"
+		ENDIF
+	
+	; ペット以外に身体を弄られている
+	ELSE
+		; ペット系素質所持時
+		IF TALENT:140
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたしを好きにしていいのはご主人様だけ、です……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やっ、いやぁ……　%PETNAME%様以外の精液が、わたしの中に……」\n"
+		ENDIF
+		
+		; [ペット]所持時
+		IF TALENT:140 == 1
+			
+		; [花嫁]所持時
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたし結婚してるんですよ……ぁ……　中に射精していいのは、旦那様だけなのに……」\n"
+			
+		; [しもべ]所持時
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたしに中出しするなら、ご主人様の許可を、取ってください……」\n"
+		ENDIF
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+	
+	
+	; 精液量100%以上なら追加口上
+	IF (CFLAG:60 + CFLAG:401) >= 100
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「私の子宮が♥　精液でたぷたぷにされちゃってますぅ♥」\n"
+			; 妊娠中(寄生含む)なら追加口上
+			IF CFLAG:22 || CFLAG:36
+				CALL KOJO_4_0_ADD_MESSAGE, @"「もう赤ちゃん孕まされてるんですよっ♥　私のお腹が膨らんだままになっちゃいます♥♥」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　そんなにどぷどぷしたらぁ♥　お腹の中の子が精液中毒になっちゃいます♥♥」\n"
+			ENDIF
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（子宮がっ♥　精液を貪欲に飲み込んでるっ♥　だめっ♥　私の心の底まで幸せだと勘違いしちゃうっ♥♥）\n"
+			; 妊娠していない(寄生含む)なら追加口上
+			IF !(CFLAG:22 || CFLAG:36)
+				CALL KOJO_4_0_ADD_MESSAGE, @"「妊娠っ♥　こんなの絶対妊娠しちゃうぅっ♥♥」\n"
+			ENDIF
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d限界を超えた膣内射精で理性が崩れ去り、%CALLNAME:TARGET%は種付けされる雌の幸せに酔っている…\d\n"
+		
+		CASE "強気"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「子宮がパンパンで……　もう…はいりま…せん……」\n"
+			; 妊娠していない(寄生含む)なら追加口上
+			IF !(CFLAG:22 || CFLAG:36)
+				CALL KOJO_4_0_ADD_MESSAGE, @"（うぅ……！　何が何でも孕ませる気なんですね……！）\n"
+			ENDIF
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d許容量を超えた膣内射精で、不様に膨らんだ腹を%CALLNAME:TARGET%は屈辱的な顔で睨んでいる…\d\n"
+			
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「い、いつまで射精するんですか！　もう溢れてるの見えてないんですか！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もうはいらないんです…　射精…しないでください…っ……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もぉお…ぅぅっ射…精…だ…めです…！　破…っ！裂…っしちゃぁあ…う…ぅ……」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d許容量を超えた膣内射精で、不様に膨らんだ腹を%CALLNAME:TARGET%は絶望的な顔で眺めている…\d\n"
+			
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+
+; □ 攻撃種類別
+; ◆ 0837 ドッペルゲンガー 特殊妊娠
+@KOJO_4_0_SYSTEM_MESSAGE_16_837(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 攻撃キャラが自分の娘
+	; 現在攻撃を行っている敵を把握する為の情報はないので敵の名前で判別する
+	; "CALLNAME:TARGET + の娘" なら自分の娘として扱う
+	; 他のキャラに同名の名前を付けられると判別が不可能になるけれど、そうそう無い可能性なので考えない
+	IF ARGS:1 == CALLNAME:TARGET + "の娘"
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「お母さんのおまんこ気持ちいいですか？♥　好きなだけ射精してもいいですよ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「自分の子供に…　種付けされちゃいました…♥♥」\n"
+		CASEELSE
+		ENDSELECT
+		
+	; 攻撃キャラが自分以外の娘
+	ELSE
+	ENDIF
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0838 ドッペルゲンガー 特殊妊娠 低威力大量射精
+@KOJO_4_0_SYSTEM_MESSAGE_16_838(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 攻撃キャラが自分の娘
+	; 現在攻撃を行っている敵を把握する為の情報はないので敵の名前で判別する
+	; "CALLNAME:TARGET + の娘" なら自分の娘として扱う
+	; 他のキャラに同名の名前を付けられると判別が不可能になるけれど、そうそう無い可能性なので考えない
+	IF ARGS:1 == CALLNAME:TARGET + "の娘"
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そんにゃ…にっ…、はいりません…ぉ♥♥　お母さんのおまんこ…こわれる…ぅっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「こんなに…射精されちゃったらぁ…っ♥　自分の子供ので…♥　孕んじゃう…♥♥」\n"
+		CASEELSE
+		ENDSELECT
+		
+	; 攻撃キャラが自分以外の娘
+	ELSE
+	ENDIF
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0842 コウノトリ 妊娠
+@KOJO_4_0_SYSTEM_MESSAGE_16_842(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あはっ♪　これ、精液ですね…っ♪　子宮にしみこんでるのがわかります…♪」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ちょっと変わった妊娠のさせ方するんですね♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（うっ、嘘！？　この霧、あの鳥さんの精液！？）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（んぅっ！？　この霧、全身に染みこんできてませんか…っ！？）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こんなの、どうやって避ければ良いんでしょう……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「即座に影響はなさそうですが…」\n"
+	ENDSELECT
+RETURN 1
+
+; 攻撃種類別
+; ◆ 0859 アグー 高威力三段妊娠
+@KOJO_4_0_SYSTEM_MESSAGE_16_859(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_16_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「溜め込んだ精液が♥　一気にわたしの奥底までぇ……っ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（うっ、嘘ですよね！？　まだ出るんですかっ！？）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「出し過ぎっ！　出し過ぎですっ！！」\n"
+	ENDSELECT
+	
+	; ペット関連 追加口上
+	; ペットに身体を捧げている
+	IF KOJO_4_0_TEMP_FLAG:1
+		; ペット系素質所持時
+		IF TALENT:140
+			CALL KOJO_4_0_ADD_MESSAGE, @"（ご主人様の本気の交尾♥　ご主人様の本気の射精が来る♥♥）\n"
+		ENDIF
+		
+		; [ペット]所持時
+		IF TALENT:140 == 1
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたし……っ♥　豚のペットっ♥　豚チンポのペットぉぉ……っ♥♥」\n"
+			
+		; [花嫁]所持時
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あっあっあっ……♥♥　あなたぁぁぁっ♥♥　射精凄いです……っ♥♥\n　精液漬けで、心の底までとろけちゃうのおぉぉ……♥♥♥　もっとくださいぃ……♥♥♥」\n"
+		
+		; [しもべ]所持時
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたし……は……っ♥　ご主人様の孕み袋ぉ……っ♥♥\n　ご主人様が満足するまで、おまんこをぐちゃぐちゃに使って貰うのぉぉ……っ♥♥）\n"
+		ENDIF
+	
+	; ペット以外に身体を弄られている
+	ELSE
+		; ペット系素質所持時
+		IF TALENT:140
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ご主人様ぁっ！　%PETNAME%様あぁぁっ！\n　助けてっ！　豚の精液で、わたしの子宮が壊されちゃうぅっ！？」\n"
+		ENDIF
+	ENDIF
+	CALL KOJO_4_0_FIX_MESSAGE
+RETURN 1

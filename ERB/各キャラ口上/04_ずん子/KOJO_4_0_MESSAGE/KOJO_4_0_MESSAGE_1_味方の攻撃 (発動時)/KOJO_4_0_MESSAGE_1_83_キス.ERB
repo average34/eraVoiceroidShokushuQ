@@ -1,0 +1,29 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 83 キス
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_1_83(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中行動
+	IF KOJO_4_0_IS_HYPNO()
+		RETURN 0
+		
+	; 通常時性攻撃
+	ELSE
+		; 性攻撃時は地の文を書き換える
+		CALL KOJO_4_0_ADD_MESSAGE, @"\m"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"\g%CALLNAME:TARGET%は\g"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"\g淫液まみれの触手に\g"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\g雌穴を犯すために怒張した触手を撫で、\g"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_4_0_ADD_MESSAGE, @"\g口を付けた\g\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\g優しく口づけをかわした\g\n"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	ENDIF
+RETURN 1

@@ -1,0 +1,39 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 追加地の文(前)
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; ワイヤーゴーストに拘束されているなら地の文をカスタマイズ
+	IF CFLAG:20 && DA:(CFLAG:20):0 == 37
+		; 前のターンも敵の性攻撃 & 攻撃部位が一致なら何もしない
+		IF KOJO_4_0_GET_PREV_ARG(0) == 14 && KOJO_4_0_GET_PREV_ARG(2) == ARG:2
+						
+		; その他行動
+		ELSE
+			SELECTCASE ARG:2
+			CASE 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d%SAVESTR:(CFLAG:20)%に身体の自由を奪われた%CALLNAME:TARGET%は、操られるままに両手で尻穴を拡げた\d\n"
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d%SAVESTR:(CFLAG:20)%に身体の自由を奪われた%CALLNAME:TARGET%は、操られるままに胸を突き出した\d\n"
+			CASE 2
+				; ふたなり
+				IF GET_PENIS(TARGET)
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d%SAVESTR:(CFLAG:20)%に身体の自由を奪われた%CALLNAME:TARGET%のペニスは、手を触れる事もなく勃起させられた\d\n"
+				; 通常
+				ELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"\d%SAVESTR:(CFLAG:20)%に身体の自由を奪われた%CALLNAME:TARGET%は、操られるままに両手で包皮を押さえクリトリスを晒け出した\d\n"
+				ENDIF
+			CASE 3
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d%SAVESTR:(CFLAG:20)%に身体の自由を奪われた%CALLNAME:TARGET%は、操られるままに両手で女性器を広げた\d\n"
+			CASE 9
+				CALL KOJO_4_0_ADD_MESSAGE, @"\d%SAVESTR:(CFLAG:20)%に身体の自由を奪われた%CALLNAME:TARGET%は、だらしなく口を開き舌をだらりと垂らした\d\n"
+			ENDSELECT
+		ENDIF
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		
+		; 地の文の位置変更
+		CALL KOJO_4_0_ADD_MESSAGE, @"\M"
+	ENDIF
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+RETURN 1

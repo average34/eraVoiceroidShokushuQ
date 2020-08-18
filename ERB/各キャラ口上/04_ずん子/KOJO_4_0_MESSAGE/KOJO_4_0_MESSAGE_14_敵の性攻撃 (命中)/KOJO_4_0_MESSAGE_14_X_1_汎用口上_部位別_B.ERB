@@ -1,0 +1,123 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 1 汎用口上 部位別 B
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_14_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_BEFORE("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_4_0_REGIST_DESCRIPTION_AFTER("KOJO_4_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時, 戦意喪失, 諦めた
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_4_0_ADD_MESSAGE, @"（くっ……！？　身体が……勝手に……っ！？　おっぱい……こすりつけて……ます…っ！？）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（えっ！？　なにが、おきてるんですかっ……！？）\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"（だっ……　め……っ……　おっぱいで、きもちよく……なんてっ……）\n"
+			CASE 2
+				CALL KOJO_4_0_ADD_MESSAGE, @"「そこは……っ、いじらないで……っ！？　いやっ、快感が…っ！？\n　乳首はダメですっ！　そこいじられるとっ、わたし……っ……　肉便器に……っ！」\n\d胸を弄られるたび思考を上書きされ、%CALLNAME:TARGET%は少しずつ淫らな牝へと堕ちていく\d\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「乳首っ！？　乳首だめですっ！　そこはっ、わたしが肉便器に改造されていくスイッチだからっ！\n　押さないでっ！　さわらないでっ！　肉便器にっ、完全な肉便器に堕とされちゃうからっ！？」\n\d胸を弄られるたび思考を上書きされ%CALLNAME:TARGET%は、もはや蕩けきった牝の顔で肉欲に耐えている\d\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「んあぁっ♪　おっぱい、こりこりされて…　どんどんえっちに…なって……♪」\n"
+			CASEELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"「…おっぱいコリコリされるの、気持ちいい……です」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「ちくび……　いじめられるの……　大好き……♥」\n"
+				CALL KOJO_4_0_ADD_MESSAGE, @"「わたしは……　おっぱいで……イクのが……　大好きな……　ヘンタイです……」\n"
+			ENDSELECT
+			
+			; 乳首勃起時 追加口上
+			IF GET_ERECTION_STATE_B(TARGET)
+				SELECTCASE CFLAG:43
+				CASE 1
+					CALL KOJO_4_0_ADD_MESSAGE, @"（乳首……っ、とがってます……っ！　く…ぅっ、こんなの気持ちよく……ないっ　はずなのにっ！？）\n"
+				CASE 2
+					CALL KOJO_4_0_ADD_MESSAGE, @"「乳首……♪　人間の尊厳を壊しちゃうスイッチ……ぃ♪　そんなに押されたらわたし、わたし……っ♪」\n\d胸を弄られるたびに顔を上気させ、%CALLNAME:TARGET%は蕩けた顔で肉便器として扱われる悦びに浸っている\d\n"
+					CALL KOJO_4_0_ADD_MESSAGE, @"（ちくびが……たったら……　こりこりして……もらわないと……）\n"
+				CASEELSE
+					CALL KOJO_4_0_ADD_MESSAGE, @"「……乳首……すごい勃起してます……」\n"
+					CALL KOJO_4_0_ADD_MESSAGE, @"「勃起ちくび……　いっぱい……　いじめてください……」\n"
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おっぱいっ……♥　おっぱいが…っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ……っ♥　さきっぽ、じんじんします…ッ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうしました？　おっぱいいじるの好きなんですか？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ん…っ♥　おっぱい、揉むだけでいいんですか？　それだけで満足…出来ますか？♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ああぁ……っ♥　えっちな、さわりかた……ですね…っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「もっと…っ♥　ぐにぐにしてっ♥　もっと…っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（胸でこんなに感じるようになるなんて……♥♥）\n"
+		
+		; 乳首陥没中 追加口上
+		IF TALENT:159
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そんなにいじめたら、ちくび…勃っちゃうから…♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ちくび……っ♥　ちくびもいじめてください♥　気持ちよくなったら先っぽ出てきますからっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「先っぽコリコリしてっ♥　一番気持ちいい乳首、勃起させてっ♥♥」\n"
+			
+		; 乳首勃起中 追加口上
+		ELSEIF GET_ERECTION_STATE_B(TARGET)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「勃起乳首……っ♥　勃起乳首いじめて……っ♥　あぁぁあっ♥　そこ、弱いんですっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ボッキ乳首……っ♥　刺激、つよすぎて……っ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あぁ……っ♥　勃起ちくび…ぃ、ビンカンで……っ♥♥」\n"
+		ENDIF
+	
+		; [淫乳]所持 または りばーす東方触手宮でB感覚LV3以上
+		IF TALENT:76 || (KOJO_4_0_IS_REVERSE() && ABL:7 >= 3)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「胸っ♥　感じるっ♥　感じすぎちゃううぅぅっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ほへえぇぇっ♥　おっぱいっ♥　おっぱいとけるううぅっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「んﾞにいぃぃっ♥　ひゅごいぃっ♥　おっぱいひゅごいぃぃぃっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（うああぁぁ♥♥　すごいいいぃぃっ♥♥　おっぱい弄られるだけで頭の中がぁああっ♥♥）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（気持ちよすぎてっ♥♥　このままおっぱいでイキ狂いそう……っっ♥♥）\n"
+		ENDIF
+		
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひぐっ……っ！？　ヘンなさわりかたしないでください！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ……！　胸なんて触って、何が楽しいの……っ！？」\n"
+		
+		; 乳首陥没中 追加口上
+		IF TALENT:159
+			CALL KOJO_4_0_ADD_MESSAGE, @"（そんな……っ、陥没乳首をいじめないで……っ！？）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「いや……っ、乳首を、ほじくらない……でっ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（やめて……っ！！　そんなムリヤリされたら勃っ――）\n"
+			
+		; 乳首勃起中 追加口上
+		ELSEIF GET_ERECTION_STATE_B(TARGET)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「い……っ今はダメですっ！　乳首勃起して……っ、感じすぎちゃ……　ああぁぁぁっ！！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やめてください……っ　わたしの乳首はあなた達の玩具では……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（くぅっ……　勃った乳首にねちっこい責めを……っ……）\n"
+		ENDIF
+		
+		; [淫乳]所持 または りばーす東方触手宮でB感覚LV3以上
+		IF TALENT:76 || (KOJO_4_0_IS_REVERSE() && ABL:7 >= 3)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あﾞあﾞあﾞあﾞぁぁぁっ♥♥　おっぱいはイヤあﾞあﾞあﾞぁぁぁっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「胸はダメですっ♥　ダメだからぁあああﾞあﾞあﾞっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ひぎぃいっ♥　おっぱいで感じるのいやぁあああああっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（ああああぁぁっ♥♥　おっぱいの感度、壊れてますううぅぅっ♥♥）\n"
+		ENDIF
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

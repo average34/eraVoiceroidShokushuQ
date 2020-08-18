@@ -1,0 +1,77 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 46 裸で時間経過
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_46(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中
+	IF CFLAG:29
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は力の入らない腕で、なんとか身体を隠そうとしている…\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 諦め済み
+	IF TFLAG:16 == 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			; [濡透]
+			IF BASE:3 > 0
+				CALL KOJO_4_0_ADD_MESSAGE, @"（ぐちゃぐちゃに濡れて肌に張り付いてる服とか…　かなり…えっち、ですね…）\n"
+			; [大破]
+			ELSE
+				CALL KOJO_4_0_ADD_MESSAGE, @"（どうせ犯されちゃいますし…　問題ないですよね…♥）\n"
+			ENDIF
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（どうして…　こんな状態でドキドキしているんでしょうか…）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「恥ずかしがるだけ、無駄ですよね……」\n"
+		ENDSELECT
+		RETURN 0
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d催眠にかかった%CALLNAME:TARGET%は、じんわりと汗ばんだ身体を隠そうともしない\d\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（わたし…今、お嫁に行けないようなコトしている…気がします…）\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（恥ずかしい…けど…っ　見られてるだけで…カラダが…あつく…っ♥）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（見られる…のっ、凄く…気持ちいい…っ♥）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d見られる事で興奮するのか、%CALLNAME:TARGET%身体はじんわりと汗ばんでいる\d\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（じろじろ見られてる…　気がします…）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（カラダのラインが…出ちゃってます…）\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こ、こっち見ないでください！！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は腕で胸と秘部を隠しながら、恥ずかしさに耐えている\d\n"
+		
+		; 服の状態によって追加口上
+		; [濡透]
+		IF BASE:3 > 0
+			CALL KOJO_4_0_ADD_MESSAGE, @"（く…　この状態、恥ずかしいです…っ）\n"
+		; [大破]
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「せめて何か、隠せるものがあれば…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「新しい服が欲しいですね…」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1

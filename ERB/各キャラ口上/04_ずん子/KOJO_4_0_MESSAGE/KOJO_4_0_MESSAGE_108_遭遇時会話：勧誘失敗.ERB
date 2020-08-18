@@ -1,0 +1,24 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 108 遭遇時会話：勧誘失敗
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_108(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひとりは危険だと思いますが…　気が変わったらいつでも言ってください」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「残念です…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（無理に勧誘するのもよくないですものね…）\n"
+	ENDSELECT
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; きりたん
+	CASE 8
+		CALL KOJO_4_0_ADD_MESSAGE, @"「%KOJO_4_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:1)))%、もしかして反抗期……？」\n"
+	; イタコ
+	CASE 16
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…イタコ姉様も気を付けてくださいね」\n"
+	ENDSELECT
+RETURN 1

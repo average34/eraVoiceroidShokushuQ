@@ -1,0 +1,59 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 101 迷宮内で他のキャラと会った - キャラクター別 XXX 娘
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+@KOJO_4_0_SYSTEM_MESSAGE_101_X_0_CHARA_XXX(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+		
+		
+	; 催眠行動中
+	ELSEIF CFLAG:(ARG:1):43 == 1
+		CALL KOJO_4_0_ADD_MESSAGE, @"「大丈夫…？　足元がおぼつかないようですが…」\n"
+	
+		
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_4_0_PARTY_NO:1 || ARG:1 == KOJO_4_0_PARTY_NO:2
+		
+		CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+		CALL KOJO_4_0_ADD_MESSAGE, @"「戦い方を見てると…やっぱり魔物の子…なんですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「私の力を受け継いで要るんですね…少し複雑です」\n"
+		
+	; 通常行動中
+	ELSE
+		; 対象のキャラとは初遭遇
+		; 表示タイミングが一度しかない口上、優先口上として処理する
+		IF KOJO_4_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+			CALL KOJO_4_0_ADD_MESSAGE, @"（心を入れ替えたとはいえ、魔物の子…警戒はした方が良いかもしれません）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もう暴れちゃ駄目ですよ」\n"
+			RETURN 1
+		ENDIF
+		
+		CALL KOJO_4_0_SET_IMPORTANT_FLAG()
+		CALL KOJO_4_0_ADD_MESSAGE, @"「貴方は、いつも元気一杯ですね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（…無理矢理生まされた子ですが、こうして見ると可愛いですね…）\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こんな暗くてジメジメした場所でも、元気そうでなによりです」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「貴方にも、ちゃんと名前をつけてあげないとね…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そうやって普通にしていると、子供の頃の私そっくりですね…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…私が言うのもなんですが、余り危ない事はしちゃ駄目ですよ」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あれから、他の人を襲ったりしてませんか？　…そっか、ちゃんと約束守れてるんだね。良い子良い子。」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「どうしたの？　お腹でも空いたの？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「自分で言うのもなんですが、抱きしめたくなる可愛さがありますね…」\n"
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失中
+@KOJO_4_0_SYSTEM_MESSAGE_101_X_1_CHARA_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+		
+	; 通常行動中
+	ELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…子供の頃の自分そっくりな子が、こうして倒れてるのを見るのは複雑ですね…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…この迷宮は、かつての仲間にも一切容赦はしないんですね…」\n"
+	ENDIF
+RETURN 1

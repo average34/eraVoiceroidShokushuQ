@@ -1,0 +1,49 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 5 逃走
+; ------------------------------------------------------------------------------
+
+; □ 0 失敗
+@KOJO_4_0_SYSTEM_MESSAGE_1_5_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あはっ♥　犯されちゃう♥」\n"
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d逃走に失敗した%CALLNAME:TARGET%は、何かを期待する目で触手を見つめている…\d\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お願い…　みのがして…！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「くっ…　逃がしてくれませんか…っ」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「隙をついたと思ったんですが……」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「そう簡単に獲物を逃すわけがない、ですよね」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「くっ！　しつこいですね！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ついてこないでください！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ッ………！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 成功
+@KOJO_4_0_SYSTEM_MESSAGE_1_5_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「また、遊びましょう♪」\n"
+		
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は甘い疼きに支配された身体を庇いながら、ふらつく足でなんとか逃げ出した…\d\n"
+	CASEELSE
+		IF BASE:MP >= (MAXBASE:MP / 4)
+			CALL KOJO_4_0_ADD_MESSAGE, @"「命あっての物種ですから…！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「三十六計逃げるに如かず…っ！」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%%TACHI()%は脱兎のごとく逃げ出した！\d\n"
+		ELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「こんな状態で戦うのは……」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「今はぼろぼろなので…　退散させてもらいます…！」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%%TACHI()%はふらつく足でなんとか逃げ出した\d\n"
+		ENDIF
+	ENDSELECT
+RETURN 1

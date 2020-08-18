@@ -1,0 +1,56 @@
+﻿
+; ==============================================================================
+; ■ 定数
+; ==============================================================================
+#DIM CONST KOJO_4_0_MIND_DEFAULT  = 1050 ; 理性度初期値
+#DIM CONST KOJO_4_0_MIND_BORDER_0 = 1200 ; 理性度境界(この数値超なら【強気】)
+#DIM CONST KOJO_4_0_MIND_BORDER_1 = 1000 ; 理性度境界(この数値超なら【強気】～【普通】)
+#DIM CONST KOJO_4_0_MIND_BORDER_2 =  500 ; 理性度境界(この数値超なら【普通】)
+#DIM CONST KOJO_4_0_MIND_BORDER_3 =  300 ; 理性度境界(この数値超なら【普通】～【発情】)
+#DIM CONST KOJO_4_0_MIND_BORDER_4 = -1000 ; 理性度境界(この数値超なら【発情】)
+
+#DIM CONST KOJO_4_0_LIKABILITY_BORDER = 350 ; 友好度の境、これ以上なら相手の二人称が変化 当口上内でのみの独自指定
+
+; ==============================================================================
+; ■ 変数(セーブデータに影響を与えない一時変数)
+; ==============================================================================
+
+; □ システム管理用
+#DIM  KOJO_4_0_TEMP_MESSAGE_RANK               ; 口上ランダム選択処理用 一時ストック 深度判定用
+#DIM  KOJO_4_0_TEMP_MESSAGE_COUNT, 100         ; 口上ランダム選択処理用 一時ストック
+#DIMS KOJO_4_0_TEMP_MESSAGE_ARRAY, 100, 500    ; 口上ランダム選択処理用 一時ストック
+#DIM  KOJO_4_0_STOCK_MESSAGE_COUNT             ; 口上ランダム選択処理用 メインストック
+#DIMS KOJO_4_0_STOCK_MESSAGE_ARRAY, 1000       ; 口上ランダム選択処理用 メインストック
+#DIMS KOJO_4_0_MESSAGE_LOG, 500                ; 表示した口上のログ(ランダムの偏り軽減用)
+
+#DIM  KOJO_4_0_IMPORTANT_FLAG					; 優先口上管理用
+
+#DIMS KOJO_4_0_ACTIVE_FUNCTION_NAME                     ; 現在処理中の口上関数名
+#DIMS KOJO_4_0_DESCRIPTION_FUNCTION_NAME_BEFORE, 2, 500 ; 追加地の文登録(前表示用)
+#DIMS KOJO_4_0_DESCRIPTION_FUNCTION_NAME_AFTER,  2, 500 ; 追加地の文登録(後表示用)
+
+#DIM  KOJO_4_0_ARG_LOG,  100, 7                ; ARG情報保持用
+#DIMS KOJO_4_0_ARGS_LOG, 100, 2                ; ARGS情報保持用
+#DIMS KOJO_4_0_CALLNAME, 300, 100              ; 各キャラの呼び名
+
+
+; □ 判定用
+#DIM  CHARADATA KOJO_4_0_TEXT_SKIP_FLAG                 ; 地の文スキップフラグ
+#DIM  CHARADATA KOJO_4_0_PRINTED_SYSTEM_MESSAGE         ; システムメッセージ2重表示防止用フラグ
+
+#DIM  CHARADATA KOJO_4_0_TURN_FINALIZE                  ; TURN_FINALIZE発生中フラグ
+#DIM  CHARADATA KOJO_4_0_KEEP_TURN                      ; 戦闘中 ターン数保持(ターン切り替わり確認に利用)
+#DIM  CHARADATA KOJO_4_0_PREV_BASE, 7                   ; BASE前回ループ参照値
+#DIM  CHARADATA KOJO_4_0_PREV_FLAG, VARSIZE("FLAG")     ; FLAG前回ループ参照値
+#DIM  CHARADATA KOJO_4_0_PREV_CFLAG, VARSIZE("CFLAG")   ; CFLAG前回ループ参照値
+#DIM  CHARADATA KOJO_4_0_PREV_TALENT, VARSIZE("TALENT") ; TALENT前回ループ参照値
+#DIM  CHARADATA KOJO_4_0_PARTY_NO, 3                    ; 仲間のNo(戦闘後会話時に共闘キャラを確認)
+#DIMS CHARADATA KOJO_4_0_KOJO_MODE                      ; このターンに使用する口上モード
+
+#DIM CHARADATA KOJO_4_0_CREAMPIE_COUNT                  ; 戦闘中 膣内射精回数
+#DIM CHARADATA KOJO_4_0_ORGASM_COUNT, 10                ; 戦闘中 部位別絶頂回数
+#DIM CHARADATA KOJO_4_0_SEXUAL_ASSAULT_COUNT, 10        ; 戦闘中 受性攻撃回数
+
+#DIM CHARADATA KOJO_4_0_TEMP_FLAG, 100                  ; 汎用利用する一時変数群
+                                               ; 0 : 戦闘開始時に拘束状態(捕食中フラグ)
+                                               ; 1 : ペットに身体を捧げているフラグ

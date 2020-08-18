@@ -1,0 +1,25 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 60 アクセサリ
+; ------------------------------------------------------------------------------
+
+; □ 1 使用
+@KOJO_4_0_SYSTEM_MESSAGE_1_60_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE ARG:2
+		; 小さなお守り, メリケンサック, 使い魔, 力持ちの腕輪
+		CASE 20 TO 23
+			CALL KOJO_4_0_ADD_MESSAGE, @"「道具は使えるときに、使わないとっ！」\n"
+		; 猫耳
+		CASE 27
+			CALL KOJO_4_0_ADD_MESSAGE, @"（…これ、役に立つのでしょうか）\n"
+		; 幸運のお守り
+		CASE 36
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ずんだの神様…！　私たちに幸運の光を！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 破損
+@KOJO_4_0_SYSTEM_MESSAGE_1_60_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1

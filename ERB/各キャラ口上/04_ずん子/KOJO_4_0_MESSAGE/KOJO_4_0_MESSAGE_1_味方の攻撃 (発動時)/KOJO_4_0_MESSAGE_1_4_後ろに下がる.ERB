@@ -1,0 +1,45 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 4 後ろに下がる
+; ------------------------------------------------------------------------------
+
+@KOJO_4_0_SYSTEM_MESSAGE_1_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ふふっ♥　かわいい獲物が逃げちゃいますよっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こっちですよ、のろまな魔物さんっ♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「敵から距離を取らないと…！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ふぅ……　この距離なら、なんとか……」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「少し距離を取ります！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「手早く済ませたかったですが……！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ちょっと後退します！」\n"
+	ENDSELECT
+	
+	; PT人数による追加口上
+	SELECTCASE GET_MEMBER_SUM()
+	; 1人で行動中
+	CASE 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「獲物が無防備に近くに居たのに♥　残念でした♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"（誰にも頼れない状況で、前に出るのは無謀ですね……）\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「仲間が居れば、もっと意味のある行動になるんですが」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「一人ですし、遠くから攻撃し続けるのが正解かもしれません」\n"
+		ENDSELECT
+		
+	; 2人以上で行動中
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「囮役は、今の私では自殺行為でした…」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「これ以上は、私以外の人がやってください…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わたしも距離を取って攻撃に転じます！」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,202 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ デバッグモード
+; ------------------------------------------------------------------------------
+
+; □ 口上モードを固定
+; 通常モードで動作時は空RETURN
+@KOJO_4_0_DEBUG_FORCE_KOJO(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#FUNCTIONS
+; RETURNF "淫乱"
+; RETURNF "発情"
+; RETURNF "強気"
+; RETURNF "普通"
+RETURNF
+
+; □ 登録口上を表示する
+@KOJO_4_0_SHOW_REGIST_MESSAGE()
+#FUNCTION
+; 0:表示しない 1:表示する
+RETURNF 1
+
+; □ 登録口上関数を表示する
+@KOJO_4_0_SHOW_REGIST_FUNCTION()
+#FUNCTION
+; 0:表示しない 1:表示する
+RETURNF 0
+
+; ------------------------------------------------------------------------------
+; ■ デバッグ用情報表示
+; ------------------------------------------------------------------------------
+
+; □ 情報表示
+@KOJO_4_0_SHOW_DEBUG_INFO(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+#DIM TEMP_REDRAW
+
+	; デバッグモードで起動した時のみ表示を行う
+	[IF_DEBUG]
+		CURRENTREDRAW
+		TEMP_REDRAW = RESULT
+		REDRAW 0
+		; システムメニューで表示が崩れる事があるので対策
+		SIF ARG:0 == 0
+			RETURN 0
+		
+		; いろいろ表示、後で要整形
+		SETCOLOR 0x449944
+		DRAWLINEFORM *
+		PRINTFORM %CALLNAME:TARGET%専用 デバッグ数値確認
+
+		; 口上モード表示
+		PRINTFORM 　
+		IF KOJO_4_0_DEBUG_FORCE_KOJO() != ""
+			PRINTFORM デバッグ
+		ENDIF
+		PRINTFORM 口上モード【%KOJO_4_0_KOJO_MODE%】
+		
+		PRINTFORM 　催眠の種類：
+		SELECTCASE FLAG:526
+		CASE 0
+			PRINTFORM 拘束・肉体操作系
+		CASE 1
+			PRINTFORM 発情・感情操作系
+		CASE 2
+			PRINTFORM 無意識・認識操作系
+		ENDSELECT
+		
+		IF KOJO_4_0_IS_REVERSE()
+			PRINTFORM 　りばーす専用モード：
+			SELECTCASE CFLAG:811
+			CASE 1
+				PRINTFORM OFF
+			CASE 2
+				PRINTFORM ON
+			CASEELSE
+				PRINTFORM 未
+			ENDSELECT
+		ENDIF
+		
+		PRINTFORML 
+		
+		; 汎用情報表示
+		DRAWLINEFORM -
+		PRINTFORML 理性度:{CFLAG:800}, 淫乱堕ちフラグ:\@CFLAG:805 ? ON # OFF\@, 寸止め回数:{CFLAG:820}
+
+		; 前回参照値表示、変動があった値は色替えした現在値も表示
+		PRINTFORM 前回参照値
+		FOR LCOUNT, 0, 7
+			SELECTCASE LCOUNT
+			CASE 0
+				PRINTFORM  HP:
+			CASE 1
+				PRINTFORM  MP:
+			CASE 2
+				PRINTFORM  EP:
+			CASE 3
+				PRINTFORM  CP:
+			CASE 4
+				PRINTFORM  TP:
+			CASE 5
+				PRINTFORM  DP:
+			CASE 6
+				PRINTFORM  NP:
+			ENDSELECT
+			PRINTFORM {KOJO_4_0_PREV_BASE:LCOUNT}
+			
+			IF BASE:LCOUNT != KOJO_4_0_PREV_BASE:LCOUNT
+				SETCOLOR RGBCOLOR(229, 255, 38)
+				PRINTFORM →{BASE:LCOUNT}
+				SETCOLOR 0x449944
+			ENDIF
+			
+			SIF LCOUNT != 6
+				PRINTFORM ,
+		NEXT
+		PRINTFORML 
+		
+		PRINTFORM バッドステータス:
+		PRINTFORM \@CFLAG:25 ? 【睡眠】 # \@
+		PRINTFORM \@CFLAG:29 ? 【喪失】 # \@
+		PRINTFORM \@CFLAG:35 ? 【絶頂】 # \@
+		PRINTFORM \@KOJO_4_0_IS_HYPNO() ? 【催眠】 # \@
+		PRINTFORML 
+		
+		; 戦闘中情報表示
+		IF TFLAG:13
+			DRAWLINEFORM -
+			PRINTFORML 現在ターン:{KOJO_4_0_KEEP_TURN}, ターン終了フラグ:\@KOJO_4_0_TURN_FINALIZE ? ON # OFF\@
+			PRINTFORML 膣内射精回数:{KOJO_4_0_CREAMPIE_COUNT}
+			PRINTFORML 受攻撃回数 A:{KOJO_4_0_SEXUAL_ASSAULT_COUNT:0} B:{KOJO_4_0_SEXUAL_ASSAULT_COUNT:1} C:{KOJO_4_0_SEXUAL_ASSAULT_COUNT:2} V:{KOJO_4_0_SEXUAL_ASSAULT_COUNT:3} M:{KOJO_4_0_SEXUAL_ASSAULT_COUNT:9}, 部位別絶頂回数 A:{KOJO_4_0_ORGASM_COUNT:0} B:{KOJO_4_0_ORGASM_COUNT:1} C:{KOJO_4_0_ORGASM_COUNT:2} V:{KOJO_4_0_ORGASM_COUNT:3} M:{KOJO_4_0_ORGASM_COUNT:9}
+		ENDIF
+		
+		; 後で正しい場所に置き直す、まだ一時表示のままにしておく
+		DRAWLINEFORM -
+		PRINTFORM 敵の性攻撃用 メイン属性={TFLAG:63}　
+		PRINTFORM \@(TFLAG:63 == 0) ? Ａ # 　 \@
+		PRINTFORM \@(TFLAG:63 == 1) ? Ｂ # 　 \@
+		PRINTFORM \@(TFLAG:63 == 2) ? Ｃ # 　 \@
+		PRINTFORM \@(TFLAG:63 == 3) ? Ｖ # 　 \@
+		PRINTFORM \@(TFLAG:63 == 5) ? 肌 # 　 \@
+		PRINTFORM \@(TFLAG:63 == 9) ? Ｍ # 　 \@
+		PRINTFORM 複合属性={TFLAG:92}　
+		PRINTFORM \@(TFLAG:92 & 1) ? Ａ # 　 \@
+		PRINTFORM \@(TFLAG:92 & 2) ? Ｂ # 　 \@
+		PRINTFORM \@(TFLAG:92 & 4) ? Ｃ # 　 \@
+		PRINTFORM \@(TFLAG:92 & 8) ? Ｖ # 　 \@
+		PRINTFORM \@(TFLAG:92 & 16) ? 無 # 　 \@
+		PRINTFORM \@(TFLAG:92 & 32) ? Ｍ # 　 \@
+		PRINTFORML 
+		
+		
+		; 引数別詳細情報
+		DRAWLINEFORM -
+		SELECTCASE ARG:0
+		; 出会い頭治療
+		CASE 465
+			; 相手の陰茎情報を表示
+			PRINTFORM %CALLNAME:(ARG:2)%のペニス 状態:
+			SELECTCASE GET_PENIS(ARG:2)
+			CASE 1
+				PRINTFORML 寄生
+			CASE 2
+				PRINTFORML 癒着
+			CASE 4
+				PRINTFORML 男
+			CASEELSE
+				PRINTFORML 正しい情報が取得出来ません
+			ENDSELECT
+			
+			; 癒着状態なら追加情報あり
+			IF GET_PENIS(ARG:2) & 2
+				PRINTFORML ふたなり細分化情報を書かなきゃいけない場所、後で書くので忘れないように
+			ENDIF
+			
+		; 追加情報なし
+		CASEELSE
+			; DRAWLINE不要なので削っておく
+			CLEARLINE 1
+		ENDSELECT
+		
+		
+		DRAWLINEFORM *
+		REDRAW TEMP_REDRAW
+		RESETCOLOR
+
+		; デバッグモード時はシステムメッセージ情報を強制表示
+		; りばーす東方触手宮にはメッセージ情報表示が存在しないので、現在表示中の引数だけ表示する
+		IF !KOJO_4_0_IS_REVERSE()
+			SIF !CFLAG:750
+			CALL SHOW_PRINT_MESSAGE_INFO(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ELSE
+			CURRENTREDRAW
+			TEMP_REDRAW = RESULT
+			REDRAW 0
+			SETCOLOR 0x449944
+			PRINTFORML ARG:0={ARG:0}　ARG:1={ARG:1}　ARGS:0=%ARGS:0%　ARGS:1=%ARGS:1%　ARG:2={ARG:2}　ARG:3={ARG:3}　ARG:4={ARG:4}　ARG:5={ARG:5}　ARG:6={ARG:6}
+			REDRAW TEMP_REDRAW
+			RESETCOLOR
+		ENDIF
+			
+	[ENDIF]
+RETURN 1

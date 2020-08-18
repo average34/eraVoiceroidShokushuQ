@@ -1,0 +1,570 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 441 触手スーツ常駐時
+; ------------------------------------------------------------------------------
+
+; □ 01 A陵辱開始
+@KOJO_4_0_SYSTEM_MESSAGE_441_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; A感度LVで分岐
+	SELECTCASE TALENT:101
+	CASE 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「むむ…そっちの穴はそこまで気持ちよく慣れないんですよね」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ちょっ、そんなとこに入ってこない…でぇっ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「うそっ！？　そこは何かを入れる場所じゃない…からぁっ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おっ、おしりを弄ろうとしないでっ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ひぅ…っ！？　おしり…いじられてる…っ！？」\n"
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\dあまりの気色悪さに服を引き剥がそうとした瞬間、%CALLNAME:TARGET%の腕は別の触手に捕らえられた！\d\n"
+		
+	CASE 1
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そちらは快楽を貪れる穴では無いのですが、仕方ないですね♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「ひゃっ！？　私のおしり、弄ってみたいんですか…？♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"（服の下で、おしりの穴拡げられちゃってます…っ……）\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「どうして、そんなとこ弄ろうとするんですか……っ！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「どうしておしりいじるんですかこの服……！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だめ…っ！　そっちの穴は、そういう事する場所じゃ……！」\n"
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d急な感覚に%CALLNAME:TARGET%は服を押さえたが、それは蠢く触手を尻穴に押しつける形になった\d\n"
+		
+	CASE 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あはっ♥　おしりの穴も、結構気持ちよく、なれるんですよね…♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「やめてください……っ　そっちを弄られると、変な感じがしちゃうから……！」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だめ…っ！　これ以上弄られたら、戻れなくなっちゃうから……ぁ♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わた、わたしはそっちの穴で気持ちよくなるような変態女じゃな―――ひぐぅっ♥」\n"
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d性感帯として開発された尻穴を舐めほじられると、%CALLNAME:TARGET%は甘い声で喘ぎ始めた…\d\n"
+		
+	; A感度LV3以上は地の文が待ちかねたに変化
+	CASEELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はっ♥　あっ♥　あひぃ…っ♥　おひっ…りが……っ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「もっと…っ♥　もっとわたしのおひり…ずぽずぽ…してぇっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「うしろの穴っ♥　いじいじするの…や…め…っ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おひり…ッ♥　もういじっちゃだ…めぇぇえッ♥♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「んﾞひ…っ♪　おﾞっ…おﾞひりぃ…っ♪　弄られちゃう…っ♪」\n"
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d快感にほぐれきった尻穴を嬲られるたび、%CALLNAME:TARGET%の表情が蕩けていく…\d\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 02 A陵辱終了
+@KOJO_4_0_SYSTEM_MESSAGE_441_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…は…♥　お腹の中、ザーメンでいっぱい…♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はっ♥　あっ♥　あは…は…っ♥　おひっ…り…気持ち…いい…っ♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「う…あ…足がガクガクして……立ち上がれない…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おしり…おしりなんて…気持ち悪いだけ…だから…っ」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"（こんな事され続けたら、おしりの穴が閉じなくなっちゃう…）\n"
+	ENDSELECT
+		
+RETURN 1
+
+
+; □ 03 B陵辱開始
+@KOJO_4_0_SYSTEM_MESSAGE_441_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	;母乳体質なし
+	IF TALENT:130 == 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あっ♥　まだおっぱいは出ませんので、いやらしい胸に開発してくださいっ♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あはっ♥　もっともっと、おっぱい快楽を私に刻み込んでくださいっ♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「まっ…まってくださいっ！？私の胸からは何も出な…ひぎゃっ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「わ、私の胸に何を…っ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「きゃ…っ！？　おっぱいに吸い付いて…っ！？」\n"
+			CALL KOJO_4_0_PARAGRAPH_MESSAGE
+			CALL KOJO_4_0_ADD_MESSAGE, @"\dあまりの気色悪さに服を引き剥がそうとした瞬間、%CALLNAME:TARGET%の腕は別の触手に捕らえられた！\d\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"\d急な感覚に%CALLNAME:TARGET%は服を押さえたが、それは蠢く触手を胸に押しつける形になった\d\n"
+		ENDSELECT
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はっ♥　あっ♥　あはは…っ♥　母乳…っ♥　母乳出ちゃう…っ♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あは…♥　私のおっぱい、沢山飲んで下さいね…♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おっぱい！おっぱい出ちゃうからやめ……っ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「そ、そんなことしたら母乳が出ちゃ……ああぁぁああっ♥♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だめ…っ！　私の胸は、あなたの遊び道具じゃ…ひぐっ♥♥」\n"
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d性感帯として開発された胸に吸い付かれると、%CALLNAME:TARGET%は甘い声で喘ぎ始めた…\d\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d母乳射精の快楽を覚え込まされた胸を弄られるたび、%CALLNAME:TARGET%の表情が蕩けていく…\d\n"
+	ENDIF
+		
+RETURN 1
+
+
+; □ 04 B陵辱終了
+@KOJO_4_0_SYSTEM_MESSAGE_441_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	;母乳体質なし
+	IF TALENT:130 == 0
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はっ♥　はっ♥　母乳が出たら、もっと気持ち良いんでしょうか…っ♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はっ♥　はひっ♥　もっと、弄っても良いんですよ…っ♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「痛いだけ…こんなの痛いだけです…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「く…う…っ♥　こんな事続けられてたらそのうち…」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「おっぱいの…おっぱいの奥がずきずきする…♥」\n"
+		ENDSELECT
+	ELSE
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「はぁー…っ♥　はぁー……っ♥　また、お願いします…っ♥」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「あ…は…♥　私の……おっぱい、止まらなくなってます……♥」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「や…やっと…止まってくれました……っ♥♥」\n"
+		ENDSELECT
+	ENDIF
+		
+RETURN 1
+
+; □ 05 C陵辱開始
+@KOJO_4_0_SYSTEM_MESSAGE_441_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はひ……っ♥　おﾞっ♥　おﾞおﾞぉ～～っ♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んﾞにﾞぃぃぃっ！？　ひぎ…ぃっ！？　ひ…いぃぃっ！」\n"
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	CALL KOJO_4_0_ADD_MESSAGE, @"\d力強く吸い付いた触手は、強引に勃起させた%CALLNAME:TARGET%のクリトリスに気が狂うほどの快楽を刻み込んでいく！\d\n"
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こわれ…っ♥　こわれりゅっっ……！　おまめ、が……ぁっ♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひぃ…っ♥　んひぃぃ…っ♥　んおぉぉぉっ♥　やめぇ…、やめ――――――♥♥」\n"
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+
+	CALL KOJO_4_0_ADD_MESSAGE, @"\d執拗に責め立てられた%CALLNAME:TARGET%は、淫らに腰を揺らし淫液を吹きだしながら蕩けた声を上げ始めた…\d\n"
+		
+RETURN 1
+
+
+; □ 06 C陵辱終了
+@KOJO_4_0_SYSTEM_MESSAGE_441_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はぁー…っ♥　はぁー……っ♥　また、お願いします…っ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はっ♥　はひっ♥　もっと、弄っても良いんですよ…っ♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「や…やっと…止まってくれました……っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「く…う…っ♥　こんな事続けられてたらそのうち…」\n"
+	ENDSELECT
+		
+RETURN 1
+
+; □ 07 V陵辱開始
+@KOJO_4_0_SYSTEM_MESSAGE_441_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おごっ♥　奥っ…までっ♥　いっぱい…はいって…っ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あがっ♥　もっと、もっと子宮をゴリゴリって…っ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひぎぃぃっ♥　赤ちゃんの部屋っ♥　赤ちゃんの部屋がぐちゅぅってっ♥　潰されてっ♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひっ…あぁぁあっ！？　入って、来ないで…っ！？ひぎぃっ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「おっ、あがっ！？　もう、もう入らな……かはっ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ……深…い…っ！？　だ、だめです…！　抜いてっ！　抜い……おごっ！？」\n"
+	ENDSELECT
+		
+RETURN 1
+
+; □ 08 V陵辱終了
+@KOJO_4_0_SYSTEM_MESSAGE_441_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…はっ♥　お腹の中…精液でたぷたぷです…っ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お腹…精液で膨らんじゃってます…♥　あは、あははははっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「すご…いっ♥　赤ちゃんの部屋、精液でぱんぱんに…♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お腹が…お腹が触手の精液で重い…です…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「く…う…っ♥　こんな事続けられてたらそのうち…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…う…　出し過ぎ、です…　お腹が…破裂しそう…」\n"
+	ENDSELECT
+		
+RETURN 1
+
+; □ 09 微ダメ
+@KOJO_4_0_SYSTEM_MESSAGE_441_9(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ん…♥　もっと、激しくして良いんですよ…？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「少し撫でられてるだけでわたし…わたし…っ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「子宮が…子宮がきゅんきゅんしちゃうから…♥　はやくっ♥　はやく激しいのをっ♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ふぅー…♥　ふぅー…♥　ぬるぬるが…気持ちいい…♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…♥　く…♥　も、もっと激しくしても、いいんですよ…？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「身体が疼いてるので……い、今ならしても良い…ですよ？」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ん…これぐらいの刺激なら…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「…こうして活性してないときなら、自己再生できる服という意味でメリットはあるんですが…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「こういうタイミングでなら、引きはがせるような気もしますが…」\n"
+	ENDSELECT
+		
+RETURN 1
+
+; □ 12 セルフ膣内射精
+@KOJO_4_0_SYSTEM_MESSAGE_441_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「にゃかだしっ♥　にゃかだしとまんにゃいっ♥♥　せーしがびゅるびゅるって、わたひのお腹をっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「自分の精液でぇ…♥　おなかのなか、たぷたぷして…ます…♥\n　もっと…射精したい…♥　おちんぽからびゅるびゅる、射精したいですっ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「わたしぃっ…　自分に…っ　膣内射精…しちゃってます…！？\n　や…っ…！　だ…めなのにっ…！　とまらないいぃぃっ！？」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「うそッ、うそですよね！？　わたしの膣内に…っ　わたしの精子が流し込まれて…るっ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「だめっ！？　入って、入って来てますっ！？　わたしの精子がお腹の中にいいいぃぃっ！？」\n"
+	ENDSELECT
+	
+	; 妊娠していない or 妊娠中(判明前)なら追加口上
+	IF !CFLAG:36 || CFLAG:36 == 2
+		SELECTCASE KOJO_4_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「妊娠っ♥　自分の精液でぇ、妊娠しちゃうぅぅｘっ…♥」\n"
+		CASE "発情"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「だめぇっ！　ナカにぃっ、ナカに出すのやめてえぇぇっ！　自分の精液で、赤ちゃん作りたくないからぁっ！？」\n"
+		CASEELSE
+			CALL KOJO_4_0_ADD_MESSAGE, @"「夢なら、夢なら覚めてください！　自分で、自分を孕ませるなんて、そんな、そんな…っ！？」\n"
+			CALL KOJO_4_0_ADD_MESSAGE, @"「とまって！　止まってくださいっ！　自分の精液で赤ちゃん身籠りたくないから……っ！」\n"
+		ENDSELECT
+		CALL KOJO_4_0_PARAGRAPH_MESSAGE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d自分自身への種付けを強要された%CALLNAME:TARGET%のペニスは、いつも以上に濃縮され煮詰まった精液を吐きだしている！\d\n"
+	ENDIF
+RETURN 1
+
+
+; □ 15　電撃開始
+@KOJO_4_0_SYSTEM_MESSAGE_441_15(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あがっ！？　痛い…はずなのにっ♥　もっと欲しい…っ♥　もっとくださああﾞあﾞあﾞあﾞぁﾞっ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ああああぁぁぁっ♥♥　わたしっ♥　わたし痛みで気持ちよく…！？　あぎゃああﾞあﾞあﾞあﾞあﾞあﾞあﾞっ♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ぐぎっ！？　死ぬ！　死んじゃうからっ！？　あﾞあﾞあﾞあﾞあﾞっ！！！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あﾞあﾞあﾞあﾞあﾞっ！！！　やっ！！　やめっ！！　いぎいいいﾞいﾞいﾞいﾞいﾞっ！！！」\n"
+	ENDSELECT
+		
+RETURN 1
+
+
+; □ 16　電撃終了
+@KOJO_4_0_SYSTEM_MESSAGE_441_16(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「電撃で…気持ちよくなっちゃいました…♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はぁ…っ♥　はぁ…っ♥　これで気持ちよくなるなんて、わたしもうおかしくなっちゃったんですね…っ♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「はぁ…　はぁ…　生き…てる…＿」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「く…う…まだ全身…しびれてます…」\n"
+	ENDSELECT
+		
+RETURN 1
+
+; □ 17　全身開始
+@KOJO_4_0_SYSTEM_MESSAGE_441_17(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「んごおおおおおぉぉぉっ、おﾞおﾞっ♥　あ……が……♥　精液で…おぼれちゃ…♥　んﾞぐぶっ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「壊れっ♥♥　壊れちゃっ――っ♥♥♥　んんんんんーーーーっ♥♥　ぐぶっ♥　……ッ♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あは…っ♥　ご……っ♥　おﾞっ♥　おﾞおﾞぉ～～っ♥♥」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「まっ……！　……ッ！　……ッッ！！　んぶ…っ！？　おごぉ…ぉっ！？\n　んﾞぐぶっ！？　むﾞぅっ！？　んﾞんﾞんﾞんﾞんﾞんﾞっ！？」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひっ！？　やっ！？　やめっ！　やめ―――――っ！\n　あっ…　おっ…　おﾞぉﾞぉﾞ…あﾞっ…　　……ッ！　……ッッ！！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひっ！？　たっ…たすけっ……！　……ッ！　……ッッ！！」\n"
+	ENDSELECT
+		
+RETURN 1
+
+
+; □ 18 全身終了
+@KOJO_4_0_SYSTEM_MESSAGE_441_18(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_4_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…はっ♥　お腹の中…精液でたぷたぷです…っ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お腹…精液で膨らんじゃってます…♥　あは、あははははっ♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「すご…いっ♥　赤ちゃんの部屋、精液でぱんぱんに…♥♥」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「すご…かったです…♥　精液で…溺れ死ぬかと…♥」\n"
+		
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お腹が…お腹が触手の精液で重い…です…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「く…う…っ♥　こんな事続けられてたらそのうち…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あ…う…　出し過ぎ、です…　お腹が…破裂しそう…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「お…ご…♥　お腹も、胃の中も…精液でいっぱいに…」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひゅー…　ひゅー……　げぼっ！　ごほっ！　おえぇぇえええ…」\n\d%CALLNAME:TARGET%は胃の中に溜まった精液を必死に吐き出している…\d"
+	ENDSELECT
+		
+RETURN 1
