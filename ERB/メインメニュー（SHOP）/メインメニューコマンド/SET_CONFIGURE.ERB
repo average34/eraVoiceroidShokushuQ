@@ -565,10 +565,12 @@ REDRAW 1
 		RESULTS:0 = 捕食による最大HP減少
 		IF FLAG:502 == 0
 			RESULTS:1 = 救助時に８割回復
-		ELSEIF FLAG:502 >= 1 && FLAG:502 <= 10
-			RESULTS:1 = 救助時に{FLAG:502}割回復
-		ELSEIF FLAG:502 == 11
+		ELSEIF FLAG:502 == 1
+			RESULTS:1 = 救助時に４割回復
+		ELSEIF FLAG:502 == 2
 			RESULTS:1 = 回復しない
+		ELSEIF FLAG:502 == 3
+			RESULTS:1 = 救助時に全回復
 		ENDIF
 
 	;---選択時の処理---
@@ -577,17 +579,18 @@ REDRAW 1
 		SETCOLOR 0xEEEE10
 		PRINTFORML ※難易度が変化しますので、ご注意ください
 		RESETCOLOR
-		PRINTFORML 約８割回復するがデフォルトです
-		PRINTFORML 何割回復するか1～11の数字を入力してください
-		PRINTFORML 11を入力すると回復しません
+		PRINTFORML [1] 約８割回復する(デフォルト)
+		PRINTFORML [2] 約４割回復する
+		PRINTFORML [3] 回復しない
+		PRINTFORML [4] 全回復する
 		PRINTFORML 
 		PRINTFORML [0] キャンセル
 		$INPUT_LOOP
 		INPUT
 		IF RESULT == 0
 			PRINTFORML キャンセルしました
-		;1～11
-		ELSEIF RESULT >= 1 && RESULT <= 11
+		;1～4
+		ELSEIF RESULT >= 1 && RESULT <= 4
 			FLAG:502 = RESULT - 1
 			PRINTFORMW 設定しました
 		ELSE
