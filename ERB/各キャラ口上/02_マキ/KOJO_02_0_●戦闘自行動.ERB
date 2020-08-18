@@ -1,0 +1,962 @@
+﻿;戦闘中の行動
+
+@BATTLE_MIKATA_KOUDOU_HATUDOU_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		CFLAG:810=1
+
+		SELECTCASE ARG:1
+		;戦闘中
+			;防御
+			CASE 1
+				IF ARG:2 == 0
+				;ガード
+					IF KOJO_2_0_状態取得()=="苦戦"
+						PRINTFORML 「ん、っく……ま、守りを固めない…と……」
+						PRINTFORMDW マキはこれ以上ダメージが蓄積しないよう防御の体勢に入った
+					ELSE
+
+						PRINTDATAL
+						DATAFORM マキは敵の攻撃を防ぐため身構えている…
+						DATAFORM マキは集中して相手の行動を読み、攻撃をさばこうとしている…
+						ENDDATA
+						PRINTDATAW
+						DATAFORM 「今は耐えて、守りを固める！」
+						DATAFORM 「そう簡単に好きにはさせないよ！」
+						ENDDATA
+					ENDIF
+				ELSE
+				;リロード
+					IF KOJO_2_0_状態取得()=="苦戦"
+						PRINTFORML 「はぁっ、はぁっ…早く、仕留めないと…！」
+						PRINTFORMDW マキは震える手で%ARGS:1%を構え直した
+					ELSE
+						PRINTDATAW
+						DATAFORM 「焦らずリロードしないとね」
+						DATAFORM 「弾切れ前に終わらせないと…」
+						ENDDATA
+					ENDIF
+					
+				ENDIF
+			;アイテム
+			CASE 2
+				PRINTFORMW 「こんな時こそこれを！」
+			;前進
+			CASE 3
+				IF KOJO_2_0_状態取得()=="苦戦"
+					PRINTFORML 「今はあまり前に出たくないんだけどね…」
+					PRINTFORMDW マキは体を少し引きずりながら敵の前に出た
+				ELSEIF CFLAG:800==0 && rand:5
+					PRINTDATAW
+					DATAFORM 「%CSTR:50%、今のうちに！」
+					DATAFORM 「%CSTR:50%、今がチャンスだよ！」
+					DATAFORM 「%CSTR:50%、攻撃の準備はできてるっ！？」
+					DATAFORM 「%CSTR:50%、私が囮になるからっ！」
+					DATAFORM 「%CSTR:50%、そこから援護をお願い！」
+					DATAFORM 「%CSTR:50%、バックアップ任せたよ！」
+					ENDDATA
+				ELSEIF CFLAG:800==1 && rand:5
+					PRINTDATAW
+					DATAFORM 「%CSTR:50%、今のうちに体勢を！」
+					DATAFORM 「%CSTR:50%、今がチャンスですよ！」
+					DATAFORM 「%CSTR:50%、攻撃の準備はできてますかっ！？」
+					DATAFORM 「%CSTR:50%、私が囮になりますっ！」
+					DATAFORM 「%CSTR:50%、援護をお願いします！」
+					DATAFORM 「%CSTR:50%、バックアップは任せましたっ！」
+					DATAFORM 「%CSTR:50%、私ごとふっ飛ばさないでくださいね！」
+					ENDDATA
+				ELSE
+					PRINTFORML 「さぁ、かかってきなよ！」
+					PRINTFORMDW マキは前に大きく一歩踏み出した
+				ENDIF
+			;後退
+			CASE 4
+					PRINTFORMW 「ッ！」
+					PRINTFORMDW 嫌な予感がしたマキは敵から間合いを取った
+			;逃走
+			CASE 5
+			IF ARG:2 == 0
+				PRINTFORMW 「ああもうこのっ！大人しく逃がしてよ！」
+			ELSEIF ARG:2 == 1
+				;発情
+				IF CFLAG:28
+					PRINTFORML 「はぁ…はぁ…ぜ、絶対、マズい、これっ…っうぅぅ…！」
+					PRINTFORMW マキは頬を上気させながら敵から距離を取っていく
+				;HP1/4以下
+				ELSEIF MAXBASE:HP/4 >= BASE:HP
+					PRINTFORMW 「一旦退いた方が良さそうだね…」
+				;専用台詞
+				ELSEIF CSTR:51=="ゆかり" && rand:4==0
+					PRINTFORML （%CSTR:50%、ここは一旦退くよ）
+					PRINTFORMDW マキはアイコンタクトで%CSTR:50%に指示を出した
+				ELSEIF CFLAG:800==0 && rand:6
+					PRINTDATAW
+					DATAFORM 「%CSTR:50%！これ以上は危険、逃げるよっ！」
+					DATAFORM 「%CSTR:50%！走れるよね！？」
+					DATAFORM 「%CSTR:50%！走れるよね！？」
+					DATAFORM 「離脱するよ！逃げて、%CSTR:50%！」
+					DATAFORM 「%CSTR:50%、ここは一旦退こう！」
+					ENDDATA
+				ELSEIF CFLAG:800==1 && rand:6
+					PRINTDATAW
+					DATAFORM 「%CSTR:50%！これ以上は危険です！」
+					DATAFORM 「%CSTR:50%！走れますよね！？」
+					DATAFORM 「離脱します！準備はいいですか%CSTR:50%！」
+					DATAFORM 「%CSTR:50%、ここは退きましょう！」
+					ENDDATA
+				;その他
+				ELSE
+					PRINTDATAW
+					DATAFORM 「せ、戦略的撤退！」
+					DATAFORM 「ここは逃げるが勝ちっ！」
+					DATAFORM 「お、お願いだから逃がしてっ！」
+					ENDDATA
+				ENDIF
+			ENDIF
+			;浄化
+			;CASE 130で処理
+			
+			;-----弾幕攻撃
+			;弱弾幕
+			CASE 10
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMW 「これなら当たるはず…！」
+						CASE 1
+							PRINTFORMW 「まずは確実に敵に当てて…うぅ…」
+						CASEELSE
+							PRINTFORMW 「はぁ…はぁ…」
+							PRINTFORMDW 頬を染めながらマキは素早い攻撃を放った
+					ENDSELECT
+
+				;その他
+				ELSE
+					PRINTDATAL
+					DATAFORM 「小手調べだよ！」
+					DATAFORM 「確実に当てていけば勝てるんだから！」
+					DATAFORM 「当たれ！」
+					DATAFORM 「ていやっ！」
+					DATAFORM 「隙だらけだよ？」
+					DATAFORM 「そりゃあっ！」
+					ENDDATA
+					PRINTDATAW
+					DATAFORM マキの鋭い蹴りが相手を狙う！
+					DATAFORM マキが飛び上がって蹴りを繰り出す！
+					DATAFORM マキの裏拳が放たれる！
+					DATAFORM マキは軽やかに蹴りを放った！
+					ENDDATA
+
+				ENDIF
+			;中弾幕
+			CASE 11
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW (うぅ…思うように狙いを付けられない…)
+						CASEELSE
+							PRINTFORMDW マキは頬を染め、太ももをこすらせながら攻撃を放った！
+					ENDSELECT
+				
+				;その他
+				ELSE
+					PRINTDATAL
+					DATAFORM 「何事もバランスが大事ってね」
+					DATAFORM 「受けられるかなっ！」
+					DATAFORM 「当たれ！」
+					DATAFORM 「底力を舐めないでよね！」
+					DATAFORM 「ってやぁ！」
+					DATAFORM 「それっ！」
+					ENDDATA
+					PRINTDATAW
+					DATAFORM マキの正拳突きが敵を狙う！
+					DATAFORM マキの華麗な回し蹴りが繰り出される！
+					DATAFORM マキの連撃が放たれる！
+					DATAFORM マキは鮮やかな軌道で蹴りを放った！
+					ENDDATA
+
+				ENDIF
+			;強弾幕
+			CASE 12
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML マキは欲望と戦いながら蹴りを放つ！
+							PRINTFORMW 「速く片付けないと…私の理性がもう…！」
+						CASEELSE
+							PRINTFORML 「…っふぅぅ…く、食らえ！」
+							PRINTFORMDW マキは目の前の敵に身を委ねたい衝動を振り払って渾身の蹴りを放つ！
+					ENDSELECT
+
+				;その他
+				ELSE
+
+					PRINTDATAL
+					DATAFORM 「でやぁぁぁ！」
+					DATAFORM 「だぁっ！」
+					DATAFORM 「そぉいっ！」
+					DATAFORM 「甘いっ！」
+					DATAFORM 「そこっ！」
+					DATAFORM 「そりゃあっ！」
+					DATAFORM 「ったああぁぁ！！」
+					DATAFORM 「覚悟してよね！」
+					ENDDATA
+					PRINTDATAW
+					DATAFORM マキはフェイントをかけてから裏拳を放った！
+					DATAFORM マキは空中で回転しながら勢いをつけ、かかと落としを放った！
+					DATAFORM マキは気を纏った手刀を大きく振り下ろした！
+					DATAFORM マキは気を纏い刀剣のような鋭さを持った腕を振るった！
+					DATAFORM 気を纏ったマキの肘が敵に突き出される！
+					ENDDATA
+				ENDIF
+			;溜め撃ち
+			CASE 13
+				;溜め
+				IF CFLAG:31 == 2
+
+					;専用台詞
+					IF CSTR:51=="ゆかり" && rand:4==0
+						PRINTFORML （%CSTR:50%、頼んだよ）
+					ELSEIF CFLAG:800==0 && rand:6
+						PRINTDATAL
+						DATAFORM 「ごめん、%CSTR:50%！一瞬でいいから敵の気を逸らして！」
+						DATAFORM 「%CSTR:50%、一瞬だけ敵を引き付けて！」
+						DATAFORM 「%CSTR:50%、カバーお願い！」
+						DATAFORM 「%CSTR:50%、少し時間を稼いで！」
+						DATAFORM 「%CSTR:50%、敵の気を逸らせるかなっ！？」
+						ENDDATA
+					ELSEIF CFLAG:800==1 && rand:6
+						PRINTDATAL
+						DATAFORM 「%CSTR:50%、一瞬だけ気を逸らしてください！」
+						DATAFORM 「%CSTR:50%、一瞬だけ敵を引き付けてください！」
+						DATAFORM 「%CSTR:50%、カバーお願いします！」
+						DATAFORM 「%CSTR:50%、少し時間を稼いでください！」
+						DATAFORM 「%CSTR:50%、敵の気を逸らせせますかっ！？」
+						ENDDATA
+					;その他
+					ELSE
+						PRINTDATAL
+						DATAFORM 「タイミングを合わせて……」
+						DATAFORM 「相手が相手だけに…何度もチャンスは無いよね…」
+						DATAFORM 「…………………………」
+						ENDDATA
+					ENDIF
+
+					PRINTDATAW
+					DATAFORM マキは重い一撃を叩き込むための隙を探り始めた…
+					DATAFORM マキはあえて足を止め、重い一撃を繰り出すために隙を伺っている…
+					DATAFORM マキは足を止め、敵の隙を突こうとしている…
+					ENDDATA
+				;発射
+				ELSE
+					;発情
+					IF CFLAG:28
+						PRINTDATAL
+						DATAFORM 「…っうぅぅぅ！！！」
+						DATAFORM 「この程度…でっ…私の心は、…屈しないんだからね！」
+						DATAFORM 「お、落ち着いて、冷静に放てば、このくらい…っ！」
+						ENDDATA
+						PRINTDATAW
+						DATAFORM マキは欲望を打ち払って渾身の一撃を放った！
+						DATAFORM マキは震える身体を必死に奮い立たせて全力の一撃を放つ！
+						DATAFORM マキは子宮の疼きを感じながらも必死に重い一撃を放った！
+						ENDDATA
+					;その他
+					ELSE
+						PRINTDATAL
+						DATAFORM 「でやぁぁぁ！」
+						DATAFORM 「…そこだぁぁぁっっ！」
+						DATAFORM 「どりゃあぁぁあっ！」
+						DATAFORM 「こんのぉぉぉぉっ！」
+						DATAFORM 「覚悟しろぉぉぉっ！」
+						DATAFORM 「っだぁぁぁあぁぁっ！」
+						DATAFORM 「うりゃあああぁぁぁ！！」
+						ENDDATA
+						PRINTDATAW
+						DATAFORM マキは美しい軌道を描きながら素早い蹴りを繰り出した！
+						DATAFORM マキは空中で回転しながら勢いをつけ、渾身のかかと落としを放った！
+						DATAFORM マキは真正面から渾身の突きを放った！
+						DATAFORM マキは鋭く腕を振るい、素早い連撃を繰り出した！
+						ENDDATA
+
+					ENDIF
+				ENDIF
+			;ばら撒き弾
+			CASE 14
+				;発情
+				IF CFLAG:28
+					PRINTDATAW
+					DATAFORM 「動かないで…ってば……っ！」
+					DATAFORM 「これ以上近づかれたら…っ、あの臭いが…！」
+					DATAFORM 「じゃ、邪魔だよっ、あっち行ってっ！」
+					ENDDATA
+
+				;その他
+				ELSE
+					PRINTDATAW
+					DATAFORM 「これで自由には動けないでしょ？」
+					DATAFORM 「まずは動きを止めないと…」
+					DATAFORM 「自由に動かれたら危ないからね！」
+					DATAFORM 「これ以上好き勝手には動かせないよっ！」
+					ENDDATA
+				ENDIF
+			;貫通弾
+			CASE 15
+
+				;発情
+				IF CFLAG:28
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMDW マキは無言のまま貫通力重視の一撃を放つ！
+						CASEELSE
+							PRINTFORMDL マキは頬を上気させながらも鋭い一撃を放った！
+							PRINTFORMW 「はぁ…はぁ…次から次へと、少しは休ませてよ…」
+					ENDSELECT
+
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「こういう弾幕ってあんまり使わないので慣れないんですよね…」
+							PRINTFORMDW マキはすこし不安そうな顔で弾幕を放った！
+						CASEELSE
+							PRINTFORMW 「貫け！光符「華光玉」！」
+					ENDSELECT
+				ENDIF
+			;消耗武器
+			;弱攻撃
+			CASE 20
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「上手く力が入らない…ッ！」
+						CASEELSE
+							PRINTFORML 「うくっ…うぅ…」
+							PRINTFORMDW マキは欲望により少し涙目になっている！
+					ENDSELECT
+
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「女の子に武器持たせたら怖いんだからね！」
+						CASEELSE
+							PRINTFORML 「それっ！」
+							PRINTFORMDW マキは相手の次の行動を予測して攻撃を放った！
+					ENDSELECT
+				ENDIF
+			;中攻撃
+			CASE 21
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「うぅ…」
+							PRINTFORMDW マキは頬を染め、太ももをこすらせながら攻撃を放った！
+						CASEELSE
+							PRINTFORML 「くぅ…どいてぇっ！」
+							PRINTFORMDW マキは股間の疼きをなんとか抑えながら攻撃を放った！
+					ENDSELECT
+
+				;その他
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 「食らえ！」
+							PRINTFORMDW マキは敵に狙いを定めた！
+						CASE 1
+							PRINTFORML 「躱せるもんなら躱してみてよね！」
+							PRINTFORMDW マキは余計な動きをせずに真っ直ぐ敵を狙った！
+						CASEELSE
+							PRINTFORMW 「うりゃあー！」
+							PRINTFORMDW マキは気合を入れながら武器を振り回した！
+					ENDSELECT
+				ENDIF
+			;強攻撃
+			CASE 22
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「んくっ…はぁ…はぁ……そこだッ！」
+						CASEELSE
+							PRINTFORML 「ふ、吹っ飛べぇーっ！」
+							PRINTFORMDW マキは発情して朦朧となりながらも敵を狙う！
+					ENDSELECT
+
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「そりゃあっ！」
+							PRINTFORMDW マキは敵の弱点と思われる部分だけに狙いを定めて攻撃した！
+						CASEELSE
+							PRINTFORML 「これでも！食らえっ！」
+							PRINTFORMDW マキは腰を落とし、敵に攻撃を放った！
+					ENDSELECT
+				ENDIF
+			;節約攻撃
+			CASE 23
+				;発情
+				IF CFLAG:28
+					PRINTFORMW 「今、ここで手加減すれば……って違う！」
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「やたらと消費するのはマズそうだね…」
+						CASE 1	
+							PRINTFORML 「弾が尽きたらそれまで、今は節約しないと…！」
+							PRINTFORMDW マキは無駄弾を使わないよう慎重に攻撃を放った！
+					ENDSELECT
+				ENDIF
+			;みだれうち
+			CASE 24
+				;発情
+				IF CFLAG:28
+					PRINTFORML 「当たれ！当たれぇ！」
+					PRINTFORMDW マキは快感を必死に否定しながらがむしゃらに撃ちまくる！
+				;その他
+				ELSE
+					PRINTFORML 「下手な鉄砲何とやらってねっ！」
+					PRINTFORMDW マキは短く息を吐くと武器を敵の方に向けて撃ち続けた！
+				ENDIF
+			;一点集中
+			CASE 25
+				;発情
+				IF CFLAG:28
+					PRINTFORML (こんな状態で集中なんて…んんっ！)
+					PRINTFORMDW マキは疼く体を押さえつけ、なんとか集中を続けている！
+				;その他
+				ELSE
+					PRINTFORMW 「落ち着いて、落ち着いて当てる……そこだぁっ！」
+				ENDIF
+			;非消耗武器
+			;弱攻撃
+			CASE 30
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「上手く力が入らない…ッ！」
+						CASEELSE
+							PRINTFORML 「うくっ…うぅ…」
+							PRINTFORMDW マキは欲望により少し涙目になりながら攻撃を繰り出す！
+					ENDSELECT
+
+				;その他
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「確実に、一撃入れる！」
+						CASEELSE
+							PRINTFORML 「そこっ！」
+							PRINTFORMDW マキは隙の少ない素早い攻撃を放った！
+					ENDSELECT
+				ENDIF
+			;中攻撃
+			CASE 31
+				;発情
+				IF CFLAG:28 && BASE:TP < 150
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「んぅ……」
+							PRINTFORMDW マキは頬を染め、太ももをこすらせながら攻撃を放った！
+						CASEELSE
+							PRINTFORML 「くぅ…どいてよっ！」
+							PRINTFORMDW マキは股間の疼きをなんとか抑えながら攻撃を放った！
+					ENDSELECT
+
+				;その他
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 「食らえぇ！」
+							PRINTFORMDW マキは相手の懐へもぐりこみ、切り上げるようにして攻撃した！
+						CASE 1
+							PRINTFORML 「てやぁぁぁぁぁ！」
+							PRINTFORMDW マキは相手を袈裟切りにしようと真っ直ぐ敵に向かった！
+						CASEELSE
+							PRINTFORML 「私、運動には自信あるんだからねっ！」
+							PRINTFORMDW マキは構えた武器を横一文字に薙いだ！
+					ENDSELECT
+				ENDIF
+			;強攻撃
+			CASE 32
+				;発情
+				IF CFLAG:28
+					SELECTCASE RAND:3 && BASE:TP < 150
+						CASE 0
+							PRINTFORML 「んくっ…はぁ…はぁ……てやぁッ！」
+							PRINTFORMDW マキは顔を真っ赤にしながらも武器を大きく振り下ろした！
+						CASE 1
+							PRINTFORML 「そこを…どいて、よっ！」
+							PRINTFORMDW マキは武器がすっぽ抜けないようにきつく握ってから大きく振った！
+						CASEELSE
+							PRINTFORML 「くっ…うああぁぁぁぁぁ！」
+							PRINTFORMDW マキは発情して朦朧となりながらも敵に攻撃を仕掛ける！
+					ENDSELECT
+
+				;その他
+				ELSE
+					PRINTDATAW
+					DATAFORM 「っとりゃあぁぁ！」
+					DATAFORM 「このぉっ！」
+					DATAFORM 「ふっ！」
+					DATAFORM 「うりゃああぁぁあぁ！」
+					DATAFORM 「でやぁぁぁぁぁぁ！」
+					ENDDATA
+					PRINTDATAW
+					DATAFORM マキは隙を最小限に抑えつつ、武器を大きく振りかぶり攻撃した！
+					DATAFORM マキはバットを構えるようにエモノを振りかぶり敵に攻撃を放った！
+					DATAFORM マキは短く息を吐き、敵に鋭い攻撃を放った！
+					DATAFORM マキは掛け声とともに武器を振るい、敵に攻撃を放った！
+					ENDDATA
+				ENDIF
+			;下段狙い
+			CASE 33
+				;発情
+				IF CFLAG:28
+					PRINTFORML 「ちょ…こっち来ないでよっ！」
+					PRINTFORMDW マキは相手の動きを鈍らせるために狙いを定めた一撃を仕掛けた！
+				;その他
+				ELSE
+					PRINTFORML 「その動き、抑えさせてもらうよ！」
+					PRINTFORMDW マキは敵にフェイントをかけながら下段に攻撃を仕掛けた！
+				ENDIF
+			CASE 34
+			;急所狙い
+				IF CFLAG:28
+				;発情
+					PRINTFORML 「これで…相手も少しは……」
+					PRINTFORMDW マキは良からぬ考えを振り払い、相手に攻撃することだけに集中している
+				;その他
+				ELSE
+					PRINTFORMW 「大体このへんっ！」
+				ENDIF
+			;カウンター
+			CASE 35
+			;別の部分で処理しているのでスルー
+
+			;--ここから拘束
+			;拘束離脱
+			CASE 42
+				;失敗
+				IF ARG:3 != 0
+					;絶頂中
+					ELSEIF CFLAG:TARGET:35 != 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「―――――――――ッ！」
+								PRINTFORMDW マキは絶頂による快感を受けながらも必死に手足をバタ付かせているが、敵に効果は無いようだ！
+							CASEELSE
+								PRINTFORMW 「はぐぅ…ぁ！…ぁぁぁぁああああ！」
+								PRINTFORMDW マキは何か抗議の声を上げようとしたが何の意味もなく、絶頂による痙攣を続ける
+						ENDSELECT
+					;発情
+					ELSEIF CFLAG:28
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW マキは逃げようと思いながらも体が上手く動かない！
+								PRINTFORMW (逃げなくちゃいけないのに…ッ)
+							CASEELSE
+								PRINTFORMW 「んっ…っくあぁ…」
+								PRINTFORMDW マキは体が疼き上手く脱出ができない！
+						ENDSELECT
+					;丸呑み
+					ELSEIF CFLAG:TARGET:21 != 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「んぐぐっ！むぐぅっ…！」
+								PRINTFORMW （せめて、自由に呼吸が出来れば…！）
+							CASEELSE
+								PRINTFORMDW マキは敵に不規則なリズムで締め上げられ、上手く動けない！
+								PRINTFORMW 「う…くっ！あ、うぁッ！？」
+						ENDSELECT
+					;その他
+					ELSE
+						SELECTCASE RAND:5
+							CASE 0
+								PRINTFORMW 「くっ、離してよっ！どうせ離してくれないだろうけどさ！」
+								PRINTFORMDW マキは必死に敵から離れようとしている
+							CASE 1
+								PRINTFORMW 「んっ、くああぁぁぁぁ…」
+								PRINTFORMDW マキは触手に愛撫をされるたび背筋がゾワゾワする感覚に襲われた
+							CASE 2
+								PRINTFORMW 「ひぅん！…っく」
+								PRINTFORMDW マキは敵の拘束から逃れようと必死に抵抗している
+							CASE 3
+								PRINTFORMW 「こんなことで…っぅああああああ！」
+								PRINTFORMDW マキは敵の拘束から逃れようと必死に抵抗している
+							CASEELSE
+								PRINTFORMW 「今離してくれたら許してあげても良いよ？」
+								PRINTFORMW 「まぁそんな気さらさらないんだけど…くぅっ！」
+								PRINTFORMDW マキは強がりながらも敵の隙を窺っている
+						ENDSELECT
+					ENDIF
+			;力溜め
+			CASE 43
+				;発情
+				IF CFLAG:28
+					PRINTFORML 「悠長に隙を伺ってる余裕なんて…っぁあ！」
+					PRINTFORMDW マキは喘がされながらも脱出のために力を溜めようとしている…
+				;その他
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMDW マキは脱出のため、触手からの快楽に耐えながらじっと力を溜めている…
+						CASE 1
+							PRINTFORMW 「この程度で私は屈ないんだからね…んっ…！」
+						CASEELSE
+							PRINTFORMDW マキは深呼吸をし、精神力を高めた！
+					ENDSELECT
+				ENDIF
+			;諦め
+			CASE 44
+				;PRINTFORMW (あぁ…もう…)
+				;	IF CFLAG:28
+				;	;発情
+				;		PRINTFORMW 「もう…我慢…したくな…い……ああぁぁあぁ♪」
+				;	ELSE
+				;	;その他
+				;		PRINTFORMW 「お嬢様…咲夜さん…フラン様…申し訳ありませ…ん……」
+				;		PRINTFORMDW マキは屈服し、全てを受け入れた…
+				;	ENDIF
+			;お尻
+			CASE 50
+				;戦意喪失
+				IF CFLAG:29
+					;
+				ELSE	
+					PRINTFORMDW マキは尻に近づく触手を必死に押さえている！
+				ENDIF
+			;乳首
+			CASE 51
+				;戦意喪失
+				IF CFLAG:29
+					PRINTFORMW 「お願いします……もう揉まないで…吸わないでください……」
+				;母乳体質orMP1/4以下
+				ELSEIF TALENT:130 || MAXBASE:MP/4 >= BASE:MP
+					PRINTFORMW 「くぅっ、これ以上胸を責められたら……！」
+				ELSE
+					PRINTFORMW 「くっ、このぉっ!」
+					PRINTFORMDW 弱い胸を攻められないようにマキは必死に抵抗している！
+				ENDIF
+			;C
+			CASE 52
+				;戦意喪失
+				IF CFLAG:29
+					;
+				ELSE	
+					PRINTFORMDW マキは陰核に近づきつつある触手をはたき落そうとしている！
+				ENDIF
+			;挿入ガード
+			CASE 53
+				;戦意喪失
+				IF CFLAG:29
+					PRINTFORMW 「中だけは……おねがいします…どうか許してください……」
+				;MP1/4以下
+				ELSEIF MAXBASE:MP/4 >= BASE:MP
+					PRINTFORMW 「中だけは、防がないと……！」
+				ELSE
+					PRINTFORML 「そこはダメ…っ！く…ぅ……！」
+					PRINTFORMDW マキは膣の奥を貫こうと蠢く触手をなんとか避けようと体を捻っている！
+				ENDIF
+			;-----催眠中
+			;平常行動
+			CASE 71
+				IF FLAG:526 == 1
+					PRINTFORMW 「えへへ～ いいじゃん～キスぐらい」
+				ELSE
+					PRINTFORMW 「座布団…座布団…どこやったかな……」
+				ENDIF
+			;自慰
+			CASE 72
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「あぁ～…なんだかエッチな気分になってきちゃったなあ…」
+					CASEELSE
+						PRINTFORMDW マキは虚ろな目をしたまま、自分を慰め始めた！
+				ENDSELECT
+			CASE 73
+			;襲う
+				PRINTFORMW 「イイ！その顔凄くイイ！素敵だよ！このまま……食べられて♪」
+			;お着替え
+			CASE 74
+				PRINTFORMW 「なんだか蒸し暑いよね…ちょっと着替えちゃいましょう♪」
+			;逃げる
+			CASE 75
+				IF CFLAG:526 == 1
+					PRINTFORMW 「ストリップショーのはじまりだよ～♪」
+				ELSE
+					PRINTFORMW 「逃げなくちゃ…にげなくちゃ…ニゲナクチャ…」
+					PRINTFORMDW マキはボソボソと何かを呟きながらゆっくりと敵に近寄って行く
+				ENDIF
+			;寝る
+			CASE 76
+				PRINTFORMW 「くぁぁ～～……」
+			;精神抵抗
+			CASE 77
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW （あれ？私は？誰？どこに？なんで？どうして？いつから？）
+					CASEELSE
+						PRINTFORMW （思い出せない思い出せない思い出せない思い出せない思い出せない思い出せない思い出せない思い出せない思い出せない）
+				ENDSELECT
+			;踏みつけ
+			CASE 80
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「あれぇ？どんどん、どんどん固くなっていくねぇ？」
+					CASE 1
+						PRINTFORMW 「これじゃあお仕置きの意味がないなあ♪」
+					CASE 2
+						PRINTFORMW 「じゃあ…もっと強く踏んであげるね♪」
+					CASE 3
+						PRINTFORMDW マキは触手を足で踏みながら満面の笑みを浮かべている
+				ENDSELECT
+			;ビンタ
+			CASE 81
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「手が汚れちゃった……」
+					CASE 1
+						PRINTFORMW 「あ、そこの あ・な・た♪」
+						PRINTFORMW 「ちょっとハンカチ代わりにさせてもらうね？」
+					CASE 2
+						PRINTFORMDW マキは次々と触手をしばき倒していく！
+				ENDSELECT
+			;折る
+			CASE 82
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「おいたはいけないねぇ？」
+					CASE 1
+						PRINTFORMW 「だ・れ・が、そんなことして良いって言ったのかな？」
+						PRINTFORMW 「言ってないよね？だ！れ！も！」
+				ENDSELECT
+			;キス
+			CASE 83
+				PRINTFORMW 「んっ…………」
+				PRINTFORMW （…………………あれ…わたし…なにを……？）
+			;手淫
+			CASE 84
+				;ラヴラヴ
+				IF FLAG:526 == 1
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMW 「なるほど、ここのところが気持ちいいんだね？」
+							PRINTFORMDW マキは男性器を模した触手の雁首を捻るように攻めている
+						CASE 1
+							PRINTFORMW 「ほらほら、早く出しちゃってよ～」
+						CASE 2
+							PRINTFORMW 「この先っぽのところ…随分弱いみたいだね～？」
+							PRINTFORMW 「ダメだよ？弱いところは鍛えなくちゃ♪」
+							PRINTFORMDW マキは男性器を模した触手の先端を指でつついている
+					ENDSELECT
+				;その他
+				ELSE
+					PRINTFORMW 「そんなにシコシコされたいんだ？この変態」
+				ENDIF
+			;フェラ
+			CASE 85
+				IF FLAG:526 == 2
+					PRINTFORMW 「んっ、んっ、んっ、んんっ、んっ、んぐっ、んっ」
+					PRINTFORMW 「…うぇぇ…！ゲホッ…！……はぁ、息つく暇もない…！」
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMW 「んっ！むっ！んっ！んぐっ！……ぷはぁっ」
+							PRINTFORMW 「んふふ。美味しくはないけど…これは、クセになる味だね…♪」
+							PRINTFORMDW マキは官能的な笑顔を浮かべ、再び触手を咥え始めた
+						CASE 1
+							PRINTFORMW 「れろれろ～、ちゅっ」
+							PRINTFORMW 「んふふ、気持ちいいでしょ？」
+						CASE 2
+							PRINTFORMW 「ん、んぐぅぅぅっっ！！」
+							PRINTFORMW 「ケホッケホ……えへへ。いっぱい出ましたね♪」
+					ENDSELECT
+				ENDIF
+			;パイズリ
+			CASE 86
+				IF FLAG:526 == 1
+					PRINTFORMW 「私ね、おっぱいには自信あるんだよ？
+					PRINTFORMW 「ほ～ら、ぐりぐりー」
+					PRINTFORMDW マキは触手を胸に挟み、無邪気な笑顔で触手を弄んでいる
+				ELSE
+					PRINTFORMW 「気持ち悪い…とっとと終わらせてよね…」
+					PRINTFORMDW マキは侮蔑の目を向けるが、強がりであることは明らかだ…
+				ENDIF
+			;襲われてるなう
+			CASE 95
+				;解放してくれた
+				IF ARG:3 == 2
+					IF CFLAG:28
+					;発情
+						PRINTFORMW （もうちょっとあのままが良かったかな……）
+					ELSE
+					;その他
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「あ、あの……責任、取ってよね…」
+							CASEELSE
+								PRINTFORMW 「はぁ……はぁ……はぁ……」
+								PRINTFORMDW マキは目一杯、肺に空気を送っている
+						ENDSELECT
+					ENDIF
+				;自力で脱出
+				ELSEIF ARG:3 == 1
+					;発情
+					IF CFLAG:28
+						PRINTFORMW （もうちょっとあのままでも良かったかも……）
+						PRINTFORMW 「って何考えてるの私は！」
+					ELSE
+						PRINTFORMW 「目を覚ましてよー！」
+					ENDIF
+				;犯されっぱなし
+				ELSE
+					;発情
+					IF CFLAG:28
+						PRINTFORMW 「あっ！ひゃんっ！んっ！んぁっ！」
+						PRINTFORMDW マキは%ARGS:1%から与えられる快楽に浸っている！
+					;その他
+					ELSE
+						PRINTFORMW 「だめっ…ぁっ！…んぅ…っ！」
+						PRINTFORMDW マキは%ARGS:1%に対する対処法が分からずに犯され続けている
+					ENDIF
+				ENDIF
+			;襲ってるなう
+			CASE 96
+				;押し倒した瞬間
+				IF ARG:3 == 3 || ARG:3 == 2
+					PRINTFORMW 「もう我慢しないでいいですよね？答えは聞いてません♪」
+				;ふたなり挿入
+				ELSEIF ARG:3 == 1
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「はぁっ！はぁっ！…%ARGS:1%のナカ、んっ、すごくイイよ！腰が…くぅっ！止まらないんですっ！」
+						CASEELSE
+							PRINTFORMDW マキはケダモノのように%ARGS:1%をがっちりと掴みながら腰を振り続けている！
+					ENDSELECT
+				;通常れいーぷ
+				ELSE
+					PRINTFORMW 「はぁっ、はぁっ…気持ちいい？…私は、すごく、気持ちいいよっ！」
+				ENDIF
+
+			;該当コマンドなし
+			CASEELSE
+				CFLAG:810=0
+
+		ENDSELECT
+
+
+
+
+
+
+@BATTLE_MIKATA_KOUDOU_OTHER_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+CFLAG:810=1
+SELECTCASE ARG:0
+	;攻撃がHit
+	CASE 11
+		IF CFLAG:28 || CFLAG:43
+			;
+		ELSE	
+
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORML 「この調子で！」
+				CASE 1
+					PRINTFORML 「このまま畳み掛けられればッ！」
+				CASE 2
+					PRINTFORML 「どうっ！？」
+				CASE 3
+					PRINTFORML 「私の攻撃にいつまで耐えられるかな！？」
+				CASE 4
+					IF CFLAG:800==0 && rand:6
+						PRINTDATAL
+						DATAFORM 「%CSTR:50%、今のうちに！」
+						DATAFORM 「%CSTR:50%、追撃お願い！」
+						DATAFORM 「%CSTR:50%、今がチャンスだよ！」
+						DATAFORM 「%CSTR:50%、連撃任せたよ！」
+						ENDDATA
+					ELSEIF CFLAG:800==1 && rand:6
+						PRINTDATAL
+						DATAFORM 「%CSTR:50%、今のうちです！」
+						DATAFORM 「%CSTR:50%、追撃お願いします！」
+						DATAFORM 「%CSTR:50%、今がチャンスです！」
+						DATAFORM 「%CSTR:50%、連撃任せました！」
+						ENDDATA
+					ELSE
+						PRINTFORML 「吹っ飛べえぇっ！」
+					ENDIF
+				CASEELSE
+					PRINTFORML (よし！この隙に距離を取らないと…！)
+			ENDSELECT
+		ENDIF
+	;撃破
+	CASE 31
+		;発情時
+		IF CFLAG:28 || BASE:EP < 2000
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW (倒せたのに…少し残念に思った自分が嫌いになりそうだよ…)
+				CASEELSE
+					PRINTFORML 「はぁー…はぁー…はぁー…」
+					PRINTFORMDW マキは息を荒げながらも敵の撃破を確認した
+			ENDSELECT
+		;その他
+		ELSE
+			IF CFLAG:800==0 && rand:2
+				PRINTDATAW
+				DATAFORM 「やったね、%CSTR:50%」
+				DATAFORM 「勝てたね%CSTR:50%、ケガとかしてない？」
+				DATAFORM 「%CSTR:50%、大丈夫だった？」
+				ENDDATA
+			ELSEIF CFLAG:800==1 && rand:2
+				PRINTDATAW
+				DATAFORM 「やりましたね、%CSTR:50%」
+				DATAFORM 「勝てましたね、%CSTR:50%。ケガとかしてませんか？」
+				DATAFORM 「%CSTR:50%、見事な活躍でしたね」
+				ENDDATA
+			ELSE
+				PRINTDATAW
+				DATAFORM 「ふぅ…」
+				DATAFORM 「勝てば官軍、かぁ」
+				DATAFORM 「…っとと、やりすぎたかな」
+				ENDDATA
+			ENDIF
+		ENDIF
+
+	;カウンター中
+	CASE 50
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「ほらほらどうしたの？怖気付いたのかな？」
+			CASE 1
+				PRINTFORMW 「かかってきなよ！」
+			CASEELSE
+				PRINTFORMW 「ん？私はここだよ～？」
+		ENDSELECT
+	;カウンター発動
+	CASE 51
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「そんな体勢で、反撃されたらどうするつもりだったのかな？」
+			CASE 1
+				PRINTFORMDW マキは敵の攻撃の勢いを利用し、鋭い回し蹴りを放った！
+			CASEELSE
+				PRINTFORMW 「この程度で私を捕まえるつもりだったんだ…女の子も舐められたもんだよね！」
+		ENDSELECT
+
+	;該当コマンドなし
+	CASEELSE
+		CFLAG:810=0
+
+		
+
+ENDSELECT
+
+

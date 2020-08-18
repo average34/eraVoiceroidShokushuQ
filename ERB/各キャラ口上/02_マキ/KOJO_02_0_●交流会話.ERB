@@ -1,0 +1,402 @@
+﻿;交流イベント
+
+@DUNGEON_COMMUNICATION_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+CFLAG:810=1
+SELECTCASE ARG:0
+	;迷宮内で誰かに会った
+	CASE 101
+		CALL KOJO_2_0_相手取得(ARG:1)
+
+		;戦意喪失
+		IF CFLAG:29
+			PRINTFORMW 「……………」
+			PRINTFORMDW マキは出会った相手も見ず、小さく震え続けている…
+		;睡眠
+		ELSEIF CFLAG:25
+			PRINTFORMW 「ん～…」
+			PRINTFORMDW マキは呆れるほどぐっすり寝ていた
+		;向こうが喪失中
+		ELSEIF ARG:2
+			IF CSTR:51 == "ゆかり"
+				PRINTFORMW 「な…あ……え…？」
+				PRINTFORMW 「ゆ、ゆか…りん……？」
+				PRINTFORMW 「ゆかりん…？うそ、ゆかりん、やだ…しっかりしてっ！？」
+				PRINTFORMW 「ゆかりん…嘘だよね……やだよ…いや…嫌ぁぁぁあぁっ……」
+				PRINTFORMW 虚空を見つめるゆかりは、マキの嗚咽にもぴくりとも反応しない…
+			ELSEIF CSTR:51 == "きりたん"
+				PRINTFORML 「き、きりたん……！？」
+				PRINTFORMW 「だ、大丈夫！？きりたんっ！ちょっと、きりたんっ！？」
+				PRINTFORMDW マキはきりたんの頬を軽くたたいたり揺さぶるが、反応は一切ない。
+				PRINTFORMW 「…………私が……」
+				PRINTFORMW 「私が……一緒にいれば…………」
+				PRINTFORMDW マキは悔しそうに涙をこぼしながらきりたんを抱きしめている
+			;ずん子
+			ELSEIF CSTR:51 == "ずん子"
+				PRINTFORMW 「………………………」
+				PRINTFORMW 「………………………………………………え？」
+				PRINTFORMDW マキは%CSTR:51%が喪失していることを信じられないのか困惑の表情を浮かべている
+				PRINTFORMW 「%CSTR:50%…？そ、そんなわけないよね？%CSTR:50%があんな奴らに負ける…なんて……」
+				PRINTFORMDW マキは%CSTR:51%が完全に触手に負けたという事実を受け止めた途端焦り始めた
+				PRINTFORMW 「お、お願い…！%CSTR:50%、しっかりしてっ…！」
+			ELSE
+				PRINTDATAW
+				DATAFORM 「……ひどい…」
+				DATAFORM 「っ、こんな事って……」
+				DATAFORM 「っ…大丈夫じゃ…ないよね……」
+				ENDDATA
+				PRINTFORMDW マキは%CSTR:51%を悲しそうな目で見つめている
+			ENDIF
+		;向こうが妊娠中
+		ELSEIF CFLAG:(ARG:1):36 == 3
+			;ゆかりにあった
+			IF NO:(ARG:1) == 3
+				PRINTFORMW 「ゆ、ゆかりん！？どうしたのそのお腹……」
+				PRINTFORMW (あんなに苦しそうなゆかりん、初めて見た……)
+
+			ELSEIF CFLAG:800==0
+				PRINTFORMW 「あ、%CSTR:50%！無事だったん……だ………」
+				PRINTFORMDW マキはお腹を大きくした%CSTR:51%を見た瞬間硬直した
+
+			ELSEIF CFLAG:800==1
+				PRINTFORMW 「あ、%CSTR:50%！無事だったんです……ね………」
+				PRINTFORMDW マキはお腹を大きくした%CSTR:51%を見た瞬間硬直した
+			ENDIF
+		ELSE
+			IF CFLAG:800==0
+				PRINTDATAW
+				DATAFORM 「ヤッホー、元気？……なんて、のんきに挨拶してる場合じゃないんだよねー」
+				DATAFORM 「お互いになんとか無事みたいだね」
+				DATAFORM 「大丈夫だった？私は…ううん、何ともないよ」
+				DATAFORM 「どう？何か出口への手掛かりは掴めた？」
+				ENDDATA
+			ELSEIF CFLAG:800==1
+				PRINTDATAW
+				DATAFORM 「お元気ですか？……なんて、のんきに挨拶してる場合じゃないんですよねー」
+				DATAFORM 「お互い無事みたいですね」
+				DATAFORM 「身体は大丈夫ですか？」
+				DATAFORM 「どうでしょう、何か出口への手掛かりは掴めましたか？」
+				ENDDATA
+			ENDIF
+		ENDIF
+	;離れる
+	CASE 102
+
+		IF CFLAG:800==0
+			PRINTDATAW
+			DATAFORM 「何か見つけたら連絡するよ」
+			DATAFORM 「うん、お互い気を付けようね」
+			DATAFORM 「情報を見つけて、それからまた合流しよう」
+			DATAFORM 「早く出口を見つけないとね」
+			ENDDATA
+		ELSEIF CFLAG:800==1
+			PRINTDATAW
+			DATAFORM 「何か見つけたら連絡しますね」
+			DATAFORM 「うん、お互い気を付けましょうね」
+			DATAFORM 「情報を見つけて、それからまた合流しましょう」
+			DATAFORM 「早く出口を見つけましょう」
+			ENDDATA
+		ENDIF
+	;遭遇時会話：雑談
+	;ARG:1に遭遇キャラ　ARG:2にMP回復量
+	CASE 103
+		CALL KOJO_2_0_相手取得(ARG:1)
+
+		;マキが主人公の時
+		IF TARGET == 1
+			IF CFLAG:800==0
+				PRINTDATAW
+				DATAFORM 「そこでなんと倉庫の奥からマイクが出てきたんだよ～！」
+				DATAFORM 「実は学校に『開かずの間』があってさあ――」
+				DATAFORM 「前にゆかりんと二人で遊んでいた時の話なんだけど――」
+				DATAFORM 「この髪飾りって意外と頑丈で――」
+				DATAFORM 「…内緒だよ？実はここだけの話なんだけどさ――」
+				ENDDATA
+			ELSEIF CFLAG:800==0
+				PRINTDATAW
+				DATAFORM 「そこでなんと倉庫の奥からマイクが出てきたんですよ～！」
+				DATAFORM 「実は学校に『開かずの間』があるらしいんです――」
+				DATAFORM 「前にゆかりんと二人で遊んでいた時の話なんですけど――」
+				DATAFORM 「この髪飾りって意外と頑丈で――」
+				DATAFORM 「…内緒ですよ？実はここだけの話なんですが――」
+				ENDDATA
+			ENDIF
+			PRINTFORMDW マキは話の花を咲かせている
+
+		ELSE
+		;
+		ENDIF
+	;情報
+	CASE 104
+		CALL KOJO_2_0_相手取得(ARG:1)
+
+		IF ARG:2 == 1
+			;PRINTFORM 「おぉ、部屋の雰囲気が変わった気がする！」
+		;戦意喪失
+		ELSEIF CFLAG:29
+			;
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「あー、なるほどねえ……」
+					PRINTFORMDW マキは情報を熱心に聞いている
+				CASE 1
+					PRINTFORMW 「あの部屋には確か…」
+					PRINTFORMDW マキは記憶を辿って情報を提供している
+				CASEELSE
+					PRINTFORMW 「………えーと、つまりどうなって？」
+			ENDSELECT
+		ENDIF
+	;アイテムもらう
+	CASE 105
+		CALL KOJO_2_0_相手取得(ARG:1)
+
+		;主犯
+		IF TARGET == 1
+			;戦意喪失
+			IF CFLAG:29
+				;
+			;向こうが喪失
+			ELSEIF ARG:3
+				PRINTFORM 「ごめんね、きっと助けに来るから」
+				PRINTFORMDW マキは謝りつつアイテムを物色した
+			ELSE
+				PRINTFORMW 「ありがとうございます」
+				PRINTFORMDW マキは礼をしながらもアイテムをもらっていった
+			ENDIF
+		ENDIF
+		;共犯
+		IF TARGET != 1
+			;戦意喪失
+			IF CFLAG:29
+				;
+			;向こうが喪失
+			ELSEIF ARG:3
+				PRINTFORM 「……これは仕方ない、仕方ないって分かってる事だから…」
+				PRINTFORMDW マキは行為に罪悪感を感じながらも、自分を納得させようとしている
+			ENDIF
+		ENDIF
+
+
+	;PTに勧誘された
+	CASE 140
+		;ARG:1に状況　（ARG:1が0：通常　1：共闘）　ARG:2が0：失敗　1：成功
+		;※主人公ではなく、誘われた側のキャラの口上
+		IF ARG:1 == 0 && ARG:2 == 1
+		;通常時、マキがPTに入る
+			;戦意喪失
+			IF CFLAG:29
+				PRINTFORMDW マキは虚ろな目を続けている
+			;元気
+			ELSEIF cflag:800==0
+				PRINTDATAW
+				DATAFORM 「%cstr:50%、よろしくね！」
+				DATAFORM 「こんな所、さっさと抜け出そうね」
+				DATAFORM 「オッケー%cstr:50%、任せといて！」
+				DATAFORM 「これで少しは安心かな」
+				DATAFORM 「%cstr:50%と合流出来て安心したよ」
+				DATAFORM 「絶対にここから脱出しようね」
+				DATAFORM 「協力すればきっと大丈夫だよ」
+				ENDDATA
+			ELSEIF cflag:800==1
+				PRINTDATAW
+				DATAFORM 「%cstr:50%、よろしくお願いします！」
+				DATAFORM 「こんな所、さっさと抜け出しましょう」
+				DATAFORM 「了解です%cstr:50%、任せてください！」
+				DATAFORM 「%cstr:50%と一緒なら安心です」
+				DATAFORM 「絶対に脱出しましょうね」
+				DATAFORM 「協力すればきっと大丈夫ですよ」
+				ENDDATA
+			ENDIF
+		ELSEIF ARG:1 == 1 && ARG:2 == 1
+		;戦闘時、マキがPTに入る
+			;戦意喪失
+			IF CFLAG:29
+				PRINTFORMDW マキは虚ろな目を続けている
+
+			;元気
+			ELSEIF cflag:800==0
+				PRINTDATAW
+				DATAFORM 「援軍！？ありがとう！」
+				DATAFORM 「ありがとう%cstr:50%、後でお礼するね！」
+				DATAFORM 「%cstr:50%、背後に気を付けて！」
+				ENDDATA
+			ELSE
+				PRINTDATAW
+				DATAFORM 「援軍ですか！？助かります！」
+				DATAFORM 「%cstr:50%、ありがとうございます！」
+				DATAFORM 「%cstr:50%、背後に気を付けてください！」
+				ENDDATA
+			ENDIF
+
+		ENDIF
+
+	CASE 107
+		CALL KOJO_2_0_相手取得(ARG:1)
+
+		;勧誘成功
+		;自分→相手(CASE109)の順で出る
+		;140 → 107 →109
+		;主人公時
+		IF TARGET == 1 && !CFLAG:29
+			;相手が喪失
+			IF ARG:2
+				PRINTFORMW 「…私が世話をすれば問題ないよね？絶対に迷惑はかけないから…」
+			;元気
+			ELSEIF cflag:800==0
+				PRINTDATAW
+				DATAFORM 「よろしくね！」
+				DATAFORM 「必ずここから脱出しよう！」
+				ENDDATA
+			ELSEIF cflag:800==1
+				PRINTDATAW
+				DATAFORM 「よろしくお願いします！」
+				DATAFORM 「必ずここから脱出しましょうね！」
+				ENDDATA
+			ENDIF
+		ENDIF
+
+	;遭遇時会話：勧誘失敗
+	;ARG:1に遭遇キャラ	
+	CASE 108
+		CALL KOJO_2_0_相手取得(ARG:1)
+
+		;戦意喪失
+		IF CFLAG:29
+			;
+		ELSE
+			PRINTFORMW 「そ、そっか…じゃあ、また次の機会に」
+		ENDIF
+	;パーティ加入
+	CASE 109
+	;CASE140を使うので何も無い
+	;
+	;
+	;PTメンバーと別れる
+	CASE 110
+		CALL KOJO_2_0_相手取得(ARG:1)
+		IF ARG:2 == 1
+			;主人公として表示する場合、ARG:1のキャラを見送る
+			;仲間の離脱口上→主人公の口上と表示される。
+			IF TARGET == 1 && !CFLAG:29
+				;好感度が200以上 のハズ
+				IF CFLAG:5 >= 200
+					PRINTFORML 「な、泣きついたりなんてしないってば！
+					PRINTFORMW 　%CSTR:50%こそ、一人でどうなっても知らないよ！？」
+					PRINTFORML
+					PRINTFORMDW ………
+					PRINTFORMW 「……バカ…本当に……知らないんだからね………！」
+				ELSEIF MAXBASE:(ARG:1):MP/4 >= BASE:(ARG:1):MP ||  CFLAG:(ARG:1):36 >= 3 ||  (BASE:(ARG:1):HP <= 0 && BASE:(ARG:1):CP <= 0)
+					PRINTFORML 「ちょ、ちょっと、%CSTR:50%！？　そんな状態で一人になったら……！
+					PRINTFORML 　ここが女の子にとってどれだけ危険な場所か本当に理解して……ッ！」
+					PRINTFORMW 「………わかった、よ……気を付けて…ね…」
+				ELSE
+					PRINTDATAW
+					DATAFORM 「二手に分かれるの？　うーん…%CSTR:50%本当に大丈夫？」
+					DATAFORM 「別行動？　ホントに大丈夫かなあ……」
+					DATAFORM 「お互い油断だけはしないようにね」
+					DATAFORM 「…………はぁ。こんな場所で単独行動なんて、%CSTR:50%大丈夫なのかなあ」
+					DATAFORM 「私たちがバラバラに動けば、やつらの狙いも分散するはずだよ」
+					DATAFORM 「くれぐれも気をつけてね」
+					ENDDATA
+				ENDIF
+			;それ以外の場合、自分が抜ける
+			ELSE
+				;喪失中
+				IF CFLAG:29
+					PRINTFORMDL
+					PRINTFORMDL 
+				ELSE
+					PRINTFORML 
+					PRINTFORML 
+				ENDIF
+			ENDIF
+		ENDIF
+	;アイテムを取られる
+	CASE 111
+		PRINTFORMW 「ま、待って！それは私の゛ッ！？…ゲホッゲホ！」
+	;アイテムを取られる
+	CASE 112
+		PRINTFORMW 「やめて…許して…っぐぁぁぁぁ！」
+
+
+	;遭遇時逆襲：襲い掛かられた
+	CASE 141
+		;ARG:1に遭遇キャラ　ARG:2が1なら実はドッペル
+		IF ARG:2 == 1
+			PRINTFORMW 「…なんか様子が変だと思ったら…っ！」
+		ELSE
+			PRINTFORMW 「っと！敵ながら見事な作戦だね…」
+		ENDIF
+	;遭遇時逆襲：襲い掛かった
+	CASE 142
+		;ARG:2が1なら実はドッペル
+		;※主人公ではなく、襲った側のキャラの口上
+		IF ARG:2 == 1
+			PRINTFORMW 「うふふ、ワタシと気持ち良いコトしようっ♪」
+		ELSE
+			PRINTFORML 「大丈夫だよ…？」
+			PRINTFORMW 「ちゃんと愉しませるからね♪」
+		ENDIF
+
+	;フッた
+	CASE 161
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「%CSTR:50%には失望したよ。まさかこんな人だったなんて…」
+			CASE 1
+				PRINTFORMW 「もう愛想が付きた！せいぜい元気でね、バイバイ！」
+			CASE 2
+				PRINTFORMDW マキは%ARGS:1%を一瞥し、足早に去って行った…
+		ENDSELECT
+	;フラれた
+	CASE 162
+		
+	;プレゼントフォーユー
+	CASE 163
+		;主人公時
+		IF TARGET == 1
+			PRINTFORMW 「あの！これ、良かったら使ってよ！」
+		ENDIF
+	;バクシーシ
+	CASE 164
+		;戦意喪失
+		IF CFLAG:29
+			;
+		ELSE
+			PRINTFORMW 「ほ、本当にいいの！？ありがとう！」
+		ENDIF
+	;死者蘇生
+	CASE 166
+		PRINTFORMW 「だ、大丈夫？私が分かる？」
+		PRINTFORMW 「…よ……よかったぁーーーーー！！」
+	;死者復活
+	CASE 167
+		 PRINTFORMW 「…ん………あ、れ？」
+		 PRINTFORMW 「私、今まで何を……」
+
+
+	;喪失相手を襲う
+	CASE 455
+		IF TARGET == 1
+			PRINTFORML 「ごめん…本当にごめんねっ！」
+		ELSE
+		;
+		ENDIF
+	;オシオキ
+	CASE 460
+		;説教
+		IF ARG:1 == 0
+			PRINTFORMW 「こんなことしちゃダメだからね！いい？そもそも――」
+		;ヤる
+		ELSE
+			PRINTFORMW 「あ……あはっ」
+			PRINTFORMW 「あはははははははっ♪あっはははハはハハハはははハはハ♪」
+			PRINTFORMDW マキは何かに憑りつかれたように腰を振っている
+		ENDIF
+
+	;該当コマンドなし
+	CASEELSE
+		CFLAG:810=0
+
+
+ENDSELECT

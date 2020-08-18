@@ -1,0 +1,652 @@
+﻿;戦闘中の被行動
+
+
+@BATTLE_MIKATA_KOUDOU_UKE_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+CFLAG:810=1
+SELECTCASE ARG:0
+	;攻撃回避
+	CASE 22 TO 27
+		;発情
+		IF CFLAG:28
+			PRINTDATAL
+			DATAFORM 「ひゃっ！？　今の、危なかった…」
+			DATAFORM 「そ、そんなの当たらないよ！」
+			DATAFORM 「い、今の、もう少し反応が遅かったら…」
+			DATAFORM 「っくぅうう…」
+			DATAFORM 「ば、馬鹿にしないでよねっ…！」
+			DATAFORM 「そ、そのくらい余裕なんだからねっ！」
+			ENDDATA
+			PRINTFORMDW マキは快感・欲望と戦いながらもなんとか敵の攻撃をかわした
+		;その他
+		ELSE
+			PRINTDATAL
+			DATAFORM 「うわっ！？　今の、危なかったかも…」
+			DATAFORM 「そんなの当たらないよ！」
+			DATAFORM 「今の、もう少し反応が遅かったら…」
+			DATAFORM 「おっとっとっと…」
+			DATAFORM 「馬鹿にしてるのかな？」
+			DATAFORM 「そのくらい余裕だよ」
+			ENDDATA
+		ENDIF
+
+
+	;HPダメージ
+	CASE 12
+		;戦意喪失
+		IF CFLAG:29
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「がっ……」
+					PRINTFORMDW マキは殆ど無意識に傷口を抑えながら呻いている…
+				CASE 1
+					PRINTFORMW 「…う…おえぇ……」
+					PRINTFORMDW マキは胃液が逆流するのを無意識に抑えているようが、口の端から涎がダラダラと垂れている…
+				CASEELSE
+					PRINTFORMW 「……………」
+					PRINTFORMDW マキは敵の攻撃を受けてもピクリとも反応しない…
+			ENDSELECT
+		;睡眠
+		ELSEIF CFLAG:25
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「んぐぅっ！」
+					PRINTFORMDW マキは眠りながら悲痛の表情をしている
+				CASE 1
+					PRINTFORMW 「…ぐ、ごほっ…」
+					PRINTFORMDW マキは眉間にしわを寄せている
+				CASEELSE
+					PRINTFORMW 「ん゛っ………！」
+					PRINTFORMDW マキは敵の攻撃を受けても目を覚まそうとしない
+			ENDSELECT
+		;HPがない
+		ELSEIF BASE:HP == 0
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORMW 「げほっ…げほっ…！うぅぐ……」
+					PRINTFORMDW マキは傷口を抑えながら痛呻いている…
+				CASE 1
+					PRINTFORMW 「おぼッ！…う…おえぇ……」
+					PRINTFORMDW マキは胃液が逆流するのを必死に抑えている…
+				CASE 2
+					PRINTFORMW 「ぐ…い゛っ！？」
+					PRINTFORMDW マキは攻撃の受けた場所を手で抑えている…
+				CASEELSE
+					PRINTFORMW 「がは…ッ…」
+					PRINTFORMDW マキは肺の中にある空気を吐き出す…
+			ENDSELECT
+		;痛い
+		ELSEIF ARG:2 >= 3000
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORMW 「あッ…！？　ッ！…ぅぅぅ……」
+					PRINTFORMDW マキはガードを貫くほどの攻撃を受け呻いている
+				CASE 1
+					PRINTFORMW 「ぐぁッ！！」
+				CASE 2
+					PRINTFORMW 「ま、まだまだっ！」
+				CASEELSE
+					PRINTFORMW 「ぐッ！…ぁっ！…」
+			ENDSELECT
+		;少し痛い
+		ELSEIF ARG:2 >= 1500
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW (気を使えばこれくらいなら…ッ！)
+				CASE 1
+					PRINTFORMW 「くッ！！」
+				CASEELSE
+					PRINTFORMW 「ぐぅッ！」
+			ENDSELECT
+		;あんまり痛くない
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW (これくらいならなんとか…)
+				CASE 1
+					PRINTFORMW 「そんな攻撃で私は屈しないよ！」
+				CASEELSE
+					PRINTFORMW 「そんな攻撃、どうってことないんだから！」
+			ENDSELECT
+		ENDIF
+	;EPダメージ
+	CASE 14
+		;戦意喪失
+		IF CFLAG:29
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「っ………」
+					PRINTFORMDW マキは白目をむいてガクガクと震えている…
+				CASE 1
+					PRINTFORMW 「…う…ぇ………」
+					PRINTFORMDW マキは快感に呻きながら口の端から涎がダラダラと垂れている…
+				CASEELSE
+					PRINTFORMW 「…ッ………」
+					PRINTFORMDW マキは敵に蹂躙されているにもかかわらずピクリとも反応しない…
+			ENDSELECT
+		;睡眠
+		ELSEIF CFLAG:25
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「あ…ぁあっ…！？」
+					PRINTFORMDW マキは眠りながら突然の快感に驚きの表情をしている
+				CASE 1
+					PRINTFORMW 「…んっ…んぁっ…！」
+					PRINTFORMDW マキは眠りながら突然の快感に驚きの表情をしている
+				CASE 2
+					PRINTFORMW 「…ふっ…くぁっ…！」
+					PRINTFORMDW マキは眠りながら突然の快感に驚きの表情をしている
+			ENDSELECT
+		;発情
+		ELSEIF CFLAG:28
+			;EPダメージ10000オーバー
+			IF ARG:3 >= 10000 
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「ひゃああああああぁぁぁぁぁぁぁああっぁあっぁぁああぁぁ」
+						PRINTFORMDW マキは目をトロンとさせて快楽を受け入れている
+					CASE 1
+						PRINTFORMW 「んっあああぁぁあ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛」
+						PRINTFORMDW マキは目を白黒させながらも貪欲に快楽を受け入れている
+					CASE 2
+						PRINTFORMW 「ッ！あ゛あ゛あ゛あ゛ぉあ゛ぁぁ」
+						PRINTFORMDW マキはだらしなく舌を突き出して痙攣している
+					CASEELSE
+						PRINTFORMW 「　～～～～ッ　～～～～ァ！！」
+						PRINTFORMDW マキはろくに声も出せず口をパクパクさせている
+				ENDSELECT
+			;EPダメージ5000以上
+			ELSEIF ARG:3 >= 5000
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「ひぐぅんっ！…っくぅああぁぁぁぁぁ！」
+					CASE 1
+						PRINTFORMW 「ダメ…これ以上はああああっっ！」
+					CASE 2
+						PRINTFORMW 「なぁっ…んぅ！っく、ふあぁぁあぁぁぁぁぁ！」
+					CASEELSE
+						PRINTFORMW 「んくぅっ！うぁっ！あぁっ！あああぁっ！」
+				ENDSELECT
+			;EPダメージ3000以上
+			ELSEIF ARG:3 >= 3000
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「んっ…ああ……ひゃぅんっ……あっ！」
+					CASE 1
+						PRINTFORMW 「ぅ…っくあぁ！っぐぅぅ…！」
+					CASEELSE
+						PRINTFORMW 「んあっ！んッ！も、もう…くうぅ！」
+				ENDSELECT
+			;EPダメージ3000未満
+			ELSE
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORMW 「んんっ…」
+					CASE 1
+						PRINTFORMW 「は、あっ！…ぁ……」
+					CASE 2
+						PRINTFORMW 「くぅっ、んっ…！」
+					CASE 3
+						PRINTFORMW 「んくっ…ふぁっ…！」
+					CASEELSE
+						PRINTFORMW 「あぁっ……ひゃっ……」
+						PRINTFORMDW マキは快楽に身を震わせている
+				ENDSELECT
+			ENDIF
+		;催眠
+		ELSEIF CFLAG:43
+			;EPダメージ10000オーバー
+			IF ARG:3 >= 10000 
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「もっともっともっともっともっともっとぉぉぉぉぉぉ
+						CALL HEARTCB(0xD02830)
+						CALL HEARTCB(0xD02830)
+						PRINTFORMDW 」
+					CASE 1
+						PRINTFORMW 「はあ゛あ゛っっ♪ぅぁぁあああああああああ゛あ゛あ゛あ゛あ゛♪♪」
+						PRINTFORMDW マキはもはや快楽しか見えていない！
+					CASE 2
+						PRINTFORMW 「んぁぁああああああああああああ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+						PRINTFORMDW マキはだらしなく舌を突き出しながら四肢を痙攣させている
+					CASEELSE
+						PRINTFORMW 「　～～～～ッ　～～～～～～～～～～ァ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+						PRINTFORMDW マキはろくに声も出せず口をパクパクさせている
+				ENDSELECT
+			;EPダメージ5000以上
+			ELSEIF ARG:3 >= 5000
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「ひぅぅぅぅぅぅぅんぁっっ！」
+					CASE 1
+						PRINTFORMW 「あっ…んぅうぅぅぅぅぅ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					CASE 2
+						PRINTFORMW 「もっとぉ！狂うくらいして欲しいのぉ
+						CALL HEARTCB(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORMW 「っっっっ！！っっんぅ♪」
+				ENDSELECT
+			;EPダメージ3000以上
+			ELSEIF ARG:3 >= 3000
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「ふぁっ♪あぁぁぁぁぁ♪」
+					CASE 1
+						PRINTFORMW 「ダメダメぇ！もっと激しくぅ！」
+					CASEELSE
+						PRINTFORMW 「んあっ！んッ！…くぅっ！」
+				ENDSELECT
+			;EPダメージ3000未満
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「んんっ…♪」
+					CASE 1
+						PRINTFORMW 「もっとキツくしてもいいんですよ♪」
+					CASEELSE
+						PRINTFORMW 「んふふふ……」
+				ENDSELECT
+			ENDIF
+		;その他
+		ELSE
+			;EPダメージ10000オーバー
+			IF ARG:3 >= 10000 
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「ひゃああああああぁぁぁぁぁぁぁああっぁあっぁぁああぁぁ」
+						PRINTFORMDW マキは目をトロンとさせて快楽を受け入れている
+					CASE 1
+						PRINTFORMW 「んっあああぁぁあ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛」
+						PRINTFORMDW マキは目を白黒させながらも貪欲に快楽を受け入れている
+					CASE 2
+						PRINTFORMW 「ッ！あ゛あ゛あ゛あ゛ぉあ゛ぁぁ」
+						PRINTFORMDW マキはだらしなく舌を突き出して痙攣している
+					CASEELSE
+						PRINTFORMW 「　～～～～ッ　～～～～ァ！！」
+						PRINTFORMDW マキはろくに声も出せず口をパクパクさせている
+				ENDSELECT
+			;EPダメージ大
+			ELSEIF ARG:3 >= 3000
+				SELECTCASE ARG:1
+					;ワーム 強A攻撃
+					CASE 628
+						PRINTFORMW 「あ゛あ゛あ゛ッ！？んっぐぅ…ぁ！そ…こは…ぁああぁぁ！」
+						PRINTFORMDW ワームはマキを内側から蹂躙している！
+					;ワーム 強C攻撃
+					CASE 629
+						PRINTFORMW 「ひゃあああ！だ、ダメっ！それ以上されたら……ッ！」
+						PRINTFORMDW ワームはマキの嬌声を聞き取ったのか更に攻めを激しくしてきた！
+					;サンドワーム 強A攻撃
+					CASE 631
+						PRINTFORMW 「あ゛あ゛あ゛ッ！？んっぐぅ…ひぃっ！」
+						PRINTFORMDW サンドワームはマキを内側から蹂躙している！
+						PRINTFORMDW マキはサンドワームの砂により感じたことのない快感を受け困惑している！
+					;サンドワーム 強C攻撃
+					CASE 632
+						PRINTFORMW 「ひゃあああ！だ、ダメっ！それ以上されたら……ッぁあああぁぁ！」
+						PRINTFORMDW サンドワームはマキの嬌声を聞き取ったのか更に攻めを激しくしてきた！
+						PRINTFORMDW マキはサンドワームの砂により快感が加速した！
+					;タコ 強B攻撃
+					CASE 634
+						PRINTFORMW 「んんんぅ！胸は！ダメなのっぁ！」
+						PRINTFORMDW オクトパスは懇願の声などお構いなしにマキの大きな胸に快感を与えている！
+						PRINTFORMW 「吸盤が…ッ！うぁ…あ゛っ！！」
+					;タコ 強C攻撃
+					CASE 635
+						PRINTFORMW 「ひゃあぁぁぁあぁぁぁ…！」
+						PRINTFORMDW マキはオクトパスに陰核を吸いつかれ、だらしのない嬌声を上げた！
+						PRINTFORMDW オクトパスは構わずマキの陰核に快感を与えている！
+					;タコ 強B吸収攻撃
+					CASE 636
+						PRINTFORMW 「ひゃぅっ！そんなぁ…搾らないで…んくっ！」
+						PRINTFORMDW オクトパスはマキの大きい胸を搾り上げ、先端を啜っている！
+						PRINTFORMDW マキはオクトパスの吸盤が離れる瞬間、特に大きな快感を受けた！
+					;タコ 強C吸収攻撃
+					CASE 637
+						PRINTFORMW 「そんなに…吸わないでぇぇえぇぇ…！」
+						PRINTFORMDW オクトパスはマキにかまわず秘所から垂れている愛液を啜り続けている！
+						PRINTFORMDW マキは必死になって引きはがそうとするが、吸盤が一つは慣れるたびに快楽の波がマキを襲う！
+					;ワーム A攻撃
+					CASE 328
+						PRINTFORMW 「ん゛っ！？」
+						PRINTFORMDW マキは内側から蹂躙されている！
+					;ワーム C攻撃
+					CASE 329
+						PRINTFORMW 「ひッ…んッ…！」
+						PRINTFORMDW ワームはマキの嬌声を聞き取ったのか更に攻めを激しくしてきた！
+					;サンドワーム A攻撃
+					CASE 331
+						PRINTFORMW 「お、お尻にッぁああああ！？」
+						PRINTFORMDW サンドワームはマキを内側から蹂躙している！
+						PRINTFORMDW マキはサンドワームの砂により感じたことのない未知の快感を受け困惑している！
+					;サンドワーム C攻撃
+					CASE 332
+						PRINTFORMW 「くぅん！…っあ！」
+						PRINTFORMDW サンドワームはマキの嬌声を聞き取ったのか更に攻めを激しくしてきた！
+						PRINTFORMDW マキはサンドワームの砂により快感が加速した！
+					;タコ B攻撃
+					CASE 334
+						PRINTFORMW 「ぎ…う…ぁ！」
+						PRINTFORMDW オクトパスは苦しさも交じっている声などお構いなしにマキの大きな胸に快感を与えている！
+						PRINTFORMW 「吸盤が…はぁんっ…！」
+					;タコ C攻撃
+					CASE 335
+						PRINTFORMW 「うううぅぅぅぅぅぅ！」
+						PRINTFORMDW マキはオクトパスに陰核を吸いつかれているのをこらえ、反撃をしようとしている！
+						PRINTFORMDW しかしオクトパスは構わずマキの陰核に快感を与えている！
+					;タコ B吸収攻撃
+					CASE 336
+						PRINTFORMW 「ひゃっ！そんなぁ……んくっ！」
+						PRINTFORMDW オクトパスはマキの大きな胸を搾り上げ、先端を啜っている！
+						PRINTFORMDW マキはオクトパスの吸盤が離れる瞬間、大きく背中を反らせた！
+					;タコ C吸収攻撃
+					CASE 337
+						PRINTFORMW 「そんなに…吸わないでぇっ…！」
+						PRINTFORMDW オクトパスはマキにかまわず秘所から垂れている愛液を啜り続けている！
+						PRINTFORMDW マキは必死になって引きはがそうとするが、吸盤が一つ離れるたびに快楽の波がマキを襲う！
+					;汎用
+					CASEELSE
+						;5000以上
+						IF ARG:3 >= 5000
+							SELECTCASE RAND:4
+								CASE 0
+									PRINTFORMW 「ひぐぅんっ！…っくぅぅぅぅぅぅ！」
+								CASE 1
+									PRINTFORMW 「ダメ…これ以上はああっっ！」
+								CASE 2
+									PRINTFORMW 「なぁっ…んぅ！っく、ふあぁぁぁぁ！」
+								CASEELSE
+									PRINTFORMW 「くぅっ！うぁっ！あぁっ！あああぁっ！」
+							ENDSELECT
+						;3000以上
+						ELSEIF ARG:3 >= 3000
+							SELECTCASE RAND:4
+								CASE 0
+									PRINTFORMW 「く…うぅ……　こんな…ッ」
+								CASE 1
+									PRINTFORMW 「この程度で…ッ！」
+								CASE 2
+									PRINTFORMW 「ひゃんっ！なっ、そ、そんなところまで…！？」
+								CASEELSE
+									PRINTFORMW 「…いっ…、うっ　んッ」
+									PRINTFORMDW マキは歯を食いしばり快感を耐えている
+							ENDSELECT
+						ENDIF
+				ENDSELECT
+			;EPダメージ小
+			ELSE
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORMW 「ひっ…、うんっ…」
+					CASE 1
+						PRINTFORMW 「ひゃっ…！？」
+					CASE 2
+						PRINTFORMW 「うぅ…っくぅ……」
+					CASEELSE
+						PRINTFORMW 「っ……」
+						PRINTFORMDW マキは快楽にじっと耐えている
+				ENDSELECT
+			ENDIF
+		ENDIF
+	;敵の拘束攻撃（命中）
+	;ARG:1にコマンドID　ARG:2に丸呑みフラグ
+	CASE 15
+		;戦意喪失
+		IF CFLAG:29
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「…………」
+					PRINTFORMDW マキは敵に拘束されても何も反応しない…
+				CASE 1
+					PRINTFORMW 「……ぇ………」
+					PRINTFORMDW マキは何も無い空間を虚ろな目で見つめている…
+				CASEELSE
+					PRINTFORMW 「…ッ………」
+					PRINTFORMDW マキは一瞬だけ反応したが、すぐに先程までの状態に戻った…
+			ENDSELECT
+		;催眠
+		ELSEIF CFLAG:43 && FLAG:526 == 1
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「えへへぇ～ そんなにがっついちゃダメですよ～？」
+				CASE 1
+					PRINTFORMW 「食べてっ♪食べてっ♪食べてっ♪」
+				CASEELSE
+					PRINTFORMW 「ふふっ、幸せぇ…」
+			ENDSELECT
+		;睡眠
+		ELSEIF CFLAG:25
+			PRINTFORMW 「むにゃむにゃ…」
+			PRINTFORMDW マキは未だ眠りについたままだ
+		;丸呑み
+		ELSEIF ARG:2 != 0
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「くっ…油断した！？」
+				CASE 1
+					PRINTFORMW 「な――！？」
+					PRINTFORMDW マキはこれから何をされるのかすぐに察し、顔が青くなった！
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「離してよっ！この、くうぅっ！？」
+					PRINTFORMDW マキは必死に抵抗しているが、かなり厳しいようだ
+				CASEELSE
+					PRINTFORMW 「くっ、振りほどけないっ！？」
+			ENDSELECT
+		ENDIF
+	;敵の寄生攻撃（命中）
+	;ARG:1にコマンドID　ARG:2に妊娠フラグ　ARG:3にMPダメージ
+	CASE 16
+		;戦意喪失
+		IF CFLAG:29
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「…………」
+					PRINTFORMDW マキは敵の精を受け止めても何も反応しない…
+				CASE 1
+					PRINTFORMW 「……ぁ………」
+					PRINTFORMDW マキは体がびくびく震えているが抵抗は見られない…
+				CASEELSE
+					PRINTFORMW 「…ッ………」
+					PRINTFORMDW マキは目を見開いたが、ゆっくり先程までの虚ろな瞳に戻っていった…
+			ENDSELECT
+		;催眠
+		ELSEIF CFLAG:43
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「んんっ…っはぁぁ…
+					CALL HEARTCB(0xD02830)
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORMW 「あかちゃんできちゃうのぉ…
+					CALL HEARTCB(0xD02830)
+					PRINTFORMW 」
+				CASEELSE
+					PRINTFORMW 「…………ふふっ♪」
+			ENDSELECT
+		;睡眠
+		ELSEIF CFLAG:25
+			PRINTFORMW 「んっ……」
+			PRINTFORMDW マキは眠りながら不快な表情をしている
+		ELSEIF ARG:2 != 0
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「ひゃうんっ！？」
+				CASEELSE
+					PRINTFORMDW マキは小刻みに震え続けている！
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「う…くぁッ…！？」
+					PRINTFORMDW マキは自分の中へ侵入してくる異形の感触に恐怖している！
+				CASEELSE
+					PRINTFORMW 「ぇああああぁぁぁぁぁ…」
+					PRINTFORMDW マキは自分の中へ強引に入ってくる異形の存在に震えながら呻いている！
+			ENDSELECT
+		ENDIF
+
+
+	;HPが0になっちった
+	CASE 32
+		;発情時
+		IF CFLAG:28
+			SELECTCASE RAND:2
+				CASEELSE
+					;
+			ENDSELECT
+		;催眠
+		ELSEIF CFLAG:29 || CFLAG:43
+			PRINTFORMDW ;
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「ぐ、ぁっ…っ！」
+					PRINTFORMW (マズい…これじゃ動きが…！)
+				CASEELSE
+					PRINTFORMW 「このままじゃ…くっ！」
+					PRINTFORMDW マキは痛む身体を手で押さえながら悔しげに正面を睨み付けた
+			ENDSELECT
+		ENDIF
+	;服が変化 CP減少
+	CASE 35
+		;破れ始める
+		IF CFLAG:29
+			;
+		ELSEIF CFLAG:25
+			PRINTFORMW 「ぅ…さむ……むにゃ…」
+		ELSEIF ARG:1 == 2
+			PRINTFORMW 「あ、こら！何するの！？」
+		;半裸
+		ELSEIF ARG:1 == 1 
+			PRINTFORMW 「もう殆ど残ってないよこれ……」
+			PRINTFORMDW マキは自分の服がぼろぼろにされショックを受けている
+		;全裸
+		ELSEIF ARG:1 == 0
+			PRINTFORMDW マキはすぐに秘所と胸を隠したが…
+			PRINTFORMW 「うぅ……」
+			PRINTFORMDW 不利を悟り、ゆっくり隠していた手をどけた
+		ENDIF
+	;戦意喪失
+	CASE 33
+		;発情
+		IF CFLAG:28
+			PRINTFORMW 「はー…　あぁ…ん…　…」
+			PRINTFORMW (もっと…もっと…もっと……)
+			PRINTFORMW (もっと…欲しいィ…ぃぃ♪)
+		;その他
+		ELSE
+			PRINTFORMW 「あ……ぁ…………」
+		ENDIF
+
+	;寄生される
+	CASE 40
+		;発情
+		IF CFLAG:28
+			PRINTFORMW (気持ち悪いけど…気持ちいいような…)
+			PRINTFORMDW マキは発情のせいか倒錯的になっている…
+		;戦意喪失
+		ELSEIF CFLAG:29
+			PRINTFORMW 「…………ぅ…」
+			PRINTFORMDW マキは焦点の合っていない目で何も無い空間を見つめている…
+		;催眠
+		ELSEIF CFLAG:43
+			PRINTFORMDW マキは瞳に
+			CALL HEARTCB(0xD02830)
+			PRINTFORMDW を浮かべている…
+		;睡眠
+		ELSEIF CFLAG:25
+			PRINTFORMW 「ああうっ…！」
+			PRINTFORMDW マキは眠りながら眉をひそめる…
+		;その他
+		ELSE
+			PRINTFORMW 「うぅぅぅ…気持ち悪い……」
+			PRINTFORMDW 自分の中に根付いた異形の幼体に、マキは大きなショックを受けている…
+		ENDIF
+
+
+	;攻撃されて起きた
+	CASE 41
+		;ARG:1に敵ID　ARG:2に攻撃の種類　ARG:3に部位
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「く、ひゃうぅんっ……えっ、い、いつの間に敵が！？」
+			CASEELSE
+				PRINTFORMW 「……え、てっ、敵襲！？」
+		ENDSELECT
+
+
+
+	;アイテムを使ってもらう
+	CASE 36
+		CALL KOJO_2_0_相手取得(ARG:2)
+		;戦意喪失
+		IF CFLAG:29
+			;
+		ELSEIF CFLAG:800==0 && rand:2
+			PRINTDATAW
+			DATAFORM 「ありがとう、%CSTR:50%！」
+			DATAFORM 「助かるよ、%CSTR:50%！」
+			DATAFORM 「恩に着るよ、%CSTR:50%！」
+			ENDDATA
+		ELSEIF CFLAG:800==1 && rand:2
+			PRINTDATAW
+			DATAFORM 「%CSTR:50%、ありがとうございます！」
+			DATAFORM 「%CSTR:50%、助かります！」
+			DATAFORM 「%CSTR:50%、恩に着ます！」
+			ENDDATA
+		ENDIF
+
+
+	;敵から解放される
+	CASE 42
+		;戦意喪失
+		IF CFLAG:29
+			PRINTFORMW 「…………ぅ…」
+			PRINTFORMDW マキは焦点の合っていない目で何も無い空間を見つめている…
+		;催眠
+		ELSEIF CFLAG:43
+			PRINTFORMW 「あぅ…
+			CALL HEARTCB(0xD02830)
+			PRINTFORMW 」
+		;発情
+		ELSEIF CFLAG:28
+			PRINTFORMW (もうちょっと捕まってても良かったかも…)
+			PRINTFORMW 「…ハッ！私は今…なんてことを……」
+		;睡眠
+		ELSEIF CFLAG:25
+			PRINTFORMW 「むぐ…んむ……」
+			PRINTFORMDW マキは未だに眠りこけている
+		;その他
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「もう二度とゴメンだよ…」
+				CASE 1
+					PRINTFORMW 「できればもう少し早く出たかったなあ…」
+				CASEELSE
+					PRINTFORMW 「うぅ、べとべとする…」
+			ENDSELECT
+		ENDIF
+	;裸で時間経過
+	CASE 46
+		;ARG:1に羞恥フラグ（ARG:1が　0：恥薄い　1：通常　2：恥じらい）　ARG:2にMPダメージ
+		PRINTFORMDW マキは衣類を身に着けない羞恥に耐えている…
+
+	;該当コマンドなし
+	CASEELSE
+		CFLAG:810=0
+
+
+ENDSELECT
+
+

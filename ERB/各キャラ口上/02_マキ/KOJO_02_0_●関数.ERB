@@ -1,0 +1,61 @@
+﻿;●CSTR:50　二人称判定
+;	ゆかりん(相性)／きりたん(呼び捨て)／〇〇ちゃん／〇〇さん
+;	相手が指定されているイベントなら引数の番号を使う。
+;	その他のイベントでも(仲間がいる際は)口上内で呼びかける場合があるので相手を(複数いればランダムに)決めておく
+;●CSTR:51　相手のCALLNAME
+;	CALLNAME:(NO:(ARG:1))みたいなのが面倒なので略記
+;●CFLAG:800　ですます調を使うフラグ
+;	年上・格上相手の呼びかけだった場合は1になる
+
+;●CFLAG:810　口上呼び出せたフラグ
+;	内部の切り分けで使用中
+
+;●主に戦闘行動の台詞分岐に使用中
+@KOJO_2_0_状態取得
+#FUNCTIONS
+	;MP1/4以下　HP1/4以下　妊娠中
+	IF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/4 >= BASE:HP || CFLAG:36 >= 3
+		RETURNF "苦戦"
+	ELSE
+		RETURNF "通常"
+	ENDIF
+
+RETURNF
+
+;●呼びかける相手(CSTR:51)に応じて呼び名(CSTR:50)と敬語フラグ(CFLAG:800)を切り替える準備用関数
+;　デフォルトでは口上先頭で呼びかけ可能なパーティーメンバーをランダム取得している
+;　特定の口上(行動対象が明示されているもの)では口上冒頭で再度呼び出す必要がある
+@KOJO_2_0_相手取得(ARG:0)
+	;敬語フラグをいったんオフに
+	CFLAG:800=0
+	;自分自身が対象なら呼びかけは無し
+	if ARG:0<=0 || CALLNAME:(ARG:0)=="マキ"
+		CSTR:50=
+		CSTR:51=
+		CFLAG:800=-1
+		return
+	endif
+	CSTR:51=%CALLNAME:(ARG:0)%
+	SELECTCASE no:(ARG:0)
+		
+	CASE 3
+		CSTR:50=ゆかりん
+	CASE 8
+		CSTR:50=きりたん
+	CASE 4
+		;ずん子(4)は呼び方が創作で変わりそうなギリギリのラインなのでなんとも言えない
+		CSTR:50=ずんちゃん
+	CASE 13
+		;ギャラ子
+		CSTR:50=%CALLNAME:(ARG:0)%先輩
+		CFLAG:800=1
+			;…でいいんだろうか？
+	CASE 7,16,17
+		;セイカ、イタコ、そら
+		CSTR:50=%CALLNAME:(ARG:0)%さん
+		CFLAG:800=1
+
+	CASEELSE
+		CSTR:50=%CALLNAME:(ARG:0)%ちゃん
+	ENDSELECT
+RETURN

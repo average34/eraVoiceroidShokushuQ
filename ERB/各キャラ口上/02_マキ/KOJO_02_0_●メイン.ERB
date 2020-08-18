@@ -1,0 +1,790 @@
+﻿;--------------------------------------------------
+;■　ボイロ触手宮_マキ口上
+;--------------------------------------------------
+;　　東方触手宮　美鈴口上(byやーこふ様)がベースです。
+;--------------------------------------------------
+
+;口上選択時のタイトル
+@KOJO_TITLE_2
+RESULTS = 東方触手宮_マキ口上
+
+
+;口上選択時の詳細説明
+;フリーフォーマットです。ご自由にどうぞ
+@KOJO_DETAIL_2_0
+PRINTFORML 東方触手宮　美鈴口上(byやーこふ様)をベースにしています。
+
+
+;;文字色　レモンイエロー
+@KOJO_DEFAULT_COLOR_2_0
+RETURN RGBCOLOR(255, 243, 82)
+
+
+
+
+
+
+;口上本体
+@KOJO_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+
+
+
+
+;地の文はデフォルトのものを使用します
+CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;確認用呼び出しで落ちるようなのでチェック
+IF CHARANUM<=1
+	RETURN
+ENDIF
+
+
+;☆フラグ
+;元気な仲間がPTメンバー/助っ人にいるならデフォルトの呼びかけ候補にする
+CALL KOJO_2_0_相手取得(-1)
+IF (NO:1!=2) && !CFLAG:(1):20 && !CFLAG:(1):21 && !CFLAG:(1):25 && !CFLAG:(1):29 && !CFLAG:(1):104
+	CALL KOJO_2_0_相手取得(1)
+ENDIF
+IF (CSTR:50=="" || rand:2==0) && NO:(FLAG:10) != 2 && !CFLAG:(FLAG:10):20 && !CFLAG:(FLAG:10):21 && !CFLAG:(FLAG:10):25 && !CFLAG:(FLAG:10):29 && !CFLAG:(FLAG:10):104
+	CALL KOJO_2_0_相手取得(FLAG:10)
+ENDIF
+IF (CSTR:50=="" || rand:3==0) && NO:(FLAG:11) != 2 && !CFLAG:(FLAG:11):20 && !CFLAG:(FLAG:11):21 && !CFLAG:(FLAG:11):25 && !CFLAG:(FLAG:11):29 && !CFLAG:(FLAG:11):104
+	CALL KOJO_2_0_相手取得(FLAG:11)
+ENDIF
+;☆ここまでフラグ
+
+
+;文字色設定
+SETCOLOR CFLAG:700
+
+CFLAG:810=1
+
+SELECTCASE ARG:0
+	CASE 1
+		CALL BATTLE_MIKATA_KOUDOU_HATUDOU_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		IF CFLAG:810==0
+			RESETCOLOR
+			RETURN 0
+		ENDIF
+
+
+		;口上を見つけられなかったので汎用口上にフォールバック
+		CALL KOJO_DEFAULT(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	;CASE2～10は敵の攻撃発動なので口上は表示されない
+
+
+
+	;戦闘開始
+	CASE 54
+		;娘との初遭遇時、もしくはドッペルとの遭遇時、口上スキップ
+		IF CFLAG:805 == 4
+			CFLAG:805 = 0
+		;戦意喪失or睡眠
+		ELSEIF CFLAG:25 || CFLAG:29
+			;
+		;発情
+		ELSEIF CFLAG:28
+			PRINTFORMW 「んんっ…っはぁ、はぁ……」
+			PRINTFORMW 「今は、戦いたく、んっ、ないんだけどね……ぅ…」		
+		ELSEIF CFLAG:800==0 && rand:2
+			PRINTDATAW
+			DATAFORM 「作戦は…分かってるよね？」
+			DATAFORM 「行くよ、%CSTR:50%！」
+			DATAFORM 「油断しないでね、%CSTR:50%！」
+			DATAFORM 「っ、%CSTR:50%、私の後ろに隠れて！」
+			DATAFORM 「%CSTR:50%、危ないから前に出過ぎないでねっ！」
+			DATAFORM 「%CSTR:50%、危なくなったらすぐ逃げるよっ！」
+			DATAFORM 「%CSTR:50%、フォローお願い！」
+			DATAFORM 「こいつ、私たちを…気を付けて%CSTR:50%！」
+			ENDDATA
+		ELSEIF CFLAG:800==1 && rand:2
+			PRINTDATAW
+			DATAFORM 「行きますよ、%CSTR:50%！」
+			DATAFORM 「%CSTR:50%、油断しないでくださいね！」
+			DATAFORM 「っ、%CSTR:50%、私の後ろに隠れてください！」
+			DATAFORM 「%CSTR:50%、前に出過ぎないでくださいねっ！」
+			DATAFORM 「%CSTR:50%、危なくなったらすぐ逃げますよっ！」
+			DATAFORM 「%CSTR:50%、フォローお願いします！」
+			DATAFORM 「こいつ、私たちを…気を付けてください%CSTR:50%！」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+			DATAFORM 「気持ち悪い……ああもう、どうにでもするけどさあ！」
+			DATAFORM 「見逃してもらえたりは…ダメだろうなあ」
+			DATAFORM 「あの動き…私%tachi()%を狙ってる…！」
+			ENDDATA
+		ENDIF
+	
+	
+	
+	;全員無事に逃走成功
+	CASE 55
+		;発情
+		IF CFLAG:28
+			PRINTFORMDW マキは先程の敵に犯されたかったという考えが浮かび、動揺する
+			PRINTFORMW (はっ…、私は…今何を！？)
+		;戦意喪失
+		ELSEIF CFLAG:29
+			;
+		;催眠
+		ELSEIF CFLAG:43
+			;PRINTFORMDW 
+		;睡眠
+		ELSEIF CFLAG:25
+			PRINTFORMW 「うへへへー♪」
+			PRINTFORMDW マキは眠りながら幸せそうな笑顔を浮かべている
+		;その他
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「ひとまず安心かな」
+				CASE 1
+					PRINTFORMW 「ここまでくれば大丈夫かな…」
+				CASEELSE
+					PRINTFORMW 「……ふぅ」
+			ENDSELECT
+		ENDIF
+	;初遭遇
+	CASE 61
+		CALL KOJO_2_0_相手取得(ARG:2)
+
+		;娘
+		IF ARG:1 == 19 && TFLAG:14 != 3
+			PRINTFORMW 「え…私……？ううん違う、私の……」
+			CFLAG:805 = 4
+		;悪堕ちキャラ（通常）
+		ELSEIF ARG:1 == 101 && TFLAG:14 != 3
+			IF CSTR:51 == "ゆかり"
+				PRINTFORMW 「ゆかりん！？ちょっとねえ、正気に戻ってよ！」
+			ELSEIF CFLAG:800==1
+				PRINTDATAW
+				DATAFORM 「操られてる…わけではなさそうかな？」
+				DATAFORM 「そんな…%CSTR:51%、どうしてですか！？」
+				DATAFORM 「%CSTR:51%！？あの、正気に戻ってください！」
+				ENDDATA
+			ELSE
+				PRINTDATAW
+				DATAFORM 「そんな、どうして…」
+				DATAFORM 「そんな…%CSTR:51%、どうしちゃったの！？」
+				DATAFORM 「%CSTR:51%！？ちょ、正気に戻ってってば！」
+				ENDDATA
+			ENDIF
+			CFLAG:805 = 4
+		;悪堕ちキャラ（その他）
+		ELSEIF ARG:1 >= 102 && ARG:1 <= 104 && TFLAG:14 != 3
+			IF CSTR:51 == "ゆかり"
+				PRINTDATAW
+				DATAFORM 「……ゆか…りん……？嘘、だよね…？」
+				ENDDATA
+			;その他
+			ELSE
+				IF ARG:1 == 102
+					PRINTFORMW 「まずあいつらと引き離しますよ……！」
+				ELSE
+					PRINTDATAW
+					DATAFORM 「あれ…まさか…%CSTR:51%…？」
+					DATAFORM 「%CSTR:51%っ！？」
+					ENDDATA
+				ENDIF
+			ENDIF
+			CFLAG:805 = 4
+
+		ENDIF
+
+	;見捨てる
+	CASE 62
+		;催眠
+		IF CFLAG:43
+			
+		;その他
+		ELSE
+			PRINTFORMW 「絶対に迎えに来るから！待ってて！」
+		ENDIF
+	;見捨てられる
+	CASE 63
+		;戦意喪失
+		IF CFLAG:29
+			PRINTFORMDW マキは仲間に置いて行かれることを理解していないのかできないのか、ピクリとも動かない…
+		;特別パターン
+		ELSEIF NO:(ARG:2)==3
+			PRINTDATAW
+			DATAFORM 「ゆ、ゆかりん…？」
+			ENDDATA
+			PRINTFORMDW マキはこれはきっと作戦なんだと自分に言い聞かせている…
+		;その他
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「…………」
+					PRINTFORMDW マキは俯きながら唇を噛みしめている…
+				CASEELSE
+					PRINTFORMW 「あ…待ってよ、ねぇっ…！やだ…嘘……置いて……いかないで………」
+			ENDSELECT
+		ENDIF
+	;戦闘勝利
+	CASE 57
+		;戦意喪失
+		IF CFLAG:29
+			PRINTFORML 「……………」
+			PRINTFORMDW マキは敵が目の前からいなくなっても何のリアクションも起こさなかった…
+		;催眠
+		ELSEIF CFLAG:43
+			PRINTFORMDW 「……えっ…私…今まで何して……？」
+			
+		;睡眠
+		ELSEIF CFLAG:25
+			;
+		;HP1/4以下
+		ELSEIF MAXBASE:HP/2 >= BASE:HP
+			PRINTFORMW 「ちょっときつかったかな…」
+		ELSE
+			SELECTCASE RAND:7
+				CASE 0
+					PRINTFORML 「あなたたちがどれだけ来ようと、私は負けたりしない！」
+					PRINTFORMW 「な～んて、こういう時くらいはカッコいいこと言いたいんだけどなあ」
+				CASEELSE
+					PRINTDATAL
+					DATAFORM 「ふぅ……よしっ！」
+					DATAFORM 「……はぁ…はぁ」
+					DATAFORM 「はー…ふうぅぅ…」
+					ENDDATA
+					PRINTFORMDW マキは呼吸を落ち着かせ、探索に戻った
+			ENDSELECT
+		ENDIF
+	;先制攻撃・不意打ち発生　ARG:2に状況(1で先制 2で不意打ち 3で寝込み)
+	CASE 60
+		;ARG:1にイベントID(1でクイーン 2でガーディアン)
+		;不意打ち
+		IF ARG:2 == 2
+			PRINTFORMW 「ふ、不意打ち！？」
+		;寝込み
+		ELSEIF ARG:2 == 3
+			PRINTDATAW
+			DATAFORM 「むにゃ………」
+			DATAFORM 「んく………」
+			DATAFORM 「ん…ぅ……」
+			ENDDATA
+		;戦意喪失
+		ELSEIF CFLAG:29
+			;
+		;睡眠
+		ELSEIF CFLAG:25
+			;
+		;先制
+		ELSEIF ARG:2 == 1
+			PRINTDATAW
+			DATAFORM 「先手必勝っ！」
+			DATAFORM 「今のうちにっ！」
+			DATAFORM 「隙は突かせてもらうからね！」
+			ENDDATA
+		ENDIF
+
+	;自慰発生時　フラグだけ回収するので戦意喪失でも来る
+	;いろんな自慰からここに来るのでフラグ追加はここだけ書いておけば大丈夫？
+	;書くときは色んな自慰から飛んでくるのを考慮して書かないといけない
+	CASE 118
+		CFLAG:805 = 3
+		RESETCOLOR
+		;口上記入済み
+		RETURN 1
+	;自慰で絶頂失敗　フラグだけ消去するので戦意喪失でも来る
+	CASE 119
+		CFLAG:805 = 0
+		RESETCOLOR
+		;口上記入済み
+		RETURN 1
+
+	;絶頂の瞬間
+	CASE 120
+		;出産絶頂は出さない
+		IF CFLAG:805 == 2
+			CFLAG:805 = 0
+		;連続絶頂２回めor４回め以降ランダム
+		ELSEIF CFLAG:806 == 2 || (CFLAG:806 > 3 && RAND:4 == 0)
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORML 「もう…ダメ…あっ、あああぁぁぁぁぁ！！」
+				CASE 1
+					PRINTFORML 「だめだよぉおっ！あひぃぃぃぃぃぃぃぃ！」
+				CASE 2
+					PRINTFORMDL 快楽によってマキは震え続けている！
+				CASE 3
+					PRINTFORML 「ま、待って！これ以上はっうぁぁああああ！」
+				CASE 4
+					PRINTFORML 「お、おかひくなっちゃああああぁぁぁぁ！！」
+				CASE 5
+					PRINTFORML 「止めて止めて止めてぇぇぇぇぁぁぁぁああああああ！！」」
+			ENDSELECT
+		;諦め時orMP1/4以下or発情中or深い催眠
+		ELSEIF TFLAG:16 == 2 || MAXBASE:MP/4 >= BASE:MP || CFLAG:28 || CFLAG:43 > 1
+			IF RAND:3 == 0
+				PRINTFORM 「あはぁっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　きもちいぃ、きもちいいっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORM 　たたかうの、わすれちゃうぅ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSEIF RAND:2 == 0
+				PRINTFORM 「あ、あぁっ、ああああああぁっ……
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORM 「く、くるの、きもちいいのっ、我慢できな――あ、ああああああぁんっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ENDIF
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTDATA
+					DATAFORM 「ふぁぁぁぁぁぁぁああああ
+					DATAFORM 「やっ、ひゃ…はにゃああぁぁあぁっ
+					DATAFORM 「や、嫌、いやあぁぁあぁぁぁぁ
+					ENDDATA
+					CALL HEARTCB(0xD02830)
+					PRINTFORMW 」
+				CASEELSE
+					PRINTFORMW 「もっとぉぉ！もっとおかひくひてぇぇぇぇぇぇ！！」
+			ENDSELECT
+		ELSE
+			;自慰で絶頂した時
+			IF CFLAG:805 == 3
+				PRINTFORMW 「ひんっ♪　あっ……ううぅんっ……！」
+			ELSE
+				PRINTDATAL
+				DATAFORM 「んああああぁぁぁぁぁっ！」
+				DATAFORM 「いくッ！イっちゃうぅぅぅぅぁぁあああああ！」
+				DATAFORM 「が、あぁぁっ！？…っはぁん！！」
+				DATAFORM 「止めてぇっ！嫌ぁっ、いひゃぁぁぁぁぁぁぁ！！」
+				DATAFORM 「んくぅ…あぁあぁぁぁぁぁぁぁぁ！！」
+				DATAFORM 「あああぁぁぁぁっ！イク！イっちゃうぅあああぁぁぁ！！」
+				DATAFORM 「も、もう限界っ…ぅあああああぁぁぁ！」
+				DATAFORM 「ひっ　あっ　ああああああああぁぁ…！」
+				ENDDATA
+
+				PRINTDATAL
+				DATAFORM マキは体を弓のように反らしている！
+				DATAFORM マキの視界がチカチカと明滅を繰り返す！
+				ENDDATA
+			ENDIF
+		ENDIF
+		;自慰絶頂管理
+		SIF CFLAG:805 == 3
+			CFLAG:805 = 0
+
+
+	;戦意喪失中に絶頂
+	CASE 122
+		;出ない時
+		IF CFLAG:805 == 2
+			CFLAG:805 = 0
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「……………」
+				PRINTFORMDW マキは虚ろな目をしながら体をピクピクと痙攣させている
+			CASE 1
+				PRINTFORMW 「あっ……ぅ……」
+			CASEELSE
+				PRINTFORMW 「…ひゃ………ん……」
+			ENDSELECT
+		ENDIF
+		SIF CFLAG:805 == 3
+			CFLAG:805 = 0
+	;母乳吸われる
+	CASE 123
+
+			;発情時・戦意喪失時・諦め時・深い催眠・MP1/4以下でランダム
+			IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1 || (RAND:3 == 0 && MAXBASE:MP/4 >= BASE:MP)
+				;諦め時か戦意喪失時か深い催眠時専用
+				IF RAND:2 == 0 && (TFLAG:16 == 2 || CFLAG:29 || CFLAG:43 > 1)
+					PRINTFORMW 「んぁっ…わたしのおっぱい、吸われちゃってるぅ……♪」
+				ELSE
+					PRINTFORM 「んひゃぁあっ♪　お、おっぱい、すわれて、あっ、はあぁぁぁん…
+					CALL HEARTCB(0xD02830)
+					PRINTFORMW 」
+				ENDIF
+			ELSE
+				PRINTDATAL
+				DATAFORM 「ちょ……っひゃ、吸うの……やめっ……！」
+				DATAFORM 「す、吸われて…！？ちょ、ちょっと、飲まないでよ……！」
+				ENDDATA
+			ENDIF
+
+
+;★
+	;寄生が進行
+	CASE 125
+		;ARG:1に残り時間
+		;1/3で
+		IF RAND:3 == 0 && ARG:1 <= 7
+			PRINTFORMW 「ッ……！」
+			PRINTFORMDW マキは寄生体がマキの気に対して拒絶を繰り返す度に痛みを感じている
+		ELSEIF RAND:3 == 0
+			;
+		ENDIF
+	;妊娠が進行
+	CASE 126
+		;ARG:1に残り時間
+		;1/3で
+		IF RAND:3 == 0 && ARG:1 <= 7
+			PRINTFORMW 「うぐぅっ……！」
+			PRINTFORMDW マキは自分の体が邪悪な気に対して拒絶を繰り返す痛みと、体内の子がマキの気に拒絶を繰り返す痛みを感じている
+		ELSEIF RAND:3 == 0 && TARGET != 0
+			;
+		ENDIF
+	;寄生・出産イベント
+	CASE 127
+		;ARG:1に状況　（ARG:1が　0：最初　1：産まれた　2：吸われた）
+		IF ARG:1 == 0
+			PRINTFORMW 「ごふっ…ぅ…っぐぅあ！」
+			PRINTFORMDW マキは異形の子を生む時に受ける狂いそうな痛みを必死で堪えている！
+		ELSEIF ARG:1 == 1
+			PRINTFORMW 「ああ、あぁぁぁぁ……」
+		ELSEIF ARG:1 == 2
+			PRINTFORMW 「う、ううぅ………」
+			PRINTFORMDW マキは精根使い果たしたばかりなのにも拘らず、気を限界まで吸われ意識が飛びそうになっている
+		ENDIF
+	;妊娠・出産イベント
+	CASE 129
+		;ARG:1に状況　（ARG:1が　0：最初　1：産まれた　2：吸われた）　ARG:2に子供の種類
+		IF ARG:1 == 0
+			PRINTFORMW 「ごふっ…ぅ…っぐぅあ！」
+			PRINTFORMDW マキは異形との子が生まれる時に受ける狂いそうな痛みを必死に堪えている！
+		ELSEIF ARG:1 == 1
+			PRINTFORMW 「ああ、あぁぁぁぁ……」
+		ELSEIF ARG:1 == 2
+			PRINTFORMW 「う、ううぅ………」
+			PRINTFORMDW マキは精根使い果たしたばかりなのにも拘らず、気を限界まで吸われ意識が飛びそうになっている
+		ENDIF
+	;処女喪失
+	CASE 136
+		IF ARG:3 == 1
+			PRINTFORMW 「うあ…っくぅぅぅ……」
+		;防衛成功
+		ELSEIF ARG:3 == 2
+			PRINTFORMW 「させない…よッ！」
+		;防衛失敗
+		ELSEIF ARG:3 == 0
+			;戦意喪失
+			IF CFLAG:29
+				PRINTFORMDW マキは自分の純潔が散ったことに対して何も反応しなかった
+			;催眠
+			ELSEIF CFLAG:43
+				PRINTFORMW 「…あ、ぁははっ
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW それ、正真正銘、私の処女だよぉ
+				CALL HEARTCB(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「っ！…ううぅ…」
+				PRINTFORMW 「話には聞いてたけど、やっぱり痛いものなんだね…っくぅっ…！」
+			ENDIF
+		ENDIF
+
+	;寄生進行 他キャラ
+	CASE 145
+		IF CFLAG:29
+		;戦意喪失
+			;
+		ELSEIF CFLAG:25
+		;睡眠
+			;
+		ENDIF
+	;妊娠進行 他キャラ
+	CASE 146
+		IF CFLAG:29
+		;戦意喪失
+			;
+		ELSEIF CFLAG:25
+		;睡眠
+			;
+		ELSEIF ARG:1 <= 6 && ARG:1 > 1
+		;残り時間１より上６以下で3分の１
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「背中をさするくらいしかできないけど…少しは楽になるかな…？」
+			ENDSELECT
+		ENDIF
+	;寄生出産 他キャラ
+	CASE 147
+		;
+	;妊娠出産 他キャラ
+	CASE 148
+		;
+	;捕食中
+	CASE 151
+		;主人公本人＝主観描写
+		IF TARGET == 1
+			SELECTCASE DA:(ARG:1):0
+				CASE 1 TO 2
+					IF RAND:3 == 0
+						PRINTFORMDW マキは敵にひたすら凌辱され続けている！このままでは時間の問題だ！
+					ELSEIF RAND:2 == 0
+						PRINTFORMW 「がはっ、があぁぅぅううううああ！！」
+					ELSE
+						PRINTFORMW (私…この後…どうなるんだろう……)
+					ENDIF
+				CASE 4
+					IF RAND:3 == 0
+						PRINTFORMW 「んんぅ！ぐっんんんん！」
+					ELSEIF RAND:2 == 0
+						PRINTFORMW (…少しずつ……力が無くなっていくのが分かる………)
+					ELSE
+						PRINTFORMW 「うあぁ…誰かぁ…たす、助けて……」
+						PRINTFORMDW マキは涙をぽろぽろ零しながら助けを求めている
+					ENDIF
+				CASE 5 TO 6
+					IF RAND:3 == 0
+						PRINTFORMW 「あぁぁぁ…」
+						PRINTFORMDW マキは自分の命を吸われていくのが分かり、恐怖している！
+					ELSEIF RAND:2 == 0
+						PRINTFORMW 「やめて…そん…な……」
+					ELSE
+						PRINTFORMW (もう…これ以上は……)
+					ENDIF
+				CASE 7 TO 8
+					IF RAND:3 == 0
+						PRINTFORMW (もう誰も…助けてくれなかったり…して……)
+						PRINTFORMDW マキは取り込まれながらも自嘲気味にうっすら笑みを浮かべた
+					ELSEIF RAND:2 == 0
+						PRINTFORMW 「あっ、あっ、あっ、あっ、あっ…」
+						PRINTFORMDW マキは自分を犯す触手に対して力無く喘ぎ声を返すことしかできない
+					ELSE
+						PRINTFORMW 「もう…ダメっ…だ、誰かぁ……」
+						PRINTFORMDW マキは目からぽろぽろと涙をこぼしている
+					ENDIF
+				CASE 9 TO 10
+					IF RAND:3 == 0
+						PRINTFORMW 「……んっ……くぅ！………」
+					ELSEIF RAND:2 == 0
+						PRINTFORMW (もう…だめ……)
+					ELSE
+						PRINTFORMDW マキは金魚のように口をぱくぱくさせ触手の凌辱を受け続けることしかできない
+					ENDIF
+				CASE 11 TO 12
+					IF RAND:3 == 0
+						PRINTFORMW 「…ぅ…気持ち…悪いよぉ……」
+						PRINTFORMDW マキは自分の中に異形が浸食してくることに対し激しい嫌悪感を抱いた！
+					ELSEIF RAND:2 == 0
+						PRINTFORMDW マキは何も言わず体がぴくぴくと震えている
+					ELSE
+						PRINTFORMW 「出たい…ここから…誰か……出し…て………」
+					ENDIF
+				CASE 13 TO 14
+					IF RAND:3 == 0
+						PRINTFORMDW マキはつま先をピンと伸ばし、だらしなく舌を突き出している…
+					ELSEIF RAND:2 == 0
+						PRINTFORMW (お願い…外…外に……)
+					ELSE
+						PRINTFORMW (じわじわ…溶けて…いく……)
+						PRINTFORMDW マキは気と生命力を吸われ、体が溶けていくような錯覚を起こした
+					ENDIF
+				CASE 15 TO 16
+					IF RAND:3 == 0
+						PRINTFORMW 「ひゃぁあぁああぁぁぁ！あぁ…！」
+					ELSEIF RAND:2 == 0
+						PRINTFORMW (感じたく…ないのにッ！……)
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「くあっぁああああ！うあああぁぁぁぁ…！」
+								PRINTFORMDW マキは叫び声に近い嬌声を上げ続けている…
+							CASEELSE
+								PRINTFORMW 「ひ、ひぇあああぁぁ！あっあっあっ…！」
+								PRINTFORMDW マキは友人たちとの思い出が頭をよぎったが、快感により一瞬で思考をすることができなくなる…
+						ENDSELECT
+					ENDIF
+				CASEELSE
+					IF ARG:2
+						IF RAND:3 == 0
+							PRINTFORMW 「ぅ…ぅ……」
+						ELSEIF RAND:2 == 0
+							PRINTFORMW 「いっそ一思いに……」
+						ELSE
+							PRINTFORMDW マキは既に自分がどこに存在しているのかすらあやふやになっている
+						ENDIF
+					ELSE
+						IF RAND:3 == 0
+							PRINTFORMW 「…私……吸われ…て…！」
+						ELSEIF RAND:2 == 0
+							PRINTFORMW 「やめて…お…おねが…っ！あああぁぁ！」
+						ELSE
+							PRINTFORMW 「かっ…ぁ―――――――」
+							PRINTFORMDW マキは休む暇も無く押し寄せてくる快楽の波により軽い呼吸困難に陥っている
+						ENDIF
+					ENDIF
+			ENDSELECT
+		ENDIF
+	;完全捕食
+	CASE 152
+		;戦意喪失
+		IF CFLAG:29
+			PRINTFORMW 「…………ぅ…」
+			PRINTFORMDW マキは捕食されていることに気が付いているのか付いていないのか、焦点の合っていない目で何も無い空間を見つめている
+		ELSE
+			PRINTFORMW 「や…あ　んぁ…　あ…」
+			PRINTFORMW (なんだろう…頭……ふわーって……)
+		ENDIF
+
+
+	;固定イベント発生
+	CASE 200
+		CALL DUNGEON_FIXEDEVENT_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		IF CFLAG:810==0
+			RESETCOLOR
+			RETURN 0
+		ENDIF
+
+
+	;ゲームオーバー
+	CASE 157
+		
+	;ゲーム開始時
+	CASE 159
+		;
+	;MAPにて
+	CASE 160
+		;ランダム
+		IF RAND:2 == 0
+			;戦意喪失　睡眠
+			IF CFLAG:29 || CFLAG:25
+				;
+			;ふたなり
+			ELSEIF CFLAG:42
+				SELECTCASE RAND:6
+					CASE 0
+						PRINTFORML 「…………………」
+						PRINTFORMDL マキは歩くたびチラチラと自らの"ソレ"に目を向けている
+					CASE 1
+						PRINTFORML 「なんだか、変な気分に…その……」
+						PRINTFORML 「い、いや！ムラムラしてるわけじゃなくて！してるけど！あぁもう、なんて言えばいいのか…」
+					CASE 2
+						PRINTFORML 「ううぅ……」
+							IF BASE:CP == 0
+								PRINTFORML 「こ、この恰好なんとかならないのかな？そろそろ限界なんだけど…」
+							ELSE
+								PRINTFORML 「ぬ、布が擦れて…んっ」
+							ENDIF
+				ENDSELECT
+			ELSE
+				;20日以降
+				IF DAY >= 20
+					SELECTCASE RAND:6
+						CASE 0
+							PRINTFORML 「この壁、何度見ても気が滅入るなあ」
+						CASE 1
+							PRINTFORML 「気を抜けないのがここのつらい所だよね…」
+						CASE 2
+							PRINTFORML 「この空間、気持ち悪くて嫌なんだよね…」
+						CASE 3
+							PRINTFORML 「みんな、心配してないといいんだけど……」
+						CASE 4
+							PRINTFORML 「えっと、こっちがあの部屋で、あそこを曲がると…あれ？」
+						CASEELSE
+							PRINTFORML 「時間も日付も、段々分からなくなってきちゃうなあ……」
+					ENDSELECT
+				;20日以内
+				ELSE
+					SELECTCASE RAND:6
+						CASE 0
+							PRINTFORML 「ここ、ちゃんと出口あるのかな…？」
+						CASE 1
+							PRINTFORML 「ん～～っ、はぁ。こんな所にいたら肩が凝っちゃうよ」
+						CASE 2
+							PRINTFORML 「う……げほっげほ！　はぁ…ここの空気、もう最悪だよ……」
+						CASE 3
+							PRINTFORML 「みんな、大丈夫かなぁ」
+						CASE 4
+							PRINTFORML 「えっと、こっちがあの部屋であそこを曲がると…あれ？」
+						CASEELSE
+							PRINTFORML 「どの道歩いても嫌な見た目だなあ」
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ENDIF
+
+	;オープニング
+	CASE 203
+		IF TARGET == 1
+			;PRINTFORMDW ―――――――――――――――――――――――
+			;PRINTFORMDW ―――――――――――――――――――――――
+		ENDIF
+	;射精らしい
+	CASE 451
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORMW 「あああっ！とまっ、止まっ―――だっ、ダメェェェェェ！！」
+			CASE 1
+				PRINTFORML 「―――――――ッッ！」
+				PRINTFORMDW マキは湧き出るように出てくる精液とそれによってもたらされる快感により痙攣を繰り返している！
+			CASE 2
+				PRINTFORMW 「あ゛ぁぁぁぁぁぁぁぁ！…ぁっ！」
+			CASE 3
+				PRINTFORMDW ！！
+				PRINTFORMDW ！！！！！！！
+			CASE 4
+				PRINTFORML 「あっ、あっ、あっ、あっ、あっ…！」
+				PRINTFORMDW マキは"ソレ"が精液を吐き出すたびに快感に呑みこまれそうになっている！
+		ENDSELECT
+	;ふたなり終了
+	CASE 452
+		PRINTFORML 「と、取れ……た……？」
+
+	;その他の切り出した行動
+	CASEELSE
+
+		;戦闘時行動／被行動レスポンス
+		CALL BATTLE_MIKATA_KOUDOU_OTHER_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		IF CFLAG:810==1
+			RESETCOLOR
+			RETURN 1
+		ENDIF
+		CALL BATTLE_MIKATA_KOUDOU_UKE_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		IF CFLAG:810==1
+			RESETCOLOR
+			RETURN 1
+		ENDIF
+		;探索交流時の会話
+		CALL DUNGEON_COMMUNICATION_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		IF CFLAG:810==1
+			RESETCOLOR
+			RETURN 1
+		ENDIF
+
+		;探索コマンド
+		CALL DUNGEON_EVENT_2_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		IF CFLAG:810==1
+			RESETCOLOR
+			RETURN 1
+		ENDIF
+
+		;該当なし
+		RESETCOLOR
+		RETURN 0
+
+ENDSELECT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESETCOLOR
+
+;口上記入済み
+RETURN 1
+
