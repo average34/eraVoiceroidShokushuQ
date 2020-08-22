@@ -39,7 +39,7 @@ https://seesaawiki.jp/eraseries/d/eraVoiceroid
   
 ## 共有ボタン
 
-[<img src="https://help.twitter.com/content/dam/help-twitter/brand/logo.png" width="40" alt="Twitterで共有">](https://twitter.com/share?url=https://github.com/average34/eraVoiceroidA/blob/master/README.md&hashtags=eraVoiceroid&text=eraVoiceroidA%0D%0Aテキストのみで進める、ボイロを監禁調教するゲーム。%0D%0A "Twitterで共有")
+[<img src="https://help.twitter.com/content/dam/help-twitter/brand/logo.png" width="40" alt="Twitterで共有">](https://twitter.com/share?url=https://github.com/average34/eraVoiceroidA/blob/master/README.md&hashtags=eraVoiceroid&text=eraVoiceroid触手宮%0D%0Aテキストのみで進める、ボイチェビ達が触手と戦うゲームです。（R-18）%0D%0A "Twitterで共有")
 ※R-18,R-18Gな投稿が可能な場でのみの共有をお願いします。
 
 ## 連絡先  
