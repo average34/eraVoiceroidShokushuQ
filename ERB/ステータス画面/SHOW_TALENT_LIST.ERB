@@ -378,6 +378,16 @@ SELECTCASE ARG
 		ELSEIF ARG:1 >= 2
 			LOCALS += "+" + TOSTR(ARG:1-1) + "]"
 		ENDIF
+	;複乳
+	CASE 230
+		LOCALS = [複乳
+		IF ARG:1 == 1
+			LOCALS += "]"
+		ELSEIF ARG:1 == 2
+			LOCALS += " Lv2]"
+		ELSEIF ARG:1 >= 3
+			LOCALS += " Lv3]"
+		ENDIF
 		
 	CASEELSE
 		LOCALS = [%TALENTNAME:(ARG)%]
@@ -825,6 +835,15 @@ SELECTCASE ARG:0
 	;接地乳房
 	CASE 223
 		PRINTFORM 既に乳房が地面に当たるまで肥大しました。今や乳暈だけで胸のように見えます
+	;複乳
+	CASE 230
+		IF ARG:1 == 1
+			PRINTFORM 多乳房です。乳房が左右に2対あります
+		ELSEIF ARG:1 == 2
+			PRINTFORM 多乳房です。乳房が左右に3対あります
+		ELSEIF ARG:1 >= 3
+			PRINTFORM 多乳房です。乳房が左右に4対あります
+		ENDIF
 	CASEELSE
 		PRINTFORM この素質の説明は未実装です
 ENDSELECT

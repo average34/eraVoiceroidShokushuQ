@@ -131,8 +131,9 @@ IF LOCAL:1
 	IF FLAG:502 == 11
 		;回復なし
 		LOCAL:1 = 0
-	ELSEIF FLAG:502 == 3
-		;全回復
+	ELSEIF FLAG:502 >= 1 && FLAG:502 <= 10
+		;N割回復
+		LOCAL:1 = LOCAL:1 * FLAG:502 / 10
 	ELSE
 		;8割回復（デフォルト）
 		LOCAL:1 = LOCAL:1 * 4 / 5

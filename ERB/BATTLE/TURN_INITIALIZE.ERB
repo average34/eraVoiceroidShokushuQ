@@ -58,7 +58,15 @@
 		CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
 		GOTO INITIALIZE_END
 	ENDIF
-		
+	;死亡時は何もしない
+	IF CFLAG:CHARA_ID:58
+		CFLAG:CHARA_ID:50 = 45
+		CFLAG:CHARA_ID:51 = CHARA_ID
+		CFLAG:CHARA_ID:52 = 0
+		CFLAG:CHARA_ID:54 = 0
+		CFLAG:CHARA_ID:55 = BATTLE_SPEED_MAX
+		GOTO INITIALIZE_END
+	ENDIF
 	; --------------------------------------------------------------------------
 	; 外部コマンドによって既にコマンドが指定されている場合、即時終了処理を行う
 	; 現在の所は強制自慰と抱きつかれのみ

@@ -1340,10 +1340,28 @@ SELECTCASE TALENT:(ARG:0):220
 ENDSELECT
 
 ;=======================
+;胸の素質 複乳(1文字)
+;1→白・2→ピンク・3→赤
+;=======================
+@PRINT_TALENT_2S(ARG:0)
+;◆レベルによって色を変える
+SELECTCASE TALENT:(ARG:0):230
+	CASE 1
+		RESULTS = 複
+	CASE 2
+		RESULTS = 複
+		RETURN 0xD022D0
+	CASE IS >= 3
+		RESULTS = 複
+		RETURN 0xA00000
+	CASEELSE
+ENDSELECT
+
+;=======================
 ;胸の素質 母乳体質(1文字)
 ;母乳体質→白・母乳分泌過多→ピンク・母乳異常分泌以上→赤
 ;=======================
-@PRINT_TALENT_2S(ARG:0)
+@PRINT_TALENT_3S(ARG:0)
 ;◆レベルによって色を変える
 SELECTCASE TALENT:(ARG:0):130
 	CASE 1
@@ -1363,7 +1381,7 @@ ENDSELECT
 ;=======================
 ;胸の素質 拡張乳腺(1文字)
 ;=======================
-@PRINT_TALENT_3S(ARG:0)
+@PRINT_TALENT_4S(ARG:0)
 ;◆レベルによって色を変える
 SELECTCASE TALENT:(ARG:0):162
 	CASE 1
@@ -1384,19 +1402,19 @@ ENDSELECT
 ;淫乱系素質
 ;=======================
 ;淫乱
-@PRINT_TALENT_4S(ARG:0)
+@PRINT_TALENT_5S(ARG:0)
 SIF TALENT:(ARG:0):74
 	RESULTS = 淫
 
 ;複合(尻穴狂い＋淫乳＋淫核＋淫壷)
-@PRINT_TALENT_5S(ARG:0)
+@PRINT_TALENT_6S(ARG:0)
 SIF TALENT:(ARG:0):75 && TALENT:(ARG:0):76 && TALENT:(ARG:0):77 && TALENT:(ARG:0):78
 	RESULTS = 乱
 
 
 ;淫乱持ちなら各部位は表示しない
 ;尻穴狂い
-@PRINT_TALENT_6S(ARG:0)
+@PRINT_TALENT_7S(ARG:0)
 IF TALENT:(ARG:0):75
 	;複合の条件を満たすなら表示しない
 	IF TALENT:(ARG:0):76 && TALENT:(ARG:0):77 && TALENT:(ARG:0):78
@@ -1405,7 +1423,7 @@ IF TALENT:(ARG:0):75
 	ENDIF
 ENDIF
 ;淫乳
-@PRINT_TALENT_7S(ARG:0)
+@PRINT_TALENT_8S(ARG:0)
 IF TALENT:(ARG:0):76
 	;複合の条件を満たすなら表示しない
 	IF TALENT:(ARG:0):75 && TALENT:(ARG:0):77 && TALENT:(ARG:0):78
@@ -1414,7 +1432,7 @@ IF TALENT:(ARG:0):76
 	ENDIF
 ENDIF
 ;淫核/淫茎
-@PRINT_TALENT_8S(ARG:0)
+@PRINT_TALENT_9S(ARG:0)
 IF TALENT:(ARG:0):77
 	;複合の条件を満たすなら表示しない
 	IF TALENT:(ARG:0):75 && TALENT:(ARG:0):76 && TALENT:(ARG:0):78
@@ -1427,7 +1445,7 @@ IF TALENT:(ARG:0):77
 	ENDIF
 ENDIF
 ;淫壷
-@PRINT_TALENT_9S(ARG:0)
+@PRINT_TALENT_10S(ARG:0)
 IF TALENT:(ARG:0):78
 	;複合の条件を満たすなら表示しない
 	IF TALENT:(ARG:0):75 && TALENT:(ARG:0):76 && TALENT:(ARG:0):77
@@ -1438,22 +1456,22 @@ ENDIF
 
 
 ;キス魔
-@PRINT_TALENT_10S(ARG:0)
+@PRINT_TALENT_11S(ARG:0)
 SIF TALENT:(ARG:0):79
 	RESULTS = ｷｽ
 
 ;悪堕ち
-@PRINT_TALENT_11S(ARG:0)
+@PRINT_TALENT_12S(ARG:0)
 SIF TALENT:(ARG:0):73
 	RESULTS = 悪
 
 ;淫魔
-@PRINT_TALENT_12S(ARG:0)
+@PRINT_TALENT_13S(ARG:0)
 SIF TALENT:(ARG:0):156
 	RESULTS = 魔
 
 ;ペット
-@PRINT_TALENT_13S(ARG:0)
+@PRINT_TALENT_14S(ARG:0)
 IF TALENT:(ARG:0):140 == 1
 	RESULTS = Ｐ
 ELSEIF TALENT:(ARG:0):140 == 2

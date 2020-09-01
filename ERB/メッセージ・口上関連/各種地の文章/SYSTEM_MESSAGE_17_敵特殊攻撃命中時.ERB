@@ -4,6 +4,10 @@
 ;敵のコマンドごとに命中時の描写したり
 
 SELECTCASE ARG:1
+	CASE 3
+		PRINTFORML %ARGS:0%は、投げ飛ばされた%CALLNAME:(TFLAG:97)%の身体を受け止める為、回避する事ができない！
+		PRINTFORML 二人は碌に受身も取れぬまま激突し、苦痛と衝撃に呻いた！
+		PRINTFORML %CALLNAME:(TFLAG:97)%は解放された！
 	CASE 4
 		PRINTFORML %ARGS:0%は、精液の濁流にもまれる%CALLNAME:(TFLAG:97)%の身体を受け止める為、回避する事ができない！
 		PRINTFORML 二人は碌に受身も取れぬまま激突し、ザーメンの海の中で喘いだ！
@@ -328,16 +332,51 @@ SELECTCASE ARG:1
 		ENDIF
 	
 	CASE 1029
-		IF FLAG:507 > 0
+		IF FLAG:507 > 1
 			PRINTFORML %ARGS:1%の触手が%ARGS:0%の脳を直接刺激する……
 			PRINTFORML クチュクチュグチュグシャッゴリィ
-			PRINTFORML %ARGS:0%は激しく痙攣している……
-			PRINTFORML %ARGS:0%のHP/MP/EPの最大値が1になった
+			PRINTFORML %ARGS:0%の全身が激しく痙攣し、やがて動かなくなった……
+			PRINTFORML %ARGS:0%は死亡した
 		ELSE
 			PRINTFORML %ARGS:1%の触手が%ARGS:0%の頭に食い込んだ……
 			PRINTFORML %ARGS:0%は頭に直接流れてくる快感に痙攣している……
 		ENDIF
 	
+	
+	CASE 1036
+		SELECTCASE TFLAG:98
+			CASE IS <= 0 ;コンフィグで同族堕ちOFF/主人公や娘/まだ余裕
+				;特に何も表示しない
+			CASE 1 ;あぶない
+				PRINTFORML %ARGS:0%は快感に呑まれそうになっている！
+			CASE 2 ;堕ちた（内部処理はまだ行ってない）
+				PRINTFORML %ARGS:0%が完全に屈服したのを確認すると、%ARGS:1%は頭まですっぽりと覆いかぶさってきた！
+				PRINTFORML %ARGS:1%の中に浮かぶ%ARGS:0%の影がどんどん薄くなっていく……
+				PRINTFORML 完全に影が消えた少し後に、%ARGS:1%の身体が二つに分裂した！
+				PRINTFORML その片方の形は、まぎれもなく%ARGS:0%そのものだ！
+				PRINTFORML 身も心もとろけ切った%ARGS:0%が%CALLNAME:1%\@ GET_MEMBER_SUM() >= 3 ? 達 # \@に襲い掛かる！
+		ENDSELECT
+	CASE 1037
+		PRINTFORML %ARGS:1%の液体を避けきれなかった%ARGS:0%は体が火照っていくのを感じた……
+	CASE 1038
+		IF FLAG:507 > 1
+			PRINTFORML %ARGS:1%は管のような口を%ARGS:0%の頭頂部に食い込ませた……
+			PRINTFORML ジュル、ジュルルルルルルルル
+			PRINTFORML %ARGS:1%の口は%ARGS:0%の頭蓋骨を貫通し脳を吸っていく……
+			PRINTFORML %ARGS:0%は声にならない声を上げながら全身を激しく痙攣させ、やがて動かなくなった……
+			PRINTFORML %ARGS:0%は死亡した
+		ELSE
+			PRINTFORML %ARGS:1%の口が%ARGS:0%の頭に食い込んだ……
+			PRINTFORML %ARGS:0%は大切な何かを吸われながら無理やり流れ込んでくる快感に震えている……
+		ENDIF
+	
+	CASE 1040
+		PRINTFORML %ARGS:0%の体液を吸い取り%ARGS:1%の体力が回復した！
+	CASE 1041
+		PRINTFORML %ARGS:0%の体液を吸い取り%ARGS:1%の体力が回復した！
+	CASE 1042
+		PRINTFORML %ARGS:0%の体液を吸い取り%ARGS:1%の体力が回復した！
+
 	CASE 1300
 		PRINTFORML %ARGS:0%のカラダに糸が絡みついた！
 	CASE 1301

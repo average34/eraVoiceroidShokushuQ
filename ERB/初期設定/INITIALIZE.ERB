@@ -115,9 +115,12 @@
 	CSTR:(CHARA_ID):1 = %NAME:(CHARA_ID)%
 	CSTR:(CHARA_ID):2 = %CALLNAME:(CHARA_ID)%
 	
-	;素質モブへのランダム能力化
-	IF TALENT:(CHARA_ID):166
-		CALL MOB_CUSTOMIZE(CHARA_ID)
+	;同一キャラへのランダム能力化 触手宮のモブを流用
+	IF EXIST_CHARA(NO:CHARA_ID)
+		IF (FLAG:537 == 2 && CHARA_ID != 1) || FLAG:537 == 3
+			CALL MOB_RESET(CHARA_ID)
+			CALL MOB_CUSTOMIZE(CHARA_ID)
+		ENDIF
 	ENDIF
 
 	;キャラの初期レベルと経験値が見合っていない部分を補正

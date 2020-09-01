@@ -1,0 +1,149 @@
+﻿;敵データ設定
+;ARG:0	設定場所
+;ARG:1	Reserved
+@SET_ENEMY_DATA_159(ARG:0, ARG:1)
+
+DA:(ARG:0):1 = 6000 ;HP
+DA:(ARG:0):2 = 6000 ;MAXHP
+DA:(ARG:0):3 = 1    ;ランクアップしない
+DA:(ARG:0):5 = 60   ;戦闘素質
+DA:(ARG:0):9 = 15   ;速度
+
+DA:(ARG:0):15 = 0   ;行動選択-突撃
+DA:(ARG:0):16 = 70  ;行動選択-慎重
+DA:(ARG:0):17 = 30  ;行動選択-待ち伏せ
+DA:(ARG:0):18 = 80  ;命中率
+DA:(ARG:0):19 = 10  ;HP自然回復
+
+DA:(ARG:0):40 = 150 ;被ダメ倍率-弾幕
+DA:(ARG:0):41 = 100 ;被ダメ倍率-炎弾幕
+DA:(ARG:0):42 = 150 ;被ダメ倍率-消耗武器
+DA:(ARG:0):43 = 100 ;被ダメ倍率-炎消耗武器
+DA:(ARG:0):44 = 120 ;被ダメ倍率-非消耗武器
+
+DA:(ARG:0):88 = 1   ;ペットにならない
+DA:(ARG:0):90 = 1033;拘束LvUp時に呼び出す攻撃口上
+
+;図鑑用触手データ
+DA:(ARG:0):85 = 73  ;触手種別-1+8+64女呑粘
+DA:(ARG:0):86 = 6   ;強さランク
+DA:(ARG:0):89 = 38  ;好む部位-2+4+32BCM
+
+SAVESTR:(ARG:0) = %ENEMY_NAME(159)%
+
+;戦闘中の行動決定
+;ARG:0	設定場所
+;ARG:1	対象キャラ
+@SELECT_ENEMY_ACTION_159(ARG:0, ARG:1)
+;LOCAL
+;0	LOOP
+;1	拘束フラグ
+;2	選択コマンド
+;3	確率計算用
+
+LOCAL:2 = 0
+
+;誰かを拘束しているかチェック
+LOCAL:1 = 0
+IF DA:(ARG:0):20 == 1
+	;１人目拘束
+	LOCAL:1 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
+	;２人目拘束
+	LOCAL:1 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
+	;３人目拘束
+	LOCAL:1 = FLAG:11
+ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:1 = -1
+ENDIF
+
+
+;賢い敵なら相手の状態に合わせてコマンド選んだりさせたい
+;頭が悪そうな敵も多いので、基本はランダムで良いと思うけど
+
+IF LOCAL:1 == ARG:1
+	;攻撃対象を拘束している場合
+	IF CFLAG:(ARG:1):29 && ((CFLAG:(ARG:1):21 && RAND:100 < 5) || (!CFLAG:(ARG:1):21 && RAND:100 < 10))
+		;既に戦意喪失している場合、一定確率（低め）で解放する
+		LOCAL:2 = 1
+
+	;拘束状態別の特殊行動
+	ELSEIF CFLAG:(ARG:1):21 && RAND:100 < 60
+		;丸呑み状態は強力な攻撃
+		LOCAL:3 = RAND:3
+		IF LOCAL:3 < 2
+			LOCAL:2 = 1035
+		ELSE
+			LOCAL:2 = 1036
+		ENDIF
+	ELSEIF !CFLAG:(ARG:1):21 && CFLAG:(ARG:1):38 >= 4
+		;拘束レベル4で丸呑み確定
+		LOCAL:2 = 1034;545
+	ELSEIF !CFLAG:(ARG:1):21 && CFLAG:(ARG:1):20 && (CFLAG:(ARG:1):29 || RAND:100 < 25)
+		;拘束レベル１～３まで
+		;確率で拘束強化。戦闘喪失なら確定
+		LOCAL:2 = 1033;544
+
+	ELSE
+		;そうでなければ普通の強攻撃
+		LOCAL:3 = RAND:10
+		IF LOCAL:3 < 1
+			LOCAL:2 = 675
+		ELSEIF LOCAL:3 < 2
+			LOCAL:2 = 731
+		ELSEIF LOCAL:3 < 3
+			LOCAL:2 = 956
+		ELSEIF LOCAL:3 < 4
+			LOCAL:2 = 978
+		ELSEIF LOCAL:3 < 5
+			LOCAL:2 = 979
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 985
+		ELSEIF LOCAL:3 < 7
+			LOCAL:2 = 995
+		ELSEIF LOCAL:3 < 8
+			LOCAL:2 = 1019
+		ELSE
+			LOCAL:2 = 968
+		ENDIF
+	ENDIF
+
+ELSE
+	;攻撃対象を拘束していない場合
+	;拘束攻撃ORその他
+	;他のキャラを拘束している場合は拘束攻撃をしない
+	IF LOCAL:1 == 0 && RAND:8 == 0
+		LOCAL:2 = 540 ;拘束
+	ELSE
+		;その他は等確率ランダム
+		LOCAL:3 = RAND:9
+		IF LOCAL:3 < 1
+			LOCAL:2 = 127
+		ELSEIF LOCAL:3 < 2
+			LOCAL:2 = 128
+		ELSEIF LOCAL:3 < 3
+			LOCAL:2 = 1891
+		ELSEIF LOCAL:3 < 4
+			LOCAL:2 = 1892
+		ELSEIF LOCAL:3 < 5
+			LOCAL:2 = 1893
+		ELSEIF LOCAL:3 < 6
+			LOCAL:2 = 1894
+		ELSEIF LOCAL:3 < 7
+			LOCAL:2 = 1895
+		ELSEIF LOCAL:3 < 8
+			LOCAL:2 = 1896
+		ELSE
+			LOCAL:2 = 1897
+		ENDIF
+	ENDIF
+ENDIF
+
+;ここまで来たら確定
+DA:(ARG:0):50 = LOCAL:2
+DA:(ARG:0):51 = ARG:1
+DA:(ARG:0):52 = 0
+
+

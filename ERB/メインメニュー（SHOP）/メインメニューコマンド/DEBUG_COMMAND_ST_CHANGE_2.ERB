@@ -915,7 +915,7 @@ FOR LCOUNT, 0, 301
 						PRINTFORM %"??",4,LEFT%
 				ENDSELECT
 			;数値表示
-			CASE 124, 158, 215, 220, 222, 223
+			CASE 124, 158, 215, 220, 222, 223, 230
 				SELECTCASE TALENT:キャラID:LCOUNT
 					CASE 0
 						PRINTFORM %"×",4,LEFT%
@@ -1355,6 +1355,11 @@ SELECTCASE 入力
 		TALENT:(キャラID):110 = 0
 		TALENT:(キャラID):158 = 0
 		TALENT:(キャラID):222 = 0
+	;複乳
+	CASE 230
+		TALENT:(キャラID):(入力) ++
+		SIF TALENT:(キャラID):(入力) > 3
+			TALENT:(キャラID):(入力) = 0
 	CASEELSE
 		IF TALENT:(キャラID):(入力)
 			TALENT:(キャラID):(入力) = 0

@@ -70,7 +70,10 @@ IF LOCAL:1
 				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:1+10) * (TALENT:(ARG:0):(101+TFLAG:63) + 2), 5)
 			NEXT
 			LOCAL:2 = 0
-
+			;複乳チェック
+			IF FLAG:598 > 0
+				TRYCALL SUPERNUMERARY_BREASTS(ARG:0, 2)
+			ENDIF
 		CASE 2
 		;乳腺開発　開発済みならダメージ 確率でNF＋ダメージ
 			;NF判定
@@ -115,7 +118,10 @@ IF LOCAL:1
 					NEXT
 				ENDIF
 			ENDIF
-		
+			;複乳チェック
+			IF FLAG:598 > 0
+				TRYCALL SUPERNUMERARY_BREASTS(ARG:0, 2)
+			ENDIF
 		CASE 3
 		;胸肥大化　超乳以上ならダメージ
 			CALL PRINT_MESSAGE(ARG:0, 444, 5, CALLNAME:(ARG:0), "")
@@ -171,7 +177,10 @@ IF LOCAL:1
 					NEXT
 				ENDIF
 			ENDIF
-		
+			;複乳チェック
+			IF FLAG:598 > 0
+				TRYCALL SUPERNUMERARY_BREASTS(ARG:0, 2)
+			ENDIF
 		CASE 4
 		;精力増強
 			CALL PRINT_MESSAGE(ARG:0, 444, 7, CALLNAME:(ARG:0), "")

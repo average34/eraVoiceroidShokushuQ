@@ -565,12 +565,10 @@ REDRAW 1
 		RESULTS:0 = 捕食による最大HP減少
 		IF FLAG:502 == 0
 			RESULTS:1 = 救助時に８割回復
-		ELSEIF FLAG:502 == 1
-			RESULTS:1 = 救助時に４割回復
-		ELSEIF FLAG:502 == 2
+		ELSEIF FLAG:502 >= 1 && FLAG:502 <= 10
+			RESULTS:1 = 救助時に{FLAG:502}割回復
+		ELSEIF FLAG:502 == 11
 			RESULTS:1 = 回復しない
-		ELSEIF FLAG:502 == 3
-			RESULTS:1 = 救助時に全回復
 		ENDIF
 
 	;---選択時の処理---
@@ -579,18 +577,17 @@ REDRAW 1
 		SETCOLOR 0xEEEE10
 		PRINTFORML ※難易度が変化しますので、ご注意ください
 		RESETCOLOR
-		PRINTFORML [1] 約８割回復する(デフォルト)
-		PRINTFORML [2] 約４割回復する
-		PRINTFORML [3] 回復しない
-		PRINTFORML [4] 全回復する
+		PRINTFORML 約８割回復するがデフォルトです
+		PRINTFORML 何割回復するか1～11の数字を入力してください
+		PRINTFORML 11を入力すると回復しません
 		PRINTFORML 
 		PRINTFORML [0] キャンセル
 		$INPUT_LOOP
 		INPUT
 		IF RESULT == 0
 			PRINTFORML キャンセルしました
-		;1～4
-		ELSEIF RESULT >= 1 && RESULT <= 4
+		;1～11
+		ELSEIF RESULT >= 1 && RESULT <= 11
 			FLAG:502 = RESULT - 1
 			PRINTFORMW 設定しました
 		ELSE
@@ -856,23 +853,29 @@ REDRAW 1
 	ENDIF
 ;=================================================
 ;コンフィグ項目
-;「旧作キャラ」
+;「キャラ重複の許可」
 ;=================================================
 @SET_CONFIGURE_2_8(ARG)
 	;---項目の表示---
 	IF ARG == 0
-		RESULTS:0 = 旧作キャラ
+		RESULTS:0 = キャラ重複
 		IF FLAG:537 == 0
-			RESULTS:1 = 出る
-		ELSE
-			RESULTS:1 = 出ない
+			RESULTS:1 = しない
+		ELSEIF FLAG:537 == 1
+			RESULTS:1 = する
+		ELSEIF FLAG:537 == 2
+			RESULTS:1 = する上で主人公以外に個性をつける
+		ELSEIF FLAG:537 == 3
+			RESULTS:1 = する上で全員に個性をつける
 		ENDIF
 	;---選択時の処理---
 	ELSEIF ARG == 1
-		PRINTFORML 旧作キャラを出しますか？
-		PRINTFORML （ランダム決定の際に旧作キャラが出ないようにできます）
-		PRINTFORML [1] 出す
-		PRINTFORML [2] 出さない
+		PRINTFORML キャラ重複を許可しますか？
+		PRINTFORML （同一キャラを選択できるようになります）
+		PRINTFORML [1] 許可しない
+		PRINTFORML [2] 許可する
+		PRINTFORML [3] 許可した上で主人公以外に個性をつける
+		PRINTFORML [4] 許可した上で個性をつける
 		PRINTFORML 
 		PRINTFORML [0] キャンセル
 		$INPUT_LOOP
@@ -882,10 +885,16 @@ REDRAW 1
 		;1
 		ELSEIF RESULT == 1
 			FLAG:537 = 0
-			PRINTFORMW 旧作キャラを出します
+			PRINTFORMW 重複を許可しません
 		ELSEIF RESULT == 2
 			FLAG:537 = 1
-			PRINTFORMW 旧作キャラを出しません
+			PRINTFORMW 重複を許可します
+		ELSEIF RESULT == 3
+			FLAG:537 = 2
+			PRINTFORMW 重複を許可した上で主人公以外に個性をつけます
+		ELSEIF RESULT == 4
+			FLAG:537 = 3
+			PRINTFORMW 重複を許可した上で個性をつけます
 		ELSE
 			GOTO INPUT_LOOP
 		ENDIF
@@ -2199,6 +2208,44 @@ REDRAW 1
 			GOTO INPUT_LOOP
 		ENDIF
 	ENDIF
+
+
+;=================================================
+;コンフィグ項目
+;「複乳パッチ」
+;=================================================
+@SET_CONFIGURE_4_22(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = 複乳パッチ
+		
+		IF FLAG:598 == 0
+			RESULTS:1 = OFF
+		ELSEIF FLAG:598 == 1
+			RESULTS:1 = ON
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML 複乳パッチを適用しますか？
+		PRINTFORML 
+		PRINTFORML [1] OFF(デフォルト)
+		PRINTFORML [2] ON
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:598 = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
+
 ;=================================================
 ;コンフィグ項目
 ;「ゲームの難易度」

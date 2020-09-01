@@ -1,0 +1,141 @@
+﻿@SUPERNUMERARY_BREASTS(ARG:0, ARG:1, ARG:2)
+;ARG
+;0	対象キャラ
+;1	原因(0:END_PHASE　1:敵の攻撃　2:触手服orスライム服のB攻撃　3:出産)
+;2	予備
+#DIM 複乳進行度
+
+;残虐度表現ノーマル以下は無効
+SIF FLAG:507 < 1
+	RETURN 0
+;複乳パッチがOFFなら無効
+SIF FLAG:598 <= 0
+	RETURN
+
+;淫乳無し → 無効
+SIF TALENT:(ARG:0):76 == 0
+	RETURN 0
+;Bインプラント無し → 無効
+SIF GETBIT(CFLAG:(ARG:0):81, 2) == 0
+	RETURN 0
+;侵食が15未満 → 無効
+SIF CFLAG:(ARG:0):80 < 15
+	RETURN 0
+
+;特定の攻撃を受けていない
+IF ARG:1 != 1
+	;複乳系のステータスがないと無効
+	IF CFLAG:(ARG:0):513 <= 0 || TALENT:(ARG:0):230 <= 0
+		RETURN 0
+	ENDIF
+ENDIF
+
+複乳進行度 = 0
+
+;複乳化・基本
+SELECTCASE ARG:1
+	CASE 0
+		複乳進行度 += 2
+	CASE 1
+		複乳進行度 += 10
+	CASE 2
+		複乳進行度 += 5
+	CASE 3
+		複乳進行度 += 5
+ENDSELECT
+
+;複乳化・素質補正分 (巨乳以上、母乳体質)
+SELECTCASE GET_BUST(ARG:0)
+	CASE 1
+		複乳進行度 += 2
+	CASE 2
+		複乳進行度 += 4
+	CASE 3
+		複乳進行度 += 8
+	CASE 4
+		複乳進行度 += 12
+	CASE 5
+		複乳進行度 += 16
+ENDSELECT
+IF TALENT:(ARG:0):130 > 0
+	複乳進行度 += TALENT:(ARG:0):130
+ENDIF
+
+CFLAG:(ARG:0):513 += 複乳進行度
+
+;メッセージ用
+IF ARG:1 == 1
+	;素質が最大になっていなければメッセージ
+	IF TALENT:(ARG:0):230 <= 2
+		CALL PRINT_MESSAGE(ARG:0, 535, 11, CALLNAME:(ARG:0), "")
+	ENDIF
+	RETURN ARG:1
+ELSEIF ARG:1 >= 2
+	RETURN ARG:1
+ELSE
+	RETURN 0
+ENDIF
+
+@CHECK_SUPERNUMERARY_BREASTS(ARG:0)
+;[複乳]素質取得
+;ARG：0		対象キャラ
+#DIM 素質取得	;素質取得したかどうか
+
+;残虐度表現ノーマル以下は無効
+SIF FLAG:507 < 1
+	RETURN 0
+;複乳パッチがOFFなら無効
+SIF FLAG:598 <= 0
+	RETURN
+
+;淫乳無し → 無効
+SIF TALENT:(ARG:0):76 == 0
+	RETURN 0
+;Bインプラント無し → 無効
+SIF GETBIT(CFLAG:(ARG:0):81, 2) == 0
+	RETURN 0
+;侵食が15未満 → 無効
+SIF CFLAG:(ARG:0):80 < 15
+	RETURN 0
+
+素質取得 = 0
+
+IF TALENT:(ARG:0):230 < 3
+	SELECTCASE CFLAG:(ARG:0):513
+		CASE 1 TO 33
+			CALL PRINT_MESSAGE(ARG:0, 535, 0, CALLNAME:(ARG:0), "")
+		CASE 34 TO 66
+			CALL PRINT_MESSAGE(ARG:0, 535, 1, CALLNAME:(ARG:0), "")
+		CASE 67 TO 99
+			CALL PRINT_MESSAGE(ARG:0, 535, 2, CALLNAME:(ARG:0), "")
+		CASE IS >= 100
+			CALL PRINT_MESSAGE(ARG:0, 535, 3, CALLNAME:(ARG:0), "")
+		CASEELSE
+	ENDSELECT
+ENDIF
+
+IF TALENT:(ARG:0):230 >= 3
+	CALL PRINT_MESSAGE(ARG:0, 535, 7, CALLNAME:(ARG:0), "")
+ELSEIF TALENT:(ARG:0):230 == 2 && CFLAG:(ARG:0):513 >= 100
+	CALL PRINT_MESSAGE(ARG:0, 535, 6, CALLNAME:(ARG:0), "")
+	TALENT:(ARG:0):230 = 3
+	CFLAG:(ARG:0):513 = 0
+	素質取得 = 1
+ELSEIF TALENT:(ARG:0):230 == 1 && CFLAG:(ARG:0):513 >= 100
+	CALL PRINT_MESSAGE(ARG:0, 535, 5, CALLNAME:(ARG:0), "")
+	TALENT:(ARG:0):230 = 2
+	CFLAG:(ARG:0):513 = 0
+	素質取得 = 1
+ELSEIF TALENT:(ARG:0):230 <= 0 && CFLAG:(ARG:0):513 >= 100
+	CALL PRINT_MESSAGE(ARG:0, 535, 4, CALLNAME:(ARG:0), "")
+	TALENT:(ARG:0):230 = 1
+	CFLAG:(ARG:0):513 = 0
+	素質取得 = 1
+ENDIF
+
+;メッセージ分岐用
+IF 素質取得 == 1
+	RETURN 2
+ELSE
+	RETURN 1
+ENDIF

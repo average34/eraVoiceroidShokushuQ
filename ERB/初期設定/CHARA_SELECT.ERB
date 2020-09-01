@@ -17,11 +17,6 @@ PRINTFORML [2] ランダムでキャラを選ぶ（ゲーム開始まで誰に�
 ;PRINTFORML [4] 口上のあるキャラからランダムで選ぶ（ゲーム開始まで誰になるか不明）
 PRINTFORML [9] あなた（♀）
 PRINTFORML 
-IF FLAG:537 == 0
-;	PRINTFORML [10] ランダム選択で旧作キャラを出ないようにする
-ELSEIF FLAG:537 == 1
-;	PRINTFORML [10] ランダム選択で旧作キャラを出るように戻す
-ENDIF
 
 $INPUT_LOOP1
 INPUT
@@ -82,13 +77,6 @@ ELSEIF RESULT == 4
 ELSEIF RESULT == 9
 	LOCAL:1 = 0
 	FLAG:567 = 0
-ELSEIF RESULT == 10
-	IF FLAG:537 == 0
-		FLAG:537 = 1
-	ELSE
-		FLAG:537 = 0
-	ENDIF
-	RESTART
 ELSE
 	REUSELASTLINE 入力値が不正です。再入力してください
 	GOTO INPUT_LOOP1
@@ -139,11 +127,21 @@ NEXT
 PRINTFORML [0] これでOK！（？？？が残っている場合、ランダムに決定されます）
 ;PRINTFORML [1] これでOK！（？？？が残っている場合、口上のあるキャラからランダムに決定されます）
 PRINTFORML [2] 全員？？？に戻す
+IF FLAG:537 == 0
+	PRINTFORML [8] 同キャラ重複を許可する
+ELSEIF FLAG:537 == 1
+	PRINTFORML [8] 同キャラ重複した場合に主人公以外に個性を出す
+ELSEIF FLAG:537 == 2
+	PRINTFORML [8] 同キャラ重複した場合に主人公含め全員に個性を出す
+ELSEIF FLAG:537 == 3
+	PRINTFORML [8] 同キャラ重複を出ないように戻す
+ENDIF
 IF FLAG:998
 	PRINTFORML [9] 人数を変更する（1～9人まで変更可能）
 ELSE
 	PRINTFORML [9] 人数を変更する（0～9人まで変更可能）
 ENDIF
+
 
 $INPUT_LOOP1
 INPUT
@@ -183,6 +181,17 @@ ELSEIF RESULT == 2
 	FOR LOCAL:0, 1, (LOCAL:1 + 1)
 		FLAG:(LOCAL:0 + 20) = 0
 	NEXT
+ELSEIF RESULT == 8
+	IF FLAG:537 == 0
+		FLAG:537 = 1
+	ELSEIF FLAG:537 == 1
+		FLAG:537 = 2
+	ELSEIF FLAG:537 == 2
+		FLAG:537 = 3
+	ELSE
+		FLAG:537 = 0
+	ENDIF
+	RESTART
 ELSEIF RESULT == 9
 	IF FLAG:998
 		PRINTFORML 主人公以外のキャラは何人登場させますか？（1～9の値を入力してください）
@@ -279,7 +288,7 @@ FOR LCOUNT, (11 + (30 * PAGE)), (41 + (30 * PAGE))
 	ENDIF
 	
 	
-	IF EXIST_CHARA(LCOUNT - 10)
+	IF EXIST_CHARA(LCOUNT - 10) && FLAG:537 == 0
 		;加入済み
 		SETCOLOR 0x333333
 		PRINTFORMLC [---] %CSVNAME(LCOUNT - 10, 0),16,LEFT% (選択済み)
@@ -331,7 +340,7 @@ ELSEIF RESULT >= 11 && RESULT <= (FLAG:2 + 10)
 	SELECT_CHARA = RESULT - 10
 	
 	;加入済み
-	SIF !EXIST_CHARA(SELECT_CHARA)
+	SIF !EXIST_CHARA(SELECT_CHARA) || FLAG:537 >= 1
 		RETURN SELECT_CHARA
 ELSEIF RESULT > FLAG:2 + 10 && RESULT < FLAG:2 + 23
 	SELECT_MOB = RESULT - 10
@@ -369,14 +378,12 @@ RETURNF 0
 @SELECT_RANDOM_CHARA
 #FUNCTION
 LOCAL:0 = RAND:(FLAG:2) + 1
-;既に居るキャラが選ばれてしまったら再抽選
-SIF EXIST_CHARA(LOCAL:0)
-	RESTART
-;旧作キャラ排除のコンフィグONで旧作キャラなら再抽選
-IF FLAG:537
-	;IF LOCAL:0 == 51 || LOCAL:0 == 52 || (LOCAL:0 >= 57 && LOCAL:0 <= 76)
-	;	RESTART
-	;ENDIF
+
+;重複許可フラグチェック
+IF FLAG:537 == 0
+	;既に居るキャラが選ばれてしまったら再抽選
+	SIF EXIST_CHARA(LOCAL:0)
+		RESTART
 ENDIF
 RETURNF LOCAL:0
 

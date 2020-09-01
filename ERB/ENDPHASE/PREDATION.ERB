@@ -158,7 +158,7 @@ CALL GET_LOSE_MARK(ARG:0, DA:(ARG:1):0)
 
 	;************開放パッチ********************	
 ;開放パッチ使用かつ戦意喪失中なら低確率で開放
-IF FLAG:524 == 0 && CFLAG:(ARG:0):29 == 1 && DA:(ARG:1):0 >= 5 && RAND:100 < 10
+IF FLAG:524 == 0 && CFLAG:(ARG:0):29 == 1 && DA:(ARG:1):0 >= 5 && RAND:100 < 10 && CFLAG:(ARG:0):58 == 0
 	IF CFLAG:(ARG:0):22 == 0
 		CALL PARASITE_TYPE(ARG:0, 0, DA:(ARG:1):0, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 0)
 
