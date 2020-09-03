@@ -19,7 +19,7 @@ https://github.com/average34/eraVoiceroidShokushuQ/releases
 Emuera1824beta005.exeを実行することでゲームを起動します。  
 インストーラなどはありません。  
   
-※起動時に何か問題が起きた場合、まずは同フォルダの[「Q&A.txt」](https://github.com/average34/eraVoiceroidShokushuQ/blob/master/RESOURCES/eraVStop.png "Q&A")  を参照して下さい。  
+※起動時に何か問題が起きた場合、まずは同フォルダの[「Q&A.txt」](https://github.com/average34/eraVoiceroidShokushuQ/blob/master/Q%26A.txt "Q&A")  を参照して下さい。  
   
 ## 動作環境  
 
