@@ -481,7 +481,7 @@ REDRAW 1
 ;処女男
 @CONFIGURE_FIRST_SEX
 #DIM LCOUNT
-PRINTFORML 処女モードの設定を行います。　【処女】の概念を導入しますか？
+PRINTFORML 処女・オトコモードの設定を行います。　【処女】の概念を導入しますか？
 PRINTFORML [ 0] 【処女】の処理は行わない
 PRINTFORM [ 1] 【処女】の処理を行う　
 SETCOLOR 0xEEEE10
@@ -490,12 +490,12 @@ RESETCOLOR
 PRINTFORML [ 2] 【処女】+　貞操帯モード　※A感度にペナルティが入ります
 PRINTFORML [ 3] 【処女】を個別に設定する
 PRINTFORML 
-PRINTFORML [11] 【オトコ】の処理を行う
+PRINTFORML [11] 全員【オトコ】にする
 SETCOLOR 0xEEEE10
 PRINTFORML ※処女やふたなり付加したキャラにオトコは付けられません
 PRINTFORML ※ふたなりオトコは全員ふたなり開始で下記の個別設定をすることで可能です
 RESETCOLOR
-PRINTFORML [12] 【オトコ】を個別に設定する
+PRINTFORML [12] 【オトコ】【ふたなり】を個別に設定する
 PRINTFORML  [99] 【処女】\@ (FLAG:512 & 2) == 2 ? 【オトコ】 # \@をランダムに決定する
 
 INPUT
@@ -557,7 +557,7 @@ ELSEIF RESULT == 12
 	LOCAL:5 = 0
 	DRAWLINE
 	FOR LCOUNT, 0, CHARANUM - 1
-		PRINTFORML [{LCOUNT}] %CALLNAME:(LCOUNT + 1),15, LEFT%:\@ TALENT:(LCOUNT + 1):122 ? ○ # × \@
+		PRINTFORML [{LCOUNT}] %CALLNAME:(LCOUNT + 1),15, LEFT%:\@ TALENT:(LCOUNT + 1):オトコ ? オトコ #  \@\@ TALENT:(LCOUNT + 1):ふたなり ? ふたなり #  \@
 		LOCAL:5 ++
 	NEXT
 	DRAWLINE
@@ -565,8 +565,17 @@ ELSEIF RESULT == 12
 	INPUT
 	LOCAL:5 += 4
 	IF RESULT >= 0 && RESULT <= CHARANUM - 1
-		 INVERTBIT TALENT:(RESULT + 1):オトコ, 0
-		 IF TALENT:(RESULT + 1):0 == 1 && TALENT:(RESULT + 1):122 > 0
+		IF TALENT:(RESULT + 1):オトコ == 0 && TALENT:(RESULT + 1):ふたなり == 0
+		TALENT:(RESULT + 1):ふたなり = 1
+		TALENT:(RESULT + 1):オトコ = 0
+		ELSEIF TALENT:(RESULT + 1):オトコ == 0 && TALENT:(RESULT + 1):ふたなり == 1
+		TALENT:(RESULT + 1):ふたなり = 0
+		TALENT:(RESULT + 1):オトコ = 1
+		ELSEIF TALENT:(RESULT + 1):オトコ == 1 && TALENT:(RESULT + 1):ふたなり == 0
+		TALENT:(RESULT + 1):ふたなり = 0
+		TALENT:(RESULT + 1):オトコ = 0
+		ENDIF
+		 IF TALENT:(RESULT + 1):0 == 1 && TALENT:(RESULT + 1):オトコ > 0
 		 	TALENT:(RESULT + 1):0 = 0
 		 ENDIF
 		 CLEARLINE LOCAL:5
