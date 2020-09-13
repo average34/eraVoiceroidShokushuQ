@@ -1,0 +1,49 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 34 EPが0になった - 前回情報参照 114 睡眠開始時PTの誰かに襲われた
+;    CFLAG:951にレイプ犯No
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_34_PREV_114(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_34_DESCRIPTION_BEFORE")
+	
+	; 自分が主人公の場合のみ処理を行う、それ以外は戻る
+	SIF NO:1 != 4
+		RETURN 0
+		
+	; レイプ犯NOが範囲外の場合も処理を行わない
+	SIF !INRANGE(CFLAG:951, 1, CHARANUM - 1)
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂寸前の%CALLNAME:TARGET%は%CALLNAME:(CFLAG:951)%に虚ろな笑顔を向けながら、膣内射精をねだるように艶めかしく腰を動かした…\d\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d夢中で腰を振る%CALLNAME:(CFLAG:951)%に抱きつくと、%CALLNAME:TARGET%は絶頂寸前の雌穴でペニスを奥深くくわえ込んだ！\d\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂寸前の%CALLNAME:TARGET%は舌を突き出しヨダレをこぼしながら、%CALLNAME:(CFLAG:951)%に合わせて腰を動かしている…\d\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂寸前の%CALLNAME:TARGET%は目に涙を溜めながら、自分を犯す%CALLNAME:(CFLAG:951)%を睨み付けている…\d\n"
+	ENDSELECT
+RETURN 1

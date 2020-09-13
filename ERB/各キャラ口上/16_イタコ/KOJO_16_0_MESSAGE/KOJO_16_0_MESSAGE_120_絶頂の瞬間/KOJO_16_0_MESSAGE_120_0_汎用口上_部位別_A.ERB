@@ -1,0 +1,101 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 0 汎用口上 部位別 A
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_120_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%は……　おしり交尾で……　イキましたわ……ぁ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたし…は……　おしりの穴をほじられて…絶頂する、ド変態ですの……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んっ……　おしり…でっ…　絶頂しましたわ…ぁっ」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d催眠状態の%CALLNAME:TARGET%は、顔を上気させながら事務的に絶頂したことを伝えた\d\n"
+			CALL KOJO_16_0_FIX_MESSAGE
+			
+			; 連続絶頂時 or 寸止め時 追加口上
+			IF GETBIT(ARG:3, 1) || CFLAG:820
+
+				CALL KOJO_16_0_ADD_MESSAGE, @"「またイキますわ…っ……♥　イッてますの…っ…♥\n　%CALLNAME:TARGET%のアナルは、イキっぱなしにされて喜んでいますのぉ…っ♥♥」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%はビクビクと脈打つ尻穴を拡げ、蕩けきった声で絶頂を報告した\d\n"
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おかしくなるっ♥　おしりおかしくなってますわっ♥　イかせてっ♥　おしりもっとイかせてくださいましぃぃっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あは…♥　お尻のあなが、ジンジンしますわ……♥♥」\n"
+		
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（うそ…っ！？　あたし、おしりで…イッてるっ！？　イかされてるうぅぅっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（うそですわよね…っ！？　おしりっ！？　おしりがイッてますわっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「やめて…っ　おしりでイカされるのっ、ヘンになってしまいますの……っ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「どうして…っ…　おしりなんかで…　きもちよくなって…ぇっ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いや…　お尻のあな、ジンジンしちゃいますわっ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「壊れるっ！　おしり壊れちゃいますのっ！　イかせないでぇっ！！　おしりイかせないでえぇぇぇっ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「やめてぇっ！　おしりっ、おしりが気持ちよくなるの覚えちゃいますわっ！　いやああぁぁぁっ！！」\n"
+	ENDSELECT
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 連続絶頂時 or 寸止め時 追加口上
+	IF GETBIT(ARG:3, 1) || CFLAG:820
+
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おしり…ぃ♥　触手ズポズポきもちいいですのぉっっ……♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おしりぃっ♥　おしりのあなぁっ♥　もっといじめてくださいまし♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あﾞおﾞぉぉっ♥　おひりぃっ♥　おひぃ…っ♥　りぃぃ…っ♥」\n\d%CALLNAME:TARGET%は少しでも快感を引き延ばそうと、絶頂したばかりのアナルをほじくりまわしている…\d\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ヘンですわ…　おしりで…　きもちよくなって…しまうなんて…っ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「やあ…ぁ…あああっ！？　おしりっ…おしりの穴がっ！？　変になってっ！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もういやぁぁっ！　イキぐせついちゃいますのっ！！　おしりのあなにイキぐせついちゃうからあああぁぁっ！！」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「くぅぅ…っ！　おしりなんか…でっ、イキたくありませんのにっ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう…っ、おしりのあなぁ…　ほじくるの…　やめてくださいまし…っ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もうやめてぇ…っ　おしり…ぃっ　めくれてしまいますわ…っ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おしっ、おしりぃっ！　こわれるっ！　おかしくなるぅううぅ…っ！\n　とまりませんわ…！？　イクのとまらないいぃぃぃっ！？」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 多重絶頂時 追加口上
+	IF ARG:3 && !GETBIT(ARG:3, 1)
+
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「他にもイッてるのにぃ♥　おしりまでイッちゃっいましたわぁ……♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おひりっ♥　おひりもイッちゃうぅっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（他にイッてますのにっ、お尻まで…っ！？）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「いやぁぁっ♥　もう気持ちよくしない…でっ♥　おしり……までぇぇぇっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「いやぁっ！　おしりもイクっ！　イっちゃうううぅぅぅっ！！」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+RETURN 1

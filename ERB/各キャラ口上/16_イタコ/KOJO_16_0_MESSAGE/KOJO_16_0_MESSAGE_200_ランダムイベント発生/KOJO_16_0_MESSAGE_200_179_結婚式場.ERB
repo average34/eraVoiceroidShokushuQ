@@ -1,0 +1,86 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 179 結婚式場
+; ------------------------------------------------------------------------------
+
+; □ 2 触手服ウェディングドレス授与
+@KOJO_16_0_SYSTEM_MESSAGE_200_179_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こっ、この服は……　もしや……」\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　あたし、また結婚式挙げるんですわね…っ♥♥」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 誓いの公開レイプ
+@KOJO_16_0_SYSTEM_MESSAGE_200_179_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（…これは…結婚式、みたいですわ……　あたし、あるじ様と…結婚して、しまいますの…？）\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（結婚、式…っ♥　あぁ…っ♥♥　また%PETNAME%様に、滅茶苦茶に犯して貰えますわ…っ♥♥）\n"
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 今のところ結婚宣言は二度目以降も共用
+	{
+		CALL KOJO_16_0_ADD_MESSAGE, @"
+			\d触手ドレスに全身を愛撫され、%CALLNAME:TARGET%は蕩けた声をあげたまま結婚の誓いを口にしはじめた\d\n
+			「あそこも…っ♥　お尻の穴も、おっぱいも、\@GET_PENIS(TARGET) ? おちんちん # クリトリス\@も…っ♥　きもちいい所すべて、%PETNAME%様のものですわ♥♥\n
+			　いかなる時でも、%PETNAME%様の性欲を満たす為の専用肉便器としてっ♥\n
+			　あたしっ…！　%CALLNAME:TARGET%はっ♥　生涯、%PETNAME%様を愛し続ける事を誓いますわ…っ…♥♥」\n
+			\d宣言を終えると、%CALLNAME:TARGET%は%PETNAME%の性器に誓いの口づけをした\d\n
+		"
+	}
+
+RETURN 1
+
+
+; □ 8 無視して離れた
+@KOJO_16_0_SYSTEM_MESSAGE_200_179_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質によって分岐
+	SELECTCASE TALENT:140
+	; [ペット]所持
+	CASE 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あるじ様、そちらに何かあるんですの…？」\n"
+		ENDSELECT
+
+	; [花嫁]所持
+	CASE 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あ…♥　あたし、ここで結婚式挙げたんでしたわ…♥」\n"
+		ENDSELECT
+		
+	; ペット系素質未所持(イタコ以外の誰かがペット所持)
+	CASEELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「そっちはダメですわ！　嫌な……嫌な気配がいたしますの……っ！」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1

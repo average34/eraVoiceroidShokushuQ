@@ -1,0 +1,101 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ ふたなり 汎用
+; ------------------------------------------------------------------------------
+
+; □ ふたなり化
+@KOJO_16_0_SYSTEM_MESSAGE_CHINKO_EQUIP(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 地の文表示前の口上(自販機の場合のみ地の文表示前に喋る)
+	IF ARG:0 == 200 && ARG:1 == 160 && ARG:2 == 7
+		; 初ちんこ
+		IF EXP:12 == 0
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ひっ！？　なっ！？　おまたが…！？　おまたがあつく…っ！！」\n"
+			ENDSELECT
+		; 射精中毒 Lv1以下(Lv0で寄生されるのはほぼ見れないのでLv1に統合)
+		ELSEIF ABL:12 <= 1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの…にっ、吸い付いて…　どんどん、おおきく…っ♥」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「やめっ、やめてくださっい゛ぃ！？　ひぐ…！　吸い付いちゃ…だめですわ…っ！」\n"
+			ENDSELECT
+		; 射精経験35以下(射精中毒Lv2は結構長いので途中で分割)
+		ELSEIF EXP:12 <= 35
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽ…っ　生えてく感覚すごいっですわっ♥\n　くりとりすがっ…　きもちいいトコが、おっきくなって…っ…♥」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「だめっ！　だめですぅ…！　それにっ…寄生されるとっ、おかしく…おかしくりますの……っ！」\n"
+			ENDSELECT
+		; 射精経験36以上
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「いい…ですっ♥　おまめ…っ、おかしくしてくださいましっ…♥\n　二度と取れなくなっても構いませんわっ♥　あたしに…おちんぽくださいっ♥」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　あっ♥　ああっ♥\n　だめ…ですわ…っ…　また…　おとこの人の…快楽、たくさん…経験してしまいますわ…♥」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文表示
+	CALL KOJO_16_0_ADD_MESSAGE, @"\M"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 初ちんこ
+	IF EXP:12 == 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こ、これ…おちんちん？　あたしの…？」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「う、うそ…ですわ……　殿方のモノが…あたしに…っ！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はぁ…　はぁ…　……夢、ですわよね……？　あたしにこんなの付いてるはずが…ありませんわ……っ」\n"
+		ENDSELECT
+	; 射精中毒 Lv1以下(Lv0で寄生されるのはほぼ見れないのでLv1に統合)
+	ELSEIF ABL:12 <= 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「射精しすぎると取れてしまうので、今度は気をつけないとですわ…♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「くぅっ……、取るの大変でしたのに……」\n"
+		ENDSELECT
+	; 射精経験35以下(射精中毒Lv2は結構長いので途中で分割)
+	ELSEIF EXP:12 <= 35
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あはっ♥　また触手ちんぽで、びゅーびゅーできますわ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（これ以上おとこの人ので気持よくなったら…　あたし…　戻れなくなりますわ……）\n（どうにかして…　取り除く方法考えませんと……）\n"
+		ENDSELECT
+	; 射精経験36以上
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		; 淫乱, 発情
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あﾞーっ♥　うあﾞあﾞぁーっ♥\n　きましたっ♥　おちんぽきましたわっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あは…は…♥　また…おちんちん生えてしまいましたわ…♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

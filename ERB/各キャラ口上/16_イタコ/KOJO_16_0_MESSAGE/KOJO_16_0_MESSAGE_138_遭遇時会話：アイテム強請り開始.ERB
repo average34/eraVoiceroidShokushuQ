@@ -1,0 +1,36 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 138 遭遇時会話：アイテム強請り開始
+; ------------------------------------------------------------------------------
+
+; □ 0 通常交渉
+@KOJO_16_0_SYSTEM_MESSAGE_138_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; アイテムをあげたばかり
+	IF KOJO_16_0_GET_PREV_ARG(0) == 163
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「等価交換ということで、何かいただけません？」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「何か頂けると、助かりますの…」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「余ってるものとかありませんでしょうか」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失キャラから強奪
+@KOJO_16_0_SYSTEM_MESSAGE_138_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさいね…　何かお持ちでなくって？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「……ごめんなさい　……許してくださいまし」\n"
+	ENDSELECT
+RETURN 1

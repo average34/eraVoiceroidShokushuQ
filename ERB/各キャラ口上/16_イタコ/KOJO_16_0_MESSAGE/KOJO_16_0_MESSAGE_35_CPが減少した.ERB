@@ -1,0 +1,223 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 35 CPが減少した
+; ------------------------------------------------------------------------------
+
+; □ 0 全裸になった
+@KOJO_16_0_SYSTEM_MESSAGE_35_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中なら何もせずに帰る
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; ランダムイベント：スライム で服を溶かされた
+	IF KOJO_16_0_GET_PREV_ARG(0) == 200 && KOJO_16_0_GET_PREV_ARG(1) == 136 && KOJO_16_0_GET_PREV_ARG(2) == 1
+		; PTメンバーにいる
+		IF NO:1 == 4 || NO:(FLAG:10) == 4 || NO:(FLAG:11) == 4
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「服だけ溶かすスライム…　実在しましたのね……」\n"
+			ENDSELECT
+			
+		; 同室に居て巻き込まれた
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「どうしてあたしがこんな目に……」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしは何も触ってませんのに！…」\n"
+			ENDSELECT
+		ENDIF
+		
+	; ペットに身体を捧げている最中(ペット系素質所持時のみ)
+	ELSEIF KOJO_16_0_TEMP_FLAG:1 && TALENT:140
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d身につけた服を全て奪われたにも関わらず、%CALLNAME:TARGET%は気にせず主人との行為に夢中になっている…\d\n"
+		
+	; 通常処理
+	ELSE
+		; 喪失中
+		IF CFLAG:29
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あ…ぁ……　服…が……」\n"
+			
+		; 諦め済み
+		ELSEIF TFLAG:16 == 2
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「やだ…　もういやですの…」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あ…ぁ…　あたしのぜんぶ、みえて……」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d一糸まとわぬ身体を這い回る触手の感覚に、%CALLNAME:TARGET%は恐怖で身を震わせてい\d\n"
+			ENDSELECT
+			
+		; 通常状態
+		ELSE
+			; 汎用口上
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　全部ぬがされてしまいましたにゃ♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「コッショリするのに服があったら邪魔になってしまいますものね♪」\n"
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「だっ、だめぇ…っ！　全部、見えちゃいますわ…っ！」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの裸は安くありませんわよ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわっ！？　こっちを見ないで下さいまし！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ひゃぅっ！？　あたしの服が！？」\n（こんな場所で裸…　これはまずいですわ！？）\n"
+			ENDSELECT
+			
+			; 触装中 追加口上
+			IF CFLAG:40
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あの服…触手がヌルヌルしてすごく気持ちよかったのですのよ…？」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「…ようやく脱げましたわ\n　…あれに身体を弄られ続けるぐらいなら、裸の方がマシですわ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ふぅ…　ようやく脱げましたわ\n　次は普通の服が手に入るといいですわね」\n"
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 1 半裸になった
+@KOJO_16_0_SYSTEM_MESSAGE_35_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中なら何もせずに帰る
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 諦め済み
+	IF TFLAG:16 == 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう少し、やさしく脱がしてほしいですわ♪」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわぁ……　あたし、脱がされてますわ……」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう…いや…」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; ペットに身体を捧げている最中(ペット系素質所持時のみ)
+	IF KOJO_16_0_TEMP_FLAG:1 && TALENT:140
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d興奮した%PETNAME%によって服を破かれた%CALLNAME:TARGET%は、発情した雌の顔で主人を見つめた…\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 汎用口上
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「少し動いたらあたしの大事なとこ見えちゃいそうですわ♪」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こうして服を残すのって…　裸より煽情的ですわね♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「うぅ…こんな服でこれからどうすれば…」\n"
+	ENDSELECT
+	
+	; 触装中 追加口上
+	IF CFLAG:40
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あっ、触手服も脱がされますの…？　残念ですにゃぁ♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この服が脱げるなら、あえて食らってもいいですわね…！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 2 破れはじめた
+@KOJO_16_0_SYSTEM_MESSAGE_35_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中なら何もせずに帰る
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 諦め済み
+	IF TFLAG:16 == 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あぁ……もう降参しましたのに……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「わざわざ破らないでくださいまし……」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; ペットに身体を捧げている最中(ペット系素質所持時のみ)
+	IF KOJO_16_0_TEMP_FLAG:1 && TALENT:140
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d整った衣服を乱され、%CALLNAME:TARGET%は%PETNAME%に期待のまなざしを向けた…\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの裸…　見たいんですの…？」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 汎用口上
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「にゃはっ♥　犯されちゃう♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ふふっ、ムリヤリがお好きなんですのね？♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ふ、服がっ！？」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ！　破かれてしまいましたわ…！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの服、返してほしいですわ！」\n"
+	ENDSELECT
+
+	; 触装中 追加口上
+	IF CFLAG:40
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ん…♥この触手服も、普通に破れるんですのね」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

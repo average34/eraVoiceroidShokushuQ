@@ -1,0 +1,164 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 42 拘束からの離脱
+; ------------------------------------------------------------------------------
+
+; □ 0 脱出開始
+; ◆ 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_1_42_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 敵種族別口上呼び出し
+	CALL KOJO_16_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_16_0_SYSTEM_MESSAGE_1_42_X_0_ENEMY_{DA:(ARG:4):0}")
+	SIF KOJO_16_0_GET_IMPORTANT_FLAG()
+		RETURN 1
+		
+	; PTメンバーがいる
+	IF GET_MEMBER_SUM() > 1
+		; 自分以外のPTは全員寝てる
+		IF (CFLAG:1:25 || TARGET == 1) && (CFLAG:(FLAG:10):25 || TARGET == FLAG:10) && (CFLAG:(FLAG:11):25 || TARGET == FLAG:11 || FLAG:11 == 0)
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d触手に絡め取られた%CALLNAME:TARGET%は、なかなか起きない\@ (TARGET == 1) ? %CALLNAME:(FLAG:10)%%TACHI()% # %CALLNAME:1%%TACHI()% \@に助けを求めた\d\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「起きてくださいまし……　だれか…助けて……！」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ちょ、ちょっとぉっ！寝てる場合じゃありませんわよぉっっ……！？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしが捕まってるのにっ……気持ちよく寝ないでくださいまし！」\n"
+			ENDSELECT
+			
+		; 自分以外のPTは全員喪失
+		ELSEIF (CFLAG:1:29 || TARGET == 1) && (CFLAG:(FLAG:10):29 || TARGET == FLAG:10) && (CFLAG:(FLAG:11):29 || TARGET == FLAG:11 || FLAG:11 == 0)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「みんな…倒れて……！　どうしてこうなったんですの……？」\n"
+			ENDSELECT
+			
+		; 自分以外のPTは全員拘束 or 丸呑み状態
+		ELSEIF (CFLAG:1:20 || CFLAG:1:21 || TARGET == 1) && (CFLAG:(FLAG:10):20 || CFLAG:(FLAG:10):21 || TARGET == FLAG:10) && (CFLAG:(FLAG:11):20 || CFLAG:(FLAG:11):21 || TARGET == FLAG:11 ||FLAG:11 == 0)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「みんな捕まって…？　…ぜ、絶望的ですわっ……！」\n"
+			ENDSELECT
+			
+		; 仲間は通常行動中
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「誰か、力を貸してくださいましっ！」\n"
+			ENDSELECT
+		ENDIF
+		
+	; ひとりだよ
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「そんなに締め付けたらイイコトしてあげませんわよ♪」\n"
+		CASEELSE
+			IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あぁっ！離してくださいましっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おねがいですわ、はなれてくださいましっ！」\n"
+			ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+				CALL KOJO_16_0_ADD_MESSAGE, @"「むりです…むりですわ……　はなしてくださいましっ……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（このままですと……あたし……）\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（あたし……まだ、死にたく……っ！）\n"
+			ELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「もう……ゆるして……」\n"
+			ENDIF
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; 0 脱出開始
+; ◆ 敵種族別
+; ◇ 005 リビングバイン
+@KOJO_16_0_SYSTEM_MESSAGE_1_42_X_0_ENEMY_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ツタがあっちこっちに絡みついて邪魔ですわっ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 拘束からの離脱
+; □ 1 絶頂による失敗
+@KOJO_16_0_SYSTEM_MESSAGE_1_42_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んっ…んんぅっ……　力が……抜けて……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 拘束からの離脱
+; □ 2 脱出成功
+@KOJO_16_0_SYSTEM_MESSAGE_1_42_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ぐすん…散々な目に遭いましたわ……」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「よ、余裕の脱出ですわ…！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…っ！　今度はあたしのターンですわ…！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 拘束からの離脱
+; □ 3 少しだけ脱出
+; ◆ 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_1_42_X_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 敵種族別口上呼び出し
+	CALL KOJO_16_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_16_0_SYSTEM_MESSAGE_1_42_X_3_ENEMY_{DA:(ARG:4):0}")
+	SIF KOJO_16_0_GET_IMPORTANT_FLAG()
+		RETURN 1
+			
+	; 拘束
+	IF !ARG:2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「くぅっ！　あたしを放しなさいっ！！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「抜け……抜けないとっ！、あたしが魔物の慰みものにっ…！」\n"
+		ENDSELECT
+	
+	; 丸呑み
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「最悪ですわっ！　とっとと出ないとっ……！」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「このままじゃ魔物に、食べられて……　そ、それだけは…っ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ぬるぬるして気持ち悪い…！　やばい、やばいですわ！！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; 拘束からの離脱
+; 少しだけ脱出
+; ◆ 敵種族別
+; ◇ 015 アルラウネ
+@KOJO_16_0_SYSTEM_MESSAGE_1_42_X_3_ENEMY_15(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いつまで抱きついていますの！　こういうのは姉妹でやるものですわ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 拘束からの離脱
+; □ 4 脱出失敗
+@KOJO_16_0_SYSTEM_MESSAGE_1_42_X_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「い、いやぁ……エッチな事されちゃ……♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたしの力じゃ…振りほどけませんわ……っ）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたし…天に……見放されましたのね……）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（はー……はー……ちっとも隙がありませんわ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ぐぬぬ……っ！　ぜんぜん動けませんわ……っ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちょっとくらい……油断して、ほしいですわっ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「まずいっ……　まずい、ですわっ……」\n"
+	ENDSELECT
+RETURN 1

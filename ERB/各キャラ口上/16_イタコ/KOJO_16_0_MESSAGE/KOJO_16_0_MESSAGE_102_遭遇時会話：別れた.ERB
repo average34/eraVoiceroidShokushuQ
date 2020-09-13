@@ -1,0 +1,86 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 102 遭遇時会話：別れた
+; ------------------------------------------------------------------------------
+
+; □ 通常
+@KOJO_16_0_SYSTEM_MESSAGE_102_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あら…　ちょっとやりすぎましたわね…」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なにか困ったら、またよろしくお願いしますわ」\n"
+	ENDSELECT
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; ずん子
+	CASE 4
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ずんちゃんも気を付けてくださいまし」\n"
+	; きりたん
+	CASE 8
+		CALL KOJO_16_0_ADD_MESSAGE, @"「危なくなったら、防犯ブザーを鳴らすんですのよ？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 喪失中
+@KOJO_16_0_SYSTEM_MESSAGE_102_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「受け入れるのも賢い選択かもしれませんわ？\n　…また一緒に遊びましょう♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたしもそのうち……　こうなってしまいますの………）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「許してくださいまし…後で必ず助けますわ…」\n"
+	ENDSELECT
+	
+	
+	; 好感度別、追加口上
+	; 好感度:低
+	IF CFLAG:(ARG:1):5 < 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「そこで寝ていればぐちゃぐちゃにしてもらえますわ♪　いえ、お礼は不要ですわよ♪」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…ごめんなさい」\n"
+		ENDSELECT
+		
+	; 好感度:警戒
+	ELSEIF CFLAG:(ARG:1):5 < 50
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+		ENDSELECT
+		
+	; 好感度:通常
+	ELSEIF CFLAG:(ARG:1):5 < 200
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+		ENDSELECT
+		
+	; 好感度:高
+	ELSEIF CFLAG:(ARG:1):5 >= 200
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……　本当は、連れていきたいですわ。でも……」\n"
+		ENDSELECT
+	ENDIF
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:1)
+	; アイ
+	CASE 1
+		CALL KOJO_16_0_ADD_MESSAGE, @"（きりちゃんより小さい子ですわ……助けてあげたいですが……）\n"
+	; ずん子
+	CASE 4
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ずんちゃん！？……なんてひどい……あとで必ず助けますわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「今ならふとももを好きに……いけませんわ！　……なにか気付けを探してきますわ！」\n"
+	; きりたん
+	CASE 8
+		CALL KOJO_16_0_ADD_MESSAGE, @"「き、きりちゃん！？……必ず助けますから……少しの辛抱ですわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさい、きりちゃん……今は助けられませんの……」\n"
+	
+	ENDSELECT
+RETURN 1

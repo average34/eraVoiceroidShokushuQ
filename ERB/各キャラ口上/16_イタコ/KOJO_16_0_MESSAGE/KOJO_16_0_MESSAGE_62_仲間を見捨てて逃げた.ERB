@@ -1,0 +1,79 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 62 仲間を見捨てて逃げた
+; ------------------------------------------------------------------------------
+
+; □ X 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_62(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさぃっ……！　ごめんなさぃっ……！　必ず助けを呼んできますわ……！」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あとで助けに行きますわ！\n　……絶対に！！」\n"
+	ENDSELECT
+	
+	; 自分だけ逃げた
+	IF (GET_MEMBER_SUM() == 2 && ARG:3 == 0) || (GET_MEMBER_SUM() == 3 && ARG:3 != 0)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたしだけでも逃げて――　態勢を整えないとですわ――）\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 1 クイーン戦
+@KOJO_16_0_SYSTEM_MESSAGE_62_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（今助けに戻ったら、きっとあたしも――）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あんなの、どうすればいいんですの……？　あたしだけで、助ける事なんて……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 ガーディアン戦
+@KOJO_16_0_SYSTEM_MESSAGE_62_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 1 クイーン戦にお願い
+	CALL KOJO_16_0_SYSTEM_MESSAGE_62_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

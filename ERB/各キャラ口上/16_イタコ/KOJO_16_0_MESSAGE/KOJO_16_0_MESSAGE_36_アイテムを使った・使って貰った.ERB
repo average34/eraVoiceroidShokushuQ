@@ -1,0 +1,460 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 36 アイテムを使った・使って貰った
+; ------------------------------------------------------------------------------
+
+; □ 54 着替えセット
+@KOJO_16_0_SYSTEM_MESSAGE_36_54(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 前の服状態による口上
+	; 裸だった
+	IF KOJO_16_0_PREV_BASE:3 == 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「服を着ると少し安心できますわね」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「裸では何されるかわかりませんもの」\n"
+		ENDSELECT
+		
+	; 新品だった
+	ELSEIF KOJO_16_0_PREV_BASE:3 == MAXBASE:3
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "強気"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんな時こそ気分転換が大事ですわ」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「よし、新しい服を着て心機一転ですわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちょっともったいなかったかもしれませんわね」\n"
+		ENDSELECT
+	
+	; 破れていた
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「結構気してましたのよ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ほんの少しの傷で大事に至ることだってありますわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「測ったようにピッタリですわ…？」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 服装による追加口上
+	SELECTCASE CFLAG:501
+	; 00:いつもの服
+	CASE 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「やっぱりこの服が一番動きやすいですわね♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「どうしてあたしの服が落ちてるのかしら…？　気味が悪いですわね…」\n"
+		ENDSELECT
+	; 01:普通の服
+	CASE 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「たまにはこういう普通なのも悪くないですわね」\n"
+		ENDSELECT
+	; 02:体操着
+	CASE 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「運動用ですから、動きやすさは抜群ですわね」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「さすがにこんな状況じゃなければ、着ようと思いませんわ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「動きやすいのは良いのですが、攻撃はあまり防げそうにありませんわね」\n"
+		ENDSELECT
+	; 03:メイド服
+	CASE 3
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おかえりなさいませ！ご主人様！……ちゅわ……恥ずかしいですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こういうフリフリな服もたまには良いですわね」\n"
+		ENDSELECT
+	; 04:パジャマ
+	CASE 4
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「お布団で寝たくなりますわね……でもここで寝るのは不安ですわ」\n"
+		ENDSELECT
+	; 05:巫女服
+	CASE 5
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの普段着とは微妙に違いますわね」\n"
+		ENDSELECT
+	; 06:スクール水着
+	CASE 6
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……これを着るのはちょっと躊躇しますわ……」\n"
+		ENDSELECT
+	; 07:マイクロビキニ
+	CASE 7
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ほ、ほとんど丸見えですわ…♥　この状態で魔物に襲われたら…♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「な、何も着てないよりはマシ…ですわ…」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ！布が少なすぎますわ！」\n"
+		ENDSELECT
+	; 08:ボディスーツ
+	CASE 8
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「カラダにぴっちりしてて、裸よりエッチな気がしますわ…」\n"
+		ENDSELECT
+	; 09:セーラー服
+	CASE 9
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ずんちゃんの学校の制服ですわ……なんであたしにピッタリなんですの？」\n"
+		ENDSELECT
+	; 10:半ズボン
+	CASE 10
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんなにふとももを晒すなんて……閃きましたわ！」\n"
+		ENDSELECT
+	; 11:妊婦服
+	CASE 11
+		; 妊娠・寄生されている
+		IF CFLAG:36 >= 3 || (CFLAG:22 && CFLAG:36 == 0)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「マタニティドレス…今のあたしには必要ですわね…」\n"
+			ENDSELECT
+			
+		; 通常状態
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「なんだかこれを着ていると、孕ませて欲しいみたいじゃないですの…」\n"
+			ENDSELECT
+		ENDIF
+	; 12:ランジェリードレス
+	CASE 12
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんなの着てたら♥　誘ってるって思われちゃいますにゃ♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「うぅ…　この服、透けててエッチですわ…っ…」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ここでこれを着ていれば注目の的ですわね…悪い意味で…」\n"
+		ENDSELECT
+	; 13:セーター
+	CASE 13
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「暖かくて不思議な安心感がありますわ」\n"
+		ENDSELECT
+	; 14:チャイナドレス
+	CASE 14
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「スリットが深すぎて激しく動いたら全部見えちゃいそうですわね」\n"
+		ENDSELECT
+	; 15:貞操帯
+	CASE 15
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「たまには禁欲をしなさいというお告げでしょうか…」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こ、こんなのを付ける日が来るとは思いませんでしたわ…\n　でも、仕方ありませんわね。安全第一で行きましょう…」\n"
+		ENDSELECT
+	; 16:ポイントアーマー
+	CASE 16
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんな重い物の身に着けたら、お相手のやりたい放題に…♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「お、重い…ですわ！　その分、防御力に期待ですわね…」\n"
+		ENDSELECT
+	; 17:園児服
+	CASE 17
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「にゃぁっ♥　エッチじゃないのにすごくエッチですわ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「つまりこういう服の子を犯すのが大好きな殿方が居る、ということですわね♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ど、どうしても着なきゃいけませんの…？　きりちゃんでももう着ませんわよ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（これは身を守るため……私の趣味じゃありませんわ……）\n"
+		ENDSELECT
+	; 18:エプロン
+	CASE 18
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もしかして炊事中にこの迷宮に落ちてしまった方がいらっしゃるのでしょうか」\n"
+		ENDSELECT
+	; 19:ローブ
+	CASE 19
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イタコは魔法使いじゃありませんけど、使えたら良かったですわ」\n"
+		ENDSELECT
+	; 20:ウェディングドレス
+	CASE 20
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんなのを着たら触手のお嫁さんになるみたいですわ♥　それも悪くありませんわね♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「きっとこのドレスがもっと真っ白になるまで…♥　あぁ…楽しみですにゃ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「前にずんちゃんに着せようとしたらずんだドレスにされましたわね…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「東北家は代々白無垢ですから、ドレスには憧れてましたわ♪」\n"
+		ENDSELECT
+	; 21:ふんどし
+	CASE 21
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「修行の時には履きますけれども…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ま、まさか…下着だけですの！？」\n"
+		ENDSELECT
+	; 22:触手服
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわぁ……これは服と呼んでいいんですの？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ぢゅっ！？！？　この服、動きましたわ！…　あたしの手をぺろんって舐めましたわ！」\n"
+		ENDSELECT
+	; 23:スリングショット
+	CASE 23
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あぁ♥　食い込んで♥　集中できませんわ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「これはもう服じゃなくて紐ですわ！？」\n"
+		ENDSELECT
+	ENDSELECT
+	
+	; 過去に触手スーツを経験済みなら追加口上あり
+	; ただし触手服選択時は除く
+	IF GETBIT(CFLAG:900, 2) && CFLAG:501 != 22
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あら？　今回はあの動く服じゃありませんのね……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「またあの生きてる服を着てみたいですわ…♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この服は動かない服ですわね……急に動き出したりしたら……っ♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（ふぅ…　この服は大丈夫なようですわ…）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（今回はまともな服であってほしいですわ…）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ふぅ…これは普通の服でしたわ…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう変な服は嫌ですわ…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この服は…　大丈夫ですの…？」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 57 薬酒
+; ◆ 通常口上
+@KOJO_16_0_SYSTEM_MESSAGE_36_57(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 前回情報参照用の空関数
+RETURN 1
+
+
+; 57 薬酒
+; ◆ 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(無害)1
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 自分以外のキャラにアイテムを使って貰った場合は何も喋らずに帰る
+	SIF ARG:2 != 0
+		RETURN 0
+	
+	CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……ヘンなもの飲まされて……まぁ害はないみたいですわね」\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「お酒は二十歳になってから！　ですわ！　あんな無理やり飲ませるなんて！」\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「のどが渇いただけで……こんな目に合うなんて……」\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文表示
+	CALL KOJO_16_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(無害)2
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 強制飲酒(無害)1におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_1()
+RETURN RESULT
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(無害)3
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 強制飲酒(無害)1におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_1()
+RETURN RESULT
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(無害)4
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 強制飲酒(無害)1におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_1()
+RETURN RESULT
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(無害)5
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 強制飲酒(無害)1におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_1()
+RETURN RESULT
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(無害)6
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 強制飲酒(無害)1におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_1()
+RETURN RESULT
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 何も起きなかった
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 自分以外のキャラにアイテムを使って貰った場合は何も喋らずに帰る
+	SIF ARG:2 != 0
+		RETURN 0
+	
+	CALL KOJO_16_0_ADD_MESSAGE, @"「良薬口に苦しとは言いますけれど……これは苦すぎますわ！」\n\d悪態をつきながら、\d"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「ずんだシェイクより甘いですわね……何が入っていますの？」\n\d怪訝そうな顔をしながら、\d"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は薬酒を飲み干した…\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文表示
+	CALL KOJO_16_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(V) + 眠気MAX
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_8(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 自分以外のキャラにアイテムを使って貰った場合は何も喋らずに帰る
+	SIF ARG:2 != 0
+		RETURN 0
+	
+	CALL KOJO_16_0_ADD_MESSAGE, @"「んぁ…　はぁ…　はぁ…ぁっ…　うぅ…ん…」\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d眠ったまま息を荒げる%CALLNAME:TARGET%の股間から、白濁した酒がとろとろとあふれている…\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d眠ったまま息を荒げる%CALLNAME:TARGET%の股間から、飲みきれなかった酒がビチャビチャと吹き出している…\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文表示
+	CALL KOJO_16_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; 57 薬酒
+; 前回情報参照 偽酒イベント
+; ◇ 強制飲酒(A) + 眠気MAX
+@KOJO_16_0_SYSTEM_MESSAGE_36_57_PREV_502_9(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 自分以外のキャラにアイテムを使って貰った場合は何も喋らずに帰る
+	SIF ARG:2 != 0
+		RETURN 0
+	
+	CALL KOJO_16_0_ADD_MESSAGE, @"「ぁあ…　はぁ…　はぁ…ぁっ…　うぅ…ん…」\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d眠ったまま息を荒げる%CALLNAME:TARGET%の尻穴から、白濁した酒がとろとろとあふれている…\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d眠ったまま息を荒げる%CALLNAME:TARGET%の尻穴から、飲みきれなかった酒がビチャビチャと吹き出している…\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文表示
+	CALL KOJO_16_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 59 煙玉
+@KOJO_16_0_SYSTEM_MESSAGE_36_59(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 自分以外のキャラにアイテムを使って貰った場合は何も喋らずに帰る
+	SIF ARG:2 != 0
+		RETURN 0
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「今回はここまでですわ♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ここは逃げますわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「戦わないのも作戦ですわ！」\n"
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%が煙玉を地面に投げつけると辺り一面が煙に包まれた！\d\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d視界が奪われ困惑する敵を尻目に、%CALLNAME:TARGET%%TACHI()%は一目散に逃げ出した！\d\n"
+RETURN 1
+
+
+; □ 65 胡蝶夢丸ナイトメア
+@KOJO_16_0_SYSTEM_MESSAGE_36_65(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 自分以外のキャラにアイテムを使って貰った場合は何も喋らずに帰る
+	SIF ARG:2 != 0
+		RETURN 0
+
+	CALL KOJO_16_0_ADD_MESSAGE, @"「ぁ…　ずんちゃん…許してくださいまし…ぁぁ」\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「あ…　あたしの…　コレ……クションが……」\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「ずんちゃん……きりちゃん……おいて…いか……ないで……」\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「……ぐぅぅっ……　ぁあぁ…　ぃゃぁ…」\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は薬の効果で悪夢にうなされている…\n"
+RETURN 1
+
+
+; □ 67 包帯
+@KOJO_16_0_SYSTEM_MESSAGE_36_67(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM TEMP
+
+	; 自分以外のキャラにアイテムを使って貰った場合は何も喋らずに帰る
+	SIF ARG:2 != 0
+		RETURN 0
+		
+	; 口上呼び出し前にCP回復が発生するので回復後の数値を考えて
+	TEMP = BASE:CP * 100 / MAXBASE:CP
+	
+	; 服:新品
+	IF TEMP >= 100
+	; 服:通常
+	ELSEIF TEMP > 66
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「治療は早いうちにするのが大切ですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「今でできるのはこれくらいですわね…」\n"
+		ENDSELECT
+		
+	; 服:損傷
+	ELSEIF TEMP > 33
+	; 服:中破
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「何も着ていないより、いくらかましですわ…」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		ENDSELECT
+	ENDIF
+RETURN 1
+

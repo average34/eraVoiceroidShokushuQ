@@ -1,0 +1,119 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 151 捕食中描画
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_151(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM CSV_MAX_HP
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	; 残り生命力(最大HP)で分岐
+	CSVBASE 4,0
+	CSV_MAX_HP = RESULT
+	; 残り生命力66%以上
+	IF MAXBASE:0 > (CSV_MAX_HP / 100 * 66)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（犯されはじめて……　どのくらい、になるんですの……♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（きっと……あたしの……カラダ、精液の臭い……　取れなくなっちゃいますわ……♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（いったい…何回出せば……　気が済むのですの……♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（私のナカ、こいつのおちんちんの形に……されちゃって……ますの……♥）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたし　ここで　死んでしまうんでしょうか………）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたしが孕むまで…いいえ、孕んでも犯し続ける気がですのね…）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（今は耐えないと……　誰かが、助けてくれるかもしれませんもの……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（抗い続けたら早く壊れちてしまいます……ある程度は、受け入れませんと……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（心を、無に……身を任せて、体力を温存して……それで……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（どんどん……　ちから……　うばわれて……ますわ……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたしが……　消えていく……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたま……　はたらかなく……　なって…ますの…）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（いつまで……続くのですの……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（なんだか、あたたかいですわ……）\n"
+		ENDSELECT
+		
+	; 残り生命力33%以上
+	ELSEIF MAXBASE:0 > (CSV_MAX_HP / 100 * 33)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（気持ちいい……♥　頭のなかまで、ぐちゃぐちゃで……思考が、纏まりませんわっ♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おﾞっ♥　おﾞまんこっ、使っていただきっ♥　ありがとうござい……まﾞしっ♥　おごぉっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イﾞっちゃう……っ♥　またイﾞっぢゃいﾞまﾞ……っ♥　あﾞあﾞあﾞああああぁっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あはは……♥　あた、し、完全に魔物様の、孕み袋、に………♥）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（たす…けて…♥　のうみそぜんぶ……　きもちいいこと……だけに……♥　なって……ますのっ……♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おなかっ……ぁ♥　もう、いっぱい…ですわぁっ♥　出さない……で……あぁぁああﾞあﾞあﾞあﾞ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（ぜんしん……快楽、の……暴力に晒され…て……もう……意識を保つ……ことも……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「とけ……る…っ♥　あたしの、意識、が……♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（おね…がい…　だれか……　だれか、たす……け……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたし……からだ…も……こころも……おかしく、されちゃったんですね……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（これは、夢ですの………次に目が覚めたら、きっと……）\n"
+		ENDSELECT
+		
+	; 残り生命力0%以上
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「きへる、きへますぅぅぅぅぅ！　はいってぎてる！！\n　子宮の奥の奥まであづいのだくざんんんんんん！！ッ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「だしてっ♥♥　もっとだしてくださいましっ♥♥♥\n　あたしが壊れるぐらい中を満たしてえええええぇぇええ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「じぬっ♥♥　イキすぎて死んじゃうううぅぅぅっ♥♥♥\n　ひぎゃっ♥♥♥　あああぁぁあああﾞあﾞあﾞあﾞあﾞあﾞあﾞあﾞ――――――――――――ｯｯｯ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「足りないっ♥♥♥　足りませんわっ♥♥　壊れていいからっ♥♥♥\n　快楽であたしを満たしてくださいいいぃぃぃ♥♥♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あだまがっ♥　あたじのあだまがもうつかいものにならにゃっひぎぁっ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あﾞーーーっ♥♥　あﾞあﾞーーーっ♥♥\n　んに゛ゃあああぁぁぁああﾞあﾞあﾞあﾞあﾞあﾞｯ―――――――――――♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「のうみぞっ♥　のうみぞがアグメずる事じか考えられなっぎにゃあおおおおぉぉぉっ♥\n　だず――げ――――――♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イグッ♥　イグイグイグゥうぅぅぅ♥♥♥♥\n　イグの、止まらな――――びぎひぃひぃぃっっぃぃぃっっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あ゛っあ゛だじっ♥♥　こわれっ♥♥　ごわれま゛じゅの゛っ♥♥♥\n　少し、すこしだけやすま―――――――んほおおおぉぉぉおおおっっ～～ッ♥♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 敵種族別
+; ◆ 052 ハウンド
+; ※KOJO_16_0_RAND_MESSAGE以外の表示命令は禁止
+@KOJO_16_0_SYSTEM_MESSAGE_151_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱", "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたしのおまんこ……　犬ちんぽで満たされちゃってますの…っ♥♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（わんちゃんと交尾っ♥　わんちゃんとの交尾気持ちいいですわっ♥♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（わんちゃんのこぶつきちんぽぉ♥　ごりごりって、きもちいいですわ♥♥）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（どうしてあたし………　犬なんかに犯されてるんでしょう……）\n"
+	ENDSELECT
+RETURN 1

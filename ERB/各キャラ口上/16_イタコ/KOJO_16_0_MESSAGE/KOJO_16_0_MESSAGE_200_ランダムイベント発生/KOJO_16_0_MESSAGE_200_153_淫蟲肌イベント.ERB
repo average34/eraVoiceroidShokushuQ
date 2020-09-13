@@ -1,0 +1,29 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 153 淫蟲肌イベント
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_200_153(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; CPの残りを見て分岐
+	; 服着てる
+	IF BASE:CP > 0
+		CALL KOJO_16_0_ADD_MESSAGE, @"\dあふれ出した淫蟲は、服の中に潜り込むとナメクジを思わせる動きで肌の上を這い回りはじめた！\d\n"
+	; 全裸
+	ELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\dあふれ出した淫蟲は、一糸纏わぬ身体に絡みつくとナメクジを思わせる動きで肌の上を這い回りはじめた！\d\n"
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d淫蟲の分泌する媚薬混じりの粘液が、%CALLNAME:TARGET%の肌へと染みこんでいく……\d\n"
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「気持ちよくなるの、手伝ってくださいますのね♥　ぜひ、おねがいしますわ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こっ、これっ！　ダメですわっ！　カラダがぞわぞわして…変にっ……なりますの…っ！？」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ひっ！？　気持ち悪いっ！　離れて！　離れてくださいましっ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ、熱っ！？　ぬるぬるがっ、熱いですわ……っ！！」\n"
+	ENDSELECT
+RETURN 1

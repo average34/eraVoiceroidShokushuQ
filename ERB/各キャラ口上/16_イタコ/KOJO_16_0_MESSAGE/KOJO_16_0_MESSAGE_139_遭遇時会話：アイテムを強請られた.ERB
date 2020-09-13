@@ -1,0 +1,62 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 139 遭遇時会話：アイテムを強請られた
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_139(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; アイテム強請り失敗は別関数で処理
+	SIF ARG:1 == 0
+		RETURN 0
+
+	; 胡蝶夢丸を盛られた酒を飲んで睡眠中に抜き取られる
+	IF CFLAG:25
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は荷物を漁る%ARGS:0%に気づかず、ぐっすりと眠り込んでいる…\n"
+		
+	; 喪失中に抜き取られる
+	ELSEIF CFLAG:29
+		
+	; 魔法の拘束具で拘束中
+	ELSEIF CFLAG:504
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あの…そのアイテムはさし上げますので、この拘束を解いていただけませんか…？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「弱肉強食…こんな状況になったあたしが悪い、ということですのね」\n"
+		ENDSELECT
+		
+	; 普通に渡す
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「良いですわ、丁度余ってましたの」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんな場所ですし、助け合いは大事ですわね」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 0 何も渡さなかった
+; 喪失中に「渡さない」は発生しないので分岐なし
+@KOJO_16_0_SYSTEM_MESSAGE_139_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 魔法の拘束具で拘束中
+	IF CFLAG:504
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…あなたの顔、しかと覚えましてよ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「残念ですが、あたしは何も持っていませんわ」\n"
+		ENDSELECT
+	
+	; 通常行動中
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさい、今は渡せるものがありませんわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あー…わたし今、素寒貧なんですの」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

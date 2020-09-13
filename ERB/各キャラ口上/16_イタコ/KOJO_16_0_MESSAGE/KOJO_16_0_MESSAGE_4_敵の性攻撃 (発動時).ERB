@@ -1,0 +1,258 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 4 敵の性攻撃 (発動時)
+; ------------------------------------------------------------------------------
+
+; □ 攻撃種類別
+; ◆ 0379 ヒュプノ A
+@KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 非催眠時にのみ口上を表示する
+	; 主な利用はレッサーヒュプノの暗示攻撃、ヒュプノは非催眠時に
+	SIF KOJO_16_0_IS_HYPNO()
+		RETURN 0
+	
+	; 喪失
+	IF CFLAG:29
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"（ちゅわ……　身体が…動きませんわ……）\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は身体から力が抜け、眼がうつろになっていく…\d\n"
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んっ……♥　あっ……♥　お、おねがい……しますわ……っ♥　おかし……て下さい……♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（お願いしますわ！……♥　あたしを敗北アクメで、イキ狂わせて…っ♥♥）\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示によって、力尽きたイタコの思考は凌辱願望まみれに塗り替えられた…\d\n"
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"（えっちな交霊を…しない…と…………にゃ……意識、が……）\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は、力尽き性処理便器として役に立たない身に歯がゆさを覚えた…\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 諦めた
+	IF TFLAG:16 == 2
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……力が……入りませんわ……」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は身体から力が抜け、眼がうつろになっていく…\d\n"
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「にゃっ…にゃあ♥、犯してくださいな……♥　貴方様の、その怒張……で……っ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「種付け……っ♥　哀れな変態イタコに、お恵みを……っ♥♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は、諦めと性欲の混じった卑屈な笑みを浮かべている…\d\n"
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"（にゃぁ……あ、あたしは、この方の…えっちペットなんですわ………）\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は、完全服従の性処理愛玩ペットだと思い込まされた…\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 既に暗示に掛かっている
+	IF GETBIT(CFLAG:900, 0)
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"（ちゅっ……　全然動けませんわ……っ……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「また……　その目……　ですか……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「にゃぁ……その目で見るのは……にゃっ……あ♥……！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「にゃあ！……　またっ♥……　変に、なっちゃう……ぅっ」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d更に強く自由を奪われた%CALLNAME:TARGET%は、焦りの見える眼で%ARGS:1%を睨み付けている…\d\n"
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ふふっ♥　性欲には素直にならないとダメですわよ？♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「にゃぁ♥　あたしのここは使わないんですの？♥　準備万端ヌルヌルでお待ちしてますわ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「見てるだけで満足ですの？…もっとあたしとしましょ♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d強く思考を上書きされた%CALLNAME:TARGET%は、だらしなく涎を垂らしたまま%ARGS:1%を見つめている…\d\n"
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はい……　あたしは……　精液大好きな……　変態ですわ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はい……　もっとがんばって……　苗床イタコになりますわ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はい……　なんでも……　お申し付け…ください……」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d強く思考を上書きされた%CALLNAME:TARGET%は、焦点の合わない眼で%ARGS:1%を眺めている…\d\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 通常状態
+	; 催眠種類で分岐
+	SELECTCASE FLAG:526
+	; 拘束・肉体操作系
+	CASE 0
+		CALL KOJO_16_0_ADD_MESSAGE, @"（頭が……　ボ～っとしますわ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわっ……！？　な、なんですのこれ……ぇ！？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んにゃ……　意識が……　とおく……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なんか……　ヘンな……　感じが……」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は身体から力が抜け、眼がうつろになっていく…\d\n"
+		
+	; 発情・感情操作系
+	CASE 1
+		CALL KOJO_16_0_ADD_MESSAGE, @"「何を、したんですの……っ♥　子宮が、ずくんっ……て……♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「にゃぅ……っ♥　欲しい……っ♥　オクに欲しいですわ……♥♥」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は、身体の奥底からあふれるメスの本能に身震いした…\d\n"
+		
+	; 無意識・認識操作系
+	CASE 2
+		CALL KOJO_16_0_ADD_MESSAGE, @"「も、申し訳ありません……　ペット風情が貴方様に抵抗するなんて……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「苗床……　あたしのお仕事は、苗床になる事……」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:1%の暗示にかかった%CALLNAME:TARGET%は、自分を性処理愛玩ペットだと思い込まされた…\d\n"
+	ENDSELECT
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0380 ヒュプノ B+
+@KOJO_16_0_SYSTEM_MESSAGE_4_380(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0381 ヒュプノ C
+@KOJO_16_0_SYSTEM_MESSAGE_4_381(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0382 ヒュプノ V
+@KOJO_16_0_SYSTEM_MESSAGE_4_382(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0383 ヒュプノ 二段複合
+@KOJO_16_0_SYSTEM_MESSAGE_4_383(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0384 ヒュプノ全体複合
+@KOJO_16_0_SYSTEM_MESSAGE_4_384(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0385 ヒュプノ全体B+
+@KOJO_16_0_SYSTEM_MESSAGE_4_385(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0386 ヒュプノ全体V
+@KOJO_16_0_SYSTEM_MESSAGE_4_386(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0679 ヒュプノ A
+@KOJO_16_0_SYSTEM_MESSAGE_4_679(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0680 ヒュプノ B+
+@KOJO_16_0_SYSTEM_MESSAGE_4_680(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0681 ヒュプノ C
+@KOJO_16_0_SYSTEM_MESSAGE_4_681(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0682 ヒュプノ V
+@KOJO_16_0_SYSTEM_MESSAGE_4_682(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0683 ヒュプノ 二段複合
+@KOJO_16_0_SYSTEM_MESSAGE_4_683(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の性攻撃(発動時) 攻撃種類別 379 ヒュプノ A におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_4_379(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0962 ワイヤーゴースト 全体三段複合
+@KOJO_16_0_SYSTEM_MESSAGE_4_962(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あ…♪　沢山おいでになりましたわ♪」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……！　今は来ないでほしいですわ……！！」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これはちょっと…近寄りたく無いですわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ち゛ゅっ！？　近付いてきましたわ！？」\n"
+	ENDSELECT
+RETURN 1

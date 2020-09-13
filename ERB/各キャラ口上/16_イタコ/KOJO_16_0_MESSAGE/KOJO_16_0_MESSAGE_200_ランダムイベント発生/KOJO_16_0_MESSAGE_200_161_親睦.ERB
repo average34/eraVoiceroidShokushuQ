@@ -1,0 +1,204 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 161
+; ------------------------------------------------------------------------------
+
+; □ 事前準備
+@KOJO_16_0_SYSTEM_MESSAGE_200_161(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	IF CFLAG:(FLAG:10):28 >= 1 && CFLAG:(FLAG:11):28 >= 1 && CFLAG:1:28 >= 1 
+		CFLAG:951 = FLAG:11
+	ELSEIF CFLAG:(FLAG:10):28 <= 0 && CFLAG:(FLAG:11):28 >= 1
+		CFLAG:951 = FLAG:11
+	ELSEIF CFLAG:(FLAG:10):28 >= 1 && CFLAG:(FLAG:11):28 <= 0
+		CFLAG:951 = FLAG:10
+	ELSEIF CFLAG:(FLAG:11):28 >= 1 && CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 <= 0
+		CFLAG:951 = FLAG:11
+	ENDIF
+	
+	IF NO:1 != 4
+		IF ARG:2 == 1 && (ARG:3 == 0 || ARG:3 == 2)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「この迷宮の淫気に当てられたら、仕方ないですわよね…♥\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"　%KOJO_16_0_CALLNAME_FROM_ID(1)%が可愛すぎるのがいけないんですのよ…♥」\n"
+			ENDSELECT
+		ELSEIF ARG:2 == 1 && ARG:3 == 1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「残念、もうちょっとでしたのに…♥」\n"
+			ENDSELECT
+		ELSEIF ARG:2 == 0 && ARG:3 == 2
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「…確かに一人でしてくださいって言いましたけれど…本当にしちゃいますのね」\n"
+			ENDSELECT
+		ENDIF
+	ELSE
+		
+		; □ 発情無し+引きはがした
+		IF ARG:2 == 0 && ARG:3 == 2
+			; 通常時
+			; 好感度：それほど高くない
+			IF CFLAG:(CFLAG:951):5 < 400 && CFLAG:951 != 0
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「この迷宮の淫気に当てられたら、仕方ないですわよね…♥」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「くっ…！　次に襲って来たら、覚悟してくださいまし…っ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あたしは…っ、%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%のオナニー道具ではありませんわ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「少しは遠慮してくださいましっ！」\n"
+				ENDSELECT
+				
+			; 好感度：普通(or 犯人不明)
+			ELSEIF CFLAG:(CFLAG:951):5 < 800 || CFLAG:951 == 0
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"（…あたしを襲ってしまうくらい溜まっていましたの…？）\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「…もっと、ムードを考えてほしいですわ」\n"
+				ENDSELECT
+			; 好感度：高い
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あ、えっと…%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%。　あ、あなたのお気持ちは嬉しいですわ…\n　で、でもこういう行為はちゃんとお互いの気持ちを、確かめてから……」\n\dイタコは顔を赤くして乙女チックな事を呟いているが、%CALLNAME:(CFLAG:951)%は自慰に集中しているようだ…\d\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"（…どうしてあたし、少し残念に思っていますの？）\n"
+				ENDSELECT
+			ENDIF
+			
+		; □ 発情無し+救出された
+		ELSEIF ARG:2 == 0 && ARG:3 == 1
+			; 通常時
+			; 好感度：それほど高くない
+			IF CFLAG:(CFLAG:951):5 < 400 && CFLAG:951 != 0
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「この迷宮の淫気に当てられたら、仕方ないですわよね…♥」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「くっ…！　次に襲って来たら、覚悟してくださいまし…っ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あたしは…っ、%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%のオナニー道具ではありませんわ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「少しは遠慮してくださいましっ！」\n"
+				ENDSELECT
+				
+			; 好感度：普通(or 犯人不明)
+			ELSEIF CFLAG:(CFLAG:951):5 < 800 || CFLAG:951 == 0
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「仲間を襲ってしまうくらい溜まっていましたの…？」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「た、助かりましたわ…」\n"
+				ENDSELECT
+			; 好感度：高い
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あ、えっと…%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%なら…別にそのまま襲っていただいても、良かったんですのよ……」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（…どうしてあたし、少し残念に思っていますの？）\n"
+				ENDSELECT
+			ENDIF
+			
+		; □ 発情無し+身を委ねた
+		; □ 発情あり+身を委ねた
+		ELSEIF (ARG:2 == 0 && ARG:3 == 0) || (ARG:2 == 1 && ARG:3 == 0) 
+		
+			; 通常時
+			; 好感度：それほど高くない
+			IF CFLAG:(CFLAG:951):5 < 400 && CFLAG:951 != 0
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「付き合ってあげますわ…っ♥　その代わり、あたしも楽しませてくださいましっ♥♥」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「この迷宮の淫気に当てられたら、仕方ないですわよね…♥」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ぐぅっ…！　仲間同士で、どうして…こんなコトを…っ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"（…っ！　気持ちよさそうな顔しながら犯して、ますわね…っ）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あたしは…っ、%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%のオナニー道具なんかじゃ…っ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「もうやめてくださいまし…！　おねがい…、おねがいですわ…！」\n"
+					IF GET_PENIS(CFLAG:951)
+						CALL KOJO_16_0_ADD_MESSAGE, @"「もう射精さないでぇ…　あたしの…なか…　破裂しちゃいますの…っ…」\n"
+						CALL KOJO_16_0_ADD_MESSAGE, @"「少しは遠慮してくださいまし…っ！　…ひっ！？　また中でおっきくなって…っ！」\n"
+					ENDIF
+				ENDSELECT
+				
+			; 好感度：普通(or 犯人不明)
+			ELSEIF CFLAG:(CFLAG:951):5 < 800 || CFLAG:951 == 0
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「仲間を襲ってしまうくらい溜まっていましたの？\n　ほら…いいですわよ…♥」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ああっぁああ～っ♥　またぁ…♥　またイ……っクうぅっ♥」\n"
+					IF GET_PENIS(CFLAG:951)
+						CALL KOJO_16_0_ADD_MESSAGE, @"「仲間を襲ってしまうくらい溜まっていましたの？\n　ほら…いいですわよ…♥　もっと奥まで突き込んで、精液…びゅーびゅーしましょっ♥」\n"
+						CALL KOJO_16_0_ADD_MESSAGE, @"「ああっぁああ～っ♥　またぁ…♥　またイ……っクうぅっ♥\n　おちんぽぉ…されすぎ…てぇっ♥　おまんこ、壊れちゃいますわ……っ♥♥」\n"
+					ENDIF
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ガマンできないのでしたら…　仕方ないと思いますけれど…」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「すこし…やすませて……くださいまし…　イキっぱなしは…キツ…ぃ…っ…」\n"
+				ENDSELECT
+			; 好感度：高い
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%なら…良いですわよ…♥\n　もっと、全てを忘れさせてくれるぐらい、激しくしても…♥」\n"
+					IF GET_PENIS(CFLAG:951)
+						CALL KOJO_16_0_ADD_MESSAGE, @"「中に出されるの…すきっ♥　…っあっ…またナカにぃ♥　どぷどぷ…ってぇ…♥\n　ぃいい…ですわ…っ♥　射精されながら…イクのぉ…♥　すごい…い…ですわっ♥♥」\n"
+						CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%のちんぽぉ♥　ビクビクってぇ…あばれてますわ…♥\n　あふれちゃうくらい、たくさん膣内射精してくださいましっ♥」\n"
+					ENDIF
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ひぐぅっ♥　また…　またイカされて…♥」\n"
+					IF GET_PENIS(CFLAG:951)
+						CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%…のっ、おちんちん…　きもちよさそうに…　ヒクヒクして…ますわね……♥」\n"
+					ENDIF
+				ENDSELECT
+			ENDIF
+			
+		; □ 発情あり+合意
+		ELSEIF  ARG:2 == 1 && ARG:3 == 2
+			
+			; 好感度：普通(or 犯人不明)
+			IF CFLAG:(CFLAG:951):5 < 800 || CFLAG:951 == 0
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「付き合ってあげますから…っ♥　あたしも楽しませてくださいましっ♥♥」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「この迷宮の淫気に当てられたら、仕方ないですわよね…♥」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「仲間を襲ってしまうくらい溜まっていましたの？\n　ほら…いいですわよ…♥」\n"
+					IF GET_PENIS(CFLAG:951)
+						CALL KOJO_16_0_ADD_MESSAGE, @"「仲間を襲ってしまうくらい溜まっていましたの？\n　ほら…いいですわよ…♥　もっと奥まで突き込んで、精液…びゅーびゅーしましょっ♥」\n"
+					ENDIF
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ガマンできないのでしたら…　仕方ないと思いますわ…」\n"
+				ENDSELECT
+			; 好感度：高い
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%なら…良いですわよ…♥\n　もっと、全てを忘れさせてくれるぐらい、激しくしても…♥」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「優しく…してくださいまし…♥」\n"
+					IF GET_PENIS(CFLAG:951)
+						CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CFLAG:951)%…のっ、おちんちん…　きもちよさそうに…　ヒクヒクして…ますわね……♥」\n"
+					ENDIF
+				ENDSELECT
+			ENDIF
+			
+		ENDIF
+	
+	ENDIF
+	
+RETURN 1

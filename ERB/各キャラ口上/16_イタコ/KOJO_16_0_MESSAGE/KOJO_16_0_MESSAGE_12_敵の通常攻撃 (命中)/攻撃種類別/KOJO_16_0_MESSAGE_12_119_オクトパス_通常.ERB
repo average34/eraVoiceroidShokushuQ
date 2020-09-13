@@ -1,0 +1,47 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 12 敵の通常攻撃 (命中) - 攻撃種類別 0119 オクトパス 通常
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_12_119(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時 状況によって地の文が変化
+	; 全裸
+	IF BASE:3 <= 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちょ、そんなとこ―――っ！！！　ひぎっ！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「いやっ、絡みついちゃ―――んぎっ！？」\n"
+		ENDSELECT
+	; その他状況
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「吸盤で服を破るなんて、えっちなタコですこと……！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もし、肌に吸い付かれたら………そ、想像してる場合じゃ…ありませんわ！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

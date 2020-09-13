@@ -1,0 +1,124 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 27 敵のその他攻撃 (回避)
+; ------------------------------------------------------------------------------
+
+; □ 攻撃種類別
+; ◆ 0013 発情花粉・単体（アルラウネ用）
+@KOJO_16_0_SYSTEM_MESSAGE_8_13(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "強気"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（遅効性の毒かも…、出来るだけ吸わないようにしておきましょう……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なんでしょうかこの粉、ヘンなものじゃないですわよね？」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（よくわかりませんが、身体に良くなさそうなので吸わないようにしないと……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「えっと、何も起きませんわ…？　何がしたかったんですの？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…何も起きませんわね？　失敗ですの？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0016 ガーディアン 凝視(発情+強制自慰)
+@KOJO_16_0_SYSTEM_MESSAGE_8_16(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「変な目で見つめないでくださいまし！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 敵のその他攻撃(回避)
+;  攻撃種類別
+; ◆ 0950 汚染攻撃(汚れを追加)
+@KOJO_16_0_SYSTEM_MESSAGE_8_950(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中
+	IF CFLAG:29
+		; 喪失中は独自地の文を使う
+		CALL KOJO_16_0_ADD_MESSAGE, @"\m\d%ARGS:1%の放った汚液は、%ARGS:0%に命中せず地面に染みこんだ……\d\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あら……？」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ！何するんですの！　汚いのがかかってしまいますわ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 敵のその他攻撃(回避)
+; 攻撃種類別
+; ◆ 0951 汚染攻撃(汚れを追加)
+@KOJO_16_0_SYSTEM_MESSAGE_8_951(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 0950 汚染攻撃(汚れを追加) におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_8_950(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 敵のその他攻撃(回避)
+; 攻撃種類別
+; ◆ 0952 汚染攻撃(汚れを追加)
+@KOJO_16_0_SYSTEM_MESSAGE_8_952(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 0950 汚染攻撃(汚れを追加) におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_8_950(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

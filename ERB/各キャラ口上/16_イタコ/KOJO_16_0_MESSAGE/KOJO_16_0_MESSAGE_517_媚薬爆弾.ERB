@@ -1,0 +1,62 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 517 媚薬爆弾
+; ------------------------------------------------------------------------------
+
+; □ 0 爆弾発動
+@KOJO_16_0_SYSTEM_MESSAGE_517_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	CALL KOJO_16_0_ADD_MESSAGE, @"「ひぐぁ…っﾞ♥　えﾞあﾞ…っ♥♥　あﾞあﾞああぁぁぁっ…っっ♥♥♥」\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「……！？　……ッ♥　……ッッ♥♥　……ッッ♥♥♥」\n"
+	CALL KOJO_16_0_ADD_MESSAGE, @"「おﾞっ！？　ひﾞっ…！？　んﾞいﾞいﾞいっぃぃぃぃっっ………！？　ひﾞぃﾞぃﾞいいいぃいっ♥♥」\n"
+	
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d全身から異常な量の汗を噴き出した%CALLNAME:TARGET%は、そのまま立ち続けることも出来ずその場にへたり込んだ…\d"
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d身体の奥底から気が狂うほどの性感に晒され、%CALLNAME:TARGET%の身体はひとりでに絶頂し始めた！\d"
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d急激な感覚に晒された%CALLNAME:TARGET%の身体は大きく痙攣し、快感が脳を灼き始めた！\d"
+	CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は舌を突き出し、意味のわからない言葉を発しながら唾液を噴きこぼしている！\d"
+	
+	; 最後の一文で改行制御する為、行頭に改行を用意する(もしくはWAIT)
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\n「すごぃっ♥　すごいのがきた…っ♥♥\n　狂うっ♥♥　イキ狂っちゃ―――――っ♥♥♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\n（何っ！？　あたしの身体、何が起きましたのっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\n（ぁっ♥　なに、これっ♥♥　身体中で快感が跳ねまわって、頭がっ♥　頭がぁああ♥♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 発動終了
+@KOJO_16_0_SYSTEM_MESSAGE_517_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 発動終了口上呼び出し前に発情状態のバッドステータスが付与されるので、ここでは発情以上の口上しか呼び出されない
+	; 普通、強気口上の表記は不要
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んぁ……っ♥　はぁ…っ♥　はぁ…っ♥♥」\n\d%CALLNAME:TARGET%は全身から汗を噴きだし、よだれや愛液を溢れさせながら立ち尽くしている…\d\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_16_0_MIND_SET()
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ま…だ…♥　頭の中チカチカして…ぇ、イキっぱなしみたいに…なって…ますわ…♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いったい…っ♥　なんだっ…たん…ですの…っ♥\n　うくぅぅっ♥　まだ…っ、あつい…♥♥　あついですわ…っ♥♥」\n"
+	ENDSELECT
+RETURN 1

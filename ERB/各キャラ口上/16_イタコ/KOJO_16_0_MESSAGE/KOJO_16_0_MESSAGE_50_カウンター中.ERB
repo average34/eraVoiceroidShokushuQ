@@ -1,0 +1,43 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 50 カウンター中
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_50(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 残りMPによって分岐
+	IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（タイミングさえ合わせられれば……力が入らなくてもきっと……！）\n"
+		CASE "強気"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（相手の力を利用して、大きな一撃をお見舞いしてさしあげますわ）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「さあ！　おいでになさい！」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（敵の気配をうまく読んで……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「相手の動きに合わせて……」\n"
+		ENDSELECT
+		
+	ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（今のカラダでは、うまくスキを狙うしかありませんわ…）\n"
+		CASE "強気"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（力があっても、頭を使いませんと）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あえてスキを誘ってから叩き込みますわ！）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（向かってくる勢いを利用して反撃に！）\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "強気"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（これ以上…ムダな消耗はできませんわ…！）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（ムリは出来ませんわね……相手の力をうまく使いますわ……！）\n"
+		ENDSELECT
+	ENDIF
+		
+		
+	
+RETURN 1

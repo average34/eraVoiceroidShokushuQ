@@ -1,0 +1,52 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 140 PTに勧誘された
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+; ◆ 0 失敗
+@KOJO_16_0_SYSTEM_MESSAGE_140_0_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あまり大勢ですと、格好の獲物になりますわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「今は都合が悪いですの、また誘ってくださいまし？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「今は一人の方がいいんですの」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 0 通常
+; ◆ 1 成功
+@KOJO_16_0_SYSTEM_MESSAGE_140_0_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの霊力がお役に立つといいですわ♪」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いいですわ、力を合わせて戦いましょう！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はい、よろしくお願いしますわ♪」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 共闘
+; ◆ 0 失敗
+@KOJO_16_0_SYSTEM_MESSAGE_140_1_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は近づいてくる敵を目にした瞬間、声を掛ける%ARGS:0%を差し置いて一目散に逃げ出した！\d\n"
+	ENDSELECT
+RETURN 1
+
+
+; 1 共闘
+; ◆ 1 成功
+@KOJO_16_0_SYSTEM_MESSAGE_140_1_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ここは助太刀いたしますわよ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「イタコ専門学校首席の実力をお見せいたしますわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ここで会ったのも何かの縁ですの　…行きますわ！」\n"
+	ENDSELECT
+RETURN 1
+
+

@@ -1,0 +1,57 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 43 時間経過で起きた
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_43(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM ATTACK_COUNT
+
+	VARSET ATTACK_COUNT
+	
+	; 睡眠中に受けた性攻撃関連回数をカウント
+	; 戦闘中の回数をカウントするので、戦闘中に睡眠状態になった場合は多少不都合が出るかも
+	ATTACK_COUNT += KOJO_16_0_CREAMPIE_COUNT
+	ATTACK_COUNT += SUMARRAY(KOJO_16_0_ORGASM_COUNT, 0)
+	ATTACK_COUNT += SUMARRAY(KOJO_16_0_SEXUAL_ASSAULT_COUNT, 0)
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 寝てる間にイタズラされた
+	IF ATTACK_COUNT
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んっ♥　睡眠姦とはいい趣味を持ってですわね♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……寝てる間に、えっちなコトされてたみたいですわ…♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……あたしが寝てる間、何をしていたんですの？」\n"
+		ENDSELECT
+	
+	; 寝てたのに何もされなかった
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……ちゅわぁ～　……あら？　寝ていたのに、何もしなかったんですの……？」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d不満そうな顔で、%CALLNAME:TARGET%は目の前の触手をにらんでいる\d\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「寝てる間には何もされていないみたいですわね」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「戦闘中に眠ってしまうとは、寝不足ですの……？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……はっ！？　あたし寝ていましたの！？」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

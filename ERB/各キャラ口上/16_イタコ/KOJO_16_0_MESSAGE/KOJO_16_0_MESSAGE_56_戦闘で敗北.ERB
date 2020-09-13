@@ -1,0 +1,125 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 56 戦闘で敗北
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_56(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 捕食中のタコ姉さまを助ける戦闘だった場合
+	IF KOJO_16_0_TEMP_FLAG:0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさい、巻き込んでしまいましたわね……♥　%KOJO_16_0_CALLNAME_FROM_ID(FLAG:10)%♥"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			IF FLAG:11
+				CALL KOJO_16_0_ADD_MESSAGE, @"　%KOJO_16_0_CALLNAME_FROM_ID(FLAG:11)%♥」\n"
+			ELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"」\n"
+			ENDIF
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「申し訳…ないですわ…　あたしのせいで……　%KOJO_16_0_CALLNAME_FROM_ID(FLAG:10)%……"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			IF FLAG:11
+				CALL KOJO_16_0_ADD_MESSAGE, @"　%KOJO_16_0_CALLNAME_FROM_ID(FLAG:11)%……」\n"
+			ELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"」\n"
+			ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d抵抗心を挫かれた%CALLNAME:TARGET%は、虚ろな目のまま魔物相手にすべてをさらけ出した……n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"（そんな…あた…しの……カラダ……勝手に…動いています…わ……）\n"
+			CASE 2
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしのトロトロのおまんこ♥　おっぱい♥　おしりも♥♥　あたしのすべて、お好きにお使いくださいまし♥♥」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d（あ、あたし…のカラダ……　好き勝手に…されて……しまいます…のね……）\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「東北イタコは魔物様のお人形です。　哀れな操り人形をお好きにお使いいただき、\n　身も心も魔物様の所有物にしてください……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「今日からイタコは性処理ペットです。　前も後ろも…すべてぐちゃぐちゃにぶっ壊して\n　皆様の力でイタコを立派な性処理便所にしてください……」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"（いやっ　思ってもいないことを……　言わせないでほしいですわ…… うぅ……♥　思っていませんわよね………♥♥）\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は迷宮の瘴気に言動の全てを操られ、敗北宣言をし、跪いた……　\nじきにその心さえ熱く淫ら煮えたぎった躰の中にに引きずられ、融けていってしまうだろう……\d\n"
+			ENDSELECT
+			RETURN 1
+			
+		; 発情・感情操作系
+		CASE 1
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしったら♥　にゃんでこんなにエッチな魔物様を♥　嫌っていたのかしら……♥♥」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d精魂尽き果てた%CALLNAME:TARGET%は、魔物に対して抱いていたはずの嫌悪感が、淫らな期待に変わっていくのを感じた……\d\n"
+			CASE 2
+				CALL KOJO_16_0_ADD_MESSAGE, @"「にゃあ♥　大好きですわ……魔物様……♥♥　%CALLNAME:TARGET%をもっと♥　もっと愛してくださいましっ♥♥」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\dかつての敵意は全て好意に変わり、抵抗する心を喪った%CALLNAME:TARGET%は、魔物相手にいやらしく媚を売り続けていた……\d\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「にゃあん♥　ダメ、なんですの…♥　こんなに素敵な方♥　きっと、他では出会えませんわ……♥♥　\n　もう、魔物様に…♥　愛していただくこと以外……考えられませんわ……♥　お願い…いたしますっ♥♥　\n　あたしをっ♥　東北イタコをっ♥♥　皆様のえっち花嫁としてぇ…♥　娶ってくださいましぃっ♥♥」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d瘴気にあてられて頭の芯まで発情しきった%CALLNAME:TARGET%は、魔物相手に熱烈なプロポーズをした……　\n……　\n迷宮のどこかでぐちゃぐちゃと粘液をかき混ぜる音と、%CALLNAME:TARGET%の甘美な嬌声が響く……　\n日が昇ることのないこの迷宮内で、%CALLNAME:TARGET%の結婚初夜は、永遠に続いていく……\d\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「にゃぁっ♥　あなた様っ♥　あなた様ぁっ♥♥　愛してっいますわっ♥♥　\n　奴隷花嫁%CALLNAME:TARGET%をっ♥　永久に愛してっ♥　くださいましっ♥♥」\n"
+			ENDSELECT
+			RETURN 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_16_0_ADD_MESSAGE, @"「……　あたしは……魔物様に負けた……あわれな……雌狐…\n　これからは、みなさまの繁殖用孕み袋……ですわ……」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d力尽きた%CALLNAME:TARGET%は操られるままに、望まぬ誓いを口にした…\d\n"
+			CASE 2
+				CALL KOJO_16_0_ADD_MESSAGE, @"（これは負けではありませんわ。魔物様に身体を使ってもらう事はあたしの夢だったんですわ…♥）\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d催眠術で思考を歪められた%CALLNAME:TARGET%は、敗北しながらも奇妙な幸福感に満たされた…\d\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「生意気な%CALLNAME:TARGET%に苗床洗脳を施していただき、ありがとうございますわ…　\n　苗床%CALLNAME:TARGET%は触手様の繁殖用孕み袋を使って頂くのがこの上ない幸せですの…」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あぁ…魔物様のおかげで%CALLNAME:TARGET%は本当の幸せを見つけましたわ…　\n　人間を辞めた%CALLNAME:TARGET%、魔物様専用の性処理ペットとして働かせていただきますわ…」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d迷宮によって常識を砕かれた%CALLNAME:TARGET%は、開発されきり淫らに花開いた性器を晒しながら、\n自らの意思で、その生涯すべてを迷宮の魔物に捧げる誓いの言葉を紡いだ……\d\n"
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたし……　これからどうなるのでしょう……♥\n　孕み袋？♥それとも精液ボテになるまで注ぎ込まれちゃう…？♥　ああ、楽しみですわ…♥）\n"
+		
+		; [尻穴狂い]所持 または りばーす東方触手宮でA感覚LV3以上
+		IF TALENT:75 || (KOJO_16_0_IS_REVERSE() && ABL:6 >= 3)
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あぁ♥　負けてしまいましたわ♥　\n　これで…あたしのトロトロになってる私のお尻の穴♥　イキ狂うまでかき回していただけますわ…♥♥）\n"
+		ENDIF
+		
+		; [淫壺]所持 または りばーす東方触手宮でV感覚LV3以上
+		IF TALENT:78 || (KOJO_16_0_IS_REVERSE() && ABL:9 >= 3)
+			CALL KOJO_16_0_ADD_MESSAGE, @"（にゃは♥　やられてしいましたわ♥♥\n　あたし……触手の精液便所にされてしまいますのね♥　頭の中完全に壊れるまで、子宮の中までかき回されるんですわ♥♥\n　あっ♥　ああぁっ♥　はやくっ♥　トロトロぐちゅぐちゅのおまんこに触手を♥♥♥）\n"
+		ENDIF
+		
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（こんな所で倒れたら、壊れるまで……玩具にされてしまい……ますわ…♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（このまま……オモチャにされて……しまいますのね……♥\n　あぁ…♥　あたし…期待してしまっていますわ……ぁ♥）\n"
+	CASE "強気"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（こんな……　ところで……終わりませんわ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（なんとか隙を見つけて……　逃げませんと……）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「覚えていなさい……他の誰かが…きっと……貴方を……！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたし%TACHI()%……　どうして……　こんなことに…なってしまったんですの……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あぁ……終わってしまいますわ……）\n"
+	ENDSELECT
+RETURN 1

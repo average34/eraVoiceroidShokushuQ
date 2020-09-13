@@ -1,0 +1,33 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 75 戦闘から逃走(前に出る)
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_1_75(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中行動
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「……なるほど、絶対逃げられないように操作されてますのね♥」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「…っ！？　足が勝手にっ！？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「足が！？　そ、そっちはダメですわ！？」\n"
+			ENDSELECT
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしはどこにも行きませんわ♥　気持ちいいことしてくれる方からはぜーったい離れませんの♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もっとあなた様のおそばに……　えへへ……♥　大好き、ですわ♥」\n"
+
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あるじ様から逃げようとした……　愚かなあたしを……　お躾けくださいまし……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「一瞬でも逃げようなんて考えた……あたしに……　罰を与えて下さいまし……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

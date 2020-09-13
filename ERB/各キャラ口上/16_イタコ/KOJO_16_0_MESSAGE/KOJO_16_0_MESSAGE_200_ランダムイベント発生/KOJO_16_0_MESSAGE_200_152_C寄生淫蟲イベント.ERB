@@ -1,0 +1,25 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 152 C寄生淫蟲イベント
+; ------------------------------------------------------------------------------
+
+; □ 1 ふたなり化
+@KOJO_16_0_SYSTEM_MESSAGE_200_152_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_SYSTEM_MESSAGE_CHINKO_EQUIP(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1
+
+
+; □ 2 既にふたなり
+@KOJO_16_0_SYSTEM_MESSAGE_200_152_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 0
+
+
+; □ 3 回避
+@KOJO_16_0_SYSTEM_MESSAGE_200_152_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「……っと　回避できましたわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「普通の蟲…ではなさそうですわね」\n"
+	ENDSELECT
+RETURN 0

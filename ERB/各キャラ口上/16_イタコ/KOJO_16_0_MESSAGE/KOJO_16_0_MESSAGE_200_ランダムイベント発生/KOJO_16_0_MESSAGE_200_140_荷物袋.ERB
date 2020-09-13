@@ -1,0 +1,25 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 140 荷物袋
+; ------------------------------------------------------------------------------
+
+; □ 0 荷物袋を開ける
+@KOJO_16_0_SYSTEM_MESSAGE_200_140_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（道具が落ちてるのは助かりますけれど…　その分、誰かが落としてしまった、という事ですのよね…）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これ……もらっても大丈夫、ですわよね？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 荷物袋を開けない
+@KOJO_16_0_SYSTEM_MESSAGE_200_140_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「罠の可能性もありますわ……　下手に近寄るべきではありませんわね」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「もし魔物さんが入っていたら……　逃げられないですわね……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「動いたりはしてませんけれど……　中から触手が飛び出てくることも十分あり得ますわ……」\n"
+	ENDSELECT
+RETURN 1

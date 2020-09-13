@@ -1,0 +1,65 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 453 ふたなり：ターン終了時発情
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_453(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はい……　%CALLNAME:TARGET%はおちんぽ様の言うとおりにしますわ……」\n"
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 射精中毒 Lv3以上 or 口上パターン【淫乱】
+	IF ABL:12 >= 3 || KOJO_16_0_KOJO_MODE == "淫乱"
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（しゃせ…っ、しゃせぇっ♥　射精したい♥　射精したい♥　射精したいですわっ♥♥）\n"
+		ENDSELECT
+		
+		; 発情していなかった場合追加口上
+		IF !CFLAG:28
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あはっ♥　あたしのおちんちん勝手におっきしちゃってますのっ♥」\n"
+		ENDIF
+		
+	; 射精中毒 Lv2 or 口上パターン【発情】
+	ELSEIF ABL:12 == 2 || KOJO_16_0_KOJO_MODE == "発情"
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたし…　おちんちんに…　おかしくされてますわ…っ！？）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おちんちん…全然いうこときかな…っ！？　またかってにおっきくなって…ぇ　ビクｯビクッてしてますのぉっ！？」\n"
+		ENDSELECT
+		
+		; 発情していなかった場合追加口上
+		IF !CFLAG:28
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ああぁ……♥　おちんちんが、勝手に大きくなって……♥」\n"
+		ENDIF
+		
+	; 射精中毒 Lv1以下 or 口上パターン【強気】【普通】
+	ELSEIF ABL:12 <= 1 || KOJO_16_0_KOJO_MODE == "強気" || KOJO_16_0_KOJO_MODE == "普通"
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はぁ…はぁ……からだが…熱い…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「う…く…男の人のがついている…せいですの…っ！？」\n"
+		ENDSELECT
+		
+		; 発情していなかった場合追加口上
+		IF !CFLAG:28
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…男の人達は、いつもこんな性欲を我慢、してるんですの…？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……ちょんぎったら、楽になれたりしませんの？」\n"
+		ENDIF
+	ENDIF
+RETURN 1

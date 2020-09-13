@@ -1,0 +1,101 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 142 触手生物
+; ------------------------------------------------------------------------------
+
+; □ 2 襲われる前
+@KOJO_16_0_SYSTEM_MESSAGE_200_142_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…えっ！？　な、なにをっ！？」\n"
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 通常の地の文表示
+	CALL KOJO_16_0_ADD_MESSAGE, @"\M"
+RETURN 1
+
+
+; □ 3 襲われた後
+; ◆ 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_200_142_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ…あたしのカラダ……っ　元にもどして…っ　もどしてっ…くださいまし……っ\n　こんなカラダ…　いりませんわ……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 3 襲われた後
+; ◆ 部位別
+; ◇ V
+@KOJO_16_0_SYSTEM_MESSAGE_200_142_3_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「この、感じ……♥　あたしの、おまんこ……っ　いやらしい肉穴オナホに改造されてしまいましたのね…♥♥\n　もうあたし……、普通の生活できない、ですわ…っ♥♥」\n"
+	CASEELSE
+		RETURN 0
+	ENDSELECT
+RETURN 1
+
+
+; □ 4 無視して立ち去る
+@KOJO_16_0_SYSTEM_MESSAGE_200_142_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; FLAG:142にはイベント開始フラグ&イベント消化フラグ(部位別)&イベント配置部屋番号が格納されている
+	; イベントが開始された瞬間に値が代入される為、前回値を参照する事で初遭遇のチェックを行う
+	; 初遭遇
+	IF KOJO_16_0_PREV_FLAG:142 < 100
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……さんざん、酷い事してくる触手に会いましたもの……信用できませんわ」\n"
+		ENDSELECT
+		
+	; 2回目以降遭遇
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたし%TACHI()%は忙しいので、他の人を当たってくださいまし」\n"
+		ENDSELECT
+		
+		; 開発経験ありなら追加口上(イベント発生フラグを確認するだけなのでイタコ以外が開発されている可能性あり)
+		IF FLAG:142 >= 300
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「どれだけ大人しいふりしても、あなたがあたしたちにした悪事、忘れてませんわっ！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 5 4種コンプリート
+@KOJO_16_0_SYSTEM_MESSAGE_200_142_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; イタコだけで4種コンプリート
+	IF TALENT:75 && TALENT:76 && TALENT:77 && TALENT:78
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			{
+			CALL KOJO_16_0_ADD_MESSAGE, @"「まって…ください…まし…♥　こんな身体にした…責任をとって…くださいましっ……♥♥」\n
+			                              \d淫らに疼きながら雄を誘うフェロモンをまき散らす雌穴\d\n
+			                              \d第二の雌穴として完全に開発され蕩けきったアナル\d\n
+			                              \d獣欲を貪る為だけの器官として作り替えられた醜く肥大した乳首\d\n
+			                              \d感度のリミッターを破壊され無様に勃起する\@GET_PENIS(TARGET) ? ふたなりペニス # 巨大クリトリス\@\d\n
+			                              \dその全てが、%CALLNAME:TARGET%の思考を淫らに支配していく\d\n
+			                              「ひぎっ♥　あがっ♥　あたまおかしくっ♥♥　ああﾞあﾞぁﾞぁﾞぁあぁ♥♥\n
+			                              　たひゅ…っ♥　たひゅけ……て……♥♥　あ……ぁﾞ……っ♥♥♥」\n"
+			}
+		ENDSELECT
+	
+	; 通常
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「………何が、目的だったんですの…」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

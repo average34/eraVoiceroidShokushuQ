@@ -1,0 +1,202 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 42 敵から解放された
+; ------------------------------------------------------------------------------
+
+; □ X 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_42(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中
+	IF CFLAG:25
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d敵から解放されたものの、%CALLNAME:TARGET%はぐっすりと眠り続けている…\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 喪失中
+	IF CFLAG:29
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d敵から解放されたものの、気力を失った%CALLNAME:TARGET%は身動きがとれず倒れている…\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+; □ 1 触手による自然解放
+@KOJO_16_0_SYSTEM_MESSAGE_42_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠中
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 喪失中
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 睡眠・喪失時は汎用口上に任せる、それ以外は優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+		
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あら♥　もう満足しましたの？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あら…　飽きてしまいましたの♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「よくわかりませんが……　たすかりましたわ……？」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（拘束が緩んでますわ……　抜けるなら今……！）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわっ！？　急にどうしたんですの？　何はともあれ助かりましたわ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 味方の攻撃による解放
+@KOJO_16_0_SYSTEM_MESSAGE_42_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠中
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 喪失中
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 睡眠・喪失時は汎用口上に任せる、それ以外は優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「たすかり……ましたわ……」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ありがとうございます、助かりましたわ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 霊撃
+@KOJO_16_0_SYSTEM_MESSAGE_42_X_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠中
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 喪失中
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 睡眠・喪失時は汎用口上に任せる、それ以外は優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あら、まさか本当に効くとは思いませんでしたわ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「にゃぁ……助かってしまいましたわ……」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（よ、良かった……　抜けられましたわ……）\n"
+	CASE "強気"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの力、思い知りまして！？」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「よし！　抜けられましたわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なんとか助かりましたわ…」\n"
+	ENDSELECT
+RETURN 1
+
+
+
+; □ 4 自力脱出
+@KOJO_16_0_SYSTEM_MESSAGE_42_X_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠中
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 喪失中
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 睡眠・喪失時は汎用口上に任せる、それ以外は優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「もっとぎゅーっと抱いておかないと、逃げられてしまいますわよ♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ふぅ……　あのまま捕まっていたら……　想像したくありませんわね……」\n"
+	ENDSELECT
+RETURN 1

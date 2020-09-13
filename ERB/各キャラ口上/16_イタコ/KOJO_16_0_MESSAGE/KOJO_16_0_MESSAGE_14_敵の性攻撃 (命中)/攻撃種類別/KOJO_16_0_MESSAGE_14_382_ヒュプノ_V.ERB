@@ -1,0 +1,56 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0382 ヒュプノ V
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_14_382(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠コンフィグによって変化
+	SELECTCASE FLAG:526
+	
+	; 拘束・肉体操作系
+	CASE 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（声が出せなませんわっ♥　今のあたし性処理用の人形にされてますのっ♥♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あれ……♥　あたしの腰、勝手に動いてますわ……♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「い、いや……！？　腰が勝手に、うごいて……っ！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「カラダが自由になったら……　お返ししますわっ！」\n"
+		ENDSELECT
+
+	; 発情・感情操作系
+	CASE 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（おまんこ掻き回されるとっ♥　ぜんぶ、どうでもよくなっちゃいますわ……♥♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたし、の♥　おまんこは、いかがですかっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「うああぁっ♥　そんなにされたら……、あそこが…よろこんで…っ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ああぁぁっ♥　はいってき…てますわっ♥♥　あたし、犯されて…っ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（おまんこ、掻き回されるの……　気持ちいい……）\n"
+		ENDSELECT
+		
+	; 無意識・認識操作系
+	CASE 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「セックスペットのおまんこは……　いかがですか……？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「奴隷専門学校首席のおまんこの実力！　とくとごらんあそばせ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（そうです……　あたしは触手様の玩具なんだから……　たくさん、えっちしませんと……）\n"
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

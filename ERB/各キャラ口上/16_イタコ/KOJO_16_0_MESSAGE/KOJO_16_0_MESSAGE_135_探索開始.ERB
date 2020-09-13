@@ -1,0 +1,127 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 135 探索開始
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_135(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+#DIM WEAPON_COUNT
+
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+
+	; 汎用口上
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なにか楽しいものはにゃいかにゃー♪」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「気持ちいい物はいつでも歓迎ですにゃ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「えへっ、えっちな道具がありそうですわ♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「少しでも使える物があれば良いのですけれど……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「警戒を怠らずに探しませんとと……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「もし罠にかかったら今のあたしでは……」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いろいろ落ちてますけれど……お金は落ちてませんわね」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「何か役に立つ物が落ちていると嬉しいのですわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「そろそろ出口の手がかりでもないかしら……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なんだかお腹がすいてきましたわ……食べ物は落ちてないかしら？」\n"
+	ENDSELECT
+	
+	
+	; 部屋の汚染度で分岐
+	; 清浄
+	IF FLAG:(50 + FLAG:5) < 10
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ…綺麗なお部屋ですのね…なーんにも見当たりませんわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「お昼寝をするならこういう部屋がいいですわね」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSEIF FLAG:(50 + FLAG:5) < 40
+
+
+	; 軽度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 70
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この散らかり具合はなにかあるとみましたわ！」\n"
+		ENDSELECT
+		
+	; 中度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 100
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……物を探していたら魔物をつかみそうですわ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「少し綺麗にしてから探した方がよかったですわね……」\n"
+		ENDSELECT
+		
+	; 重度汚染
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんなところで見つかるのは絶対ヘンな物ですわ……！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「その白い水たまりの中も探しますの…？」\n"
+		ENDSELECT
+	ENDIF
+	
+	
+	; ソロで行動中なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「にゃあ♥　エッチな道具があったらもっと楽しめますわ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひとりで探すのは重労働ですわね…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「せめてお仲間を先に探すべきでしたわ……」\n"
+		ENDSELECT
+		
+		; 武器系アイテムストックなし + 装備なしなら追加口上
+		VARSET WEAPON_COUNT
+		FOR LCOUNT, 1, 20
+			WEAPON_COUNT += ITEM:LCOUNT
+		NEXT
+		IF WEAPON_COUNT == 0 && !INRANGE(CFLAG:7, 1, 19) && !INRANGE(CFLAG:8, 1, 19)
+			CALL KOJO_16_0_ADD_MESSAGE, @"「悪霊さんを追い払えるような武器が欲しいですわね」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「武器がなければ妖狐召霊拳を使わざるをえませんわ……」\n"
+		ENDIF
+	ENDIF
+	
+	
+	; 媚薬のストックなし + PTメンバーが媚薬を装備していない なら追加口上
+	IF ITEM:39 == 0 && !(CFLAG:1:7 == 39 || CFLAG:1:8 == 39) && !(CFLAG:(FLAG:10):7 == 39 || CFLAG:(FLAG:10):8 == 39) && !(CFLAG:(FLAG:11):7 == 39 || CFLAG:(FLAG:11):8 == 39)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんな場所なら、えっちになるお薬とかありそうですにゃ♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この迷宮だと、変な薬とかも落ちてるかもしれませんわね……」\n"
+		ENDSELECT
+		
+		
+	ENDIF
+	
+	; 服のストックなし + 包帯のストックなし + CP25%以下 なら追加口上
+	IF ITEM:54 == 0 && ITEM:67 == 0 && BASE:3 <= (MAXBASE:3 / 4)
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……なにか肌を隠せるものが欲しいですわね」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「服が欲しいとは言いませんけれど、布くらいは欲しいですわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「まともに着られる物が欲しいですわね……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「イタコは衣装も大事ですの……ここで見つかるかしら？」\n"
+	ENDIF
+	
+	; 気付け薬のストックなし + PTの誰かが喪失 なら追加口上
+	IF ITEM:58 == 0 && (CFLAG:1:29 || (FLAG:10 && CFLAG:(FLAG:10):29) || (FLAG:11 && CFLAG:(FLAG:11):29))
+		CALL KOJO_16_0_ADD_MESSAGE, @"「必要な時に限って見つかりませんのよね……いわゆる、物欲センサーですわ」\n"
+	ENDIF
+	
+	; 大人の玩具のストックなし なら追加口上
+	IF ITEM:60 == 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「大人向けの玩具があったらうれしいにゃ♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（自分で慰めなければいけませんのね……\n　そういうのに使えるものはありますかしら……？）\n"
+		CASEELSE
+		ENDSELECT
+	ENDIF
+RETURN 1

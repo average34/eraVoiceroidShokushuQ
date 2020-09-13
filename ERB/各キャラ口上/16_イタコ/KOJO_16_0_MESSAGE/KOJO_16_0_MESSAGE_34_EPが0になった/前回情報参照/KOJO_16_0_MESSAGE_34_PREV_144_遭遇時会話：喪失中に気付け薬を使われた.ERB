@@ -1,0 +1,42 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 34 EPが0になった - 前回情報参照 144 遭遇時会話：喪失中に気付け薬を使われた
+; ------------------------------------------------------------------------------
+
+; □ 06 乳搾り(強制)
+@KOJO_16_0_SYSTEM_MESSAGE_34_PREV_144_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_34_DESCRIPTION_BEFORE")
+	
+	; 母乳体質素質で分岐
+	; [母乳体質]
+	IF TALENT:130 == 1
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d搾乳される快感に耐えられず、%CALLNAME:TARGET%の乳頭は激しく母乳を噴き出した！\d\n"
+		
+	; [母乳異常分泌]
+	ELSEIF TALENT:130 == 2
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は搾乳される快感に屈し、興奮しきった乳頭から飲みきれない程の母乳を滴らせた！\d\n"
+		
+	; [母乳製造装置]
+	ELSEIF TALENT:130 == 3
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d執拗に絞られた%CALLNAME:TARGET%の胸は、匂い立つ母乳を射精するように幾度となく噴き出した！\d\n"
+	ENDIF
+RETURN 1
+
+
+; □ 07 乳搾り(同意)
+@KOJO_16_0_SYSTEM_MESSAGE_34_PREV_144_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 乳搾り(強制)を使用
+	CALL KOJO_16_0_SYSTEM_MESSAGE_34_PREV_144_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; □ 10 強制射精開始
+@KOJO_16_0_SYSTEM_MESSAGE_34_PREV_144_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; ふたなり治療(治療される側)を使用
+	CALL KOJO_16_0_SYSTEM_MESSAGE_34_PREV_459(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

@@ -1,0 +1,146 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 114 睡眠開始
+; ------------------------------------------------------------------------------
+
+; □ X 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_114(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+		
+	; 部屋の汚染度で分岐
+	; 清浄
+	IF FLAG:(50 + FLAG:5) < 10
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「寝てる間に、というのも興味ありますが……」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「どうにか休めそうですわ……」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「休めるときに休んでおきませんと！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「綺麗な部屋は貴重ですわ。今のうちに休憩しましょう」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSEIF FLAG:(50 + FLAG:5) < 40
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「寝てる間に襲われたりするのでしょうか」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「眠れるときに眠らないとダメですわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゃんとしたお布団で眠りたいですわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「寝てる間に何も起きないといいですわね……」\n"
+		ENDSELECT
+
+	; 軽度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 70
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ここなら、期待してもいいですわね…♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この場所で寝るのは少々勇気が要りますわ…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「床が少しぬるぬるしてきもちわるいですわ…」\n"
+		ENDSELECT
+		
+	; 中度汚染
+	ELSEIF FLAG:(50 + FLAG:5) < 100
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE " 淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「いっぱい楽しむためにも♥　休めるときはしっかり休まみませんと♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちょっと汚すぎますわね……少しだけ、休んだら…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ！？……　床がぬめぬめしていますわ……！」\n"
+		ENDSELECT
+		
+	; 重度汚染
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE " 淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この部屋…エッチな気配が沢山で♥　なかなか、寝付けませんわ♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「汚いですわ……　こんな場所で眠って大丈夫ですの……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「少しだけ……休憩ですわ……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 0 見張り無し
+@KOJO_16_0_SYSTEM_MESSAGE_114_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんなところで寝るなんて♥　誘ってるように見えますかしら♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「何も起きなければいいんですけれど……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 PTで見張り
+@KOJO_16_0_SYSTEM_MESSAGE_114_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（皆で仲良く襲われるのも、ありですわね）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんなときだからこそ警戒しておくべきですわ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 NPCが見張り
+@KOJO_16_0_SYSTEM_MESSAGE_114_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM CHARA_ID
+
+	CHARA_ID = ARG:2
+	
+	; 喪失中なら何も喋らずに戻る
+	SIF CFLAG:29
+		RETURN 0
+		
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「すいませんが、少しだけ見張りをお願いしますわ…」\n"
+	ENDSELECT
+	
+	; 好感度による追加口上
+	; 好感度:低
+	IF CFLAG:CHARA_ID:5 < 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（まともな見張りは期待できませんわね…）\n"
+		ENDSELECT
+		
+	; 好感度:警戒
+	ELSEIF CFLAG:CHARA_ID:5 < 50
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（つい頼んでしまいましたけれど、大丈夫ですの…？）\n"
+		ENDSELECT
+		
+	; 好感度:通常
+	ELSEIF CFLAG:CHARA_ID:5 < 200
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…助かりますわ。では、ゆっくり休ませていただきますわ。」\n"
+		ENDSELECT
+		
+	; 好感度:高
+	ELSEIF CFLAG:CHARA_ID:5 >= 200
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%は優しいんですわね\n　敵が来たら言ってくださいまし？　休憩した分、活躍してみせますわ！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

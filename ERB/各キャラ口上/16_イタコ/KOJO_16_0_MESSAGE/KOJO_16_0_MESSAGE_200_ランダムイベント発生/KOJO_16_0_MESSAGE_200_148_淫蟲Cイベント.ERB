@@ -1,0 +1,43 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 148 淫蟲Cイベント
+; ------------------------------------------------------------------------------
+
+; □ 0 淫蟲に襲われた(主人公以外)
+@KOJO_4_0_SYSTEM_MESSAGE_200_148_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_4_0_ADD_MESSAGE, @"\dあふれ出した淫蟲は、%CALLNAME:TARGET%の股間を執拗に責めはじめた！\d\n"
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+
+	SELECTCASE KOJO_4_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あはっ♪　あそこに殺到してる…っ♪」\n"
+	CASE "発情"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「ひっ！　だめですわっ！！　そこは、そこはだめぇぇえええええっっ！！」\n"
+	CASEELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"「えっ！　ま、待ってくださいまし！　どうして、そんなとこを…っ！」\n"
+		CALL KOJO_4_0_ADD_MESSAGE, @"「あっ…　やっ…！　そこはっ…！？」\n"
+	ENDSELECT
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+	
+	; ふたなり
+	IF GET_PENIS(TARGET)
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d強制的に勃起させられた雌ペニスが快感に震えビクビクと脈打っている！\d\n"
+	; 通常
+	ELSE
+		CALL KOJO_4_0_ADD_MESSAGE, @"\d包皮を剥かれ、露出したクリトリスが刺激される度、%CALLNAME:TARGET%の身体が小さく跳ねる…\d\n"
+	ENDIF
+	CALL KOJO_4_0_PARAGRAPH_MESSAGE
+RETURN 1
+
+
+; □ 1 淫蟲に襲われた(主人公)
+@KOJO_4_0_SYSTEM_MESSAGE_200_148_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 主人公以外が襲われたときと同じ処理で
+	CALL KOJO_4_0_SYSTEM_MESSAGE_200_148_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1
+
+
+; □ 3 ふたなり化
+@KOJO_4_0_SYSTEM_MESSAGE_200_148_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_4_0_SYSTEM_MESSAGE_CHINKO_EQUIP(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT

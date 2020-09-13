@@ -1,0 +1,1228 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 判定・確認用
+; ------------------------------------------------------------------------------
+
+; □ 口上モード確認
+@KOJO_16_0_MIND_SET(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#FUNCTIONS
+#DIMS MODE
+
+	; 淫乱堕ちしているか媚薬2個装備の場合は淫乱口上を呼び出す(淫乱落ちしていないのに正気度0未満もバグ対策として一応)
+	; 発情・感情操作系催眠にかかっている場合も淫乱口上を利用
+	IF CFLAG:805 == 1 || (CFLAG:7 == 39 && CFLAG:8 == 39) || CFLAG:800 < 0 || (KOJO_16_0_IS_HYPNO() && FLAG:526 == 1)
+		MODE = 淫乱
+	
+	; 発情口上呼び出し
+	ELSEIF CFLAG:28 || CFLAG:800 <= KOJO_16_0_MIND_BORDER_3
+		MODE = 発情
+		
+	; 発情・普通ランダム呼び出し
+	ELSEIF CFLAG:800 > KOJO_16_0_MIND_BORDER_3 && CFLAG:800 <= KOJO_16_0_MIND_BORDER_2
+		MODE = \@(RAND:2) ? 発情 # 普通\@
+	
+	; 普通口上呼び出し
+	ELSEIF CFLAG:800 > KOJO_16_0_MIND_BORDER_2 && CFLAG:800 <= KOJO_16_0_MIND_BORDER_1
+		MODE = 普通
+		
+	; 普通・強気ランダム呼び出し
+	ELSEIF CFLAG:800 > KOJO_16_0_MIND_BORDER_1 && CFLAG:800 <= KOJO_16_0_MIND_BORDER_0
+		MODE = \@(RAND:2) ? 普通 # 強気\@
+	
+	; 強気口上呼び出し
+	ELSEIF CFLAG:800 > KOJO_16_0_MIND_BORDER_0
+		MODE = 強気
+	
+	; 上記該当なしなら普通口上を呼び出す
+	ELSE
+		MODE = 普通
+	ENDIF
+	
+	; デバッグ用口上モードが指定されていればそれを利用する
+	[IF_DEBUG]
+		SIF KOJO_16_0_DEBUG_FORCE_KOJO() != ""
+			MODE = %KOJO_16_0_DEBUG_FORCE_KOJO()%
+	[ENDIF]
+	
+RETURNF MODE
+
+
+; □ ターン終了時確認
+@KOJO_16_0_IS_TURN_FINALIZE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#FUNCTION
+
+	; 戦闘中のみチェック
+	IF TFLAG:13
+		;丸呑みされていて敵の攻撃コマンド以外で汚れが+2された
+		SIF CFLAG:21 && ((KOJO_16_0_PREV_BASE:5 + 2) == BASE:5) && !(KOJO_16_0_GET_PREV_ARG(0) >= 12 && KOJO_16_0_GET_PREV_ARG(0) <= 17)
+			RETURNF 1
+		
+		; 戦闘中に捕食されている
+		SIF CFLAG:10 && ARG:0 == 59
+			RETURNF 1
+			
+		; ひるみ, 防御, 集中, 反撃 が一斉に解除された
+		SIF (!CFLAG:24 && !CFLAG:30 && !CFLAG:32 && !CFLAG:33) && (KOJO_16_0_PREV_CFLAG:24 || KOJO_16_0_PREV_CFLAG:30 || KOJO_16_0_PREV_CFLAG:32 || KOJO_16_0_PREV_CFLAG:33)
+			RETURNF 1
+			
+		; レッサーヒュプノの
+		; 催眠減衰で催眠が解けた
+		SIF !CFLAG:43 && KOJO_16_0_PREV_CFLAG:43
+			RETURNF 1
+		
+		; 時間経過で起きた, 煙幕が晴れた, 砂煙が晴れた
+		SIF ARG:0 == 43 || ARG:0 == 44 || ARG:0 == 45
+			RETURNF 1
+		
+		; 裸で時間経過
+		SIF ARG:0 == 46
+			RETURNF 1
+		
+		; 重度汚染部屋で時間経過
+		SIF ARG:0 == 47
+			RETURNF 1
+		
+		; 寄生侵食植え付け
+		SIF ARG:0 == 445
+			RETURNF 1
+			
+		; 触手包帯ダメージ
+		SIF ARG:0 == 508
+			RETURNF 1
+			
+		; 触手スーツを着ている場合EPダメージ
+		SIF ARG:0 == 441 && ARG:1 == 27
+			RETURNF 1
+			
+		; 触手スーツ自己再生
+		SIF ARG:0 == 441 && ARG:1 == 28
+			RETURNF 1
+			
+		; 絶頂から回復
+		; 前回参照時にCFLAG:35がON　現在がOFF+EP全快ならTRUE
+		SIF KOJO_16_0_PREV_CFLAG:35 && !CFLAG:35 && BASE:EP == MAXBASE:EP
+			RETURNF 1
+		
+		; ふたなり:ターン終了時発情
+		SIF ARG:0 == 453
+			RETURNF 1
+		
+		; ターン終了時自慰発生
+		; ターン終了時自慰はフラグが立った上にランダムで発生する
+		; もし発生しなかった場合は誘発フラグCFLAG:39参照　前回値と比較
+		SIF ARG:0 == 48 || (!CFLAG:39 && KOJO_16_0_PREV_CFLAG:39)
+			RETURNF 1
+				
+		; 抱きつかれたキャラから解放された OR 抜け出した
+		SIF ARG:0 == 1 && ARG:1 == 95
+			RETURNF 1
+	ENDIF
+RETURNF 0
+
+; □ 男の娘チェック
+@KOJO_16_0_CHECK_OTOKONOKO(ARG:0)
+
+	; いかなる状況でも口上発生時にチェックを行う
+	; ただしゲーム開始時のキャラ選択画面は除く
+	SIF ARG:0 == 0
+		RETURN 0
+		
+	; 素質[男の娘]未所持
+	SIF !TALENT:122
+		RETURN 0
+		
+	; 既にチェック判定済み
+	SIF CFLAG:810
+		RETURN 0
+		
+	CALL KOJO_TITLE_8_0
+	PRINTFORML %RESULTS%は素質[男の娘]に未対応です
+	PRINTFORML 表示内容に違和感が発生する可能性がありますが、強制的に口上を表示しますか？
+	PRINTFORML （いいえを選択した場合[男の娘]状態では一切の口上が表示されなくなります）
+	CALL ASK_YN
+	IF RESULT == 0
+		CFLAG:810 = 1
+	ELSE
+		CFLAG:810 = 2
+	ENDIF
+RETURN 1
+
+; □ りばーす東方触手宮での口上モード指定
+@KOJO_16_0_SET_REVERSE_KOJO_MODE(ARG:0)
+
+	; いかなる状況でも口上発生時にチェックを行う
+	; ただしゲーム開始時のキャラ選択画面は除く
+	SIF ARG:0 == 0
+		RETURN 0
+		
+	; 既にチェック判定済み
+	SIF CFLAG:811
+		RETURN 0
+		
+	; りばーす東方触手宮の時のみ判定
+	SIF !KOJO_16_0_IS_REVERSE()
+		RETURN 0
+	
+	DRAWLINE
+	CALL KOJO_TITLE_8_0
+	PRINTFORML %RESULTS%は、りばーす東方触手宮に完全対応していません
+	PRINTFORML バリアント仕様の違いから、りばーす東方触手宮では意図しないタイミングでの口上が発生します
+	PRINTFORML 
+	PRINTFORML 口上動作モードを選択して下さい
+	DRAWLINE
+	PRINTFORML [0] 東方触手宮モード　　　　　　　※違和感のある口上が発生します
+	PRINTFORML [1] りばーす東方触手宮専用モード　※正常に動作しますが、口上バリエーションが減ります
+	
+	WHILE !CFLAG:811
+		INPUT
+		SELECTCASE RESULT
+		CASE 0
+			CFLAG:811 = 1
+		CASE 1
+			CFLAG:811 = 2
+		CASEELSE
+			REUSELASTLINE 入力値が不正です。再入力してください
+		ENDSELECT
+	WEND
+RETURN 1
+
+; □ 催眠・暗示状態の確認
+@KOJO_16_0_IS_HYPNO()
+#FUNCTION
+	SIF CFLAG:43 || GETBIT(CFLAG:900, 0)
+		RETURNF 1
+RETURNF 0
+
+; ------------------------------------------------------------------------------
+; ■ 名前関連
+; ------------------------------------------------------------------------------
+
+; □ 仲間の呼び名を初期化
+@KOJO_16_0_INIT_CALLNAME()
+#DIM LCOUNT
+	VARSET KOJO_16_0_CALLNAME
+	FOR LCOUNT, 0, CHARANUM
+		TRYCALLFORM KOJO_16_0_CALLNAME_{NO:LCOUNT}()
+	NEXT
+RETURN 1
+
+; □ 仲間の呼び名を追加
+@KOJO_16_0_ADD_CALLNAME(CHAR_NO, ADDNAME)
+#DIM LCOUNT
+#DIM CHAR_NO
+#DIMS ADDNAME
+	FOR LCOUNT, 0, VARSIZE("KOJO_16_0_CALLNAME", 1)
+		IF KOJO_16_0_CALLNAME:CHAR_NO:LCOUNT == ""
+			KOJO_16_0_CALLNAME:CHAR_NO:LCOUNT = %ADDNAME%
+			BREAK
+		ENDIF
+	NEXT
+RETURN 1
+
+; □ 仲間の呼び名を確定
+@KOJO_16_0_SELECT_CALLNAME(CALL_ID)
+#FUNCTIONS
+#DIM LCOUNT
+#DIM NAME_COUNT
+#DIM CALL_ID
+	VARSET NAME_COUNT
+	FOR LCOUNT, 0, VARSIZE("KOJO_16_0_CALLNAME", 1)
+		SIF KOJO_16_0_CALLNAME:(NO:CALL_ID):LCOUNT != ""
+			NAME_COUNT++
+	NEXT
+	
+	; 特定の名前が登録されていない場合はデフォルトの名前を返す
+	SIF NAME_COUNT == 0
+		RETURNF CALLNAME:CALL_ID
+		
+RETURNF KOJO_16_0_CALLNAME:(NO:CALL_ID):(RAND:NAME_COUNT)
+
+; □ 仲間の呼び名を取得
+; 与えられたIDに対応するキャラの名前を取得
+; キャラ別ERB側で未定義の場合は通常登録された名前を返す
+@KOJO_16_0_CALLNAME_FROM_ID(CALL_ID)
+#FUNCTIONS
+#DIM  CALL_ID
+	
+	; 呼び出しキャラIDが0未満、CHARANUM以上(存在しないキャラID)
+	SIF CALL_ID < 0 || CALL_ID >= CHARANUM
+		RETURNF "存在しないキャラIDです"
+		
+	; 触手宮のキャラ好感度は主人公からの一方向のみ
+	; 主人公でない場合上手く動かないので除外
+	SIF TARGET != 1
+		RETURNF CALLNAME:CALL_ID + "さん"
+	
+	; 娘は除外
+	SIF CFLAG:CALL_ID:104 != 0
+		RETURNF CALLNAME:CALL_ID
+		
+	; 呼び出しキャラの名前がCSV登録と一致しない(名前が変更されている)
+	SIF CALLNAME:CALL_ID != CSVCALLNAME(NO:CALL_ID)
+		RETURNF CALLNAME:CALL_ID
+
+	; キャラ番号がCSVに未定義
+	; CSV範囲外なだけで実体はあるので登録された名前を返す
+	EXISTCSV NO:CALL_ID
+	SIF !RESULT
+		RETURNF CALLNAME:CALL_ID
+		
+; 登録された名前を返す
+RETURNF KOJO_16_0_SELECT_CALLNAME(CALL_ID)
+
+; ------------------------------------------------------------------------------
+; ■ 口上登録・表示関数
+; ------------------------------------------------------------------------------
+
+; □ メッセージ表示関連変数総合初期化
+@KOJO_16_0_CLEAR_MESSAGE()
+	VARSET KOJO_16_0_STOCK_MESSAGE_COUNT
+	VARSET KOJO_16_0_STOCK_MESSAGE_ARRAY
+	VARSET KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE
+	VARSET KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER
+	VARSET KOJO_16_0_IMPORTANT_FLAG
+	CALL KOJO_16_0_CLEAR_TEMP_MESSAGE
+RETURN 1
+
+; □ メッセージ表示関連一時記憶初期化
+@KOJO_16_0_CLEAR_TEMP_MESSAGE()
+	VARSET KOJO_16_0_TEMP_MESSAGE_RANK
+	VARSET KOJO_16_0_TEMP_MESSAGE_COUNT
+	VARSET KOJO_16_0_TEMP_MESSAGE_ARRAY
+RETURN 1
+
+
+; □ 地の文スキップフラグを設定
+; スキップフラグを設定した場合(ARG==1)、当ループ中は自動で地の文表示が行われない
+; 任意のタイミングで地の文表示を行いたい場合に呼び出す
+@KOJO_16_0_SET_TEXT_SKIP(ARG)
+	KOJO_16_0_TEXT_SKIP_FLAG = ARG
+RETURN 1
+
+; □ 地の文スキップフラグを取得
+@KOJO_16_0_IS_TEXT_SKIP()
+#FUNCTION
+RETURNF SIGN(KOJO_16_0_TEXT_SKIP_FLAG)
+
+; □ システムメッセージ表示済フラグを設定
+@KOJO_16_0_SET_PRINTED_SYSYTEM_MESSAGE(ARG)
+	KOJO_16_0_PRINTED_SYSTEM_MESSAGE = ARG
+RETURN 0
+
+; □ システムメッセージ表示済フラグを取得
+@KOJO_16_0_IS_PRINTED_SYSTEM_MESSAGE()
+#FUNCTION
+RETURNF SIGN(KOJO_16_0_PRINTED_SYSTEM_MESSAGE)
+
+; □ システムメッセージを表示
+; システムメッセージを表示するだけのラッパー
+; 2重表示防止を忘れる可能性があるので一箇所にまとめる
+@KOJO_16_0_PRINT_SYSTEM_MESSAGE()
+	
+	; スキップフラグ設定時は何もしないで帰る
+	SIF KOJO_16_0_IS_TEXT_SKIP()
+		RETURN 0
+		
+	IF !KOJO_16_0_IS_PRINTED_SYSTEM_MESSAGE()
+		{
+		CALL SYSTEM_MESSAGE(KOJO_16_0_GET_ARG(0),
+		                    KOJO_16_0_GET_ARG(1),
+		                    KOJO_16_0_GET_ARGS(0),
+		                    KOJO_16_0_GET_ARGS(1),
+		                    KOJO_16_0_GET_ARG(2),
+		                    KOJO_16_0_GET_ARG(3),
+		                    KOJO_16_0_GET_ARG(4),
+		                    KOJO_16_0_GET_ARG(5),
+		                    KOJO_16_0_GET_ARG(6))
+		}
+		
+		CALL KOJO_16_0_SET_PRINTED_SYSYTEM_MESSAGE(1)
+	ENDIF
+RETURN 1
+
+; □ 口上単体読み込み
+; KOJO_16_0_DEPLOY_MESSAGEの単体版 TRYCCALLFORMのラッパー
+; この関数は以下の複数返り値を持つ
+; RESULT:0 呼び出した関数からの返り値
+; RESULT:1 関数の呼び出しに成功したか否か 0:失敗 1:成功
+@KOJO_16_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, FUNCTION_NAME)
+#DIMS DYNAMIC BASE_FUNCTION_NAME
+#DIM  DYNAMIC FUNCTION_RESULT
+#DIM  DYNAMIC TRYCCALLFORM_RESULT
+#DIM  DYNAMIC FIX_BEFORE_MESSAGE_COUNT
+#DIMS DYNAMIC FUNCTION_NAME
+
+	; 指定関数名が無効
+	SIF FUNCTION_NAME == ""
+		RETURN 0
+		
+	; 口上単体読み込みは既存の口上関数から呼び出される事を前提とする為
+	; 呼び出し元の口上関数名を一時保存し、後で元に戻す必要がある
+	BASE_FUNCTION_NAME = KOJO_16_0_GET_ACTIVE_FUNCTION_NAME
+	
+	; 口上登録確認用
+	FIX_BEFORE_MESSAGE_COUNT = KOJO_16_0_STOCK_MESSAGE_COUNT
+	
+	; 対応口上呼び出し(important属性未適用時のみ)
+	CALL KOJO_16_0_SET_ACTIVE_FUNCTION_NAME(@"%FUNCTION_NAME%")
+	IF !KOJO_16_0_GET_IMPORTANT_FLAG()
+		TRYCCALLFORM %FUNCTION_NAME%(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+			
+			; 呼び出した関数の返り値を保存
+			FUNCTION_RESULT = RESULT
+			TRYCCALLFORM_RESULT = 1
+			
+			; 呼び出しに成功した場合一時ストックに積まれた口上群をメインストックに移す
+			CALL KOJO_16_0_FIX_MESSAGE
+			
+			; デバッグモードで起動した時のみ表示を行う
+			[IF_DEBUG]
+				IF KOJO_16_0_SHOW_REGIST_FUNCTION()
+					IF FIX_BEFORE_MESSAGE_COUNT == KOJO_16_0_STOCK_MESSAGE_COUNT && !KOJO_16_0_GET_IMPORTANT_FLAG()
+						SETCOLOR 0x333333
+					ELSEIF KOJO_16_0_GET_IMPORTANT_FLAG()
+						SETCOLOR 0x66FF33
+					ELSE
+						SETCOLOR 0xE5FF26
+					ENDIF
+					PRINTFORML 口上関数登録 %FUNCTION_NAME%
+					RESETCOLOR
+				ENDIF
+			[ENDIF]
+		CATCH
+			FUNCTION_RESULT = 0
+			TRYCCALLFORM_RESULT = 0
+		ENDCATCH
+	ELSE
+		; important属性適用時は口上呼び出し返り値、TRYCCALLFORM共に失敗として扱う
+		FUNCTION_RESULT = 0
+		TRYCCALLFORM_RESULT = 0
+	ENDIF
+	
+	; 口上関数名を元に戻す
+	CALL KOJO_16_0_SET_ACTIVE_FUNCTION_NAME(@"%BASE_FUNCTION_NAME%")
+	
+	RESULT:0 = FUNCTION_RESULT
+	RESULT:1 = TRYCCALLFORM_RESULT
+RETURN
+
+; □ 口上一括読み込み
+; 各種引数を指定する事で任意のPREV_ARGで呼び出すことも可能
+@KOJO_16_0_DEPLOY_MESSAGE(R_ARG:0, R_ARG:1, R_ARGS:0, R_ARGS:1, R_ARG:2, R_ARG:3, R_ARG:4, R_ARG:5, R_ARG:6, BASE_STR = "", RANK = 0)
+#DIM  DYNAMIC R_ARG, 7
+#DIMS DYNAMIC R_ARGS, 2
+#DIMS DYNAMIC BASE_STR
+#DIM  DYNAMIC RANK
+#DIM  DYNAMIC FIX_BEFORE_MESSAGE_COUNT
+#DIM  DYNAMIC HASH_NUM
+#DIMS DYNAMIC HASH_CODE
+#DIMS HASH_TABLE, 1000000
+
+	; 階層が配列の範囲外、
+	SIF RANK > 6
+		RETURN 0
+		
+	; 基礎文字列が不適格
+	STRLENFORMU %BASE_STR%
+	SUBSTRINGU BASE_STR, (RESULT - 2), -1
+	SIF RANK == 1 && RESULTS == "X_"
+		RETURN 0
+	
+	; 口上登録確認用
+	FIX_BEFORE_MESSAGE_COUNT = KOJO_16_0_STOCK_MESSAGE_COUNT
+	
+	; 呼び出し予定関数のハッシュ取得
+	CALL CRC32_UNI(@"%BASE_STR%%TOSTR(R_ARG:RANK)%")
+	HASH_NUM = RESULT:0
+	HASH_CODE = %RESULTS:0%
+		
+	;PRINTFORML %BASE_STR%%TOSTR(R_ARG:RANK)%
+		
+	; 対応口上呼び出し(important属性、無効関数呼び出し防止のハッシュテーブル情報を確認)
+	CALL KOJO_16_0_SET_ACTIVE_FUNCTION_NAME(@"%BASE_STR%%TOSTR(R_ARG:RANK)%")
+	IF !KOJO_16_0_GET_IMPORTANT_FLAG() && STRCOUNT(HASH_TABLE:(HASH_NUM % VARSIZE("HASH_TABLE")), @"%HASH_CODE%") == 0
+		{
+		TRYCCALLFORM %BASE_STR%%TOSTR(R_ARG:RANK)%(KOJO_16_0_GET_ARG(0),
+		                                           KOJO_16_0_GET_ARG(1),
+		                                           KOJO_16_0_GET_ARGS(0),
+		                                           KOJO_16_0_GET_ARGS(1),
+		                                           KOJO_16_0_GET_ARG(2),
+		                                           KOJO_16_0_GET_ARG(3),
+		                                           KOJO_16_0_GET_ARG(4),
+		                                           KOJO_16_0_GET_ARG(5),
+		                                           KOJO_16_0_GET_ARG(6))
+		}
+			
+			; 呼び出しに成功した場合一時ストックに積まれた口上群をメインストックに移す
+			CALL KOJO_16_0_FIX_MESSAGE
+			
+			; デバッグモードで起動した時のみ表示を行う
+			[IF_DEBUG]
+				IF KOJO_16_0_SHOW_REGIST_FUNCTION()
+					IF FIX_BEFORE_MESSAGE_COUNT == KOJO_16_0_STOCK_MESSAGE_COUNT && !KOJO_16_0_GET_IMPORTANT_FLAG()
+						SETCOLOR 0x333333
+					ELSEIF KOJO_16_0_GET_IMPORTANT_FLAG()
+						SETCOLOR 0x66FF33
+					ELSE
+						SETCOLOR 0xE5FF26
+					ENDIF
+					PRINTFORML 口上関数登録 %BASE_STR%%TOSTR(R_ARG:RANK)%
+					RESETCOLOR
+				ENDIF
+			[ENDIF]
+			
+			; 前回参照値用口上の呼び出し
+			IF !STRCOUNT(BASE_STR, "PREV")
+				{
+				CALL KOJO_16_0_DEPLOY_MESSAGE(KOJO_16_0_GET_PREV_PURE_ARG(0),
+				                              KOJO_16_0_GET_PREV_PURE_ARG(1),
+				                              KOJO_16_0_GET_PREV_PURE_ARGS(0),
+				                              KOJO_16_0_GET_PREV_PURE_ARGS(1),
+				                              KOJO_16_0_GET_PREV_PURE_ARG(2),
+				                              KOJO_16_0_GET_PREV_PURE_ARG(3),
+				                              KOJO_16_0_GET_PREV_PURE_ARG(4),
+				                              KOJO_16_0_GET_PREV_PURE_ARG(5),
+				                              KOJO_16_0_GET_PREV_PURE_ARG(6),
+				                              @"%BASE_STR%%TOSTR(R_ARG:RANK)%_PREV_PURE_")
+				}
+				{
+				CALL KOJO_16_0_DEPLOY_MESSAGE(KOJO_16_0_GET_PREV_ARG(0),
+				                              KOJO_16_0_GET_PREV_ARG(1),
+				                              KOJO_16_0_GET_PREV_ARGS(0),
+				                              KOJO_16_0_GET_PREV_ARGS(1),
+				                              KOJO_16_0_GET_PREV_ARG(2),
+				                              KOJO_16_0_GET_PREV_ARG(3),
+				                              KOJO_16_0_GET_PREV_ARG(4),
+				                              KOJO_16_0_GET_PREV_ARG(5),
+				                              KOJO_16_0_GET_PREV_ARG(6),
+				                              @"%BASE_STR%%TOSTR(R_ARG:RANK)%_PREV_")
+				}
+			ENDIF
+		CATCH
+			; 呼び出しに失敗した関数は二度と呼び出さないようにフラグを持つ
+			HASH_TABLE:(HASH_NUM % VARSIZE("HASH_TABLE")) = @"%HASH_TABLE:(HASH_NUM % VARSIZE("HASH_TABLE"))%, %HASH_CODE%")
+		ENDCATCH
+	ENDIF
+	
+	;下の階層へ
+	CALLFORM KOJO_16_0_DEPLOY_MESSAGE(R_ARG:0, R_ARG:1, R_ARGS:0, R_ARGS:1, R_ARG:2, R_ARG:3, R_ARG:4, R_ARG:5, R_ARG:6, @"%BASE_STR%%TOSTR(R_ARG:RANK)%_", RANK + 1)
+	CALLFORM KOJO_16_0_DEPLOY_MESSAGE(R_ARG:0, R_ARG:1, R_ARGS:0, R_ARGS:1, R_ARG:2, R_ARG:3, R_ARG:4, R_ARG:5, R_ARG:6, @"%BASE_STR%X_", RANK + 1)
+RETURN 1
+
+; □ 現在処理中の口上関数名を保持
+@KOJO_16_0_SET_ACTIVE_FUNCTION_NAME(ARGS)
+	KOJO_16_0_ACTIVE_FUNCTION_NAME = %ARGS%
+RETURN 1
+
+; □ 現在処理中の口上関数名を取得
+@KOJO_16_0_GET_ACTIVE_FUNCTION_NAME()
+#FUNCTIONS
+RETURNF KOJO_16_0_ACTIVE_FUNCTION_NAME
+
+; □ 追加地の文関数(前)登録
+; KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:0:X には登録元関数名
+; KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:1:X には登録された地の文用関数名が入る
+@KOJO_16_0_REGIST_DESCRIPTION_BEFORE(ARGS)
+#DIM LCOUNT
+
+	FOR LCOUNT, 0, VARSIZE("KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE", 1)
+		; 関数登録
+		; 登録済みの同名関数があった場合は上書き
+		{
+		IF KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:0:LCOUNT == KOJO_16_0_GET_ACTIVE_FUNCTION_NAME() || 
+		   KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:0:LCOUNT == ""
+		}
+			KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:0:LCOUNT = %KOJO_16_0_GET_ACTIVE_FUNCTION_NAME()%
+			KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:1:LCOUNT = %ARGS%
+			BREAK
+		ENDIF
+	NEXT
+RETURN 1
+
+; □ 追加地の文関数(前)取得
+; ARGSに登録元関数名を渡すと、登録された関数名を取得出来る
+@KOJO_16_0_GET_DESCRIPTION_BEFORE(ARGS)
+#FUNCTIONS
+#DIM LCOUNT
+	FOR LCOUNT, 0, VARSIZE("KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE", 1)
+		SIF KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:0:LCOUNT == ARGS
+			RETURNF KOJO_16_0_DESCRIPTION_FUNCTION_NAME_BEFORE:1:LCOUNT
+	NEXT
+RETURNF ""
+
+; □ 追加地の文関数(後)登録
+; KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:0:X には登録元関数名
+; KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:1:X には登録された地の文用関数名が入る
+@KOJO_16_0_REGIST_DESCRIPTION_AFTER(ARGS)
+#DIM LCOUNT
+
+	FOR LCOUNT, 0, VARSIZE("KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER", 1)
+		; 関数登録
+		; 登録済みの同名関数があった場合は上書き
+		{
+		IF KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:0:LCOUNT == KOJO_16_0_GET_ACTIVE_FUNCTION_NAME() || 
+		   KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:0:LCOUNT == ""
+		}
+			KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:0:LCOUNT = %KOJO_16_0_GET_ACTIVE_FUNCTION_NAME()%
+			KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:1:LCOUNT = %ARGS%
+			BREAK
+		ENDIF
+	NEXT
+RETURN 1
+
+; □ 追加地の文関数(後)取得
+; ARGSに登録元関数名を渡すと、登録された関数名を取得出来る
+@KOJO_16_0_GET_DESCRIPTION_AFTER(ARGS)
+#FUNCTIONS
+#DIM LCOUNT
+	FOR LCOUNT, 0, VARSIZE("KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER", 1)
+		SIF KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:0:LCOUNT == ARGS
+			RETURNF KOJO_16_0_DESCRIPTION_FUNCTION_NAME_AFTER:1:LCOUNT
+	NEXT
+RETURNF ""
+
+; □ 口上の登録
+@KOJO_16_0_ADD_MESSAGE(ARGS_MESSAGE)
+#DIMS DYNAMIC ARGS_MESSAGE
+#DIMS DYNAMIC MESSAGE_VALUE
+
+	; 追加地の文関数(前)が登録されている & 口上ストックが空なら地の文を追加しておく
+	IF KOJO_16_0_TEMP_MESSAGE_RANK == 0 && KOJO_16_0_TEMP_MESSAGE_COUNT:0 == 0 && KOJO_16_0_GET_DESCRIPTION_BEFORE(KOJO_16_0_GET_ACTIVE_FUNCTION_NAME()) != ""
+		; 無限ループ防止の為、空段落を一つ追加しておく(表示に影響は出ない)
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE()
+		{
+		TRYCALLFORM %KOJO_16_0_GET_DESCRIPTION_BEFORE(KOJO_16_0_GET_ACTIVE_FUNCTION_NAME())%(KOJO_16_0_GET_ARG(0),
+		                                                                                     KOJO_16_0_GET_ARG(1),
+		                                                                                     KOJO_16_0_GET_ARGS(0),
+		                                                                                     KOJO_16_0_GET_ARGS(1),
+		                                                                                     KOJO_16_0_GET_ARG(2),
+		                                                                                     KOJO_16_0_GET_ARG(3),
+		                                                                                     KOJO_16_0_GET_ARG(4),
+		                                                                                     KOJO_16_0_GET_ARG(5),
+		                                                                                     KOJO_16_0_GET_ARG(6))
+		}
+	ENDIF
+	
+	; エスケープ文字で口上色を変更しているにも関わらず閉じ忘れがある場合修正
+	MESSAGE_VALUE = %ARGS_MESSAGE%
+	SIF STRCOUNT(MESSAGE_VALUE, @"\d") % 2
+		MESSAGE_VALUE += @"\d"
+	SIF STRCOUNT(MESSAGE_VALUE, @"\b") % 2
+		MESSAGE_VALUE += @"\b"
+	SIF STRCOUNT(MESSAGE_VALUE, @"\g") % 2
+		MESSAGE_VALUE += @"\g"
+		
+	; 登録
+	KOJO_16_0_TEMP_MESSAGE_ARRAY:KOJO_16_0_TEMP_MESSAGE_RANK:(KOJO_16_0_TEMP_MESSAGE_COUNT:KOJO_16_0_TEMP_MESSAGE_RANK) = %MESSAGE_VALUE%
+	KOJO_16_0_TEMP_MESSAGE_COUNT:KOJO_16_0_TEMP_MESSAGE_RANK++
+RETURN 1
+
+; □ 口上を次の節へ
+@KOJO_16_0_PARAGRAPH_MESSAGE
+	KOJO_16_0_TEMP_MESSAGE_RANK++
+RETURN 1
+
+; □ 口上を整理
+@KOJO_16_0_FIX_MESSAGE(RANK = 0, BASE_STR = "")
+#DIM  DYNAMIC LCOUNT
+#DIM  DYNAMIC RANK
+#DIMS DYNAMIC BASE_STR
+#DIMS EDIT_TEXT
+
+	; ストックにメッセージが入っていないなら帰る
+	; 口上優先度のみが登録されて実態が無い場合も帰る
+	IF KOJO_16_0_TEMP_MESSAGE_RANK == 0
+		{
+		IF KOJO_16_0_TEMP_MESSAGE_COUNT:KOJO_16_0_TEMP_MESSAGE_RANK == 0 ||
+		  (KOJO_16_0_TEMP_MESSAGE_COUNT:KOJO_16_0_TEMP_MESSAGE_RANK == 1 && KOJO_16_0_TEMP_MESSAGE_ARRAY:0:0 == "")
+		}
+			CALL KOJO_16_0_CLEAR_TEMP_MESSAGE
+			RETURN 0
+		ENDIF
+	ENDIF
+	
+	; FIX_MESSAGEが再帰ROOT呼び出し状態で
+	; 追加地の文関数(後)が登録されているなら追加しておく
+	IF RANK == 0 && BASE_STR == "" && KOJO_16_0_GET_DESCRIPTION_AFTER(KOJO_16_0_GET_ACTIVE_FUNCTION_NAME()) != ""
+		{
+		TRYCALLFORM %KOJO_16_0_GET_DESCRIPTION_AFTER(KOJO_16_0_GET_ACTIVE_FUNCTION_NAME())%(KOJO_16_0_GET_ARG(0),
+		                                                                                    KOJO_16_0_GET_ARG(1),
+		                                                                                    KOJO_16_0_GET_ARGS(0),
+		                                                                                    KOJO_16_0_GET_ARGS(1),
+		                                                                                    KOJO_16_0_GET_ARG(2),
+		                                                                                    KOJO_16_0_GET_ARG(3),
+		                                                                                    KOJO_16_0_GET_ARG(4),
+		                                                                                    KOJO_16_0_GET_ARG(5),
+		                                                                                    KOJO_16_0_GET_ARG(6))
+		}
+	ENDIF
+
+	; 何故かFORで実装すると再帰時にループから抜ける
+	; 原因が究明できなかったのでWHILEで実装
+	WHILE 1
+		; ストックしている数の処理を終えたらBREAK
+		; ただし空ストックのままランクを掘り下げている可能性があるので最低一回は処理する
+		SIF LCOUNT >= KOJO_16_0_TEMP_MESSAGE_COUNT:RANK && LCOUNT > 0
+			BREAK
+			
+		; 現在処理中のランクよりも下の階層があるなら、そちらで処理
+		IF KOJO_16_0_TEMP_MESSAGE_RANK > RANK
+			; 保持している優先度と現在の優先度を比較して大きいものを引き渡す
+			CALL KOJO_16_0_FIX_MESSAGE(RANK + 1, @"%BASE_STR%%KOJO_16_0_TEMP_MESSAGE_ARRAY:RANK:LCOUNT%")
+
+		; 下の階層が無いならばメッセージ確定
+		ELSE
+			EDIT_TEXT = %BASE_STR%%KOJO_16_0_TEMP_MESSAGE_ARRAY:RANK:LCOUNT%
+			
+			; 登録文字列に地の文が含まれていない場合、先頭に地の文を付与する
+			; ただし地の文キャンセル用のエスケープが含まれていた場合は付与なし
+			SIF STRCOUNT(EDIT_TEXT, @"\M") == 0 && STRCOUNT(EDIT_TEXT, @"\m") == 0
+				EDIT_TEXT = \M%EDIT_TEXT%
+
+			; 登録文字列から半角スペースとタブ、オリジナル地の文用のエスケープを取り除く
+			REPLACE EDIT_TEXT, " ", ""
+			REPLACE RESULTS, "\t", ""
+			REPLACE RESULTS, "\m", ""
+			EDIT_TEXT = %RESULTS%
+			
+			; 既に登録済みの口上に同じものがあった場合、登録を弾く
+			; 登録テキストが空、もしくは地の文のみの場合も弾く
+			; 例外として地の文スキップフラグのみの登録は可とする
+			REPLACE RESULTS, "\M", ""
+			IF (!MATCH(KOJO_16_0_STOCK_MESSAGE_ARRAY, EDIT_TEXT) && STRLENS(RESULTS) != 0) || @"%BASE_STR%%KOJO_16_0_TEMP_MESSAGE_ARRAY:RANK:LCOUNT%" == @"\m"
+				KOJO_16_0_STOCK_MESSAGE_ARRAY:(KOJO_16_0_STOCK_MESSAGE_COUNT) = %EDIT_TEXT%
+				KOJO_16_0_STOCK_MESSAGE_COUNT++
+			ENDIF
+		ENDIF
+			
+		LCOUNT++
+	WEND
+	
+	; 処理後はストックを空に
+	SIF RANK == 0
+		CALL KOJO_16_0_CLEAR_TEMP_MESSAGE
+RETURN 1
+
+; □ 口上 important属性設定
+@KOJO_16_0_SET_IMPORTANT_FLAG(IMPORTANT_FLAG = 1)
+#DIM IMPORTANT_FLAG
+	CALL KOJO_16_0_CLEAR_MESSAGE()
+	KOJO_16_0_IMPORTANT_FLAG = IMPORTANT_FLAG
+RETURN 1
+
+; □ 口上 important属性取得
+@KOJO_16_0_GET_IMPORTANT_FLAG()
+#FUNCTION
+RETURNF KOJO_16_0_IMPORTANT_FLAG
+
+; □ エスケープシーケンス処理・表示
+; MESSAGE_VALUE		処理・表示する文字列
+; FONT_COLOR		フォントカラー
+@KOJO_16_0_PRINT_ESCAPE(MESSAGE_VALUE, FONT_COLOR = -1)
+#DIM  DYNAMIC SPLIT_COUNT
+#DIM  DYNAMIC LCOUNT
+#DIM  DYNAMIC FONT_COLOR
+#DIMS DYNAMIC MESSAGE_VALUE
+#DIMS DYNAMIC MESSAGE_ARRAY, 100
+
+	; ==========================================================================
+	; ◆ 初期化
+	; ==========================================================================
+	VARSET MESSAGE_ARRAY
+		
+	; ==========================================================================
+	; ◆ 文字色処理
+	; ==========================================================================
+	
+	; メッセージ中で\d
+	; \d～\dの間、又は\d(単独)以降の文字列をシステム標準色で表示する
+	SPLIT MESSAGE_VALUE, "\d", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			; \dに挟まれた内容のみシステム標準色で表示
+			IF LCOUNT % 2 == 1
+				GETDEFCOLOR
+				CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), RESULT)
+			; 通常文字色で描画
+			ELSE
+				CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+			ENDIF
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; メッセージ中で\b
+	; \b～\bの間、又は\b(単独)以降の文字列をBAD色(赤)で表示する
+	SPLIT MESSAGE_VALUE, "\b", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			; \bに挟まれた内容のみBAD色(赤)で表示
+			IF LCOUNT % 2 == 1
+				CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), 0xEE1010)
+			; 通常文字色で描画
+			ELSE
+				CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+			ENDIF
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; メッセージ中で\g
+	; \g～\gの間、又は\g(単独)以降の文字列をGOOD色(青)で表示する
+	SPLIT MESSAGE_VALUE, "\g", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			; \bに挟まれた内容のみGOOD色(青)で表示
+			IF LCOUNT % 2 == 1
+				CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), 0x10EEEE)
+			; 通常文字色で描画
+			ELSE
+				CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+			ENDIF
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; ==========================================================================
+	; ◆ 文章整形処理・システムメッセージ
+	; ==========================================================================
+	
+	; メッセージ中で\w
+	SPLIT MESSAGE_VALUE, "\w", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+		
+			; 改行処理
+			SIF LCOUNT != (SPLIT_COUNT - 1)
+				PRINTFORMW 
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; メッセージ中で\n
+	SPLIT MESSAGE_VALUE, "\n", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+		
+			; 改行処理
+			SIF LCOUNT != (SPLIT_COUNT - 1)
+				PRINTFORML 
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; メッセージ中で\c
+	SPLIT MESSAGE_VALUE, "\c", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+		
+			; 1行消去
+			SIF LCOUNT != (SPLIT_COUNT - 1)
+				CLEARLINE 1
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; メッセージ中で\M
+	SPLIT MESSAGE_VALUE, "\M", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+		
+			; システムメッセージ表示
+			SIF LCOUNT != (SPLIT_COUNT - 1)
+				CALL KOJO_16_0_PRINT_SYSTEM_MESSAGE()
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; ==========================================================================
+	; ◆ 特殊文字
+	; ==========================================================================
+	
+	; メッセージ中で♥
+	SPLIT MESSAGE_VALUE, "♥", MESSAGE_ARRAY
+	SPLIT_COUNT = RESULT
+	IF SPLIT_COUNT != 1
+		FOR LCOUNT, 0, SPLIT_COUNT
+			; 再帰
+			CALL KOJO_16_0_PRINT_ESCAPE(MESSAGE_ARRAY:(LCOUNT), FONT_COLOR)
+		
+			; ハート表示
+			SIF LCOUNT != (SPLIT_COUNT - 1)
+				CALL HEARTCB(0xD02830)
+		NEXT
+		RETURN 1
+	ENDIF
+	
+	; ==========================================================================
+	; ◆ 表示
+	; ==========================================================================
+	
+	; フォントカラー指定
+	; 未指定ならキャラクタ文字色で描画
+	IF FONT_COLOR == -1
+		SETCOLOR CFLAG:700
+	; 指定されているならその色に
+	ELSE
+		SETCOLOR FONT_COLOR
+	ENDIF
+	
+	; 既に平文
+	PRINTFORM %MESSAGE_VALUE%
+	
+	; 文字色をリセット
+	RESETCOLOR
+RETURN 1
+
+; ------------------------------------------------------------------------------
+; ■ システム関数
+; ------------------------------------------------------------------------------
+
+; □ ARG情報保存
+@KOJO_16_0_SAVE_ARG(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT, 2
+
+	; 既に保持している情報を繰り上げ
+	FOR LCOUNT:0, (VARSIZE("KOJO_16_0_ARG_LOG", 0) - 1), 0, -1
+		FOR LCOUNT:1, 0, 7
+			KOJO_16_0_ARG_LOG:(LCOUNT:0):(LCOUNT:1) = KOJO_16_0_ARG_LOG:(LCOUNT:0 - 1):(LCOUNT:1)
+		NEXT
+		
+		FOR LCOUNT:1, 0, 2
+			KOJO_16_0_ARGS_LOG:(LCOUNT:0):(LCOUNT:1) = %KOJO_16_0_ARGS_LOG:(LCOUNT:0 - 1):(LCOUNT:1)%
+		NEXT
+	NEXT
+	
+	; 新規に引き渡された情報を保持
+	FOR LCOUNT:0, 0, 7
+		KOJO_16_0_ARG_LOG:0:(LCOUNT:0) = ARG:(LCOUNT:0)
+	NEXT
+	
+	FOR LCOUNT:0, 0, 2
+		KOJO_16_0_ARGS_LOG:0:(LCOUNT:0) = %ARGS:(LCOUNT:0)%
+	NEXT
+RETURN 1
+
+; □ 現ARG情報取得
+; ARG	取得したいARG(ARG:0～ARG:6まで)
+@KOJO_16_0_GET_ARG(ARG)
+#FUNCTION
+	; 引数情報がおかしい場合は0を返す
+	SIF !(ARG >= 0 && ARG <= 6)
+		RETURNF 0
+RETURNF KOJO_16_0_ARG_LOG:0:ARG
+
+; □ ARG情報取得
+; ARG	取得したいARG(ARG:0～ARG:6まで)
+@KOJO_16_0_GET_PREV_ARG(ARG, LBACKNUMBER = 1)
+#FUNCTION
+#DIM LCOUNT
+#DIM LBACKNUMBER ; 何個前の情報を取得するか 標準は1
+#DIM MSG_COUNT   ; 検索で見つけた数を保持
+
+	VARSET MSG_COUNT
+	
+	; 引数情報がおかしい場合は0を返す
+	SIF !(ARG >= 0 && ARG <= 6) || (LBACKNUMBER <= 0 || LBACKNUMBER >= VARSIZE("KOJO_16_0_ARG_LOG", 0))
+		RETURNF 0
+	
+	; りばーす東方触手宮専用口上モードでは0を返すことで無効化する
+	SIF KOJO_16_0_IS_REVERSE() && CFLAG:811 == 2
+		RETURNF 0
+	
+	FOR LCOUNT, 1, VARSIZE("KOJO_16_0_ARG_LOG", 0)
+		; 割り込みメッセージの確認
+		SIF !KOJO_16_0_CHECK_INTERRUPT_MESSAGE(KOJO_16_0_ARG_LOG:LCOUNT:0, KOJO_16_0_ARG_LOG:LCOUNT:1, KOJO_16_0_ARG_LOG:LCOUNT:2, KOJO_16_0_ARG_LOG:LCOUNT:3, KOJO_16_0_ARG_LOG:LCOUNT:4, KOJO_16_0_ARG_LOG:LCOUNT:5, KOJO_16_0_ARG_LOG:LCOUNT:6)
+			MSG_COUNT++
+		
+		; 必要な情報を発見したので帰る
+		SIF MSG_COUNT == LBACKNUMBER
+			RETURNF KOJO_16_0_ARG_LOG:LCOUNT:ARG
+	NEXT
+RETURNF 0
+
+; □ ARG情報取得(割り込みメッセージの除外なし)
+; ARG 取得したいARG(ARG:0～ARG:6まで)
+@KOJO_16_0_GET_PREV_PURE_ARG(ARG, LBACKNUMBER = 1)
+#FUNCTION
+#DIM LBACKNUMBER ; 何個前の情報を取得するか 標準は1
+	
+	; 引数情報がおかしい場合は0を返す
+	SIF !(ARG >= 0 && ARG <= 6) || (LBACKNUMBER <= 0 || LBACKNUMBER >= VARSIZE("KOJO_16_0_ARG_LOG", 0))
+		RETURNF 0
+		
+	; りばーす東方触手宮専用口上モードでは0を返すことで無効化する
+	SIF KOJO_16_0_IS_REVERSE() && CFLAG:811 == 2
+		RETURNF 0
+		
+RETURNF KOJO_16_0_ARG_LOG:(LBACKNUMBER):ARG
+
+; □ 現ARGS情報取得
+; ARG	取得したいARG(ARGS:0～ARGS:1まで)
+@KOJO_16_0_GET_ARGS(ARG)
+#FUNCTIONS
+	; 引数情報がおかしい場合は""を返す
+	SIF !(ARG >= 0 && ARG <= 1)
+		RETURNF ""
+RETURNF KOJO_16_0_ARGS_LOG:0:ARG
+
+; □ ARGS情報取得
+; ARG	取得したいARGS(ARGS:0～ARGS:1まで)
+@KOJO_16_0_GET_PREV_ARGS(ARG, LBACKNUMBER = 1)
+#FUNCTIONS
+#DIM LCOUNT
+#DIM LBACKNUMBER   ; 何個前の情報を取得するか 標準は1
+#DIM MSG_COUNT     ; 検索で見つけた数を保持
+
+	VARSET MSG_COUNT
+
+	; 引数情報がおかしい場合は空白を返す
+	SIF !(ARG >= 0 && ARG <= 1) || (LBACKNUMBER <= 0 || LBACKNUMBER >= VARSIZE("KOJO_16_0_ARGS_LOG", 0))
+		RETURNF ""
+		
+	; りばーす東方触手宮専用口上モードでは0を返すことで無効化する
+	SIF KOJO_16_0_IS_REVERSE() && CFLAG:811 == 2
+		RETURNF ""
+
+	FOR LCOUNT, 1, VARSIZE("KOJO_16_0_ARGS_LOG", 0)
+		; 割り込みメッセージの確認
+		SIF !KOJO_16_0_CHECK_INTERRUPT_MESSAGE(KOJO_16_0_ARG_LOG:LCOUNT:0, KOJO_16_0_ARG_LOG:LCOUNT:1, KOJO_16_0_ARG_LOG:LCOUNT:2, KOJO_16_0_ARG_LOG:LCOUNT:3, KOJO_16_0_ARG_LOG:LCOUNT:4, KOJO_16_0_ARG_LOG:LCOUNT:5, KOJO_16_0_ARG_LOG:LCOUNT:6)
+			MSG_COUNT++
+		
+		; 必要な情報を発見したので帰る
+		SIF MSG_COUNT == LBACKNUMBER
+			RETURNF KOJO_16_0_ARGS_LOG:LCOUNT:ARG
+	NEXT
+RETURNF ""
+
+; □ ARGS情報取得(割り込みメッセージの除外なし)
+; ARG	取得したいARGS(ARGS:0～ARGS:1まで)
+@KOJO_16_0_GET_PREV_PURE_ARGS(ARG, LBACKNUMBER = 1)
+#FUNCTIONS
+#DIM LBACKNUMBER ; 何個前の情報を取得するか 標準は1
+	
+	; 引数情報がおかしい場合は空白を返す
+	SIF !(ARG >= 0 && ARG <= 1) || (LBACKNUMBER <= 0 || LBACKNUMBER >= VARSIZE("KOJO_16_0_ARGS_LOG", 0))
+		RETURNF ""
+		
+	; りばーす東方触手宮専用口上モードでは0を返すことで無効化する
+	SIF KOJO_16_0_IS_REVERSE() && CFLAG:811 == 2
+		RETURNF ""
+		
+RETURNF KOJO_16_0_ARGS_LOG:(LBACKNUMBER):ARG
+
+; □ 他キャラクタとの遭遇回数を保存
+; ARG	キャラID
+@KOJO_16_0_SAVE_ENCOUNTER_COUNT(ARG)
+#DIM  LCOUNT
+#DIM  L_ARRAY, 500
+#DIMS STR_ARRAY, 500
+
+	; ARGが異常値なら0を返す
+	SIF ARG < 0 || ARG > CHARANUM
+		RETURN 0
+		
+	VARSET L_ARRAY
+	VARSET STR_ARRAY
+	
+	; 保持中のキャラクタ遭遇回数(文字列型変数)を分割
+	SPLIT CSTR:50, ",", STR_ARRAY
+	
+	; 数値として格納
+	FOR LCOUNT, 1, CHARANUM
+		L_ARRAY:LCOUNT = TOINT(STR_ARRAY:LCOUNT)
+		
+		; 遭遇キャラIDと一致したらインクリメント
+		SIF LCOUNT == ARG
+			L_ARRAY:LCOUNT++
+	NEXT
+	
+	; CSTRに書き戻し
+	CSTR:50 = {L_ARRAY:0}
+	FOR LCOUNT, 1, CHARANUM
+		CSTR:50 = %CSTR:50%,{L_ARRAY:LCOUNT}
+	NEXT
+RETURN 1
+
+; □ 他キャラクタとの遭遇回数を取得
+; ARG	キャラID
+@KOJO_16_0_GET_ENCOUNTER_COUNT(ARG)
+#FUNCTION
+#DIM  LCOUNT
+#DIM  L_ARRAY, 500
+#DIMS STR_ARRAY, 500
+	
+	; ARGが異常値なら0を返す
+	SIF ARG < 0 || ARG > CHARANUM
+		RETURNF 0
+		
+	VARSET L_ARRAY
+	VARSET STR_ARRAY
+	
+	; 保持中のキャラクタ遭遇回数(文字列型変数)を分割
+	SPLIT CSTR:50, ",", STR_ARRAY
+	
+	; 数値として格納
+	FOR LCOUNT, 0, CHARANUM
+		L_ARRAY:LCOUNT = TOINT(STR_ARRAY:LCOUNT)
+	NEXT
+RETURNF L_ARRAY:ARG
+
+; □ 拾ったアイテムの個数を保存
+; ARG	アイテムID
+@KOJO_16_0_SAVE_ITEMGET_COUNT(ARG)
+#DIM  LCOUNT
+#DIM  L_ARRAY, VARSIZE("ITEM")
+#DIMS STR_ARRAY, VARSIZE("ITEM")
+		
+	VARSET L_ARRAY
+	VARSET STR_ARRAY
+	
+	; 保持中のアイテム取得回数(文字列型変数)を分割
+	SPLIT CSTR:51, ",", STR_ARRAY
+	
+	; 数値として格納
+	FOR LCOUNT, 1, VARSIZE("ITEM")
+		L_ARRAY:LCOUNT = TOINT(STR_ARRAY:LCOUNT)
+		
+		; 遭遇キャラIDと一致したらインクリメント
+		SIF LCOUNT == ARG
+			L_ARRAY:LCOUNT++
+	NEXT
+	
+	; CSTRに書き戻し
+	CSTR:51 = {L_ARRAY:0}
+	FOR LCOUNT, 1, VARSIZE("ITEM")
+		CSTR:51 = %CSTR:51%,{L_ARRAY:LCOUNT}
+	NEXT
+RETURN 1
+
+; □ 拾ったアイテムの個数を取得
+; ARG	アイテムID
+@KOJO_16_0_GET_ITEMGET_COUNT(ARG)
+#FUNCTION
+#DIM  LCOUNT
+#DIM  L_ARRAY, VARSIZE("ITEM")
+#DIMS STR_ARRAY, VARSIZE("ITEM")
+	
+	; ARGが異常値なら0を返す
+	SIF ARG < 0 || ARG > 100
+		RETURNF 0
+		
+	VARSET L_ARRAY
+	VARSET STR_ARRAY
+	
+	; 保持中のアイテム取得回数(文字列型変数)を分割
+	SPLIT CSTR:51, ",", STR_ARRAY
+	
+	; 数値として格納
+	FOR LCOUNT, 0, VARSIZE("ITEM")
+		L_ARRAY:LCOUNT = TOINT(STR_ARRAY:LCOUNT)
+	NEXT
+RETURNF L_ARRAY:ARG
+
+
+
+; □ 割り込みメッセージの確認
+; 絶頂やステータス変動など、処理中急に発生する処理か否かをチェック
+; 割り込みメッセージなら1、それ以外は0を返す
+; ARG：システムメッセージの引数ARG:0の値
+@KOJO_16_0_CHECK_INTERRUPT_MESSAGE(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#FUNCTION
+	SELECTCASE ARG:0
+	;  32 HPが0になった
+	;  33 MPが0になった
+	;  34 EPが0になった
+	;  35 CPが減少した(服破れ)
+	;  48 ターン終了時自慰発生
+	;  61 敵と初遭遇メッセージ
+	; 120 絶頂の瞬間
+	; 121 発情がおさまった
+	; 122 戦意喪失中に絶頂
+	; 123 母乳を吸われる
+	; 125 寄生が進行
+	; 126 妊娠が進行
+	; 136 処女喪失
+	; 145 寄生が進行(寄生された本人以外の口上)
+	; 146 妊娠が進行(妊娠した本人以外の口上)
+	; 221 尻穴寄生産卵が進行
+	; 222 尻穴寄生産卵が進行 (寄生された本人以外の口上)
+	; 225 尻穴寄生出産が進行
+	; 226 尻穴寄生出産が進行 (寄生された本人以外の口上)
+	; 420 淫乱系素質
+	; 441 触手スーツ常駐時
+	; 442 触手スーツ自慰時
+	; 444 スライムスーツ常駐時
+	; 445 寄生侵食発生
+	; 446 寄生侵食進行
+	; 451 射精した
+	; 452 ふたなりペニスが萎び落ちた
+	; 453 ふたなり ターン終了時発情
+	; 454 ふたなり触手定着　素質[ふたなり]取得
+	; 460 ふたなりでおしおき
+	; 466 勃起
+	; 467 発情による勃起進行(システムメッセージ用)
+	; 468 発情による勃起進行B
+	; 469 発情による勃起進行C
+	; 470 B勃起減衰
+	; 471 C勃起減衰
+	; 500 精液ダメージ
+	; 501 陥没乳首勃起
+	; 505 胸揺れ
+	; 509 膨乳病
+	; 510 バストサイズ変化
+	; 512 卵巣異常
+	; 517 媚薬爆弾
+	; 518 B拡張
+	; 519 骨折ダメージ
+	; 520 捕虜制裁ダメージ
+	; 521 乳首寄生産卵が進行
+	; 522 乳首寄生産卵が進行 (寄生された本人以外の口上)
+	; 525 乳首寄生出産が進行
+	; 526 乳首寄生出産が進行 (寄生された本人以外の口上)
+	; 532 大量膣内射精
+	; 541 C寄生産卵が進行
+	; 542 C寄生産卵が進行 (寄生された本人以外の口上)
+	; 545 C寄生出産が進行
+	; 546 C寄生出産が進行 (寄生された本人以外の口上)
+	; 549 C寄生による射精妨害
+	; 550 C寄生による玉肥大化
+	; 552 C妊娠が進行
+	; 553 C妊娠が進行 (寄生された本人以外の口上)
+	CASE 32, 33, 34, 35, 48, 61, 120, 121, 122, 123, 125, 126, 136, 145, 146, 221, 222, 225, 226, 420, 441, 442, 444, 445, 446, 451, 452, 453, 454, 460, 466, 467, 468, 469, 470, 471, 500, 501, 505, 509, 510, 512, 517, 518, 519, 520, 521, 522, 525, 526, 532, 541, 542, 545, 546, 549, 550, 552, 553
+		RETURNF 1
+	; 503 使い魔
+	CASE 503
+		SELECTCASE ARG:1
+		; 0 睡眠中 B開発開始
+		; 2 睡眠中 B開発中
+		CASE 0, 2
+			RETURNF 1
+		ENDSELECT
+	ENDSELECT
+RETURNF 0
+
+; □ りばーす東方触手宮か否か
+@KOJO_16_0_IS_REVERSE()
+#FUNCTION
+	SIF FLAG:600 == 1
+		RETURNF 1
+RETURNF 0

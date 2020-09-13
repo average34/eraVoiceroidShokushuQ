@@ -1,0 +1,61 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0387 コウノトリ見せつけ
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_14_387(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おねがいしますわ…　いっぱいなかだしして…　にんしんさせてくださいまし…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%の孕み袋……　精液ちゃぷちゃぷにして……　苗床にしてくださいまし…♥♥」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「子作り…っ♥　あたしと子作りいたしましょう…っ♥　あなたのあかちゃん…っ♥♥　あたしに孕ませてぇ……っ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしぃ…っ♥　あかちゃん欲しいですわ……♥　ねぇ…どうしてほしいか…♥　わかっていますわよね♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あぁ…♥　立派なおちんぽ……♥　あたしの奥…ぐちゃぐちゃにされて…♥♥　ザーメンタプタプに…されてしまいますのね…♥♥）\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あのおちんちんで、お腹の中掻き回されて……\n　子宮の中全部精液でいっぱいに……　って何考えていますの！　あたし！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（ぁ……っ！？　お腹の奧、きゅんきゅんしてる……っ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（どう……して……　あの触手見てると、子作りしたくなって………）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ダメっ、ダメですわっ！　あんなのと子作りしたらっ、どうなるか解ってますのに……っ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「な……にコレ……っ！？　急に、アソコが疼いて……っ！？」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（……えっ！？　どうして、脳裏に子供が欲しいなんてっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（ちっ、違うっ！？　あたしは子供なんて欲しくありませんわっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（なんでお腹の奥が熱く…っ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「赤ちゃん……　あたしと魔物の赤ちゃん……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「赤ちゃんを産むには……　膣内にたくさん射精してもらいませんと……」\n"
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

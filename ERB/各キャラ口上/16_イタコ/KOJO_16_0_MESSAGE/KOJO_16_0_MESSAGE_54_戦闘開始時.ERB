@@ -1,0 +1,345 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 54 戦闘開始時
+; ------------------------------------------------------------------------------
+
+; □ 0 通常戦闘
+@KOJO_16_0_SYSTEM_MESSAGE_54_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT
+#DIM FOUND_ENEMY_COUNT
+	
+	; 先制攻撃・不意打ち発生時はここで口上を呼び出さない
+	SIF TFLAG:14
+		RETURN 0
+	
+	; 遭遇した敵の数をカウント
+	; 本来であればTFLAG:15に格納されているが、バリアントやバージョンによっては値が取れない
+	FOUND_ENEMY_COUNT = 10 - GROUPMATCH(0, TFLAG:1, TFLAG:2, TFLAG:3, TFLAG:4, TFLAG:5, TFLAG:6, TFLAG:7, TFLAG:8, TFLAG:9, TFLAG:10)
+
+	; 敵別専用口上があるならそれを呼び出す(出現した敵が1種類の時のみ)
+	IF TFLAG:1 != 0 && FOUND_ENEMY_COUNT == GROUPMATCH(DA:(TFLAG:1):0, DA:(TFLAG:1):0, DA:(TFLAG:2):0, DA:(TFLAG:3):0, DA:(TFLAG:4):0, DA:(TFLAG:5):0, DA:(TFLAG:6):0, DA:(TFLAG:7):0, DA:(TFLAG:8):0, DA:(TFLAG:9):0, DA:(TFLAG:10):0)
+		CALL KOJO_16_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_16_0_SYSTEM_MESSAGE_54_ENEMY_{DA:(TFLAG:1):0}")
+		SIF KOJO_16_0_GET_IMPORTANT_FLAG()
+			RETURN 1
+	ENDIF
+		
+	; 状態異常で喋れない場合は何もしないで帰る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あ…………」\n"
+			
+			; 連戦なら追加口上(直前の呼び出し口上が「戦闘で勝利」)
+			IF KOJO_16_0_GET_PREV_ARG(0) == 57
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あ……　また……」\n"
+			ENDIF
+			
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 寝てたけど起きた
+	IF KOJO_16_0_GET_PREV_ARG(0) == 114
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう少し静かに近付けば、あたし%TACHI()%襲い放題でしたのに…♥　勿体ない事しましたのね♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「睡眠姦もいいですが、起きていないと気持ちよくありませんわ♪」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もし寝たままでしたら……今頃はあったかいのでお腹いっぱいにされてたんでしょうか…♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「き、気づいてよかったですわ……　あのまま寝てたら今ごろあたし……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（急いで戦闘体勢を整えませんと……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（危なかったですわ……！　こんな火照った身体でされていましたら……きっとあたし……！）\n"
+		CASE "強気"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「人の眠りを妨げるなんて、万死に値しますわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「気持ちよく寝ていましたのに、まったくもう……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おちおち休ませてももらえませんのね！」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「起きて早々に戦闘なんて…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……　やっと眠れましたのに…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「寝こみを襲うのは基本というわけですわね…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう、安心して休める場所はありませんの？」\n"
+		ENDSELECT
+		
+	; 普通に
+	ELSE
+		; 汎用口上
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「どうしたんですの？　そんなにあたしに孕ませたいんですの？♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（この身体で、戦えますかしら……）\n"
+		CASE "強気"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ここの魔物、畑で取れたりするんですの？」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「まったく、きりがありませんわ」\n"
+		ENDSELECT
+		CALL KOJO_16_0_FIX_MESSAGE
+		
+		; PT人数によって変化する追加口上
+		; PT人数は一人だけ
+		IF GET_MEMBER_SUM()  == 1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「そんな目で見ない下さいませ♥　子宮が期待して疼いてしまいますわ♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あは……ギラギラしたおめめ♥　どうですか？　あたしとセックスしてみますか？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「このままじゃあたし、ぐっちゃぐちゃに犯されちゃいますわ…？♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「孕ませやすそうな雌狐が一匹、飛んで火にいる夏の虫ですわね」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d目の前の敵は、自分の事を種付け用の雌としか見ていないだろう…\d\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d抵抗せず身を任せれば、気が狂うまで交尾漬けの日々を送れるかもしれない…\d\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\dたった一人では抵抗も出来ず、一方的に嬲られるかもしれない…\d\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d敵の目には無防備な雌が、一匹で罠に掛かりに来たように映っているだろう…\d\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				
+				CALL KOJO_16_0_ADD_MESSAGE, @"\dそう考えた瞬間、%CALLNAME:TARGET%の背筋にゾクゾクとした感覚走った\d\n"
+				
+				; [尻穴狂い]所持 または りばーす東方触手宮でA感覚LV3以上
+				SIF TALENT:75 || (KOJO_16_0_IS_REVERSE() && ABL:6 >= 3)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d尻穴狂いへと堕ちた%CALLNAME:TARGET%は、肛虐絶頂の快感を期待して淫らな笑みを浮かべた\d\n"
+				
+				
+				; [淫乳]所持 または りばーす東方触手宮でA感覚LV3以上
+				SIF TALENT:76 || (KOJO_16_0_IS_REVERSE() && ABL:7 >= 3)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は下品に成長させられた乳房が、快感を求めて熱く疼くのを感じた\d\n"
+				
+				; [淫核]所持 または りばーす東方触手宮でC感覚LV3以上
+				IF TALENT:77 || (KOJO_16_0_IS_REVERSE() && ABL:8 >= 3)
+					; ふたなり時
+					IF GET_PENIS(TARGET)
+						CALL KOJO_16_0_ADD_MESSAGE, @"\d無様に射精させられる姿を想像した%CALLNAME:TARGET%のペニスは、先走りを垂らしながらムクムクと勃起していく\d\n"
+					; 通常時
+					ELSE
+						CALL KOJO_16_0_ADD_MESSAGE, @"\d肉欲に支配された%CALLNAME:TARGET%のクリトリスは、弱点を見せつけるようにムクムクと勃起していく\d\n"
+					ENDIF
+				ENDIF
+				
+				; [淫壺]所持 または りばーす東方触手宮でV感覚LV3以上
+				SIF TALENT:78 || (KOJO_16_0_IS_REVERSE() && ABL:9 >= 3)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d雌の快感に逆らえなくなった%CALLNAME:TARGET%の肉穴は、襲い来る敵を前に愛液をこぼしはじめた\d\n"
+				
+				; [苗床卵巣]所持 && 妊娠していない(寄生含む)
+				SIF TALENT:137 == 3 && !(CFLAG:22 || CFLAG:36)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d完全な苗床へと作り替えられた卵巣が、%CALLNAME:TARGET%の思考を膣内射精の悦びで蝕んでいく\d\n"
+					
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「に、逃げないと……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（どうしてこんな時にっ！？）\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は熱い息を吐きながら、発情しきった身体をぎゅっと抱きしめた\d\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				
+				; [尻穴狂い]所持 または りばーす東方触手宮でA感覚LV3以上
+				SIF TALENT:75 || (KOJO_16_0_IS_REVERSE() && ABL:6 >= 3)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d尻穴狂いへと堕とされた%CALLNAME:TARGET%の脳裏に、アヌスを蹂躙され無様に泣き叫ぶ自分の姿が浮かんだ\d\n"
+				
+				; [淫壺]所持 または りばーす東方触手宮でV感覚LV3以上
+				IF TALENT:78 || (KOJO_16_0_IS_REVERSE() && ABL:9 >= 3)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d性交の快感を貪る為の器官へと作り替えられた%CALLNAME:TARGET%の膣穴は、犯される事を期待して愛液をこぼしている\d\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\dセックス狂いへと堕とされた%CALLNAME:TARGET%の膣穴は、襲い来る敵を前に疼き始めた\d\n"
+				ENDIF
+				
+			CASE "強気"
+				IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+					CALL KOJO_16_0_ADD_MESSAGE, @"「落ち着いてやれば、なんとかなりますわ」\n"
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「逃げることも考えておきますわ……」\n"
+				ENDIF
+				
+			CASEELSE
+				IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+					CALL KOJO_16_0_ADD_MESSAGE, @"（このまま見逃していただけたりは…　ありえませんわね…）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ひとりで戦うなんて無茶でしょうか…」\n"
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（ど、どうにかして逃げませんと……）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「これは、かなりやばいですわ…」\n"
+				ENDIF
+			ENDSELECT
+			
+		; PT人数より敵の数が多い
+		ELSEIF GET_MEMBER_SUM() < TFLAG:15
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+					CALL KOJO_16_0_ADD_MESSAGE, @"「さぁ、誰から気持ちよくしてくださいますの♪」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あは♪　触手さんがたくさんですわ♪」\n"
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「うまく立ち回りませんと、逃げられませんわ……♥」\n"
+				ENDIF
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d襲い来る敵を前に、%CALLNAME:TARGET%はカラダの疼きが大きくなるのを感じた\d\n"
+				
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……　逃げたほうが、いいかもしれませんわ……っ」\n"
+			CASE "強気"
+				IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+					CALL KOJO_16_0_ADD_MESSAGE, @"「敵の数が多いのは、よくないですわね」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"（慎重に戦って、スキを伺いませんと……）\n"
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（囲まれる前に逃げた方がいいですわね……）\n"
+				ENDIF
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あちらの方が数が多い、ですわ……！？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「多勢に無勢……　まずいですわね……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「くっ……あなた方にかまってる余裕はありませんわ……！」\n"
+			ENDSELECT
+			
+		; PT人数と敵の数は同数
+		ELSEIF GET_MEMBER_SUM() == TFLAG:15
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "強気"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おいでになりましたわ」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「みんなで力を合わせれば勝てますわ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「一匹ずつ倒していければ……」\n"
+			ENDSELECT
+			
+		; PT人数より敵の数は少ない
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "強気"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「万全の体制……ではありませんが、この戦力差なら大丈夫ですわ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「道を開けてください。痛くしますわよ！」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「相手がこの数なら、安心ですわね」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「さて、とっとと片付けますわよ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「できればご遠慮願いたい……ですわね」\n"
+			ENDSELECT
+		ENDIF
+		
+		; 連戦なら追加口上(直前の呼び出し口上が「戦闘で勝利」)
+		IF KOJO_16_0_GET_PREV_ARG(0) == 57
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「少しだけ休憩しませんこと……？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「まだ魔物が居たんですの！？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「消耗するのを待っていましたの？」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 1 クイーン戦
+@KOJO_16_0_SYSTEM_MESSAGE_54_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 状態異常で喋れない場合は何もしないで帰る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「見るからに危険な気配が……　捕まってしまったらきっと……♥」\n"
+	CASE "発情"
+		IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+			CALL KOJO_16_0_ADD_MESSAGE, @"「出る……　わたしはこの迷宮から脱出するんです……！」\n"
+		ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_16_0_ADD_MESSAGE, @"「い、今戦うのは……　かなり、ヤバいですわっ……」\n"
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「無理ですわっ……　この身体で戦うのは絶対無理……！」\n"
+		ENDIF
+	CASE "強気"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あなたがここの親玉ですわね！　今から退治してさしあげますわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしはずんだ餅が食べたいんですの！さっさと退治されてくださいまし！」\n"
+	CASEELSE
+		IF BASE:MP >= (MAXBASE:MP / 100 * 66)
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この雰囲気……こちらの方を退治すれば帰れそうですわね」\n"
+		ELSEIF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_16_0_ADD_MESSAGE, @"「い、一度体勢を立て直すべきですわ……」\n"
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「い、今こんな相手と戦っても勝ち目はありませんわ……」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 ガーディアン戦
+@KOJO_16_0_SYSTEM_MESSAGE_54_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; クイーン戦におねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_54_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; □ X 敵種族別
+; ◆ 005 リビングバイン
+@KOJO_16_0_SYSTEM_MESSAGE_54_ENEMY_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中・喪失中は汎用口上に任せる
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 敵が1匹、もしくは1種という珍しい状況の為、優先口上指定
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "強気"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「たかが雑草、すぐに駆除してあげますわ！」\n"
+	CASEELSE
+		IF BASE:MP >= (MAXBASE:MP / 100 * 33)
+			CALL KOJO_16_0_ADD_MESSAGE, @"「狙いが分かりにくい相手は、戦いにくいですわね」\n"
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あまり強くは無さそうですが、今はまずいですわ……」\n"
+		ENDIF
+	ENDSELECT
+	
+	; 敵同種複数体なら追加口上
+	IF (10 - GROUPMATCH(0, TFLAG:1, TFLAG:2, TFLAG:3, TFLAG:4, TFLAG:5, TFLAG:6, TFLAG:7, TFLAG:8, TFLAG:9, TFLAG:10)) >= 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "強気"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「きりがないところも雑草そっくりですわね」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ミントやドクダミみたいに増えなければいいですけれど」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

@@ -1,0 +1,113 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 2 汎用口上 部位別 C
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_14_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時, 戦意喪失, 諦めた
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; ふたなりと通常時で分岐
+			; 通常時
+			IF !GET_PENIS(TARGET)
+				SELECTCASE CFLAG:43
+				CASE 1
+					CALL KOJO_16_0_ADD_MESSAGE, @"（ひぃっ！？　いやっ！？　おまめさんが…、ふくらんで…きて…ますわっ！？）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"（だめ…っ！　こすったら、だめっ…っ！）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「いや…っ！　感じたく…ないんですの…っ！　おまめを…　しごかないで…くださいっまし！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「これは…っ、ただの生理現象ですわ…っ！　あたしが求めてるわけじゃ、ありませんの…っ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「どうしてそんなとこいじるんですかっ！？　あたしを感じさせても、意味なんて…っ！？」\n"
+				CASE 2
+					CALL KOJO_16_0_ADD_MESSAGE, @"（なにか…　なんかがヘンですわ……っ！　おまめいじり回されるのが…　嬉しくなって…っ！？）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あはっ♪　おまめさんっ♪　いじいじされるの…　すきですわ…♪」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「はい…　こうすれば…　いじりやすいですか…？」\n\d%CALLNAME:TARGET%は両手で包皮を広げ、ぷっくりと膨れ上がった陰核を晒け出している\d\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「おまめさんを…♪　くりくりされると…♪　頭のなかぁ、ビリビリってして…　しあわせ…です…わっ♪」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%のクリトリスは…　ビンビンに勃起させて…　イかされるために…　ありますわ…」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「…おまめ…くりくりされるの、気持ちいい…ですわ」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「…クリトリスが…勃起して…ひくひくしてますわ…」\n"
+				ENDSELECT
+				
+			; ふたなり時
+			ELSE
+				SELECTCASE CFLAG:43
+				CASE 1
+					CALL KOJO_16_0_ADD_MESSAGE, @"（いやっ…　いやなのにっ…　おとこの人のが…っ　すごい…っ、かたくなってますの…っ！？）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"（やめてっ！　さわらないでくださいまし…っ！　こすらない…でっ！）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「こんな…っ　ニセの逸物で…っ　きもちよく……っなんか…っ！！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「どうして…、こんなことするんですか…っ！　あたしのコレ…っ、ニセモノですのに…っ！」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「だっ…めぇっ…！　それを、いじめない…でっ！　感じちゃいけませんのにっ、快楽が…っ！？」\n"
+				CASE 2
+					CALL KOJO_16_0_ADD_MESSAGE, @"（射精しないと…　おちんちんをいじられたら…　射精しないといけませんわ…）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"（射精するときは…　えっちな顔をして…　えっちな声をあげて…相手が喜ぶぐらい、無様に……っ）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「ひっ♪　あっ♪　ああぁっ♪　ちんぽが…っ♪　ガマン汁で、ぬるぬる…にっ♪」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「そんなに…っ、いじられたら…　射精しちゃ…いますわっ！？」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「もっと……っ♪　もっとしごいて…っ♪」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「はい…　勃起ちんぽ…　射精させていただきますわ…」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「…ちんぽ…しこしこされるの、気持ちいい…ですわ」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「…おちんぽが…勃起して…ひくひくしてますの…」\n"
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; ふたなりと通常時で分岐
+	; 通常時
+	IF !GET_PENIS(TARGET)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「そんないじめ方したら……♥　頭のなかクリイキの事ばっかりになちゃいますのぉ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あはは……ぇ♪　くりとりす……っ、ぱんぱんで……っ♥　言う事聞きませんわ……っ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「見てくださいっ♪　あたしのクリちゃん、いじめられて喜んでますのっ♪\n　ビンビンに勃起して、ピクピクふるえて…っ♪」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「くっ…　うぅっ…　クリ…っ、刺激つよ…すぎますわっ…」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「そこは…だめですの…っ　ビンカンな場所だからっ…さわっちゃダメですわ…っ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ダメっ！　おまめ…っ、おまめさんがっ！　じんじんしてっ！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「デリケートな部分を……っ、そんなふうにいじめたら……っ！？」\n"
+		ENDSELECT
+	
+	; ふたなり時
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あはっ♪　わたしのおちんぽ♪　シコシコされて喜んじゃってますわっ♪」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（ガマン汁あふれてぇっ♥　どんどん、ぬるぬるになって……っ♥♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽっ♥　おちんぽが気持ちいいっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひぁっ♥　おちんぽシコシコされてぇ、腰がっ…動いてっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひぃ…っ♥　おちんちん苛めるの…っ、じょうずですわ…っ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひっ…　ぐっ…　おちん…ちんっ、刺激つよ…すぎですわっ…」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「く…っ！　さわら、ないで…っ！　しごかない…でっ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひゃっ…　あたしのおとこの人の部分苛めて何が楽しいんですのっ！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「そこは…だめ…っ　おとこの人の快楽なんてっ…知りたく…っ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ダ……メっ！　あたしのじゃ、無いのにっ…！　快感が、昇って…っ！？」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

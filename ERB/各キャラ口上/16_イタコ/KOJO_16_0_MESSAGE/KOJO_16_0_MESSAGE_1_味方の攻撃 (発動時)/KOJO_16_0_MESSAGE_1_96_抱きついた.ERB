@@ -1,0 +1,292 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 96 抱きついた
+; ------------------------------------------------------------------------------
+
+; □ 0 抱きついたまま
+@KOJO_16_0_SYSTEM_MESSAGE_1_96_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 相手にペニスなし
+			IF !GET_PENIS(ARG:2)
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のクリトリス、興奮して大きくなってますわ……　%CALLNAME:TARGET%との貝合わせでもっと感じてくださいね……」\n"
+				ENDSELECT
+			; 相手にペニスあり
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の勃起チンポ……　%CALLNAME:TARGET%のおまんこ汁でぬるぬるですわね……　好きなときに射精しちゃってくださいまし……」\n"
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%におまた擦り付けるの、気持ちよすぎて止まりませんのっ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の感じてる顔えっちすぎますわ、もっと%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のだめな顔、見せてくださいまし♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ほら♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%も腰振ってくださいまし♥♥　もっと気持ちよくなりたいですわよね♥♥」\n"
+	
+		; 最大勃起時 追加口上
+		IF GET_ERECTION_STATE_C(TARGET) == 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ガチ勃起クリ……トリスぅ……♥♥　気持ち、よすぎるううぅぅ……♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おﾞ～っﾞ♥　おﾞおﾞ～っﾞ♥　勃起クリ、とけ、そうッッ♥♥」\n"
+		ENDIF
+		
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あとちょっと、ちょっとだけガマンしてくださいねっ♥　んぅぅっ、気持ちいいぃっ♥♥」\n"
+		
+		; 最大勃起時 追加口上
+		IF GET_ERECTION_STATE_C(TARGET) == 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"（勃起クリこりこりするのっ……♥　気持ちいいっ……♥♥　気持ちいいいいっっ……♥♥）\n"
+		ENDIF
+	CASEELSE
+	ENDSELECT
+	
+	; 相手のペニスありなしで追加口上
+	; 相手にペニスなし
+	IF !GET_PENIS(ARG:2)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のクリも悦んでますわね♥　もっともっと気持ちよくなりましょう♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のクリちゃんで♥　もっとあたしのクリちゃんをイジめてください♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしと……っ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおまんこ……♥　擦れてエッチな音してますわ……♥♥」\n"
+			
+			; 最大勃起時 追加口上
+			IF GET_ERECTION_STATE_C(TARGET) == 3
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あは♥　あはは……♥　わたしの、ガチ勃起クリトリスとっ、%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のクリちゃん……♥　こりこりぃ♥♥」\n"
+			ENDIF
+			
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしと……っ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のお豆さんが……♥　気持ちいいっ……♥　気持ちいいですのっ……♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あははっ♥　女の子同士なのに、とまりませんわっ……♥♥」\n"
+		CASEELSE
+		ENDSELECT
+		
+	; 相手にペニスあり
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしは%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんぽでオナニーしてるだけですわ♥　なのでっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%もあたしのオマンコでオナニーしていいんですのよっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「お願い、射精してくださいましっ♥　あたしのお腹にいっぱい、ぶっかけて欲しいですわっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%っ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%っ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%っ♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おまたが熱いっ♥　熱いんですのっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のモノに擦り付けるの……とまりませんわっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（おとこの人のモノに擦りつけるだけで…♥　こんなに気持ちいいなんて……♥♥）\n"
+		CASEELSE
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 1 抱きついたまま(ふたなり)
+@KOJO_16_0_SYSTEM_MESSAGE_1_96_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおまんこは、%CALLNAME:TARGET%のおちんぽでズボズボされて嬉しいんですの……？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽへの締め付けが強くなってきましたわ……　%CALLNAME:TARGET%のセックスで感じて貰えてなによりですわ……」\n"
+				
+				; 最大勃起時 追加口上
+				IF GET_ERECTION_STATE_C(TARGET) == 3
+					CALL KOJO_16_0_ADD_MESSAGE, @"「おﾞっﾞ♥　おﾞっﾞ♥　おﾞっﾞ♥」\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「すみ……ま……せんっ……♥♥\n　限界勃起したおちんちん……っ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の赤ちゃんの部屋をノックするのが止まりませんわ……っ♥」\n"
+				ENDIF
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%っ♥　もっと高く腰上げてっ♥　えっちな動きであたしを感じさせてくださいましっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおまんこ、いやらしいお汁でぐちょぐちょですのっ♥　おちんぽセックス悦びすぎですわっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あああぁっ♥　ださせてっ♥　射精したいんですのっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の中にびゅーびゅーってっっっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の感じてる声、可愛いですわね♥♥　おちんちん俄然元気になっちゃいますわ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「見られながらのえっちっ♥　セックスっ♥♥　最高に気持ちいいですわねっ♥♥」\n"
+		
+		; 最大勃起時 追加口上
+		IF GET_ERECTION_STATE_C(TARGET) == 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちんぽっ♥　ぎぼぢいﾞぃﾞ～ッﾞ♥♥　出じだいﾞっ♥　しゃせーしだいﾞぃぃぃっ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちんぽっ、もう限界ですのっ♥♥　射精したいっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおまんこっ♥　膣内射精っっ♥♥」\n"
+		ENDIF
+		
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽ気持ちいい♥　おちんぽ気持ちいい♥　おちんぽ気持ちいい……っ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あぁぁぁぁ……♥♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の中、あったかいですわ……♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「射精っ♥　射精したいぃっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の赤ちゃんの部屋に沢山射精したいっっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%との子作りっ♥　気持ちいい…っ♥　気持ちいい…っ♥　腰がっ…腰がとまりませんわっ♥♥）\n"
+		
+		; 最大勃起時 追加口上
+		IF GET_ERECTION_STATE_C(TARGET) == 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おﾞおﾞぉﾞ～～っﾞ♥♥　イグッ♥♥　おﾞぢんﾞぢんﾞイっぢゃううぅッ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%……っっ♥♥　たひゅけへ……っ♥　あらひの、ガチガチちんぽぉ助けてくださいぃぃっ♥♥」\n"
+		ENDIF
+	CASEELSE
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 抱きついた
+@KOJO_16_0_SYSTEM_MESSAGE_1_96_X_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 相手にペニスなし
+			IF !GET_PENIS(ARG:2)
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あたしと、%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のクリトリス……　一緒に気持ちよく……なりましょう……」\n"
+				ENDSELECT
+			; 相手にペニスあり
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんちん……　あたしのでクニクニしてあげますわね……」\n"
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 相手にペニスなし
+	IF !GET_PENIS(ARG:2)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おまたっ擦り合わせるの、好きっ♥　おまんこ同士の……グチュグチュ……いいですわっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のお豆♥　あたしのと擦れてビクビクしてますわっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のお豆ちゃん、あたしのと擦れて感じてますのね…♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさい♥　あたしの身体が、%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%とまぐわいたがってますの…♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさい……！　あたしの頭、気持ちいいのだけになってますの……っ！ごっ、ごめんなさい……！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の身体貸してくださいまし……♥　ちゃんと……%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%も……気持ちよく……してあげますわ……♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「だめ……♥　もう、ガマン……できませんわ……っ♥」\n"
+		CASEELSE
+		ENDSELECT
+		
+	; 相手にペニスあり
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のえっちなチンポっ♥　あたしのお豆さんが一目ぼれして、もうガマン出来ないって言ってますわ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%のフニフニおまたで……♥　おちんちんさんコスコスしてあげますわね…♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（子作りしたいっ♥　子作りしたい、けど……ガマンっ♥　おちんちんコスコスでガマンですわっ♥♥）\n"
+		CASEELSE
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 3 抱きついた(ふたなり)
+@KOJO_16_0_SYSTEM_MESSAGE_1_96_X_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%……っ、違っ！　これはあたしの意思じゃあ……っ！　ああぁっ、おちんちん気持ちいいぃっ……！」\n"
+			CASE 2
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%を犯すのは現状打破の為……　少しガマンしてくださいまし……っ……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおまんこ、おちんぽ欲しがってるみたいですわね……　あたしのでほじってあげますわ……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（ちんぽ勃起したままじゃ戦えませんわ……　手近なおまんこで発散しませんと……）\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%はご主人様の命令で、%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%をおちんぽレイプいたしますわ……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%様、セックス人形%CALLNAME:TARGET%のおちんぽをご堪能くださいまし……」\n"
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさいっ♥　あたし、おちんぽに逆らえなくてっ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんな簡単に入っちゃうなんて…♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%も欲しかったんですのね♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おちんちん挿れられて、%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%凄いえっちな顔してますわっ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「赤ちゃんの部屋、何度でも突いてあげますわっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の可愛い声いっぱい聞かせてくださいまし♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「せっかくですし、あたしたちの子作りを魔物さんに見せつけてあげましょう♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「もうだめっ♥　もうだめですのっ♥　子作りするの、がまんできませんわっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あはぁ……♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおまんこに、おちんちんはいってしまいましたわ…♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ごめんなさいっ♥　ごめんなさいっ♥　おちんちん、ガマンできないですわっ♥♥」\n"
+	CASEELSE
+	ENDSELECT
+	
+	; C勃起度200%なら追加口上
+	IF GET_ERECTION_LEVEL_C(TARGET) == 200
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥　セックスっ♥　ガチガチちんぽで本気セックスうっっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おちんちんっ♥　おちんちん限界ですの……っ♥♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおまんこ、使わせてくださいましっ……っ♥♥」\n"
+		CASEELSE
+		ENDSELECT
+	ENDIF
+RETURN 1

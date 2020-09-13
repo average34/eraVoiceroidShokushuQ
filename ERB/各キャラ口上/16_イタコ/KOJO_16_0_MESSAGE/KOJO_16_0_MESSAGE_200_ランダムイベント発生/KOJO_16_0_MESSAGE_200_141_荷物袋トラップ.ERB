@@ -1,0 +1,20 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 141 荷物袋トラップ
+; ------------------------------------------------------------------------------
+
+; □ 0 荷物袋を開ける
+@KOJO_16_0_SYSTEM_MESSAGE_200_141_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…ちゅわっ！？　やはり、罠でしたのね……！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅっ！？　こんなサイズで、どうやって入っていましたの…！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 荷物袋を開けない
+@KOJO_16_0_SYSTEM_MESSAGE_200_141_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 荷物袋の中身によって口上が変化するとマズいので、通常荷物袋の口上を呼び出す
+	CALL KOJO_16_0_SYSTEM_MESSAGE_200_140_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN 1

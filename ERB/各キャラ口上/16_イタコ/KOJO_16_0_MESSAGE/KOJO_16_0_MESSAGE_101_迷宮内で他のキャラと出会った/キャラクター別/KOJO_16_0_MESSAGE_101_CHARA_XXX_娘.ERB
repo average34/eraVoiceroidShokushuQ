@@ -1,0 +1,59 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 101 迷宮内で他のキャラと会った - キャラクター別 XXX 娘
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+@KOJO_16_0_SYSTEM_MESSAGE_101_X_0_CHARA_XXX(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+		
+		
+	; 催眠行動中
+	ELSEIF CFLAG:(ARG:1):43 == 1
+		CALL KOJO_16_0_ADD_MESSAGE, @"「大丈夫ですの…？　なんだかふらついてますわよ…」\n"
+	
+		
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_16_0_PARTY_NO:1 || ARG:1 == KOJO_16_0_PARTY_NO:2
+		
+		CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+		CALL KOJO_16_0_ADD_MESSAGE, @"「戦い方を見てると…やっぱり魔物の子…ですわね」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの子供だと思うと、やっぱりかわいく思えますわ…」\n"
+		
+	; 通常行動中
+	ELSE
+		; 対象のキャラとは初遭遇
+		; 表示タイミングが一度しかない口上、優先口上として処理する
+		IF KOJO_16_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+			CALL KOJO_16_0_ADD_MESSAGE, @"（心を入れ替えたとはいえ、魔物の子ですわ…警戒はしておいたほうがいいですわね）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もうこんなことをしてはいけませんわよよ」\n"
+			RETURN 1
+		ENDIF
+		
+		CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+		CALL KOJO_16_0_ADD_MESSAGE, @"「貴方は、いつも元気一杯ですのね」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（…望んだ子ではありませんけれど、なんだか可愛く感じてきますわ…）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんな暗いところでも、元気に育ってでなによりですわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「そうだ、あなたにも名前をつけてあげませんとね…」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「まじまじ見ると、小さいころのあたしに瓜二つですわね…」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「……余り危ない事はしちゃ駄目ですわよ？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あれから、他の人を襲ったりしていませんの？　…おかあさんとの約束守っていますのね。良い子ですわ。」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「どうしましたの？　お腹でもすいたのかしら？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「自分を褒めるみたいですけれど、すんごく可愛いですわ…」\n"
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失中
+@KOJO_16_0_SYSTEM_MESSAGE_101_X_1_CHARA_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+		
+	; 通常行動中
+	ELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…魔物との子供とはいえ、あたしの娘をこんな目に遭わせるなんて……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…裏切者への制裁、といったところですわね…」\n"
+	ENDIF
+RETURN 1

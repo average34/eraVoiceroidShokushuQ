@@ -1,0 +1,126 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 2 汎用口上 部位別 C
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_120_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; ふたなり
+			IF GET_PENIS(TARGET)
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おとこのっ…人の快楽で…　イキ…ましたわ……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「んっ……　おちん…ぽっ…　絶頂しましたわ…っ」\n"
+			; 通常
+			ELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「んっ……　クリト…リスでっ…　絶頂しましたわ…っ」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの……　クリっ…　イカせて…いただきましたわ…っ」\n"
+			ENDIF
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d催眠状態の%CALLNAME:TARGET%は、顔を上気させながら事務的に絶頂したことを伝えた\d\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; ふたなり
+	IF GET_PENIS(TARGET)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あああぁっ♥　おちんぽっ♥　おちんぽとける…っ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう限界ですわっ♥　おちんぽっ、破裂っ♥　はれつじぢゃう…うぅっ♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「いやいやいやぁ…っ♥　おとこの人のでイクの、おかしくなっちゃいますわっ♥　イギだくないいいっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イッへましぇんふぁっ♥　おちんちんっ気持ちよくなんか…なってにゃいのっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イッちゃだめぇっ！　おちんちんっイッたら…っ、精液出ちゃいますわ…っっ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「やだっ♥　やだぁぁっ♥　おちんちん…っ、イッちゃいますのぉぉおっ♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「だめぇっ…！　射精ちゃいますわっ！　射精ちゃうからあぁぁぁっ！！」\n"
+		ENDSELECT
+		
+	; 通常
+	ELSE
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 連続絶頂時 or 寸止め時 追加口上
+	IF GETBIT(ARG:3, 3) || CFLAG:820
+
+		; ふたなり
+		IF GET_PENIS(TARGET)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「もっと…♥　おちんぽ、もっとシゴいてくださいまし…♥\n　あたしの精液♥　びゅるびゅる…しぼりださせて…♥」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は少しでも快感を引き延ばそうと、絶頂したばかりのふたなりペニスをしごき続けている…\d\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おちんちん…　ビクビクって…　とまりませんわ…っ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「またぁぁっ！？　またイクうぅっ！？\n　もうやめて…！　気持ちいいのイヤなんですのっ！　おちんちん…破裂しちゃうからぁっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ひぃ…っ！？　あぁぁっ…！？　うぁあああぁぁぁっ！？\n　もうだめッ…！　とけるっ！　おちんちんとけちゃうからぁぁぁっ！」\n"
+			ENDSELECT
+			
+		; 通常
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「クリトリス…ッ♥♥　しゅごいですわっ♥　クリちゃん…ッ♥　クニクニコリコリ…とまりませんわっ♥♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%のお豆…っ♥　もっといじめてほしいですわっ♥♥　自分でいじるの、とまりませんのぉっ♥♥」\n"
+				CALL KOJO_16_0_PARAGRAPH_MESSAGE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は少しでも快感を引き延ばそうと、絶頂したばかりのクリトリスをしごき続けている…\d\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「うあ…ぁぁっ…　あたしのおまめ…ぇっ…　おかしく…なってますわ…！？」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 多重絶頂時 追加口上
+	IF ARG:3 && !GETBIT(ARG:3, 3)
+
+		; ふたなり
+		IF GET_PENIS(TARGET)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「他にもイッてますのに…♥　おちんぽまでイッちゃっうなんて……♥♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽっ♥　おちんぽもイッちゃうぅっ♥♥」\n"
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（他でイッてるのにっ、おちんちんまでっ！？）\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「いやぁぁぁっ♥　もう気持ちよくしないでくださいましっ♥　おちんちん……までぇぇぇっ♥♥」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ダメぇっ！　おちんちんもイクっ！　イクううぅぅぅっ！！」\n"
+			ENDSELECT
+			
+		; 通常
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「他にもイッてるのに…♥　お豆ちゃんまでイッちゃうなんて……♥♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「くりとりすっ♥　くりとりすもイッちゃうぅっ♥♥」\n"
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（他でイッてるのにっ、お豆までっ！？）\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「いやあぁぁっ♥　もう気持ちよくしないでくださいましっ♥　お豆……までぇぇぇっ♥♥」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ダメぇっ！　お豆もイクっ！　イクううぅぅぅっ！！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+RETURN 1

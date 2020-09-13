@@ -1,0 +1,84 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 136 スライム
+; ------------------------------------------------------------------------------
+
+; □ 1 服を溶かされた
+@KOJO_16_0_SYSTEM_MESSAGE_200_136_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; もともと全裸
+	IF BASE:CP == 0
+		CALL KOJO_16_0_ADD_MESSAGE, @"\dが、もともと服を着ていなかった…\d\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+		; PTメンバーにいる
+		IF NO:1 == 4 || NO:(FLAG:10) == 4 || NO:(FLAG:11) == 4
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「このスライム……なんだかひんやりしていて心地いいですわ……♪」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ぬめぬめして気持ち悪いですわ……身体を溶かしたりは、しませんわよね……？」\n"
+			ENDSELECT
+			
+		; 同室に居て巻き込まれた
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたし、何にもしてないのに襲われましたわ……　服がないからまだいいですけれど……」\n"
+			ENDSELECT
+		ENDIF
+
+	; 通常
+	ELSE
+		; PTメンバーにいる
+		IF NO:1 == 4 || NO:(FLAG:10) == 4 || NO:(FLAG:11) == 4
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「きゃっ！？　なんですかこのぬるぬるっ！？　あたしの服に、くっついて……！？」\n"
+			ENDSELECT
+			
+		; 同室に居て巻き込まれた
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「服に、纏わりつかないでくださいまし……っ！」\n"
+			ENDSELECT
+		ENDIF
+		
+		; 触装中なら追加口上
+		IF CFLAG:40
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「えっ？　触手服を溶かしましたわ…！？\n　触手服とヌルヌル両方にいじめてもらえると思いましたのに……♥」\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ぢゅわっ！？　服が…溶けてっ！？　……触手服が溶けて無くなるなんて、ラッキー！　ですわ！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 2 回避した
+@KOJO_16_0_SYSTEM_MESSAGE_200_136_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あ……、つい避けてしまいましたわ…勿体ないことをしましたわね…」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「き、危機一髪……ですわ……」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「不意打ちでしたら、もう少しスキを狙うことですわね」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「残念ですわねっ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「引っ付かれると厄介そうですわ…　避けて正解だったかもしれませんわ」\n"
+	ENDSELECT
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 全裸なら追加口上
+	IF BASE:CP == 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もしや、これが風に聞く服を溶かす魔物……ですの？　今のあたしには避ける意味もありませんでしたわね……」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「服を溶かす生き物……どういう進化をすれば、そんな生き物になりますの……？」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

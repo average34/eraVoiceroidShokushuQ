@@ -1,0 +1,52 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 9 汎用口上 部位別 M
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_120_9(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ん…っ♥　ぅう…んっ♥　……っ♥　ッッッッ♥♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（口が…っ！？　う、ウソっ！？　あたし、お口でイッて…っ！？）\n"
+	ENDSELECT
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 連続絶頂時 or 寸止め時 追加口上
+	IF GETBIT(ARG:3, 6) || CFLAG:820
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んﾞんﾞんﾞッ♥♥　んﾞおﾞぉﾞ…っﾞ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ほふひ…っ♥　ほふひいひまふぅぅっ♥♥　おおおぉっ♥　いっへるほぉぉぉっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（おくちイキ止まりませんのっ♥　おくち犯されてっ♥　あたまとけるぅっ♥♥）\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は痙攣する舌から唾液を噴きこぼし、滅茶苦茶な嬌声を上げながら絶頂を繰り返している…\d\n"
+		CASEELSE
+		ENDSELECT
+	ENDIF
+RETURN 1

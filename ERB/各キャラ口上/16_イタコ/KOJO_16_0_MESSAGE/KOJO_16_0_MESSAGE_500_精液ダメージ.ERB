@@ -1,0 +1,84 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 500 精液ダメージ
+; ------------------------------------------------------------------------------
+
+; 精液中毒LV2以上で発生するのでLV2, LV3以上で分岐
+@KOJO_16_0_SYSTEM_MESSAGE_500(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 睡眠中
+	IF CFLAG:25
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んっ♥　あっ♥　あ……んっ♥　うぅ……んっ♥」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は眠っているにも関わらず、子宮全体に精液を塗り込むように腰を動かしている…\d\n"
+		RETURN 1
+	ENDIF
+	
+	; 喪失中
+	IF CFLAG:29
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おま…こ…っ♥　おま…っ♥　おまん…こっ…♥　とけちゃ…っ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んっひ…ぃっ♥　おっ♥　あ…ぃぃっ♥♥」\n"
+		RETURN 1
+	ENDIF
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの子袋のなか、精液でパンパン♥　精液便所として誇らしいですわ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（%CALLNAME:TARGET%の苗床おまんこ…ぉ、子種で満たして…っ♥　もっと使ってくださいましっ♥♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「肉便器%CALLNAME:TARGET%のにゃか♥♥　ドロドロ精液いっぱぁいっ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんにゃにいっぱい♥　%CALLNAME:TARGET%のおまんこ便器♥♥　壊れてしまいますわ♥♥」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 精液中毒LV2
+	IF ABL:14 == 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あは♥　こんなにドプドプ出して…　あたしのお腹、精液ボテにしたいんですの？♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（なかに出されて…ぇ、あたしの子宮がごくごく飲んじゃってますわ…っ♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「にゃああっっ♥　そのまま…っ、そのまま精液便所にしてくださいましっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ズルいっ…♥　ズルいですわっ♥♥　こんな、こんな状態でおまんこ虐めるなんて…っ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたしの子宮、ナカ出しされて喜んでますの♥　どうしてっ♥　どうしてですのっ♥♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（うそ…！？　あたし、膣内射精されて気持ちよくなってますわ…っ！？）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「どうしてこんな事されて感じてるのっ！？　あたしのお腹の中、おかしくなってますの…！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（この感覚…っ！？　何度もされると取り返しがつきませんわ…っ！）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（受け入れちゃ駄目ですのに！？　子宮が欲しがってますのっ！？）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あつい…っ！？　おなかの中が燃えているみたいな、感覚が…っ？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひぎっ！？　子宮の中からゾクゾクって…！？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたし…　子宮…　精液でいっぱいにされて…　感じてますわ…」\n"
+		ENDSELECT
+		
+	; 精液中毒LV3以上
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（なかだしされて…ぇ、子宮が喜んでますわぁ…っ♥）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「すご…いィィっ♥　あたしのお腹…精液でパンパンに膨れあがっちゃってますの♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「見えますかしら？　あたしのおまんこ、もっと欲しいって待ちわびてるのが♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「出してっ♥　もっといっぱい射精ひてぇッッ♥♥　あたひの子宮っ…精液で溢れさせてぇッ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「だめぇっ♥　これおかひくなるっ…っ♥　あらしっ、精液で頭が壊れ……ッッッ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんなので感じてたら苗床に…♥　苗床にされてしまうわっ…♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「子宮がっ♥　子宮があたしのいう事聞きませんわ…っ♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「気持ちよくない…っ♥　気持ちよくない…ですわぁっ♥　もう、射精さないでぇぇっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひぐぅぅっ♥　射精さな、いでぇ♥　おかしくなるっ♥♥　おかしくなりますのぉっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひぎ……っ♥　お…ぉ……っ♥　んほおぉ……ぉぉっっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「やっ、やめっ！？　いけませんわっ！　押しつけてどぷどぷ射精するのだめぇぇっ♥♥」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

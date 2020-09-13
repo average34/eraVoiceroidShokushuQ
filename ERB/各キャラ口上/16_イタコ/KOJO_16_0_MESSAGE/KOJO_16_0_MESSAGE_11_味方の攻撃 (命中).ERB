@@ -1,0 +1,83 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 11 味方の攻撃 (命中)
+; ------------------------------------------------------------------------------
+
+; □ XX 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_11(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 二段攻撃
+	IF KOJO_16_0_GET_PREV_ARG(0) == 11
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もっといきますわ！！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「まだまだっ！！」\n"
+		ENDSELECT
+		
+	; 通常攻撃
+	ELSE
+		
+	ENDIF
+RETURN 1
+
+
+; □ 84 手淫
+@KOJO_16_0_SYSTEM_MESSAGE_11_84(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 性攻撃は他の攻撃と混じらないよう優先口上扱い
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中行動
+	IF KOJO_16_0_IS_HYPNO()
+		RETURN 0
+		
+	; 通常時性攻撃
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ほら、シコシコしちゃいますわよ～♥　いつでも出してもいいですわよ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ふふっ、気持ちよくしてさしあげますわ♥元気出してくださいな」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 85 フェラチオ
+@KOJO_16_0_SYSTEM_MESSAGE_11_85(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 性攻撃は他の攻撃と混じらないよう優先口上扱い
+	CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+	
+	; 催眠中行動
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"（舐めないと……　ぜんぶ舐め取りませんと……！）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んﾞむﾞっ……　ぢゅるるっ……　ずぞぞっ……っ　ぞるるるるぅぅっ……」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+		
+	; 通常時性攻撃
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%のエッチなお口で、出してくださいね♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「気持ちよくされる前に…こっちから気持ちてあげますわ♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（ああっ……♥　口の中がっ、口の中が気持ちいいですわ……♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（だめ……っ、どんどんえっちな気分になっちゃいますわ……っ♥）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ふふ……♪　意外とこういう攻撃は……じゅるっ♪　効くんじゃありませんの？」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d言い訳を口にしながら、%CALLNAME:TARGET%は興奮した表情で触手に舌を這わせている…\d\n"
+	ENDSELECT
+RETURN 1

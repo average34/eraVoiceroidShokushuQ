@@ -1,0 +1,49 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0623 リビングバイン V+
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_14_623(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠
+	SIF CFLAG:25
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「力が、入りませんわ……っ♥　深くまで、ゴリゴリされちゃいますわ……っ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「足捕まって、大事なとこいじられたら……♥　快楽を貪る事しか出来なくなっちゃいますわ……♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（恥ずかしいっ……　こんな格好で犯されるの恥ずかしいですわ……っ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「うぅ……っ……　足放して……っ……　ぐぅぅぅっ！　奥まで、入ってきていますの……っ！」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「くっ……　足が閉じられませんわっ……！……っ！？　抜いて！　抜いてくださいましっ！　」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（こっ…の…！　足ムリヤリ開かれて、逃げられませんわ……っ！）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「やめっ！　抜いて！　抜いてくださいましっ！」\n"
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

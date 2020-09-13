@@ -1,0 +1,48 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 101 迷宮内で他のキャラと会った - キャラクター別 004 ずん子
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+@KOJO_16_0_SYSTEM_MESSAGE_101_X_0_CHARA_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%！？　…いったい誰がこんなことをしましたの！？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%……？　もしかしてそういうプレイ中ですの…？　」\n"
+	; 催眠行動中
+	ELSEIF CFLAG:(ARG:1):43 == 1
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_16_0_PARTY_NO:1 || ARG:1 == KOJO_16_0_PARTY_NO:2
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%が無事で良かったですわっ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"(%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%の魅力で魔物に捕まっいたらて触手に…\n　あたしったらはしたない想像を…)\n"
+		
+	; 通常行動中
+	ELSE
+		; 対象のキャラとは初遭遇
+		; 表示タイミングが一度しかない口上、優先口上として処理する
+		IF KOJO_16_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%！？…%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%までこんなところに……」\n"
+			RETURN 1
+		ENDIF
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%、無事でしたのね…？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あらっ！　%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%ですわっ♪」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"(あたしはどうなっても……%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%は助けてあげませんと…)\n"
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失中
+@KOJO_16_0_SYSTEM_MESSAGE_101_X_1_CHARA_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_16_0_PARTY_NO:1 || ARG:1 == KOJO_16_0_PARTY_NO:2
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%……っ　あたしがよわいばっかりに」\n"
+	; 通常行動中
+	ELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ず、%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%！？　%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%！？」\n"
+	ENDIF
+RETURN 1

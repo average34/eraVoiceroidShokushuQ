@@ -1,0 +1,110 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 200 ランダムイベント発生 - 143 不思議なガス
+; ------------------------------------------------------------------------------
+
+; □ 1 眠くなってきた
+@KOJO_16_0_SYSTEM_MESSAGE_200_143_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「くっ……　睡眠……ガス……！？」\n"
+	ENDSELECT
+	
+	; 眠気によって分岐
+	IF FLAG:7 <= 3
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちょっと眠いだけですわね……そこまで強くなかったみたいですわ」\n"
+		ENDSELECT
+		
+	ELSEIF FLAG:7 <= 7
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「これぐらいの眠気……　まだ大丈夫ですわ……」\n"
+		ENDSELECT
+		
+	ELSEIF FLAG:7 <= 11
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ん……　眠気でふらふらしますわ……」\n"
+		ENDSELECT
+		
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「まず…いですわ…　意識……が……」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 2 発情した
+@KOJO_16_0_SYSTEM_MESSAGE_200_143_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 発情処理は口上の後なので、未発情状態の口上が書ける
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんなの……♥　ずるい……っですわっ♥　女の子は……絶対、勝て……ませんわ……っ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はぁ……ぁ……♥　こう……して、脳みそトロトロにして……おいしく、食べてしまうんですわね……ぇ♥　ひど…い…♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんなの吸わされて……はっ…♥　おちんぽ……おちんぽ欲しくなっちゃいますの……っ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（欲しい……っ♥　気持ちいいの、が……っ♥　壊れるぐらい、たくさん…たくさんっ…♥♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（ただでさえ身体が熱くて大変……ですのにっ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いや……♥　いや……♥　もう、気持ちいいの、欲しく……ありませんの……♥♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ああぁぁっ♥　身体、ぞわぞわ、して……っ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「くっ……ぅ……♥　あたしが、この程度の罠……でっ……っ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（油断……しましたっ……　避ける時間は、十分あったはず…ですのに……っ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「まっ……ずぃ……っ……♥　感覚……っ、おかし…く……っ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（迷宮……にっ……！　弄ばれて……ますわ……っ……！）\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 自慰が止まらなくなった
+@KOJO_16_0_SYSTEM_MESSAGE_200_143_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 200_139 桃色ガスにおねがい
+	CALL KOJO_16_0_SYSTEM_MESSAGE_200_139_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; □ 4 テンションが上がった(TP=MAX)
+@KOJO_16_0_SYSTEM_MESSAGE_200_143_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（これ……はっ！？　感情の高ぶりが、抑えられませんの……っ！？）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あはっ♪　今ならどんな魔物の相手もらくしょーですわっ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（心臓がうるさいぐらいどくどく脈打ってますわ……　もしかしてこのガス、興奮させる効果が…？）\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 5 テンションが下がった(TP=0)
+@KOJO_16_0_SYSTEM_MESSAGE_200_143_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はぁ……　もうどーでもいいですわ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「……諦めて、迷宮に身を任せた方が楽になりそうですわ……」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 6 回避
+@KOJO_16_0_SYSTEM_MESSAGE_200_143_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「手遅れになる前に気が付けて助かりましたわ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「……いつ風向きが変わってこっちに来るかわかりませんわ　早くここから離れましょう…っ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 7 気絶した
+@KOJO_16_0_SYSTEM_MESSAGE_200_143_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「は……　あ……　ぁ…………」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ぐっ……　この……ガスは……　いし……き……が……」\n"
+	ENDSELECT
+RETURN 1
+

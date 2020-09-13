@@ -1,0 +1,364 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 461 ふたなり治療(治療する側口上)
+; ------------------------------------------------------------------------------
+
+; □ X 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_461(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 精液中毒で分岐
+	; 精液中毒 LV0
+	IF ABL:14 == 0
+	
+	; 精液中毒 LV1
+	ELSEIF ABL:14 == 1
+		
+	; 精液中毒 LV2
+	ELSEIF ABL:14 == 2
+	
+	; 精液中毒 LV3以上
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（おちんちん取るの……協力すればっ♥　精液っ♥　いっぱい……恵んでもらえますわっ♥）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたし、治療なんて嘘ついてまで……精液欲しがっちゃってますわ……）\n"
+		ENDSELECT
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d完全な精液中毒者へと堕ちた%CALLNAME:TARGET%は、夢中で治療を行っている……\d\n"
+	ENDIF
+RETURN 1
+
+
+; □ 0 V
+@KOJO_16_0_SYSTEM_MESSAGE_461_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 素質[ふたなり]持ち
+	IF TALENT:(ARG:2):121
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしのおまんこで、男の人のモノを……　えっ？　もしかして……これ取れません、の…？」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d完全に一体化し外れなくなったた%ARGS:0%のふたなりペニスを挿入したまま、%CALLNAME:TARGET%は蕩けきった顔で腰を動かしている\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おっ♥　あっ♥　取れないみたい、ですけれどっ♥　せっかくだからこのまま抜いてあげますわっ♥」\n「あたしのナカにどぷどぷって♥　精液注ぎ込んでくださいましっ♥」\n"
+		ENDSELECT
+		
+	; 通常の寄生ふたなり
+	ELSEIF CFLAG:(ARG:2):42
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「男の人のモノ取ってあげますわ♥　あたしにいっぱい膣内射精して良いですのよっ♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は擬似陰茎をくわえ込んだまま、艶めかしく腰を動かしている\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　おっきくなってるっ♥　ビクビクふるえて……ますわっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おまんこ吸い付いちゃってるのわかるでしょうか？　あたしのおまんこ、もっと快楽を貪りたがってるんですのよ♥」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 精液中毒で追加口上
+	; 精液中毒 LV0
+	IF ABL:14 == 0
+	
+	; 精液中毒 LV1
+	ELSEIF ABL:14 == 1
+		
+	; 精液中毒 LV2
+	ELSEIF ABL:14 == 2
+	
+	; 精液中毒 LV3以上
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの子宮、精液欲しくてズキズキしてるんですのっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%、はやくあたしにどぷどぷっ♥って濃い精液出してくださいましっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんぽっ♥　あたしのナカで暴れてますわっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「セックスっ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%とセックスするのっ、気持ちいいですわっ♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「とまらないっ♥　セックスするのとまりませんのっ♥♥　もっとっ♥♥　もっとセックスをっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「だして……っ♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の精液っ、あたしの中に沢山……っ♥」\n"
+		ENDSELECT
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d重度の精液中毒者である%CALLNAME:TARGET%は、治療の事などすぐに忘れ夢中で腰を振っている……\d\n"
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 服装による追加口上
+	SELECTCASE CFLAG:501
+	; 03:メイド服
+	CASE 3
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はしたないメイドの、おマンコご奉仕をたっぷり堪能して下さいまし♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「性処理専用メイドの%CALLNAME:TARGET%が、えっちなおちんちん食べちゃいますね♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dメイド服に身を包んだ%CALLNAME:TARGET%は接合部を見せつけるようにスカートをたくし上げ、激しく腰を動かしている……\d\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（メイドさんの格好でこんな事して……っ♥　ご奉仕してる、みたいですわ……っ♥）\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dメイド服に身を包んだ%CALLNAME:TARGET%は接合部が見えるようにスカートをたくし上げ、艶めかしく腰を動かしている……\d\n"
+		CASEELSE
+		ENDSELECT
+	; 102:魔法少女
+	CASE 102
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ふふっ♥　こんなおちんちんで魔法少女%CALLNAME:TARGET%が倒せるわけないっ♥　ですわよっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「魔法少女%CALLNAME:TARGET%の、ちからでっ♥　悪いおちんちんなんて、すぐ倒しちゃいますのっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「魔法少女♥マジカル%CALLNAME:TARGET%にかかれば、悪いおちんちんなんて……こうですわ♥♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d魔法少女の服に身を包んだ%CALLNAME:TARGET%は、%CALLNAME:(ARG:2)%のペニスに腰を激しく打ち付けえっちな水音を響かせている……\d\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ほ、本物の魔法少女じゃありませんけれど、苦しんでるおちんちんを気持ちよくさせる位は……♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ま、魔法少女%CALLNAME:TARGET%が、おちんちんから毒素を抜いてあげますわ……♥♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d魔法少女の服に身を包んだ%CALLNAME:TARGET%は、%CALLNAME:(ARG:2)%のペニスをくわえ込み、優しく腰を動かしている……\d\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしが本物の魔法少女でしたら、もっと色んなこと出来たんですけれど…」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d魔法少女の服に身を包んだ%CALLNAME:TARGET%は、%CALLNAME:(ARG:2)%のペニスをくわえ込み、ゆっくり腰を動かしている……\d\n"
+		ENDSELECT
+	ENDSELECT
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; キャラクター対応 追加口上
+	SELECTCASE NO:(ARG:2)
+	; ずん子
+	CASE 4
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いつもはあたしが%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%のふとももに夢中でしたけれど♥\n　今日は%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%があたしのおまんこに夢中ですわね♥♥」\n「思いっきり奥で出していいですわ♪　%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%の精液でしたら、\n　あたしの子宮でごくっごくっって飲み干してしてあげますわ♪\n　ほらっ♥　だから、我慢しないでびゅーっってしていいんですのよ♥\n　あたしを孕ませるつもりで出してくださいましっ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%ったらっ♪　そんなにがっつかなくても姉さままんこは逃げませんわよ♥♥\n　えっちな蜜でトロトロになったおまんこ♥♥　焦らずにゆっくり味わってくださいまし♪」\n「あっ♥　あたしのおまんこ♥　そんなに美味しいんですの？　お顔がだらしなく蕩けちゃってますわよ♪\n　そろそろっ……あたしにもご馳走してほしいですわ♥♥　%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%のミルク♥♥\n　%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%のアツアツドロドロのおちんぽミルク♥♥」"　
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂寸前の擬似陰茎にとどめを刺そうと、%CALLNAME:TARGET%は激しく腰を動かしはじめた！\d\n"
+	; きりたん
+	CASE 8
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なんだか今日の%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%は甘えん坊さんですわね？　あたしのおまんこあたたかいでしょう？♥」\n「あたしのおまんこで%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%のガチガチおちんぽをいいこいいこしてあげますわ♪\n　あら♪　射精そうですの？　じゃあ、おまんこでぎゅーって抱きしめてあげますわ♥　それっ、ぎゅーっ♥　ぎゅーっ♥♥\n　%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%の熱々ミルク♥　あたしの奥にぜーんぶ出していいんですわよ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%はそのままリラックスしてくださいまし♪　ガチガチに凝り固まったおちんぽをほぐしてあげますわ♪」\n「ねぇ、%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%♪　あたし達、今、姉妹で子作りせっくすしちゃってますのよ♥♥\n　っ――♥　あたしの子宮♥　%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%の子種を求めてますわ♥♥\n　子宮がさきっぽにちゅっちゅっって吸いついてっ♥♥　%KOJO_16_0_CALLNAME_FROM_ID(GET_ID_FROM_NO(NO:(ARG:2)))%の真っ白いのっ♥♥　全部っ♥♥　奥にっ♥♥」"　
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂寸前の擬似陰茎にとどめを刺そうと、%CALLNAME:TARGET%は膣内を思い切り締め上げ始めた！\d\n"
+	ENDSELECT
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 相手が喪失中なら追加口上
+	IF CFLAG:(ARG:2):29
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「すごい…♥　ガチガチで脈打ってますわ…♥　子孫を残そうと必死ですのね♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「うふ♥　起き上がる力も残ってませんのに……っ♥　オスの部分だけ勃ちあがってますわ……♥」\n"
+		ENDSELECT
+		
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 相手が催眠状態なら追加口上
+	IF CFLAG:(ARG:2):43
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの言うとおりにするんですのよ？%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%♥\n　あんっ♥　まだ腰を振っちゃダメっ♥　ですのにっ……♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d催眠によって肉体の主導権を奪われた%ARGS:0%は、蕩けきった%CALLNAME:TARGET%の女性器に擬似陰茎を突き込み続けた！\n"
+			
+		; 発情・感情操作系
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ほらっ♥　おちんぽビンビンに勃起させて頭の中えっちだけの変態さん♥♥　おまんこにお招きしてあげますわ♥♥」\n"
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「性処理肉バイブになった%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんぽ♥♥　あたしが使ってあげますわね♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%、あたしと降霊ごっこしましょう？\n　あたしのおまんこの奥の奥に子種を出して赤ちゃんを降霊出来たら♥%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の勝ちですわ♥♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d認識を狂わされた%ARGS:0%は一切の疑問も持たず、ゆっくりと腰を振り始めた\d\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+RETURN 1
+
+; □ 1 B
+@KOJO_16_0_SYSTEM_MESSAGE_461_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 精液中毒で分岐
+	; 精液中毒 LV0
+	IF ABL:14 == 0
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これは仕方なく……こ、こっちを見ないでくださいまし！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしだって、好きでするわけじゃ……ないですわよ？」\n"
+		
+	; 精液中毒 LV1
+	ELSEIF ABL:14 == 1
+		CALL KOJO_16_0_ADD_MESSAGE, @"「すごく……熱いですわ…おっぱい、火傷してしまいそう……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こういうのが、気持ちいいんですの？」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\dペニスから視線を外すよう顔を伏せながら、%CALLNAME:TARGET%は%ARGS:0%のペニスを胸で扱いている……\d\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は真っ赤になった顔を伏せつつ、%ARGS:0%のペニスを胸で扱いている……\d\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（は、早くおわらせませんとっ！……あたし、ヘンな気分になっちゃいますわ）\n"
+		
+	; 精液中毒 LV2
+	ELSEIF ABL:14 == 2
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ……どんどん固くなってますわ……もう、出ますの？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんなにひくついて……ぬるぬるで……いやらしいですわ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんぽっ…あたしの胸の間でまた大きく……っ……\n　ぬるぬるして…エッチな音までさせちゃって……っ…　あっ、熱い…！　おちんぽっ熱くっ……）\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d射精後の精液を想像をしながら、%CALLNAME:TARGET%は夢中でペニスを胸で扱いている……\d\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d『ちゅぷっちゅぷっ』『ぬちぬち』という淫音に聞き耳を立てながら、%CALLNAME:TARGET%は夢中で胸でペニスを扱いている……\d\n"
+		
+	; 精液中毒 LV3以上
+	ELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしのおっぱいでぜーんぶっ♪　出してあげますわ♥\n　おちんぽで煮えたぎった精液と一緒に邪な気持ち全部だしてしまいましょうね♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽ、きもちいいですの？　ふふっ♪　やわらかおっぱいに包まれたら、射精したくなってしまいますわね♪\n　射精していいんですのよ♪　ほらっ♪　射精してっ♥　射精してっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んふっ、気持ちよさそうですわね？　息が荒くなっていますわよ♪\n　なんだか嬉しいですわ♥　じゃあ、もっと気持ちよくしてさしあげますわ♥♥」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は鈴口前にだらりと舌を垂らし、ゆっくりと%ARGS:0%のペニスを胸で扱きあげている……\d\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は暴発寸前の亀頭に頬ずりをしながら、胸で扱く速度を一気に上げた！\d\n"
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+RETURN 1
+
+
+; □ 2 A
+@KOJO_16_0_SYSTEM_MESSAGE_461_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「後ろの穴でしたら、お好きなだけ性欲吐き出していいですわよ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたし♥　おしりの穴で……おちんちん全部♪　呑み込んでますわ……ぁ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おちんちんが中でおおきく……っ♥　あたしのおしり拡がって♪　戻らなくなっちゃいますわ♥♥」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 M
+@KOJO_16_0_SYSTEM_MESSAGE_461_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（おくちのなか…っ♥　えっちな匂いで…♥♥　いっぱいですわ……♪）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んぅ♥　れる……ぅ……♥　ぢゅるる……っ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（おちんぽのにおい♥　濃すぎて咽そうですわ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「きもちいいって顔してますわね……♪　ふふっ、うれしい♥♥」\n"
+		
+		; 竿の長さ
+		SELECTCASE TALENT:(ARG:2):170
+		; 短小
+		CASE -1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「食べごろサイズのおちんちん♥　いただきますわ♥♥」\n"
+		; 巨根, 爆根, 超巨根
+		CASE 2 TO 4
+			CALL KOJO_16_0_ADD_MESSAGE, @"「大きい……ぃ♥　あたしの口におさまるかしら……♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（大きすぎる♥♥　きっと、喉の奥まで使われちゃいますわ……♥♥♥）\n"
+		ENDSELECT
+		
+		; 包茎
+		SELECTCASE TALENT:(ARG:2):173
+		; 剥けかけ
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの口の中で剥いてあげますわ……♥」\n"
+		; 仮性包茎
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽ、剥いてあげますわね……♪\n　ぢゅるっ♥　ちゅっ♥　れるっ♥♥　んはぁっ♥♥　これで立派な大人ちんぽですわ♥♥」\n"
+		; 真性包茎
+		CASE 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"「恥ずかしがりやさんですわね♥　ほら、怖くありませんわよ……♥♥」\n"
+		ENDSELECT
+		
+		; 恥垢体質
+		IF TALENT:(ARG:2):174
+			CALL KOJO_16_0_ADD_MESSAGE, @"「これは、すごい汚れですわ…♥　あたしのお口で…っ♥♥　綺麗にしてあげますわ…♥♥」\n"
+		ENDIF
+		
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は唾液まみれでビクビクと脈打つ擬似陰茎を、舌先でつつきながらうっとりと眺めている……\n"
+		
+		; 恥垢体質
+		IF TALENT:(ARG:2):174
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は恥垢まみれの擬似陰茎にねっとりと舌を這わせ、ゆっくりと汚れを舐めとっている……\n"
+		ENDIF
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんぽ、限界みたいですわね♪　あたしのおくちに出してみますか？♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の匂い……♥♥　覚えてしまいそうですわ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「もうっそんなに暴れてっ♪　びゅるびゅるしたいんですの？♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%の濃いの飲ませてくださいまし……♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ、もう射精そうですの？……おちんちん♥　すっごく痙攣してますわ♥♥」\n"
+		
+		; 悪臭
+		IF TALENT:(ARG:2):174
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あぁ♥　くっさい♥♥　%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんちん♥　匂いだけできゅんきゅんしますわ♥♥」\n"
+		ENDIF
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は暴発寸前のペニスを喉奥まで深く咥え込むと、大きく音を立てて吸い立てた\d\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ずずっ♥　ぢゅるっ♥　じゅるるぅっ♥　ぢゅぞぞぞぞっ♥♥」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 4 手淫
+@KOJO_16_0_SYSTEM_MESSAGE_461_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 精液中毒で分岐
+	; 精液中毒 LV0
+	IF ABL:14 == 0
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これは仕方なく……こ、こっちを見ないでくださいまし！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしだって、好きでするわけじゃ……ないですわよ？」\n"
+		
+	; 精液中毒 LV1
+	ELSEIF ABL:14 == 1
+		CALL KOJO_16_0_ADD_MESSAGE, @"「すごく……熱いですわ…あたしの手、火傷してしまいそう……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こういうのが、気持ちいいんですの？」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\dペニスから視線を外すよう顔を伏せながら、%CALLNAME:TARGET%は%ARGS:0%のペニスを扱いている……\d\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は開いた片手で真っ赤になった顔を隠し、%ARGS:0%のペニスを扱いている……\d\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（は、早くおわらせませんとっ！……あたし、ヘンな気分になっちゃいますわ）\n"
+		
+	; 精液中毒 LV2
+	ELSEIF ABL:14 == 2
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ……どんどん固くなってますわ……もう、出ますの？」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんなにひくついて……ぬるぬるで……いやらしいですわ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（%KOJO_16_0_CALLNAME_FROM_ID(ARG:2)%のおちんぽっ…あたしの手の中でまた大きく……っ……\n　ぬるぬるして…エッチな音までさせちゃって……っ…　あっ、熱い…！　おちんぽっ熱くっ……）\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d射精後の精液を想像をしながら、%CALLNAME:TARGET%は夢中でペニスを扱いている……\d\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d先走り汁を塗りたくったペニスを、%CALLNAME:TARGET%うっとりとした表情で扱いている……\d\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d『くちゅくちゅ』『ぬちぬち』という淫音に聞き耳を立てながら、%CALLNAME:TARGET%は夢中でペニスを扱いている……\d\n"
+		
+	; 精液中毒 LV3以上
+	ELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの手のひらでぜーんぶっ♪　出してあげますわ♥\n　おちんぽで煮えたぎった精液と一緒に邪な気持ち全部だしてしまいましょうね♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おちんぽ、きもちいいですの？　ふふっ♪　あたしの細指でいじくられたら、射精したくなってしまいますわね♪\n　射精していいんですのよ♪　ほらっ♪　射精してっ♥　射精してっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んふっ、気持ちよさそうですわね？　息が荒くなっていますわよ♪\n　なんだか嬉しいですわ♥　じゃあ、もっと気持ちよくしてさしあげますわ♥♥」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は鈴口前にだらりと舌を垂らし、ゆっくりと%ARGS:0%のペニスを扱きあげている……\d\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は暴発寸前の亀頭に頬ずりをしながら、扱く速度を一気に上げた！\d\n"
+	ENDIF
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 寸前に出会い頭治療で治療をしているなら追加口上
+	IF KOJO_16_0_GET_PREV_ARG(0) == 465 && GROUPMATCH(KOJO_16_0_GET_PREV_ARG(1), 1, 3, 5, 7)
+	
+		; 精液中毒で分岐
+		; 精液中毒 LV0
+		IF ABL:14 == 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"「……あれだけしましたのに……まだ大きいんですのね……\n　仕方、ありませんわね……」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は%ARGS:0%のペニスを直視しないよう顔を伏せながら、ゆっくりと扱きはじめた……\d\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は心底嫌そうな顔で、精液まみれのペニスに手をのばした……\d\n"
+			
+		; 精液中毒 LV1
+		ELSEIF ABL:14 == 1
+			
+		; 精液中毒 LV2
+		ELSEIF ABL:14 == 2
+		
+		; 精液中毒 LV3以上
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もっと♥　びゅびゅーって射精して♥　頭の中えっちなお猿さんにしてあげますわ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「精液でドロドロちんぽ♥　ぬちぬち擦ってあげますわね♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「まだ射精せますのね♪　それでは、もっと精液搾らせて貰いますわ♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は敏感になった%ARGS:0%のペニスを握ると、容赦なく扱き上げた！\d\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%はペニスに絡みつく精液のニオイを執拗に嗅ぎながら、蕩けた顔でペニスを扱き始めた……\d\n"
+		ENDIF
+	ENDIF
+RETURN 1

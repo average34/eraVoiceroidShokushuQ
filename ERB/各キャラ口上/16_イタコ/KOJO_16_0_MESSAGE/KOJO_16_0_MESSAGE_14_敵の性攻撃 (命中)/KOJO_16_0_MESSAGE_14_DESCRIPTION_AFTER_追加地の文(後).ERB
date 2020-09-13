@@ -1,0 +1,179 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 追加地の文(後)
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文を発生させる場合
+	; 前にランダム口上ストックがあるかもしれないので明示的に次の段落へ
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	
+	; 喪失中 追加地の文
+	IF CFLAG:29
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は蕩け切った声をあげ、半開きの口から涎をこぼしている\d\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は蕩け切った顔で、頭を左右に振っている\d\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d限界を超えて与えられる快楽に、%CALLNAME:TARGET%は脱力した身体を震わせている\d\n"
+		ENDSELECT
+	ENDIF
+	
+	; 催眠中 追加地の文
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は自分を犯す相手に安らかな笑顔を向けている…\d\n"
+		ENDSELECT
+	ENDIF
+		
+	; 淫乱系素質持ちなら地の文追加
+	SELECTCASE ARG:2
+	; A
+	CASE 0
+		IF TALENT:75 || (KOJO_16_0_IS_REVERSE() && ABL:6 >= 3)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d肉欲を貪るだけの器官に成り果てた淫らな尻穴は、とろけるような快感に痙攣している\d\n"
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d発情しきった媚肉へと堕ちた尻穴は、更なる快感をねだるようにひくついている\d\n"
+			CASE "強気"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d快感を得るための無様な穴へ作り替えられた%CALLNAME:TARGET%のアナルは、肉欲を下品に受け入れている\d\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d無様に破壊された%CALLNAME:TARGET%の尻穴は、与えられる刺激を全て快感に変え脳を侵していく……\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d疼き続ける淫らな肉穴に作り替えられた%CALLNAME:TARGET%のアナルは、ひくつきながら貪欲に快感を受け入れている\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d無様に改造された尻穴は、%CALLNAME:TARGET%の意思を無視して肛虐の悦びに蕩けきっている\n"
+			ENDSELECT
+			
+			; 催眠中(無意識・認識操作系) 追加口上
+			IF KOJO_16_0_IS_HYPNO() && FLAG:526 == 2
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d最高の肉便器へ作り替えられた%CALLNAME:TARGET%のアナルは、肛門をほじられる喜びにヒクヒクと痙攣している\d\n"
+			ENDIF
+		ENDIF
+	
+	; B
+	CASE 1
+		IF TALENT:76 || (KOJO_16_0_IS_REVERSE() && ABL:7 >= 3)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d徹底的に破壊され、触れるだけで絶頂する淫肉に成り果てた%CALLNAME:TARGET%の胸は、乳首を淫らに尖らせ肉欲を貪っている\d\n"
+			CASE "発情"
+				; 乳首勃起中
+				IF GET_ERECTION_STATE_B(TARGET)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d肉欲を貪るだけの器官に成り果てた%CALLNAME:TARGET%の胸は、肥大化した乳首を勃起させながら快感に震えている\d\n"
+				; [陥没乳首]
+				ELSEIF TALENT:159
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d肉欲を貪るだけの器官に成り果てた%CALLNAME:TARGET%の胸は、肥大化した陥没乳首をぷっくりと膨れ上がらせ快感に震えている\d\n"
+				; 乳首勃起なし & 素質なし
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d肉欲を貪るだけの器官に成り果てた%CALLNAME:TARGET%の胸は、肥大化した乳首を尖らせながら快感に震えている\d\n"
+				ENDIF
+			CASE "強気"
+				; 乳首勃起中
+				IF GET_ERECTION_STATE_B(TARGET)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d疼き続けるよう作り替えられた%CALLNAME:TARGET%の胸は、大きく勃起した乳首をふるわせて快感を貪っている\d\n"
+				; [陥没乳首]
+				ELSEIF TALENT:159
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d疼き続けるよう作り替えられた%CALLNAME:TARGET%の胸は、大きく膨らんだ陥没乳首をふるわせて快感を貪っている\d\n"
+				; 乳首勃起なし & 素質なし
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d疼き続けるよう作り替えられた%CALLNAME:TARGET%の胸は、尖りきった乳首をふるわせて快感を貪っている\d\n"
+				ENDIF
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d気が狂う程の感度に改造された淫乳を弄られ、頭の芯まで痺れるような快感に%CALLNAME:TARGET%は蕩けきった顔を晒している\d\n"
+			ENDSELECT
+			
+			; 催眠中(無意識・認識操作系) 追加口上
+			IF KOJO_16_0_IS_HYPNO() && FLAG:526 == 2
+				; 乳首勃起中
+				IF GET_ERECTION_STATE_B(TARGET)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d気が狂う程の感度に作り替えられた%CALLNAME:TARGET%の淫乳は、乳首を下品に勃起させながら快感を貪っている\d\n"
+				; [陥没乳首]
+				ELSEIF TALENT:159
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d気が狂う程の感度に作り替えられた%CALLNAME:TARGET%の淫乳は、陥没した乳首を膨らせ快感を貪っている\d\n"
+				; 乳首勃起なし & 素質なし
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d気が狂う程の感度に作り替えられた%CALLNAME:TARGET%の淫乳は、乳首を淫らに尖らせながら快感を貪っている\d\n"
+				ENDIF
+			ENDIF
+		ENDIF
+	
+	; C
+	CASE 2
+		IF TALENT:77 || (KOJO_16_0_IS_REVERSE() && ABL:8 >= 3)
+			; ふたなり
+			IF GET_PENIS(TARGET)
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d射精狂いへ堕ちた%CALLNAME:TARGET%の醜く成長した肉棒は、ねだるようにビクビクと脈打っている\d\n"
+				CASE "発情"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d醜く作り替えられた射精の快楽を貪るだけの器官は、ねだるようにビクビクと脈打っている\d\n"
+				CASE "強気"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d疼き続ける肉棒は、淫らにひくつきながら快感を主張している\d\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d醜く作り替えられた、本来は無いはずの器官が%CALLNAME:TARGET%の頭に気が狂うような快感を送り続けている\d\n"
+				ENDSELECT
+				
+				; 催眠中(無意識・認識操作系) 追加口上
+				IF KOJO_16_0_IS_HYPNO() && FLAG:526 == 2
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d射精の快楽を得るためだけにあるふたなりペニスは、淫らにひくつきながら快感を主張している\d\n"
+				ENDIF
+			; 通常
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d徹底的に破壊され、触れるだけで絶頂する淫肉に成り果てた%CALLNAME:TARGET%のクリトリスは、激しく勃起し肉欲を貪っている\d\n"
+				CASE "発情"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d醜く作り替えられ淫らに膨れ上がった淫核は、ねだるようにビクビクと脈打っている\d\n"
+				CASE "強気"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d疼き続けるよう作り替えられた%CALLNAME:TARGET%のクリトリスは、大きく勃起して快感を貪っている\d\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d淫らに破壊された%CALLNAME:TARGET%のクリトリスは、与えられる刺激に激しく充血しヒクヒクと痙攣している\d\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d気が狂う程の感度に改造された淫核を弄られ、頭の芯まで痺れるような快感に%CALLNAME:TARGET%は蕩けきった顔を晒している\d\n"
+				ENDSELECT
+				
+				; 催眠中(無意識・認識操作系) 追加口上
+				IF KOJO_16_0_IS_HYPNO() && FLAG:526 == 2
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d気が狂う程の感度に作り替えられた%CALLNAME:TARGET%のクリトリスは、下品に勃起しながら快感を貪っている\d\n"
+				ENDIF
+			ENDIF
+		ENDIF
+	; V
+	CASE 3
+		IF TALENT:78 || (KOJO_16_0_IS_REVERSE() && ABL:9 >= 3)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d肉欲を貪るだけの器官に成り果てた牝穴は、雄を誘うようにぬらぬらと光り淫らにヒクついている\d\n"
+			CASE "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d発情しきった媚肉へと堕ちた牝穴は、感度を幾重にも増幅させ際限なく快感を貪っている\d\n"
+			CASE "強気"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d快感を得るための無様な穴へ作り替えられた%CALLNAME:TARGET%のヴァギナは、肉欲を下品に受け入れている\d\n"
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d疼き続ける淫らな肉穴に作り替えられた%CALLNAME:TARGET%のヴァギナは、ひくつきながら貪欲に快感を受け入れている\d\n"
+			ENDSELECT
+
+			; 催眠中(無意識・認識操作系) 追加口上
+			IF KOJO_16_0_IS_HYPNO() && FLAG:526 == 2
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d最高の肉便器へ作り替えられた%CALLNAME:TARGET%の牝穴は、まるで膣内射精をねだるようにぬらついている\d\n"
+			ENDIF
+		ENDIF
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 敵の衣服攻撃 & CP0%状態で転送されてきた場合は地の文追加
+	IF ARG:0 == 13 && BASE:CP <= 0
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d何も身に着けていない%CALLNAME:TARGET%の身体を、触手が好き放題にもてあそんでいる\d\n"
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+RETURN 1

@@ -1,0 +1,32 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 201 分断テレポート
+; ------------------------------------------------------------------------------
+
+; □ 0 飛ばされる前 
+@KOJO_16_0_SYSTEM_MESSAGE_201_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…っ！？しまっ…！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「何の光ですのっ…！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+
+; □ 1 飛ばされた後
+@KOJO_16_0_SYSTEM_MESSAGE_201_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ここは…さっきとは違う場所……ですわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「何が…起きたましたの…？」\n"
+		
+		IF FLAG:10 && FLAG:11
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dさっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%達の姿も見えない。　どうやら別の部屋に転送されたようだ…\n"
+		ELSEIF FLAG:10
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dさっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%の姿も見えない。　どうやら別の部屋に転送されたようだ…\n"
+		ENDIF
+	ENDSELECT
+RETURN 1

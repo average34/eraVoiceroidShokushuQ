@@ -1,0 +1,51 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0698 ハウンド V+
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_14_698(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしのおまんこっ♥　もっともっと犬のおちんぽで滅茶苦茶にしてくださいましっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「くう～ん♥　くう～ん♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「わんっ♥　わんっ♥　わうぅぅんっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あははっ♥　犬のおちんぽ…っ♥　気持ちいいとこをゴリゴリ削ってるっっ♥♥」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は女としてのプライドをかなぐり捨て、発情しきった雌犬になりきっている\d\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたしっ、犯されてますっ♥　ムリヤリ…っ♥　犬なんかに、気持ちよくされ…ますわぁっ♥♥）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おごっ……！　な…かで…っ…大きく…なって……っ、ゴリゴリ擦れてますわ……っ！」\n"
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

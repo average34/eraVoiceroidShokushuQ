@@ -1,0 +1,27 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 3 前に出る
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_1_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; PTメンバーがいる
+	IF GET_MEMBER_SUM() > 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしが前衛を務めますわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（敵の攻撃をみんなからひきつけませんと……）\n"
+		ENDSELECT
+		
+	; ひとりだよ
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（い、勢いで近づいてしまいましたわ…）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「守りは捨てて、短期決戦ですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「回避は考えず、突撃ぃ～ですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「この距離なら、あなたも避けられませんわよ…！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

@@ -1,0 +1,60 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 101 迷宮内で他のキャラと会った - キャラクター別 006 琴葉葵
+; ------------------------------------------------------------------------------
+
+; □ 0 通常
+@KOJO_16_0_SYSTEM_MESSAGE_101_X_0_CHARA_6(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+	
+	; 催眠行動中
+	ELSEIF CFLAG:(ARG:1):43 == 1
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_16_0_PARTY_NO:1 || ARG:1 == KOJO_16_0_PARTY_NO:2
+		; パーティーに茜ちゃんが居ないなら追加口上
+		IF !(CHECK_MEMBER_FROM_NO(5))
+			CALL KOJO_16_0_ADD_MESSAGE, @"「茜さんとの為にもこんなところで負けていられませんわね……？」\n"
+		ENDIF
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こんなに強いなんて琴葉家って、何かと謎が多いですわね」\n"
+	; 通常行動中
+	ELSE
+		; 対象のキャラとは初遭遇
+		; 表示タイミングが一度しかない口上、優先口上として処理する
+		IF KOJO_16_0_GET_ENCOUNTER_COUNT(ARG:1) == 0
+			CALL KOJO_16_0_SET_IMPORTANT_FLAG()
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%もこの迷宮に来ていましたの？」\n"
+			RETURN 1
+		ENDIF
+		
+		; パーティーに茜ちゃんが居ないなら追加口上
+		IF !(CHECK_MEMBER_FROM_NO(5))
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%が茜さんと一緒じゃないのも珍しいですわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「茜さんと早く再会したいですわね？」\n"
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「茜さん！　%KOJO_16_0_CALLNAME_FROM_ID(ARG:1)%が居ましたわ！」\n"
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 1 喪失中
+@KOJO_16_0_SYSTEM_MESSAGE_101_X_1_CHARA_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 遭遇キャラは拘束されている
+	IF CFLAG:(ARG:1):504
+	
+	; 遭遇キャラと寸前まで共闘していた
+	ELSEIF ARG:1 == KOJO_16_0_PARTY_NO:1 || ARG:1 == KOJO_16_0_PARTY_NO:2
+	
+	; 通常行動中
+	ELSE
+		; パーティーに茜ちゃんが居ないなら追加口上
+		IF !(CHECK_MEMBER_FROM_NO(5))
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…こんなところで寝てたら、茜さんが悲しみますわよ…？」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…茜さんが見たら、どう思うかしら…」\n"
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あ、茜さん！　落ち着いて！　息はありますわ！」\n\dボロボロに犯し尽くされた葵を見て、茜は錯乱している…\d"
+		ENDIF
+	ENDIF
+RETURN 1

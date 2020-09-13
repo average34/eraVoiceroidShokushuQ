@@ -1,0 +1,61 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 508 触手包帯
+; ------------------------------------------------------------------------------
+
+; □ 1 触手包帯暴走
+@KOJO_16_0_SYSTEM_MESSAGE_508_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 起床中
+	IF FLAG:8 == 0
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はっ♥　あっ♥　おっぱい…っ、いい…ですわっ♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あぁ…っ♥　むね…ぇ、しびれ…ますのっ…♥♥」\n"
+			
+			; 追加口上
+			; 乳首勃起中
+			IF GET_ERECTION_STATE_B(TARGET)
+				CALL KOJO_16_0_ADD_MESSAGE, @"「はぅぅ…ん♥　ちくび…ぃ、勃起してぇ…♥　感じちゃい…ますの…♥♥」\n"
+			; [陥没乳首]
+			ELSEIF TALENT:159
+				CALL KOJO_16_0_ADD_MESSAGE, @"「そんな…にっ、いじめられたらぁ…♥　ちくび勃ってしまいますのぉ♥」\n"
+			; 乳首勃起なし & 素質なし
+			ELSE
+				
+			ENDIF
+
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「くっ、包帯にまで罠があるなんて…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「くうっ、ぞわぞわしますわ…」\n"
+		ENDSELECT
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+		; 追加地の文
+		; 乳首勃起中
+		IF GET_ERECTION_STATE_B(TARGET)
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dなで回すように刺激された%CALLNAME:TARGET%の乳首は、包帯の上からでも勃起しているのが判る程大きく膨らんでいる\d\n"
+		; [陥没乳首]
+		ELSEIF TALENT:159
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dなで回すように刺激された%CALLNAME:TARGET%の乳首は、包帯の上からでも形がくっきりと判る程大きく膨らんでいる\d\n"
+		; 乳首勃起なし & 素質なし
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dなで回すように刺激された胸を上下させながら、%CALLNAME:TARGET%は荒い息を吐いている…\d\n"
+		ENDIF
+		
+	; 睡眠中(通常睡眠・気絶睡眠を区別しない)
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あっ…♥　あっ…♥　んあぁ…っ♥」\n"
+			CALL KOJO_16_0_PARAGRAPH_MESSAGE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は胸を舐め回される感覚に、眠ったまま涎を垂らし甘い声をあげている…\d\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んっ…、あ…っ……」\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; WAIT調整
+	CALL KOJO_16_0_ADD_MESSAGE, @"\w"
+RETURN 1

@@ -1,0 +1,143 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 30～34 非消耗武器攻撃
+; ------------------------------------------------------------------------------
+
+; □ 30 非消耗武器攻撃 弱攻撃
+@KOJO_16_0_SYSTEM_MESSAGE_1_30(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上を読み込む
+	CALL KOJO_16_0_SYSTEM_MESSAGE_1_DIRECT_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「狙うはヒットアンドアウェイですわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「敵から離れるまでが攻撃ですわっ！」\n"
+	ENDSELECT
+RETURN RESULT
+
+
+; □ 31 非消耗武器攻撃 中攻撃
+@KOJO_16_0_SYSTEM_MESSAGE_1_31(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上を読み込む
+	CALL KOJO_16_0_SYSTEM_MESSAGE_1_DIRECT_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_FIX_MESSAGE
+RETURN RESULT
+
+
+; □ 32 非消耗武器攻撃 強攻撃
+@KOJO_16_0_SYSTEM_MESSAGE_1_32(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 汎用口上を読み込む
+	CALL KOJO_16_0_SYSTEM_MESSAGE_1_DIRECT_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あんまり大きな武器は性に合いませんわ」\n"
+	ENDSELECT
+RETURN RESULT
+
+
+; □ 33 非消耗武器攻撃 下段狙い
+@KOJO_16_0_SYSTEM_MESSAGE_1_33(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いたずら好きのあんよにお仕置きですわ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 34 非消耗武器攻撃 急所狙い
+@KOJO_16_0_SYSTEM_MESSAGE_1_34(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「スキありですわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「そこっ！ですわ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ XX 非消耗武器攻撃 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_1_DIRECT_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 汎用攻撃口上を読み込む
+	CALL KOJO_16_0_SYSTEM_MESSAGE_1_VERSATILE_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 残りMP 33%以上
+	IF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「これでぶっ叩いてあげますわッ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もっと遠くから攻撃したいですわ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「攻撃したら距離を取りませんと……！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「返り血を浴びるのは気持ち悪いですわー」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…この武器っ　重い……ですわねっ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（身体に疲れが……慎重に攻撃しませんと…！）\n"
+		ENDSELECT
+	ENDIF
+	
+	; 1人で行動中なら追加口上
+	IF GET_MEMBER_SUM() == 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ここの敵に一人ではは近付きたくありませんけれど……」\n"
+		ENDSELECT
+	ENDIF
+		
+	; 武器別追加口上
+	SELECTCASE TFLAG:67
+	; ナイフ
+	CASE 10
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「いざとなったらこれを投げつけてあげますわ！」\n"
+		ENDSELECT
+		
+	; クナイ
+	CASE 11
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「投げて攻撃できませんかしら……？」\n"
+		ENDSELECT
+	
+		; 2人以上のパーティーなら追加口上
+		IF GET_MEMBER_SUM() > 1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「…うっかり人に当てないようにしませんと」\n"
+			ENDSELECT
+		ENDIF
+		
+	; フライパン★
+	CASE 12
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「思い切り振りかぶって…！エイヤッ！」\n"
+		ENDSELECT
+		
+	; マジカルステッキ
+	CASE 13
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イタコの必殺！マジカル殴打ですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「変身っ！魔法少女イタコの除霊アタックですわ！」\n"
+		ENDSELECT
+		
+	; 大剣
+	CASE 16
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「こんなに大きな剣……負ける気がしませんわー！」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+

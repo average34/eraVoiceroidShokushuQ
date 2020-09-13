@@ -1,0 +1,109 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 46 強制自慰
+; ------------------------------------------------------------------------------
+
+; 選択コマンドによって派生とかしたかったけれどターン初期化時にはコマンド書き換えが発生してしまうので参照不可能
+; なのでパターンを増やして違和感を消すのがいいかな
+@KOJO_16_0_SYSTEM_MESSAGE_1_46(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 催眠中 & 戦闘中なら地の文書き換え
+	IF KOJO_16_0_IS_HYPNO() && TFLAG:13
+		
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 地の文書き換え
+			CALL KOJO_16_0_ADD_MESSAGE, @"\m\g%CALLNAME:TARGET%は身体を操られ、周りに見せつけながらの自慰を強制された！\g\n"
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 地の文書き換え
+			CALL KOJO_16_0_ADD_MESSAGE, @"\m\g催眠状態の%CALLNAME:TARGET%は虚ろな表情のまま自慰をしている…\g\n"
+		ENDSELECT
+		
+	; ワイヤーゴーストに拘束されているなら地の文書き換え
+	ELSEIF CFLAG:20 && DA:(CFLAG:20):0 == 37
+		CALL KOJO_16_0_ADD_MESSAGE, @"\m\g%CALLNAME:TARGET%は身体を操られ、周りに見せつけながらの自慰を強制された！\g\n"
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 拘束・丸呑み中
+			IF CFLAG:20 || CFLAG:21
+				CALL KOJO_16_0_ADD_MESSAGE, @"（あたしが好きな場所、知ってもらいませんと……）\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（変態らしく……淫らに……いやらしく……アピールを……）\n"
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 先制攻撃成功 & MP低下中
+	IF KOJO_16_0_GET_PREV_ARG(0) == 60 && KOJO_16_0_GET_PREV_ARG(2) == 1 && BASE:MP <= (MAXBASE:MP / 4)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んふふっ♪　あたしのえっちな所見せつけてあげますわっ♪」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（んあぁっ……先手を取れましたのにっ……　手が……とまらにゃひ……ぃっ……）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（ダメですわっ！　手がっ…勝手にぃっ……こんな、オナニーしてたら気付かれてしまいますのにぃっ…っ！？）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んあぁっ…！？　逃げないと……苗床にされてしまいますのにっ！？　オナニーッ……とまらないっ……」\n"
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あふっ…カラダが疼いて止まりませんわっ♥　いつもより…イイッ♥♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あ……っ……♥　あっ……♥　あっ♥あっ♥ああぁっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あれ？　あたしは確か……？　何をしていたのか、忘れてしまいましたわ…？　\n　そんなこと……より、今は…イきたいっ♥）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　くぅぅ……っ♥　きゅっうに……うずいてぇっっ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ぐちゅぐちゅに濡れた…からっぽおまんこ……ぉ♥♥　誰かぁ……おちんぽで♥　埋めてくださいましぃぃ♥♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はぁ……っ……♥　はぁ……っ……♥　んん……っ……♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「だっ……め……っ……　もう、ガマンできませんわ…っ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（オナニー…っ！　おまんこしたいっっ！　いけま…せんわっ、考えてはっ……！　んんんっ…ぐちょぐちょしたい……っ！）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あつい……っ　おまんこ……っ　火照って……っ　あついぃぃっ……っ）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「く……ぅっ……　はっ……　うぅ……ん……っ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（この疼きを…鎮めませんと…！！）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あたし……　こんな事……　してる場合じゃ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これは…っ　仕方がっ…　仕方がないんですの……っ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（こんな時に、身体が疼い……てっ！）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はっ……はっ……　鎮め…ないと、戦え…ませんわっ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はぁ……っ……　はぁ……っ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「やぁ……っ……　弄る手が……　とまりませんわ……っ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「どう……してっ……　きゅうに、こんな……ぁっ……！？」\n"
+	ENDSELECT
+	
+	; 拘束・丸呑み中 追加口上
+	IF CFLAG:20 || CFLAG:21
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「気持ちよすぎて……っ♥　どうでもいいですわっ♥　イったまま…逝っちゃう…♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あぁ……っ♥　締め付け…ながら……するのっ♥♥　凄いですわ……っ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（どうせ、抜け出せないなら……気持ちいい方が…　いいですわ……っ）\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（逃げないと、いけませんのに……\n　気持ちいい事で……頭がいっぱい……っ）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（頭がぼーっとしますわ……なんでですの……）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「一回だけ、イッて……　そうっ…したら……っ、すぐにっ…逃げますわ……っ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「だめぇ……っ　逃げないと…いけませんのに……っ！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

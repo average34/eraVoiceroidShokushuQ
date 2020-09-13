@@ -1,0 +1,246 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - XX 戦闘攻撃 汎用
+; ------------------------------------------------------------------------------
+
+; □ 攻撃汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_1_VERSATILE_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM CHARA_ID
+#DIM DAMAGE
+
+	; 敵専用口上を読み込む
+	CALL KOJO_16_0_DEPLOY_MESSAGE_SINGLE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, @"KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_{DA:(TFLAG:53):0}")
+	
+	; 汎用口上
+	; MPMAX
+	IF BASE:1 == MAXBASE:1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「これでも喰らえですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「吹き飛ばしてあげますわ！」\n"
+		ENDSELECT
+		
+	; 残りMP 66%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 66)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「少しくらい調子が悪くても…　これくらいでしたらっ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゃんと、当てないといけませんのに…っ　集中…力が…っ」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたると痛いですわよっ！！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イタコを甘く見たら痛み目みますわっ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「えっちな目で見ないでくださいましっ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はぁっ！！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「それっ！！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「早く倒れなさいっ！」\n"
+		ENDSELECT
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「カラダ、ざわついて…　集中できませんわ…っ」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あっ…　あたってくださいましっ！」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「気力の残ってる間に、できるだけ攻撃するべきですわね……！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「少し疲れ気味ですが、相手の動きさえ読めれば…！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（マズいですわ……　疲れで判断力が鈍ってますの……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「そ、それ…ッ！」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はぁ……♥　ふぅ……♥　攻撃を、しませんとっ…♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅぅ…　調子が、悪いですわ…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「アナタ程度、すぐに倒してあげますわ…！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「何とかして倒さないと…　このままじゃまずい、ですわっ…」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（視界がぼやけて…っ、うまく狙いが……）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「…っ！　ちゃんと狙わなきゃいけませんのに、目が霞んで――」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（早く、早く倒しませんと、あたしの気力が――）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「はやくっ…　はやく倒しきらないと…っ！」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 低EPなら追加口上
+	; りばーすでは専用地の文が表示される
+	IF BASE:EP < 1000
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（早く終わらせて、快楽を貪りたいです…♥）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（身体の火照りが、邪魔ですわ……ッ！）\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んぅ……くっ……　集中出来ませんわっ……」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 寸前に敵の通常攻撃(命中)を受けているなら追加口上
+	IF KOJO_16_0_GET_PREV_ARG(0) == 12
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「さっきの痛み、アナタにも教えてあげますわ！！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしに傷をつけた報い、その身に味わわせてあげますわ！！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あたしのターンですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おかえししてあげますわ！」\n"
+		ENDSELECT
+	ENDIF
+	
+	; 対象の敵が誰かを拘束している
+	IF DA:(TFLAG:53):10 || DA:(TFLAG:53):20
+		SIF DA:(TFLAG:53):10
+			CHARA_ID = DA:(TFLAG:53):10
+		SIF DA:(TFLAG:53):20
+			CHARA_ID = DA:(TFLAG:53):20
+			
+		; 好感度によって分岐
+		; 好感度:低
+		IF CFLAG:CHARA_ID:5 < 0
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"（捕まってる%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%を囮にすれば、きっと当たるはずわ）\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（捕まってる%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%を狙えばうまく当たりそうですわ）\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"（良い囮役が居ることですし、いまのうちですわ）\n"
+			ENDSELECT
+			
+		; 好感度:警戒
+		ELSEIF CFLAG:CHARA_ID:5 < 50
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%、もう少しだけそいつを押さえててくださいましっ！」\n"
+			ENDSELECT
+			
+		; 好感度:通常
+		ELSEIF CFLAG:CHARA_ID:5 < 200
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「こらっ！　%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%を離しなさい！」\n"
+			ENDSELECT
+			
+		; 好感度:高
+		ELSEIF CFLAG:CHARA_ID:5 >= 200
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%はっ！　あなたなんかにはふさわしくありませんわっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「今すぐ%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%を離してくださいましっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(CHARA_ID)%っ！今、助けますわっ！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+
+	; 多分この攻撃で相手を倒せるなら追加口上(りばーすには関数が無いので実行しない)
+	IF !KOJO_16_0_IS_REVERSE()
+		
+		; ダメージ期待値を取得
+		CALL CHECK_ATTACKED_DAMAGE(TARGET, ARG:1, TFLAG:53)
+		DAMAGE = RESULT
+		
+		IF DAMAGE > DA:(TFLAG:53):1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「これで……終わりですわっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「とどめっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「―――さよならですわ」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「謝っても、もう遅いですわよ？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「……あたしの勝ちですわ」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 攻撃口上 敵種類別
+; ◆ 003 ガーディアン
+@KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（…っ、この目玉の魔物から…　すごい威圧感を感じますわ…）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あなたを倒さないと、この迷宮から出られないみたいですわね……！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 攻撃口上 敵種類別
+; ◆ 005 リビングバイン
+@KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_5(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「植物みたいですから、火が効きそうですわね…」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 敵種類別 攻撃口上
+; ◆ 007 ワーム
+@KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_7(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「うねうね動くの、やめてくださいまし……っ」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 敵種類別 攻撃口上
+; ◆ 030 ダブルイール
+@KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_30(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「にゅるにゅる動いて気持ち悪いですわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「もうっ！　ぬるぬるして捕まえにくいですわねっ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 敵種類別 攻撃口上
+; ◆ 045 コウノトリ
+@KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_45(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 武器別口上
+	SELECTCASE TFLAG:67
+	; 火炎放射器
+	CASE 3
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「丸焼きにしますわよ！」\n"
+		ENDSELECT
+	ENDSELECT
+RETURN 1
+
+
+; 敵種類別 攻撃口上
+; ◆ 052 ハウンド
+@KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_52(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「わんちゃんは、もっと可愛げがある方がいいですわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「もう！　飼い主はどんな躾をしていますの！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 敵種類別 攻撃口上
+; ◆ 056 フレッシュゴーレム
+@KOJO_16_0_SYSTEM_MESSAGE_1_ATTACK_ENEMY_55(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM DAMAGE
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「大きければ何でもいいと思ったら大間違いですわよっ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こっちの攻撃さえ効くなら何とでもなりますわ！」\n"
+	ENDSELECT
+	
+	; 多分この攻撃で相手を倒せるなら追加口上(りばーすには関数が無いので実行しない)
+	IF !KOJO_16_0_IS_REVERSE()
+		
+		; ダメージ期待値を取得
+		CALL CHECK_ATTACKED_DAMAGE(TARGET, ARG:1, TFLAG:53)
+		DAMAGE = RESULT
+		
+		IF DAMAGE > DA:(TFLAG:53):1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ウドの大木って言葉、ご存じですの？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「大きさにあぐらをかくと、足元を掬われますわよ！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1

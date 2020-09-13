@@ -1,0 +1,127 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 442 触手スーツ自慰時
+; ------------------------------------------------------------------------------
+
+; □ 0 開始
+@KOJO_16_0_SYSTEM_MESSAGE_442_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちょ、ちょっと！？　何をさせるつもりですの…っ！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 AV
+@KOJO_16_0_SYSTEM_MESSAGE_442_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		; AVのどちらかが自慰中に絶頂している
+		IF KOJO_16_0_ORGASM_COUNT:0 > 0 || ORGASM_COUNT:3 > 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"「っぎぃぃっ！？　そこはぁ…っ…　イッたばかり…でっ、ビンカンにぃっ…にゃってましゅのにっ！！」\n"
+			
+		; 絶頂したのは別の部位
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んひぃぁっ！？　にゃかぁっ！？　ゴリゴリっ…てぇっ！？」\n"
+		ENDIF
+	ENDSELECT
+RETURN 1
+
+
+; □ 2 BC
+@KOJO_16_0_SYSTEM_MESSAGE_442_2(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あﾞあﾞあﾞあﾞあﾞあﾞぁっ！？　そこはっ！？　そこはだめぇええええっ！？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 3 セルフ膣内射精
+@KOJO_16_0_SYSTEM_MESSAGE_442_3(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 触手スーツ常駐時 強制セルフ膣内射精を流用
+	CALL KOJO_16_0_SYSTEM_MESSAGE_441_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; □ 4 終了
+@KOJO_16_0_SYSTEM_MESSAGE_442_4(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「……ぁっ♥　やっと…止まって…くれましたわ…♥♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「………は……ぁ……　ぁぁ……　ぁ……」\n"
+	ENDSELECT
+RETURN 1

@@ -1,0 +1,123 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 110 PTから離脱
+; ------------------------------------------------------------------------------
+
+; □ 0 確認
+@KOJO_16_0_SYSTEM_MESSAGE_110_X_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 別れる側口上・別れた側口上の両方が呼び出される為分岐
+	; 仲間側口上
+	IF ARG:1 == TARGET
+		; 喪失中
+		IF CFLAG:29
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"（いや……　おいて……いかないで…）\n"
+			ENDSELECT
+			
+		; 好感度:普通
+		ELSEIF CFLAG:5 < 200
+
+		; 好感度:高
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ここで別れるなんて、冗談ですわよね？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「よ、よく聞こえませんでしたわ……？　今、別れる……と言いましたの？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は目を見開き、絶望した表情でこちらを見ている\d\n「え……？　嘘だと、言って、くださいまし…？」\n"
+			ENDSELECT
+		ENDIF
+		
+	; 主人公側口上
+	ELSE
+	
+	ENDIF
+RETURN 1
+
+
+; □ 1 別れた
+@KOJO_16_0_SYSTEM_MESSAGE_110_X_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 別れる側口上・別れた側口上の両方が呼び出される為分岐
+	; 仲間側口上
+	IF ARG:1 == TARGET
+		; 喪失中
+		IF CFLAG:29
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ぁ……ぅ………　見捨て……なぃ………で……」\n"
+			ENDSELECT
+			
+		; 好感度:低
+		ELSEIF CFLAG:5 < 0
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「いつか天罰が下りますわよ」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたし相手にいい度胸をしていますわね……」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「次に会ったら覚悟しておくことですわ♪」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「もし、あなたが困っていても助けてあげませんわ」\n"
+			ENDSELECT
+			
+		; 好感度:警戒
+		ELSEIF CFLAG:5 < 50
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「奇遇ですわね、あたしも同じことを思ってましたわ」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「もう限界だと思っていましたわ」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「次に会っても声をかけないでくださいまし」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしから言おうと思っていたところですわ。　それでは……」\n"
+			ENDSELECT
+			
+		; 好感度:普通
+		ELSEIF CFLAG:5 < 200
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「お互い、生きてあえるといいですわね」\n"
+			ENDSELECT
+			
+		; 好感度:高
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「……わかり、ましたわ…」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「……嫌われて、しまいましたの」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「……あ、あたしに、悪いところがあったなら直しますわ…！だから…だから…！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は、必死の形相でしがみついている\d\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「…できれば、一緒にいたかったですが…」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわ……いえ……大丈夫…です、わ」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「…何を、間違えたんでしょう、あたし…」\n"
+			ENDSELECT
+		; 好感度:激高
+		; ヤンデレ悪落ちにしたいなーと思ったけどあまり良い文章にならなかったので保留
+		;ELSE
+		;	SELECTCASE KOJO_16_0_KOJO_MODE
+		;	CASEELSE
+		;		CALL KOJO_16_0_ADD_MESSAGE, @"「……ああ、そっか。そういう事なんですね。わかりました。\n どれだけ好意を向けたとしても相手が受け入れてくれるかどうかなんてわからない。だったら…」\w"
+		;		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		;		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は顔を伏せ、何かを呟いている。\n表情を伺い知る事は出来ないが、時折笑っているような声も漏れ聞こえてくる。\w"
+		;		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		;		CALL KOJO_16_0_ADD_MESSAGE, @"\dもしかしたら、自分は取り返しのつかない事をしてしまったのではないか…\nそんな事を考えていると、%CALLNAME:TARGET%は顔をあげ、笑顔で私の名前を呼んだ。\w"
+		;		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		;		CALL KOJO_16_0_ADD_MESSAGE, @"「%KOJO_16_0_CALLNAME_FROM_ID(1)%」\n\n\n\n\w"
+		;		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		;		CALL KOJO_16_0_ADD_MESSAGE, @"「後で、迎えに来ますね。」\n\w"
+		;		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		;		CALL KOJO_16_0_ADD_MESSAGE, @"\dその言葉を最後に、%CALLNAME:TARGET%の姿は闇の中に消えていった。\n\d\w"
+		;	ENDSELECT
+		;	
+		;	;判別用の悪堕ち素質
+		;	TALENT:(ARG:1):73 = 101
+		;	CALL CREATE_ENEMY(101, CFLAG:(ARG:1):4, 0, ARG:1)
+		;	
+		;	CFLAG:(ARG:1):48 = 0
+		;	CFLAG:(ARG:1):37 = 0
+		;	BASE:(ARG:1):3 = 0
+		;	CFLAG:(ARG:1):2 = 1
+		ENDIF
+			
+	; 主人公側口上
+	ELSE
+	
+	ENDIF
+RETURN 1

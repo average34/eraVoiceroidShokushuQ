@@ -1,0 +1,62 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 74 着替える
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_1_74(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 服を着る
+			IF ITEM:54 > 0 && BASE:3 <= MAXBASE:3 / 2
+				CALL KOJO_16_0_ADD_MESSAGE, @"（着替えあるのに…　どうして…　こんなボロボロの服着てるんでしょうか…）\n（着替えませんと……）\n"
+			
+			; 服を脱ぐ
+			ELSE
+				; 催眠深度によって変化
+				SELECTCASE CFLAG:43
+				CASE 1
+					CALL KOJO_16_0_ADD_MESSAGE, @"（あたし…　なんで…　こんな服を着ていますの…）\n"
+				CASE 2
+					CALL KOJO_16_0_ADD_MESSAGE, @"（あたし…　どうして…　服なんか着ていますの…）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あたしっ♥　服なんか着て、変態みたいですわっ！　早くっ♥　早く裸になりませんとぉ……♥♥」\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（こんなもの…　早く脱ぎませんと……）\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"「性処理便所が…♥　服なんか着て…申し訳ありませんっ♥　すぐにっ♥　すぐに脱がせて…いただきますわっ♥」\n"
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 服を着る
+	IF ITEM:54 > 0 && BASE:3 <= MAXBASE:3 / 2
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あら♥　綺麗な服を汚す方がお好みですの？　へんたいさんですわ♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「着替えは貴重なんですのよ…」\n"
+		ENDSELECT
+		
+	; 服を脱ぐ
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"（あたし…、魔物さんに犯されるのわかってるのに…♥　自分で脱いでますわ…♥　んっ♥　期待で濡れてしまいそう…♥）\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「く…ぅ…！　脱ぎたくありませんのにぃ…！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「勝手に脱がせるの…やめてくださいまし…！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1

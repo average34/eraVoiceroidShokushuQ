@@ -1,0 +1,61 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 1894 サキュバス C
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_14_1894(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+	
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠・喪失・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 汎用口上
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ああっ♥　さきっぽ…っ、ちゅうちゅうされて…っ♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「やっ…、ああっ……！　そこ…っ、ビンカンな……ところですの…っ！」\n"
+	ENDSELECT
+
+	; 着衣状態と裸で地の文が変化する為分岐
+	; 着衣
+	IF BASE:3
+		; 着衣時はふたなり判定で地の文が変化
+		; ふたなり
+		IF GET_PENIS(TARGET)
+			; 地の文は「くわえ込んだ」と表現されている
+			; 多分口奉仕系を想定していると思うが、セックス用口上書いてもいいよね サキュバス相手だし
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「そんな事したら、あたしの赤ちゃん孕んでしまいますわ…♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ああっ♥　これっ、子作りっ♥　子作りセックスですのっ♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「おちんちんっ♥　おまんこに、ずぷずぷ入ってい…く♥」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あたしのおちんちんが、食べられて…♥」\n"
+			CASEELSE
+			ENDSELECT
+		; 通常
+		ELSE
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「そんなに優しくされたら…、お豆さんがむずむずしちゃいますわ…♥」\n"
+			CASEELSE
+			ENDSELECT
+		ENDIF
+	; 裸
+	ELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あはっ♥　あったかくて、気持ちいい…っ♥♥」\n"
+		CASEELSE
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 追加地の文側で\nするので口上側は\nで終わること
+RETURN 1

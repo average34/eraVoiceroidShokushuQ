@@ -1,0 +1,223 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 1 味方の攻撃 (発動時) - 10～14 通常攻撃
+; ------------------------------------------------------------------------------
+
+; □ 10 通常攻撃 弱攻撃
+@KOJO_16_0_SYSTEM_MESSAGE_1_10(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 汎用口上を読み込む
+	CALL KOJO_16_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 残りMP 66%以上
+	IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「弱い攻撃でも、先ずは当てることが重要ですわ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「少しずつ、確実にですわ！」\n"
+		ENDSELECT
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「少しでも削っておきませんと…っ！」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"（これくらいなら……今のあたしでも！）\n"
+		ENDSELECT
+	ENDIF
+	
+RETURN 1
+
+
+; □ 11 通常攻撃 中攻撃
+@KOJO_16_0_SYSTEM_MESSAGE_1_11(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 汎用口上を読み込む
+	CALL KOJO_16_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 残りMP 66%以上
+	IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「少し痛くしますわっ！」\n"
+		ENDSELECT
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「しっかりと狙って……てやぁっ！」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「これでも喰らいなさい！！」\n"
+		ENDSELECT
+	ENDIF
+RETURN 1
+
+
+; □ 12 通常攻撃 強攻撃
+@KOJO_16_0_SYSTEM_MESSAGE_1_12(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 霊撃も強攻撃から呼び出される
+	; 霊撃
+	IF CFLAG:50 == 19
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちょああああああっ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はあああああああっ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「破ぁっ！！」\n"
+	
+	; 強攻撃
+	ELSE
+		; 汎用口上を読み込む
+		CALL KOJO_16_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		CALL KOJO_16_0_FIX_MESSAGE
+	
+		; 残りMP 66%以上
+		IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「大きいの、いきますわ！」\n"
+			ENDSELECT
+		
+		; 残りMP 33%以上
+		ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「狙いは二の次ですわ…！」\n"
+			ENDSELECT
+			
+		; 残りMP 0%以上
+		ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「あっ…あたれぇー…！」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+
+
+; □ 13 通常攻撃 溜め撃ち
+; ◆ 0 チャージ
+@KOJO_16_0_SYSTEM_MESSAGE_1_13_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ふふっ♥　どうしても隙が出てしまいますわ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（霊力を貯めてる間は隙だらけ…♥　あぁ、捕まってしまいますわ…♥）\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「はぁー…っ　ふぅー…っ　はぁーっ…♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おっきいのっ…♥　おっきいのをっ…♥　おもいっきり…っ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いっ…　いまは…っ♥　ちからを…ためないと…♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（今はヘンなことも考えてはいけません…！　力を、力をためませんとっ…！！）\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d発情しきった%CALLNAME:TARGET%は、荒い息を吐きながら必死に力を溜めようとしている…\d\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「次で最期にしてあげますわ…！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「お待ちになって…！　強烈なのを差し上げますわ…！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"(集中して…　相手の先を狙いますわ…)\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「すぅー……はぁー……」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は呼吸を整えながら敵の隙をうかがっている\d\n"
+	ENDSELECT
+RETURN 1
+
+
+; 13 通常攻撃 溜め撃ち
+; ◆ 1 発射
+@KOJO_16_0_SYSTEM_MESSAGE_1_13_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ、あくりょうっ…　たいさぁぁんっ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これで、なんとかなってぇ♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「え、えぇーい♥」\n"
+		CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は辛うじて力を溜めきったが、攻撃の瞬間声が上ずってしまった\d\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたしの霊力！とくと味わいなさい！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「妖狐……召！霊！拳！！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これが…、あたしの全身全霊ですわっ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「…悪霊退散っ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あたーっ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「喰らいなさいっ！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これが九尾の力ですわっ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 14 通常攻撃 ばら撒き弾
+@KOJO_16_0_SYSTEM_MESSAGE_1_14(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「避けてばっかりの子には、お仕置きですわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「イタコ流降霊術！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「避けられなくしてあげますわ！」\n"
+	ENDSELECT
+	
+RETURN 1
+
+
+; □ XX 通常攻撃 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_1_BULLET_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 汎用攻撃口上を読み込む
+	CALL KOJO_16_0_SYSTEM_MESSAGE_1_VERSATILE_ATTACK(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	CALL KOJO_16_0_FIX_MESSAGE
+	
+	; 汎用口上
+	; 残りMP 66%以上
+	IF BASE:1 >= (MAXBASE:1 / 100 * 66)
+	
+	; 残りMP 33%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 33)
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「よーく、ねらってっ！！」\n"
+		ENDSELECT
+		
+	; 残りMP 0%以上
+	ELSEIF BASE:1 >= (MAXBASE:1 / 100 * 0)
+	ENDIF
+RETURN 1
+
+
+; □ XX 通常攻撃 汎用とどめ口上
+@KOJO_16_0_SYSTEM_MESSAGE_1_BULLET_ATTACK_FINISH(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+#DIM DAMAGE
+
+	; 多分この攻撃で相手を倒せるなら追加口上(りばーすには関数が無いので実行しない)
+	IF !KOJO_16_0_IS_REVERSE()
+		
+		; ダメージ期待値を取得
+		CALL CHECK_ATTACKED_DAMAGE(TARGET, ARG:1, TFLAG:53)
+		DAMAGE = RESULT
+		
+		IF DAMAGE > DA:(TFLAG:53):1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASEELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"「覚悟しなさいっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「成敗っ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「―――さよならですわ」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「何か言い残すことは？」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「―――ここですわっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「ここが勝負どころですわっ！」\n"
+				CALL KOJO_16_0_ADD_MESSAGE, @"「今までのは、ほんのお遊びに過ぎませんわ」\n"
+			ENDSELECT
+		ENDIF
+	ENDIF
+RETURN 1
+

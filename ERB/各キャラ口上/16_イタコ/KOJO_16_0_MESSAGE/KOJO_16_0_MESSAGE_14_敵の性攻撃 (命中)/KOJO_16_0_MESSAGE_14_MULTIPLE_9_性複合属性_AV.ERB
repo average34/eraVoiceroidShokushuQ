@@ -1,0 +1,74 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 9 性複合属性 AV
+;    ARG参照外分岐 汎用口上から直接呼び出されるので注意
+; ------------------------------------------------------------------------------
+
+; ついつい射精された的口上を書きがちだが、情報を得ることが出来ないので書かないこと 書きたいなら寄生攻撃で
+@KOJO_16_0_SYSTEM_MESSAGE_14_MULTIPLE_9(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時, 諦めた
+	SIF CFLAG:25 || TFLAG:16 == 2
+		RETURN 0
+		
+	; 戦意喪失
+	SIF CFLAG:29
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おまんこと…おしりの穴…　両方とも使って頂けて…　うれしいですわ……♥♥」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　あっ♥　あっ♥♥　前と後ろから…　ごりごりって…ッ♥♥　潰されるのすご…い…ですわ……ッ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　両方っ気持ちっ♥♥　おまんこもっ♥　おしりもっ♥　両方気持ち…いいですわっ…っ♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「おごっ　あがっ　前と…後ろ…っ！　同時っ！同時だめっ……　あたしっ……おかしく…っ……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あぎぃぃっ！！　抜いてっ、抜いてくださいましっ！！　お゛ごっ……こわれるっ、こわれるうううううっ！！」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あが…ぁっ…　中…ごりごり……ひぬっ……しんじゃいますわっ…！！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「前と後ろを同時に…っ…！？　ごがぁっ！　潰れる…っ……潰れちゃいますわ……！」\n"
+	ENDSELECT
+	
+	; ペットに身体を捧げているなら追加口上
+	IF KOJO_16_0_TEMP_FLAG:1
+		; [ペット]所持時 追加口上
+		IF TALENT:140 == 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「両方……同時に食べますのっ…？♥　あるじ様ったら……食いしん坊ですわねっ♥♥」\n"
+		
+		; [花嫁]所持時 追加口上
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おっ♥　あっ♥　両方の穴っ一緒にっ♥　愛されてるぅぅ♥♥　あたし%PETNAME%様のお嫁さんになれてしあわせですわ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おまんこもおしりも%PETNAME%様でいっぱいっ♥　気持ちいいのでいっぱいっ♥♥　%PETNAME%様♥　大好きですわ♥♥」\n"
+
+		; [しもべ]所持時 追加口上
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%CALLNAME:TARGET%のおまんこもおしりもっ♥　あるじ様の為のものですわっ♥　ずぼずぼっ♥　ごりごりっ♥　壊れるくらいっ犯してっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あるじ様のお望みなら、二穴責めでも受け止めますわ♥　%CALLNAME:TARGET%の穴が閉じなくなるくらい♥　ぐちゃぐちゃに使ってほしいですわ♥♥」\n"
+		ENDIF
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1

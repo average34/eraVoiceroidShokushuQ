@@ -1,0 +1,217 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 120 絶頂の瞬間 - 追加地の文(前)
+; ------------------------------------------------------------------------------
+
+; □ 追加地の文(前)
+@KOJO_16_0_SYSTEM_MESSAGE_120_DESCRIPTION_BEFORE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM TEMP
+#DIM LCOUNT
+	
+	; 寸止め時追加文
+	IF CFLAG:820
+		; 1回目の寸止めは自慰誘発でも使っているので、絶頂寸止め以外の表現が必要
+		; 今のところいい文章が思いつかないので最上位寸止め時のみ追加
+		SELECTCASE CFLAG:820
+;		CASE 0
+;		CASE 1
+;			CALL KOJO_16_0_ADD_MESSAGE, @"\d性欲が高まった状態で与えられる快感に、%CALLNAME:TARGET%は甘く蕩けきった声をあげた\d\n"
+;		CASE 2 TO 3
+;			CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂を阻害され火照る身体は、快感を幾重にも倍増させた\d\n"
+;		CASE 4 TO 5
+;			CALL KOJO_16_0_ADD_MESSAGE, @"\d幾度となく寸止めを繰り返され、蓄積した快感は爆発の瞬間を待ち望んでいる…\d\n"
+;		CASE 6 TO 8
+;			CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂を許されず疼き続ける身体は、わずかな刺激ですら最高の快楽に変えてしまう…\d\n"
+;		CASEELSE
+		CASE 9 TO __INT_MAX__
+			CALL KOJO_16_0_ADD_MESSAGE, @"\dようやく寸止めから解放された%CALLNAME:TARGET%は、涎と鼻水まみれの笑顔を浮かべながら身体を痙攣させた\d\n"
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 通常の地の文表示
+	; 回復時のメッセージは一部カスタマイズ
+	IF ARG:2 < 0
+		; 催眠中
+		IF KOJO_16_0_IS_HYPNO()
+			; 催眠種類で分岐
+			SELECTCASE FLAG:526
+			; 拘束・肉体操作系
+			CASE 0
+				
+			; 発情・感情操作系
+			CASE 1
+				
+			; 無意識・認識操作系
+			CASE 2
+				; 催眠深度によって変化
+				SELECTCASE CFLAG:43
+				CASE 1
+					CALL KOJO_16_0_ADD_MESSAGE, @"\M\c\c\d思考をグチャグチャにかき回された%CALLNAME:TARGET%は、泣き叫びながらイキ続けた…\n%CALLNAME:TARGET%の精神は無理矢理回復させられた！\d\n"
+				CASE 2
+					CALL KOJO_16_0_ADD_MESSAGE, @"\M\c\c\d自分を肉便器だと思い込まされた%CALLNAME:TARGET%は、淫らな笑顔を浮かべながらイキ続けた…\n%CALLNAME:TARGET%の精神が回復した！\d\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\M\c\c\d%CALLNAME:TARGET%はだらしなく開いた口からイキ声を漏らし、肉便器としての悦びに打ち震えている…\n%CALLNAME:TARGET%の精神が回復した！\d\n"
+				ENDSELECT
+			ENDSELECT
+		ENDIF
+
+		; 通常時
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\M\c\c\d淫らに破壊された性感帯からの刺激に、%CALLNAME:TARGET%の脳は雌の本能で埋め尽くされていく…\n%CALLNAME:TARGET%の精神が回復した！\d\n"
+		ENDSELECT
+	ELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"\M"
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+		
+	; 睡眠時にPTメンバーを襲う + 触手による強制連続性交中
+	; 部位別判定不要 Cのみの描写でOK
+	IF KOJO_16_0_GET_PREV_ARG(0) == 114 && NO:1 != 4 && CFLAG:35
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%ARGS:0%は射精寸前のふたなりペニスを%CALLNAME:1%の膣内に押し込んだ\d\n"
+		CASEELSE
+		ENDSELECT
+		
+	; 触手スーツ装着時
+	ELSEIF KOJO_16_0_GET_PREV_ARG(0) == 440 && GROUPMATCH(KOJO_16_0_GET_PREV_ARG(1), 4, 8, 10, 12, 17)
+		SELECTCASE KOJO_16_0_GET_PREV_ARG(1)
+		; 04 A開発開始
+		CASE 4
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d無慈悲にほじくられる尻穴に、%CALLNAME:TARGET%は声にならない叫びを上げ続けた！\d\n"
+		; 08 B開発開始
+		CASE 8
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は淫らに作り変えられる乳房を守るように身をかがめ、想像を絶する快楽に無駄な抵抗を続けている…\d\n"
+		; 10 C開発開始
+		CASE 10
+			; ふたなり時
+			IF GET_PENIS(TARGET)
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂中にも関わらず激しく扱かれるふたなりペニスに、%CALLNAME:TARGET%は呂律の回らない声で喘ぎながら悶え続けた！\d\n"
+			; 通常時
+			ELSE
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂中にも関わらず激しく扱かれるクリトリスに、%CALLNAME:TARGET%は呂律の回らない声で喘ぎながら悶え続けた！\d\n"
+			ENDIF
+		; 12 V開発開始
+		CASE 12
+			; [淫壺]所持 または りばーす東方触手宮でV感覚LV3以上
+			IF TALENT:78 || (KOJO_16_0_IS_REVERSE() && ABL:9 >= 3)
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は完全に屈服した牝穴から大量の潮を吹き、無茶苦茶な嬌声を上げながら無様に腰を振っている…\d\n"
+				ENDSELECT
+			; 通常処理
+			ELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASE "淫乱"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d情け容赦なく開発される牝穴の感覚に、%CALLNAME:TARGET%は嬌声を上げ自分から腰を降っている…\d\n"
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d情け容赦なく開発される牝穴の感覚に、%CALLNAME:TARGET%は否定の嬌声を上げながら無意識に腰を降っている…\d\n"
+				ENDSELECT
+			ENDIF
+		; 17 全身開発開始
+		CASE 17
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d涎をダラダラとこぼしながら、%CALLNAME:TARGET%は蝕まれる身体を抱いて消し飛びそうな理性を何とか保っている…\d\n"
+		ENDSELECT
+		
+	; ふたなり治療(治療される側)V or 出会い頭治療(治療される側)V
+	; ふたなり治療時は間違いなくふたなりなので、部位はC確定、クリトリス側の描写不要
+	ELSEIF (KOJO_16_0_GET_PREV_ARG(0) == 459 && KOJO_16_0_GET_PREV_ARG(1) == 0) || (KOJO_16_0_GET_PREV_ARG(0) == 465 && KOJO_16_0_GET_PREV_ARG(1) == 6)
+		; ふたなり治療をはじめてからの射精回数をカウント
+		TEMP = 0
+		FOR LCOUNT, 1, VARSIZE("KOJO_16_0_MESSAGE_LOG")
+			SIF KOJO_16_0_GET_PREV_PURE_ARG(0, LCOUNT) == 451
+				TEMP++
+			SIF (KOJO_16_0_GET_PREV_PURE_ARG(0, LCOUNT) == 459 && KOJO_16_0_GET_PREV_PURE_ARG(1, LCOUNT) == 0) || (KOJO_16_0_GET_PREV_PURE_ARG(0, LCOUNT) == 465 && KOJO_16_0_GET_PREV_PURE_ARG(1, LCOUNT) == 6)
+				BREAK
+		NEXT
+		
+		; ふたなり治療をはじめてから1回目の射精
+		IF TEMP == 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は雌の絶頂に震えながら、射精寸前のふたなりペニスを%KOJO_16_0_GET_PREV_ARGS(0)%の奥深くまでねじ込んだ！\d\n"
+		
+		; ふたなり治療をはじめてから2回目以降の射精
+		ELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は%KOJO_16_0_GET_PREV_ARGS(0)%の子袋を徹底的に蹂躙する為、射精寸前のペニスを子宮口に押し当てた！\d\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は精液にまみれた%KOJO_16_0_GET_PREV_ARGS(0)%の雌穴を、絶頂中のふたなりペニスでかき回している！\d\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は更なる膣内射精の快感を貪る為、精液まみれの雌穴に絶頂中のふたなりペニスを押し当てた！\d\n"
+		ENDIF
+		
+	; ふたなり治療(治療する側)
+	; 部位別判定不要 Vのみの描写でOK
+	ELSEIF KOJO_16_0_GET_PREV_ARG(0) == 461 && KOJO_16_0_GET_PREV_ARG(1) == 0
+		CALL KOJO_16_0_ADD_MESSAGE, @"\d絶頂で痙攣した膣穴が、精液を搾り取ろうと%KOJO_16_0_GET_PREV_ARGS(0)%のペニスを締め付ける！\d\n"
+		
+	; 媚薬爆弾 発動中
+	ELSEIF KOJO_16_0_GET_PREV_ARG(0) == 517 && KOJO_16_0_GET_PREV_ARG(1) == 0
+		SELECTCASE ARG:1
+		CASE 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d爆弾の効力で、%CALLNAME:TARGET%の尻穴が身体の内側から媚薬漬けにされていく！\d\n"
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d爆弾の効力で、%CALLNAME:TARGET%の胸が身体の内側から媚薬漬けにされていく！\d\n"
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d爆弾の効力で、%CALLNAME:TARGET%の\@GET_PENIS(TARGET) ? ペニス # クリトリス\@が身体の内側から媚薬漬けにされていく！\d\n"
+		CASE 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d爆弾の効力で、%CALLNAME:TARGET%の蜜壺が身体の内側から媚薬漬けにされていく！\d\n"
+		ENDSELECT
+		
+	; 喪失時
+	ELSEIF CFLAG:29
+		SELECTCASE ARG:1
+		CASE 0
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d戦意を喪失した%CALLNAME:TARGET%は、尻穴に与えられる暴力的な快楽に抗う事なく身体を震わせている…\d\n"
+		CASE 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d戦意を喪失した%CALLNAME:TARGET%は、胸に与えられる暴力的な快楽に抗う事なく身体を震わせている…\d\n"
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d戦意を喪失した%CALLNAME:TARGET%は、\@GET_PENIS(TARGET) ? ふたなりペニス # クリトリス\@に与えられる暴力的な快楽に抗う事なく身体を震わせている…\d\n"
+		CASE 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"\d戦意を喪失した%CALLNAME:TARGET%は、陰部に与えられる暴力的な快楽に抗う事なく身体を震わせている…\d\n"
+		ENDSELECT
+	
+	; 通常時
+	ELSE
+		SELECTCASE ARG:1
+		CASE 0
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱", "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d無理矢理与えられる刺激に、淫汁にまみれた尻穴はヒクヒクと細かい痙攣を起こしている…\d\n"
+			CASEELSE
+			ENDSELECT
+		CASE 1
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱", "発情"
+				; 乳首勃起中
+				IF GET_ERECTION_STATE_B(TARGET)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d玩具のように扱われ、いやらしく勃起した乳首が%CALLNAME:TARGET%の意志を無視して暴れている…\d\n"
+				; [陥没乳首]
+				ELSEIF TALENT:159
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d玩具のように扱われ、淫らに膨らんだ陥没乳首が%CALLNAME:TARGET%の意志を無視して暴れている…\d\n"
+				; 乳首勃起なし & 素質なし
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d玩具のように扱われ、いやらしく尖りきった乳首が%CALLNAME:TARGET%の意志を無視して暴れている…\d\n"
+				ENDIF
+			CASEELSE
+			ENDSELECT
+		CASE 2
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱", "発情"
+				IF GET_PENIS(TARGET)
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は大きく膨らんだふたなりペニスを見せつけるような格好で絶頂し、ぶるぶると腰を震わせている…\d\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\dガマン汁を噴き出すふたなりペニスは、雄の絶頂より先に雌の絶頂を脳に刻み込んだ！\n%CALLNAME:TARGET%は身体を仰け反らせ、ガクガクと震える腰を突き出している！\d\n"
+				ELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%は大きく膨らんだクリトリスを見せつけるような格好で絶頂し、ぶるぶると腰を震わせている…\d\n"
+					CALL KOJO_16_0_ADD_MESSAGE, @"\d%CALLNAME:TARGET%の愛液まみれで淫らに光るクリトリスは激しく勃起し、絶頂を主張するようにヒクヒクと痙攣している！\d\n"
+				ENDIF
+			CASEELSE
+			ENDSELECT
+		CASE 3
+			SELECTCASE KOJO_16_0_KOJO_MODE
+			CASE "淫乱", "発情"
+				CALL KOJO_16_0_ADD_MESSAGE, @"\d与えられる快楽に屈した膣穴は、だらしなくヒクつきながら愛液をまき散らしている…\d\n"
+			CASEELSE
+			ENDSELECT
+		ENDSELECT
+	ENDIF
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+RETURN 1

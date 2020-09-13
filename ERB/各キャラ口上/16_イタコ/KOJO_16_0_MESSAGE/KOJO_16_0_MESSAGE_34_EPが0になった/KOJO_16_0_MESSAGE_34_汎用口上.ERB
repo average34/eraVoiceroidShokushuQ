@@ -1,0 +1,106 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 34 EPが0になった - 汎用口上
+; ------------------------------------------------------------------------------
+
+@KOJO_16_0_SYSTEM_MESSAGE_34(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_34_DESCRIPTION_BEFORE")
+	
+	; 睡眠 or 喪失時は喋らずに帰る
+	SIF CFLAG:25 || CFLAG:29
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			RETURN 0
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	; 寸止め回数によって分岐
+	; 1回目の寸止めは自慰誘発でも使っているので、絶頂寸止め以外の表現が必要
+	SELECTCASE CFLAG:820
+	CASE 0 TO 1
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「んっ♥　んっ♥　んんんん……っっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あっ♥　あっあっ♥　気持ちいいの、爆発しますわ……っ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「きたっ♥　ぞくぞくってっ♥　イきますわっ♥　イっちゃいますわっ♥♥」\n"
+		CASE "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひぐぅぅっ！？　来ちゃ…うっ！　もうっ♥　もうイキたくないのにぃぃっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あああぁぁぁっ♥　イキたくないっ♥　イキたくなああああぁぁぁあっ♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「いやいやいやぁっ！　イキたくないんですのっ！　こんなの、こんなのあたしじゃありませんの……っ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「我慢……我慢…っ…できなっ！　イクっ！！　イッちゃううぅっ！！」\n"
+		ENDSELECT
+		
+	CASE 2 TO 3
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう寸止めはやめて…くださいまし…っ！　苦しくて……もう、苦しくて……っ！」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「カラダ……っ、きゅんきゅんしてヘンになりそうなんですのっ……　……お、お願いしますわっ！　イカせてっ……くださいましっ……！」\n"
+		ENDSELECT
+		
+	CASE 4 TO 5
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あぁっ♥　ああああっ♥　イかせてっ♥♥　イかせてくださいましぃぃぃっ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「頭のにゃかがっ♥　イクことだけを…考えちゃっ……てぇ……♥　おかしく、なりますわぁっ♥♥」\n"
+		ENDSELECT
+		
+	CASE 6 TO 8
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ごほうゥゥびクださいいましっ♥　無様なイキ狂い……っ！　おみせますしますわッ……だから……ぁっ♥♥　もう寸止めやあああぁあぁぁあ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あはははッ♥♥　アぁはははアぁっ♥♥♥　脳みそ、が♥　ぉがじ、ぐっ♥♥♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう、らめぇ♥　らめなのぉ♥♥　イかせてぇっっ♥♥　狂っちゃうからぁぁぁあ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ひぎいいぃぃっ♥♥　イカせてっ♥♥　イガぜでえﾞぇﾞぇﾞっ♥♥」\n"
+		ENDSELECT
+	
+	CASEELSE
+		SELECTCASE KOJO_16_0_KOJO_MODE
+		CASE "淫乱", "発情"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「もう嫌ですの……っ♥　イケないの嫌ですのぉぉぉぉっっっ♥♥　イﾞギだいっ♥♥　イﾞギだいいぃぃぃいいいいいっっっ♥♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「これすきッ♥♥　もう死んじゃううぅぅ～っっ♥♥　このままイケないと死んじゃううぅぅ～っっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「おおぉひっおひっ～♥♥♥　オねがイッですのッ♥♥♥　イガ、ぜでっ♥　イグのガマンできなイがらあぁあﾞあああﾞあﾞあﾞっ♥♥♥」\n"
+		CASEELSE
+			CALL KOJO_16_0_ADD_MESSAGE, @"「イカへてぇ……♥♥　もう、にゃんでもいいからぁあぁぁっ♥♥」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「たすけてぇぇぇ♥♥　ごのぐるじみがら解放させでぇえぇぇぇええッッ♥♥」\n"
+		ENDSELECT
+	ENDSELECT
+	
+	; ペットに身体を捧げているなら追加口上
+	IF KOJO_16_0_TEMP_FLAG:1
+		
+		; ペット系素質所持時
+		IF TALENT:140
+			CALL KOJO_16_0_ADD_MESSAGE, @"「%PETNAME%様ぁ♥　あたし、限界っ♥　もう、限界なんですのっ♥♥」\n"
+		ENDIF
+		
+		; [ペット]所持時
+		IF TALENT:140 == 1
+			CALL KOJO_16_0_ADD_MESSAGE, @"「あるじ様ぁっ♥　イキますわっ♥　%CALLNAME:TARGET%はもうイっちゃいますわあぁっ♥」\n"
+			
+		; [花嫁]所持時
+		ELSEIF TALENT:140 == 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「アナタ様ぁっ♥　イキますわねっ♥　%CALLNAME:TARGET%はもうイっちゃいますのおぉっ♥」\n"
+		
+		; [しもべ]所持時
+		ELSEIF TALENT:140 == 3
+			CALL KOJO_16_0_ADD_MESSAGE, @"「ご主人様ぁっ♥　もうイキますわっ♥　下僕%CALLNAME:TARGET%の無様なイキ顔をご堪能下さいませっ♥♥」\n"
+		ENDIF
+	ENDIF
+RETURN 1

@@ -1,0 +1,35 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 443 スライムスーツ装着時
+; ------------------------------------------------------------------------------
+
+; □ 0 スライムイベントによる発生
+@KOJO_16_0_SYSTEM_MESSAGE_443_0(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「んぁ……っ♥　ヌルヌルが身体を包んで……♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「くっ……　ぐにゅぐにゅしてて、ちゃんと引き剥がせませんわっ……」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「こ……のっ……！　離れて……っ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「なん……なんですの……、このべとべと……っ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 1 スライム系の敵を倒した
+@KOJO_16_0_SYSTEM_MESSAGE_443_1(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ひぁっ♥　最期まであたしに快楽を与えてくれるんですね…♥♥」\n"
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（しまっ…！　今の状態で変な刺激を受けるのは…！）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「……べとべとしますわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「最後まで嫌悪感を相手に与える嫌なまもの、ですわね……」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ひゃっ……べとべとしますわ……！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「往生際の悪いことですわね……ッ！」\n"
+	ENDSELECT
+RETURN 1

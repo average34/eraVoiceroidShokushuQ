@@ -1,0 +1,131 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 22 敵の通常攻撃 (回避)
+;    催眠中に通常口上を表示しないよう注意
+;    行動阻害されているのに攻撃が当たらないのは違和感があるため
+; ------------------------------------------------------------------------------
+
+; □ 汎用口上
+@KOJO_16_0_SYSTEM_MESSAGE_22(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+		
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（わざと…外しましたの？\n　動けないからって遊んでますの…？）\n"
+				ENDSELECT
+			CASE 2
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（いつでも当てられる、という脅しなのでしょうか……\n　今の状態であんな攻撃を喰らってしまいましたら…あたし…）\n"
+				ENDSELECT
+			CASEELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（ちゅわっ……！　もう…当たりますわ！　怖い、怖い……っ！！）\n"
+				ENDSELECT
+			ENDSELECT
+			RETURN 1
+			
+		; 発情・感情操作系
+		CASE 1
+			RETURN 0
+			
+		; 無意識・認識操作系
+		CASE 2
+			; 催眠深度によって変化
+			SELECTCASE CFLAG:43
+			CASE 1
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"（ちゅっ？なんで当てにこないのでしょう…？）\n"
+				ENDSELECT
+			CASE 2
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「あら……？　はずれてしまい、ましたわ……」\n"
+				ENDSELECT
+			CASEELSE
+				SELECTCASE KOJO_16_0_KOJO_MODE
+				CASEELSE
+					CALL KOJO_16_0_ADD_MESSAGE, @"「もうしわけ……ありません……　あたしから当たりに行くべきでしたわ……」\n"
+				ENDSELECT
+			ENDSELECT
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "強気"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「そんな攻撃では、当たりませんわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「これがイタコの力ですわ！」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「攻撃をよく見ればなんとなりますわ！」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「いろんな霊を降ろした経験が生きたにゃ！」\n"
+	ENDSELECT
+RETURN 1
+
+
+; □ 攻撃種類別
+; ◆ 0161 フレッシュゴーレム 大振り
+@KOJO_16_0_SYSTEM_MESSAGE_22_161(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	 
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	SIF KOJO_16_0_IS_HYPNO()
+		RETURN 0
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "発情"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（なんとか避けられましたわ……）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（動きが遅くて助かりましたわ……）\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「大振りの攻撃は避けやすいですわね」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「大きいだけあって大味な攻撃ですわ」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「どこを狙っていますの？」\n"
+	ENDSELECT
+RETURN 1
+
+
+; 攻撃種類別
+; ◆ 0162 フレッシュゴーレム 大振り全体
+@KOJO_16_0_SYSTEM_MESSAGE_22_162(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	; 敵の通常攻撃(回避) 0161 フレッシュゴーレム 大振り にお願い
+	CALL KOJO_16_0_SYSTEM_MESSAGE_22_161(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+RETURN RESULT
+
+
+; 攻撃種類別
+; ◆ 0169 タングルフット
+@KOJO_16_0_SYSTEM_MESSAGE_22_169(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 睡眠時・喪失時・諦め
+	SIF CFLAG:25 || CFLAG:29 || TFLAG:16 == 2
+		RETURN 0
+
+	; 催眠中
+	SIF KOJO_16_0_IS_HYPNO()
+		RETURN 0
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"「ちゅわっ！？…ふともも狙いとは気が合いそうですわ！」\n"
+	ENDSELECT
+RETURN 1

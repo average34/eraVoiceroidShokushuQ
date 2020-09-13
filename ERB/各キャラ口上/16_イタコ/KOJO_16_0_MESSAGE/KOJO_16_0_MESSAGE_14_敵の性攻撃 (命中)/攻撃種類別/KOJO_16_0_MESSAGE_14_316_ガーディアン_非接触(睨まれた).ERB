@@ -1,0 +1,53 @@
+﻿
+; ------------------------------------------------------------------------------
+; ■ 14 敵の性攻撃 (命中) - 攻撃種類別 0316 ガーディアン 非接触(睨まれた)
+; ------------------------------------------------------------------------------
+
+; メイン性属性(TFLAG:63)はABCVランダム
+@KOJO_16_0_SYSTEM_MESSAGE_14_316(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	
+	; 追加地の文関数(前)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_BEFORE("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_BEFORE")
+
+	; 追加地の文関数(後)を登録
+	CALL KOJO_16_0_REGIST_DESCRIPTION_AFTER("KOJO_16_0_SYSTEM_MESSAGE_14_DESCRIPTION_AFTER")
+	
+	; 睡眠時
+	SIF CFLAG:25
+		RETURN 0
+	
+	; 催眠中
+	IF KOJO_16_0_IS_HYPNO()
+		; 催眠種類で分岐
+		SELECTCASE FLAG:526
+		; 拘束・肉体操作系
+		CASE 0
+			
+		; 発情・感情操作系
+		CASE 1
+			
+		; 無意識・認識操作系
+		CASE 2
+			CALL KOJO_16_0_ADD_MESSAGE, @"「さわられて、ません…　のに…　すごく…　きもちいいですわ……」\n"
+			CALL KOJO_16_0_ADD_MESSAGE, @"「カラダのなかから…　きもちいいのが…　上がってきますの……」\n"
+			RETURN 1
+		ENDSELECT
+	ENDIF
+
+	; 通常時
+	SELECTCASE KOJO_16_0_KOJO_MODE
+	CASE "淫乱"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あ、頭のなかから犯してくるなんてっ♥　器用な、魔物ですわね…っ♥♥」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あは…ぁ♥　何が…起きて…♥　子宮が…ズキズキしてます…♥♥」\n"
+	CASEELSE
+		CALL KOJO_16_0_ADD_MESSAGE, @"（…っ！？　少し、目が合っただけですのにっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（見つめられただけで…快感があがってきますわっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"（あの目…っ！　見られるだけで、ぞわぞわ…してきますわっ！？）\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「子宮が……　子宮がずっくんずっくんって…　疼いてきますの…っ…」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「くぅぅ…　だめ…　みつめないでっ…」\n"
+		CALL KOJO_16_0_ADD_MESSAGE, @"「あああぁっ！？　あついっ！？　からだがあついっ！？」\n"
+	ENDSELECT
+	CALL KOJO_16_0_PARAGRAPH_MESSAGE
+	
+	; 地の文側で\nするので口上側は\nで終わること
+RETURN 1
