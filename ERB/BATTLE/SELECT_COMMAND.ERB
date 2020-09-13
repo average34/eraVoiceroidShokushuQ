@@ -949,6 +949,12 @@ RETURNF 1
 	;抱きつき
 	CASE 96
 		RETURNF 0
+	;抱きつかれ
+	CASE 97
+		RETURNF 0
+	;抱きつき
+	CASE 98
+		RETURNF 0
 	ENDSELECT
 RETURNF 1
 
@@ -1040,6 +1046,14 @@ ELSEIF TFLAG:17
 	IF CFLAG:(ARG:0):106
 		;前回選択した対象が保存されている場合、それを使う
 		CFLAG:(ARG:0):51 = CFLAG:(ARG:0):106
+		IF CFLAG:(ARG:0):51 != TFLAG:1 || CFLAG:(ARG:0):51 != TFLAG:2 || CFLAG:(ARG:0):51 != TFLAG:3
+			FOR LOCAL:0, 1, TFLAG:15 + 1
+				IF TFLAG:(LOCAL:0) && DA:(TFLAG:(LOCAL:0)):1 > 0
+					LOCAL:2 = LOCAL:0
+					BREAK
+				ENDIF
+			NEXT
+		ENDIF
 	ELSE
 		;まだ対象を覚えていない場合、敵単体対象は、残った敵の先頭
 		LOCAL:2 = 1
