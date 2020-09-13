@@ -57,6 +57,9 @@ SIF CFLAG:(ARG:0):200 > 0
 ;溜めてる途中で行動不能になると溜めっぱなしになる可能性があるので、時間経過もチェックしておく
 SIF CFLAG:(ARG:0):31 > 0
 	CFLAG:(ARG:0):31 -= 1
+;傀儡状態
+SIF CFLAG:(ARG:0):59 > 0
+	CFLAG:(ARG:0):59 -= 1
 
 IF CFLAG:(ARG:0):25 == 1 && RAND:10 < 3
 	CFLAG:(ARG:0):25 = 0

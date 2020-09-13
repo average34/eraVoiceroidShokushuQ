@@ -1,0 +1,73 @@
+
+;-------------------------------------------------
+;キャラ間呼び名取得関数@CNAME
+;eratohoЯeverseから移植
+;式中で使用する関数です。TARGETが引数0(ARG:0)のキャラを呼ぶ呼び名を表示します。省略するとMASTER
+;引数1を入れるとTARGET以外からも参照できます。
+;頻繁に呼ばれるのでRESULTを保護します。
+;こんなゴツい処理を名前呼ぶたびに行う是非についてはとりあえず知らない。まあ重くなんてならないと信じる
+;-------------------------------------------------
+@CNAME(ARG = -2, ARG:1 = -2)
+#FUNCTIONS
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIM LCOUNT, 1
+#DIMS DYNAMIC 敬称対象, 100
+#DIMS DYNAMIC 敬称内訳, 100
+#DIMS DYNAMIC 呼び名対象, 100
+#DIMS DYNAMIC 呼び名内訳, 100
+
+;引数省略の処理
+ARG = ARG != -2 ? ARG # MASTER
+ARG:1 = ARG:1 != -2 ? ARG:1 # TARGET
+
+;基本敬称の処理
+SPLIT CSTR:(ARG:1):基本敬称, "/", 敬称対象, LOCAL
+FOR LCOUNT, 0, LOCAL
+	敬称内訳:LCOUNT = %REPLACE(REPLACE(SUBSTRING(敬称対象:LCOUNT, STRFIND(敬称対象:LCOUNT, "_")+1), "名前", NAME:ARG), "呼び名", CALLNAME:ARG)%
+	敬称対象:LCOUNT = %SUBSTRING(敬称対象:LCOUNT,0, STRFIND(敬称対象:LCOUNT, "_")-1)%
+NEXT
+
+;呼び名の分類
+SPLIT CSTR:(ARG:1):呼び方リスト, "/", 呼び名対象, LOCAL
+FOR LCOUNT, 0, LOCAL
+	呼び名内訳:LCOUNT = %REPLACE(REPLACE(SUBSTRING(呼び名対象:LCOUNT, STRFIND(呼び名対象:LCOUNT, "_")+1), "名前", NAME:ARG), "呼び名", CALLNAME:ARG)%
+	呼び名対象:LCOUNT = %SUBSTRING(呼び名対象:LCOUNT,0, STRFIND(呼び名対象:LCOUNT, "_")-1)%
+NEXT
+
+;一時的にNAMEを入れる
+LOCALS = %NAME:ARG%
+$NAMELESS_LOOP
+;呼び名対象にいる場合
+IF MATCH(呼び名対象, LOCALS)
+	FOR LCOUNT, 0, 100
+		IF 呼び名対象:LCOUNT == LOCALS
+			LOCALS = %呼び名内訳:LCOUNT%
+			BREAK
+		ENDIF
+	NEXT
+;大妖精・小悪魔の場合
+ELSEIF LOCALS == "大妖精" || LOCALS == "小悪魔"
+	;そのままでは呼べないのであなたにしてもう一度回す
+	LOCALS = あなた
+	GOTO NAMELESS_LOOP
+;基本敬称の処理
+ELSE
+	;CALLNAMEにする
+	LOCALS = %CALLNAME:ARG%
+	;敬称対象検索
+	FOR LCOUNT, 0, 100
+		SELECTCASE 敬称対象:LCOUNT
+			CASE ""
+				BREAK
+			CASE "基本"
+				LOCALS = %敬称内訳:LCOUNT%
+			CASEELSE
+				SIF TALENT:ARG:(敬称対象:LCOUNT)
+					LOCALS = %敬称内訳:LCOUNT%
+		ENDSELECT
+	NEXT
+ENDIF
+;RESULTを復元
+RESULT = LOCAL
+RETURNF LOCALS

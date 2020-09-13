@@ -20,14 +20,6 @@
 VARSET LOCAL, 0, 1, 14
 
 
-;目標値（イベント難易度）決定
-LOCAL:1 = 180
-
-
-;達成値決定
-CALL GET_SEARCH_RATE
-LOCAL:2 = RESULT
-
 
 ;壁の無い場所で発生したら、別の場所に移る
 IF FLAG:5 < 6
@@ -87,6 +79,15 @@ ELSE
 	ENDIF
 	LOCAL:8 = LOCAL:(RAND:(LOCAL:13) + 10)
 ENDIF
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 180
+IF LOCAL:13 == 4
+	LOCAL:1 = 70
+ENDIF
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
 
 
 IF LOCAL:2 >= LOCAL:1

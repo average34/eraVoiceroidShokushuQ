@@ -17,6 +17,8 @@
 
 #DIM 踏ん張り確率
 
+#DIM ERECTION_LEVEL_C
+
 ;FLAG:20
 ;0:同じ部屋 1:違う部屋 違う部屋だとメッセージ表示しない、他の関数でもチェックするのでローカル変数代用不可
 
@@ -320,6 +322,11 @@ IF ARG:3 == 0
 	;ところてん射精 精力を減らさず射精
 	IF 部位属性 == 3 && GET_PENIS(ARG:0) > 0 && RAND:3 == 0
 		PRINTFORML %CALLNAME:(ARG:0)%の陰茎から白濁液が漏れている……
+		CALL ADD_ABL_EXP(12, ARG:0, 1)
+	ENDIF
+	;男のところてん射精 精力を減らさず射精
+	IF 部位属性 == 0 && TALENT:(ARG:0):122
+		PRINTFORML 触れられてもいないのに%CALLNAME:(ARG:0)%の陰茎から白濁液が漏れている……
 		CALL ADD_ABL_EXP(12, ARG:0, 1)
 	ENDIF
 

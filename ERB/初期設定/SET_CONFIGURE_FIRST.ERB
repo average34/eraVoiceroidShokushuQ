@@ -39,42 +39,40 @@ CONF_BIT = 0
 	ENDIF
 	PRINTFORML
 ;ふたなり　二周目以降のおまけ要素
-	IF FLAG:520 > 0
-		PRINTFORML ■ 全キャラをふたなり化させることができます
-		IF FLAG:520 == 1
-			SIF GETBIT(CONF_BIT, 2)
-				SETCOLOR 0x9999FF
-			PRINTFORML [2] すでに全員寄生されてます
-			RESETCOLOR
-			SIF GETBIT(CONF_BIT, 3)
-				SETCOLOR 0x9999FF
-			PRINTFORML [3] ここに迷いこむ前から全員生えていました
-			RESETCOLOR
-		ELSEIF FLAG:520 == 2
-			SIF GETBIT(CONF_BIT, 2)
-				SETCOLOR 0x9999FF
-			PRINTFORML [2] 主人公は寄生されています
-			RESETCOLOR
-			SIF GETBIT(CONF_BIT, 3)
-				SETCOLOR 0x9999FF
-			PRINTFORML [3] ここに迷いこむ前から主人公には生えていました
-			RESETCOLOR
-		ELSEIF FLAG:520 == 3
-			SIF GETBIT(CONF_BIT, 2)
-				SETCOLOR 0x9999FF
-			PRINTFORML [2] 主人公以外はすでに寄生されています
-			RESETCOLOR
-			SIF GETBIT(CONF_BIT, 3)
-				SETCOLOR 0x9999FF
-			PRINTFORML [3] ここに迷いこむ前から主人公以外の全員に生えていました
-			RESETCOLOR
-		ENDIF
-		SIF GETBIT(CONF_BIT, 4)
+	PRINTFORML ■ 全キャラをふたなり化させることができます
+	IF FLAG:520 == 1
+		SIF GETBIT(CONF_BIT, 2)
 			SETCOLOR 0x9999FF
-		PRINTFORML [4] 生えていたり生えていなかったりします
+		PRINTFORML [2] すでに全員寄生されてます
 		RESETCOLOR
-		PRINTFORML
+		SIF GETBIT(CONF_BIT, 3)
+			SETCOLOR 0x9999FF
+		PRINTFORML [3] ここに迷いこむ前から全員生えていました
+		RESETCOLOR
+	ELSEIF FLAG:520 == 2
+		SIF GETBIT(CONF_BIT, 2)
+			SETCOLOR 0x9999FF
+		PRINTFORML [2] 主人公は寄生されています
+		RESETCOLOR
+		SIF GETBIT(CONF_BIT, 3)
+			SETCOLOR 0x9999FF
+		PRINTFORML [3] ここに迷いこむ前から主人公には生えていました
+		RESETCOLOR
+	ELSEIF FLAG:520 == 3
+		SIF GETBIT(CONF_BIT, 2)
+			SETCOLOR 0x9999FF
+		PRINTFORML [2] 主人公以外はすでに寄生されています
+		RESETCOLOR
+		SIF GETBIT(CONF_BIT, 3)
+			SETCOLOR 0x9999FF
+		PRINTFORML [3] ここに迷いこむ前から主人公以外の全員に生えていました
+		RESETCOLOR
 	ENDIF
+	SIF GETBIT(CONF_BIT, 4)
+		SETCOLOR 0x9999FF
+	PRINTFORML [4] 生えていたり生えていなかったりします
+	RESETCOLOR
+	PRINTFORML
 	PRINTFORML ■ 全キャラの体質を変化させることができます (複数選択可)
 	SIF GETBIT(CONF_BIT, 5)
 		SETCOLOR 0x9999FF
@@ -491,16 +489,13 @@ PRINTFORML ※難易度が大幅に上昇します
 RESETCOLOR
 PRINTFORML [ 2] 【処女】+　貞操帯モード　※A感度にペナルティが入ります
 PRINTFORML [ 3] 【処女】を個別に設定する
-IF (FLAG:512 & 2) == 2
-	PRINTFORML 
-	PRINTFORM [11] 【オトコ】の処理を行う
-	SETCOLOR 0xEEEE10
-	PRINTFORML ※処女やふたなり付加したキャラにオトコは付けられません
-	PRINTFORML ※ふたなりオトコは全員ふたなり開始で下記の個別設定をすることで可能です
-	PRINTFORML ※オトコの選択肢は設定を保存しなければ出ません
-	RESETCOLOR
-	PRINTFORML [12] 【オトコ】を個別に設定する
-ENDIF
+PRINTFORML 
+PRINTFORML [11] 【オトコ】の処理を行う
+SETCOLOR 0xEEEE10
+PRINTFORML ※処女やふたなり付加したキャラにオトコは付けられません
+PRINTFORML ※ふたなりオトコは全員ふたなり開始で下記の個別設定をすることで可能です
+RESETCOLOR
+PRINTFORML [12] 【オトコ】を個別に設定する
 PRINTFORML  [99] 【処女】\@ (FLAG:512 & 2) == 2 ? 【オトコ】 # \@をランダムに決定する
 
 INPUT

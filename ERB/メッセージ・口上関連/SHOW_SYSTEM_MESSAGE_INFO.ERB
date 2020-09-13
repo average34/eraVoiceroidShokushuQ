@@ -108,10 +108,10 @@
 		; 逃走
 		CASE 5
 			PRINTFORML ARG:2={ARG:2, 5}　逃走成功フラグ　0：失敗　1：成功
-		; 強攻撃
+		; 強弾幕
 		CASE 12
-			PRINTFORML 補足       　コマンドID.19 霊撃からも強攻撃口上が呼び出されます　判別にはCFLAG:50を参照
-		; 溜め攻撃
+			PRINTFORML 補足       　コマンドID.19 霊撃からも強弾幕口上が呼び出されます　判別にはCFLAG:50を参照
+		; 溜め撃ち
 		CASE 13
 			PRINTFORML ARG:2={ARG:2, 5}　0：溜め　1：撃ち
 		; 拘束からの離脱
@@ -569,7 +569,7 @@
 			PRINTFORML ARG:1={ARG:1, 5}　アイテムID (0の場合アイテム強請り失敗)
 		ENDIF
 		PRINTFORML 補足       　喪失中のアイテム盗難はCFLAG:29をチェック
-		PRINTFORML            　飲みものに薬を盛られて睡眠中ならCFLAG:25をチェック(CFLAG:29もフラグが立つのでCFLAG:25優先)
+		PRINTFORML            　酒に薬を盛られて睡眠中ならCFLAG:25をチェック(CFLAG:29もフラグが立つのでCFLAG:25優先)
 	CASE 140
 		PRINTFORML ARG:0={ARG:0, 5}　PTに勧誘された
 		PRINTFORML ARG:1={ARG:1, 5}　状況　0：通常　1：共闘
@@ -589,7 +589,7 @@
 		PRINTFORML ARG:0={ARG:0, 5}　遭遇時会話：喪失中に気付け薬を使われた + パッチによる拡張
 		PRINTFORML ARG:1={ARG:1, 5}　 0：喪失回復後に礼を言って立ち去る (拘束中の場合動けない)
 		PRINTFORML            　 1：喪失回復後PTへの参加を希望　2：PTに加わった　3：PTへの参加を拒否された
-		PRINTFORML            　 4：喪失回復後に、貰ったエナジードリンクを飲んだ (喪失回復後限定)　5：貰ったエナジードリンクは触手入り
+		PRINTFORML            　 4：喪失回復後に、貰った日本酒を飲んだ (喪失回復後限定)　5：貰った日本酒は触手入り
 		PRINTFORML            　 6：乳搾り (強制)　7：乳搾り (同意)　8：好感度低の為、乳搾り失敗
 		PRINTFORML            　 9：ふたなりペニスを折られる
 		PRINTFORML            　10：強制射精開始　11：強制射精終了
@@ -1198,8 +1198,8 @@
 		PRINTFORML ARG:1={ARG:1, 5}　コマンドID (ID.{ARG:1}=%SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND (ARG:1)%)
 		PRINTFORML 補足       　コマンドIDが渡されるのは戦闘中のみ、非戦闘中は常に0
 	CASE 502
-		PRINTFORML ARG:0={ARG:0, 5}　偽ポーション
-		PRINTFORML ARG:1={ARG:1, 5}　0：偽ポーション飲み開始　1～6：強制飲酒(無害)　7：何も起きなかった
+		PRINTFORML ARG:0={ARG:0, 5}　偽酒
+		PRINTFORML ARG:1={ARG:1, 5}　0：偽酒飲み開始　1～6：強制飲酒(無害)　7：何も起きなかった
 		PRINTFORML            　8：強制飲酒(V)＋眠気MAX　9：強制飲酒(A)＋眠気MAX
 	CASE 503
 		PRINTFORML ARG:0={ARG:0, 5}　使い魔
@@ -1483,7 +1483,7 @@ RETURN
 #FUNCTIONS
 	SELECTCASE ARG:0
 	CASE 10 TO 15
-		RETURNF "通常攻撃　"
+		RETURNF "弾幕攻撃　"
 	CASE 20 TO 25
 		RETURNF "消耗武器　"
 	CASE 30 TO 35

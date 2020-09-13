@@ -32,7 +32,7 @@ IF LOCAL:1
 	;味方の行動の場合、コマンドID10以上(主に敵への攻撃)の場合、死亡チェックを行う
 	IF CFLAG:(TFLAG:51):50 >= 10 && TFLAG:60 == 0
 		IF TFLAG:53
-			IF DA:(TFLAG:53):1 <= 0
+			IF DA:(TFLAG:53):1 <= 0 || DA:(TFLAG:53):6 == 0
 				;既に対象が死亡している場合、別の対象を選択
 				CALL SELECT_LIVE_MEMBER_ENEMY
 				TFLAG:53 = RESULT
@@ -43,7 +43,7 @@ ELSE
 	;敵の行動の場合はいつでも死亡(戦意喪失)チェックを行う　ただし、大抵無視フラグ付き
 	IF TFLAG:60 == 0
 		IF TFLAG:53
-			IF DA:(TFLAG:53):1 <= 0
+			IF DA:(TFLAG:53):1 <= 0 || DA:(TFLAG:53):6 == 0
 				;既に対象が死亡している場合、別の対象を選択
 				CALL SELECT_LIVE_MEMBER_ENEMY
 				TFLAG:53 = RESULT

@@ -9,7 +9,7 @@
 ;2	TEMP
 
 ;行動不能ならスキップ
-IF CHECK_FINE(ARG:0) == 0 || CFLAG:(ARG:0):504 == 1
+IF CHECK_FINE(ARG:0) == 0 || CFLAG:(ARG:0):504 == 1 || CFLAG:(ARG:0):58 || CFLAG:(ARG:0):59
 	RETURN
 ENDIF
 
@@ -488,6 +488,15 @@ IF LOCAL:11 == 0
 	
 	IF BASE:(ARG:0):1 <= 0 && CFLAG:(ARG:0):29 == 0
 		CALL HEART_BREAK(ARG:0)
+	ENDIF
+	
+	;コントローラーの操り
+	IF (DA:(ARG:1):0 == 37 && DA:(ARG:1):0 == 68) && RAND:4 == 0
+		CFLAG:(ARG:0):59 += 2 + RAND:3
+		DA:(ARG:1):10 = ARG:0
+		DA:(ARG:1):20 = ARG:0
+		CFLAG:(ARG:0):10 = ARG:1
+		CFLAG:(ARG:0):20 = ARG:1
 	ENDIF
 	
 	;追撃が4回以上の場合、絶頂回数に応じた確率でそのまま捕食される
