@@ -59,9 +59,23 @@ ELSEIF FLAG:10 && DA:(ARG:0):20 == FLAG:10
 ELSEIF FLAG:11 && DA:(ARG:0):20 == FLAG:11
 	;３人目拘束
 	LOCAL:1 = FLAG:11
-ELSEIF DA:(ARG:0):20 > 0 || DA:(ARG:0):10 > 0
+ELSEIF DA:(ARG:0):20 > 0
 	;PT外メンバー拘束
 	LOCAL:1 = -1
+ENDIF
+LOCAL:4 = 0
+IF DA:(ARG:0):10 == 1
+	;１人目拘束
+	LOCAL:4 = 1
+ELSEIF FLAG:10 && DA:(ARG:0):10 == FLAG:10
+	;２人目拘束
+	LOCAL:4 = FLAG:10
+ELSEIF FLAG:11 && DA:(ARG:0):10 == FLAG:11
+	;３人目拘束
+	LOCAL:4 = FLAG:11
+ELSEIF DA:(ARG:0):10 > 0
+	;PT外メンバー拘束
+	LOCAL:4 = -1
 ENDIF
 
 
@@ -72,7 +86,7 @@ IF LOCAL:1 > 0
 	;PTメンバーを拘束している場合
 	;拘束相手には強性攻撃・寄生攻撃・戦意喪失済みなら解放　が選択肢
 	;それ以外の相手には拘束攻撃以外
-	IF ARG:1 == LOCAL:1
+	IF ARG:1 == LOCAL:1 || ARG:1 == LOCAL:4
 		;拘束している相手を攻撃
 		IF CFLAG:(ARG:1):29 && RAND:100 < 15
 			;既に戦意喪失している場合、一定確率で解放する
