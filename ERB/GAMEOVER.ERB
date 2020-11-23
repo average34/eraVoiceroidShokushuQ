@@ -82,6 +82,7 @@ PRINTFORML
 PRINTFORML 開発度合いそのままに最初からやり直しますか？
 PRINTFORML [ 0] はい
 PRINTFORML [ 1] いいえ
+PRINTFORML [ 2] 主人公のみ変更してやり直す
 PRINTFORML [99] キャラのステータスを確認する
 PRINTFORML 
 
@@ -94,6 +95,10 @@ IF RESULT == 0
 ELSEIF RESULT == 1
 	RESETDATA
 	BEGIN TITLE
+ELSEIF RESULT == 2
+	CALL CHARA_SELECT
+	FLAG:96 = RESULT
+	CALL NEWGAME
 ELSEIF RESULT == 99
 	FLAG:49 = ARG:0 + 1
 	CALL SHOW_FINALCHARADATA
@@ -140,7 +145,26 @@ ENDIF
 						PRINTFORML うろうろしている
 					ENDIF
 				ELSEIF CFLAG:(LCOUNT):2
-					PRINTFORML %ENEMY_NAME(CFLAG:(LCOUNT):103)%に敗北し良質な苗床と化している
+					IF CFLAG:(LCOUNT):58
+						PRINTFORML %ENEMY_NAME(CFLAG:(LCOUNT):103)%に殺害され、物言わぬ屍と化している…
+					;悪堕ち転生
+					ELSEIF TALENT:(LCOUNT):73>0
+						IF TALENT:(LCOUNT):73==101
+							PRINTFORML 屈服、迷宮の主に忠誠を誓っている…
+						;「〇〇化」だとエネミー名が不自然なので決め打ち
+						ELSEIF TALENT:(LCOUNT):73==103
+							PRINTFORML 敗北、アルラウネとして生まれ変わった…
+						ELSEIF TALENT:(LCOUNT):73==104
+							PRINTFORML 敗北、スライムガールとして生まれ変わった…
+						ELSEIF TALENT:(LCOUNT):73==105
+							PRINTFORML 敗北、ラミアとして生まれ変わった…
+						ELSE
+							PRINTFORML 完全敗北、%ENEMY_NAME(TALENT:(LCOUNT):73)%として生まれ変わった…
+						ENDIF
+					;通常ロスト
+					ELSE
+						PRINTFORML %ENEMY_NAME(CFLAG:(LCOUNT):103)%に敗北し良質な苗床と化している
+					ENDIF
 				ELSEIF CFLAG:(LCOUNT):10
 					PRINTFORML %ENEMY_NAME(CFLAG:(LCOUNT):10)%に捕まっている
 				ELSEIF CFLAG:(LCOUNT):29

@@ -2,7 +2,7 @@
 ;ARG:0	敵の種類
 ;ARG:1	敵の位置(0指定だと、ランダムで決定)
 ;ARG:2	除外位置(1以上を指定していると、その位置だけ避ける　初期配置などで利用　※ARG:1強制指定の方が優先)
-;ARG:3	その他データ
+;ARG:3	その他データ(フリー枠。バイオプラント系なら中の人ID、寄生/出産なら母親ID、悪堕ち/転生なら元キャラID、ドッペルなら化け先ID)
 @CREATE_ENEMY(ARG:0, ARG:1, ARG:2, ARG:3)
 ;LOCAL
 ;0	LOOP
@@ -21,12 +21,18 @@ IF LOCAL:6 >= VARSIZE("DA", 0) || FLAG:525 == 1
 	LOCAL:6 = (VARSIZE("DA", 0) - 1)
 ENDIF
 
-;既に限界以上居るなら増えない
-;そのためいっぱいならランクアップを発生させて数を減らす
+
+;既に限界以上居る場合に他エネミーと入れ替えたり圧縮したりする処理
 IF FLAG:1 >= LOCAL:6
-	;同じ敵が3匹以上居るなら、それらを吸収して最初から高ランク化する可能性あり
-	IF (ARG:0 <= 4) || (ARG:0 >= 19) || ((ARG:0 % 2) == 0)
-		;固定敵や、ランクアップ済みの敵（種類IDが偶数）なら、ランクアップしない
+	;生成を試みているのが
+	;１　悪堕ちキャラかバイオプラントなら、暇してる一般エネミーを一匹ひっ捕まえて入れ替わっていただく
+	;２　新規生成かつランクアップ可能なエネミーなら、同種合成でランクアップを発生させて数を減らそうとする
+	;　　同じ敵が3匹以上居るなら、それらを削除(フレーバー的には吸収)して最初から高ランク化で生成する
+	;３　新規生成かつランクアップ不可能なエネミーなら生成諦めて帰る
+	;※既存エネミーのランクアップならそもそも直前にランクアップ前の自身を削除しているので限界は絶対に超えない
+
+	IF (ARG:0 < 4)
+		;生成を試みているのが固定敵なら生成を諦める。(固定敵は生成限界に引っ掛からないはずだが一応)
 		RETURN
 	ENDIF
 	
@@ -34,25 +40,57 @@ IF FLAG:1 >= LOCAL:6
 	LOCAL:3 = 0
 	LOCAL:4 = 0
 	LOCAL:5 = 0
-	FOR LOCAL:0, 1, FLAG:1
-		IF DA:(LOCAL:0):0 == ARG:0 && DA:(LOCAL:0):10 == 0 && DA:(LOCAL:0):20 == 0 && DA:(LOCAL:0):1 > 0
-			;うろついてるだけの敵をカウント
-			LOCAL:(LOCAL:2 + 3) = LOCAL:0
-			LOCAL:2 += 1
-			IF LOCAL:2 >= 3
+
+	;悪堕ちキャラの生成が空振りだとたいへん残念なので、バイオプラントと悪堕ちキャラは積極的に生成(暇してる他枠エネミーと入れ替え)する
+	IF FLAG:2000>0 || ARG:0 == 4
+		FOR LOCAL:0, 1, FLAG:1
+			;誰も拘束しておらず、悪堕ちキャラでも固定エネミーでもない敵を一匹探す。
+			;将来的な拡張性を考えると固定エネミーかどうかもフラグ管理の方が良さそうだけどとりあえず番号決め打ち
+			IF DA:(LOCAL:0):0 > 4 && DA:(LOCAL:0):10 == 0 && DA:(LOCAL:0):20 == 0 && DA:(LOCAL:0):1 > 0 && DA:(LOCAL:0):99==0
+				;うろついてるだけの敵を見つけたら削除対象に。すまんの
+				LOCAL:2 = LOCAL:0
 				BREAK
 			ENDIF
+		NEXT
+
+		;削除して枠を開ける
+		IF LOCAL:2 >= 1
+			CALL DELETE_ENEMY(LOCAL:2)
+		ELSE
+			RETURN
 		ENDIF
-	NEXT
-	IF LOCAL:2 >= 3
-		CALL DELETE_ENEMY(LOCAL:5)
-		CALL DELETE_ENEMY(LOCAL:4)
-		CALL DELETE_ENEMY(LOCAL:3)
-		;3匹削除し、１ランク上の敵を追加
-		ARG:0 = ARG:0 + 1
+	;通常の生成なら
 	ELSE
-		RETURN
+
+
+		FOR LOCAL:0, 1, FLAG:1
+			;誰も拘束しておらず、かつ悪堕ちキャラではない同種エネミーを探す。
+			IF DA:(LOCAL:0):0 == ARG:0 && DA:(LOCAL:0):10 == 0 && DA:(LOCAL:0):20 == 0 && DA:(LOCAL:0):1 > 0 && DA:(LOCAL:0):99==0
+
+				;今生成しようとしているのが実はランクアップ済み(またはランクアップ先が無い)エネミーだった場合、生成を諦める
+				IF DA:(LOCAL:0):3==1
+					RETURN
+				ENDIF
+
+				;うろついてるだけの敵を見つけたら削除候補としてカウント
+				LOCAL:(LOCAL:2 + 3) = LOCAL:0
+				LOCAL:2 += 1
+				IF LOCAL:2 >= 3
+					BREAK
+				ENDIF
+			ENDIF
+		NEXT
+		;3匹見つけられたらまとめて削除し、１ランク上の敵を追加
+		IF LOCAL:2 >= 3
+			CALL DELETE_ENEMY(LOCAL:5)
+			CALL DELETE_ENEMY(LOCAL:4)
+			CALL DELETE_ENEMY(LOCAL:3)
+			ARG:0 = ARG:0 + 1
+		ELSE
+			RETURN
+		ENDIF
 	ENDIF
+
 ENDIF
 
 ;念のためここでもDAを初期化
@@ -60,9 +98,10 @@ FOR LOCAL:0, 0, VARSIZE("DA", 1)
 	DA:(FLAG:1):(LOCAL:0) = 0
 NEXT
 
-
+;エネミー番号を設定
 DA:(FLAG:1):0 = ARG:0
 
+;初期位置を設定
 IF ARG:1 == 0
 	IF ARG:2 > 0
 		;除外位置が指定されているため、1～29で選択し、除外位置と被るなら30扱いに
@@ -92,7 +131,6 @@ ELSE
 		LOCAL:1 = ARG:1
 	ENDIF
 ENDIF
-
 DA:(FLAG:1):4 = LOCAL:1
 
 ;ダミー、クイーン、クイーンの両手、ガーディアン、で敵が5体すでにいる状態で出てこないように安全装置
@@ -101,17 +139,20 @@ IF (ARG:0 == 1 || ARG:0 == 2 || ARG:0 == 3) && FLAG:1 >= 6
 	RETURN 0
 ENDIF
 
-;その他の能力を読み込む
+
+
+;エネミー個別のパラメータや所持フラグを読み込む
 TRYCCALLFORM SET_ENEMY_DATA_{ARG:0}(FLAG:1, ARG:3)
 CATCH
 	PRINTFORMW (CREATE_ENEMY) 未実装の敵(ID:{ARG:0})のため、処理できません
 	RETURN 0
 ENDCATCH
+
+;バグっていないか確認
 IF ARG:0 == 19 || ARG:0 == 101 || ARG:0 == 102 || ARG:0 == 103 || ARG:0 == 104 || ARG:0 == 105
 	SIF ARG:3 == 0
 		THROW 存在しないキャラの娘が生まれた、または存在しないキャラが悪堕ちしました
 ENDIF
-
 
 ;エネミー多様化　easy以下は出ない(素の状態に慣れてほしいため)　ノーマル以上も全体的に出にくくする
 SIF FLAG:4 > 1 && RAND:5 == 0
@@ -141,6 +182,9 @@ ENDIF
 ;バグ対策に　拘束した状態の敵が生まれてしまうので解除しておく
 DA:(FLAG:1):20 = 0
 DA:(FLAG:1):21 = 0
+
+
+
 
 FLAG:1 += 1
 

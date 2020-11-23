@@ -29,6 +29,8 @@
 		NEXT
 		;敵と出会ったかどうか記録　図鑑用
 		CALL LOAD_GLOBAL_ENEMY_WIKI_DATA(0)
+	ELSE
+		ENEMY_WIKI_REGISTERED:0 = 1 ;移行しない
 	ENDIF
 	IF FLAG:509
 		LOCAL = ANIME_CONFIG("FORCE", 2)
@@ -52,11 +54,11 @@
 	PRINTFORML [ 4] %"Lunatic",12,LEFT%			%"ひたすらに全滅してみたい人向け",10,LEFT%
 	PRINTFORML [ 5] %"Extra",12,LEFT%			%"Normalを基準に捕まった状態から脱走を試みるもの",10,LEFT%
 	PRINTFORML [ 6] %"Phantasm",12,LEFT%		%"Lunaticを基準に捕まった状態から脱走を試みるもの",10,LEFT%
-	SIF FLAG:718
+	SIF GET_ENEMY_WIKI_REGISTERED(18)
 		PRINTFORML [ 7] %"Doppel",12,LEFT%			%"敵がドッペルゲンガーのみモード",10,LEFT%
 	PRINTFORML [10] %"Trap",12,LEFT%			%"敵がほとんど存在しない代わりに罠にあふれたモード",10,LEFT%
 	PRINTFORML 
-	;PRINTFORML [81] %"Minigame",12,LEFT%		%"ミニゲーム",10,LEFT%
+	PRINTFORML [81] %"Minigame",12,LEFT%		%"ミニゲーム",10,LEFT%
 
 	$INPUT_LOOP_DIF
 	INPUT
@@ -257,8 +259,6 @@
 	;＝＝＝ 口上 ＝＝＝
 	
 	PRINTL 
-	;PRINTL ※ver1.00現在、口上はまだ存在していません
-	;PRINTL ※以下の選択肢は2の「口上全OFF」をおすすめします	
 	PRINTL ゲーム開始後に口上を変更すると、口上独自の特殊な処理が正常に動作しないことがあります
 	PRINTL 今のうちに各キャラの口上の設定を確認しますか？
 		PRINTFORML [0] デフォルト　(口上の存在するキャラは口上を使用します)
@@ -369,7 +369,7 @@ ELSEIF RESULT == 3
 	FLAG:531 = 2
 	FLAG:533 = 1
 	FLAG:535 = 1
-	FLAG:538 = 2
+	FLAG:538 = 3
 
 	FLAG:523 = 1
 	FLAG:534 = 1

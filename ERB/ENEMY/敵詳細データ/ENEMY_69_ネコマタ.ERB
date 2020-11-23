@@ -1,13 +1,35 @@
 ﻿;敵データ設定
 ;ARG:0	設定場所
-;ARG:1	Reserved
+;ARG:1	元キャラのID
 @SET_ENEMY_DATA_69(ARG:0, ARG:1)
 
-DA:(ARG:0):1 = 6000
-DA:(ARG:0):2 = 6000
-DA:(ARG:0):3 = 1
-DA:(ARG:0):5 = 50
-DA:(ARG:0):9 = 100
+;簡易悪堕ちだった場合
+IF ARG:1 > 0 && FLAG:2000 == 1
+	DA:(ARG:0):1 = ABL:(ARG:1):98 * 100 + 8000
+	DA:(ARG:0):2 = ABL:(ARG:1):98 * 100 + 8000
+	DA:(ARG:0):3 = 1
+	DA:(ARG:0):5 = 50 + ABL:(ARG:1):98 / 3
+	DA:(ARG:0):9 = 100 + ABL:(ARG:1):97 / 2
+	;●入れ替わりパッチ追加START
+	DA:(ARG:0):49 = CFLAG:(ARG:1):104
+	;●END
+	;念のため元キャラのIDを残しておく
+	DA:(ARG:0):46 = ARG:1
+	;転生組である旨を記録
+	DA:(FLAG:1):99=2
+	SAVESTR:(ARG:0) = ネコマタ%CALLNAME:(ARG:1)%
+	;元キャラがダミーデータの場合パス　バグ対策
+	SIF ARG:1 == 0 || FLAG:997 == 81
+		RETURN
+;通常湧きの場合
+ELSE
+	DA:(ARG:0):1 = 6000
+	DA:(ARG:0):2 = 6000
+	DA:(ARG:0):3 = 1
+	DA:(ARG:0):5 = 50
+	DA:(ARG:0):9 = 100
+	SAVESTR:(ARG:0) = %ENEMY_NAME(69)%
+ENDIF
 
 DA:(ARG:0):15 = 70
 DA:(ARG:0):16 = 0
@@ -22,7 +44,6 @@ DA:(ARG:0):86 = 3
 DA:(ARG:0):89 = 5
 
 
-SAVESTR:(ARG:0) = %ENEMY_NAME(69)%
 
 ;戦闘中の行動決定
 ;ARG:0	設定場所

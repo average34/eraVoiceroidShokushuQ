@@ -66,6 +66,11 @@ SELECTCASE DA:対象:0
 	;転生悪堕ちキャラは必ずペットに
 	CASE 103, 104, 105
 		LOCAL = 100
+	CASEELSE
+		;簡易転生悪堕ちキャラも必ずペットに
+		IF DA:対象:99>0
+			LOCAL = 100
+		ENDIF
 ENDSELECT
 
 ;デバッグなら必ず仲間に
@@ -84,7 +89,7 @@ SIF DA:対象:88
 ;-----------------
 IF LOCAL < RAND:100
 	;悪落ちの場合メッセージ
-	IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+	IF DA:対象:99 >0
 		PRINTFORML 何とか%SAVESTR:(対象)%を気絶させることに成功したものの、
 		PRINTFORML 倒れたその体を肉々しい地面が飲み込んでそのままどこかへ隠してしまった。
 		PRINTFORMW もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
@@ -99,9 +104,16 @@ ENDIF
 ;-----------------
 ;入力及び分岐
 ;-----------------
-IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+IF DA:対象:99 >0
 	PRINTFORML ようやく大人しくなった%SAVESTR:対象%は起き上がってこちらを見ている。
-	PRINTFORML 敵意は無くなったようだが、ぼんやりとしたその瞳は正気に戻ったようには見えない……
+	SELECTCASE DA:対象:99
+		CASE 3
+		PRINTFORML 敵意は無くなったようだが、ぼんやりとしたその瞳は正気に戻ったようには見えない……
+		CASE 2
+		PRINTFORML 敵意は無くなったようだが、造り変えられた身体の真意までは窺い知れない……
+		CASEELSE
+		PRINTFORML 虚ろな瞳は何も映すことなく、敵意が無くなったかどうかも定かではない……
+	ENDSELECT
 	PRINTFORML 連れて行きますか？
 ELSE
 
@@ -137,7 +149,7 @@ ENDIF
 PRINTFORMW %PETNAME%を仲間にした！
 ;悪堕ちキャラの場合元キャラを記憶
 ;入れるタイミングは地味にここしかない
-IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+IF DA:対象:99 >0
 	PET:9 = DA:対象:46
 ELSE
 	PET:9 = 0
@@ -145,7 +157,7 @@ ENDIF
 
 
 CALLFORM PRINT_MESSAGE(1, 514, 3, CALLNAME:1, PETNAME)
-IF DA:対象:0 >= 101 && DA:対象:0 <= 105
+IF DA:対象:99 >0
 	CALLFORM PRINT_MESSAGE(PET:9, 1514, 3, CALLNAME:1, PETNAME)
 ENDIF
 CALL PET_INVITE_2(DA:対象:0)
