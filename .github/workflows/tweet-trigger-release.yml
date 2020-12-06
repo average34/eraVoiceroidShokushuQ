@@ -14,25 +14,25 @@ jobs:
 
       # env.RELEASE_VERSIONにバージョン名（タグ名）を代入
       - name: Set env RELEASE_VERSION
-        run: echo ::set-env name=RELEASE_VERSION::$(echo $GITHUB_REF | awk -F / '{print $3}')
+        run: echo "RELEASE_VERSION=$(echo $GITHUB_REF | awk -F / '{print $3}')" >> $GITHUB_ENV
       # env.REPOSITORY_NAMEにリポジトリ名を代入
       - name: Set env REPOSITORY_NAME
-        run: echo ::set-env name=REPOSITORY_NAME::$(echo $GITHUB_REPOSITORY | awk -F / '{print $2}')
+        run: echo "REPOSITORY_NAME=$(echo $GITHUB_REPOSITORY | awk -F / '{print $2}')" >> $GITHUB_ENV
       #  run: echo $GITHUB_REF
 
       # env.TWEET_TEXTにツイート内容を代入
       - name: Set env TWEET_TEXT_1
-        run: echo ::set-env name=TWEET_TEXT_1::"eraVoiceroid触手宮 ${{ env.RELEASE_VERSION }} 更新しました。"
+        run: echo "TWEET_TEXT_1="eraVoiceroid触手宮 ${{ env.RELEASE_VERSION }} 更新しました。"" >> $GITHUB_ENV
 
       - name: Set env TWEET_TEXT_2
-        run: echo ::set-env name=TWEET_TEXT_2::"https://github.com/$GITHUB_REPOSITORY/releases/"
+        run: echo "TWEET_TEXT_2="https://github.com/$GITHUB_REPOSITORY/releases/"" >> $GITHUB_ENV
 
       - name: Set env TWEET_TEXT_3
-        run: echo ::set-env name=TWEET_TEXT_3::"このゲームは、VOICEROID、CeVIO、AITalkのキャラクターの二次創作ゲームです。 テキストのみで進める、ボイチェビ達が触手と戦うゲームです。ぜひとも遊んでください。"
+        run: echo "TWEET_TEXT_3="このゲームは、VOICEROID、CeVIO、AITalkのキャラクターの二次創作ゲームです。 テキストのみで進める、ボイチェビ達が触手と戦うゲームです。ぜひとも遊んでください。"" >> $GITHUB_ENV
 
       # env.TWEET_TEXT_TESTにツイート内容を代入
       - name: Set env TWEET_TEXT_TEST
-        run: echo ::set-env name=TWEET_TEXT_TEST::"${{ env.REPOSITORY_NAME }} ${{ env.RELEASE_VERSION }} \\nこれはGithub Actionsのツイートテストです。"
+        run: echo "TWEET_TEXT_TEST="${{ env.REPOSITORY_NAME }} ${{ env.RELEASE_VERSION }} \\nこれはGithub Actionsのツイートテストです。"" >> $GITHUB_ENV
 
       #ツイートする
       #- name: Tweet to bot
@@ -47,7 +47,7 @@ jobs:
       # Github側でsecretsを設定する必要あり
       # DISCORD_WEBHOOKにURIを代入
       - name: Set env DISCORD_WEBHOOK 1
-        run: echo -e ::set-env name=DISCORD_WEBHOOK::${{ secrets.DISCORD_WEBHOOK }}
+        run: echo -e "DISCORD_WEBHOOK=${{ secrets.DISCORD_WEBHOOK }}" >> $GITHUB_ENV
 
       # Discordで通知する
       - name: Discord notification1-1
@@ -65,7 +65,7 @@ jobs:
 
       # DISCORD_WEBHOOKにURIを代入
       - name: Set env DISCORD_WEBHOOK for BOIRODA
-        run: echo -e ::set-env name=DISCORD_WEBHOOK::${{ secrets.DISCORD_WEBHOOK_BOIRODA }}
+        run: echo -e "DISCORD_WEBHOOK=${{ secrets.DISCORD_WEBHOOK_BOIRODA }}" >> $GITHUB_ENV
 
       # Discordで通知する
       - name: Discord notification2-1
