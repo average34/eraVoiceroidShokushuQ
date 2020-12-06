@@ -138,6 +138,7 @@
 	ENDIF
 
 
+
 	;--- 初期処理開始 ------------------
 	;キャラ登録番号メモ
 	;0		「あなた」が入っているが、使わない
@@ -153,40 +154,49 @@
 	CALL OTHER_CHARA_SELECT
 
 
-
 	;主人公の能力ボーナス選択
 	;★EXモードではボーナスがない
 	IF FLAG:999
 		
 	ELSE
-		PRINTFORML 主人公に初期ボーナスとして、好きな能力レベルを+1するか、アイテムを貰う事ができます
-		PRINTFORML ※元々レベル１の能力をレベル２にすることはできません
-		PRINTFORML  
-		$INPUT_BONUS
-		PRINTFORML 初期ボーナスを選択してください
-		FOR LCOUNT, 0, 16
-			IF ABL:1:(LCOUNT)
-				SETCOLOR 0x333333
-				PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% はこれ以上上げられません
-				RESETCOLOR
-			ELSE
-				IF LCOUNT == 12
-					IF FLAG:520
-						PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% を上げる（ふたなりが付与されます)
-						CONTINUE
-					ELSE
-						CONTINUE
+		;おすすめ設定にするかどうか聞く
+		CALL AUTO_CHOICES
+		IF FLAG:おすすめ自動選択モード
+			RESULT = 0
+		ELSE
+			PRINTFORML 主人公に初期ボーナスとして、好きな能力レベルを+1するか、アイテムを貰う事ができます
+			PRINTFORML ※元々レベル１の能力をレベル２にすることはできません
+			PRINTFORML  
+			$INPUT_BONUS
+			PRINTFORML 初期ボーナスを選択してください
+			FOR LCOUNT, 0, 16
+				IF ABL:1:(LCOUNT)
+					SETCOLOR 0x333333
+					PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% はこれ以上上げられません
+					RESETCOLOR
+				ELSE
+					IF LCOUNT == 12
+						IF FLAG:520
+							PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% を上げる（ふたなりが付与されます)
+							CONTINUE
+						ELSE
+							CONTINUE
+						ENDIF
 					ENDIF
+					PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% を上げる
 				ENDIF
-				PRINTFORML [{LCOUNT, 2}] %ABLNAME:(LCOUNT)% を上げる
-			ENDIF
-		NEXT
-		PRINTFORML [16] アイテムを貰う（回復アイテムなどがいくつか貰えます）
-		PRINTFORML [17] ペットを貰う（きちんと世話してあげましょうね）
-		PRINTFORML [18] 素質を入手する
-		INPUT
+			NEXT
+			PRINTFORML [16] アイテムを貰う（回復アイテムなどがいくつか貰えます）
+			PRINTFORML [17] ペットを貰う（きちんと世話してあげましょうね）
+			PRINTFORML [18] 素質を入手する
+
+
+			INPUT
+		ENDIF
+
 		IF (RESULT >= 0) && (RESULT <= 15) && RESULT != 12 && (ABL:1:(RESULT) == 0)
-			PRINTFORMW %ABLNAME:(RESULT)% のレベルが上がった！
+			SIF !FLAG:おすすめ自動選択モード
+				PRINTFORMW %ABLNAME:(RESULT)% のレベルが上がった！
 			ABL:1:RESULT += 1
 		ELSEIF RESULT == 12
 			ABL:1:12 += 1
@@ -236,21 +246,28 @@
 		CALL ADD_ITEM(59, 2, 0)
 	ENDIF
 
-	PRINTFORML 主人公のみ性格を自由に設定することができます
-	CALL SHOW_TUTORIAL(3)
-	CALL CHANGE_PERSONALITY(1)
+	IF !FLAG:おすすめ自動選択モード
+		PRINTFORML 主人公のみ性格を自由に設定することができます
+		CALL SHOW_TUTORIAL(3)
+		CALL CHANGE_PERSONALITY(1)
+	ENDIF
 	
 	;各種初期化処理　敵の初期化は順番の関係で移動
 	CALL CHARA_INITIALIZE
 	CALL MAP_INITIALIZE
 
 	IF NO:1 == 0
-		PRINTFORML 主人公のみ、素質の変更ができます。
-		PRINTFORML %CALLNAME:1%の素質を変更しますか？
+		IF FLAG:おすすめ自動選択モード
+			RESULT = 0
+		ELSE
+			PRINTFORML 主人公のみ、素質の変更ができます。
+			PRINTFORML %CALLNAME:1%の素質を変更しますか？
+			
+			PRINTFORML [0] デフォルト
+			PRINTFORML [1] 変更する
 		
-		PRINTFORML [0] デフォルト
-		PRINTFORML [1] 変更する
-		INPUT
+			INPUT
+		ENDIF
 		IF RESULT == 1
 			CALL TALENT_SET(1)
 		ENDIF
@@ -258,13 +275,18 @@
 	
 	;＝＝＝ 口上 ＝＝＝
 	
-	PRINTL 
-	PRINTL ゲーム開始後に口上を変更すると、口上独自の特殊な処理が正常に動作しないことがあります
-	PRINTL 今のうちに各キャラの口上の設定を確認しますか？
-		PRINTFORML [0] デフォルト　(口上の存在するキャラは口上を使用します)
-		PRINTFORML [1] 変更する
-		PRINTFORML [2] 口上全OFF
-		INPUT
+		IF FLAG:おすすめ自動選択モード
+			RESULT = 0
+		ELSE
+			PRINTL 
+			PRINTL ゲーム開始後に口上を変更すると、口上独自の特殊な処理が正常に動作しないことがあります
+			PRINTL 今のうちに各キャラの口上の設定を確認しますか？
+			PRINTFORML [0] デフォルト　(口上の存在するキャラは口上を使用します)
+			PRINTFORML [1] 変更する
+			PRINTFORML [2] 口上全OFF
+			INPUT
+		ENDIF
+
 	IF RESULT == 1
 		CALL KOJO_SELECT
 		PRINTL 
@@ -277,7 +299,6 @@
 		PRINTFORML 口上をすべてOFFに設定しました
 		FLAG:565 = 2
 	ELSE
-		PRINTFORML 設定しました
 		FLAG:565 = 0
 	ENDIF
 	PRINTFORML 
@@ -289,14 +310,20 @@
 	ENDIF
 	;★ここまで
 
-PRINTFORML 初期設定を確認しますか？（開始後コンフィグで設定可能）
+	SIF FLAG:おすすめ自動選択モード
+		GOTO INPUT_LOOP_STARTSET
+	PRINTFORML 初期設定を確認しますか？（開始後コンフィグで設定可能）
 	PRINTFORML [0] 個別に行う　　：個別に設定してからスタート
 	PRINTFORML [1] 基本セット　　：初期から存在した基本的なシステム・魔物のみに限定します
 	PRINTFORML [2] 戦闘セット　　：直接的な戦闘による責めを重視した設定です
 	PRINTFORML [3] 堕落セット　　：責めを受けたことによる心身の変化を重視した設定です
 	PRINTFORML [4] そのまま　　　：デフォルトのまま、もしくは以前設定したままにします
 	$INPUT_LOOP_STARTSET
-	INPUT
+		IF FLAG:おすすめ自動選択モード
+			RESULT = 1
+		ELSE
+			INPUT
+		ENDIF
 IF RESULT == 0
 	;ふたなりと豊乳化と尿意も最初に選べるように
 	CALL CONFIGURE_FIRST_TALENT
@@ -422,3 +449,19 @@ ENDIF
 
 	BEGIN SHOP
 ;=================================================
+
+
+
+;おすすめ自動選択モード を有効にする関数
+@AUTO_CHOICES
+FLAG:おすすめ自動選択モード = 0
+;FLAG:おすすめ自動選択モード  (FLAG:401)
+	PRINTFORML 以降の設定をおすすめのものに自動選択しますか？？
+	PRINTFORML [0] はい（初心者におすすめ）
+	PRINTFORML [1] いいえ
+	INPUT
+	IF RESULT == 1
+	ELSE
+		PRINTFORMW おすすめ自動選択モードを有効にしました
+		FLAG:おすすめ自動選択モード = 1
+	ENDIF
