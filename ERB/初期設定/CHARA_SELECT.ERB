@@ -13,7 +13,7 @@ PRINTFORML 主人公(プレイヤーが操作するキャラ)を選択してく�
 PRINTFORML [0] 自分で好きなキャラを選ぶ
 PRINTFORML [1] ランダムでキャラを選ぶ（確認あり）
 PRINTFORML [2] ランダムでキャラを選ぶ（ゲーム開始まで誰になるか不明）
-;PRINTFORML [3] 口上のあるキャラからランダムで選ぶ（確認あり）
+PRINTFORML [3] 口上のあるキャラからランダムで選ぶ（確認あり）
 ;PRINTFORML [4] 口上のあるキャラからランダムで選ぶ（ゲーム開始まで誰になるか不明）
 PRINTFORML [9] あなた（♀）
 PRINTFORML 
@@ -99,6 +99,7 @@ ENDIF
 
 ;他のキャラデータ選択
 @OTHER_CHARA_SELECT
+#DIM RoopCount
 ;LOCAL
 ;0		LOOP
 ;1		人数上限
@@ -125,7 +126,7 @@ FOR LOCAL:0, 1, (LOCAL:1 + 1)
 	ENDIF
 NEXT
 PRINTFORML [0] これでOK！（？？？が残っている場合、ランダムに決定されます）
-;PRINTFORML [1] これでOK！（？？？が残っている場合、口上のあるキャラからランダムに決定されます）
+PRINTFORML [1] これでOK！（？？？が残っている場合、口上のあるキャラから優先的にランダムに決定されます）
 PRINTFORML [2] 全員？？？に戻す
 IF FLAG:537 == 0
 	PRINTFORML [8] 同キャラ重複を許可する
@@ -161,14 +162,21 @@ ELSEIF RESULT == 1
 	;埋まっていない部分をランダムで埋める
 	FOR LOCAL:0, 1, (LOCAL:1 + 1)
 		IF FLAG:(LOCAL:0 + 20) == 0
+
+		;ここで無限ループが発生する
+		RoopCount = 0
 			$RANDOM_PARTNER_START
 			FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
 			TARGET = 0
 			TRYCCALLFORM KOJO_{FLAG:(LOCAL:0 + 20)}_0(0, 0)
 				;口上本体がある場合、決定
 			CATCH
-				;口上本体が無い場合、再抽選
-				GOTO RANDOM_PARTNER_START
+				RoopCount += 1
+				;ループ回数が多くなったら抽選はしない
+				IF RoopCount <= 5000
+					;口上本体が無い場合、再抽選
+					GOTO RANDOM_PARTNER_START
+				ENDIF
 			ENDCATCH
 		ENDIF
 	NEXT
@@ -356,15 +364,18 @@ GOTO INPUT_LOOP
 ;ARG:0	調べたいキャラ
 @EXIST_CHARA(ARG:0)
 #FUNCTION
-
-FOR LOCAL:0, 0, CHARANUM
+#DIM LCOUNT1
+#DIM LCOUNT2
+LCOUNT1 = 0
+LCOUNT2 = 0
+FOR LCOUNT1, 0, CHARANUM
 	;見つかった
-	SIF NO:(LOCAL:0) == ARG:0
+	SIF NO:(LCOUNT1) == ARG:0
 		RETURNF 1
 NEXT
-FOR LOCAL:0, 21, 30
+FOR LCOUNT2, 21, 30
 	;見つかった
-	SIF FLAG:(LOCAL:0) == ARG:0
+	SIF FLAG:(LCOUNT2) == ARG:0
 		RETURNF 1
 NEXT
 
@@ -377,13 +388,22 @@ RETURNF 0
 ;選択肢（人数）が少なすぎると無限ループになるので注意
 @SELECT_RANDOM_CHARA
 #FUNCTION
-LOCAL:0 = RAND:(FLAG:2) + 1
+#DIM CharaNo
+#DIM LoopCount
+CharaNo = RAND:(FLAG:2) + 1
 
 ;重複許可フラグチェック
 IF FLAG:537 == 0
-	;既に居るキャラが選ばれてしまったら再抽選
-	SIF EXIST_CHARA(LOCAL:0)
-		RESTART
+	LoopCount = 0
+	DO
+		CharaNo = RAND:(FLAG:2) + 1
+		LoopCount += 1
+
+		SIF LoopCount >= 50000
+			RETURNF -1
+		;既に居るキャラが選ばれてしまったら再抽選
+	LOOP EXIST_CHARA(CharaNo)
+
 ENDIF
-RETURNF LOCAL:0
+RETURNF CharaNo
 
