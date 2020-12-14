@@ -25,7 +25,7 @@ jobs:
         run: echo "RELEASE_VERSION=${GITHUB_REF:10}" >> $GITHUB_ENV
       # env.REPOSITORY_NAMEにリポジトリ名を代入
       - name: Set env REPOSITORY_NAME
-        run: echo "REPOSITORY_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}'" >> $GITHUB_ENV
+        run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*\/}" >> $GITHUB_ENV
 
 
       # ビルド処理(Githubからダウンロード)
