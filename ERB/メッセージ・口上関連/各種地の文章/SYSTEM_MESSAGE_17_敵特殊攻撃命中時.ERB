@@ -135,6 +135,27 @@ SELECTCASE ARG:1
 		PRINTFORML %ARGS:0%は発情した！
 	CASE 163
 		PRINTFORML %ARGS:1%が動き回る度に、掴まっている%ARGS:0%の体力が削られていく…
+	
+	CASE 188
+		IF CFLAG:203
+			PRINTFORML %ARGS:0%の腹にもう一つ穴が開いた！
+		ELSE
+			PRINTFORML %ARGS:0%のきれいなお腹に穴が貫通した！
+			PRINTFORML %ARGS:0%はお腹に傷ができた！
+		ENDIF
+	CASE 189
+		PRINTFORML %ARGS:0%の腹がぱっくりと切り裂かれた！
+		IF CFLAG:203 == 0
+			PRINTFORML %ARGS:0%の腹に傷が開いた！
+		ENDIF
+	CASE 190
+		PRINTFORML %ARGS:0%は%ARGS:1%に傷口を広げられた！
+	CASE 191
+		PRINTFORML %ARGS:0%の腹肉がドリルのような触手でえぐられていく！
+		IF CFLAG:203 == 0
+			PRINTFORML %ARGS:0%の腹にこぶし大の穴が開いた！
+		ENDIF
+	
 	CASE 248
 		IF FLAG:99 == 1
 			PRINTFORML 足元まで這い寄ってきた%ARGS:1%は%ARGS:0%の下着を喰いちぎり、
@@ -384,6 +405,9 @@ SELECTCASE ARG:1
 			PRINTFORML %ARGS:0%の身体が支配されていく……
 		ENDIF
 		PRINTFORML %ARGS:0%は%ARGS:1%の傀儡になった！
+	
+	CASE 1080
+		PRINTFORML %ARGS:0%は漏出状態になった！
 	
 
 	CASE 1300

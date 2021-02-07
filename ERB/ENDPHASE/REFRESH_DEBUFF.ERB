@@ -1,0 +1,54 @@
+﻿;デバフ回復処理
+;毎ターンかかっている全員が軽減される＆特殊処理が特にないデバフがここ
+;ARG:0	対象キャラ
+@REFRESH_DEBUFF(ARG:0)
+;LOCAL
+;0	LOOP
+
+
+;発情回復判定　薬毒耐性だと回復しやすい
+IF CFLAG:(ARG:0):28 && RAND:10 <= 0 + TALENT:(ARG:0):56
+	;媚薬装備時は発情レベル1を維持する、それ以外の場合のみ回復
+	CALL GET_EQUIP_BONUS((ARG:0), 39)
+	IF !(RESULT && CFLAG:(ARG:0):28 == 1)
+		CFLAG:((ARG:0)):28 = LIMIT(CFLAG:(ARG:0):28 - 1, 0, __INT_MAX__)
+		CALL PRINT_MESSAGE((ARG:0), 121, 99, CALLNAME:(ARG:0), "")
+	ENDIF
+ENDIF
+
+;腹穴回復
+IF CFLAG:(ARG:0):203
+	CFLAG:((ARG:0)):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
+	;回復早い
+	SIF TALENT:((ARG:0)):111
+		CFLAG:((ARG:0)):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
+	;吸血鬼
+	IF TALENT:((ARG:0)):114
+		IF TIME:0 == 0 || TIME:0 == 1
+			
+		ELSE
+			CFLAG:((ARG:0)):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
+		ENDIF
+	ENDIF
+	;日光浴
+	IF TALENT:((ARG:0)):115
+		SIF TIME:0 == 0 || TIME:0 == 1
+			CFLAG:((ARG:0)):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
+	ENDIF
+	;月光浴
+	IF TALENT:((ARG:0)):116
+		SIF TIME:0 == 2 || TIME:0 == 3
+			CFLAG:((ARG:0)):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
+	ENDIF
+	;HP全快
+	IF BASE:HP == MAXBASE:HP
+		CFLAG:((ARG:0)):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
+	ENDIF
+ENDIF
+
+;漏出回復
+IF CFLAG:(ARG:0):204
+	CFLAG:((ARG:0)):204 = MAX(CFLAG:(ARG:0):204 - 1, 0)
+ENDIF
+
+

@@ -31,6 +31,7 @@ WHILE 1
 	PRINTL [17] ペット追加・編集・削除
 	PRINTL [18] 乳サイズ変更テスト
 	PRINTL [19] 妊娠と寄生の管理
+	PRINTL [20] 敵の攻撃チェック
 	;石ころ帽子着用
 	PRINTL
 	PRINTL [ 0] 戻る
@@ -82,6 +83,8 @@ WHILE 1
 		CALL DEBUG_COMMAND_乳サイズ変更テスト
 	ELSEIF RESULT == 19
 		CALL DEBUG_COMMAND_妊娠と寄生の管理
+	ELSEIF RESULT == 20
+		CALL DEBUG_COMMAND_敵の攻撃チェック
 	ELSE
 		CLEARLINE 1
 		REUSELASTLINE 入力が不正です！
@@ -3671,7 +3674,7 @@ ELSE
 ENDIF
 FOR LCOUNT, 0, 10
 	SELECTCASE CFLAG:(ARG:0):(ARG:1)
-		CASE 19, 20, 49, 67 TO 68, 71 TO 72, 91, 96
+		CASE 19, 20, 67 TO 68, 71 TO 72, 91, 96
 			IF ARG:2 == 0
 				CFLAG:(ARG:0):(ARG:1) --
 			ELSE
@@ -3689,6 +3692,111 @@ ELSEIF CFLAG:(ARG:0):(ARG:1) < 4
 	CFLAG:(ARG:0):(ARG:1) = 4
 ENDIF
 RETURN
+
+;---------------------------------
+;敵の攻撃を発生させる
+;---------------------------------
+@DEBUG_COMMAND_敵の攻撃チェック
+#DIM LCOUNT
+#DIM キャラID
+#DIM 敵の種類
+#DIM 攻撃番号
+#DIM DEL_LINE
+#DIM PAGE
+#DIM LAST_ENEMY_NUM
+#DIM LAST_PAGE
+#DIM LIST_NUM = 20
+#DIM USAGE
+
+;DIM
+;DEL_LINE		行削除用
+;PAGE			ページ部分制御
+;LAST_ENEMY_NUM	最後の敵番号
+;LAST_PAGE		最後の敵番号があるページ数
+;LIST_NUM		1ページに表示するペットの種類
+;USAGE			敵呼び出しリストの切り替え
+;
+;LOCAL
+;2	図鑑番号記録用
+
+PRINTL 誰に攻撃しますか？
+
+FOR LCOUNT, 1, CHARANUM
+	PRINTFORM [{LCOUNT}] %CALLNAME:LCOUNT,16,LEFT%
+	IF LCOUNT % 3 == 3
+		PRINTL 
+	ENDIF
+NEXT
+PRINTL 
+PRINTL [ 0] 戻る
+
+$INPUT_LOOP
+INPUT
+
+IF RESULT == 0
+	RETURN
+ELSEIF RESULT > CHARANUM || RESULT < 1
+	GOTO INPUT_LOOP
+ELSE
+	キャラID = RESULT
+ENDIF
+
+PRINTFORML どの敵が攻撃しますか？
+PRINTL
+;図鑑処理流用
+PAGE = 0
+USAGE = 1
+
+$START
+DEL_LINE = LINECOUNT
+
+;敵リスト呼び出し
+CALL DEBUG_OUTPUT_ENEMY_LIST(PAGE, LIST_NUM, USAGE)
+LAST_PAGE = RESULT:0
+LAST_ENEMY_NUM = RESULT:1
+DRAWLINE
+
+PRINTL
+PRINTL [ 0] キャンセル
+$INPUT_LOOP_2
+INPUT
+
+IF RESULT == 0
+	RETURN
+ELSEIF ENEMY_NAME(RESULT) != "バグ触手" && RESULT > 0 && RESULT != 20 && RESULT <= LAST_ENEMY_NUM
+	敵の種類 = RESULT
+ELSEIF RESULT == 777
+	;前ページへ
+	PAGE -= 1
+	SIF PAGE < 0
+		PAGE = LAST_PAGE
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START
+ELSEIF RESULT == 999
+	;次ページへ
+	PAGE += 1
+	SIF PAGE > LAST_PAGE
+		PAGE = 0
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 入力が不正です！
+	GOTO INPUT_LOOP_2
+ENDIF
+
+
+
+$INPUT_LOOP_3
+PRINTL どの攻撃をしますか？攻撃番号を入力してください
+PRINTL 参照：資料とか→敵の攻撃コマンド一覧.txt
+;誰かSHOW_SYSTEM_MESSAGE_INFO.ERBのコマンド一覧使ってよさげなの作ってもいいのよ
+INPUT
+
+攻撃番号 = RESULT
+
+CALL ENEMY_ATTACK(キャラID,攻撃番号,敵の種類)
+
 ;---------------------------------
 
 

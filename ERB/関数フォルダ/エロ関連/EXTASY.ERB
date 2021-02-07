@@ -17,8 +17,6 @@
 
 #DIM 踏ん張り確率
 
-#DIM ERECTION_LEVEL_C
-
 ;FLAG:20
 ;0:同じ部屋 1:違う部屋 違う部屋だとメッセージ表示しない、他の関数でもチェックするのでローカル変数代用不可
 
@@ -354,6 +352,9 @@ IF ARG:3 == 0
 	IF 部位属性 == 1
 		CALL ERECTION_B(ARG:0, RAND:(MP減少量 / 20))
 		CALL ERECTION_C(ARG:0, RAND:(MP減少量 / 50))
+	ELSEIF 部位属性 == 0 && TALENT:(ARG:0):122
+		CALL ERECTION_B(ARG:0, RAND:(MP減少量 / 50))
+		CALL ERECTION_C(ARG:0, RAND:(MP減少量 / 10))
 	ELSEIF 部位属性 != 2
 		CALL ERECTION_B(ARG:0, RAND:(MP減少量 / 50))
 		CALL ERECTION_C(ARG:0, RAND:(MP減少量 / 50))
@@ -390,8 +391,14 @@ IF ARG:3 == 0
 				DA:(TFLAG:52):1 = DA:(TFLAG:52):2
 				PRINTFORML %SAVESTR:(TFLAG:52)%の触手が太く大きくなり脈動している
 			ENDIF
+			;漏出処理
+			IF CFLAG:(ARG:0):204 && ABL:(ARG:0):98 > 1
+				CALL PRINT_MESSAGE(ARG:0, 474, 0, CALLNAME:(ARG:0), SAVESTR:(TFLAG:52))
+				ABL:(ARG:0):98 = MAX(ABL:(ARG:0):98 - 1, 1)
+			ENDIF
 		ENDIF
 	ENDIF
+	
 
 	;汚れ+3
 	BASE:(ARG:0):5 += 3
@@ -629,6 +636,12 @@ RETURN MP減少量
 	;勃起度合い
 	IF GET_PENIS(ARG:0)
 		CALL ERECTION_C(ARG:0, - RAND:(LOCAL:0 / 120 + 1))
+	ENDIF
+	
+	;漏出処理
+	IF CFLAG:(ARG:0):204 && ABL:(ARG:0):98 > 1
+		CALL PRINT_MESSAGE(ARG:0, 474, 1, CALLNAME:(ARG:0), SAVESTR:(TFLAG:52))
+		ABL:(ARG:0):98 = MAX(ABL:(ARG:0):98 - 1, 1)
 	ENDIF
 
 

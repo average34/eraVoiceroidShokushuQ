@@ -1084,6 +1084,52 @@ ENDIF
 IF CFLAG:(ARG:0):202
 	RESULTS = 虜
 ENDIF
+;=======================
+;傀儡
+;=======================
+@PRINT_CONDITION_40(ARG:0)
+IF CFLAG:(ARG:0):59
+	RESULTS = 傀儡
+ENDIF
+;=======================
+;傀儡（一文字）
+;=======================
+@PRINT_CONDITION_40S(ARG:0)
+IF CFLAG:(ARG:0):59
+	RESULTS = 傀
+ENDIF
+;=======================
+;腹穴
+;=======================
+@PRINT_CONDITION_41(ARG:0)
+IF CFLAG:(ARG:0):203 >= 21
+	RESULTS = 腹穴
+	RETURN 0xA00000
+ELSEIF CFLAG:(ARG:0):203 >= 11
+	RESULTS = 腹穴
+ENDIF
+;=======================
+;腹穴（一文字）
+;=======================
+@PRINT_CONDITION_41S(ARG:0)
+IF CFLAG:(ARG:0):203
+	RESULTS = 腹
+ENDIF
+;=======================
+;漏出
+;=======================
+@PRINT_CONDITION_42(ARG:0)
+IF CFLAG:(ARG:0):204
+	RESULTS = 漏出
+ENDIF
+;=======================
+;漏出（一文字）
+;=======================
+@PRINT_CONDITION_42S(ARG:0)
+IF CFLAG:(ARG:0):204
+	RESULTS = 漏
+ENDIF
+
 ;=================================================
 ;現在の尿意を表示 ★尿意パッチ加筆点★
 ;ARG:0	対象キャラ

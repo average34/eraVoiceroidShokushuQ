@@ -12,6 +12,7 @@ SIF FLAG:181 == 0
 ;探索を行っていた場合、探索チェック
 IF CFLAG:1:11 == 3 && ARG:0 == 0
 	CALL SEARCH_EVENT
+	CALL BUSHED_HENTAI
 	;キャラデータがリセットされている＝クリアした場合、処理中断
 	SIF CHARANUM < 2
 		RETURN 1
@@ -248,16 +249,9 @@ NEXT
 CALL BREAK_UP_CHECK(FLAG:10)
 CALL BREAK_UP_CHECK(FLAG:11)
 
-;発情回復判定　薬毒耐性だと回復しやすい
+;デバフ回復判定
 FOR LCOUNT, 1, CHARANUM
-	IF CFLAG:LCOUNT:28 && RAND:10 <= 0 + TALENT:LCOUNT:56
-		;媚薬装備時は発情レベル1を維持する、それ以外の場合のみ回復
-		CALL GET_EQUIP_BONUS(LCOUNT, 39)
-		IF !(RESULT && CFLAG:LCOUNT:28 == 1)
-			CFLAG:(LCOUNT):28 = LIMIT(CFLAG:LCOUNT:28 - 1, 0, __INT_MAX__)
-			CALL PRINT_MESSAGE(LCOUNT, 121, 99, CALLNAME:LCOUNT, "")
-		ENDIF
-	ENDIF
+	CALL REFRESH_DEBUFF(LCOUNT)
 NEXT
 
 ;ランダム自慰判定
@@ -387,14 +381,14 @@ IF PET:0
 	CALL LIMIT_PET_STATUS
 ENDIF
 
-;避妊パッチ********************************************************
-	SIF CFLAG:1:70
-		CFLAG:1:70 -= 1
-	SIF CFLAG:(FLAG:10):70
-		CFLAG:(FLAG:10):70 -= 1
-	SIF CFLAG:(FLAG:11):70
-		CFLAG:(FLAG:11):70 -= 1
-;********************************************************
+;避妊
+SIF CFLAG:1:70
+	CFLAG:1:70 -= 1
+SIF CFLAG:(FLAG:10):70
+	CFLAG:(FLAG:10):70 -= 1
+SIF CFLAG:(FLAG:11):70
+	CFLAG:(FLAG:11):70 -= 1
+
 
 CALL ENDPHASE_TRAP
 
