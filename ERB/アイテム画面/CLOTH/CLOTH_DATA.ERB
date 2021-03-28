@@ -1096,7 +1096,7 @@ RETURN RESULT
 			
 		;---服選択時の地の文---
 		CASE 5
-			PRINTFORML 淡いブルーのスモックと黄色い帽子のセット
+			PRINTFORML 淡いブルーのワンピースと黄色い帽子のセット
 			PRINTFORML 胸元には花型のバッジがついている
 			PRINTFORMW 
 
@@ -1195,7 +1195,7 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML 首からひざ下までを覆う外套
-			PRINTFORML なんと猫耳フード付きだ！
+			PRINTFORML なんとなく不思議な力をまとっている
 			PRINTFORMW 
 
 		;---ステータスの服装表示---
@@ -1240,9 +1240,10 @@ RETURN RESULT
 			
 		;---服選択時の地の文---
 		CASE 5
-			PRINTFORML 純白のドレス……と言うか水着だ
-			PRINTFORML そういえばコレでグラビアを撮っていた人がいたような……？
-			PRINTFORMW 
+			PRINTFORML 全身真っ白なケープ付きのドレス
+			PRINTFORML なぜこんなものが落ちていたのだろうか？
+			PRINTFORMW 清純な印象を受ける、レース加工の生地は薄っすらと透けている
+			PRINTFORML 
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -1250,7 +1251,7 @@ RETURN RESULT
 		CASE 11	;CP 損傷時
 			RESULTS = 穴の空いたウェディングドレス
 		CASE 12	;CP 半裸時
-			RESULTS = ボロボロのウェディングドレス
+			RESULTS = ボロボロのウェディングビキニ
 
 		;---遭遇時の服装表現---
 		CASE 20	;CP 通常時
@@ -1258,7 +1259,7 @@ RETURN RESULT
 		CASE 21	;CP 損傷時
 			RESULTS = 穴の空いたウェディングドレスを着た
 		CASE 22	;CP 半裸時
-			RESULTS = ボロボロのウェディングドレスを着た
+			RESULTS = ボロボロのウェディングビキニを纏った
 			
 		;---ダメージ補正---
 		CASE 1001
@@ -1374,7 +1375,7 @@ RETURN RESULT
 		CASE 0
 			RESULTS = スリングショット
 		CASE 1
-			RESULTS = Y字型の水着
+			RESULTS = Y字型のあぶない水着　速度(+10％)・魅力(+50)
 			
 		;---服選択時の地の文---
 		CASE 5
@@ -1394,9 +1395,14 @@ RETURN RESULT
 		CASE 20	;CP 通常時
 			RESULTS = 普通の服の下にスリングショット水着を着た
 		CASE 21	;CP 損傷時
-			RESULTS = 穴の開いた服にスリングショット水着を着た
-		CASE 22	;CP 半裸時
 			RESULTS = スリングショット水着を着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのスリングショット水着を着た
+		;---ステ補正---
+		CASE 1103
+			RESULT = -15
+		CASE 1106
+			RESULT = 50
 	ENDSELECT
 
 RETURN RESULT
@@ -1481,8 +1487,7 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 魅力的なのになぜか狙われにくい謎装備。
 			PRINTFORML 忍者だから仕方ない。古事記にもそう書いてある。
-			PRINTFORML 中は鎖帷子では無く全身タイプの網タイツなので脆い。
-			PRINTFORMW ちなみに感度は上がらない。
+			PRINTFORMW 中は鎖帷子では無く全身タイプの網タイツなので脆い。
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1514,6 +1519,8 @@ RETURN RESULT
 
 RETURN RESULT
 ;=================================================
+
+;=================================================
 ;服装データ
 ;「スパッツ」
 ;=================================================
@@ -1532,10 +1539,9 @@ RETURN RESULT
 			
 		;---服選択時の地の文---
 		CASE 5
-			PRINTFORML 首回りが緩すぎるダボTと一分丈のスパッツだ……
-			PRINTFORML なぜか触手をザコ扱いできそうなほど力が湧いてくる
-			PRINTFORML わからされないように気を付けよう
-			PRINTFORMW 
+			PRINTFORML 緩い首回りのダボダボなシャツと、一分丈のスパッツだ
+			PRINTFORML ぴっちりとして健康的な服装からは不思議な自信が湧いてくる
+			PRINTFORMW 調子に乗ってわからされないように注意しよう
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1564,6 +1570,314 @@ RETURN RESULT
 		CASE 1106
 			RESULT = 20
 		
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「ゴスロリ服」
+;=================================================
+@CLOTH_DATA_27(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ゴスロリ服
+		CASE 1
+			RESULTS = 闇の力が高まる…！　与ダメ(+20％)・CPダメ(-10％)・速度(-15％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			;「ゴシックで」って大丈夫か？
+			PRINTFORML ゴシックでフリフリな漆黒ドレス
+			PRINTFORML 少女向けのお人形に似合いそうな服だ
+			PRINTFORMW 装飾過多なせいで少し動きにくい
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ゴスロリ服
+		CASE 11	;CP 損傷時
+			RESULTS = 穴だらけのゴスロリ服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのレース下着
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = ゴスロリ服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴だらけのゴスロリ服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのレース下着だけを着た
+
+		;---ダメージ補正---
+		CASE 1000
+			RESULT = 20
+		CASE 1003
+			RESULT = -10
+		;---ステ補正---
+		CASE 1100
+			RESULT = -15
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「バニースーツ」
+;=================================================
+@CLOTH_DATA_28(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = バニースーツ
+		CASE 1
+			RESULTS = 気分はウサギさん　EPダメ(+10％)・速度(25％)・魅力(+30)
+			
+		;---服選択時の地の文---
+		CASE 5
+			;動物耳で分岐してもいいかもしれないけど、口上側の仕事かも
+			PRINTFORML ウサギの丸い尻尾が付いた、深いスリットのレオタード
+			PRINTFORML ご丁寧にウサミミカチューシャまで付属している
+			PRINTFORMW 胸元がやたらと強調されているようだが…
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = バニースーツ
+		CASE 11	;CP 損傷時
+			RESULTS = 破れかけのバニースーツ
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのバニースーツ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = バニースーツを着た
+		CASE 21	;CP 損傷時
+			RESULTS = 破れかけのバニースーツを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのバニースーツを着た
+
+		;---ダメージ補正---
+		CASE 1002
+			RESULT = 10
+		;---ステ補正---
+		CASE 1100
+			RESULT = 25
+		CASE 1106
+			RESULT = 30
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「チア服」
+;=================================================
+@CLOTH_DATA_29(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = チア服
+		CASE 1
+			RESULTS = がんばれ♥がんばれ♥　速度(10％)・命中(+5)・魅力(+25)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 薄暗い迷宮に不似合いなほど明るい色使いの、動きやすそうな衣装
+			PRINTFORML 見ているだけで元気が湧き、着れば不思議と誰かを応援したくなる
+			PRINTFORMW へそが見える丈の短さ、極端に小さなミニスカートは気になるが…
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = チア服
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の空いたチア服
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのチア服
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = チア服を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴の空いたチア服を着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのチア服を着た
+
+		;---ステ補正---
+		CASE 1103
+			RESULT = 10
+		CASE 1104
+			RESULT = 5
+		CASE 1106
+			RESULT = 25
+		;味方リジェネとかあったらそれらしいけど対応処理が無いのでパス
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「競泳水着」
+;=================================================
+@CLOTH_DATA_30(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = 競泳水着
+		CASE 1
+			RESULTS = 実用性を兼ね備えた水着　速度(+15％)・魅力(+20)
+
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML レディースの競泳水着、しかもハイレグだ
+			PRINTFORML ハイカットされた布地が脚の付け根まで丸出しにしてしまう
+			PRINTFORMW 泳ぐには適した衣装だが、この迷宮で役に立つ事はあるのだろうか…
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = 競泳水着
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の空いた競泳水着
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロの競泳水着
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = 競泳水着を着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴の空いた競泳水着を着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロの競泳水着を着た
+
+		;---ステ補正---
+		CASE 1103
+			RESULT = 15
+		CASE 1106
+			RESULT = 20
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+
+;=================================================
+;服装データ
+;「ブレザー」
+;=================================================
+@CLOTH_DATA_31(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = ブレザー
+		CASE 1
+			RESULTS = 清楚な学校制服　命中(+10)
+
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML とある有名お嬢様の学校指定ブレザーだ
+			PRINTFORML 気品を感じる紺色基調が、胸元の真っ赤なリボンを引き立たせる
+			PRINTFORMW 服だけが外から迷い込んだのだろうか、それとも…
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = ブレザー
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の空いたブレザー
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのブレザー
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = ブレザーを着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴の空いたブレザーを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのブレザーを着た
+			
+		;---ステ補正---
+		CASE 1104
+			RESULT = 10
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
+
+;=================================================
+;服装データ
+;「テニスウェア」
+;=================================================
+@CLOTH_DATA_32(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = テニスウェア
+		CASE 1
+			RESULTS = コートの中では喘がないわ！　速度(15％)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML へそ出しシャツの健康的な運動着
+			PRINTFORML 短いスコートは太ももを大胆にさらけ出してしまう
+			PRINTFORMW 素早く動き回るだけなら適した衣装だが…
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = テニスウェア
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の空いたテニスウェア
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのテニスウェア
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = テニスウェアを着た
+		CASE 21	;CP 損傷時
+			RESULTS = 穴の空いたテニスウェアを着た
+		CASE 22	;CP 半裸時
+			RESULTS = ボロボロのテニスウェアを着た
+
+		;---ステ補正---
+		CASE 1103
+			RESULT = 15
 	ENDSELECT
 
 RETURN RESULT
