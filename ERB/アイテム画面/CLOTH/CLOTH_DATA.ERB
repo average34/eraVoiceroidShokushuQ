@@ -1514,6 +1514,60 @@ RETURN RESULT
 
 RETURN RESULT
 ;=================================================
+;服装データ
+;「スパッツ」
+;=================================================
+@CLOTH_DATA_26(処理ID, キャラID)
+#DIM 処理ID
+#DIM キャラID
+
+	RESULT = 0
+	RESULTS = %""%
+	SELECTCASE 処理ID
+		;---服の名前---
+		CASE 0
+			RESULTS = スパッツ
+		CASE 1
+			RESULTS = なんだか強気になれるけど…　与ダメ(+10％)・EPダメ(+20％)・魅力(+20)
+			
+		;---服選択時の地の文---
+		CASE 5
+			PRINTFORML 首回りが緩すぎるダボTと一分丈のスパッツだ……
+			PRINTFORML なぜか触手をザコ扱いできそうなほど力が湧いてくる
+			PRINTFORML わからされないように気を付けよう
+			PRINTFORMW 
+			PRINTFORML 
+
+		;---ステータスの服装表示---
+		CASE 10	;CP 通常時
+			RESULTS = スパッツ
+		CASE 11	;CP 損傷時
+			RESULTS = 穴の開いたスパッツ
+		CASE 12	;CP 半裸時
+			RESULTS = ボロボロのスパッツ
+
+		;---遭遇時の服装表現---
+		CASE 20	;CP 通常時
+			RESULTS = スパッツをはいた
+		CASE 21	;CP 損傷時
+			RESULTS = スパッツをはいた
+		CASE 22	;CP 半裸時
+			RESULTS = スパッツをはいた
+		
+		;---EPダメージ補正---
+		CASE 1002
+			RESULT = 20
+		;---与ダメージ補正---
+		CASE 1100
+			RESULT = 10
+		;---魅力補正---
+		CASE 1106
+			RESULT = 20
+		
+	ENDSELECT
+
+RETURN RESULT
+;=================================================
 
 ;≡≡≡≡≡≡≡≡≡以下特殊用途≡≡≡≡≡≡≡≡≡≡
 ;=================================================
