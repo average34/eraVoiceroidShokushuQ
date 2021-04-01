@@ -2251,6 +2251,41 @@ REDRAW 1
 			GOTO INPUT_LOOP
 		ENDIF
 	ENDIF
+;=================================================
+;コンフィグ項目
+;「複乳パッチ」
+;=================================================
+@SET_CONFIGURE_4_23(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = オトコで妊娠しないパッチ
+		
+		IF FLAG:オトコで妊娠しない == 0
+			RESULTS:1 = オトコでも妊娠する
+		ELSEIF FLAG:オトコで妊娠しない == 1
+			RESULTS:1 = オトコは妊娠しない
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML [オトコ]の素質を持つキャラは妊娠しないようにしますか？
+		PRINTFORML 
+		PRINTFORML [1] 妊娠する(デフォルト)
+		PRINTFORML [2] 妊娠しない
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:オトコで妊娠しない = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
 
 ;=================================================
 ;コンフィグ項目
