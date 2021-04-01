@@ -147,7 +147,7 @@ CALLFORM SEX_DRIVE_{SEX_DRIVE_ID}(CHARA_ID)
 	CALL ADD_ABL_EXP(14, 1, LOCAL:1 * (2 + TALENT:(CHARA_ID):185))
 	CFLAG:(CHARA_ID):5 += 10
 
-	IF CFLAG:1:22 == 0 && RAND:4 == 0
+	IF CFLAG:1:22 == 0 && RAND:4 == 0 && (TALENT:1:122 == 0 || FLAG:オトコで妊娠しない == 0)
 		;生まれるのはシェイプシフター
 		CALL PARASITE_TYPE(1, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2, 1)
 	ENDIF
@@ -260,7 +260,7 @@ ELSE
 		CALL ADD_ABL_EXP(14, 1, LOCAL:1 * (2 + TALENT:(PEEPING_CHARA_ID):185))
 		CFLAG:(PEEPING_CHARA_ID):5 += 10
 
-		IF CFLAG:1:22 == 0 && RAND:4 == 0
+		IF CFLAG:1:22 == 0 && RAND:4 == 0 && (TALENT:1:122 == 0 || FLAG:オトコで妊娠しない == 0)
 			;生まれるのはシェイプシフター
 			CALL PARASITE_TYPE(1, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2, 1)
 		ENDIF
@@ -293,7 +293,7 @@ ELSE
 		CALL ADD_ABL_EXP(14, 1, LOCAL:1 * (2 + TALENT:(PEEPING_CHARA_ID):185))
 		CFLAG:(PEEPING_CHARA_ID):5 += 10
 
-		IF CFLAG:1:22 == 0 && RAND:4 == 0
+		IF CFLAG:1:22 == 0 && RAND:4 == 0 && (TALENT:1:122 == 0 || FLAG:オトコで妊娠しない == 0)
 			;生まれるのはシェイプシフター
 			CALL PARASITE_TYPE(1, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2, 1)
 		ENDIF

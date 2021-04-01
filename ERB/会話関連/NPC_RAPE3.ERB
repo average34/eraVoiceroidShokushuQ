@@ -95,7 +95,7 @@ ELSEIF RESULT == 3
 		CALL ADD_ABL_EXP(14, 1, LOCAL:1 * (2 + TALENT:(ARG:0):185))
 		CFLAG:(ARG:0):5 += 20
 
-	IF CFLAG:1:22 == 0 && RAND:4 == 0
+	IF CFLAG:1:22 == 0 && RAND:4 == 0 && (TALENT:1:122 == 0 || FLAG:オトコで妊娠しない == 0)
 		;生まれるのはシェイプシフター
 		CALL PARASITE_TYPE(1, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2, ARG:0)
 	ENDIF
