@@ -2286,6 +2286,41 @@ REDRAW 1
 			GOTO INPUT_LOOP
 		ENDIF
 	ENDIF
+;=================================================
+;コンフィグ項目
+;「オトコ出現の有無」
+;=================================================
+@SET_CONFIGURE_4_24(ARG)
+	;---項目の表示---
+	IF ARG == 0
+		RESULTS:0 = オトコ出現の有無
+		
+		IF FLAG:オトコ出現する == 0
+			RESULTS:1 = オトコ出現しない
+		ELSEIF FLAG:オトコ出現する == 1
+			RESULTS:1 = オトコ出現する
+		ENDIF
+		
+	;---選択時の処理---
+	ELSEIF ARG == 1
+		PRINTFORML [オトコ]の素質を持つキャラが出現するようにしますか？
+		PRINTFORML 
+		PRINTFORML [1] オトコ出現しない(デフォルト)
+		PRINTFORML [2] オトコ出現する
+		PRINTFORML 
+		PRINTFORML [0] キャンセル
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
+		;1～2
+		ELSEIF RESULT >= 1 && RESULT <= 2
+			FLAG:オトコ出現する = RESULT - 1
+			PRINTFORMW 設定しました
+		ELSE
+			GOTO INPUT_LOOP
+		ENDIF
+	ENDIF
 
 ;=================================================
 ;コンフィグ項目
