@@ -128,6 +128,11 @@ NEXT
 PRINTFORML [0] これでOK！（？？？が残っている場合、ランダムに決定されます）
 PRINTFORML [1] これでOK！（？？？が残っている場合、口上のあるキャラから優先的にランダムに決定されます）
 PRINTFORML [2] 全員？？？に戻す
+IF FLAG:オトコ出現する == 0
+	PRINTFORML [7] ランダム選択でオトコキャラを出るようにする
+ELSEIF FLAG:オトコ出現する == 1
+	PRINTFORML [7] ランダム選択でオトコキャラを出ないように戻す
+ENDIF
 IF FLAG:537 == 0
 	PRINTFORML [8] 同キャラ重複を許可する
 ELSEIF FLAG:537 == 1
@@ -189,6 +194,13 @@ ELSEIF RESULT == 2
 	FOR LOCAL:0, 1, (LOCAL:1 + 1)
 		FLAG:(LOCAL:0 + 20) = 0
 	NEXT
+ELSEIF RESULT == 7
+	IF FLAG:オトコ出現する == 0
+		FLAG:オトコ出現する = 1
+	ELSE
+		FLAG:オトコ出現する = 0
+	ENDIF
+	RESTART
 ELSEIF RESULT == 8
 	IF FLAG:537 == 0
 		FLAG:537 = 1
@@ -390,6 +402,7 @@ RETURNF 0
 #FUNCTION
 #DIM CharaNo
 #DIM LoopCount
+#DIM ExistOtoko
 CharaNo = RAND:(FLAG:2) + 1
 
 ;重複許可フラグチェック
@@ -397,13 +410,30 @@ IF FLAG:537 == 0
 	LoopCount = 0
 	DO
 		CharaNo = RAND:(FLAG:2) + 1
+		ExistOtoko = 0
 		LoopCount += 1
 
 		SIF LoopCount >= 50000
 			RETURNF -1
+		IF FLAG:オトコ出現する == 0
+			CSVTALENT CharaNo,122
+			ExistOtoko = RESULT
+			IF ExistOtoko
+				CONTINUE
+			ENDIF
+		ENDIF
+
 		;既に居るキャラが選ばれてしまったら再抽選
-	LOOP EXIST_CHARA(CharaNo)
+	LOOP EXIST_CHARA(CharaNo) || (FLAG:オトコ出現する == 0 && ExistOtoko)
 
 ENDIF
+IF FLAG:オトコ出現する == 0
+	CSVTALENT CharaNo,122
+	ExistOtoko = RESULT
+	IF ExistOtoko
+		RESTART
+	ENDIF
+ENDIF
+
 RETURNF CharaNo
 
