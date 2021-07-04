@@ -16,6 +16,11 @@ SIF FLAG:20
 SIF !(D_ARG:0 == -1 || INRANGE(D_ARG:0, 1, CHARANUM))
 	RETURN
 
+;学園モードはそちらで処理する
+IF FLAG:学園
+	CALL PRINT_MESSAGE_S(D_ARG:0, D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+	RETURN
+ENDIF
 
 ;処理メッセージ対象を確定
 IF D_ARG:0 == -1

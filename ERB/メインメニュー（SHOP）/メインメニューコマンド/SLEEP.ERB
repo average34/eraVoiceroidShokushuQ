@@ -260,37 +260,6 @@ IF ARG:1 == 0
 	ENDIF
 	CALL GET_BASIC_TP(ARG:0)
 	BASE:(ARG:0):4 = RESULT
-	
-	;腹穴回復
-	IF CFLAG:(ARG:0):203
-		CFLAG:(ARG:0):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
-		;回復早い
-		SIF TALENT:(ARG:0):111
-			CFLAG:(ARG:0):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
-		;吸血鬼
-		IF TALENT:(ARG:0):114
-			IF TIME:0 == 0 || TIME:0 == 1
-				
-			ELSE
-				CFLAG:(ARG:0):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
-			ENDIF
-		ENDIF
-		;日光浴
-		IF TALENT:(ARG:0):115
-			SIF TIME:0 == 0 || TIME:0 == 1
-				CFLAG:(ARG:0):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
-		ENDIF
-		;月光浴
-		IF TALENT:(ARG:0):116
-			SIF TIME:0 == 2 || TIME:0 == 3
-				CFLAG:(ARG:0):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
-		ENDIF
-		;HP全快
-		IF BASE:HP == MAXBASE:HP
-			CFLAG:(ARG:0):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
-		ENDIF
-	ENDIF
-	
 ELSE
 	;汚染度補正
 	IF FLAG:(CFLAG:(ARG:0):4 + 50) < 10
@@ -319,11 +288,6 @@ ELSE
 	ENDIF
 	CALL GET_BASIC_TP(ARG:0)
 	BASE:(ARG:0):4 = RESULT
-	
-	;腹穴回復　浅い眠りだと各種補正なし
-	IF CFLAG:(ARG:0):203
-		CFLAG:(ARG:0):203 = MAX(CFLAG:(ARG:0):203 - 1, 0)
-	ENDIF
 ENDIF
 
 ;高汚染度であれば疑似陰茎が生える

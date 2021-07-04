@@ -42,9 +42,9 @@
 	;0:触手宮  1:りばーす
 	FLAG:600 = 0
 
-	;★難易度追加パッチ改変	
-
+	$INPUT_LOOP_DIF
 	;---難易度設定---
+	
 	PRINTFORML ゲームの難易度を選択してください
 	PRINTFORML （Easy～Lunaticは「コンフィグ」で変更可能です）
 	PRINTFORML [ 0] %"Very easy",12,LEFT%		%"とりあえず歩きまわってみたい人向け",10,LEFT%
@@ -52,15 +52,21 @@
 	PRINTFORML [ 2] %"Normal",12,LEFT%			%"苛めたり苛められたりしたい人向け",10,LEFT%
 	PRINTFORML [ 3] %"Hard",12,LEFT%			%"厳しめのゲームが好きな人向け",10,LEFT%
 	PRINTFORML [ 4] %"Lunatic",12,LEFT%			%"ひたすらに全滅してみたい人向け",10,LEFT%
-	PRINTFORML [ 5] %"Extra",12,LEFT%			%"Normalを基準に捕まった状態から脱走を試みるもの",10,LEFT%
-	PRINTFORML [ 6] %"Phantasm",12,LEFT%		%"Lunaticを基準に捕まった状態から脱走を試みるもの",10,LEFT%
+	IF FLAG:学園 == 0
+		PRINTFORML [ 5] %"Extra",12,LEFT%			%"Normalを基準に捕まった状態から脱走を試みるもの",10,LEFT%
+		PRINTFORML [ 6] %"Phantasm",12,LEFT%		%"Lunaticを基準に捕まった状態から脱走を試みるもの",10,LEFT%
+	ENDIF
 	SIF GET_ENEMY_WIKI_REGISTERED(18)
 		PRINTFORML [ 7] %"Doppel",12,LEFT%			%"敵がドッペルゲンガーのみモード",10,LEFT%
 	PRINTFORML [10] %"Trap",12,LEFT%			%"敵がほとんど存在しない代わりに罠にあふれたモード",10,LEFT%
 	PRINTFORML 
 	PRINTFORML [81] %"Minigame",12,LEFT%		%"ミニゲーム",10,LEFT%
+	IF FLAG:学園 == 0
+		PRINTFORML [99] %"School",12,LEFT%		%"迷宮ではなく学園に触手が襲いかかる",10,LEFT%
+	ELSE
+		PRINTFORML [99] %"Dungeon",12,LEFT%		%"魔物と罠にまみれた迷宮に入り込む",10,LEFT%
+	ENDIF
 
-	$INPUT_LOOP_DIF
 	INPUT
 	IF RESULT >= 0 && RESULT <= 4
 		FLAG:4 = RESULT - 1
@@ -79,6 +85,15 @@
 	ELSEIF RESULT == 81
 		FLAG:997 = 81
 		JUMP MINIGAME
+	ELSEIF RESULT == 99
+		IF FLAG:学園 == 0
+			FLAG:学園 = 1
+			GOTO INPUT_LOOP_DIF
+		ELSE
+			FLAG:学園 = 0
+			GOTO INPUT_LOOP_DIF
+		ENDIF
+
 	ELSE
 		CLEARLINE 1
 		REUSELASTLINE 入力値が不正です。再入力してください
@@ -138,7 +153,6 @@
 	ENDIF
 
 
-
 	;--- 初期処理開始 ------------------
 	;キャラ登録番号メモ
 	;0		「あなた」が入っているが、使わない
@@ -152,6 +166,7 @@
 	CALL START_CHARA_SELECT
 	CALL SHOW_TUTORIAL(1)
 	CALL OTHER_CHARA_SELECT
+
 
 
 	;主人公の能力ボーナス選択
@@ -307,8 +322,14 @@
 	;★難易度追加パッチ・追加難易度だとここは出ない
 	IF FLAG:999 == 0
 		CALL CONFIGURE_FIRST_SEX
+	ELSEIF FLAG:学園
+		;普通の服・体操着・スクール水着・セーラー服・半ズボンを初期ON
+		CALL CALL SET_CLOTH_CONFIG( 1, "服装", 1)
+		CALL CALL SET_CLOTH_CONFIG( 1, "服装", 2)
+		CALL CALL SET_CLOTH_CONFIG( 1, "服装", 6)
+		CALL CALL SET_CLOTH_CONFIG( 1, "服装", 9)
+		CALL CALL SET_CLOTH_CONFIG( 1, "服装", 10)
 	ENDIF
-	;★ここまで
 
 	SIF FLAG:おすすめ自動選択モード
 		GOTO INPUT_LOOP_STARTSET
@@ -439,6 +460,8 @@ ENDIF
 			CALL PRINT_MESSAGE(1, 203, 0, CALLNAME:1, "")
 		ENDIF
 	ENDIF
+	
+	CALL CHARA_BONDS
 	
 	;ゲーム開始時
 	FOR LCOUNT, 1, CHARANUM

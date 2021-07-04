@@ -1,6 +1,14 @@
 ﻿;探索時のランダムイベントで発生するトラップ
 @RANDOM_TRAP
 ;基本的に既存の何度も発生するトラップを流用
+
+;学園モードだとイベント変更
+IF FLAG:学園
+	CALL RANDOM_TRAP_S
+	RETURN RESULT
+ENDIF
+
+
 ;★EXでは荷物袋トラップは発生しない。敵を増やさないために
 IF FLAG:998 || FLAG:999
 	SELECTCASE RAND:47
@@ -108,6 +116,12 @@ RETURN RESULT
 ;使い魔が勝手に発動させる罠
 @RANDOM_TRAP_2
 
+;学園モードだとイベント変更
+IF FLAG:学園
+	CALL RANDOM_TRAP_2_S
+	RETURN RESULT
+ENDIF
+
 ;罠の種類を減らす テレポートとか無理
 SELECTCASE RAND:26
 CASE 0 TO 1
@@ -141,6 +155,13 @@ RETURN RESULT
 
 ;トラップモード　固定罠も含めてマイナス効果をランダムに出す
 @RANDOM_TRAP_3
+
+;学園モードだとイベント変更
+IF FLAG:学園
+	CALL RANDOM_TRAP_3_S
+	RETURN RESULT
+ENDIF
+
 	SELECTCASE RAND:50
 	CASE 0 TO 1
 		CALL CHECK_FIXED_EVENT_EX1

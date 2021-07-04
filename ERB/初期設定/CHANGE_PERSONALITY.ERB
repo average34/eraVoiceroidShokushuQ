@@ -6,8 +6,12 @@
 IF ARG:0 == 0
 	RETURN
 ENDIF
+IF ARG:0 == 1 && (FLAG:560 == 2 || FLAG:560 ==4)
+	PRINTFORM 主人公の性格を変更しますか？　現在の
+ELSE
+	PRINTFORM %CALLNAME:(ARG:0)%の性格を変更しますか？　現在の
+ENDIF
 
-PRINTFORM %CALLNAME:(ARG:0)%の性格を変更しますか？　現在の
 CALL SHOW_PERSONALITY(ARG:0)
 CALL ASK_YN
 IF RESULT != 0
@@ -82,7 +86,12 @@ ELSE
 	GOTO INPUT_LOOP_2
 ENDIF
 
-PRINTFORM %CALLNAME:(ARG:0)%の性格を変更しました　　変更後の
+IF ARG:0 == 1 && (FLAG:560 == 2 || FLAG:560 ==4)
+	PRINTFORM 主人公の性格を変更しました　　変更後の
+ELSE
+	PRINTFORM %CALLNAME:(ARG:0)%の性格を変更しました　　変更後の
+ENDIF
+
 CALL SHOW_PERSONALITY(ARG:0)
 WAIT
 

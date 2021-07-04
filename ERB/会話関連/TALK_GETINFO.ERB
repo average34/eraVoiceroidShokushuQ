@@ -75,14 +75,25 @@ IF ARG:1 == 0
 ENDIF
 
 FOR LOCAL:0, 0, LOCAL:2
-	IF ARG:1 == 0
-		;場所が固定されているイベントの情報を取得
-		CALL GET_FIX_EVENT_NO_1(ARG:0)
+	IF FLAG:学園 == 0
+		IF ARG:1 == 0
+			;場所が固定されているイベントの情報を取得
+			CALL GET_FIX_EVENT_NO_1(ARG:0)
+		ELSE
+			;場所が固定されていないイベントの情報を取得
+			CALL GET_FIX_EVENT_NO_2(ARG:0)
+		ENDIF
+		LOCAL = RESULT
 	ELSE
-		;場所が固定されていないイベントの情報を取得
-		CALL GET_FIX_EVENT_NO_2(ARG:0)
+		IF ARG:1 == 0
+			;場所が固定されているイベントの情報を取得
+			CALL GET_FIX_EVENT_NO_1S(ARG:0)
+		ELSE
+			;場所が固定されていないイベントの情報を取得
+			CALL GET_FIX_EVENT_NO_2S(ARG:0)
+		ENDIF
+		LOCAL = RESULT
 	ENDIF
-	LOCAL = RESULT
 	IF LOCAL > 0
 		
 		;聞き出した情報を調書に送る
@@ -177,6 +188,133 @@ LOCAL:150 = 1
 LOCAL:152 = 1
 LOCAL:161 = 1
 LOCAL:169 = 1
+LOCAL:180 = 1
+
+;対象かつ残存イベントなら候補に
+INFOSUM = 0
+FOR LOCAL:0, 100, 200
+	IF LOCAL:(LOCAL:0) == 1 && FLAG:(LOCAL:0)
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+IF FLAG:206 == 0
+	;脱出イベントの隠しフラグを立てている場合、外れパターンを教えてもらえる（ちょっと選択される確率高め）
+	INFO:(INFOSUM) = 206
+	INFOSUM++
+	INFO:(INFOSUM) = 206
+	INFOSUM++
+ENDIF
+;拘束されてる仲間の情報も候補に
+FOR LOCAL:0, 1, CHARANUM
+	SIF LOCAL:0 >= 100 || INFOSUM >= 100
+		BREAK
+		
+	IF CFLAG:(LOCAL:0):10
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+;候補があれば抽選
+IF INFOSUM > 0
+	LOCAL = RAND:(INFOSUM)
+	LOCAL =  INFO:(LOCAL)
+ENDIF
+
+RETURN LOCAL
+
+
+
+
+;～～～ここから学園版の情報～～～
+
+
+
+;場所が固定されているイベントの情報を取得
+@GET_FIX_EVENT_NO_1S(ARG:0)
+#LOCALSIZE 300
+#DIM INFO,100	;聞ける可能性があるイベント
+#DIM INFOSUM	;聞ける可能性があるイベントの数
+
+VARSET LOCAL
+
+;対象のイベントをON
+LOCAL:108 = 1
+LOCAL:111 = 1
+LOCAL:119 = 1
+LOCAL:130 = 1
+LOCAL:131 = 1
+LOCAL:132 = 1
+LOCAL:133 = 1
+LOCAL:134 = 1
+LOCAL:138 = 1
+LOCAL:155 = 1
+LOCAL:156 = 1
+LOCAL:157 = 1
+LOCAL:158 = 1
+LOCAL:159 = 1
+LOCAL:160 = 1
+LOCAL:162 = 1
+LOCAL:163 = 1
+LOCAL:177 = 1
+LOCAL:178 = 1
+LOCAL:179 = 1
+
+;対象かつ残存イベントなら候補に
+INFOSUM = 0
+FOR LOCAL:0, 100, 200
+	IF LOCAL:(LOCAL:0) == 1 && FLAG:(LOCAL:0)
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+;拘束されてる仲間の情報も候補に
+FOR LOCAL:0, 1, CHARANUM
+	SIF LOCAL:0 >= 100 || INFOSUM >= 100
+		BREAK
+		
+	IF CFLAG:(LOCAL:0):10
+		INFO:(INFOSUM) = LOCAL:0
+		INFOSUM++
+	ENDIF
+NEXT
+
+;候補があれば抽選
+IF INFOSUM > 0
+	LOCAL = RAND:(INFOSUM)
+	LOCAL =  INFO:(LOCAL)
+ENDIF
+
+RETURN LOCAL
+
+
+
+;場所が固定されていないイベントの情報を取得
+@GET_FIX_EVENT_NO_2S(ARG:0)
+#LOCALSIZE 300
+#DIM INFO,100	;聞ける可能性があるイベント
+#DIM INFOSUM	;聞ける可能性があるイベントの数
+
+VARSET LOCAL
+;対象のイベントをON
+LOCAL:109 = 1
+LOCAL:110 = 1
+LOCAL:136 = 1
+LOCAL:137 = 1
+LOCAL:143 = 1
+LOCAL:146 = 1
+LOCAL:147 = 1
+LOCAL:148 = 1
+LOCAL:149 = 1
+LOCAL:152 = 1
+LOCAL:161 = 1
+LOCAL:164 = 1
+LOCAL:165 = 1
+LOCAL:170 = 1
+LOCAL:172 = 1
 LOCAL:180 = 1
 
 ;対象かつ残存イベントなら候補に

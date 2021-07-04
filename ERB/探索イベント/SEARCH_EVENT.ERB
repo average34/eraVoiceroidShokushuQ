@@ -20,12 +20,22 @@ FOR LCOUNT, 100, 300
 		;実行前のイベントの配置を記憶
 		LOCAL = FLAG:(LCOUNT) % 100
 		
-		;現在地で発生する可能性のあるイベントのチェック
-		TRYCCALLFORM CHECK_FIXED_EVENT_{LCOUNT}
-			LOCAL:3 = RESULT
-		CATCH
-			CONTINUE
-		ENDCATCH
+		;学園モードかどうかでイベント変更
+		IF FLAG:学園 == 0
+			;現在地で発生する可能性のあるイベントのチェック
+			TRYCCALLFORM CHECK_FIXED_EVENT_{LCOUNT}
+				LOCAL:3 = RESULT
+			CATCH
+				CONTINUE
+			ENDCATCH
+		ELSE
+			;現在地で発生する可能性のあるイベントのチェック
+			TRYCCALLFORM CHECK_FIXED_EVENT_S_{LCOUNT}
+				LOCAL:3 = RESULT
+			CATCH
+				CONTINUE
+			ENDCATCH
+		ENDIF
 		
 		IF FLAG:(LCOUNT) % 100 != LOCAL
 			;配置が変更(再配置か削除)されてたら調書を更新
