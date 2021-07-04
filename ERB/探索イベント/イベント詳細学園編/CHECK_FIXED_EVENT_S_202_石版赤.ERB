@@ -1,0 +1,88 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_202
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 70
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1 || FLAG:202 >= 100
+	;経験値が入るのは最初だけ
+	IF FLAG:202 < 100
+		CALL ADD_ABL_EXP_PT(0, 800)
+		FLAG:202 += 100
+	ENDIF
+	
+	IF FLAG:201 < 200
+		;石碑を読んでいない場合、詳細不明となる
+		PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた石版を発見した！
+		PRINTFORML しかし石版を調べてみても特に何も見つからなかった…
+		CALL PRINT_MESSAGE(1, 200, 202, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 202, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 202, CALLNAME:1, "", 0)
+	ELSE
+		PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた赤い石版を発見した！
+		IF FLAG:41
+			PRINTFORML しかしこの石版では{FLAG:41}番目に既に呪文を唱えている…
+			CALL PRINT_MESSAGE(1, 200, 202, CALLNAME:1, "", 1)
+			CALL PRINT_MESSAGE(FLAG:10, 200, 202, CALLNAME:1, "", 1)
+			CALL PRINT_MESSAGE(FLAG:11, 200, 202, CALLNAME:1, "", 1)
+		ELSE
+			PRINTFORML この石版の前で呪文を唱えてみますか？
+			CALL ASK_YN
+			IF RESULT == 0
+				PRINTFORML %CALLNAME:1%%TACHI()%は石版の前で呪文を唱えた！
+				IF FLAG:42 && FLAG:43
+					;他の２つ利用済み
+					FLAG:41 = 3
+				ELSEIF FLAG:42 || FLAG:43
+					;他の１つ利用済み
+					FLAG:41 = 2
+				ELSE
+					;ここが最初
+					FLAG:41 = 1
+				ENDIF
+				
+				IF FLAG:41 == 3
+					;最後だった場合、光の渦出現
+					CALL CHECK_PLATE_DATA
+					IF RESULT == 0
+						;ワープした場合、以後のイベント中断
+						RETURN 2
+					ELSE
+						PRINTFORML %CALLNAME:1%%TACHI()%がそのまま何もしないで居ると、やがて光の渦は消えてしまった…
+						CALL PRINT_MESSAGE(1, 200, 202, CALLNAME:1, "", 2)
+						CALL PRINT_MESSAGE(FLAG:10, 200, 202, CALLNAME:1, "", 2)
+						CALL PRINT_MESSAGE(FLAG:11, 200, 202, CALLNAME:1, "", 2)
+					ENDIF
+				ENDIF
+			ELSE
+				PRINTFORML %CALLNAME:1%%TACHI()%は何もせずに石版の前から立ち去った…
+				CALL PRINT_MESSAGE(1, 200, 202, CALLNAME:1, "", 3)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 202, CALLNAME:1, "", 3)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 202, CALLNAME:1, "", 3)
+			ENDIF
+		ENDIF
+	ENDIF
+	
+	;どの場合でもイベントをその場に残す
+	LOCAL:3 = 1
+	WAIT
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

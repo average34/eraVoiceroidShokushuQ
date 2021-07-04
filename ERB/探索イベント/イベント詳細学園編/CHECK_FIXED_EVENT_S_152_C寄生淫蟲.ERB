@@ -1,0 +1,99 @@
+﻿;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_152
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	被害者あり
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 0
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, 300)
+	PRINTFORML 毒々しい色をした前方の地面から、細長い淫蟲が無数に湧き出てきた！
+	PRINTFORMW 淫蟲達はそのまま、%CALLNAME:1%%TACHI()%へと飛びかかってくる…
+	PRINTFORML 
+	
+	LOCAL:4 = 0
+	
+	;前にいるほど避けにくい
+	;コンフィグによってふたなり化がONOFFあるので主人公は別処理
+	CALL REACTION_TRAP(1)
+	IF BASE:1:0 < 0 || RESULT == 1
+		IF 110 > RAND:(100 + ABL:1:5 * 50) && ( FLAG:520 == 1 || FLAG:520 == 2 )
+			CALL ADD_ABL_EXP(5, 1, 1000 + RAND:(ABL:1:5 * 500 + 1))
+			IF GET_PENIS(1) == 0
+				CALL PRINT_MESSAGE(1, 200, 152, CALLNAME:1, "", 1)
+				CFLAG:1:42 = 1 + RAND:4 + RAND:3 + RAND:2
+				CALL SHOW_TUTORIAL(17)
+				LOCAL:4 = 2
+			ELSE
+				CALL PRINT_MESSAGE(1, 200, 152, CALLNAME:1, "", 2)
+				CALL EXTASY(1, 2, 400, 100)
+				LOCAL:4 = 1
+			ENDIF
+		ELSE
+			CALL ADD_ABL_EXP(5, 1, 500 + RAND:(ABL:1:5 * 200 + 1))
+			CALL PRINT_MESSAGE(1, 200, 152, CALLNAME:1, "", 3)
+		ENDIF
+	ELSE
+		PRINTFORML %CALLNAME:1%は近づいてくる淫虫を強引に倒しきった！
+	ENDIF
+
+	FOR LOCAL:0, 2, CHARANUM
+		;現在位置が被っているかチェック
+		IF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0 && CFLAG:(LOCAL:0):21 == 0
+			CALL REACTION_TRAP(LOCAL:0)
+			IF BASE:(LOCAL:0):0 < 0 || RESULT == 1
+				IF 90 > RAND:(100 + ABL:(LOCAL:0):5 * 50) && ( FLAG:520 == 1 || FLAG:520 == 3 )
+					CALL ADD_ABL_EXP(5,(LOCAL:0) , 1000 + RAND:(ABL:(LOCAL:0):5 * 500 + 1))
+					IF GET_PENIS(LOCAL:0) == 0
+						CALL PRINT_MESSAGE((LOCAL:0), 200, 152, CALLNAME:1, "", 1)
+						CFLAG:(LOCAL:0):42 = 1 + RAND:4 + RAND:3 + RAND:2
+						CALL SHOW_TUTORIAL(17)
+						LOCAL:4 = 2
+					ELSE
+						CALL PRINT_MESSAGE((LOCAL:0), 200, 152, CALLNAME:1, "", 2)
+						CALL EXTASY((LOCAL:0), 2, 400, 100)
+						LOCAL:4 = 1
+					ENDIF
+				ELSE
+					CALL ADD_ABL_EXP(5,(LOCAL:0) , 500 + RAND:(ABL:(LOCAL:0):5 * 200 + 1))
+					CALL PRINT_MESSAGE((LOCAL:0), 200, 152, CALLNAME:1, "", 3)
+				ENDIF
+			ELSE
+				PRINTFORML %CALLNAME:(LOCAL:0)%は近づいてくる淫虫を強引に倒しきった！
+			ENDIF
+		ENDIF
+	NEXT
+	
+	IF LOCAL:4 == 2
+		PRINTFORML 
+		PRINTFORMW 異物の処理に悩みながらも、%CALLNAME:1%%TACHI()%は探索を再開した…
+	ELSEIF LOCAL:4 == 1
+		PRINTFORML 
+		PRINTFORMW 思う存分吸精した淫蟲たちは、体から離れると肉々しい色をした地面の中へ消えていった…
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 不意打ちが避けられてしまった淫蟲たちは、肉々しい色をした地面の中へと逃げていった…
+	ENDIF
+	LOCAL:3 = 1
+	;別の場所に再配置
+	FLAG:152 = RAND:30 + 1
+
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

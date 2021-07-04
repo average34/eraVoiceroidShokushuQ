@@ -1,0 +1,75 @@
+﻿;固定イベント
+;155,158の教室と一部メッセージ呼び出しも共通
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_162
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	アイテムの種類決定
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 60
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1 || FLAG:162 >= 100
+	;経験値が入るのは最初だけ
+	IF FLAG:162 < 100
+		CALL ADD_ABL_EXP_PT(0, 1000)
+		FLAG:162 += 100
+	ENDIF
+	CALL ADD_ABL_EXP_PT(0, 700)
+	PRINTFORML ここは誰もいない教室のようだ！どうしますか？
+	
+	$INPUT_LOOP
+	PRINTFORML [0] 休む
+	PRINTFORML [1] 立ち去る
+
+
+	INPUT
+
+	IF RESULT == 0
+		;触手化する教室
+		PRINTFORML %CALLNAME:1%%TACHI()%は誰もいない教室でゆっくり休もうとした……
+		PRINTFORML しかし座っていた椅子が急に触手になり%CALLNAME:1%%TACHI()%の体をいじりだした！
+		FOR LCOUNT, 0, 3
+			IF GET_MEMBER(LCOUNT)
+				CALL PRINT_MESSAGE(1, 200, 158, CALLNAME:1, "", 1)
+				TFLAG:63 = RAND:4
+				IF TFLAG:63 == 3
+					CALL LOST_VIRGIN((LCOUNT), 1, 4)
+				ENDIF
+				LOCAL:5 = CALC_SENSITIVITY((LCOUNT), TFLAG:63, 50)
+				FOR LOCAL:0, 0, 3 + RAND:4
+					CALL DAMAGE_COMMON((LCOUNT), 2, LOCAL:5 * 7 * (TALENT:(LCOUNT):104 + 2) * (TALENT:(LCOUNT):78 + 1), 500)
+				NEXT
+			ENDIF
+		NEXT
+		PRINTFORML %CALLNAME:1%%TACHI()%はなんとか逃げ出した……
+		WAIT
+	ELSEIF RESULT == 1
+		;開けない場合、イベントは残す
+		CALL PRINT_MESSAGE(1, 200, 155, CALLNAME:1, "", 2)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 155, CALLNAME:1, "", 2)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 155, CALLNAME:1, "", 2)
+	ELSE
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP
+	ENDIF
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

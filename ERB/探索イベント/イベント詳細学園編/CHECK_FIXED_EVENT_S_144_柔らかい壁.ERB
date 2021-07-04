@@ -1,0 +1,151 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_144
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	道・上
+;5	道・左
+;6	道・右
+;7	道・下
+;8	開く道
+;9	TEMP
+;10	判定用1
+;11	判定用2
+;12	判定用3
+;13	判定用4
+
+VARSET LOCAL, 0, 1, 14
+
+
+
+
+;壁の無い場所で発生したら、別の場所に移る
+IF FLAG:5 < 6
+	LOCAL:4 = -1
+ELSE
+	LOCAL:4 = ((FLAG:5 - 1) / 5 - 1) * 9 + ((FLAG:5 - 1) % 5 + 4)
+	IF FLAG:(300 + LOCAL:4) == 0
+		LOCAL:9 |= 1
+	ENDIF
+ENDIF
+IF (FLAG:5 % 5) == 1
+	LOCAL:5 = -1
+ELSE
+	LOCAL:5 = ((FLAG:5 - 1) / 5 - 1) * 9 + ((FLAG:5 - 1) % 5 + 8)
+	IF FLAG:(300 + LOCAL:5) == 0
+		LOCAL:9 |= 2
+	ENDIF
+ENDIF
+IF (FLAG:5 % 5) == 0
+	LOCAL:6 = -1
+ELSE
+	LOCAL:6 = ((FLAG:5 - 1) / 5 - 1) * 9 + ((FLAG:5 - 1) % 5 + 9)
+	IF FLAG:(300 + LOCAL:6) == 0
+		LOCAL:9 |= 4
+	ENDIF
+ENDIF
+IF FLAG:5 > 25
+	LOCAL:7 = -1
+ELSE
+	LOCAL:7 = ((FLAG:5 - 1) / 5) * 9 + ((FLAG:5 - 1) % 5 + 4)
+	IF FLAG:(300 + LOCAL:7) == 0
+		LOCAL:9 |= 8
+	ENDIF
+ENDIF
+
+IF LOCAL:9 == 0
+	;周囲に崩せる壁が無いので再配置
+	FLAG:144 = RAND:30 + 1
+	RETURN 0
+ELSE
+	;崩せる壁を決定 4か所とも閉じていることは無いので、最大でも3か所な点に注意
+	IF LOCAL:9 & 1
+		LOCAL:(10 + LOCAL:13) = LOCAL:4
+		LOCAL:13 += 1
+	ENDIF
+	IF LOCAL:9 & 2
+		LOCAL:(10 + LOCAL:13) = LOCAL:5
+		LOCAL:13 += 1
+	ENDIF
+	IF LOCAL:9 & 4
+		LOCAL:(10 + LOCAL:13) = LOCAL:6
+		LOCAL:13 += 1
+	ENDIF
+	IF LOCAL:9 & 8
+		LOCAL:(10 + LOCAL:13) = LOCAL:7
+		LOCAL:13 += 1
+	ENDIF
+	LOCAL:8 = LOCAL:(RAND:(LOCAL:13) + 10)
+ENDIF
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 180
+;周囲全て壁だと発見率アップ
+IF LOCAL:13 == 4
+	LOCAL:1 = 70
+ENDIF
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, 2000)
+	
+	PRINTFORML 周囲と少し様子が異なる壁を見つけた！　体当たりで崩してみますか？
+	CALL ASK_YN
+	IF RESULT == 0
+		IF RAND:2 == 0 || LOCAL:13 == 4
+			PRINTFORML %CALLNAME:1%%TACHI()%が体当たりすると、壁は簡単に崩れてしまった！
+			PRINTFORMW 移動できる通路が増えました！
+			CALL PRINT_MESSAGE(1, 200, 144, CALLNAME:1, "", 1)
+			CALL PRINT_MESSAGE(FLAG:10, 200, 144, CALLNAME:1, "", 1)
+			CALL PRINT_MESSAGE(FLAG:11, 200, 144, CALLNAME:1, "", 1)
+			FLAG:(300 + LOCAL:8) = 1
+			
+			;再配置
+			FLAG:144 = RAND:30 + 1
+		ELSE
+			PRINTFORML %CALLNAME:1%%TACHI()%が体当たりすると、%CALLNAME:1%%TACHI()%は壁に呑み込まれてしまった！
+			PRINTFORML どうやら壁に擬態していた軟体妖怪のようだ…
+			PRINTFORMW 壁に呑み込まれた%CALLNAME:1%%TACHI()%は全身を激しく愛撫されている！
+			CALL PRINT_MESSAGE(1, 200, 144, CALLNAME:1, "", 2)
+			LOCAL:9 = 5 + RAND:6
+			FOR LOCAL:0, 0, LOCAL:9
+				CALL EXTASY(1, RAND:4, RAND:50, 200)
+			NEXT
+			WAIT
+			IF FLAG:10
+				LOCAL:9 = 5 + RAND:6
+				CALL PRINT_MESSAGE(FLAG:10, 200, 144, CALLNAME:1, "", 2)
+				FOR LOCAL:0, 0, LOCAL:9
+					CALL EXTASY(FLAG:10, RAND:4, RAND:50, 200)
+				NEXT
+				WAIT
+			ENDIF
+			IF FLAG:11
+				LOCAL:9 = 5 + RAND:6
+				CALL PRINT_MESSAGE(FLAG:11, 200, 144, CALLNAME:1, "", 2)
+				FOR LOCAL:0, 0, LOCAL:9
+					CALL EXTASY(FLAG:11, RAND:4, RAND:50, 200)
+				NEXT
+				WAIT
+			ENDIF
+			
+			;ネチョられた場合はその場に残る
+		ENDIF
+	ELSE
+		;無視した場合はその場に残る
+		CALL PRINT_MESSAGE(1, 200, 144, CALLNAME:1, "", 3)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 144, CALLNAME:1, "", 3)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 144, CALLNAME:1, "", 3)
+	ENDIF
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

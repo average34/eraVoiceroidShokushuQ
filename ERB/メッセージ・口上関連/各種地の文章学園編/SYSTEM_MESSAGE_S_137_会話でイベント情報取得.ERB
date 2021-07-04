@@ -1,0 +1,117 @@
+﻿;会話でイベント情報取得
+@SYSTEM_MESSAGE_S_137(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+SELECTCASE ARG:2
+	CASE 0
+		PRINTFORMW (SYSTEM_MESSAGE_137)イベントのIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+	CASE 1 TO 99
+		;対象キャラの捕食情報
+		IF ARG:3 == 0
+			PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+			PRINTFORMW 最近{CFLAG:(ARG:2):4}の地点の近くで誰かの声が聞こえる気がするらしい…
+		ELSE
+			PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{CFLAG:(ARG:2):4}の地点で%CALLNAME:(ARG:2)%が%SAVESTR:(CFLAG:(ARG:2):10)%に捕まっているという情報を聞き出した
+		ENDIF
+	;↓　雑談で得られる情報
+	CASE 108
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:108 % 100}の地点で怪しげな薬が落ちているのを見かけたらしい…
+	CASE 111
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:111 % 100}の地点で怪しげな道具が落ちているのを見かけたらしい…
+	CASE 119
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:119 % 100}の地点で怪しげな薬が落ちているのを見かけたらしい…
+	CASE 130
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:130 % 100}の地点でシャワー室がまだ使えたらしい…
+	CASE 131
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:131 % 100}の地点でプールがまだ使えたらしい…
+	CASE 132
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:132 % 100}の地点で実験室に色々使えそうなものがあったらしい…
+	CASE 133
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:133 % 100}の地点の保健室はまだベッドが使えたらしい…
+	CASE 134
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:134 % 100}の地点で家庭科室で色々使えそうなものがあったらしい…
+	CASE 138
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:139 % 100}の地点の社はまだ無事らしい…
+	CASE 155
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:155 % 100}の地点で休める教室があったらしい…
+	CASE 156
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:156 % 100}の地点で休める教室があったらしい…
+	CASE 157
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:157 % 100}の地点で休める教室があったらしい…
+	CASE 158
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:158 % 100}の地点で休める教室があったらしい…
+	CASE 159
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:159 % 100}の地点で休める教室があったらしい…
+	CASE 160
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:160 % 100}の地点で怪しい装置を見かけたらしい…
+	CASE 162
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:162 % 100}の地点で休めない教室があったらしい…
+	CASE 163
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:163 % 100}の地点で休めない教室があったらしい…
+	CASE 177
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:177 % 100}の地点で大量の淫虫を見かけたらしい…
+	CASE 178
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:178 % 100}の地点で女性にムラムラしたらしい…
+	CASE 179
+		PRINTFORML 雑談中に%ARGS:1%は気になる事を喋っていた
+		PRINTFORMW 最近{FLAG:179 % 100}の地点で触手が儀式をしていたらしい…
+	
+	;↓　情報収集で得られる情報
+	CASE 109
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:109}の地点に何かの薬が落ちているという情報を聞き出した
+	CASE 110
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:110}の地点に何かの薬が落ちているという情報を聞き出した
+	CASE 136
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:136}の地点は天井にスライムが貼り付いているという情報を聞き出した
+	CASE 137
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:137}の地点では壁の触手が襲いかかってくるという情報を聞き出した
+	CASE 143
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:143}の地点に不思議なガスが充満しているという情報を聞き出した
+	CASE 146
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:146}の地点に淫蟲の巣穴があるという情報を聞き出した
+	CASE 147
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:147}の地点に淫蟲の巣穴があるという情報を聞き出した
+	CASE 148
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:148}の地点に淫蟲の巣穴があるという情報を聞き出した
+	CASE 149
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:149}の地点に淫蟲の巣穴があるという情報を聞き出した
+	CASE 152
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:152}の地点に淫蟲の巣穴があるという情報を聞き出した
+	CASE 161
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:161}の地点で女性にムラムラしたらしいという情報を聞き出した…
+	CASE 164
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:159 % 100}の地点で休める教室があったことを聞き出した…
+	CASE 165
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:163 % 100}の地点で休めない教室があったことを聞き出した…
+	CASE 169
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:169}の地点に何かの薬が落ちているという情報を聞き出した
+	CASE 170
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:170 % 100}の地点で悲鳴を聞いたことを聞き出した…
+	CASE 172
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:172 % 100}の地点で悲鳴を聞いたことを聞き出した
+	CASE 180
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:180}の地点に魔法陣があるという情報を聞き出した
+	CASE 206
+		PRINTFORMW %CALLNAME:1%%TACHI()%は%ARGS:1%から、%GET_DUMMY_PLATE_DATA()%の順で石版の前で呪文を唱えると酷い目にあったという情報を聞き出した
+	CASEELSE
+		;特に何も表示しない
+ENDSELECT
+

@@ -1,0 +1,185 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_161
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 60
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	IF FLAG:11
+		IF CFLAG:(FLAG:11):28 >= 1 && CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 <= 0
+			PRINTFORMW %CALLNAME:(FLAG:11)%の%CALLNAME:1%を見る目がおかしい…
+			PRINTFORMW 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+			PRINTFORML どうやら発情状態で脱出の目処がないまま連れまわされすぎて、少しおかしくなってしまったようだ
+			PRINTFORMW 組み敷かれた%CALLNAME:1%を%CALLNAME:(FLAG:10)%が助けだした！
+			PRINTFORMW %CALLNAME:(FLAG:10)%の%CALLNAME:1%を見る目がおかしい…
+			PRINTFORML 発情しきった%CALLNAME:(FLAG:10)%も混ざりたいだけだったようだ…
+			PRINTFORML %CALLNAME:1%は全てを諦め、%CALLNAME:(FLAG:11)%達に身を委ねている…
+				CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 0, 0)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1, 0)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 161, CALLNAME:1, "", 1, 0)
+				CALL EXTASY(1, RAND:4, RAND:30, 100)
+				CALL EXTASY((FLAG:10), RAND:4, RAND:40, 100)
+				CALL EXTASY((FLAG:11), RAND:4, RAND:40, 100)
+				CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+				CFLAG:(FLAG:10):5 += 2 + RAND:10
+				CFLAG:(FLAG:11):5 += 2 + RAND:10
+			PRINTFORML 
+			PRINTFORML 正気を取り戻して必死に謝っている%CALLNAME:(FLAG:10)%と%CALLNAME:(FLAG:11)%の手を引き、%CALLNAME:1%達は探索を再開した
+		ELSEIF CFLAG:(FLAG:10):28 >= 1 && CFLAG:(FLAG:11):28 <= 0
+			PRINTFORMW %CALLNAME:(FLAG:10)%の%CALLNAME:1%を見る目がおかしい…
+			PRINTFORMW 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+			PRINTFORML どうやら発情状態で脱出の目処がないまま連れまわされすぎて、少しおかしくなってしまったようだ
+			PRINTFORMW %CALLNAME:(FLAG:11)%が情欲に狂った%CALLNAME:(FLAG:10)%を強引に引き剥がした！
+			PRINTFORMW %CALLNAME:(FLAG:11)%は腰をもじもじさせて%CALLNAME:1%にすがりつこうとする%CALLNAME:(FLAG:10)%を突き放すと、一人でするように言い放った…
+			PRINTFORMW %CALLNAME:(FLAG:10)%は性欲に逆らえず、顔を真っ赤にして自慰を始めた…
+				CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 0, 1)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1 ,1)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 161, CALLNAME:1, "", 0 ,2)
+				CALL MASTURBATION(FLAG:10, 1, 100)
+				CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+				CFLAG:(FLAG:10):5 -= 2 + RAND:5
+				CFLAG:(FLAG:11):5 += 5
+			PRINTFORML 
+			PRINTFORML 自慰を終えた%CALLNAME:(FLAG:10)%達は、気まずそうな顔をしながらも探索を再開した…
+		ELSEIF CFLAG:(FLAG:10):28 <= 0 && CFLAG:(FLAG:11):28 >= 1
+			PRINTFORMW %CALLNAME:(FLAG:11)%の%CALLNAME:1%を見る目がおかしい…
+			PRINTFORMW 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+			PRINTFORML どうやら発情状態で脱出の目処がないまま連れまわされすぎて、少しおかしくなってしまったようだ
+			PRINTFORMW %CALLNAME:(FLAG:10)%が情欲に狂った%CALLNAME:(FLAG:11)%を強引に引き剥がした！
+			PRINTFORMW %CALLNAME:(FLAG:10)%は腰をもじもじさせて%CALLNAME:1%にすがりつこうとする%CALLNAME:(FLAG:11)%を突き放すと、一人でするように言い放った…
+			PRINTFORMW %CALLNAME:(FLAG:11)%は性欲に逆らえず、顔を真っ赤にして自慰を始めた…
+				CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 0, 1)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 0, 2)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 161, CALLNAME:1, "", 1, 1)
+				CALL MASTURBATION(FLAG:11, 1, 100)
+				CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+				CFLAG:(FLAG:10):5 += 5
+				CFLAG:(FLAG:11):5 -= 2 + RAND:5
+			PRINTFORML 
+			PRINTFORML 自慰を終えた%CALLNAME:(FLAG:11)%達は、気まずそうな顔をしながらも探索を再開した…
+		ELSEIF CFLAG:(FLAG:10):28 >= 1 && CFLAG:(FLAG:11):28 >= 1 && CFLAG:1:28 >= 1 
+			PRINTFORMW %CALLNAME:(FLAG:11)%の%CALLNAME:1%を見る目がおかしい…
+			PRINTFORMW 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+			PRINTFORML どうやら発情状態で脱出の目処がないまま連れまわされすぎて、少しおかしくなってしまったようだ
+			PRINTFORMW 組み敷かれた%CALLNAME:1%も発情した身体に突き動かされ、%CALLNAME:(FLAG:11)%の唇を貪り始めた
+			PRINTFORMW 発情のあまり既におかしくなっていた%CALLNAME:(FLAG:10)%も情欲に身を任せて身体を割り込ませていく…
+			PRINTFORML 
+			PRINTFORMW %CALLNAME:1%達は獣のように交わっている！
+				CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL EXTASY(1, RAND:4, RAND:40, 100)
+				CALL EXTASY((FLAG:10), RAND:4, RAND:40, 100)
+				CALL EXTASY((FLAG:11), RAND:4, RAND:40, 100)
+				CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+				CFLAG:(FLAG:10):5 += 2 + RAND:10
+				CFLAG:(FLAG:11):5 += 2 + RAND:10
+			PRINTFORML 
+			PRINTFORML 正気を取り戻した%CALLNAME:1%達は、気まずそうな顔をしながらも探索を再開した…
+		ENDIF
+	ENDIF
+
+	IF FLAG:10 && FLAG:11 == 0
+		IF CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 <= 0
+			PRINTFORMW %CALLNAME:(FLAG:10)%の%CALLNAME:1%を見る目がおかしい…
+			PRINTFORMW 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+			PRINTFORMW どうやら発情状態で脱出の目処がないまま連れまわされすぎて、少しおかしくなってしまったようだ
+			IF ABL:(FLAG:10):98 >= ABL:1:98
+				PRINTFORML 組み敷かれた%CALLNAME:1%の抵抗は、悲鳴をあげようとした口を唇で塞がれ、全身を這い回る指先に次第に弱まっていく
+				PRINTFORML %CALLNAME:1%は全てを諦め、%CALLNAME:(FLAG:10)%に身を委ねている…
+					CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 0, 0)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1, 0)
+					CALL EXTASY(1, RAND:4, RAND:30, 100)
+					CALL EXTASY((FLAG:10), RAND:4, RAND:40, 100)
+					CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+					CFLAG:(FLAG:10):5 += RAND:10
+				PRINTFORML 
+				PRINTFORML 正気を取り戻して必死に謝っている%CALLNAME:(FLAG:10)%の手を引き、%CALLNAME:1%達は探索を再開した
+			ELSE
+				PRINTFORMW 組み敷かれた%CALLNAME:1%は情欲に狂った%CALLNAME:(FLAG:10)%を強引に引き剥がした！
+				PRINTFORMW %CALLNAME:1%は腰をもじもじさせてすがりつこうとする%CALLNAME:(FLAG:10)%を突き放すと、一人でするように言い放った…
+				PRINTFORMW %CALLNAME:(FLAG:10)%は性欲に逆らえず、顔を真っ赤にして自慰を始めた…
+					CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 0, 2)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1 ,1)
+					CALL MASTURBATION(FLAG:10, 1, 100)
+					CFLAG:(FLAG:10):5 -= 2 + RAND:5
+				PRINTFORML 
+				PRINTFORML 自慰を終えた%CALLNAME:(FLAG:10)%達は、気まずそうな顔をしながらも探索を再開した…
+			ENDIF
+		ELSEIF CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 >= 1
+			PRINTFORMW 組み敷かれた%CALLNAME:1%も発情した身体に突き動かされ、%CALLNAME:(FLAG:10)%の唇を貪り始めた
+			PRINTFORMW 
+			PRINTFORMW %CALLNAME:1%達は獣のように交わっている！
+				CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL EXTASY(1, RAND:4, RAND:40, 100)
+				CALL EXTASY((FLAG:10), RAND:4, RAND:40, 100)
+				CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+				CFLAG:(FLAG:10):5 += 2 + RAND:10
+			PRINTFORML 
+			PRINTFORML 正気を取り戻した%CALLNAME:1%達は、気まずそうな顔をしながらも探索を再開した…
+		ENDIF
+	ENDIF
+	
+	IF PET:0 && (DA:0:85 & 1)
+		PRINTFORMW %PETNAME%の%CALLNAME:1%を見る目がおかしい…
+		PRINTFORMW 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+		PRINTFORMW どうやら発情状態のようだ
+		IF CFLAG:1:28 == 0
+			IF TALENT:1:140
+				PRINTFORML 組み敷かれた%CALLNAME:1%は、抵抗もせず、%PETNAME%に身を委ねている…
+					CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 0, 0)
+					CALL EXTASY(1, RAND:4, RAND:30, 100)
+					CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+					CFLAG:(FLAG:10):5 += RAND:10
+					PET:20 += 2
+					PET:22 += 3
+				PRINTFORML 
+				PRINTFORML どうやら%CALLNAME:1%は、%PETNAME%を満足させたようだ
+			ELSE
+				PRINTFORMW 組み敷かれた%CALLNAME:1%は情欲に狂った%PETNAME%を強引に引き剥がした！
+			ENDIF
+		ELSEIF CFLAG:(FLAG:11):28 >= 1 && CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 >= 1
+			PRINTFORMW 組み敷かれた%CALLNAME:1%も発情した身体に突き動かされ、%PETNAME%の唇を貪り始めた
+			PRINTFORMW %CALLNAME:(FLAG:10)%と%CALLNAME:(FLAG:11)%も%CALLNAME:1%の胸やクリトリスを潤んだ目でいじっている
+			PRINTFORMW 
+			PRINTFORMW %CALLNAME:1%達は獣のように交わっている！
+				CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 161, CALLNAME:1, "", 1, 2)
+				CALL EXTASY(1, RAND:4, RAND:40, 100)
+				CALL EXTASY((FLAG:10), RAND:4, RAND:40, 100)
+				CALL EXTASY((FLAG:11), RAND:4, RAND:40, 100)
+				CALL ADD_ABL_EXP_PT(13, 20 + RAND:20)
+				CFLAG:(FLAG:10):5 += 2 + RAND:10
+				CFLAG:(FLAG:11):5 += 2 + RAND:10
+				PET:20 += 6
+				PET:22 += 9
+			PRINTFORML 
+			PRINTFORML 正気を取り戻した%CALLNAME:1%達は、気まずそうな顔をしながらも探索を再開した…
+		ENDIF
+	ENDIF
+	
+	;別の場所に再配置
+	FLAG:161 = RAND:30 + 1
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

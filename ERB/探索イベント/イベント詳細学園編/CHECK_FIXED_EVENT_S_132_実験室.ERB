@@ -1,0 +1,95 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_132
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	アイテムの種類決定
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 60
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	;開けなかった場合、何度も経験値が入るという小技
+	CALL ADD_ABL_EXP_PT(0, 700)
+	PRINTFORML ここは実験室のようだ！なにか役立つものがあるかもしれない！
+	PRINTFORML 探してみますか？
+	
+	$INPUT_LOOP
+	PRINTFORML [0] はい
+	PRINTFORML [1] いいえ
+
+
+	INPUT
+
+	IF RESULT == 0
+		
+		PRINTFORML %CALLNAME:1%%TACHI()%は実験室を探してみた…
+		PRINTFORML アイテムが見つかった！
+		CALL PRINT_MESSAGE(1, 200, 132, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(FLAG:10, 200, 132, CALLNAME:1, "")
+		CALL PRINT_MESSAGE(FLAG:11, 200, 132, CALLNAME:1, "")
+		FOR LOCAL:0, 0,(GET_PT_MAX_ABL(1) + 2)
+			SELECTCASE RAND:120
+				CASE 0 TO 9
+					LOCAL:4 = 3
+				CASE 10 TO 19
+					LOCAL:4 = 4
+				CASE 20 TO 29
+					LOCAL:4 = 13
+				CASE 30 TO 39
+					LOCAL:4 = 15
+				CASE 40 TO 49
+					LOCAL:4 = 20
+				CASE 50 TO 59
+					LOCAL:4 = 21
+				CASE 60 TO 69
+					LOCAL:4 = 58
+				CASE 70 TO 79
+					LOCAL:4 = 28
+				CASE 80 TO 89
+					LOCAL:4 = 39
+				CASE 90 TO 94
+					LOCAL:4 = 59
+				CASE 95 TO 99
+					LOCAL:4 = 7
+				CASE 100 TO 109
+					LOCAL:4 = 62
+				CASEELSE
+					LOCAL:4 = 56
+			ENDSELECT
+			CALL ADD_ITEM(LOCAL:4, RAND:3 + 1, 1)
+		NEXT
+		IF RAND:4 == 0
+			;確率で部屋のアイテムが尽きる
+			FLAG:132 = 0
+			PRINTFORMW もうここには何も残っていないようだ……
+		ENDIF
+		WAIT
+	ELSEIF RESULT == 1
+		;開けない場合、イベントは残す
+		CALL PRINT_MESSAGE(1, 200, 132, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 132, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 132, CALLNAME:1, "", 1)
+	ELSE
+		REUSELASTLINE 入力値が不正です。再入力してください
+		GOTO INPUT_LOOP
+	ENDIF
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

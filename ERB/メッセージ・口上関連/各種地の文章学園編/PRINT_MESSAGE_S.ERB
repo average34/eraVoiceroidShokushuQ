@@ -1,0 +1,239 @@
+﻿;学園編メッセージ
+;基本のとほぼ同じだが、口上と一部メッセージ変更のため見やすく分ける
+;画像表示は分けると画像ファイルが重くなり過ぎそうなのでわけない
+@PRINT_MESSAGE_S(D_ARG:0, D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+#DIM  DYNAMIC D_ARG, 8
+#DIMS DYNAMIC D_ARGS, 2
+#DIM  CHECK_HYPNO_RANDOM
+#DIM  TEMP_REDRAW
+
+VARSET CHECK_HYPNO_RANDOM
+
+;メッセージ非表示フラグがONなら一切のメッセージを表示せず戻る
+SIF FLAG:20
+	RETURN
+
+;範囲外のIDは処理しない
+SIF !(D_ARG:0 == -1 || INRANGE(D_ARG:0, 1, CHARANUM))
+	RETURN
+
+
+;処理メッセージ対象を確定
+IF D_ARG:0 == -1
+	;敵攻撃発動時のメッセージはキャラ口上側でもアクセス出来るように
+	IF INRANGE(D_ARG:1, 2, 8)
+		TARGET = TFLAG:54
+	;通常のシステムメッセージ処理
+	ELSE
+		TARGET = -1
+	ENDIF
+ELSE
+	TARGET = D_ARG:0
+ENDIF
+
+; 見出し表示
+CALL PRINT_MESSAGE_HEADLINE(D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+
+;システムメッセージ処理
+IF TARGET == -1
+	; フラグ情報表示 (システムメッセージ)
+	SIF FLAG:550
+		CALL SHOW_PRINT_MESSAGE_INFO(D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+		
+	CALL SYSTEM_MESSAGE_S(D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+	
+	;キャラNOが-1の場合の画像表示
+	CURRENTREDRAW
+	TEMP_REDRAW = RESULT
+	REDRAW 0
+	STR:1 = {D_ARG:1}
+	STR:2 = {D_ARG:2}
+	SPRITECREATED @"NNN_%STR:1%_%STR:2%"
+	IF RESULT
+		HTML_PRINT @"<img src='%"NNN_"+STR:1+"_"+STR:2%' height='2500'>"
+		FOR LOCAL , 0 , 23
+			PRINTL 
+		NEXT
+		PRINTW 
+	ELSE
+		SPRITECREATED @"NNN_%STR:1%S"
+		IF RESULT
+			HTML_PRINT @"<img src='%"NNN_"+STR:1%' height='2500'>"
+			FOR LOCAL , 0 , 23
+				PRINTL 
+			NEXT
+			PRINTW 
+		ENDIF
+	ENDIF
+	REDRAW TEMP_REDRAW
+
+;キャラクターメッセージ処理
+ELSE
+	; フラグ情報表示 (キャラクタ別)
+	SIF CFLAG:TARGET:750
+		CALL SHOW_PRINT_MESSAGE_INFO(D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+
+	; 催眠の種類がランダムの場合、CFLAGで保持している種類を利用する
+	IF FLAG:526 == 3
+		CHECK_HYPNO_RANDOM = 1
+		FLAG:526 = CFLAG:TARGET:526
+	ENDIF
+	
+	;戦闘中死亡した場合口上を呼び出さない
+	IF CFLAG:TARGET:58 == 0
+		TRYCCALLFORM KOJO_{NO:TARGET}_{CFLAG:TARGET:701}_S(D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+			IF RESULT == 0
+				;キャラ口上で何もしなかった場合、デフォルトのメッセージ＋口上を表示
+				CALL PRINT_MESSAGE_DEFAULT_S(D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+			ENDIF
+		CATCH
+			;該当キャラの口上が無い場合、デフォルトのメッセージ＋口上
+			CALL PRINT_MESSAGE_DEFAULT_S(D_ARG:1, D_ARG:2, D_ARGS:0, D_ARGS:1, D_ARG:3, D_ARG:4, D_ARG:5, D_ARG:6, D_ARG:7)
+		ENDCATCH
+	ENDIF
+	
+	;画像表示
+	CURRENTREDRAW
+	TEMP_REDRAW = RESULT
+	REDRAW 0
+	STR:0 = %NAME:TARGET%
+	STR:1 = {D_ARG:1}
+	STR:2 = {D_ARG:2}
+	STR:3 = {D_ARG:3}
+	
+	SPRITECREATED @"ANIME00_%STR:0%_%STR:1%_%STR:2%"
+	IF RESULT && D_ARG:0 > 0
+		CALL ANIMATION
+	ELSE
+		SPRITECREATED @"ANIME00_%STR:0%_%STR:1%"
+		IF RESULT && D_ARG:0 > 0
+			CALL ANIMATION
+		ELSE
+			SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%_%STR:3%"
+			
+			IF RESULT && D_ARG:0 > 0
+				IF BASE:(D_ARG:0):CP > 500
+					SPRITECREATED @"%STR:0%正常_%STR:1%_%STR:2%_%STR:3%"
+					IF RESULT
+						HTML_PRINT @"<img src='%STR:0+"正常_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
+					ELSE
+						SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
+						IF RESULT
+							HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
+						ENDIF
+					ENDIF
+				ELSEIF BASE:(D_ARG:0):CP > 0 && BASE:(D_ARG:0):CP <= 500
+					SPRITECREATED @"%STR:0%半裸_%STR:1%_%STR:2%_%STR:3%"
+					IF RESULT
+						HTML_PRINT @"<img src='%STR:0+"半裸_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
+					ELSE
+						SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%_%STR:3%"
+						IF RESULT
+							HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
+						ENDIF
+					ENDIF
+				ELSE
+					HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2+"_"+STR:3%' height='2500'>"
+				ENDIF
+				
+				FOR LOCAL , 0 , 23
+					PRINTL 
+				NEXT
+				PRINTW 
+			ELSE
+				SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
+				IF RESULT && D_ARG:0 > 0
+					IF BASE:(D_ARG:0):CP > 500
+						SPRITECREATED @"%STR:0%正常_%STR:1%_%STR:2%"
+						IF RESULT
+							HTML_PRINT @"<img src='%STR:0+"正常_"+STR:1+"_"+STR:2%' height='2500'>"
+						ELSE
+							SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
+							IF RESULT
+								HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2%' height='2500'>"
+							ENDIF
+						ENDIF
+					ELSEIF BASE:(D_ARG:0):CP > 0 && BASE:(D_ARG:0):CP <= 500
+						SPRITECREATED @"%STR:0%半裸_%STR:1%_%STR:2%"
+						IF RESULT
+							HTML_PRINT @"<img src='%STR:0+"半裸_"+STR:1+"_"+STR:2%' height='2500'>"
+						ELSE
+							SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
+							IF RESULT
+								HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2%' height='2500'>"
+							ENDIF
+						ENDIF
+					ELSE
+						HTML_PRINT @"<img src='%STR:0+"_"+STR:1+"_"+STR:2%' height='2500'>"
+					ENDIF
+					
+					FOR LOCAL , 0 , 23
+						PRINTL 
+					NEXT
+					PRINTW 
+				ELSEIF D_ARG:0 > 0
+					SPRITECREATED @"XXX_%STR:1%_%STR:2%"
+					IF RESULT
+						HTML_PRINT @"<img src='%"XXX_"+STR:1+"_"+STR:2%' height='2500'>"
+						FOR LOCAL , 0 , 23
+							PRINTL 
+						NEXT
+						PRINTW 
+					ELSE
+						SPRITECREATED @"%STR:0%_%STR:1%"
+						IF RESULT
+							IF BASE:(D_ARG:0):CP > 500
+								SPRITECREATED @"%STR:0%正常_%STR:1%"
+								IF RESULT
+									HTML_PRINT @"<img src='%STR:0+"正常_"+STR:1%' height='2500'>"
+								ELSE
+									SPRITECREATED @"%STR:0%_%STR:1%"
+									IF RESULT
+										HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+									ENDIF
+								ENDIF
+							ELSEIF BASE:(D_ARG:0):CP > 0 && BASE:(D_ARG:0):CP <= 500
+								SPRITECREATED @"%STR:0%半裸_%STR:1%"
+								IF RESULT
+									HTML_PRINT @"<img src='%STR:0+"半裸_"+STR:1%' height='2500'>"
+								ELSE
+									SPRITECREATED @"%STR:0%_%STR:1%"
+									IF RESULT
+										HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+									ENDIF
+								ENDIF
+							ELSE
+								HTML_PRINT @"<img src='%STR:0+"_"+STR:1%' height='2500'>"
+							ENDIF
+							
+							FOR LOCAL , 0 , 23
+								PRINTL 
+							NEXT
+							PRINTW 
+						ENDIF
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+	REDRAW TEMP_REDRAW
+
+	; 催眠の種類がランダムの場合、元の値に書き戻しておく
+	IF CHECK_HYPNO_RANDOM
+		FLAG:526 = 3
+	ENDIF
+ENDIF
+
+TARGET = 0
+
+
+;デフォルトのメッセージ・口上
+@PRINT_MESSAGE_DEFAULT_S(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;システムメッセージの表示
+CALL SYSTEM_MESSAGE_S(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+
+;性格による汎用口上の表示(コンフィグによって表示しない可能性あり)
+;SIF FLAG:595 != -1 && CFLAG:701 != -1
+	;汎用口上は今はまだオフ、未対応
+	;CALL KOJO_DEFAULT_S(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)

@@ -1,0 +1,105 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_208
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 50
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	;何度も発生
+	FLAG:208 = RAND:30 + 1
+	
+	PRINTFORML %CALLNAME:1%の頭の中に直接不思議な声が聞こえてきた…
+	IF LOCAL:2 < 100
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 『セーブはこまめにね』
+			CASE 1
+				PRINTFORML 『装備品…特にアクセサリは凄く大事だよ』
+			CASE 2
+				PRINTFORML 『NPCに装備品をプレゼントすると、少し仲良くなれるよ』
+			CASE 3
+				PRINTFORML 『NPCに装備品をプレゼントすると、少し敵にやられにくくなるよ』
+			CASEELSE
+				PRINTFORML 『清浄な部屋に居ると、汚れも落ちるし回復も早くなるよ』
+		ENDSELECT
+	ELSEIF LOCAL:2 < 150
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 『絶頂させられた仲間は少し好感度が下がっちゃうよ』
+			CASE 1
+				PRINTFORML 『戦闘中ターン終了時に自慰した場合、EP完全回復には少し時間がかかるよ』
+			CASE 2
+				PRINTFORML 『会話レベルが高いと、NPCと雑談した時にも色んな情報が貰えるよ』
+			CASE 3
+				PRINTFORML 『何も見つからなかった部屋でも、探索技能を上げれば何か見つかるかもしれないよ』
+			CASEELSE
+				PRINTFORML 『探索だけでここから脱出したい場合、石碑と石版が大事になるよ。　場所をメモしておこう』
+		ENDSELECT
+	ELSEIF LOCAL:2 < 200
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 『NPCはCPも少しずつ回復するよ。　着替えが足りなくなったら一旦別れてみよう』
+			CASE 1
+				IF FLAG:201 >= 100 && FLAG:201 < 200 && FLAG:207
+					PRINTFORML 『今なら{FLAG:207}の部屋で面白い物が拾えるかもね』
+				ELSE
+					PRINTFORML 『浄化力は時間経過以外に、敵を倒すことでも回復するよ』
+				ENDIF
+			CASE 2
+				PRINTFORML 『今なら{FLAG:115}の部屋で強い武器が拾えるかもね』
+			CASE 3
+				PRINTFORML 『今なら{FLAG:120}の部屋で良いアクセサリが拾えるかもね』
+			CASEELSE
+				PRINTFORML 『今なら{FLAG:121}の部屋で良いアクセサリが拾えるかもね』
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 『今なら{FLAG:135}の部屋で不思議な泉が見つかると思うよ』
+			CASE 1
+				IF FLAG:201 >= 200
+					PRINTFORML 『赤い石版なら{FLAG:202 % 100}の部屋にあるよ』
+				ELSE
+					PRINTFORML 『火炎放射器は実はタコ系の魔物にも少し効きづらいんだよ』
+				ENDIF
+			CASE 2
+				IF FLAG:201 >= 200
+					PRINTFORML 『青い石版なら{FLAG:203 % 100}の部屋にあるよ』
+				ELSE
+					PRINTFORML 『ボス系の敵は４種類の性攻撃を全て使ってくるけど、実は得意属性が１つずつ決まっているんだ』
+					PRINTFORML 『得意属性だけ選ばれる確率が高かったり、威力が高かったりするんだよ』
+				ENDIF
+			CASE 3
+				IF FLAG:201 >= 200
+					PRINTFORML 『黄色の石版なら{FLAG:204 % 100}の部屋にあるよ』
+				ELSE
+					PRINTFORML 『アクセサリの媚薬は、自慰中毒が低いうちは期待値的にかなり強力なんだよ』
+				ENDIF
+			CASEELSE
+				PRINTFORML 『アイテムをプレゼントしたりしてNPCと仲良くなっておけば、主人公が敵に捕食されても助けに来てくれるよ』
+				PRINTFORML 『ラスボスに捕まっている所へ全員集まってきても知らないけどね……』
+		ENDSELECT
+	ENDIF
+	
+	WAIT
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

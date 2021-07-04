@@ -1,0 +1,95 @@
+﻿;ランダムイベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_170
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	ダメージ
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 60
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, 700)
+	PRINTFORML %CALLNAME:1%%TACHI()%は知り合いの女の子が触手に捕まっているのを見つけた！
+	PRINTFORML 助けますか？
+	
+	CALL ASK_YN
+	IF RESULT == 0
+		FOR LCOUNT, 0, 3
+			IF GET_MEMBER(LCOUNT)
+				CALL PRINT_MESSAGE(1, 200, 170, CALLNAME:LCOUNT, "", 0)
+				;助け出すのに戦闘力が高いほどHPCP消耗が低い
+				LOCAL:4 = 4000 * (1 + RAND:4) / (ABL:LCOUNT:98 + 80)
+				BASE:LCOUNT:0 -= LOCAL:4
+				BASE:LCOUNT:3 -= LOCAL:4
+				;HP0にはならない
+				SIF BASE:LCOUNT:0 <= 0
+					BASE:LCOUNT:0 = 1
+			ENDIF
+		NEXT
+		PRINTFORML %CALLNAME:1%%TACHI()%は少し消耗しながらも助け出すことができた！
+		PRINTFORML 救出のお礼にアイテムを貰った！
+		
+			SELECTCASE RAND:120
+				CASE 0 TO 9
+					LOCAL:4 = 50
+				CASE 10 TO 19
+					LOCAL:4 = 52
+				CASE 20 TO 29
+					LOCAL:4 = 54
+				CASE 30 TO 39
+					LOCAL:4 = 57
+				CASE 40 TO 49
+					LOCAL:4 = 58
+				CASE 50 TO 59
+					LOCAL:4 = 59
+				CASE 60 TO 69
+					LOCAL:4 = 67
+				CASE 70 TO 79
+					LOCAL:4 = 71
+				CASE 80 TO 89
+					LOCAL:4 = 39
+				CASE 90 TO 94
+					LOCAL:4 = 51
+				CASE 95 TO 99
+					LOCAL:4 = 53
+				CASE 100 TO 109
+					LOCAL:4 = 55
+				CASEELSE
+					LOCAL:4 = 56
+			ENDSELECT
+		CALL ADD_ITEM(LOCAL:4, RAND:2 + 1, 1)
+		;好感度も上がる
+		CFLAG:(FLAG:10):5 += 2 + RAND:5
+		CFLAG:(FLAG:11):5 += 2 + RAND:5
+		CALL PRINT_MESSAGE(1, 200, 170, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 170, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 170, CALLNAME:1, "", 1)
+	ELSE
+		PRINTFORML %CALLNAME:1%%TACHI()%は罠を警戒して彼女に見つからないようにその場を離れた……
+		CALL PRINT_MESSAGE(1, 200, 170, CALLNAME:1, "", 2)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 170, CALLNAME:1, "", 2)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 170, CALLNAME:1, "", 2)
+	ENDIF
+	WAIT
+	LOCAL:3 = 1
+	FLAG:170 = RAND:30 + 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

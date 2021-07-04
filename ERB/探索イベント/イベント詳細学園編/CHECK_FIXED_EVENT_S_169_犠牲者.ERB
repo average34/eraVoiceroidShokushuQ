@@ -1,0 +1,50 @@
+﻿;ランダムイベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_169
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	ダメージ
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 60
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, 700)
+	PRINTFORML %CALLNAME:1%%TACHI()%は知り合いの女の子を見つけた！
+	PRINTFORML %CALLNAME:1%%TACHI()%は声をかけようとしたが、背後から伸びた触手に捕まり教室に引き込まれてしまった……
+	PRINTFORML 慌てて近寄るも教室の扉は開かず中に入ることができない……
+	PRINTFORML %CALLNAME:1%%TACHI()%が呆然としているうちに、閉鎖された教室から聞こえる声が悲鳴から喘ぎ声に変わっていく……
+	FOR LCOUNT, 0, 3
+		IF GET_MEMBER(LCOUNT)
+			CALL PRINT_MESSAGE(1, 200, 169, CALLNAME:LCOUNT, "", 1)
+			LOCAL:4 = MAXBASE:LCOUNT:1 * (3 + RAND:5) / 200
+			BASE:LCOUNT:1 -= LOCAL:4
+			;０にはならない
+			SIF BASE:LCOUNT:1 <= 0
+				BASE:LCOUNT:1 = 1
+			CALL CHANGE_TP(LCOUNT, 19)
+		ENDIF
+	NEXT
+	PRINTFORML %CALLNAME:1%%TACHI()%はMPダメージを受けながらその場をあとにした……
+	WAIT
+	LOCAL:3 = 1
+	FLAG:169 = RAND:30 + 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

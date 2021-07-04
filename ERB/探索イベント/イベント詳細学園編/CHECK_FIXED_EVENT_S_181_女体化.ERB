@@ -1,0 +1,152 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_181
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 180
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, 500)
+	
+	;危機回避と術式知識が高いと避けられる
+	IF (ABL:1:5 + TALENT:1:164 + RAND:2 > 2) || (FLAG:10 && ABL:(FLAG:10):5 + TALENT:(FLAG:10):164  + RAND:2 > 2) || (FLAG:11 && ABL:(FLAG:11):5 + TALENT:(FLAG:11):164 + RAND:2 > 2)
+		PRINTFORML 起動していない魔法陣を見つけた
+		IF TALENT:1:164 == 2 || (FLAG:10 && TALENT:(FLAG:10):164 == 2) || (FLAG:11 && TALENT:(FLAG:11):164 == 2)
+			PRINTFORM どうやら女体化の魔法陣のようだが
+		ENDIF
+		PRINTFORML 入りますか？
+		CALL ASK_YN
+		;入らなければスルー
+		IF RESULT == 0
+			IF TALENT:(FLAG:11):122 || TALENT:(FLAG:10):122 || TALENT:1:122
+				IF FLAG:519
+					;あっさり女体化するけどV経験が増えることで女の悦びを知るとかで
+					IF FLAG:11 && TALENT:(FLAG:11):122
+						TALENT:(FLAG:11):122 = 0
+						TALENT:(FLAG:11):165 = 1
+						PRINTFORML なんと%CALLNAME:(FLAG:11)%は身体だけ女になってしまった……
+					ENDIF
+					IF FLAG:10 && TALENT:(FLAG:10):122
+						TALENT:(FLAG:10):122 = 0
+						TALENT:(FLAG:10):165 = 1
+						PRINTFORML なんと%CALLNAME:(FLAG:10)%は身体だけ女になってしまった……
+					ENDIF
+					IF TALENT:1:122
+						TALENT:1:122 = 0
+						TALENT:1:165 = 1
+						
+						PRINTFORML なんと%CALLNAME:1%は身体だけ女になってしまった……
+					ENDIF
+					CALL PRINT_MESSAGE(1, 200, 181, CALLNAME:1, "", 0)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 181, CALLNAME:1, "", 0)
+					CALL PRINT_MESSAGE(FLAG:11, 200, 181, CALLNAME:1, "", 0)
+				ELSE 
+					PRINTFORML 特に何も起こらなかった
+					CALL PRINT_MESSAGE(1, 200, 181, CALLNAME:1, "", 1)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 181, CALLNAME:1, "", 1)
+					CALL PRINT_MESSAGE(FLAG:11, 200, 181, CALLNAME:1, "", 1)
+				ENDIF
+			ELSE
+				;女の子は回復
+				BASE:1:1 += MAXBASE:1:1 / 4
+				IF BASE:1:1 > MAXBASE:1:1
+					BASE:1:1 = MAXBASE:1:1
+				ENDIF
+				IF FLAG:10
+					BASE:(FLAG:10):1 += MAXBASE:(FLAG:10):1 / 4
+					IF BASE:(FLAG:10):1 > MAXBASE:(FLAG:10):1
+						BASE:(FLAG:10):1 = MAXBASE:(FLAG:10):1
+					ENDIF
+				ENDIF
+				IF FLAG:11
+					BASE:(FLAG:11):1 += MAXBASE:(FLAG:11):1 / 4
+					IF BASE:(FLAG:11):1 > MAXBASE:(FLAG:11):1
+						BASE:(FLAG:11):1 = MAXBASE:(FLAG:11):1
+					ENDIF
+				ENDIF
+				PRINTFORML %CALLNAME:1%%TACHI()%はMPが少し回復した！
+				CALL PRINT_MESSAGE(1, 200, 181, CALLNAME:1, "", 2)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 181, CALLNAME:1, "", 2)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 181, CALLNAME:1, "", 2)
+			ENDIF
+		
+		ENDIF
+	;仲間がいると発動
+	ELSE
+	
+			IF TALENT:(FLAG:11):122 || TALENT:(FLAG:10):122 || TALENT:1:122
+				PRINTFORML 急にこの部屋にあった魔法陣が起動した！
+				IF FLAG:519
+					;あっさり女体化するけどV経験が増えることで女の悦びを知るとかで
+					IF FLAG:11 && TALENT:(FLAG:11):122
+						TALENT:(FLAG:11):122 = 0
+						TALENT:(FLAG:11):165 = 1
+						PRINTFORML なんと%CALLNAME:(FLAG:11)%は身体だけ女になってしまった……
+					ENDIF
+					IF FLAG:10 && TALENT:(FLAG:10):122
+						TALENT:(FLAG:10):122 = 0
+						TALENT:(FLAG:10):165 = 1
+						PRINTFORML なんと%CALLNAME:(FLAG:10)%は身体だけ女になってしまった……
+					ENDIF
+					IF TALENT:1:122
+						TALENT:1:122 = 0
+						TALENT:1:165 = 1
+						PRINTFORML なんと%CALLNAME:1%は身体だけ女になってしまった……
+					ENDIF
+					CALL PRINT_MESSAGE(1, 200, 181, CALLNAME:1, "", 0)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 181, CALLNAME:1, "", 0)
+					CALL PRINT_MESSAGE(FLAG:11, 200, 181, CALLNAME:1, "", 0)
+				ELSE 
+					PRINTFORML 特に何も起こらなかった
+					CALL PRINT_MESSAGE(1, 200, 181, CALLNAME:1, "", 1)
+					CALL PRINT_MESSAGE(FLAG:10, 200, 181, CALLNAME:1, "", 1)
+					CALL PRINT_MESSAGE(FLAG:11, 200, 181, CALLNAME:1, "", 1)
+				ENDIF
+			ELSE
+				PRINTFORML 急にこの部屋にあった魔法陣が起動した！
+				;女の子は回復
+				BASE:1:1 += MAXBASE:1:1 / 4
+				IF BASE:1:1 > MAXBASE:1:1
+					BASE:1:1 = MAXBASE:1:1
+				ENDIF
+				IF FLAG:10
+					BASE:(FLAG:10):1 += MAXBASE:(FLAG:10):1 / 4
+					IF BASE:(FLAG:10):1 > MAXBASE:(FLAG:10):1
+						BASE:(FLAG:10):1 = MAXBASE:(FLAG:10):1
+					ENDIF
+				ENDIF
+				IF FLAG:11
+					BASE:(FLAG:11):1 += MAXBASE:(FLAG:11):1 / 4
+					IF BASE:(FLAG:11):1 > MAXBASE:(FLAG:11):1
+						BASE:(FLAG:11):1 = MAXBASE:(FLAG:11):1
+					ENDIF
+				ENDIF
+				PRINTFORML %CALLNAME:1%%TACHI()%はMPが少し回復した！
+				CALL PRINT_MESSAGE(1, 200, 181, CALLNAME:1, "", 2)
+				CALL PRINT_MESSAGE(FLAG:10, 200, 181, CALLNAME:1, "", 2)
+				CALL PRINT_MESSAGE(FLAG:11, 200, 181, CALLNAME:1, "", 2)
+			ENDIF
+	ENDIF
+
+	;イベントを別の場所に移動
+	FLAG:181 = RAND:30 + 1
+	WAIT
+	
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+
+

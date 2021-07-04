@@ -1,0 +1,74 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_201
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 120
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+;ドッペルモードだと必ず失敗する
+IF FLAG:998
+	;経験値が入るのは最初だけ
+	IF FLAG:201 < 100
+		CALL ADD_ABL_EXP_PT(0, 1200)
+		FLAG:201 += 100
+	ENDIF
+	PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	PRINTFORML しかし%CALLNAME:1%%TACHI()%はその文字を読むことができなかった…
+ELSEIF LOCAL:2 >= LOCAL:1 || FLAG:201 >= 100
+	;経験値が入るのは最初だけ
+	IF FLAG:201 < 100
+		CALL ADD_ABL_EXP_PT(0, 1200)
+		FLAG:201 += 100
+	ENDIF
+	
+	IF FLAG:201 < 200 && (LOCAL:2 >= 190 || FLAG:207 == 0)
+		;大成功か、辞書を持っていると石碑が読める
+		FLAG:201 += 100
+		FLAG:40 = RAND:6
+	ENDIF
+	PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	IF FLAG:201 < 200
+		PRINTFORML しかし%CALLNAME:1%%TACHI()%はその文字を読むことができなかった…
+		CALL PRINT_MESSAGE(1, 200, 201, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 201, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 201, CALLNAME:1, "", 0)
+	ELSE
+		IF FLAG:207 == 0
+			PRINTFORML 以前拾った辞書を使って、%CALLNAME:1%%TACHI()%は石碑に刻まれた文章を解読した
+		ELSE
+			PRINTFORML 石碑の文字が統一言語で記述されていることに気付いた%CALLNAME:1%%TACHI()%は、何とかその内容を解読した
+		ENDIF
+		PRINTFORML どうやらこの石碑と同じ紋章が刻まれた赤・青・黄の石版を探しだし、
+		PRINTFORML 特定の順序でそれらの石版に向かって呪文を唱えると、ここから脱出できるらしい
+		;★EXモードではどの順番で読んでもおっけーね。さすがに順不同じゃないと辛い
+		IF FLAG:999
+			PRINTFORML 色が合っていればどの順番で呼んでも問題ないようだ……
+		ELSE
+			PRINTFORML 残念ながらどの順番で石版を選ぶのかという部分は石碑が欠けていて読むことができなかった…
+		ENDIF
+		CALL PRINT_MESSAGE(1, 200, 201, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 201, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 201, CALLNAME:1, "", 1)
+	ENDIF
+	
+	;どの場合でもイベントをその場に残す
+	LOCAL:3 = 1
+	WAIT
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

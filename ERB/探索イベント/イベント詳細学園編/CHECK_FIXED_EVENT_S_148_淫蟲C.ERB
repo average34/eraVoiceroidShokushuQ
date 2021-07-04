@@ -1,0 +1,102 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_148
+#DIM ANYONE_RAPED
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	被害者あり
+;5	ダメージ基準値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = LIMIT(RAND:100, 50, 100) + RAND:150
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, LOCAL:1 * 10)
+	PRINTFORML %CALLNAME:1%%TACHI()%は淫蟲の巣穴を探し当ててしまった！
+	PRINTFORMW 大量の淫蟲が%CALLNAME:1%%TACHI()%に襲い掛かる！
+	PRINTFORML 
+
+	VARSET ANYONE_RAPED
+
+	;コンフィグによってふたなり化がONOFFあるので主人公は別処理
+	CALL REACTION_TRAP(1)
+	IF BASE:1:0 < 0 || RESULT == 1
+		TFLAG:63 = 2
+		CALL PRINT_MESSAGE(1, 200, 148, CALLNAME:1, "", 1)
+		LOCAL:5 = CALC_SENSITIVITY(1, TFLAG:63, LOCAL:1)
+		CALL DAMAGE_COMMON(1, 2, LOCAL:5 * 7 * (TALENT:1:103 + 2) * (TALENT:1:77 + 1), 500)
+
+		IF RAND:3 == 0 && GET_PENIS(1) == 0 && ( FLAG:520 == 1 || FLAG:520 == 2 )
+			PRINTFORML 淫蟲の一部が%CALLNAME:1%のクリトリスに吸い付くと、一体化して寄生し始めた……
+			PRINTFORML %CALLNAME:1%は【ふたなり】になってしまった！
+			CALL PRINT_MESSAGE(1, 200, 148, CALLNAME:1, "", 3)
+			CFLAG:1:42 = 1 + RAND:4 + RAND:3 + RAND:2
+		ENDIF
+		
+		IF RAND:4 == 0 && TALENT:1:103 <= 2
+			PRINTFORMW %CALLNAME:1%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+			PRINTFORMW %CALLNAME:1%の\@ GET_PENIS(1) ? 陰茎 # クリトリス \@が少し敏感になった
+			TALENT:1:103 += 1
+		ENDIF
+		ANYONE_RAPED++
+	ELSE
+		PRINTFORML %CALLNAME:1%は近づいてくる淫虫を強引に倒しきった！
+	ENDIF
+
+	;ふたなり化フラグの都合で主人公以外を一括処理
+	FOR LOCAL:0, 2, CHARANUM
+		;現在位置が被っているかチェック
+		IF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0 && CFLAG:(LOCAL:0):21 == 0
+			CALL REACTION_TRAP(LOCAL:0)
+			IF BASE:(LOCAL:0):0 < 0 || RESULT == 1
+				TFLAG:63 = 2
+				CALL PRINT_MESSAGE((LOCAL:0), 200, 148, CALLNAME:(LOCAL:0), "")
+				LOCAL:5 = CALC_SENSITIVITY((LOCAL:0), TFLAG:63, LOCAL:1)
+				;◆発情追加のため、ダメージ軽減
+				CALL DAMAGE_COMMON((LOCAL:0), 2, LOCAL:5 * 7 * (TALENT:(LOCAL:0):103 + 2) * (TALENT:(LOCAL:0):77 + 1), 500);◆
+				IF RAND:3 == 0 && GET_PENIS(LOCAL:0) == 0 && ( FLAG:520 == 1 || FLAG:520 == 3 )
+						PRINTFORML 淫蟲の一部が%CALLNAME:(LOCAL:0)%のクリトリスに吸い付くと、一体化して寄生し始めた……
+						PRINTFORML %CALLNAME:(LOCAL:0)%は【ふたなり】になってしまった！
+						CALL PRINT_MESSAGE((LOCAL:0), 200, 148, CALLNAME:1, "", 3)
+						CFLAG:(LOCAL:0):42 = 1 + RAND:4 + RAND:3 + RAND:2
+					ENDIF
+				IF RAND:4 == 0 && TALENT:(LOCAL:0):103 <= 2
+					PRINTFORMW %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+					PRINTFORMW %CALLNAME:(LOCAL:0)%の\@ GET_PENIS(LOCAL:0) ? 陰茎 # クリトリス \@が少し敏感になった
+					TALENT:(LOCAL:0):103 += 1
+				ENDIF
+				ANYONE_RAPED++
+			ELSE
+				PRINTFORML %CALLNAME:(LOCAL:0)%は近づいてくる淫虫を強引に倒しきった！
+			ENDIF
+		ENDIF
+	NEXT
+	IF ANYONE_RAPED
+		PRINTFORMW %CALLNAME:1%%TACHI()%を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+	ELSE
+		PRINTFORMW 不意打ちが避けられてしまった淫蟲たちは、肉々しい色をした地面の中へと逃げていった…
+	ENDIF
+	TFLAG:63 = 0
+	
+	WAIT
+	
+	;別の場所に再配置
+	FLAG:148 = RAND:30 + 1
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

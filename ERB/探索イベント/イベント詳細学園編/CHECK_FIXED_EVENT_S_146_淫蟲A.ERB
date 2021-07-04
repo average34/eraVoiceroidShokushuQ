@@ -1,0 +1,75 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_146
+#DIM ANYONE_RAPED
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	被害者あり
+;5	ダメージ基準値
+
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = LIMIT(RAND:100, 50, 100) + RAND:150
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, LOCAL:1 * 10)
+	PRINTFORML %CALLNAME:1%%TACHI()%は淫蟲の巣穴を探し当ててしまった！
+	PRINTFORMW 大量の淫蟲が%CALLNAME:1%%TACHI()%に襲い掛かる！
+	PRINTFORML 
+	VARSET ANYONE_RAPED
+	FOR LOCAL:0, 1, CHARANUM
+		;現在位置が被っているかチェック
+		IF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0 && CFLAG:(LOCAL:0):21 == 0
+			CALL REACTION_TRAP(LOCAL:0)
+			IF BASE:(LOCAL:0):0 < 0 || RESULT == 1
+				TFLAG:63 = 0
+				CALL PRINT_MESSAGE((LOCAL:0), 200, 146, CALLNAME:(LOCAL:0), "")
+				LOCAL:5 = CALC_SENSITIVITY((LOCAL:0), TFLAG:63, LOCAL:1)
+				CALL DAMAGE_COMMON((LOCAL:0), 2, LOCAL:5 * 7 * (TALENT:(LOCAL:0):101 + 2) * (TALENT:(LOCAL:0):75 + 1), 500)
+				IF RAND:2 == 0
+					PRINTFORML %CALLNAME:(LOCAL:0)%は淫蟲の体液を浴びて【発情】し始めた！
+					CALL PRINT_MESSAGE((LOCAL:0), 200, 148, CALLNAME:(LOCAL:0), "", 2)
+					IF CFLAG:(LOCAL:0):28 < 3
+						CFLAG:(LOCAL:0):28 += 1
+					ENDIF
+				ENDIF
+				IF RAND:4 == 0 && TALENT:(LOCAL:0):101 <= 2
+					PRINTFORMW %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+					PRINTFORMW %CALLNAME:(LOCAL:0)%のお尻が少し敏感になった
+					TALENT:(LOCAL:0):101 += 1
+				ENDIF
+				ANYONE_RAPED++
+			ELSE
+				PRINTFORML %CALLNAME:(LOCAL:0)%は近づいてくる淫虫を強引に倒しきった！
+			ENDIF
+		ENDIF
+	NEXT
+	IF ANYONE_RAPED
+		PRINTFORMW %CALLNAME:1%%TACHI()%を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+	ELSE
+		PRINTFORMW 不意打ちが避けられてしまった淫蟲たちは、肉々しい色をした地面の中へと逃げていった…
+	ENDIF
+	TFLAG:63 = 0
+	
+	WAIT
+	
+	;別の場所に再配置
+	FLAG:146 = RAND:30 + 1
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

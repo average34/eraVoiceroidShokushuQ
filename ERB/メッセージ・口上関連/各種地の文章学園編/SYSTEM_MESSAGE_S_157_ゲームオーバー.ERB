@@ -1,0 +1,82 @@
+﻿;捕食された後の描写
+@SYSTEM_MESSAGE_S_157(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+;ARGS:0	味方キャラ（主に主人公）
+;ARGS:1	敵キャラ
+;キャラの数が足りない場合があるので、適当なキャラを追加しておく
+LOCAL:1 = 11 - CHARANUM
+
+FOR LOCAL:0, 0, LOCAL:1
+	ADDCHARA SELECT_RANDOM_CHARA()
+NEXT
+
+PRINTFORML  
+
+SELECTCASE ARG:1
+	CASEELSE
+		;汎用テキスト 実質ガーディアン（とシェイプシフター）専用に
+		IF LOCAL:1 >= 9
+			;１人プレイ専用全滅テキスト
+			PRINTFORMW ……………
+			PRINTFORMW %NAME:1%はもう手足に力が入らない…
+			PRINTFORMW 指先一つ動かす力も残されていないというのに、身体は強制的な快感にビクンビクンと痙攣を繰り返す…
+			PRINTFORMW 悲鳴を、喘ぎ声を、絶頂の叫びを上げ続けた喉は擦れた声も出せなくなり痛みすらももう感じない
+			PRINTFORML 
+			PRINTFORMW %NAME:1%は何となく気づいていた
+			PRINTFORMW この迷宮には自分とモンスターしかいない事に
+			PRINTFORMW %ARGS:1%に捕らえられ、逃げ損ねた時に自分の運命が決まっていた事に…
+			PRINTFORML 
+			REDRAW 0
+			PRINTFORM だ
+			TWAIT 400, 0
+			CLEARLINE 1
+			PRINTFORM だれ
+			TWAIT 400, 0
+			CLEARLINE 1
+			PRINTFORM だれか
+			TWAIT 700, 0
+			PRINTFORM た
+			TWAIT 500, 0
+			CLEARLINE 1
+			PRINTFORM たす
+			TWAIT 700, 0
+			CLEARLINE 1
+			PRINTFORM たすけ
+			TWAIT 900, 0
+			CLEARLINE 1
+			PRINTFORM たすけて
+			PRINTFORML 
+			TWAIT 1300, 0
+			PRINTFORML 
+			REDRAW 3
+			PRINTFORMW 声にならなかった願いは僅かに%NAME:1%の唇を震わせ、そして二度と動くことはなかった…
+		ELSE
+			PRINTFORMW ……………
+			PRINTFORMW 一体どれくらいの時間が経っただろうか。
+			PRINTFORMW ふと%NAME:1%が目を覚ますと、そこは見覚えのない部屋だった
+			PRINTFORMW ……どうやら敵に敗れ、心身共に犯され抜いた自分は、その後ここに運ばれたらしい
+			PRINTFORMW なんとか立ち上がろうとするが、もはやそんな力さえ残されてはいないようだ…
+			PRINTFORML 
+			PRINTFORMW ふと誰かの声が部屋の奥から聞こえ、%NAME:1%は恐る恐る首をその方向へ向ける
+			PRINTFORMW ──そこには、巨大な触手の塊としか言い表せないようなモノが獲物を求めるように蠢いていた
+			PRINTFORMW そして触手達の中には何人もの少女達が取り込まれ、悲鳴を、あるいは嬌声をあげていた
+			PRINTFORML 
+			PRINTFORMW 穴という穴に触手を突っ込まれ、声にならない声をあげる%NAME:2%
+			PRINTFORMW 全身を愛撫され、粘液混じりの触手が肌を撫でる度絶頂の叫び声を上げる%NAME:3%
+			PRINTFORMW もはや抵抗を諦めたのか、自らの指で秘所を開き責めを受け入れる%NAME:4%
+			PRINTFORML 
+			PRINTFORMW 言葉を失う%NAME:1%の足に、触手の一本が絡みつき、塊の中へ引きずり込もうとする
+			PRINTFORMW 最後の力を振り絞って逃げようとする%NAME:1%だったが、抵抗する力はもう残されていなかった
+			PRINTFORML 
+			PRINTFORMW ……………
+			PRINTFORMW やがて他の少女達同様触手の中に取り込まれた%NAME:1%は、その全てを喰らい尽くされるまで延々と犯され続けた……
+			PRINTFORML 
+			PRINTFORML 
+			PRINTFORMW その後、%NAME:1%の姿を見たものは居ない……
+		ENDIF
+ENDSELECT
+
+;タイトルとのスペース確保のために改行をいくつか入れておく
+PRINTFORML  
+PRINTFORML  
+PRINTFORML  
+

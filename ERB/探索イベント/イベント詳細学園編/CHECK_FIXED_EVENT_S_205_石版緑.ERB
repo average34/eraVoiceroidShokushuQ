@@ -1,0 +1,51 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_205
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 70
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1 || FLAG:205 >= 100
+	;経験値が入るのは最初だけ
+	IF FLAG:205 < 100
+		CALL ADD_ABL_EXP_PT(0, 800)
+		FLAG:205 += 100
+	ENDIF
+	
+	IF FLAG:201 < 200
+		;石碑を読んでいない場合、詳細不明となる
+		PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた石版を発見した！
+		PRINTFORML しかし石版を調べてみても特に何も見つからなかった…
+		CALL PRINT_MESSAGE(1, 200, 205, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 205, CALLNAME:1, "", 0)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 205, CALLNAME:1, "", 0)
+	ELSE
+		PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた緑の石版を発見した！
+		PRINTFORML しかしこの石版に刻まれた紋章は、石碑で見たものとは違うようだ…
+		CALL PRINT_MESSAGE(1, 200, 205, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 205, CALLNAME:1, "", 1)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 205, CALLNAME:1, "", 1)
+	ENDIF
+	
+	;どの場合でもイベントをその場に残す
+	LOCAL:3 = 1
+	WAIT
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

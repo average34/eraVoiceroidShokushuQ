@@ -1,0 +1,39 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_207
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 0
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, 500)
+	
+	PRINTFORMW %CALLNAME:1%%TACHI()%はボロボロになった書物を発見した！
+	PRINTFORMW 中を覗いてみると、何も書かれていないはずなのに、内容が直接頭の中に入ってくる
+	PRINTFORMW どうやらこの本は「統一言語」の辞書らしい…
+	PRINTFORMW 何かの役に立つかもしれないと考えた%CALLNAME:1%%TACHI()%は、そのままその本を持って行くことにした
+	CALL PRINT_MESSAGE(1, 200, 207, CALLNAME:1, "", 0)
+	CALL PRINT_MESSAGE(FLAG:10, 200, 207, CALLNAME:1, "", 0)
+	CALL PRINT_MESSAGE(FLAG:11, 200, 207, CALLNAME:1, "", 0)
+	
+	FLAG:207 = 0
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

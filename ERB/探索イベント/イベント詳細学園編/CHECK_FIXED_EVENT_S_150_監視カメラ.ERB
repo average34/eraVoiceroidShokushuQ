@@ -1,0 +1,71 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_150
+#DIM ANYONE_RAPED
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	被害者あり
+;5	ダメージ基準値
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 50
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, LOCAL:1 * 10)
+	PRINTFORML %CALLNAME:1%%TACHI()%は監視カメラがこちらを向いているのに気づいた！
+	PRINTFORMW 
+	FOR LCOUNT, 0, 3
+		IF GET_MEMBER(LCOUNT)
+			IF CFLAG:(LCOUNT):25 == 0 && CFLAG:(LCOUNT):28 <= 0 && CFLAG:(LCOUNT):29 == 0 &&  BASE:(LCOUNT):3 - (BASE:(LCOUNT):5 * 4) <= 0
+				IF TALENT:(LCOUNT):36
+					PRINTFORM %CALLNAME:(LCOUNT)%は
+					IF BASE:(LCOUNT):3 > 0
+						PRINTFORM 染み込んだ体液のせいで服が透けて
+					ELSE
+						PRINTFORM 裸にされて
+					ENDIF
+					PRINTFORML いる姿を録画されているが気にしていないようだ
+					CALL PRINT_MESSAGE(LCOUNT, 46, 3, CALLNAME:(LCOUNT), "", 0)
+				ELSEIF TALENT:(LCOUNT):35
+					;恥じらいなら２倍
+					LOCAL:3 = MAXBASE:(LCOUNT):1 * (5 + RAND:11) / 200
+					BASE:(LCOUNT):1 -= LOCAL:3
+					;０にはならない
+					SIF BASE:(LCOUNT):1 <= 0
+						BASE:(LCOUNT):1 = 1
+					CALL PRINT_MESSAGE(LCOUNT, 46, 5, CALLNAME:(LCOUNT), "", LOCAL:3)
+				ELSE
+					LOCAL:3 = MAXBASE:(LCOUNT):1 * (3 + RAND:5) / 200
+					BASE:(LCOUNT):1 -= LOCAL:3
+					;０にはならない
+					SIF BASE:(LCOUNT):1 <= 0
+						BASE:(LCOUNT):1 = 1
+					CALL PRINT_MESSAGE(LCOUNT, 46, 4, CALLNAME:(LCOUNT), "", LOCAL:3)
+				ENDIF
+			ENDIF
+			
+		ENDIF
+	NEXT
+	WAIT
+	
+	;別の場所に再配置
+	FLAG:150 = RAND:30 + 1
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

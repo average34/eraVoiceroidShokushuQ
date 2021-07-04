@@ -1,0 +1,60 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_139
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	被害者あり
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 0
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+
+IF LOCAL:2 >= LOCAL:1
+	CALL ADD_ABL_EXP_PT(0, 300)
+	PRINTFORML この区画には桃色のガスが充満している！
+	PRINTFORMW どうやらこのガスには強い催淫効果があるようだ…
+	PRINTFORML 
+	LOCAL:4 = 0
+	FOR LOCAL:0, 1, CHARANUM
+		;現在位置が被っているかチェック
+		IF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0 && CFLAG:(LOCAL:0):21 == 0
+			IF 50 < RAND:(100 + ABL:(LOCAL:0):10 * 50)
+				CALL PRINT_MESSAGE((LOCAL:0), 200, 139, CALLNAME:(LOCAL:0), "", 1)
+				CALL MASTURBATION((LOCAL:0), 0, 100)
+				LOCAL:4 = 1
+				WAIT
+			ELSE
+				CALL PRINT_MESSAGE((LOCAL:0), 200, 139, CALLNAME:(LOCAL:0), "", 2)
+			ENDIF
+		ENDIF
+	NEXT
+	
+	IF LOCAL:4
+		PRINTFORML 
+		PRINTFORML 自慰を終えた%CALLNAME:1%%TACHI()%は、気まずそうな顔をしながらも探索を再開した…
+	ELSE
+		PRINTFORML 
+		PRINTFORML 正気を保つことに成功した%CALLNAME:1%%TACHI()%は、そのまま探索を再開した…
+	ENDIF
+	
+	WAIT
+	
+	;同じ場所に残り続ける
+	
+	LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+

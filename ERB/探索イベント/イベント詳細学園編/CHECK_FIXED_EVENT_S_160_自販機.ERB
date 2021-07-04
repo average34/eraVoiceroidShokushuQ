@@ -1,0 +1,763 @@
+﻿;固定イベント
+;RETURN	0:失敗した　1:成功した　2:以後のイベントスキップ
+@CHECK_FIXED_EVENT_S_160
+#DIM MP_DECREASE_RATE
+;LOCAL
+;0	LOOP
+;1	目標値
+;2	達成値
+;3	戻り値
+;4	キャラ選択
+;5	ダメージ乱数
+;6	ユニーク武器パッチ用、全員分の射精量
+;7	ユニーク武器パッチ用、仲間１の射精量
+;8	ユニーク武器パッチ用、仲間２の射精量
+;9	ユニーク武器パッチ用、全員分のレズ中毒値合計
+
+LOCAL:3 = 0
+
+;目標値（イベント難易度）決定
+LOCAL:1 = 0
+
+
+;達成値決定
+CALL GET_SEARCH_RATE
+LOCAL:2 = RESULT
+
+IF LOCAL:2 >= LOCAL:1
+	PRINTL 迷宮の奥まったところに奇妙な空間を発見した
+	PRINTL 絡み合う触手は天蓋のある祭壇めいた不吉な構造に見える
+	CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, "", 0)
+	CALL PRINT_MESSAGE(FLAG:10, 200, 160, CALLNAME:1, "", 0)
+	CALL PRINT_MESSAGE(FLAG:11, 200, 160, CALLNAME:1, "", 0)
+	PRINTFORML 浄化力(現在値：{FLAG:6})を代償に何かできそうだが…
+	$INPUT_LOOP
+	PRINTL どうしますか？
+	PRINTL
+	PRINTFORML [ 1] 衣服を繕う　　　　(必要浄化力:200)
+	PRINTFORML [ 2] 腹を満たす　　　　(必要浄化力:100)
+	PRINTFORML [ 3] 何か飲み物を　　　(必要浄化力: 50)
+	PRINTFORML [ 4] 能力の強化　　　　(必要浄化力:200)
+	IF FLAG:520 >= 1
+		PRINTFORML [ 5] 武器が欲しい　　　(必要浄化力:100)
+		PRINTFORML [ 6] 消耗武器の残弾補充(必要浄化力: 50)
+	ENDIF
+	;************乳育たないパッチ*********************
+	PRINTFORML [ 7] 母乳を止めたい　　(必要浄化力:200)
+	;*************************************************
+	PRINTFORML [ 8] 風呂に入りたい　　(必要浄化力:200)
+	PRINTFORML [ 9] 寄生した敵の除去　(必要浄化力:200)
+	IF FLAG:520 >= 1
+		PRINTFORML [10] 武器の改造を　　　(必要浄化力: 50)
+	ENDIF
+	;*************ユニーク武器追加パッチ*************************************
+	;PTメンバー全員がふたなり(またはおとこのこ)で戦意喪失しておらず、☆触手放射器をまだ所持していない
+	IF (GET_PENIS(1) > 1 && !CFLAG:1:29) && (GET_PENIS(FLAG:10) > 1 && !CFLAG:(FLAG:10):29) && (GET_PENIS(FLAG:11) > 1 && !CFLAG:(FLAG:11):29) && FLAG:995 == 0
+		PRINTFORML [11] スゴイ☆武器が欲しい　　　（？？？）
+	ENDIF
+	;*************EPダメージ上限いつでも解除パッチ*************************************
+	IF FLAG:539 == 0
+		PRINTFORML [12] ジワジワと嬲られたい
+	ELSEIF FLAG:539 == 1
+		PRINTFORML [12] アクメ地獄でオーバーキルされたい
+	ENDIF
+	;***********************************************************************************************************************
+	PRINTFORML 
+	PRINTFORML [0] この場を離れる
+	INPUT
+
+	IF RESULT < 0 || RESULT >= 13
+		GOTO INPUT_LOOP
+	ELSEIF RESULT == 1
+		DRAWLINE
+		PRINTL 誰の衣服を繕いますか？
+		DRAWLINE
+		PRINTFORML [1] %CALLNAME:1%
+		IF FLAG:10
+			PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11
+			PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+	
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 199
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+	
+		FLAG:6 -= 200
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 1, 0)
+			FOR LOCAL:0, 0, 20
+				TFLAG:63 = RAND:4
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+		PRINTFORML 
+		PRINTFORMW ……
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 1, 1)
+		BASE:(LOCAL:4):3 = MAXBASE:(LOCAL:4):3
+		SIF CFLAG:(LOCAL:4):40 == 0
+			CFLAG:(LOCAL:4):40 = 1
+	
+	
+	ELSEIF RESULT == 2
+		PRINTL 誰のお腹を満たしますか？
+		PRINTFORML [1] %CALLNAME:1%
+		IF FLAG:10
+			PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11
+			PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+	
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 99
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		
+		FLAG:6 -= 100
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 2, 0)
+			FOR LOCAL:0, 0, 20
+				TFLAG:63 = 3
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 2, 1)
+			IF CFLAG:(LOCAL:4):22 == 0
+				CALL RANDOM_PARASITE((LOCAL:4), 1, 1)
+			ENDIF
+	
+	
+	ELSEIF RESULT == 3
+		PRINTL 誰が喉を潤しますか？
+		PRINTFORML [1] %CALLNAME:1%
+		IF FLAG:10
+			PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11
+			PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+	
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 49
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+	
+		FLAG:6 -= 50
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 3, 0)
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 3, 1)
+		
+		;◆発情レベルパッチ
+		IF CFLAG:(LOCAL:4):28 <= 0
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は触手液漬けで【発情】してしまった！
+			CFLAG:(LOCAL:4):28 = 2
+		ELSEIF CFLAG:(LOCAL:4):28 < 4
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は触手液漬けで【発情】が悪化してしまった！
+			CFLAG:(LOCAL:4):28 += 2
+		ELSEIF CFLAG:(LOCAL:4):28 == 4
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は触手液漬けで【発情】が悪化してしまった！
+			CFLAG:(LOCAL:4):28 = 5
+		ENDIF
+		;◆◆
+		
+		;勝手に尿意増加
+		CALL ADD_BASE_NP(LOCAL:4,5+RAND:2)
+
+	
+	ELSEIF RESULT == 4
+		PRINTL 誰の能力を強化しますか？
+		PRINTFORML [1] %CALLNAME:1%
+		IF FLAG:10
+			PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11
+			PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+		
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 199
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		
+		PRINTL どの能力を強化しますか？
+		IF TALENT:(LOCAL:4):101 <= 2
+			PRINTFORML [1] Ａ感覚を上げる
+		ENDIF
+		IF TALENT:(LOCAL:4):102 <= 2
+			PRINTFORML [2] Ｂ感覚を上げる
+		ENDIF
+		IF TALENT:(LOCAL:4):103 <= 2
+			PRINTFORML [3] Ｃ感覚を上げる
+		ENDIF
+		IF TALENT:(LOCAL:4):104 <= 2
+			PRINTFORML [4] Ｖ感覚を上げる
+		ENDIF
+		IF TALENT:(LOCAL:4):130 && TALENT:(LOCAL:4):107 == 0
+			PRINTFORML [5] 胸を小さくする
+		ENDIF
+		IF TALENT:(LOCAL:4):100 < 2
+			PRINTFORML [6] 回避率を上げる
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+		
+		IF RESULT <= 0 || RESULT >= 7
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			FLAG:6 -= 200
+			IF LOCAL:4 != 1
+				PRINTFORML %CALLNAME:1%の言葉に祭壇の上の%CALLNAME:(LOCAL:4)%は顔色を変えて詰め寄ろうとした
+				PRINTFORML %CALLNAME:(LOCAL:4)%が飛び降りるより早く、無数の触手が%CALLNAME:(LOCAL:4)%を絡め取る！
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 0, LOCAL:4)
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 1, LOCAL:4)
+				CFLAG:(LOCAL:4):5 -= 15 + RAND:15
+			ELSE
+				
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 2, LOCAL:4)
+			ENDIF
+			
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 5, 0)
+			FOR LOCAL:0, 0, 15
+				TFLAG:63 = 0
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+			PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%は手足を放り出し、力なく震えている…
+			PRINTFORMW %CALLNAME:(LOCAL:4)%のお尻が敏感になった！
+			TALENT:(LOCAL:4):101 += 1
+		ELSEIF RESULT == 2
+			FLAG:6 -= 200
+			IF LOCAL:4 != 1
+				PRINTFORML %CALLNAME:1%の言葉に祭壇の上の%CALLNAME:(LOCAL:4)%は顔色を変えて詰め寄ろうとした
+				PRINTFORML %CALLNAME:(LOCAL:4)%が飛び降りるより早く、無数の触手が%CALLNAME:(LOCAL:4)%を絡め取る！
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 0, LOCAL:4)
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 1, LOCAL:4)
+				CFLAG:(LOCAL:4):5 -= 15 + RAND:15
+			ELSE
+				
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 2, LOCAL:4)
+			ENDIF
+			
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 5, 1)
+			FOR LOCAL:0, 0, 15
+				TFLAG:63 = 1
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+			PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%は手足を放り出し、力なく震えている…
+			PRINTFORMW %CALLNAME:(LOCAL:4)%の胸が敏感になった！
+			TALENT:(LOCAL:4):102 += 1
+		ELSEIF RESULT == 3
+			FLAG:6 -= 200
+			IF LOCAL:4 != 1
+				PRINTFORML %CALLNAME:1%の言葉に祭壇の上の%CALLNAME:(LOCAL:4)%は顔色を変えて詰め寄ろうとした
+				PRINTFORML %CALLNAME:(LOCAL:4)%が飛び降りるより早く、無数の触手が%CALLNAME:(LOCAL:4)%を絡め取る！
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 0, LOCAL:4)
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 1, LOCAL:4)
+				CFLAG:(LOCAL:4):5 -= 15 + RAND:15
+			ELSE
+				
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 2, LOCAL:4)
+			ENDIF
+			
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 5, 2)
+			FOR LOCAL:0, 0, 15
+				TFLAG:63 = 2
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+			IF !GET_PENIS(LOCAL:4)
+				PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%は手足を放り出し、力なく震えている…
+				PRINTFORMW %CALLNAME:(LOCAL:4)%のクリトリスが敏感になった！
+			ELSE
+				PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%は手足を放り出し、力なく震えている…
+				PRINTFORMW %CALLNAME:(LOCAL:4)%の陰茎が敏感になった！
+			ENDIF
+			TALENT:(LOCAL:4):103 += 1
+		ELSEIF RESULT == 4
+			FLAG:6 -= 200
+			IF LOCAL:4 != 1
+				PRINTFORML %CALLNAME:1%の言葉に祭壇の上の%CALLNAME:(LOCAL:4)%は顔色を変えて詰め寄ろうとした
+				PRINTFORML %CALLNAME:(LOCAL:4)%が飛び降りるより早く、無数の触手が%CALLNAME:(LOCAL:4)%を絡め取る！
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 0, LOCAL:4)
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 1, LOCAL:4)
+				CFLAG:(LOCAL:4):5 -= 15 + RAND:15
+			ELSE
+				
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 2, LOCAL:4)
+			ENDIF
+			
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 5, 3)
+				FOR LOCAL:0, 0, 15
+				TFLAG:63 = 3
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+			PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%は手足を放り出し、力なく震えている…
+			PRINTFORMW %CALLNAME:(LOCAL:4)%の膣内が敏感になった！
+			TALENT:(LOCAL:4):104 += 1
+		ELSEIF RESULT == 5
+			FLAG:6 -= 200
+			IF LOCAL:4 != 1
+				PRINTFORML %CALLNAME:1%の言葉に祭壇の上の%CALLNAME:(LOCAL:4)%は顔色を変えて詰め寄ろうとした
+				PRINTFORML %CALLNAME:(LOCAL:4)%が飛び降りるより早く、無数の触手が%CALLNAME:(LOCAL:4)%を絡め取る！
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 0, LOCAL:4)
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 1, LOCAL:4)
+				CFLAG:(LOCAL:4):5 -= 15 + RAND:15
+			ELSE
+				
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 2, LOCAL:4)
+			ENDIF
+			 
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 5, 4, LOCAL:4)
+			FOR LOCAL:0, 0, 20
+				TFLAG:63 = 1
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+			PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%は手足を放り出し、息も絶え絶えで震えている…
+			PRINTFORMW 限界以上の母乳を搾り取られ、%CALLNAME:(LOCAL:4)%の胸が少し小さくなった！
+			CALL ADD_BUST(LOCAL:4,-1,3)
+		ELSEIF RESULT == 6
+			FLAG:6 -= 200
+			IF LOCAL:4 != 1
+				PRINTFORML %CALLNAME:1%の言葉に祭壇の上の%CALLNAME:(LOCAL:4)%は顔色を変えて詰め寄ろうとした
+				PRINTFORML %CALLNAME:(LOCAL:4)%が飛び降りるより早く、無数の触手が%CALLNAME:(LOCAL:4)%を絡め取る！
+				PRINTFORMW %CALLNAME:(LOCAL:4)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 0, LOCAL:4)
+				CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 1, LOCAL:4)
+				CFLAG:(LOCAL:4):5 -= 15 + RAND:15
+			ELSE
+				CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, CALLNAME:(LOCAL:4), 4, 2, LOCAL:4)
+			ENDIF
+			
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 6, 0)
+			FOR LOCAL:0, 0, 30
+				TFLAG:63 = RAND:4
+				LOCAL:5 = RAND:5
+				CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+			NEXT
+			PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%の様子がおかしい…
+			PRINTFORMW 激しい陵辱にちからを吸い尽くされ、身体まで縮んでしまったようだ…
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は不安げな面持ちで先程よりも高く感じる天井を見上げている…
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 6, 1)
+			TALENT:(LOCAL:4):100 += 1
+		ENDIF
+	ELSEIF RESULT == 5
+		PRINTFORML 誰に武器を用意しますか？
+		IF GET_PENIS(1) == 0 && ( FLAG:520 == 1 || FLAG:520 == 2 )
+			PRINTFORML [1] %CALLNAME:1%
+		ENDIF
+		IF FLAG:10 
+			SIF GET_PENIS(FLAG:10) == 0 && ( FLAG:520 == 1 || FLAG:520 == 3 )
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11 
+			SIF GET_PENIS(FLAG:11) == 0 && ( FLAG:520 == 1 || FLAG:520 == 3 )
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+		
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 99
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		
+		FLAG:6 -= 100
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 5, 2)
+		FOR LOCAL:0, 0, 15
+			TFLAG:63 = 2
+			LOCAL:5 = RAND:5
+			CALL DAMAGE_COMMON(LOCAL:4, 2, 30*(LOCAL:5+10)* (TALENT:(LOCAL:4):(101+TFLAG:63) + 2), 50)
+		NEXT
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 7)
+		PRINTFORMW %CALLNAME:(LOCAL:4)%は【ふたなり】にされてしまった！
+		CFLAG:(LOCAL:4):42 = 1 + RAND:4 + RAND:3 + RAND:2
+		CALL SHOW_TUTORIAL(17)
+	ELSEIF RESULT == 6
+		PRINTFORML 誰の残弾を補充しますか？
+		IF GET_PENIS(1) == 1 && ( FLAG:520 == 1 || FLAG:520 == 2 )
+			PRINTFORML [1] %CALLNAME:1%
+		ENDIF
+		IF FLAG:10 
+			SIF GET_PENIS(FLAG:10) == 1 && ( FLAG:520 == 1 || FLAG:520 == 3 )
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11 
+			SIF GET_PENIS(FLAG:11) == 1 && ( FLAG:520 == 1 || FLAG:520 == 3 )
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+		
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 49
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		
+		FLAG:6 -= 50
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 9, 0)
+		PRINTFORML 　
+		PRINTFORMW …………
+		PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%の擬似陰茎は更に醜く太く大きく成長し、脈打っている
+		PRINTFORMW %CALLNAME:(LOCAL:4)%は下腹部に力が漲るのを感じた…
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 9, 1)
+			CFLAG:(LOCAL:4):42 += 10
+
+	;*************胸育たないパッチ*************************************
+	ELSEIF RESULT == 7
+		PRINTFORML 誰の母乳体質を治療しますか？
+		IF TALENT:1:130
+			PRINTFORML [1] %CALLNAME:1%
+		ENDIF
+		IF FLAG:10 
+			SIF TALENT:(FLAG:10):130
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11 
+			SIF TALENT:(FLAG:11):130
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 199
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		FLAG:6 -= 200
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 10, 0)
+		TALENT:(LOCAL:4):130 = 0
+		TALENT:(LOCAL:4):220 = 0
+		CFLAG:(LOCAL:4):506 = 0
+		PRINTFORML 　
+		PRINTFORMW ……
+		PRINTFORMW 触手から開放された%CALLNAME:(LOCAL:4)%は手足を放り出し、力なく震えている…
+		PRINTFORMW %CALLNAME:(LOCAL:4)%の母乳が吸い尽くされ【母乳体質】でなくなった！
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 10, 1)
+	;***********************************************************************************************************************
+
+	ELSEIF RESULT == 8
+		PRINTFORML 誰が入浴しますか？
+		PRINTFORML [1] %CALLNAME:1%
+		IF FLAG:10
+			PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11
+			PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+	
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 199
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		FLAG:6 -= 200
+		
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 11, 0)
+		LOCAL:5 = 5 + RAND:6
+		FOR LOCAL:0, 0, LOCAL:5
+			CALL EXTASY(LOCAL:4, RAND:4, RAND:50, 200)
+		NEXT
+		PRINTFORMW ……………
+		IF CFLAG:(LOCAL:4):28 == 0
+			CFLAG:(LOCAL:4):28 = 2
+			PRINTFORMW %CALLNAME:(LOCAL:4)%は精液風呂に浸かって【発情】してしまった！
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 11, 1)
+		ELSE
+			CFLAG:(LOCAL:4):28 += 1
+		ENDIF
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 11, 2)
+		PRINTFORMW %CALLNAME:(LOCAL:4)%は精液風呂にゆっくり浸かって体の芯から温まった！
+		;汚れ上昇
+		BASE:(LOCAL:4):5 += 200
+		;尿意増加
+		CALL ADD_BASE_NP(LOCAL:4,1+RAND:2)
+	ELSEIF RESULT == 9
+		PRINTFORML 誰のを除去しますか？
+		IF (CFLAG:1:22 && CFLAG:1:36 == 0) || CFLAG:1:151
+			PRINTFORML [1] %CALLNAME:1%
+		ENDIF
+		IF FLAG:10 && ((CFLAG:(FLAG:10):22 && CFLAG:(FLAG:10):36 == 0) || CFLAG:(FLAG:10):151)
+			PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11 && ((CFLAG:(FLAG:11):22 && CFLAG:(FLAG:11):36 == 0) || CFLAG:(FLAG:11):151)
+			PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+	
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1 && ((CFLAG:1:22 && CFLAG:1:36 == 0) || CFLAG:1:151)
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10 && ((CFLAG:(FLAG:10):22 && CFLAG:(FLAG:10):36 == 0) || CFLAG:(FLAG:10):151)
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11 && ((CFLAG:(FLAG:11):22 && CFLAG:(FLAG:11):36 == 0) || CFLAG:(FLAG:11):151)
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 199
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		FLAG:6 -= 200
+		IF CFLAG:(LOCAL:4):22 && CFLAG:(LOCAL:4):151
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 12, 0)
+			TFLAG:63 = 3
+			CALL DAMAGE_COMMON(LOCAL:4, 2, 8000 + RAND:4001, 100)
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 12, 1)
+			TFLAG:63 = 0
+			CALL DAMAGE_COMMON(LOCAL:4, 2, 8000 + RAND:4001, 100)
+		ELSEIF CFLAG:(LOCAL:4):22
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 12, 2)
+			TFLAG:63 = 3
+			CALL DAMAGE_COMMON(LOCAL:4, 2, 8000 + RAND:4001, 100)
+		ELSEIF CFLAG:(LOCAL:4):151
+			CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 12, 3)
+			TFLAG:63 = 0
+			CALL DAMAGE_COMMON(LOCAL:4, 2, 8000 + RAND:4001, 100)
+		ENDIF
+		CFLAG:(LOCAL:4):22 = 0
+		CFLAG:(LOCAL:4):23 = 0
+		CFLAG:(LOCAL:4):151 = 0
+		CFLAG:(LOCAL:4):152 = 0
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 12, 4)
+	ELSEIF RESULT == 10
+		PRINTFORML 誰の武器を改造しますか？
+		;IF (CFLAG:1:42 || TALENT:1:121) && ( FLAG:520 == 1 || FLAG:520 == 2 )
+			PRINTFORML [1] %CALLNAME:1%
+		;ENDIF
+		IF FLAG:10 
+			SIF GET_PENIS(FLAG:10) && ( FLAG:520 == 1 || FLAG:520 == 3 )
+				PRINTFORML [2] %CALLNAME:(FLAG:10)%
+		ENDIF
+		IF FLAG:11 
+			SIF GET_PENIS(FLAG:11) && ( FLAG:520 == 1 || FLAG:520 == 3 )
+				PRINTFORML [3] %CALLNAME:(FLAG:11)%
+		ENDIF
+		PRINTFORML [0] 戻る
+		INPUT
+		
+		IF RESULT <= 0 || RESULT >= 4
+			GOTO INPUT_LOOP
+		ELSEIF RESULT == 1
+			LOCAL:4 = 1
+		ELSEIF RESULT == 2 && FLAG:10
+			LOCAL:4 = FLAG:10
+		ELSEIF RESULT == 3 && FLAG:11
+			LOCAL:4 = FLAG:11
+		ENDIF
+		IF FLAG:6 <= 49
+			PRINTFORMW 捧げられる浄化力が不足しているため触手は何の反応も示さなかった…
+			GOTO INPUT_LOOP
+		ENDIF
+		
+		FLAG:6 -= 50
+		CALL FUTANARI_CUSTOMIZE_2(LOCAL:4)
+		CALL PRINT_MESSAGE(LOCAL:4, 200, 160, CALLNAME:1, "", 13)
+	;*************ユニーク武器追加パッチ*************************************
+	ELSEIF RESULT == 11
+		LOCAL:6 = EXP:1:12
+		LOCAL:7 = EXP:(FLAG:10):12
+		LOCAL:8 = EXP:(FLAG:11):12
+		LOCAL:9 = 2 * ((ABL:1:13) + (ABL:(FLAG:10):13) + (ABL:(FLAG:11):13))
+		PRINTFORML %CALLNAME:1%%TACHI()%が揃って祭壇の前に立つと、三人の股間の陰茎から立ち込める精液の臭いに反応したのか
+		PRINTFORMW 無数の触手が一斉に彼女達に襲い掛かり、その四肢に絡み付いて完全に拘束してしまった。
+		PRINTFORML 触手は三人をそれぞれ円の字に向かい合わせ、イキリ立ち今にも精を吐き出しそうな三本のイチモツを擦り合わせるように
+		PRINTFORMW 彼女達を無理矢理密着させ、竿の束を根元の部分で縛り上げ、離れられないように固定した。
+		PRINTFORMW 先走りを滴らせる三つの亀頭が、生暖かく蠢く肉質オナホールの中で扱きこすり合わされ、その強烈な快感に%CALLNAME:1%%TACHI()%は早速理性を吹き飛ばされてしまう。
+		PRINTFORML 迷宮の闇に、%CALLNAME:1%%TACHI()%による悲鳴の三重奏が奏でられる！
+		;パーティ全員が枯れ果てて戦意喪失するまで絞り続ける
+		;戦意喪失した者は弾く
+			$SUCK_AGAIN
+		;【淫乱】持ちが延々回復し続けた場合日が暮れるので安全装置、長く続くようなら強制的に死んでもらう
+		LOCAL:9 += 1
+		IF CFLAG:1:29 == 0
+			TFLAG:63 = 2
+			MP_DECREASE_RATE = (150 + LOCAL:9)
+			CALL DAMAGE_COMMON(1, 2, 60*(LOCAL:5+10)* ((TALENT:1:103 + 2) + LOCAL:9), MP_DECREASE_RATE)
+		ENDIF
+		IF CFLAG:(FLAG:10):29 == 0
+			TFLAG:63 = 2
+			MP_DECREASE_RATE = (150 + LOCAL:9)
+			CALL DAMAGE_COMMON(FLAG:10, 2, 60*(LOCAL:5+10)* ((TALENT:(FLAG:10):103 + 2) + LOCAL:9), MP_DECREASE_RATE)
+		ENDIF
+		IF CFLAG:(FLAG:11):29 == 0
+			TFLAG:63 = 2
+			MP_DECREASE_RATE = (150 + LOCAL:9)
+			CALL DAMAGE_COMMON(FLAG:11, 2, 60*(LOCAL:5+10)* ((TALENT:(FLAG:11):103 + 2) + LOCAL:9), MP_DECREASE_RATE)
+		ENDIF
+		;誰か一人でも生き残っていたら延々絞り取られる
+		IF (CFLAG:1:29 == 0 || CFLAG:(FLAG:10):29 == 0 || CFLAG:(FLAG:11):29 == 0)
+			;制限回数以下なら通常通り
+			IF LOCAL:9 <= 60
+				PRINTFORMW 触手オナホールは、まだ息のある%CALLNAME:1%%TACHI()%から全てを吸い尽くすべく、さらに激しい扱きでペニスの束を攻め立てた！
+				GOTO SUCK_AGAIN
+			;【淫乱】持ちの絶頂回復で延々続いて居たら強制的に全滅
+			ELSEIF LOCAL:9 > 60
+				PRINTFORML 必死の抵抗を続ける%CALLNAME:1%%TACHI()%にトドメを刺すべく、祭壇の触手は%CALLNAME:1%%TACHI()%の首筋に
+				PRINTFORMW 注射針のようなトゲを突き刺し、特製の超濃縮媚薬毒を注入した！
+				BASE:1:1 = 0
+				BASE:(FLAG:10):1 = 0
+				BASE:(FLAG:11):1 = 0
+				GOTO SUCK_AGAIN
+			ENDIF
+		;全滅したら射精量計算・ふたなりの形状オプションは面倒なので計算しない（玉ありだろうが無しだろうが同じ量）
+		ELSE
+			PRINTFORMW ズリュ…ズチュビュルルルルルル！！
+			PRINTFORML
+			PRINTFORMW 濁流のような水音と共に、三人の吐き出した大量のザーメンがオナホール触手に吸い上げられていく！
+			PRINTFORMW 精液を吸い尽くされ、白目を剥いたまま失神している三人の前に佇む祭壇は…
+			LOCAL:6 = EXP:1:12 - LOCAL:6
+			LOCAL:7 = EXP:(FLAG:10):12 - LOCAL:7
+			LOCAL:8 = EXP:(FLAG:11):12 - LOCAL:8
+			LOCAL:6 = LOCAL:6 + LOCAL:7 + LOCAL:8
+			IF LOCAL:6 >= 50
+				PRINTFORMW %CALLNAME:1%%TACHI()%から搾り取った膨大な量の精液によって、妊娠してしまったようだ！
+				CALL ADD_ITEM(9, 1, 0)
+				FLAG:995 = 1
+				PRINTFORMW ガタガタッ！ゴトン…
+				PRINTFORMW ・・・・・
+				PRINTFORMW 　・・・
+				PRINTFORMW 　　・
+				PRINTFORML 祭壇の下にある扉から、火炎放射器に良く似た物体が転がり落ちた。
+				PRINTFORMW ☆触手放射器を手に入れた！
+			ELSE
+				PRINTFORMW %CALLNAME:1%%TACHI()%が枯れ果てる程の精液を啜りとったにも関わらず、一向に変化が見られない。
+				PRINTFORMW まだまだ%CALLNAME:1%%TACHI()%達の力では、祭壇を孕ませるには至らないようだ。
+			ENDIF
+				CALL ADD_ABL_EXP(11, 1, RAND:20 + LOCAL:9)
+				CALL ADD_ABL_EXP(11, FLAG:10, RAND:20 + LOCAL:9)
+				CALL ADD_ABL_EXP(11, FLAG:11, RAND:20 + LOCAL:9)
+				CALL ADD_ABL_EXP(13, 1, LOCAL:9)
+				CALL ADD_ABL_EXP(13, FLAG:10, LOCAL:9)
+				CALL ADD_ABL_EXP(13, FLAG:11, LOCAL:9)
+			LOCAL:6 = 0
+			LOCAL:7 = 0
+			LOCAL:8 = 0
+			LOCAL:9 = 0
+		ENDIF
+	;**************************************************
+	ELSEIF RESULT == 12
+		IF FLAG:539 == 1
+				PRINTFORMW 『？！！！』
+				CALL QUAKE(3)
+				PRINTFORMW 恐るべき力が触手宮を満たしていくのを感じる……
+				PRINTFORML お遊びはコレまでのようだ！
+				PRINTFORMW ！！！！EPダメージ上限が解除されました！！！！
+			FLAG:539 = 0
+		ELSEIF FLAG:539 == 0
+			FLAG:539 = 1
+		ENDIF
+	ELSE
+		CALL PRINT_MESSAGE(1, 200, 160, CALLNAME:1, "", 8)
+		CALL PRINT_MESSAGE(FLAG:10, 200, 160, CALLNAME:1, "", 8)
+		CALL PRINT_MESSAGE(FLAG:11, 200, 160, CALLNAME:1, "", 8)
+	ENDIF
+	
+	PRINTFORML %CALLNAME:1%%TACHI()%はその場を後にした…
+		;同じ場所に残す
+		LOCAL:3 = 1
+ELSE
+	;見つからなかった場合（通常は何もしない）
+ENDIF
+
+RETURN LOCAL:3
+
