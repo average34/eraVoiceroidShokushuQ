@@ -178,7 +178,7 @@ ELSEIF RESULT == 1
 			CATCH
 				RoopCount += 1
 				;ループ回数が多くなったら抽選はしない
-				IF RoopCount <= 5000
+				IF RoopCount <= 3000
 					;口上本体が無い場合、再抽選
 					GOTO RANDOM_PARTNER_START
 				ENDIF
@@ -401,39 +401,33 @@ RETURNF 0
 @SELECT_RANDOM_CHARA
 #FUNCTION
 #DIM CharaNo
-#DIM LoopCount
+;#DIM LoopCount　関数を抜けてEXIST_CHARA()に行くと初期化されるため使用してはいけない
+;グローバル変数としてCharaLoopCountを定義、使用前後は初期化すること
 #DIM ExistOtoko
-CharaNo = RAND:(FLAG:2) + 1
 
-;重複許可フラグチェック
-IF FLAG:537 == 0
-	LoopCount = 0
-	DO
-		CharaNo = RAND:(FLAG:2) + 1
-		ExistOtoko = 0
-		LoopCount += 1
+CharaLoopCount = 0
+DO
+	CharaNo = RAND:(FLAG:2) + 1
+	ExistOtoko = 0
+	CharaLoopCount += 1
 
-		SIF LoopCount >= 50000
-			RETURNF -1
-		IF FLAG:オトコ出現する == 0
-			CSVTALENT CharaNo,122
-			ExistOtoko = RESULT
-			IF ExistOtoko
-				CONTINUE
-			ENDIF
-		ENDIF
-
-		;既に居るキャラが選ばれてしまったら再抽選
-	LOOP EXIST_CHARA(CharaNo) || (FLAG:オトコ出現する == 0 && ExistOtoko)
-
-ENDIF
-IF FLAG:オトコ出現する == 0
-	CSVTALENT CharaNo,122
-	ExistOtoko = RESULT
-	IF ExistOtoko
-		RESTART
+	IF CharaLoopCount >= 3000
+		PRINTL エラー：キャラ数不足のため無限ループが発生しました。
+		CharaLoopCount = 0
+		RETURNF -1
 	ENDIF
-ENDIF
+	IF FLAG:オトコ出現する == 0
+		CSVTALENT CharaNo,122
+		ExistOtoko = RESULT
+		;SIF ExistOtoko
+		;	CONTINUE
+	ENDIF
+
+	;重複許可フラグ(537)がなかった場合、既に居るキャラが選ばれてしまったら再抽選
+	;オトコ出現するフラグがなかった場合、オトコを選んだら再抽選
+LOOP (FLAG:オトコ出現する == 0 && ExistOtoko) || (FLAG:537 == 0 && EXIST_CHARA(CharaNo))
+
+;DEBUGPRINTFORML ループカウント：{CharaLoopCount},ループカウント：{QuickStartCharaLoopCount},抽選決定キャラ：{CharaNo}
 
 RETURNF CharaNo
 

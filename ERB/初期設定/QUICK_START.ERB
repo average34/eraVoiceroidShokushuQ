@@ -23,26 +23,34 @@
 	;主人公
 	;ランダム選択は口上の有無と確認するかどうかで4分岐 詳しくはCHARA_SELECT参照
 	IF FLAG:560 == 1
+		QuickStartCharaLoopCount = 0
 		$RANDOM_START
+		QuickStartCharaLoopCount += 1
 		LOCAL:1 = SELECT_RANDOM_CHARA()
 		PRINTFORML %CSVNAME(LOCAL:1, 0),14,LEFT% (戦闘素質 {CSVABL(LOCAL:1, 98, 0), 3} / 速度 {CSVABL(LOCAL:1, 97, 0), 3}) で良いですか？
 		CALL ASK_YN
 		IF RESULT == 0
 			
 		ELSE
-			GOTO RANDOM_START
+			;ループ回数が多くなったら抽選はしない
+			SIF QuickStartCharaLoopCount <= 3000
+				GOTO RANDOM_START
 		ENDIF
 	ELSEIF FLAG:560 == 2
 		LOCAL:1 = SELECT_RANDOM_CHARA()
 	ELSEIF FLAG:560 == 3
+		QuickStartCharaLoopCount = 0
 		$RANDOM_START_KOJO
+		QuickStartCharaLoopCount += 1
 		LOCAL:1 = SELECT_RANDOM_CHARA()
 		TARGET = 0
 			TRYCCALLFORM KOJO_{LOCAL:1}_0(0, 0)
 				;口上本体がある場合、決定
 			CATCH
 				;口上本体が無い場合、再抽選
-				GOTO RANDOM_START_KOJO
+				;ループ回数が多くなったら抽選はしない
+				SIF QuickStartCharaLoopCount <= 3000
+					GOTO RANDOM_START_KOJO
 			ENDCATCH
 		PRINTFORML %CSVNAME(LOCAL:1, 0),14,LEFT% (戦闘素質 {CSVABL(LOCAL:1, 98, 0), 3} / 速度 {CSVABL(LOCAL:1, 97, 0), 3}) で良いですか？
 		CALL ASK_YN
@@ -52,14 +60,18 @@
 			GOTO RANDOM_START_KOJO
 		ENDIF
 	ELSEIF FLAG:560 == 4
+		QuickStartCharaLoopCount = 0
 		$RANDOM_START_UNKNOUN
+		QuickStartCharaLoopCount += 1
 		LOCAL:1 = SELECT_RANDOM_CHARA()
 		TARGET = 0
 			TRYCCALLFORM KOJO_{LOCAL:1}_0(0, 0)
 				;口上本体がある場合、決定
 			CATCH
 				;口上本体が無い場合、再抽選
-				GOTO RANDOM_START_UNKNOUN
+				;ループ回数が多くなったら抽選はしない
+				SIF QuickStartCharaLoopCount <= 3000
+					GOTO RANDOM_START_UNKNOUN
 			ENDCATCH
 	;固定キャラ
 	ELSE
@@ -93,14 +105,18 @@
 					FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
 			;口上不問ランダム選択
 			ELSEIF FLAG:562 == 1
+				QuickStartCharaLoopCount = 0
 				$RANDOM_PARTNER_START
+				QuickStartCharaLoopCount += 1
 				FLAG:(LOCAL:0 + 20) = SELECT_RANDOM_CHARA()
 				TARGET = 0
 				TRYCCALLFORM KOJO_{FLAG:(LOCAL:0 + 20)}_0(0, 0)
 					;口上本体がある場合、決定
 				CATCH
 					;口上本体が無い場合、再抽選
-					GOTO RANDOM_PARTNER_START
+					;ループ回数が多くなったら抽選はしない
+					SIF QuickStartCharaLoopCount <= 3000
+						GOTO RANDOM_PARTNER_START
 				ENDCATCH
 			ENDIF
 		ENDIF
