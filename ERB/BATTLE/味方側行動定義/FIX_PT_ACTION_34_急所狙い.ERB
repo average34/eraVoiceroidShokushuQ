@@ -57,7 +57,7 @@ DA:ENEMY_ID:50 = 45
 IF CFLAG:CHARA_ID:50 == 134
 
 	; 【体術or剣術】を持っている
-	IF TALENT:CHARA_ID:161 >= 1
+	IF TALENT:CHARA_ID:161 >= 1 && TALENT:CHARA_ID:202 == 0
 
 		; 装備1、2ともに非消耗武器
 		IF CFLAG:CHARA_ID:8 >= 11 && CFLAG:CHARA_ID:8 <= 19
@@ -89,7 +89,7 @@ IF CFLAG:CHARA_ID:50 == 134
 		ENDIF
 
 	;【鷲の目】持ちなら全ての条件で追撃発生
-	ELSEIF TALENT:CHARA_ID:163
+	ELSEIF TALENT:CHARA_ID:163 && TALENT:CHARA_ID:202 == 0
 		PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！	
 
 		; 装備2に消耗武器装備 & 残弾2以上なら射撃弱攻撃

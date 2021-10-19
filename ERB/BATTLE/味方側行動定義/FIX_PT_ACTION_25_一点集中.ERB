@@ -50,7 +50,7 @@ CALL PRINT_MESSAGE(CHARA_ID, 1, 25, CALLNAME:CHARA_ID, "")
 ; ここから連撃パッチ、装備の組み合わせによってTFLAG:99が変動
 ; 連撃可能かどうかをチェック
 ;【鷲の目】を持ち、後列から攻撃した
-IF TALENT:CHARA_ID:163 && CFLAG:CHARA_ID:34 == 0 
+IF TALENT:CHARA_ID:163 && CFLAG:CHARA_ID:34 == 0 && TALENT:CHARA_ID:202 == 0
 	; 装備1と2が同じ装備で残弾が2以上あった場合は通常の二丁撃ちなので弾く
 	IF (CFLAG:CHARA_ID:7 == CFLAG:CHARA_ID:8) && CFLAG:CHARA_ID:18 >= 2 && CFLAG:CHARA_ID:17 >= 2
 		TFLAG:99 = 63
