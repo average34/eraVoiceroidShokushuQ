@@ -1023,6 +1023,109 @@ SELECTCASE CFLAG:108
 			;おいしいですけど
 			CASE "いですけど"
 				RETURNF "いんだが"
+			
+			CASEELSE
+				THROW 定義されていない語尾です
+				RETURNF "エラー"
+		ENDSELECT
+
+
+;---------------------------------------
+;なのだ系
+;それ以上でも以下でもないのだ
+;---------------------------------------
+	CASE 8
+		SELECTCASE Gobi
+			;名詞接続＋終止形・連体形 食事です！
+			;形容動詞の語幹もくっつくことがある　静かです！
+			CASE "です"
+				RETURNF "なのだ"
+			;食事ですか
+			CASE "ですか"
+				RETURNF "なのか"
+			;食事ですね
+			CASE "ですね"
+				RETURNF "なのだ"
+			;食事ですよ
+			CASE "ですよ"
+				RETURNF "なのだ"
+			;食事ですけど
+			CASE "ですけど"
+				RETURNF "だけど"
+			;食事ですかね
+			CASE "ですかね"
+				RETURNF "かなのか"
+
+			;名詞接続＋未然形 食事でしょう！
+			CASE "でしょう"
+				RETURNF "なのだ"
+			;食事でしょ
+			CASE "でしょ"
+				RETURNF "なのだ"
+			;食事でしょうか
+			CASE "でしょうか"
+				RETURNF "なのか"
+			;食事でしょうね
+			CASE "でしょうね"
+				RETURNF "なのだ"
+			;食事でしょうよ
+			CASE "でしょうよ"
+				RETURNF "なのだ"
+			;食事でしょうけど
+			CASE "でしょうけど"
+				RETURNF "だけど"
+
+			;名詞接続＋連用形 シカでした！
+			CASE "でした"
+				RETURNF "だったのだ"
+			;シカでしたか
+			CASE "でしたか"
+				RETURNF "だったのか"
+			;シカでしたね
+			CASE "でしたね"
+				RETURNF "だったのだ"
+			;シカでしたよ
+			CASE "でしたよ"
+				RETURNF "だったのだ"
+			;シカでしたけど
+			CASE "でしたけど"
+				RETURNF "だったけど"
+
+
+			;助詞「の」の撥音便接続 食べるんです！
+			CASE "んです"
+				RETURNF "のだ"
+			;食べるんですか
+			CASE "んですか"
+				RETURNF "のか"
+			;食べるんですね
+			CASE "んですね"
+				RETURNF "のだ"
+			;食べるんですよ
+			CASE "んですよ"
+				RETURNF "のだ"
+			;食べるんですけど
+			CASE "んですけど"
+				RETURNF "けど"
+			;食べるんでしょう
+			CASE "んでしょう"
+				RETURNF "のだ"
+				
+			;形容詞接続 おいしいです！　食べないです！（助動詞・補助形容詞「ない」も含む）
+			CASE "いです"
+				RETURNF "いのだ"
+			;おいしいですか
+			CASE "いですか"
+				RETURNF "いのか"
+			;おいしいですね
+			CASE "いですね"
+				RETURNF "いのだ"
+			;おいしいですよ
+			CASE "いですよ"
+				RETURNF "いのだ"
+			;おいしいですけど
+			CASE "いですけど"
+				RETURNF "いけど"
 
 
 			CASEELSE

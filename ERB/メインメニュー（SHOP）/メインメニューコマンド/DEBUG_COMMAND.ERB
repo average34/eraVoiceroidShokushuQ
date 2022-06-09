@@ -32,6 +32,7 @@ WHILE 1
 	PRINTL [18] 乳サイズ変更テスト
 	PRINTL [19] 妊娠と寄生の管理
 	PRINTL [20] 敵の攻撃チェック
+	PRINTL [37] 触手服稼働
 	;石ころ帽子着用
 	PRINTL
 	PRINTL [ 0] 戻る
@@ -85,6 +86,8 @@ WHILE 1
 		CALL DEBUG_COMMAND_妊娠と寄生の管理
 	ELSEIF RESULT == 20
 		CALL DEBUG_COMMAND_敵の攻撃チェック
+	ELSEIF RESULT == 37
+		CALL DEBUG_COMMAND_触手服
 	ELSE
 		CLEARLINE 1
 		REUSELASTLINE 入力が不正です！
@@ -92,6 +95,22 @@ WHILE 1
 	ENDIF
 WEND
 REDRAW 1
+
+;=================================================
+;触手服
+;=================================================
+@DEBUG_COMMAND_触手服
+#DIM LCOUNT
+
+;触手スーツ処理
+FOR LCOUNT, 1, CHARANUM
+	IF CFLAG:(LCOUNT):37
+		CALL SHOW_TUTORIAL(21)
+	ENDIF
+	CALL CHECK_SYOKUSYUSUIT(LCOUNT)
+NEXT
+
+RETURN
 
 ;=================================================
 ;全キャラステータス表示
@@ -3706,7 +3725,9 @@ RETURN
 #DIM LAST_ENEMY_NUM
 #DIM LAST_PAGE
 #DIM LIST_NUM = 20
+#DIM LIST_NUM_ATTACK = 100
 #DIM USAGE
+#DIM RECOVERY
 
 ;DIM
 ;DEL_LINE		行削除用
@@ -3722,8 +3743,8 @@ RETURN
 PRINTL 誰に攻撃しますか？
 
 FOR LCOUNT, 1, CHARANUM
-	PRINTFORM [{LCOUNT}] %CALLNAME:LCOUNT,16,LEFT%
-	IF LCOUNT % 3 == 3
+	PRINTFORM [{LCOUNT,2}] %CALLNAME:LCOUNT,14,LEFT%
+	IF LCOUNT % 5 == 0
 		PRINTL 
 	ENDIF
 NEXT
@@ -3741,11 +3762,26 @@ ELSE
 	キャラID = RESULT
 ENDIF
 
+PRINTL 攻撃後、回復させますか？
+
+PRINTL [ 1] はい
+PRINTL [ 0] いいえ
+
+$INPUT_LOOP_4
+INPUT
+
+IF RESULT == 0
+	RECOVERY = 0
+ELSE
+	RECOVERY = 1
+ENDIF
+
+
 PRINTFORML どの敵が攻撃しますか？
 PRINTL
 ;図鑑処理流用
 PAGE = 0
-USAGE = 1
+USAGE = 2;1
 
 $START
 DEL_LINE = LINECOUNT
@@ -3785,17 +3821,62 @@ ELSE
 	GOTO INPUT_LOOP_2
 ENDIF
 
-
+PAGE = 0
 
 $INPUT_LOOP_3
+PRINTL 
 PRINTL どの攻撃をしますか？攻撃番号を入力してください
 PRINTL 参照：資料とか→敵の攻撃コマンド一覧.txt
 ;誰かSHOW_SYSTEM_MESSAGE_INFO.ERBのコマンド一覧使ってよさげなの作ってもいいのよ
+$START_ATTACK
+CALL DEBUG_OUTPUT_ATTACK_LIST(PAGE, LIST_NUM_ATTACK, USAGE)
+LAST_PAGE = RESULT:0
+LAST_ENEMY_NUM = RESULT:1
+DRAWLINE
+
+PRINTL
+PRINTL [ 0] キャンセル
+
 INPUT
 
 攻撃番号 = RESULT
 
+IF RESULT == 0
+	PRINTL 終了
+	RETURN
+ELSEIF RESULT == 7777
+	;前ページへ
+	PAGE -= 1
+	SIF PAGE < 0
+		PAGE = LAST_PAGE
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START_ATTACK
+ELSEIF RESULT == 9999
+	;次ページへ
+	PAGE += 1
+	SIF PAGE > LAST_PAGE
+		PAGE = 0
+	CLEARLINE LINECOUNT - DEL_LINE
+	GOTO START_ATTACK
+ENDIF
+
 CALL ENEMY_ATTACK(キャラID,攻撃番号,敵の種類)
+
+IF 攻撃番号 == 0
+	PRINTL 終了
+ELSE
+	IF RECOVERY == 1
+		BASE:キャラID:0 = MAXBASE:キャラID:0
+		BASE:キャラID:1 = MAXBASE:キャラID:1
+		BASE:キャラID:2 = MAXBASE:キャラID:2
+		BASE:キャラID:3 = MAXBASE:キャラID:3
+		BASE:キャラID:4 = 100
+		BASE:キャラID:5 = 0
+		BASE:キャラID:6 = 0
+		CFLAG:キャラID:29 = 0
+	ENDIF
+	GOTO INPUT_LOOP_3
+ENDIF
 
 ;---------------------------------
 
@@ -4082,5 +4163,96 @@ PRINTC [999] 次のページ
 PRINTL 
 ;最終ページと最後の敵番号を返す
 RETURN LAST_PAGE, LAST_ENEMY_NUM
+
+;---------------------------------
+
+
+
+;---------------------------------
+;敵の攻撃番号と名前をリスト出力する処理
+;RETURN 0:最後のページ数 1:最後の敵番号
+;---------------------------------
+@DEBUG_OUTPUT_ATTACK_LIST(PAGE, LIST_NUM, USAGE)
+#DIM LCOUNT,2
+#DIM PAGE
+#DIM LAST_ATTACK_NUM
+#DIM LAST_PAGE
+#DIM LIST_NUM
+#DIM USAGE
+#DIM OUTPUT_NUM = 0
+#DIM OUTPUT_SUM = 0
+#DIM STR_LENGTH
+
+OUTPUT_NUM = 0
+OUTPUT_SUM = 0
+
+SIF USAGE >= 0
+	DRAWLINE
+;リスト部分を表示
+
+PRINTFORML =={1+LIST_NUM*PAGE}～{(LIST_NUM)+LIST_NUM*PAGE}を表示中==
+PRINTL
+FOR LCOUNT, (1+LIST_NUM*PAGE), ((1+LIST_NUM)+LIST_NUM*PAGE)
+
+	LOCALS:0 = %SHOW_SYSTEM_MESSAGE_INFO_GET_ENEMY_ATTACK_COMMAND(LCOUNT)%
+
+	IF LOCALS:0 == "攻撃コマンドの説明がありません"
+		IF OUTPUT_NUM % 2 == 1 && LCOUNT % LIST_NUM == 0
+			PRINTL
+		ENDIF
+		;表示対象が無かった場合
+		IF LCOUNT % LIST_NUM == 0 && OUTPUT_SUM == 0
+			PRINTFORML                             **この範囲には有効な敵の攻撃がありません**
+		ENDIF
+		CONTINUE
+	ELSE
+		LOCAL:0 = 2
+	ENDIF
+
+	STRLENS LOCALS:0
+	STR_LENGTH = RESULT
+	;PRINTFORM {STR_LENGTH}
+	
+	;右側出力時
+	IF OUTPUT_NUM % 2 == 1 && STR_LENGTH > 41
+		OUTPUT_NUM = 0
+		PRINTL
+	ENDIF
+	
+	SELECTCASE LOCAL:0
+		CASE 2 ;通常表示（選択可能）
+			PRINTFORM [{LCOUNT,4}] %LOCALS:0, 41, LEFT%
+			OUTPUT_NUM++
+			OUTPUT_SUM++
+		CASEELSE
+	ENDSELECT
+	
+	;偶数で改行
+	IF OUTPUT_NUM % 2 == 0 && OUTPUT_NUM > 0
+		OUTPUT_NUM = 0
+		PRINTL
+	;半角41文字以上で改行
+	ELSEIF STR_LENGTH > 41
+		OUTPUT_NUM = 0
+		PRINTL
+	ENDIF
+	
+	;そのページの最終項目だが左側出力だった場合改行
+	IF OUTPUT_NUM % 2 == 1 && LCOUNT % LIST_NUM == 0
+		PRINTL
+	ENDIF
+NEXT
+
+;最後の要素があるページ数を出す
+LAST_ATTACK_NUM = 3000
+LAST_PAGE = (LAST_ATTACK_NUM-1) / LIST_NUM
+
+DRAWLINE
+PRINTLC [7777] 前のページ
+PRINTFORMLC           Page({PAGE + 1}/{LAST_PAGE + 1})
+PRINTC [9999] 次のページ
+PRINTL 
+;最終ページと最後の敵番号を返す
+RETURN LAST_PAGE, LAST_ATTACK_NUM
 
 ;---------------------------------

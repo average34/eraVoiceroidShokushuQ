@@ -15,7 +15,7 @@ DA:(ARG:0):17 = 80
 DA:(ARG:0):18 = 80
 DA:(ARG:0):19 = 10
 
-;触手で防御するので近接武器に強い　目に当たるので攻撃や炎は苦手
+;触手で防御するので近接武器に強い　目に当たるので弾幕や炎は苦手
 DA:(ARG:0):40 = 110
 DA:(ARG:0):41 = 120
 DA:(ARG:0):43 = 120
@@ -70,7 +70,7 @@ IF LOCAL:1 > 0
 			;既に戦意喪失している場合、一定確率で解放する
 			LOCAL:2 = 1
 		ELSE
-			LOCAL:3 = RAND:14
+			LOCAL:3 = RAND:15
 			SELECTCASE LOCAL:3
 				CASE 0 TO 1
 					LOCAL:2 = 679
@@ -86,6 +86,8 @@ IF LOCAL:1 > 0
 					LOCAL:2 = 993
 				CASE 12
 					LOCAL:2 = 994
+				CASE 13
+					LOCAL:2 = 1058
 				CASEELSE
 					LOCAL:2 = 840
 			ENDSELECT

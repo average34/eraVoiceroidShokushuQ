@@ -216,6 +216,26 @@ ELSE
 							PRINTW 
 						ENDIF
 					ENDIF
+;敵攻撃発動時の画像表示★★★★★
+				ELSE
+					SPRITECREATED @"NNN_%STR:1%_%STR:2%"
+					IF RESULT
+						HTML_PRINT @"<img src='%"NNN_"+STR:1+"_"+STR:2%' height='2500'>"
+						FOR LOCAL , 0 , 23
+							PRINTL 
+						NEXT
+						PRINTW 
+					ELSE
+						SPRITECREATED @"NNN_%STR:1%"
+						IF RESULT
+							HTML_PRINT @"<img src='%"NNN_"+STR:1%' height='2500'>"
+							FOR LOCAL , 0 , 23
+								PRINTL 
+							NEXT
+							PRINTW 
+						ENDIF
+					ENDIF
+;敵攻撃発動時の画像表示★★★★★
 				ENDIF
 			ENDIF
 		ENDIF

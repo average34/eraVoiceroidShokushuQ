@@ -4,6 +4,7 @@
 ;これに値が入っている場合は、レイプチェックも飛ばされる
 ;-----------------------------------
 @PET_RAPE(ARG:0)
+#DIM LCOUNT
 
 ;----対象未設定の場合、チェックと対象確定----
 IF !ARG:0
@@ -30,126 +31,135 @@ ENDIF
 
 TRYCALLFORM SET_ENEMY_DATA{PET:0}(0)
 
-;----技IDの確定----
-;リストがない場合はリビングバイン
-TRYCCALLFORM SELECT_PET_RAPE_ACTION_{PET:0}
-CATCH
-	CALLFORM SELECT_PET_RAPE_ACTION_5
-ENDCATCH
+LOCAL = 0
+FOR LCOUNT, 0, 4
+	;----技IDの確定----
+	;リストがない場合はリビングバイン
+	TRYCCALLFORM SELECT_PET_RAPE_ACTION_{PET:0}
+	CATCH
+		CALLFORM SELECT_PET_RAPE_ACTION_5
+	ENDCATCH
 
-;----一応転写----
-DA:0:50 = PET:50
-DA:0:20 = PET:51
-DA:0:51 = PET:51
-TFLAG:50 = PET:50
+	;----一応転写----
+	DA:0:50 = PET:50
+	DA:0:20 = PET:51
+	DA:0:51 = PET:51
+	TFLAG:50 = PET:50
 
-;----戦闘中フラグ----
-;もしもこの関数を戦闘中に呼び出した場合、戦闘中に0になるのを防ぐ
-TFLAG:13 += 1
+	;----戦闘中フラグ----
+	;もしもこの関数を戦闘中に呼び出した場合、戦闘中に0になるのを防ぐ
+	TFLAG:13 += 1
 
-;----技データ呼び出し----
-TFLAG:57 = PET:10
-TRYCALLFORM FIX_ENEMY_ACTION_{DA:0:50}(0)
-;----必中させるための処理----
-TFLAG:61 = 99999
-CFLAG:(PET:51):24 = 1
-;----戦闘中フラグ終了----
-;もしも戦闘中に呼び出した場合、戦闘中に0になるのを防ぐ
-TFLAG:13 -= 1
+	;----技データ呼び出し----
+	TFLAG:57 = PET:10
+	TRYCALLFORM FIX_ENEMY_ACTION_{DA:0:50}(0)
+	;----必中させるための処理----
+	TFLAG:61 = 99999
+	CFLAG:(PET:51):24 = 1
+	;----戦闘中フラグ終了----
+	;もしも戦闘中に呼び出した場合、戦闘中に0になるのを防ぐ
+	TFLAG:13 -= 1
 
-;----屈服度補正----
-;技の種類に応じて補正具合が違います
-SELECTCASE TFLAG:55
-	CASE 1
-		LOCAL = CFLAG:(PET:51):400
-	CASE 2
-		LOCAL = CFLAG:(PET:51):400 / 3
-	CASE 3
-		LOCAL = CFLAG:(PET:51):400
-	CASE 4
-		LOCAL = CFLAG:(PET:51):400 / 2
-	CASE 5
-		LOCAL = CFLAG:(PET:51):400 / 4
-ENDSELECT
+	;----屈服度補正----
+	;技の種類に応じて補正具合が違います
+	SELECTCASE TFLAG:55
+		CASE 1
+			LOCAL = CFLAG:(PET:51):400
+		CASE 2
+			LOCAL = CFLAG:(PET:51):400 / 3
+		CASE 3
+			LOCAL = CFLAG:(PET:51):400
+		CASE 4
+			LOCAL = CFLAG:(PET:51):400 / 2
+		CASE 5
+			LOCAL = CFLAG:(PET:51):400 / 4
+	ENDSELECT
+	
 
-IF TALENT:(PET:51):ペット
-	LOCAL = LOCAL * 3 / 2
-ELSEIF TALENT:(PET:51):触手使役術
-	LOCAL = LOCAL * 2 / 3
-ENDIF
+	IF TALENT:(PET:51):ペット
+		LOCAL = LOCAL * 3 / 2
+	ELSEIF TALENT:(PET:51):触手使役術
+		LOCAL = LOCAL * 2 / 3
+	ENDIF
 
-TFLAG:58 += LOCAL
-
-
-;----実処理----
-CALL FIX_BATTLE_ACTION
-;----好感度加算----
-SELECTCASE PET_LIKE()
-	CASE 3
-		PET:22 += 3
-	CASE 2
-		PET:22 += 5 + RAND:4
-	CASE 1
-		PET:22 += 5 + RAND:6
-	CASE 0
-		PET:22 += 8 + RAND:6
-ENDSELECT
-
-SIF TALENT:(PET:51):触手使役術
-	PET:22 += 1 + RAND:3
-
-;----栄養価の計算----
-;受け手の各能力を合算
-LOCAL = MAX((ABL:(PET:51):Ａ感覚 + ABL:(PET:51):Ｂ感覚 + ABL:(PET:51):Ｃ感覚 + ABL:(PET:51):Ｖ感覚 + ABL:(PET:51):自慰中毒 + ABL:(PET:51):触手中毒 + ABL:(PET:51):射精中毒 + ABL:(PET:51):レズ中毒 + ABL:(PET:51):精液中毒), 8)
-;ランクボーナス
-SELECTCASE PET:1
-	CASE 4, 5
-		LOCAL = LOCAL + 3 + RAND:3
-	CASE 1, 2, 3
-		LOCAL = LOCAL + 3 + RAND:5
-ENDSELECT
-
-;おねだりを使用していたらボーナス
-SIF CFLAG:(PET:51):50 >= 54 && CFLAG:(PET:51):50 <= 58
-	LOCAL = LOCAL * 12 / 10
-
-CALL PET_ADD_EXP(LOCAL, CALLNAME:(PET:51) + "の身体")
-
-;----満腹度加算----
-SELECTCASE PET_STARVE()
-	CASE 3
-		LOCAL = RAND:3
-	CASE 2
-		LOCAL = RAND:3 + 2
-	CASE 1
-		LOCAL = RAND:4 + 3
-	CASE 0
-		LOCAL = RAND:6 + 4
-ENDSELECT
-PET:20 += LOCAL
-SETCOLOR 0x10EEEE
-PRINTFORML 満腹度が上昇した！
-RESETCOLOR
-PRINTFORML 現在の満腹度:%PET_STARVE_STR()%
-
-;----屈服度加算----
-;レイプの場合は大きく入る
-;身体を捧げた場合、複数回加算されるので小さめ
-IF ARG:0
-	CFLAG:(PET:51):400 += RAND:5 + 3
-ELSE
-	CFLAG:(PET:51):400 += RAND:10 + 5
-ENDIF
-SIF TALENT:(PET:51):ペット
-	CFLAG:(PET:51):400 += 3
+	TFLAG:58 += LOCAL
 
 
-;----中出しされた場合転写----
-IF CFLAG:(PET:51):60
-	CFLAG:(PET:51):401 += CFLAG:(PET:51):60
-	CFLAG:(PET:51):57 = 0
-	CFLAG:(PET:51):60 = 0
-ENDIF
+	;----実処理----
+	CALL FIX_BATTLE_ACTION
+	;----好感度加算----
+	SELECTCASE PET_LIKE()
+		CASE 3
+			PET:22 += 3
+		CASE 2
+			PET:22 += 5 + RAND:4
+		CASE 1
+			PET:22 += 5 + RAND:6
+		CASE 0
+			PET:22 += 8 + RAND:6
+	ENDSELECT
+
+	SIF TALENT:(PET:51):触手使役術
+		PET:22 += 1 + RAND:3
+
+	;----栄養価の計算----
+	;受け手の各能力を合算
+	LOCAL = MAX((ABL:(PET:51):Ａ感覚 + ABL:(PET:51):Ｂ感覚 + ABL:(PET:51):Ｃ感覚 + ABL:(PET:51):Ｖ感覚 + ABL:(PET:51):自慰中毒 + ABL:(PET:51):触手中毒 + ABL:(PET:51):射精中毒 + ABL:(PET:51):レズ中毒 + ABL:(PET:51):精液中毒), 8)
+	;ランクボーナス
+	SELECTCASE PET:1
+		CASE 4, 5
+			LOCAL = LOCAL + 3 + RAND:3
+		CASE 1, 2, 3
+			LOCAL = LOCAL + 3 + RAND:5
+	ENDSELECT
+
+	;おねだりを使用していたらボーナス
+	SIF CFLAG:(PET:51):50 >= 54 && CFLAG:(PET:51):50 <= 58
+		LOCAL = LOCAL * 12 / 10
+
+	CALL PET_ADD_EXP(LOCAL, CALLNAME:(PET:51) + "の身体")
+
+	;----満腹度加算----
+	SELECTCASE PET_STARVE()
+		CASE 3
+			LOCAL = RAND:3
+		CASE 2
+			LOCAL = RAND:3 + 2
+		CASE 1
+			LOCAL = RAND:4 + 3
+		CASE 0
+			LOCAL = RAND:6 + 4
+	ENDSELECT
+	PET:20 += LOCAL
+	SETCOLOR 0x10EEEE
+	PRINTFORML 満腹度が上昇した！
+	RESETCOLOR
+	PRINTFORML 現在の満腹度:%PET_STARVE_STR()%
+
+	;----屈服度加算----
+	;レイプの場合は大きく入る
+	;身体を捧げた場合、複数回加算されるので小さめ
+	IF ARG:0
+		CFLAG:(PET:51):400 += RAND:5 + 3
+	ELSE
+		CFLAG:(PET:51):400 += RAND:10 + 5
+	ENDIF
+	SIF TALENT:(PET:51):ペット
+		CFLAG:(PET:51):400 += 3
+
+
+	;----中出しされた場合転写----
+	IF CFLAG:(PET:51):60
+		CFLAG:(PET:51):401 += CFLAG:(PET:51):60
+		CFLAG:(PET:51):57 = 0
+		CFLAG:(PET:51):60 = 0
+	ENDIF
+
+	;拘束攻撃だとさらに行動
+	IF TFLAG:55 != 4
+		BREAK
+	ENDIF
+NEXT
 
 ;----あとしまつ----
 DA:0:50 = 0

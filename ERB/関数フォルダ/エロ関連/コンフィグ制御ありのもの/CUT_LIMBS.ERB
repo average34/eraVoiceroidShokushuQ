@@ -1,16 +1,17 @@
 ﻿;四肢や翼を喪失する
 ;とりあえず片腕だけだけど他に拡張できるように準備はする
-;切断が発生した場合1を返す
+;喪失が発生した場合1を返す
 
 ;ARG
 ;0	対象キャラID
-;1	部位　0:左腕　1:右腕　2:軸足　3:利き足　4:羽・翼
+;1	部位　0:左腕　1:右腕　2:軸足　3:利き足　4:羽・翼　5:右目　6:左目
 ;2	成功率
-;3	喪失レベル
+;3	喪失レベル、失う量的なやつ
 ;4	喪失させてくる敵ID
 
-@CUT_LIMBS(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4)
+@CUT_LIMBS(ARG:0, CUT_PARTS, CUT_RATE, ARG:3, ARG:4)
 #DIM CUT_RATE
+#DIM CUT_PARTS
 
 ;残虐度表現が低いコンフィグだと発生しない
 IF FLAG:507 <= 1
@@ -18,15 +19,25 @@ IF FLAG:507 <= 1
 ENDIF
 
 ;成功しなければ戻る
-IF ARG:2 < RAND:100
+IF CUT_RATE < RAND:100
 	RETURN 0
 ELSE
-	;すでに腕がなくても戻る
-	IF TALENT:(ARG:0):202 == 1
-		RETURN 0
-	ELSE
-		;成功した場合
-		TALENT:(ARG:0):202 = 1
+	IF CUT_PARTS >= 0 && CUT_PARTS <= 3
+		;すでに腕がなくても戻る
+		IF TALENT:(ARG:0):左腕喪失 == 1
+			RETURN 0
+		ELSE
+			;成功した場合
+			TALENT:(ARG:0):左腕喪失 = 1
+		ENDIF
+	ELSEIF CUT_PARTS >= 5 && CUT_PARTS <= 6
+		;すでに目がなくても戻る
+		IF TALENT:(ARG:0):右目喪失 == 1
+			RETURN 0
+		ELSE
+			;成功した場合
+			TALENT:(ARG:0):右目喪失 = 1
+		ENDIF
 	ENDIF
 ENDIF
 
