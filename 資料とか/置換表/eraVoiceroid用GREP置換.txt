@@ -6,11 +6,11 @@ AUTOMODE構文
 =============================
 
 置換前
-(\t*)PRINTFORMW (.+\n)
+(\t*)PRINTFORMW (.+\r*\n)
 置換後
 $1PRINTFORML $2$1CALL WAIT_AUTOMODE(400, 0)
 
-※置換用の関数は
+※置換後の関数WAIT_AUTOMODEは
 IF FLAG:AUTOMODE
 	TWAIT FLAG:AUTOMODE * 400, 0
 ELSE
@@ -21,6 +21,14 @@ ENDIF
 -------------------------------------
 
 置換前
-(\t*)IF FLAG:AUTOMODE.*\r\n\t*TWAIT FLAG:AUTOMODE \* (.+)\r\n\t*ELSE\r\n\t*WAIT\r\n\t*ENDIF
+(\t*)IF FLAG:AUTOMODE.*\r*\n\t*TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t*ELSE *\r*\n\t*WAIT *\r*\n\t*ENDIF
 置換後
 $1CALL WAIT_AUTOMODE($2)
+
+-------------------------------------
+
+置換前
+(\t*)IF FLAG:AUTOMODE.*\r*\n\t*PRINTFORML(.+\r*\n)\t*TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t*ELSE *\r*\n\t*PRINTFORMW(.+\r*\n)\t*ENDIF
+置換後
+$1PRINTFORML$2$1CALL WAIT_AUTOMODE($3)
+

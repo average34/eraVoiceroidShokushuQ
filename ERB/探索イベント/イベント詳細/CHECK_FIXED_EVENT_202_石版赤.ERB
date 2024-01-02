@@ -91,11 +91,7 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:202 >= 100
 	
 	;どの場合でもイベントをその場に残す
 	LOCAL:3 = 1
-	IF FLAG:AUTOMODE
-		TWAIT FLAG:AUTOMODE * 500, 0
-	ELSE
-		WAIT
-	ENDIF
+	CALL WAIT_AUTOMODE(500, 0)
 ELSE
 	;見つからなかった場合（通常は何もしない）
 ENDIF
