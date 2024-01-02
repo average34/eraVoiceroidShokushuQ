@@ -407,7 +407,7 @@ SELECTCASE ARG:0
 			PRINTFORML しかし%ARGS:1%はもう何も持っていなかった…
 			CALL WAIT_AUTOMODE(400, 0)
 		ELSE	
-			PRINTFORMW しかし何も貰う事はできなかった…
+			PRINTFORML しかし何も貰う事はできなかった…
 			CALL WAIT_AUTOMODE(400, 0)
 		ENDIF
 	CASE 107
@@ -647,8 +647,10 @@ SELECTCASE ARG:0
 					PRINTFORML %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
 					TWAIT FLAG:AUTOMODE * 400, 0
 				ELSE
-					PRINTFORMW %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
-					PRINTFORMW 産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
+					PRINTFORML %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
+					CALL WAIT_AUTOMODE(400, 0)
+					PRINTFORML 産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			ELSE
 				;母親が人間＝半人半妖　　母親が妖怪＝半妖半触手　みたいな
@@ -1966,7 +1968,8 @@ SELECTCASE ARG:0
 	CASEELSE
 		TRYCCALLFORM SYSTEM_MESSAGE_{ARG:0}(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 		CATCH
-			PRINTFORMW (SYSTEM_MESSAGE)未実装のメッセージID {ARG:0} が指定されました ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+			PRINTFORML (SYSTEM_MESSAGE)未実装のメッセージID {ARG:0} が指定されました ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+			CALL WAIT_AUTOMODE(400, 0)
 		ENDCATCH
 ENDSELECT
 

@@ -99,7 +99,8 @@ IF LOCAL:2 >= LOCAL:1
 	IF RESULT == 0
 		IF RAND:2 == 0 || LOCAL:13 == 4
 			PRINTFORML %CALLNAME:1%%TACHI()%が体当たりすると、壁は簡単に崩れてしまった！
-			PRINTFORMW 移動できる通路が増えました！
+			PRINTFORML 移動できる通路が増えました！
+			CALL WAIT_AUTOMODE(400, 0)
 			CALL PRINT_MESSAGE(1, 200, 144, CALLNAME:1, "", 1)
 			CALL PRINT_MESSAGE(FLAG:10, 200, 144, CALLNAME:1, "", 1)
 			CALL PRINT_MESSAGE(FLAG:11, 200, 144, CALLNAME:1, "", 1)
@@ -110,7 +111,8 @@ IF LOCAL:2 >= LOCAL:1
 		ELSE
 			PRINTFORML %CALLNAME:1%%TACHI()%が体当たりすると、%CALLNAME:1%%TACHI()%は壁に呑み込まれてしまった！
 			PRINTFORML どうやら壁に擬態していた軟体妖怪のようだ…
-			PRINTFORMW 壁に呑み込まれた%CALLNAME:1%%TACHI()%は全身を激しく愛撫されている！
+			PRINTFORML 壁に呑み込まれた%CALLNAME:1%%TACHI()%は全身を激しく愛撫されている！
+			CALL WAIT_AUTOMODE(400, 0)
 			CALL PRINT_MESSAGE(1, 200, 144, CALLNAME:1, "", 2)
 			LOCAL:9 = 5 + RAND:6
 			FOR LOCAL:0, 0, LOCAL:9

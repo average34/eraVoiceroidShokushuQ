@@ -4,11 +4,12 @@
 =============================
 AUTOMODE構文
 =============================
+基本構文　やばいくらい広範囲なので注意
 
 置換前
-(\t* *)PRINTFORMW (.+\r*\n)
+^(?!;)(\t* *)PRINT(|FORM)W (.+\r*\n)
 置換後
-$1PRINTFORML $2$1CALL WAIT_AUTOMODE(400, 0)
+$1PRINT$2L $3$1CALL WAIT_AUTOMODE(400, 0)
 
 ※置換後の関数WAIT_AUTOMODEは
 IF FLAG:AUTOMODE

@@ -294,8 +294,10 @@ RETURNF 0
 		;おもらし少女は触手の夢を見るか？
 		IF 夢の種類 == "悪夢"
 			PRINTFORM 眠っている%CALLNAME:(キャラID)%の体がビクビクと震え息が荒くなり始めた。
-			PRINTFORMW どうやら夢の中で触手に犯されているようだ…
-			PRINTFORMW 絶頂させられたのか%CALLNAME:(キャラID)%の身体が跳ねた後弛緩し、
+			PRINTFORML どうやら夢の中で触手に犯されているようだ…
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORML 絶頂させられたのか%CALLNAME:(キャラID)%の身体が跳ねた後弛緩し、
+			CALL WAIT_AUTOMODE(400, 0)
 			
 		ELSEIF 夢の種類 == "普通"
 			PRINTFORM 眠っている%CALLNAME:(キャラID)%の体がピクンと震えたかと思うと、
@@ -333,9 +335,11 @@ RETURNF 0
 			PRINTFORML 目が覚めて、自分の惨状に気づいた%CALLNAME:(キャラID)%は悔しそうな表情を浮かべつつ
 			
 		ELSEIF 夢の種類 == "普通"
-			PRINTFORMW %CALLNAME:(キャラID)%の表情は安心感に緩んでいる…
+			PRINTFORML %CALLNAME:(キャラID)%の表情は安心感に緩んでいる…
+			CALL WAIT_AUTOMODE(400, 0)
 			IF FLAG:522 == 1
-				PRINTFORMW どうやら夢の中でトイレをしているようだ。
+				PRINTFORML どうやら夢の中でトイレをしているようだ。
+				CALL WAIT_AUTOMODE(400, 0)
 			ELSE
 			
 			ENDIF

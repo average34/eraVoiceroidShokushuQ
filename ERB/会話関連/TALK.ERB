@@ -730,7 +730,8 @@ IF CFLAG:(ARG:0):5 > 200 && RAND:100 < CFLAG:(ARG:0):5 / 10
 			LOCAL:2 = RESULT
 			CALL ADD_ITEM(LOCAL:2, 1, 0)
 			CALL ADD_ABL_EXP_PT(2, 500)
-			PRINTFORMW %CALLNAME:(ARG:0)%は少し残念そうに%ITEMNAME:(LOCAL:2)%を渡してくれた！
+			PRINTFORML %CALLNAME:(ARG:0)%は少し残念そうに%ITEMNAME:(LOCAL:2)%を渡してくれた！
+			CALL WAIT_AUTOMODE(400, 0)
 		ENDIF
 	ELSE
 	
@@ -762,7 +763,8 @@ ELSEIF CFLAG:(ARG:0):5 > 120 && RAND:100 < LIMIT(CFLAG:(ARG:0):5 - 100, 20, 75)
 		;友好度と引き換えに普通の物が貰える（たまに貰えない）
 		CFLAG:(ARG:0):5 -= 10 + RAND:10
 		IF RAND:100 < 80
-			PRINTFORMW それならばアイテムも渡せないと断られてしまった…
+			PRINTFORML それならばアイテムも渡せないと断られてしまった…
+			CALL WAIT_AUTOMODE(400, 0)
 		ELSE
 			CALL GIFT_ITEM(0)
 			LOCAL:2 = RESULT
@@ -792,7 +794,8 @@ ELSE
 			PRINTFORML どうやら性欲の発散だけが目的だったようだ…
 			TWAIT FLAG:AUTOMODE * 600 , 0
 		ELSE
-			PRINTFORMW どうやら性欲の発散だけが目的だったようだ…
+			PRINTFORML どうやら性欲の発散だけが目的だったようだ…
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORMW 
 		ENDIF
 	ELSEIF RESULT == 2
