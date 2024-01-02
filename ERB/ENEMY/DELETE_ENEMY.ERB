@@ -181,14 +181,9 @@ IF (DA:(ARG:0):85 & 1) && DA:(ARG:0):88 && DA:(ARG:0):4 == FLAG:5 && LOCAL:3 == 
 	;バンシーは仲間になりやすい でも囮要因
 	IF DA:(ARG:0):0 == 40 && RAND:3 == 0 && DA:(ARG:0):88 == 2
 		
-			IF FLAG:AUTOMODE
-				PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
-				PRINTFORML しかし%SAVESTR:(ARG:0)%は自分の触手で自分を拘束し自慰に耽り始めてしまった……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
-				PRINTFORMW しかし%SAVESTR:(ARG:0)%は自分の触手で自分を拘束し自慰に耽り始めてしまった……
-			ENDIF
+			PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+			PRINTFORML しかし%SAVESTR:(ARG:0)%は自分の触手で自分を拘束し自慰に耽り始めてしまった……
+			CALL WAIT_AUTOMODE(400, 0)
 		CALL ADD_NPC_ENEMY(DA:(ARG:0):0)
 	
 	;条件に両刀を追加。効果がレズ中毒に比例するように変更。無駄な括弧があるけどまあこっちのほうが分かりやすいし……

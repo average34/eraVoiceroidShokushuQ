@@ -46,14 +46,10 @@ IF LOCAL:2 >= LOCAL:1
 					ENDIF
 				ENDIF
 				IF RAND:4 == 0 && TALENT:(LOCAL:0):106 <= 2
-					IF FLAG:AUTOMODE
-						PRINTFORML %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
-						PRINTFORML %CALLNAME:(LOCAL:0)%の口が少し敏感になった
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  %CALLNAME:(LOCAL:0)%の口が少し敏感になった
-						PRINTFORMW  %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
-					ENDIF
+					PRINTFORML %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+					CALL WAIT_AUTOMODE(200, 0)
+					PRINTFORML %CALLNAME:(LOCAL:0)%の口が少し敏感になった
+					CALL WAIT_AUTOMODE(200, 0)
 
 					TALENT:(LOCAL:0):106 += 1
 				ENDIF

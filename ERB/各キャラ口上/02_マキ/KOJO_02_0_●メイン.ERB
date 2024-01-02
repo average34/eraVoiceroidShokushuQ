@@ -86,14 +86,10 @@ SELECTCASE ARG:0
 			;
 		;発情
 		ELSEIF CFLAG:28
-			IF FLAG:AUTOMODE
-				PRINTFORML 「んんっ…っはぁ、はぁ……」
-				PRINTFORML 「今は、戦いたく、んっ、ないんだけどね……ぅ…」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「んんっ…っはぁ、はぁ……」
-				PRINTFORMW  「今は、戦いたく、んっ、ないんだけどね……ぅ…」
-			ENDIF
+			PRINTFORML 「んんっ…っはぁ、はぁ……」
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORML 「今は、戦いたく、んっ、ないんだけどね……ぅ…」
+			CALL WAIT_AUTOMODE(400, 0)
 
 
 		ELSEIF CFLAG:800==0 && rand:2
