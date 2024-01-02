@@ -264,12 +264,8 @@ ELSE
 			ELSE
 				;復活できないならリタイア＋バイオプラント追加
 				IF FLAG:20 == 0
-					IF FLAG:AUTOMODE
-						PRINTFORML %CALLNAME:(ARG:0)%を糧として、新たなバイオプラントが発生した…
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW %CALLNAME:(ARG:0)%を糧として、新たなバイオプラントが発生した…
-					ENDIF
+					PRINTFORML %CALLNAME:(ARG:0)%を糧として、新たなバイオプラントが発生した…
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 				CALL CREATE_ENEMY(4, CFLAG:(ARG:0):4, 0, ARG:0)
 

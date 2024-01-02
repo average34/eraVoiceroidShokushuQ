@@ -26,30 +26,18 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:164 >= 100
 	PRINTFORML 食べてみますか？
 	CALL ASK_YN
 	IF RESULT == 0
-		IF FLAG:AUTOMODE
-			PRINTFORML ！！！！！！！！
-			TWAIT FLAG:AUTOMODE * 200, 0
-		ELSE
-			PRINTFORMW  ！！！！！！！！
-		ENDIF
+		PRINTFORML ！！！！！！！！
+		CALL WAIT_AUTOMODE(200, 0)
 
 		PRINTFORML 　
 		IF RAND:2 == 0
-			IF FLAG:AUTOMODE
-				PRINTFORML トンカツだと思っていたモノは、コロッケだった…
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  トンカツだと思っていたモノは、コロッケだった…
-			ENDIF
+			PRINTFORML トンカツだと思っていたモノは、コロッケだった…
+			CALL WAIT_AUTOMODE(400, 0)
 		
 		ELSE
 			PRINTFORML どうやら、トンカツには何かの薬が仕込まれていたようだ…
-			IF FLAG:AUTOMODE
-				PRINTFORML  %CALLNAME:1%%TACHI()%の身体の敏感・鈍感部位が書き換えられてしまった！
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW   %CALLNAME:1%%TACHI()%の身体の敏感・鈍感部位が書き換えられてしまった！
-			ENDIF
+			PRINTFORML  %CALLNAME:1%%TACHI()%の身体の敏感・鈍感部位が書き換えられてしまった！
+			CALL WAIT_AUTOMODE(400, 0)
 
 			TALENT:1:101 = RAND:4 - 1
 			TALENT:1:102 = RAND:4 - 1
@@ -93,12 +81,8 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:164 >= 100
 		FLAG:164 = RAND:30 + 1
 	ELSE
 		;食べない場合、イベントは残す
-		IF FLAG:AUTOMODE
-			PRINTFORML %CALLNAME:1%%TACHI()%はトンカツを食べずに残しておくことにした…
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  %CALLNAME:1%%TACHI()%はトンカツを食べずに残しておくことにした…
-		ENDIF
+		PRINTFORML %CALLNAME:1%%TACHI()%はトンカツを食べずに残しておくことにした…
+		CALL WAIT_AUTOMODE(400, 0)
 
 		
 	ENDIF

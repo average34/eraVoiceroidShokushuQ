@@ -26,12 +26,8 @@ IF CFLAG:(ARG:0):153 >= 3
 	CFLAG:(ARG:0):23 = 0
 	CFLAG:(ARG:0):153 -= 3
 	IF LOCAL:1
-		IF FLAG:AUTOMODE
-			PRINTFORML 寄生封じの札が体内の異物を浄化したようだ
-			TWAIT FLAG:AUTOMODE * 200, 0
-		ELSE
-			PRINTFORMW 寄生封じの札が体内の異物を浄化したようだ
-		ENDIF
+		PRINTFORML 寄生封じの札が体内の異物を浄化したようだ
+		CALL WAIT_AUTOMODE(200, 0)
 	ENDIF
 	RETURN
 ENDIF
@@ -105,12 +101,8 @@ IF CFLAG:(ARG:0):23 <= 0
 		;触手スーツ暴走
 		IF CFLAG:(ARG:0):40 == 1
 			
-			IF FLAG:AUTOMODE
-				PRINTFORML さらに、衣服に擬態していた触手が幼体の為に乳房が歪むほど揉み搾り始め、凄まじい勢いで母乳が噴出する
-				TWAIT FLAG:AUTOMODE * 200, 0
-			ELSE
-				PRINTFORMW さらに、衣服に擬態していた触手が幼体の為に乳房が歪むほど揉み搾り始め、凄まじい勢いで母乳が噴出する
-			ENDIF
+			PRINTFORML さらに、衣服に擬態していた触手が幼体の為に乳房が歪むほど揉み搾り始め、凄まじい勢いで母乳が噴出する
+			CALL WAIT_AUTOMODE(200, 0)
 			CALL EXTASY(ARG:0, 1, 400, 100)
 			CALL EXTASY(ARG:0, 1, 400, 100)
 		ENDIF
