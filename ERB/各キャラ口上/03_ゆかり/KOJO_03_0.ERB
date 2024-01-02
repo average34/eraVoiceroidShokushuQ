@@ -441,28 +441,16 @@ SELECTCASE ARG:0
 				PRINTFORML 」
 				SELECTCASE RAND:2
 					CASE 0
-						IF FLAG:AUTOMODE
-							PRINTFORMDL 耐え切れないように、ゆかりは熱っぽい表情で自分の指を咥えている……
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMDW 耐え切れないように、ゆかりは熱っぽい表情で自分の指を咥えている……
-						ENDIF
+						PRINTFORMDL 耐え切れないように、ゆかりは熱っぽい表情で自分の指を咥えている……
+						CALL WAIT_AUTOMODE(400, 0)
 					CASE 1
-						IF FLAG:AUTOMODE
-							PRINTFORMDL 熱い吐息を吐きながら、もじもじとゆかりは股間を擦りあわせた……
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMDW 熱い吐息を吐きながら、もじもじとゆかりは股間を擦りあわせた……
-						ENDIF
+						PRINTFORMDL 熱い吐息を吐きながら、もじもじとゆかりは股間を擦りあわせた……
+						CALL WAIT_AUTOMODE(400, 0)
 				ENDSELECT
 			;拘束中
 			ELSEIF CFLAG:20
-				IF FLAG:AUTOMODE
-					PRINTFORMDL 裸の状態で体を締め付けられ、ゆかりは必死にもがいている……
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMDW 裸の状態で体を締め付けられ、ゆかりは必死にもがいている……
-				ENDIF
+				PRINTFORMDL 裸の状態で体を締め付けられ、ゆかりは必死にもがいている……
+				CALL WAIT_AUTOMODE(400, 0)
 				SELECTCASE RAND:2
 					CASE 0
 						PRINTFORML 「は、肌に、くっかないでください……！」
@@ -473,12 +461,8 @@ SELECTCASE ARG:0
 				ENDSELECT
 			;EP1/4以下かMP1/4以下or催眠
 			ELSEIF MAXBASE:MP/4 >= BASE:MP || MAXBASE:EP/4 >= BASE:EP || CFLAG:43
-				IF FLAG:AUTOMODE
-					PRINTFORMDL 魔物からの視線に気づき、ゆかりは顔を赤らめながら胸を隠した……
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMDW 魔物からの視線に気づき、ゆかりは顔を赤らめながら胸を隠した……
-				ENDIF
+				PRINTFORMDL 魔物からの視線に気づき、ゆかりは顔を赤らめながら胸を隠した……
+				CALL WAIT_AUTOMODE(400, 0)
 				SELECTCASE RAND:2
 					CASE 0
 						PRINTFORML （い、今されたら、だめ……）
@@ -491,19 +475,11 @@ SELECTCASE ARG:0
 				PRINTFORMD 魔物から視線を向けられている事に気付いたゆかりは、不快そうに
 				SELECTCASE RAND:2
 					CASE 0
-						IF FLAG:AUTOMODE
-							PRINTFORMDL 舌打ちをした……
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMDW 舌打ちをした……
-						ENDIF
+						PRINTFORMDL 舌打ちをした……
+						CALL WAIT_AUTOMODE(400, 0)
 					CASE 1
-						IF FLAG:AUTOMODE
-							PRINTFORMDL 睨み返した……
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMDW 睨み返した……
-						ENDIF
+						PRINTFORMDL 睨み返した……
+						CALL WAIT_AUTOMODE(400, 0)
 				ENDSELECT
 				SELECTCASE RAND:3
 					CASE 0
@@ -576,12 +552,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「さてはドッペルゲンガーってやつですね？マキさんの姿をしても騙されませんよ」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「さてはドッペルゲンガーってやつですね？マキさんの姿をしても騙されませんよ」
-					ENDIF
+					PRINTFORMDL 「さてはドッペルゲンガーってやつですね？マキさんの姿をしても騙されませんよ」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;ずん子
 			ELSEIF NO:(ARG:3) == 4
@@ -593,12 +565,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「ずん子さん……じゃありませんね。とするとドッペルゲンガーでしょうか」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「ずん子さん……じゃありませんね。とするとドッペルゲンガーでしょうか」
-					ENDIF
+					PRINTFORMDL 「ずん子さん……じゃありませんね。とするとドッペルゲンガーでしょうか」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;きりたん
 			ELSEIF NO:(ARG:3) == 8
@@ -610,12 +578,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「きりたんの姿をしてますが、なんか違うような気がしますね」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「きりたんの姿をしてますが、なんか違うような気がしますね」
-					ENDIF
+					PRINTFORMDL 「きりたんの姿をしてますが、なんか違うような気がしますね」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;イタコ
 			ELSEIF NO:(ARG:3) == 16
@@ -627,12 +591,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「イタコさんはもっとこう……どこか抜けてる感じなんですよね」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「イタコさんはもっとこう……どこか抜けてる感じなんですよね」
-					ENDIF
+					PRINTFORMDL 「イタコさんはもっとこう……どこか抜けてる感じなんですよね」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;茜
 			ELSEIF NO:(ARG:3) == 5
@@ -644,12 +604,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「茜ちゃんはっけーん。って違う……！？」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「茜ちゃんはっけーん。って違う……！？」
-					ENDIF
+					PRINTFORMDL 「茜ちゃんはっけーん。って違う……！？」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;葵
 			ELSEIF NO:(ARG:3) == 6
@@ -661,12 +617,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「葵ちゃんはもっとしっかりした顔してたはず……ですよね？」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「葵ちゃんはもっとしっかりした顔してたはず……ですよね？」
-					ENDIF
+					PRINTFORMDL 「葵ちゃんはもっとしっかりした顔してたはず……ですよね？」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;セイカ
 			ELSEIF NO:(ARG:3) == 7
@@ -678,12 +630,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「セイカさんがシラフなのは怪しいんですよねぇ」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「セイカさんがシラフなのは怪しいんですよねぇ」
-					ENDIF
+					PRINTFORMDL 「セイカさんがシラフなのは怪しいんですよねぇ」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;あかり
 			ELSEIF NO:(ARG:3) == 15
@@ -695,12 +643,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「あかりの姿をマネるなんて……」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「あかりの姿をマネるなんて……」
-					ENDIF
+					PRINTFORMDL 「あかりの姿をマネるなんて……」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			;そら
 			ELSEIF NO:(ARG:3) == 17
@@ -712,12 +656,8 @@ SELECTCASE ARG:0
 ;				ELSEIF TFLAG:14 == 1
 ;				;	PRINTFORMW 
 				ELSE
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 「そらさんによく似てますけど、ちょっと違うみたいですね」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 「そらさんによく似てますけど、ちょっと違うみたいですね」
-					ENDIF
+					PRINTFORMDL 「そらさんによく似てますけど、ちょっと違うみたいですね」
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			ENDIF
 		;MP1/4以下or発情中or要睡眠以上or妊娠中
@@ -837,18 +777,10 @@ SELECTCASE ARG:0
 			IF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP < 2000
 				;丸呑み
 				IF CFLAG:21
-					IF FLAG:AUTOMODE
-						PRINTFORMDL ゆかりは仲間が逃げ出す気配を即座に感じ取ったらしく、敵の体内から悲鳴が漏れ始める。
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW ゆかりは仲間が逃げ出す気配を即座に感じ取ったらしく、敵の体内から悲鳴が漏れ始める。
-					ENDIF
-					IF FLAG:AUTOMODE
-						PRINTFORMDL だが、その悲鳴は物理的にも精神的にも仲間に届くことはなかった……
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW だが、その悲鳴は物理的にも精神的にも仲間に届くことはなかった……
-					ENDIF
+					PRINTFORMDL ゆかりは仲間が逃げ出す気配を即座に感じ取ったらしく、敵の体内から悲鳴が漏れ始める。
+					CALL WAIT_AUTOMODE(400, 0)
+					PRINTFORMDL だが、その悲鳴は物理的にも精神的にも仲間に届くことはなかった……
+					CALL WAIT_AUTOMODE(400, 0)
 				ELSE
 					PRINTFORML 「えっ、なっ……ちょ、ちょっと、待ってください！
 					CALL WAIT_AUTOMODE(400, 0)
@@ -857,12 +789,8 @@ SELECTCASE ARG:0
 					PRINTFORML 　す、すぐ助けに来てくれますよね……！？」
 					CALL WAIT_AUTOMODE(400, 0)
 					PRINTFORML 
-					IF FLAG:AUTOMODE
-						PRINTFORMDL 縋りつくようなゆかりの泣き声をその場に残して、%CALLNAME:1%は逃げ出した……
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW 縋りつくようなゆかりの泣き声をその場に残して、%CALLNAME:1%は逃げ出した……
-					ENDIF
+					PRINTFORMDL 縋りつくようなゆかりの泣き声をその場に残して、%CALLNAME:1%は逃げ出した……
+					CALL WAIT_AUTOMODE(400, 0)
 				ENDIF
 			ELSE
 				;丸呑み
@@ -1278,12 +1206,8 @@ SELECTCASE ARG:0
 	CASE 103
 			;HP1/2以下でMP1/6以下で味方がいないか味方が戦意喪失　たぶん救出されたて
 			IF MAXBASE:HP/2 > BASE:HP && MAXBASE:MP/6 >= BASE:MP && (FLAG:10 == 0 || CFLAG:(FLAG:10):29)
-				IF FLAG:AUTOMODE
-					PRINTFORMDL 話すだけで足がふらつくゆかりの状態は、明らかにまだ辛そうだ……
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMDW 話すだけで足がふらつくゆかりの状態は、明らかにまだ辛そうだ……
-				ENDIF
+				PRINTFORMDL 話すだけで足がふらつくゆかりの状態は、明らかにまだ辛そうだ……
+				CALL WAIT_AUTOMODE(400, 0)
 			;妊娠時
 			ELSEIF CFLAG:22 && (CFLAG:36 == 0 || CFLAG:36 >= 3)
 				SELECTCASE NO:(ARG:1)
@@ -2562,12 +2486,8 @@ SELECTCASE ARG:0
 				ENDSELECT
 			;要睡眠
 			ELSEIF FLAG:7 >= 7
-				IF FLAG:AUTOMODE
-					PRINTFORMDL ゆかりは眠気を振り払うように体を伸ばしている……
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMDW ゆかりは眠気を振り払うように体を伸ばしている……
-				ENDIF
+				PRINTFORMDL ゆかりは眠気を振り払うように体を伸ばしている……
+				CALL WAIT_AUTOMODE(400, 0)
 			ELSE
 				SELECTCASE RAND:2
 					CASE 0
@@ -2598,12 +2518,8 @@ SELECTCASE ARG:0
 				CASEELSE
 					;深い催眠・諦め
 					IF CFLAG:43 > 1 || TFLAG:16 == 2
-						IF FLAG:AUTOMODE
-							PRINTFORMDL ゆかりは破瓜の血が零れ落ちるのを、思考が浮かばないぼんやりとした瞳で見つめている……
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMDW ゆかりは破瓜の血が零れ落ちるのを、思考が浮かばないぼんやりとした瞳で見つめている……
-						ENDIF
+						PRINTFORMDL ゆかりは破瓜の血が零れ落ちるのを、思考が浮かばないぼんやりとした瞳で見つめている……
+						CALL WAIT_AUTOMODE(400, 0)
 					ELSE
 						PRINTFORML 「い、痛っ！　ちょっと、何して……！？」
 						CALL WAIT_AUTOMODE(400, 0)
@@ -2615,12 +2531,8 @@ SELECTCASE ARG:0
 				CALL WAIT_AUTOMODE(400, 0)
 				PRINTFORML 　……うぅ。べ、別にこんな状況ですから、犯されるよりは、ずっと……ずっと……うぅっ」
 				CALL WAIT_AUTOMODE(400, 0)
-				IF FLAG:AUTOMODE
-					PRINTFORMDL ゆかりは自分に言い聞かせるように、独り言を繰り返している……
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMDW ゆかりは自分に言い聞かせるように、独り言を繰り返している……
-				ENDIF
+				PRINTFORMDL ゆかりは自分に言い聞かせるように、独り言を繰り返している……
+				CALL WAIT_AUTOMODE(400, 0)
 		ENDSELECT
 	;PTに勧誘された
 	CASE 140
@@ -2736,12 +2648,8 @@ SELECTCASE ARG:0
 				ELSEIF FLAG:10
 					PRINTFORML 「やれやれ、結界の展開にお風呂に世話までっ……。動けるのはわたしだけだから仕方ないですねぇ」
 					CALL WAIT_AUTOMODE(400, 0)
-					IF FLAG:AUTOMODE
-						PRINTFORMDL ゆかりは愚痴りながら、そのまま風呂で仲間たちの体を洗っている……
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMDW ゆかりは愚痴りながら、そのまま風呂で仲間たちの体を洗っている……
-					ENDIF
+					PRINTFORMDL ゆかりは愚痴りながら、そのまま風呂で仲間たちの体を洗っている……
+					CALL WAIT_AUTOMODE(400, 0)
 				ELSE
 					PRINTFORML 「はぁ……結界の展開よりもお風呂の準備のほうが辛い。こんな場所ですし」
 					CALL WAIT_AUTOMODE(400, 0)
@@ -2766,203 +2674,87 @@ SELECTCASE ARG:0
 		;スライム化したマキにやられた（描写ハード以上）
 		;なんという趣味全開の長文……この条件では見れる人が何人いるか分からないというのに
 		IF ARG:1 == 104 && CFLAG:900 == 2 && FLAG:507 > 0
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『やっと諦めた？　ゆかり』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『やっと諦めた？　ゆかり』
-			ENDIF
+			PRINTFORMDL 『やっと諦めた？　ゆかり』
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「マ、マキさん…………」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 完全に抵抗する力を失い、ぐったりとするゆかりにマキがどろどろとまとわりつく。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 完全に抵抗する力を失い、ぐったりとするゆかりにマキがどろどろとまとわりつく。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 睨むことすらできないゆかりの様子に、マキは粘体と化した体を嬉しそうに揺らした。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 睨むことすらできないゆかりの様子に、マキは粘体と化した体を嬉しそうに揺らした。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『別に怖がったりしなくてもいいんだよ。わたしはゆかりと一緒に気持ちよくなりたいだけなんだから』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『別に怖がったりしなくてもいいんだよ。わたしはゆかりと一緒に気持ちよくなりたいだけなんだから』
-			ENDIF
+			PRINTFORMDL 完全に抵抗する力を失い、ぐったりとするゆかりにマキがどろどろとまとわりつく。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 睨むことすらできないゆかりの様子に、マキは粘体と化した体を嬉しそうに揺らした。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 『別に怖がったりしなくてもいいんだよ。わたしはゆかりと一緒に気持ちよくなりたいだけなんだから』
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「マキさん……お願い……正気に、戻って……」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『なぁに、まだそんな事言ってるの？　しょうがないなぁ……』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『なぁに、まだそんな事言ってるの？　しょうがないなぁ……』
-			ENDIF
+			PRINTFORMDL 『なぁに、まだそんな事言ってるの？　しょうがないなぁ……』
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「は、ひっ！？」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL そうマキは口を尖らせると、自分の体を薄くしてゆかりの体の全てを覆い尽くしていく。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW そうマキは口を尖らせると、自分の体を薄くしてゆかりの体の全てを覆い尽くしていく。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 今までにも経験したことのある覆われ方だが、今回は特に念入りだ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 今までにも経験したことのある覆われ方だが、今回は特に念入りだ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 女性器に尻穴から乳腺まで、体の各所に染み込んでくるマキの身体にゆかりは喘ぐ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 女性器に尻穴から乳腺まで、体の各所に染み込んでくるマキの身体にゆかりは喘ぐ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 気持ちよくなっている事を否定できない状況で……ふと、ゆかりは「体の中から」違和感を覚えた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 気持ちよくなっている事を否定できない状況で……ふと、ゆかりは「体の中から」違和感を覚えた。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 肌がぷるんとして、艶やかになっていくような感覚――
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 肌がぷるんとして、艶やかになっていくような感覚――
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『一緒に気持ちよくなりたいって言ったでしょ？』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『一緒に気持ちよくなりたいって言ったでしょ？』
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 絶句しているゆかりに対し、マキは口を開く。その顔は半分くらいしか形を留めていないが。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 絶句しているゆかりに対し、マキは口を開く。その顔は半分くらいしか形を留めていないが。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『だから文字通りくっつこうよ？　ゆかりもスライムになって、わたしと混じり合おう』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『だから文字通りくっつこうよ？　ゆかりもスライムになって、わたしと混じり合おう』
-			ENDIF
+			PRINTFORMDL そうマキは口を尖らせると、自分の体を薄くしてゆかりの体の全てを覆い尽くしていく。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 今までにも経験したことのある覆われ方だが、今回は特に念入りだ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 女性器に尻穴から乳腺まで、体の各所に染み込んでくるマキの身体にゆかりは喘ぐ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 気持ちよくなっている事を否定できない状況で……ふと、ゆかりは「体の中から」違和感を覚えた。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 肌がぷるんとして、艶やかになっていくような感覚――
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 『一緒に気持ちよくなりたいって言ったでしょ？』
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 絶句しているゆかりに対し、マキは口を開く。その顔は半分くらいしか形を留めていないが。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 『だから文字通りくっつこうよ？　ゆかりもスライムになって、わたしと混じり合おう』
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「ひっ……！？」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL その言葉に悲鳴を上げるのと同時に、ゆかりはぐしゃりと音を立てながら座り込んだ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW その言葉に悲鳴を上げるのと同時に、ゆかりはぐしゃりと音を立てながら座り込んだ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 足元を見ると、膝から下がくっつき始めている。重力に耐え切れず、平らになりながら。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 足元を見ると、膝から下がくっつき始めている。重力に耐え切れず、平らになりながら。
-			ENDIF
+			PRINTFORMDL その言葉に悲鳴を上げるのと同時に、ゆかりはぐしゃりと音を立てながら座り込んだ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 足元を見ると、膝から下がくっつき始めている。重力に耐え切れず、平らになりながら。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORM 「い、嫌、ヤダぁ！　化け物になんてなりたくないっ……あぁっ、うああぁっ
 			CALL HEARTCB(0xD02830)
 			PRINTFORML 」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『ちょっとちょっと、こんなに気持ちいいのに嫌がるの？』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『ちょっとちょっと、こんなに気持ちいいのに嫌がるの？』
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 身体が快楽に揺れ、腕が視界の中に入ってくる。その手は色を失い始めていた。骨すら見えない。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 身体が快楽に揺れ、腕が視界の中に入ってくる。その手は色を失い始めていた。骨すら見えない。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL もはや暴れる体力もなく、泣き叫ぶしかできないゆかりは自分の身長が低くなっていくのを実感した。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW もはや暴れる体力もなく、泣き叫ぶしかできないゆかりは自分の身長が低くなっていくのを実感した。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 体全体が粘液と化して、ゆかりの身体は水たまりの中に消えていった……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 体全体が粘液と化して、ゆかりの身体は水たまりの中に消えていった……
-			ENDIF
+			PRINTFORMDL 『ちょっとちょっと、こんなに気持ちいいのに嫌がるの？』
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 身体が快楽に揺れ、腕が視界の中に入ってくる。その手は色を失い始めていた。骨すら見えない。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL もはや暴れる体力もなく、泣き叫ぶしかできないゆかりは自分の身長が低くなっていくのを実感した。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 体全体が粘液と化して、ゆかりの身体は水たまりの中に消えていった……
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ………
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ………
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ……
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL …
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW …
-			ENDIF
+			PRINTFORMDL ………
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL ……
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL …
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
 			SETCOLOR 0, 255, 255
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『おはよう、ゆかり』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『おはよう、ゆかり』
-			ENDIF
+			PRINTFORMDL 『おはよう、ゆかり』
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「う…………」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 聞き慣れた声が耳に届く。意識を取り戻したゆかりは、今どんな状況だったかを思い出して、
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 聞き慣れた声が耳に届く。意識を取り戻したゆかりは、今どんな状況だったかを思い出して、
-			ENDIF
+			PRINTFORMDL 聞き慣れた声が耳に届く。意識を取り戻したゆかりは、今どんな状況だったかを思い出して、
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「っ！！！！」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 思わず跳ね起きた。その身体が水しぶきが上がる。とっさにゆかりは自らの手を見つめて、
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 思わず跳ね起きた。その身体が水しぶきが上がる。とっさにゆかりは自らの手を見つめて、
-			ENDIF
+			PRINTFORMDL 思わず跳ね起きた。その身体が水しぶきが上がる。とっさにゆかりは自らの手を見つめて、
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「……そん、な」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 自らの手が、完全に粘液そのものになっている事に気付いた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 自らの手が、完全に粘液そのものになっている事に気付いた。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL そしてそれは身体全体も同じで、足元にある水たまりは自分の思った通りに動いていく。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW そしてそれは身体全体も同じで、足元にある水たまりは自分の思った通りに動いていく。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 震えながら体液を落とすゆかりに、同じ水たまりから生えたマキが抱きついてくる。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 震えながら体液を落とすゆかりに、同じ水たまりから生えたマキが抱きついてくる。
-			ENDIF
+			PRINTFORMDL 自らの手が、完全に粘液そのものになっている事に気付いた。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL そしてそれは身体全体も同じで、足元にある水たまりは自分の思った通りに動いていく。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 震えながら体液を落とすゆかりに、同じ水たまりから生えたマキが抱きついてくる。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORMD 「じゃあ、さっそく実験……んぅ……
 			CALL HEARTCB(0xD02830)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 」
-			ENDIF
+			PRINTFORMDL 」
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORM 「はっ……
 			CALL HEARTCB(0xD02830)
 			PRINTFORM 　あ、なに
@@ -2972,50 +2764,22 @@ SELECTCASE ARG:0
 			CALL HEARTCB(0xD02830)
 			PRINTFORML 」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL マキが舌を絡ませながら互いの乳首を擦り合わせると、おかしな感覚が伝わってきた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW マキが舌を絡ませながら互いの乳首を擦り合わせると、おかしな感覚が伝わってきた。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 舌を、胸を、自分を責めるマキの快楽まで伝わってくる。その快感は二倍、いやそれ以上だ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 舌を、胸を、自分を責めるマキの快楽まで伝わってくる。その快感は二倍、いやそれ以上だ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ゆかりが粘液を撒き散らしながら快感に身を震わせるのを見て、マキは体液を零しながら口を離した。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ゆかりが粘液を撒き散らしながら快感に身を震わせるのを見て、マキは体液を零しながら口を離した。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『言ったでしょ、わたしと混じり合うんだ……って。ゆかりの身体とわたしの身体は融合してるんだ』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『言ったでしょ、わたしと混じり合うんだ……って。ゆかりの身体とわたしの身体は融合してるんだ』
-			ENDIF
+			PRINTFORMDL マキが舌を絡ませながら互いの乳首を擦り合わせると、おかしな感覚が伝わってきた。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 舌を、胸を、自分を責めるマキの快楽まで伝わってくる。その快感は二倍、いやそれ以上だ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL ゆかりが粘液を撒き散らしながら快感に身を震わせるのを見て、マキは体液を零しながら口を離した。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 『言ったでしょ、わたしと混じり合うんだ……って。ゆかりの身体とわたしの身体は融合してるんだ』
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「ふぁ……？」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 理解しているのかいないのか、ゆかりは舌を突き出した口から体液をどろどろと零しているだけだ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 理解しているのかいないのか、ゆかりは舌を突き出した口から体液をどろどろと零しているだけだ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL そんなゆかりの……自分の身体に、マキは再び容赦なく体を重ねた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW そんなゆかりの……自分の身体に、マキは再び容赦なく体を重ねた。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 『要するに……ゆかりもわたしも普通よりずっと気持ちいいって事だよ！』
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 『要するに……ゆかりもわたしも普通よりずっと気持ちいいって事だよ！』
-			ENDIF
+			PRINTFORMDL 理解しているのかいないのか、ゆかりは舌を突き出した口から体液をどろどろと零しているだけだ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL そんなゆかりの……自分の身体に、マキは再び容赦なく体を重ねた。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 『要するに……ゆかりもわたしも普通よりずっと気持ちいいって事だよ！』
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORM 「はっ
 			CALL HEARTCB(0xD02830)
 			PRINTFORM 　は……あぁっ
@@ -3024,38 +2788,18 @@ SELECTCASE ARG:0
 			CALL HEARTCB(0xD02830)
 			PRINTFORML 」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ゆかりが絶頂すると同時にマキも絶頂を迎え、二人で一つの身体から粘液を飛び散らせる。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ゆかりが絶頂すると同時にマキも絶頂を迎え、二人で一つの身体から粘液を飛び散らせる。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 無論、責めはこれで終わること無く二人のスライム少女はずっと体を絡ませ続けていく。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 無論、責めはこれで終わること無く二人のスライム少女はずっと体を絡ませ続けていく。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 迷宮クリアも、人間だったことすら忘れて、ただ異形の快楽に身を委ねるのだった……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 迷宮クリアも、人間だったことすら忘れて、ただ異形の快楽に身を委ねるのだった……
-			ENDIF
+			PRINTFORMDL ゆかりが絶頂すると同時にマキも絶頂を迎え、二人で一つの身体から粘液を飛び散らせる。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 無論、責めはこれで終わること無く二人のスライム少女はずっと体を絡ませ続けていく。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 迷宮クリアも、人間だったことすら忘れて、ただ異形の快楽に身を委ねるのだった……
+			CALL WAIT_AUTOMODE(400, 0)
 		;自分の娘にやられた
 		ELSEIF ARG:1 == 19 && CFLAG:900 == 1
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 母親が完全に屈服したことを確認した娘は、愛おしげにゆかりを抱え上げると迷宮の一室に連れ込んだ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 母親が完全に屈服したことを確認した娘は、愛おしげにゆかりを抱え上げると迷宮の一室に連れ込んだ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ぐったりとしてしたゆかりを触手で縛り上げると、娘はさっそく胸に吸い付き母乳を吸い上げていく……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ぐったりとしてしたゆかりを触手で縛り上げると、娘はさっそく胸に吸い付き母乳を吸い上げていく……
-			ENDIF
+			PRINTFORMDL 母親が完全に屈服したことを確認した娘は、愛おしげにゆかりを抱え上げると迷宮の一室に連れ込んだ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL ぐったりとしてしたゆかりを触手で縛り上げると、娘はさっそく胸に吸い付き母乳を吸い上げていく……
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「あ、か、噛まれっ、はんっうっ！？　ち、乳首、したで、転がされてぇ！？」
 			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
@@ -3064,54 +2808,30 @@ SELECTCASE ARG:0
 			SETCOLOR CFLAG:700
 			PRINTFORML 「とけるっ、あつくて、胸がとけちゃうぅぅぅぅぅっ！」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL それこそ吸い尽くされる勢いで乳首を吸われること数分……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW それこそ吸い尽くされる勢いで乳首を吸われること数分……
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 満足げに娘が胸から離れる頃には、ゆかりは何度も絶頂を繰り返していた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 満足げに娘が胸から離れる頃には、ゆかりは何度も絶頂を繰り返していた。
-			ENDIF
+			PRINTFORMDL それこそ吸い尽くされる勢いで乳首を吸われること数分……
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 満足げに娘が胸から離れる頃には、ゆかりは何度も絶頂を繰り返していた。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「うぁ……は、あひっ……」
 			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
 			PRINTFORML 「あはっ、ママ、かわいい♪」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 娘は朗らかに笑うと自分の股間から肉竿を生やし、ゆかりの割れ目にぴったりと先端を当てる。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 娘は朗らかに笑うと自分の股間から肉竿を生やし、ゆかりの割れ目にぴったりと先端を当てる。
-			ENDIF
+			PRINTFORMDL 娘は朗らかに笑うと自分の股間から肉竿を生やし、ゆかりの割れ目にぴったりと先端を当てる。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「んっ、ここから、私が産まれたんだよね……やっと一人で、じっくり弄れるね♪」
 			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR CFLAG:700
 			PRINTFORML 「あっ……ぅ、んあっ、あ、あーっ！？」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL そのまま、膣内へとじっくりと肉竿を押し込んでいく。慣れ親しんだ快感に、ゆかりは腰を浮かした。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW そのまま、膣内へとじっくりと肉竿を押し込んでいく。慣れ親しんだ快感に、ゆかりは腰を浮かした。
-			ENDIF
+			PRINTFORMDL そのまま、膣内へとじっくりと肉竿を押し込んでいく。慣れ親しんだ快感に、ゆかりは腰を浮かした。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「そ、そんなっ、あっ、だめ、そこはぁぁぁぁぁぁっ♪」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 中を細かく抉っていく動きに、散々秘所を犯され開発されてきたゆかりは耐え切れない。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 中を細かく抉っていく動きに、散々秘所を犯され開発されてきたゆかりは耐え切れない。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 表情は快感に染まり、言葉は嬌声ばかりになっていく……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 表情は快感に染まり、言葉は嬌声ばかりになっていく……
-			ENDIF
+			PRINTFORMDL 中を細かく抉っていく動きに、散々秘所を犯され開発されてきたゆかりは耐え切れない。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 表情は快感に染まり、言葉は嬌声ばかりになっていく……
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「いぁ、い、いいのっ、きもちいぃんっ、も、もうやめてくださいぃ！」
 			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
@@ -3120,12 +2840,8 @@ SELECTCASE ARG:0
 			SETCOLOR CFLAG:700
 			PRINTFORML 「ひあぁんっ！？」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 抽送を止めることなく、娘はゆかりの顔に自分の顔をすり寄せ、囁いた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 抽送を止めることなく、娘はゆかりの顔に自分の顔をすり寄せ、囁いた。
-			ENDIF
+			PRINTFORMDL 抽送を止めることなく、娘はゆかりの顔に自分の顔をすり寄せ、囁いた。
+			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
 			;妊娠中
 			IF CFLAG:36 >= 3
@@ -3144,12 +2860,8 @@ SELECTCASE ARG:0
 				PRINTFORML 「だ、だめですよ……そんな、の……わたし、たち、おや、こ……ひあぁっんっ！？」
 				CALL WAIT_AUTOMODE(400, 0)
 			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 娘の腰の動きが加速する。その気持ちよさに、言葉と裏腹にゆかりの腰も自然と揺れてしまう。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 娘の腰の動きが加速する。その気持ちよさに、言葉と裏腹にゆかりの腰も自然と揺れてしまう。
-			ENDIF
+			PRINTFORMDL 娘の腰の動きが加速する。その気持ちよさに、言葉と裏腹にゆかりの腰も自然と揺れてしまう。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 「だ、だめだめだめだめぇ！　きもちいぃことはしてあげますから、こどもはぁっ！」
 			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
@@ -3164,46 +2876,26 @@ SELECTCASE ARG:0
 			SETCOLOR CFLAG:700
 			PRINTFORML 「だめぇ、も、もうっ、イく、なかだしでイっちゃううぅぅぅっ！！？」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ゆかりが絶頂すると共に、娘の肉竿はゆかりの一番奥で射精した。膣から、白いものが溢れてくる。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ゆかりが絶頂すると共に、娘の肉竿はゆかりの一番奥で射精した。膣から、白いものが溢れてくる。
-			ENDIF
+			PRINTFORMDL ゆかりが絶頂すると共に、娘の肉竿はゆかりの一番奥で射精した。膣から、白いものが溢れてくる。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORM 「んああああっ、入ってるぅ♪　なか、あついの、いっぱい来ちゃったぁんっ……
 			CALL HEARTCB(0xD02830)
 			PRINTFORML 」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 快楽で痙攣するゆかりにできるのは、蕩けた表情で甘い声を漏らすことだけ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 快楽で痙攣するゆかりにできるのは、蕩けた表情で甘い声を漏らすことだけ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 娘と交わっているという背徳感も、快楽を加速させる要素にしかならない。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 娘と交わっているという背徳感も、快楽を加速させる要素にしかならない。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL そんなゆかりの顔を見て、娘はにっこりと笑った。膣内から、自分の肉竿を抜かないまま。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW そんなゆかりの顔を見て、娘はにっこりと笑った。膣内から、自分の肉竿を抜かないまま。
-			ENDIF
+			PRINTFORMDL 快楽で痙攣するゆかりにできるのは、蕩けた表情で甘い声を漏らすことだけ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 娘と交わっているという背徳感も、快楽を加速させる要素にしかならない。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL そんなゆかりの顔を見て、娘はにっこりと笑った。膣内から、自分の肉竿を抜かないまま。
+			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
 			PRINTFORML 「ママがきもちよさそうで、よかった……♪　それじゃ、続きだね！」
 			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR CFLAG:700
 			PRINTFORML 「ふぇ……？　んひぃっ！？」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 余韻に浸っていたゆかりの奥を、また肉竿が押し広げる。急な快楽で、ゆかりの息が詰まる。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 余韻に浸っていたゆかりの奥を、また肉竿が押し広げる。急な快楽で、ゆかりの息が詰まる。
-			ENDIF
+			PRINTFORMDL 余韻に浸っていたゆかりの奥を、また肉竿が押し広げる。急な快楽で、ゆかりの息が詰まる。
+			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
 			;妊娠中
 			IF CFLAG:36 >= 3
@@ -3217,59 +2909,31 @@ SELECTCASE ARG:0
 			PRINTFORML 「んあああああああああっ！　やめて、やめてやめてやめてぇ！　イく、すぐイっちゃうぅぅっ！」
 			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ………
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ………
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ……
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL …
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW …
-			ENDIF
+			PRINTFORMDL ………
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL ……
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL …
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
 			PRINTFORML 「うあっ！？　あ、あぁっ、うま、うまれっ、うまれりゅっ！
 			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 　こしゅ、こしゅってるっ、うぅんっ♪　んっ、んうぅっ……！」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL それから毎日、ゆかりは娘たちに犯され続け……何度も出産してはすぐ孕まされた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW それから毎日、ゆかりは娘たちに犯され続け……何度も出産してはすぐ孕まされた。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 今日もまた子供を産むゆかりの体は、出産で受ける感覚がすべて快感になるよう作り変えられていた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 今日もまた子供を産むゆかりの体は、出産で受ける感覚がすべて快感になるよう作り変えられていた。
-			ENDIF
+			PRINTFORMDL それから毎日、ゆかりは娘たちに犯され続け……何度も出産してはすぐ孕まされた。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 今日もまた子供を産むゆかりの体は、出産で受ける感覚がすべて快感になるよう作り変えられていた。
+			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR 235, 83, 129
 			PRINTFORML 「えへへ、また妹ができたね、ママ。そろそろ、娘で孫な子も作れるよ♪」
 			CALL WAIT_AUTOMODE(400, 0)
 			SETCOLOR CFLAG:700
 			PRINTFORML 「……はぁ、はぁっ、んぅっ、あはぁ……♪」
 			CALL WAIT_AUTOMODE(400, 0)
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 嬉しそうな娘にゆかりはもはや抵抗する様子もなく、蕩け切った笑みを浮かべるだけ。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 嬉しそうな娘にゆかりはもはや抵抗する様子もなく、蕩け切った笑みを浮かべるだけ。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 迷宮がゆかりに瓜二つの少女たちで溢れかえる日は、そう遠くはないだろう……
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 迷宮がゆかりに瓜二つの少女たちで溢れかえる日は、そう遠くはないだろう……
-			ENDIF
+			PRINTFORMDL 嬉しそうな娘にゆかりはもはや抵抗する様子もなく、蕩け切った笑みを浮かべるだけ。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 迷宮がゆかりに瓜二つの少女たちで溢れかえる日は、そう遠くはないだろう……
+			CALL WAIT_AUTOMODE(400, 0)
 		ELSE
 			RESETCOLOR
 			CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
@@ -3739,60 +3403,28 @@ SELECTCASE ARG:0
 			PRINTFORML 「おや？」
 			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
-			IF FLAG:AUTOMODE
-				PRINTFORMDL マキの家に着いたが、違和感に包まれた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW マキの家に着いたが、違和感に包まれた。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL ふと玄関を見ると、わずかに扉が開いていた。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW ふと玄関を見ると、わずかに扉が開いていた。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 訝し気にゆかりは声をかける。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 訝し気にゆかりは声をかける。
-			ENDIF
+			PRINTFORMDL マキの家に着いたが、違和感に包まれた。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL ふと玄関を見ると、わずかに扉が開いていた。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 訝し気にゆかりは声をかける。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
 			PRINTFORML 「マキさん、いるんですか？」
 			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 不用心な、と思いながらそっと扉に手をかける。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 不用心な、と思いながらそっと扉に手をかける。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 普段からちょっと抜けているから鍵をかけ忘れたのかもしれない。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 普段からちょっと抜けているから鍵をかけ忘れたのかもしれない。
-			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORMDL だからゆかりは油断し、反応出来なかった。
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW だからゆかりは油断し、反応出来なかった。
-			ENDIF
+			PRINTFORMDL 不用心な、と思いながらそっと扉に手をかける。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL 普段からちょっと抜けているから鍵をかけ忘れたのかもしれない。
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORMDL だからゆかりは油断し、反応出来なかった。
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 「え……？　なっ！？」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 「え……？　なっ！？」
-			ENDIF
+			PRINTFORMDL 「え……？　なっ！？」
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORML 
-			IF FLAG:AUTOMODE
-				PRINTFORMDL 自分に降りかかる淫劇を想像だにせず、ゆかりは触手宮の中へと引きずり込まれていった――
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMDW 自分に降りかかる淫劇を想像だにせず、ゆかりは触手宮の中へと引きずり込まれていった――
-			ENDIF
+			PRINTFORMDL 自分に降りかかる淫劇を想像だにせず、ゆかりは触手宮の中へと引きずり込まれていった――
+			CALL WAIT_AUTOMODE(400, 0)
 			RESETCOLOR
 			DRAWLINE 
 		ENDIF

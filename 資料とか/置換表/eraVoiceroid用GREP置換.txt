@@ -32,6 +32,13 @@ $1CALL WAIT_AUTOMODE($2)
 (\t* *)IF FLAG:AUTOMODE.*\r*\n\t* *PRINTFORML(.*\r*\n)\t* *TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t* *ELSE *\r*\n\t* *PRINTFORMW(.*\r*\n)\t* *ENDIF
 置換後
 $1PRINTFORML$2$1CALL WAIT_AUTOMODE($3)
+-------------------------------------
+
+置換前
+(\t* *)IF FLAG:AUTOMODE.*\r*\n\t* *PRINT(.*\r*\n)\t* *TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t* *ELSE *\r*\n\t* *PRINT(.*\r*\n)\t* *ENDIF
+置換後
+$1PRINT$2$1CALL WAIT_AUTOMODE($3)
+-------------------------------------
 
 
 置換前
