@@ -64,7 +64,13 @@ IF LOCAL:2 >= LOCAL:1
 	;***********************************************************************************************************************
 	PRINTFORML 
 	PRINTFORML [0] この場を離れる
-	INPUT
+	
+	
+	IF FLAG:AUTOMODE
+		TINPUT FLAG:AUTOMODE * 1000 , 0, 0, ""
+	ELSE
+		INPUT
+	ENDIF
 
 	IF RESULT < 0 || RESULT >= 13
 		GOTO INPUT_LOOP

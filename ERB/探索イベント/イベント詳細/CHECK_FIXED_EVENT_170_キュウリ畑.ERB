@@ -32,7 +32,12 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:170 >= 100
 		PRINTFORML [2] 食べる
 	ENDIF
 	PRINTFORML [0] その場を離れる
-	INPUT
+	
+	IF FLAG:AUTOMODE
+		TINPUT FLAG:AUTOMODE * 1000 , RAND:2, 0, ""
+	ELSE
+		INPUT
+	ENDIF
 	IF RESULT == 1
 		PRINTFORML おそるおそる%CALLNAME:1%%TACHI()%はキュウリを生で噛み砕いてみた！
 		PRINTFORML すっきりとしたさわやかな味わいが%CALLNAME:1%%TACHI()%の心と体を癒した！
@@ -65,7 +70,13 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:170 >= 100
 		
 		PRINTFORML %CALLNAME:1%%TACHI()%は裸になり、唾液で濡らしてから下の口でキュウリを味わい始めた…
 		PRINTFORML ほどよい太さのキュウリが、%CALLNAME:1%%TACHI()%の身体にゆっくりと沈み込んでゆく…
-		PRINTFORMW 突如キュウリが震えだし%CALLNAME:1%%TACHI()%の中をかき回し始めた！
+		IF FLAG:AUTOMODE
+			PRINTFORML 突如キュウリが震えだし%CALLNAME:1%%TACHI()%の中をかき回し始めた！
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW  突如キュウリが震えだし%CALLNAME:1%%TACHI()%の中をかき回し始めた！
+		ENDIF
+
 		TFLAG:63 = 3
 		IF CFLAG:1:29 == 0
 			BASE:1:1 += MAXBASE:1:1 / 10
@@ -99,7 +110,13 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:170 >= 100
 		PRINTFORML %CALLNAME:1%%TACHI()%はキュウリ畑から立ち去ろうとした…
 		PRINTFORML 次の瞬間足にツタが絡まり%CALLNAME:1%%TACHI()%の姿勢が崩れた！
 		PRINTFORML 振り返ると白い体液をしたたらせる大量のキュウリが目の前に突き出されていた！
-		PRINTFORMW そのまま%CALLNAME:1%%TACHI()%は上下の口から存分にキュウリを味合わされてしまった……
+		IF FLAG:AUTOMODE
+			PRINTFORML そのまま%CALLNAME:1%%TACHI()%は上下の口から存分にキュウリを味合わされてしまった……
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW  そのまま%CALLNAME:1%%TACHI()%は上下の口から存分にキュウリを味合わされてしまった……
+		ENDIF
+
 		TFLAG:63 = 3
 		IF CFLAG:1:29 == 0
 			BASE:1:0 = MAXBASE:1:0
@@ -130,7 +147,11 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:170 >= 100
 	ENDIF
 	;どの場合でもイベントをその場に残す
 	LOCAL:3 = 1
-	WAIT
+	IF FLAG:AUTOMODE
+		TWAIT FLAG:AUTOMODE * 500, 0
+	ELSE
+		WAIT
+	ENDIF
 ELSE
 	;見つからなかった場合（通常は何もしない）
 ENDIF

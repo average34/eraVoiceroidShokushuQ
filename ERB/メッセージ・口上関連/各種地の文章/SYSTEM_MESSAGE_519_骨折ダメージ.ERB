@@ -1,4 +1,10 @@
 ﻿;骨折ダメージ
 ;エグい色に腫れ上がってる患部を更に痛めつける感じ
 @SYSTEM_MESSAGE_519(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
-	PRINTFORMW %ARGS:0%の折れた肋骨が振動を受け、内臓をズキズキと弄る！
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の折れた肋骨が振動を受け、内臓をズキズキと弄る！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の折れた肋骨が振動を受け、内臓をズキズキと弄る！
+ENDIF
+

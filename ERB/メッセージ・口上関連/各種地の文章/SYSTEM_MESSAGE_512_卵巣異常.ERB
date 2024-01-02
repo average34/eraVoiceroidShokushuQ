@@ -1,21 +1,127 @@
 ﻿;卵巣異常
 @SYSTEM_MESSAGE_512(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
-;基本的に卵巣は成長したら不可逆のはずなので未熟卵巣への成長口上が出ることはないはずです
+;基本的に卵巣は成長したら不可逆のはずなので未熟卵巣と特殊な封印卵巣への成長口上が出ることはないはずです
 
 	SELECTCASE ARG:1
+		CASE -2
+			;PRINTFORML 少女の卵巣は封印に守られている……
+			;IF FLAG:AUTOMODE
+			;	PRINTFORML %ARGS:0%の卵巣は【封印卵巣】になった！
+			;	TWAIT FLAG:AUTOMODE * 400, 0
+			;ELSE
+			;	PRINTFORMW %ARGS:0%の卵巣は【封印卵巣】になった！
+			;ENDIF
+			;封印解除時に表示
+			IF ARG:2 == 1
+				PRINTFORML 封じていたはずの卵巣は、出産を経験したことでその機能を思い出してしまった
+				PRINTFORML 抑圧されていた分、活発に活動し始めているようだ……
+			;寄生侵食進行で成長時
+			ELSEIF ARG:2 == 2
+				PRINTFORML 卵巣の封印が解かれてしまっている……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【封印卵巣】ではなくなった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【封印卵巣】ではなくなった！
+			ENDIF
 		CASE -1
-			PRINTFORML まだ初潮が来ていないようだ……
-			PRINTFORMW %ARGS:0%の卵巣は【未熟卵巣】になった！
+			IF ARG:2 == 1
+				PRINTFORML まだ初潮が来ていないようだ……
+			;寄生侵食進行で成長時
+			ELSEIF ARG:2 == 2
+				PRINTFORML とはいえ%ARGS:0%に初潮が来るのはいまだ遠そうだ……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【未熟卵巣】になった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【未熟卵巣】になった！
+			ENDIF
+
 		CASE 0
-			PRINTFORML オトナの快楽によって初潮が来てしまったようだ、これからは妊娠してしまうかもしれない……
-			PRINTFORMW %ARGS:0%の卵巣は【正常卵巣】になった！
+			IF ARG:2 == 1
+				PRINTFORML オトナの経験によって初潮が来てしまったようだ、これからは妊娠してしまうかもしれない……
+			;寄生侵食進行で成長時
+			ELSEIF ARG:2 == 2
+				PRINTFORML これからは初潮が来るだろう……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【成熟卵巣】になった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【成熟卵巣】になった！
+			ENDIF
+
 		CASE 1
-			PRINTFORML 肉体は迷宮の快楽を受け入れ始めたようだ、種付けに忌避感がなくなり始めてしまった……
-			PRINTFORMW %ARGS:0%の卵巣は【異常排卵巣】になった！
+			IF ARG:2 == 1
+				PRINTFORML 身体の生殖機能が慣れ始めたようだ、これからは排卵が活発になるだろう……
+			;寄生侵食進行で成長時
+			ELSEIF ARG:2 == 2
+				PRINTFORML これからは排卵が活発になるだろう……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【活発卵巣】になった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【活発卵巣】になった！
+			ENDIF
+
 		CASE 2
-			PRINTFORML 肉体は迷宮の快楽を受け入れ、卵巣は種付けを期待してぶっくりと肥大化してしまったようだ……
-			PRINTFORMW %ARGS:0%の卵巣は【肥大化卵巣】になった！
+			IF ARG:2 == 1
+				PRINTFORML 肉体は迷宮の快楽を受け入れ始めたようだ、種付けに忌避感がなくなり始めてしまった……
+			;寄生侵食進行で成長時
+			ELSEIF ARG:2 == 2
+				PRINTFORML これからは初潮が来るだろう……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【異常排卵巣】になった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【異常排卵巣】になった！
+			ENDIF
+
 		CASE 3
-			PRINTFORML 醜いほどに肥大化した卵巣は限りあるはずの卵子を追加生成して排卵し、いつでも種付けを受け入れる迷宮のお嫁さんにされてしまったようだ……
-			PRINTFORMW %ARGS:0%の卵巣は【苗床卵巣】になった！
+			IF ARG:2 == 1
+				PRINTFORML 肉体は迷宮の快楽を受け入れ、卵巣は種付けを期待してぶっくりと肥大化してしまったようだ……
+			;寄生侵食進行で成長時
+			ELSEIF ARG:2 == 2
+				PRINTFORML これからは種付けを期待してしまうだろう……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【肥大化卵巣】になった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【肥大化卵巣】になった！
+			ENDIF
+
+		CASE 4
+			IF ARG:2 == 1
+				PRINTFORML 醜いほどに肥大化した卵巣は限りあるはずの卵子を追加生成して排卵し、いつでも種付けを受け入れる迷宮のお嫁さんにされてしまったようだ……
+			;寄生侵食進行で成長時
+			ELSEIF ARG:2 == 2
+				PRINTFORML これからはいつでも種付けを受け入れることになるだろう……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【苗床卵巣】になった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【苗床卵巣】になった！
+			ENDIF
+
+		CASE 5
+			IF ARG:2 == 1
+				PRINTFORML 迷宮に屈服嫁入りした卵巣は悦んで卵子を差し出すようになったようだ……
+			;寄生侵食進行で成長時
+			;ただし侵食ではここまで成長しないはず
+			ELSEIF ARG:2 == 2
+				PRINTFORML これからは迷宮のメス嫁として悦んで卵子を差し出すことになるだろう……
+			ENDIF
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の卵巣は【メス嫁苗床卵巣】になった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %ARGS:0%の卵巣は【メス嫁苗床卵巣】になった！
+			ENDIF
+
 	ENDSELECT

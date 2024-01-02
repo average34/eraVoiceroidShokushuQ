@@ -27,13 +27,25 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:205 >= 100
 	
 	IF FLAG:201 < 200
 		;石碑を読んでいない場合、詳細不明となる
-		PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた石版を発見した！
+		IF FLAG:AUTOMODE
+		    PRINTFORML %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた石版を発見した！
+		    TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+		    PRINTFORMW  %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた石版を発見した！
+		ENDIF
+
 		PRINTFORML しかし石版を調べてみても特に何も見つからなかった…
 		CALL PRINT_MESSAGE(1, 200, 205, CALLNAME:1, "", 0)
 		CALL PRINT_MESSAGE(FLAG:10, 200, 205, CALLNAME:1, "", 0)
 		CALL PRINT_MESSAGE(FLAG:11, 200, 205, CALLNAME:1, "", 0)
 	ELSE
-		PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた緑の石版を発見した！
+		IF FLAG:AUTOMODE
+		    PRINTFORML %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた緑の石版を発見した！
+		    TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+		    PRINTFORMW  %CALLNAME:1%%TACHI()%は不思議な紋章が刻まれた緑の石版を発見した！
+		ENDIF
+
 		PRINTFORML しかしこの石版に刻まれた紋章は、石碑で見たものとは違うようだ…
 		CALL PRINT_MESSAGE(1, 200, 205, CALLNAME:1, "", 1)
 		CALL PRINT_MESSAGE(FLAG:10, 200, 205, CALLNAME:1, "", 1)
@@ -42,7 +54,11 @@ IF LOCAL:2 >= LOCAL:1 || FLAG:205 >= 100
 	
 	;どの場合でもイベントをその場に残す
 	LOCAL:3 = 1
-	WAIT
+	IF FLAG:AUTOMODE
+		TWAIT FLAG:AUTOMODE * 500, 0
+	ELSE
+		WAIT
+	ENDIF
 ELSE
 	;見つからなかった場合（通常は何もしない）
 ENDIF

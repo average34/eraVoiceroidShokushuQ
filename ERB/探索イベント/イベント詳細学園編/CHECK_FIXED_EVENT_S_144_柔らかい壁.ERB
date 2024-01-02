@@ -63,28 +63,28 @@ IF LOCAL:9 == 0
 ELSE
 	;崩せる壁を決定 4か所とも閉じていることは無いので、最大でも3か所な点に注意
 	IF LOCAL:9 & 1
-		LOCAL:(10 + LOCAL:14) = LOCAL:4
-		LOCAL:14 += 1
+		LOCAL:(10 + LOCAL:13) = LOCAL:4
+		LOCAL:13 += 1
 	ENDIF
 	IF LOCAL:9 & 2
-		LOCAL:(10 + LOCAL:14) = LOCAL:5
-		LOCAL:14 += 1
+		LOCAL:(10 + LOCAL:13) = LOCAL:5
+		LOCAL:13 += 1
 	ENDIF
 	IF LOCAL:9 & 4
-		LOCAL:(10 + LOCAL:14) = LOCAL:6
-		LOCAL:14 += 1
+		LOCAL:(10 + LOCAL:13) = LOCAL:6
+		LOCAL:13 += 1
 	ENDIF
 	IF LOCAL:9 & 8
-		LOCAL:(10 + LOCAL:14) = LOCAL:7
-		LOCAL:14 += 1
+		LOCAL:(10 + LOCAL:13) = LOCAL:7
+		LOCAL:13 += 1
 	ENDIF
-	LOCAL:8 = LOCAL:(RAND:(LOCAL:14) + 10)
+	LOCAL:8 = LOCAL:(RAND:(LOCAL:13) + 10)
 ENDIF
 
 ;目標値（イベント難易度）決定
 LOCAL:1 = 180
 ;周囲全て壁だと発見率アップ
-IF LOCAL:14 == 4
+IF LOCAL:13 == 4
 	LOCAL:1 = 70
 ENDIF
 ;達成値決定
@@ -97,7 +97,7 @@ IF LOCAL:2 >= LOCAL:1
 	PRINTFORML 周囲と少し様子が異なる壁を見つけた！　体当たりで崩してみますか？
 	CALL ASK_YN
 	IF RESULT == 0
-		IF RAND:2 == 0 || LOCAL:14 == 4
+		IF RAND:2 == 0 || LOCAL:13 == 4
 			PRINTFORML %CALLNAME:1%%TACHI()%が体当たりすると、壁は簡単に崩れてしまった！
 			PRINTFORMW 移動できる通路が増えました！
 			CALL PRINT_MESSAGE(1, 200, 144, CALLNAME:1, "", 1)

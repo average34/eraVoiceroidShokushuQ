@@ -23,7 +23,12 @@ LOCAL:2 = RESULT
 
 IF LOCAL:2 >= LOCAL:1
 	CALL ADD_ABL_EXP_PT(0, 300)
-	PRINTFORMW 突然周囲からガスが湧きだしてきた！
+	PRINTFORML 突然周囲からガスが湧きだしてきた！
+	IF FLAG:AUTOMODE
+		TWAIT FLAG:AUTOMODE * 400, 0
+	ELSE
+		WAIT
+	ENDIF
 	PRINTFORML 
 	LOCAL:5 = RAND:2
 	
@@ -42,7 +47,12 @@ IF LOCAL:2 >= LOCAL:1
 	ELSE
 		PRINTFORML %CALLNAME:1%%TACHI()%は思わずガスを吸い込んでしまった！
 		PRINTFORML しかし、このガスは強烈なにおいを発してはいるものの、特に何の効果もないみたいだ…
-		PRINTFORMW 奇妙なトラップに首をかしげながらも%CALLNAME:1%%TACHI()%は探索を再開した
+		PRINTFORML 奇妙なトラップに首をかしげながらも%CALLNAME:1%%TACHI()%は探索を再開した
+		IF FLAG:AUTOMODE
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			WAIT
+		ENDIF
 		BASE:1:5 = 100
 		IF FLAG:10
 			BASE:(FLAG:10):5 = 100
@@ -52,7 +62,12 @@ IF LOCAL:2 >= LOCAL:1
 		ENDIF
 	ENDIF
 	
-	WAIT
+	
+	IF FLAG:AUTOMODE
+		TWAIT FLAG:AUTOMODE * 500, 0
+	ELSE
+		WAIT
+	ENDIF
 	
 	;別の場所に移動
 	FLAG:163 = RAND:30 + 1

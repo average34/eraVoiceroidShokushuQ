@@ -20,20 +20,43 @@ IF FLAG:172 < 100
 	PRINTFORML 「がちゃがちゃ　こーなー」
 	PRINTFORML 「おだいは　じょうかりょく」
 	PRINTFORML
-	PRINTFORMW いかにも怪しげだ……
+	
+	IF FLAG:AUTOMODE
+		PRINTFORML いかにも怪しげだ……
+		TWAIT FLAG:AUTOMODE * 1000 , 0
+	ELSE
+		PRINTFORMW いかにも怪しげだ……
+	ENDIF
+	
 ELSE
 	PRINTFORML 「がちゃがちゃ　こーなー」
 	PRINTFORML 「おだいは　じょうかりょく」
-	PRINTFORMW 前回はろくな目に合わなかったのだが……
+	
+	IF FLAG:AUTOMODE
+		TWAIT FLAG:AUTOMODE * 1000 , 0
+	ELSE
+		PRINTFORMW 前回はろくな目に合わなかったのだが……
+	ENDIF
+	
 ENDIF
 PRINTFORML どうしますか？
 PRINTFORML [ 1] - やってみる （必要浄化力:50）
 PRINTFORML [ 0] - やめとく
 $INPUT_LOOP
-INPUT
+
+	IF FLAG:AUTOMODE
+		TINPUT FLAG:AUTOMODE * 1000 , 0, 0, ""
+	ELSE
+		INPUT
+	ENDIF
 IF RESULT == 0
 	PRINTFORML 明らかに怪しいものには関わりたくない……
-	PRINTFORMW その場を立ち去ることにした
+	IF FLAG:AUTOMODE
+		PRINTFORML その場を立ち去ることにした
+		TWAIT FLAG:AUTOMODE * 1000 , 0
+	ELSE
+		PRINTFORMW その場を立ち去ることにした
+	ENDIF
 	RETURN
 ELSEIF RESULT == 1 && FLAG:6 < 50
 	PRINTFORML しかし浄化力が足りていない……

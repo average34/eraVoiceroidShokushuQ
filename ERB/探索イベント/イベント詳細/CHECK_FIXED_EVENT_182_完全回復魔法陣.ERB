@@ -185,7 +185,12 @@ IF LOCAL:2 >= LOCAL:1
 
 	;イベントを別の場所に移動
 	FLAG:182 = RAND:30 + 1
-	WAIT
+	
+	IF FLAG:AUTOMODE
+		TWAIT FLAG:AUTOMODE * 500, 0
+	ELSE
+		WAIT
+	ENDIF
 	
 ELSE
 	;見つからなかった場合（通常は何もしない）

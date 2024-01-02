@@ -467,7 +467,7 @@ IF LOCAL:7
 	CALL PRINT_MESSAGE(FLAG:11, 113, LOCAL:7, CALLNAME:1, ITEMNAME:(LOCAL:7))
 	CALL ADD_ITEM(LOCAL:7, LOCAL:9, 1)
 	LOCAL:10 = 1
-	WAIT
+	TWAIT FLAG:AUTOMODE * 500, 0
 ENDIF
 
 IF LOCAL:11
@@ -506,9 +506,22 @@ IF LOCAL:10 == 0
 	$NO_EVENT
 	IF ARG:0
 		;固定イベントが何か起きている場合
-		PRINTFORMW 更に周囲を調べてみたが、他には何も見つからなかった…
+		
+		IF FLAG:AUTOMODE
+			PRINTFORML 更に周囲を調べてみたが、他には何も見つからなかった…
+			TWAIT FLAG:AUTOMODE * 500, 0
+		ELSE
+			PRINTFORMW 更に周囲を調べてみたが、他には何も見つからなかった…
+		ENDIF
 	ELSE
-		PRINTFORMW 周囲を調べてみたが、特に何も見つからなかった…
+	
+		IF FLAG:AUTOMODE
+			PRINTFORML 周囲を調べてみたが、特に何も見つからなかった…
+			TWAIT FLAG:AUTOMODE * 500, 0
+		ELSE
+			PRINTFORMW 周囲を調べてみたが、特に何も見つからなかった…
+		ENDIF
+		
 	ENDIF
 ENDIF
 

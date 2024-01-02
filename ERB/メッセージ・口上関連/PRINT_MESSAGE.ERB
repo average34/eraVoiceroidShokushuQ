@@ -58,7 +58,13 @@ IF TARGET == -1
 		FOR LOCAL , 0 , 23
 			PRINTL 
 		NEXT
-		PRINTW 
+		IF FLAG:AUTOMODE
+			PRINTL 
+			TWAIT FLAG:AUTOMODE * 1500, 0
+		ELSE
+			PRINTW  
+		ENDIF
+
 	ELSE
 		SPRITECREATED @"NNN_%STR:1%"
 		IF RESULT
@@ -66,7 +72,13 @@ IF TARGET == -1
 			FOR LOCAL , 0 , 23
 				PRINTL 
 			NEXT
-			PRINTW 
+			IF FLAG:AUTOMODE
+				PRINTL 
+				TWAIT FLAG:AUTOMODE * 1500, 0
+			ELSE
+				PRINTW  
+			ENDIF
+
 		ENDIF
 	ENDIF
 	REDRAW TEMP_REDRAW
@@ -143,7 +155,13 @@ ELSE
 				FOR LOCAL , 0 , 23
 					PRINTL 
 				NEXT
-				PRINTW 
+				IF FLAG:AUTOMODE
+					PRINTL 
+					TWAIT FLAG:AUTOMODE * 1500, 0
+				ELSE
+					PRINTW  
+				ENDIF
+
 			ELSE
 				SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
 				IF RESULT && D_ARG:0 > 0
@@ -174,7 +192,13 @@ ELSE
 					FOR LOCAL , 0 , 23
 						PRINTL 
 					NEXT
-					PRINTW 
+					IF FLAG:AUTOMODE
+						PRINTL 
+						TWAIT FLAG:AUTOMODE * 1500, 0
+					ELSE
+						PRINTW  
+					ENDIF
+
 				ELSEIF D_ARG:0 > 0
 					SPRITECREATED @"XXX_%STR:1%_%STR:2%"
 					IF RESULT
@@ -182,7 +206,13 @@ ELSE
 						FOR LOCAL , 0 , 23
 							PRINTL 
 						NEXT
-						PRINTW 
+						IF FLAG:AUTOMODE
+							PRINTL 
+							TWAIT FLAG:AUTOMODE * 1500, 0
+						ELSE
+							PRINTW  
+						ENDIF
+
 					ELSE
 						SPRITECREATED @"%STR:0%_%STR:1%"
 						IF RESULT
@@ -213,7 +243,13 @@ ELSE
 							FOR LOCAL , 0 , 23
 								PRINTL 
 							NEXT
-							PRINTW 
+							IF FLAG:AUTOMODE
+								PRINTL 
+								TWAIT FLAG:AUTOMODE * 1500, 0
+							ELSE
+								PRINTW  
+							ENDIF
+
 						ENDIF
 					ENDIF
 ;敵攻撃発動時の画像表示★★★★★
@@ -224,7 +260,13 @@ ELSE
 						FOR LOCAL , 0 , 23
 							PRINTL 
 						NEXT
-						PRINTW 
+						IF FLAG:AUTOMODE
+							PRINTL 
+							TWAIT FLAG:AUTOMODE * 1500, 0
+						ELSE
+							PRINTW  
+						ENDIF
+
 					ELSE
 						SPRITECREATED @"NNN_%STR:1%"
 						IF RESULT
@@ -232,7 +274,13 @@ ELSE
 							FOR LOCAL , 0 , 23
 								PRINTL 
 							NEXT
-							PRINTW 
+							IF FLAG:AUTOMODE
+								PRINTL 
+								TWAIT FLAG:AUTOMODE * 1500, 0
+							ELSE
+								PRINTW  
+							ENDIF
+
 						ENDIF
 					ENDIF
 ;敵攻撃発動時の画像表示★★★★★
@@ -260,3 +308,4 @@ CALL SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, AR
 ;性格による汎用口上の表示(コンフィグによって表示しない可能性あり)
 SIF FLAG:595 != -1 && CFLAG:701 != -1
 	CALL KOJO_DEFAULT(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+

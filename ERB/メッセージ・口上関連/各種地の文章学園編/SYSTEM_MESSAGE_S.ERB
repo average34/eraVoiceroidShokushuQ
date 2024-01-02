@@ -25,20 +25,56 @@ SELECTCASE ARG:0
 	CASE 114
 		IF TARGET == -1
 			IF ARG:1 == 0
-				PRINTFORMW %ARGS:0%%TACHI()%は部屋の隅に身を隠すようにしながら眠りについた…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%%TACHI()%は部屋の隅に身を隠すようにしながら眠りについた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%%TACHI()%は部屋の隅に身を隠すようにしながら眠りについた…
+ENDIF
+
 			ELSEIF ARG:1 == 1
-				PRINTFORMW %ARGS:0%%TACHI()%は交替で見張りを立てながら眠りについた…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%%TACHI()%は交替で見張りを立てながら眠りについた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%%TACHI()%は交替で見張りを立てながら眠りについた…
+ENDIF
+
 			ELSEIF ARG:1 == 2
-				PRINTFORMW %ARGS:0%%TACHI()%は%ARGS:1%に敵が来たら起こしてくれるように頼み、眠りについた…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%%TACHI()%は%ARGS:1%に敵が来たら起こしてくれるように頼み、眠りについた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%%TACHI()%は%ARGS:1%に敵が来たら起こしてくれるように頼み、眠りについた…
+ENDIF
+
 			ENDIF
 		ENDIF
 
 	CASE 127
 		IF ARG:1 == 0
-			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
-			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%のナカから少しずつ這い出ようとしている…
+IF FLAG:AUTOMODE
+    PRINTFORML 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%のナカから少しずつ這い出ようとしている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%のナカから少しずつ這い出ようとしている…
+ENDIF
+
 		ELSEIF ARG:1 == 1
-			PRINTFORMW ………
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
 			IF TARGET != 1
 				;他の仲間から産まれる
 				IF FLAG:11
@@ -55,18 +91,54 @@ SELECTCASE ARG:0
 				ENDIF
 			ELSE
 				;主人公から産まれる＋誰も居ない
-				PRINTFORMW 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+IF FLAG:AUTOMODE
+    PRINTFORML 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+ENDIF
+
 				PRINTFORM そんなところに、
 			ENDIF
-			PRINTFORMW %ARGS:0%から産まれた幼体は%ARGS:0%の胸へと吸いついた
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%から産まれた幼体は%ARGS:0%の胸へと吸いついた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%から産まれた幼体は%ARGS:0%の胸へと吸いついた
+ENDIF
+
 			IF TALENT:130 == 0
-				PRINTFORMW どうやら疑似出産を経て、%ARGS:0%は母乳が出るようになったようだ…
-				PRINTFORMW %ARGS:0%は【%TALENTNAME:130%】を得た
+IF FLAG:AUTOMODE
+    PRINTFORML どうやら疑似出産を経て、%ARGS:0%は母乳が出るようになったようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  どうやら疑似出産を経て、%ARGS:0%は母乳が出るようになったようだ…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:130%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:130%】を得た
+ENDIF
+
 				PRINTFORML  
 			ENDIF
-			PRINTFORMW %ARGS:0%の生命力ごと吸い尽くすかのように、幼体は%ARGS:0%の乳首を吸い上げている
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の生命力ごと吸い尽くすかのように、幼体は%ARGS:0%の乳首を吸い上げている
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の生命力ごと吸い尽くすかのように、幼体は%ARGS:0%の乳首を吸い上げている
+ENDIF
+
 		ELSEIF ARG:1 == 2
-			PRINTFORMW ……やがて満足したのか、幼体は白濁液に塗れた%ARGS:0%を残し、どこかへ消えて行った…
+IF FLAG:AUTOMODE
+    PRINTFORML ……やがて満足したのか、幼体は白濁液に塗れた%ARGS:0%を残し、どこかへ消えて行った…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……やがて満足したのか、幼体は白濁液に塗れた%ARGS:0%を残し、どこかへ消えて行った…
+ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
 		ELSEIF ARG:1 == 4
@@ -75,19 +147,55 @@ SELECTCASE ARG:0
 		ELSEIF ARG:1 == 5
 			;母乳すすってた幼体に頭突っ込まれてNFされた
 			PRINTFORM 乳首に吸い付いていた幼体は突然%ARGS:0%の緩みきった乳腺に頭を突っ込み、内部のブドウの房のような乳分泌腺を甘噛みして直接母乳を啜りはじめた！　
-			PRINTFORMW じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+IF FLAG:AUTOMODE
+    PRINTFORML じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+ENDIF
+
 		ENDIF
 	CASE 129
 		IF ARG:1 == 0
-			PRINTFORMW 突然%ARGS:0%がうめき声と共に屈み込むと、その足元に羊水が溢れ始めた…
+IF FLAG:AUTOMODE
+    PRINTFORML 突然%ARGS:0%がうめき声と共に屈み込むと、その足元に羊水が溢れ始めた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  突然%ARGS:0%がうめき声と共に屈み込むと、その足元に羊水が溢れ始めた…
+ENDIF
+
 			IF TALENT:130 == 0
 				;残り時間がスキップされた場合への対策
-				PRINTFORMW 陣痛に苦しむ%ARGS:0%の胸から、母乳が滲み始めている…
-				PRINTFORMW %ARGS:0%は【%TALENTNAME:130%】を得た
+IF FLAG:AUTOMODE
+    PRINTFORML 陣痛に苦しむ%ARGS:0%の胸から、母乳が滲み始めている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  陣痛に苦しむ%ARGS:0%の胸から、母乳が滲み始めている…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:130%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:130%】を得た
+ENDIF
+
 			ENDIF
-			PRINTFORMW 息を荒くする%ARGS:0%のナカから、孕んでいた子供が少しずつ這い出ようとしている…
+IF FLAG:AUTOMODE
+    PRINTFORML 息を荒くする%ARGS:0%のナカから、孕んでいた子供が少しずつ這い出ようとしている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  息を荒くする%ARGS:0%のナカから、孕んでいた子供が少しずつ這い出ようとしている…
+ENDIF
+
 		ELSEIF ARG:1 == 1
-			PRINTFORMW ………
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
 			IF TARGET != 1
 				;他の仲間から産まれる
 				IF FLAG:11
@@ -107,21 +215,51 @@ SELECTCASE ARG:0
 				PRINTFORM 一人必死にお腹を抑えながら、
 			ENDIF
 			IF ARG:2 == 0
-				PRINTFORMW %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
+ENDIF
+
 			ELSE
 				;母親が人間＝半人半妖　　母親が妖怪＝半妖半触手　みたいな
-				PRINTFORMW %ARGS:0%は半妖の女の子を産み落とした
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は半妖の女の子を産み落とした
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は半妖の女の子を産み落とした
+ENDIF
+
 			ENDIF
-			PRINTFORMW 産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
+IF FLAG:AUTOMODE
+    PRINTFORML 産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
+ENDIF
+
 		ELSEIF ARG:1 == 2
 			;スライムとかの足は気にしてはいけない
-			PRINTFORMW ……しばらくして%ARGS:0%から離れた子供は、早くも自らの足で立ち上がり、どこかへと消えて行った…
+IF FLAG:AUTOMODE
+    PRINTFORML ……しばらくして%ARGS:0%から離れた子供は、早くも自らの足で立ち上がり、どこかへと消えて行った…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……しばらくして%ARGS:0%から離れた子供は、早くも自らの足で立ち上がり、どこかへと消えて行った…
+ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
 		ELSEIF ARG:1 == 4
 			;母乳すすってた幼体に頭突っ込まれてNFされた
 			PRINTFORM 乳首に吸い付いていた幼体は突然%ARGS:0%の緩みきった乳腺に頭を突っ込み、内部のブドウの房のような乳分泌腺を甘噛みして直接母乳を啜りはじめた！　
-			PRINTFORMW じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+IF FLAG:AUTOMODE
+    PRINTFORML じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  じくじくに爛れきった%ARGS:0%の乳分泌腺は乳房の中で爆ぜるように波打ち、ドロドロの母乳が乳穴と幼体の頭の隙間から溢れ出す…
+ENDIF
+
 		ENDIF
 	
 	
@@ -132,26 +270,110 @@ SELECTCASE ARG:0
 		CALL SYSTEM_MESSAGE_S_157(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 	
 	CASE 203
-		PRINTFORMW %NAME:1%がいつものように登校して朝の授業に備えていると校内放送が始まった
-		PRINTFORMW 「緊急連絡！謎の怪物が校舎に侵入！繰り返します！謎の怪物が校舎に侵入！
-		PRINTFORMW 生徒職員はすみやかに避難をきゃああああああああああああああああああああ
-		PRINTFORMW んぐぅ……んっ……あっ……やっ……やぁああ……」
+IF FLAG:AUTOMODE
+    PRINTFORML %NAME:1%がいつものように登校して朝の授業に備えていると校内放送が始まった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %NAME:1%がいつものように登校して朝の授業に備えていると校内放送が始まった
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「緊急連絡！謎の怪物が校舎に侵入！繰り返します！謎の怪物が校舎に侵入！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「緊急連絡！謎の怪物が校舎に侵入！繰り返します！謎の怪物が校舎に侵入！
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 生徒職員はすみやかに避難をきゃああああああああああああああああああああ
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  生徒職員はすみやかに避難をきゃああああああああああああああああああああ
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML んぐぅ……んっ……あっ……やっ……やぁああ……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  んぐぅ……んっ……あっ……やっ……やぁああ……」
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW ついさっきまでいつもと変わらない日常を送っていたはずなのに、一体何故こんな事になってしまったのだろうか……
-		PRINTFORMW スピーカーからはしばらく淫猥な水音と喘ぎ声が聞こえ続けた……
-		PRINTFORMW 周囲はパニックが発生し、気づけばもう誰も残っていない……
-		PRINTFORMW 出遅れてしまった%NAME:1%が廊下に出ると、通路が半ば触手に覆われてしまっていた……
+IF FLAG:AUTOMODE
+    PRINTFORML ついさっきまでいつもと変わらない日常を送っていたはずなのに、一体何故こんな事になってしまったのだろうか……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ついさっきまでいつもと変わらない日常を送っていたはずなのに、一体何故こんな事になってしまったのだろうか……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML スピーカーからはしばらく淫猥な水音と喘ぎ声が聞こえ続けた……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  スピーカーからはしばらく淫猥な水音と喘ぎ声が聞こえ続けた……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 周囲はパニックが発生し、気づけばもう誰も残っていない……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  周囲はパニックが発生し、気づけばもう誰も残っていない……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 出遅れてしまった%NAME:1%が廊下に出ると、通路が半ば触手に覆われてしまっていた……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  出遅れてしまった%NAME:1%が廊下に出ると、通路が半ば触手に覆われてしまっていた……
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW とりあえずこんな気味の悪い所からはさっさと抜け出そう……そう思ったところで、%NAME:1%は自分の身体に違和感を覚える
-		PRINTFORMW どうも思った通りに自分の力を発揮することができないようだ
-		PRINTFORMW ため息を吐きながら脱出を目指すことにした……
+IF FLAG:AUTOMODE
+    PRINTFORML とりあえずこんな気味の悪い所からはさっさと抜け出そう……そう思ったところで、%NAME:1%は自分の身体に違和感を覚える
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  とりあえずこんな気味の悪い所からはさっさと抜け出そう……そう思ったところで、%NAME:1%は自分の身体に違和感を覚える
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML どうも思った通りに自分の力を発揮することができないようだ
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  どうも思った通りに自分の力を発揮することができないようだ
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ため息を吐きながら脱出を目指すことにした……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ため息を吐きながら脱出を目指すことにした……
+ENDIF
+
 		PRINTFORML 
 	CASE 227
 		IF ARG:1 == 0
-			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
-			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の尻から少しずつ這い出ようとしている…
+IF FLAG:AUTOMODE
+    PRINTFORML 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の尻から少しずつ這い出ようとしている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の尻から少しずつ這い出ようとしている…
+ENDIF
+
 		ELSEIF ARG:1 == 1
-			PRINTFORMW ………
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
 			IF TARGET != 1
 				;他の仲間から産まれる
 				IF FLAG:11
@@ -169,19 +391,49 @@ SELECTCASE ARG:0
 			ELSE
 				;主人公から産まれる＋誰も居ない
 			ENDIF
-			PRINTFORMW 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+IF FLAG:AUTOMODE
+    PRINTFORML 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+ENDIF
+
 		ELSEIF ARG:1 == 2
-			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+IF FLAG:AUTOMODE
+    PRINTFORML ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
 		ENDIF
 
 	CASE 523
 		IF ARG:1 == 0
-			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
-			PRINTFORMW 見ると、へたり込んだ%ARGS:0%の乳首から粘液\@ TALENT:130 >= 1 ? と母乳 # \@まみれの卵が出ている…
+IF FLAG:AUTOMODE
+    PRINTFORML 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 見ると、へたり込んだ%ARGS:0%の乳首から粘液\@ TALENT:130 >= 1 ? と母乳 # \@まみれの卵が出ている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  見ると、へたり込んだ%ARGS:0%の乳首から粘液\@ TALENT:130 >= 1 ? と母乳 # \@まみれの卵が出ている…
+ENDIF
+
 		ELSEIF ARG:1 == 1
-			PRINTFORMW ………
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
 			IF TARGET != 1
 				;他の仲間から産まれる
 				IF FLAG:11
@@ -200,21 +452,57 @@ SELECTCASE ARG:0
 				;主人公から産まれる＋誰も居ない
 			ENDIF
 			PRINTFORML %ARGS:0%の産卵は声がかれ痙攣するしかできなくなるまで続いた……
-			PRINTFORMW 中で生命がうごめくのが見えるいくつもの卵が水たまりのように広がっている……
+IF FLAG:AUTOMODE
+    PRINTFORML 中で生命がうごめくのが見えるいくつもの卵が水たまりのように広がっている……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  中で生命がうごめくのが見えるいくつもの卵が水たまりのように広がっている……
+ENDIF
+
 		ELSEIF ARG:1 == 2
-			PRINTFORMW 地面が生きているかのように盛り上がると、倒れたままの%ARGS:0%を残して卵を飲み込んだ……
+IF FLAG:AUTOMODE
+    PRINTFORML 地面が生きているかのように盛り上がると、倒れたままの%ARGS:0%を残して卵を飲み込んだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  地面が生きているかのように盛り上がると、倒れたままの%ARGS:0%を残して卵を飲み込んだ……
+ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 何度も産卵をするうちに%ARGS:0%の身体が作り替えられてしまったようだ……
-			PRINTFORMW %ARGS:0%は【産卵体質】を手に入れた
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【産卵体質】を手に入れた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【産卵体質】を手に入れた
+ENDIF
+
 		ELSEIF ARG:1 == 4
 			PRINTFORML 産卵中で動けない%ARGS:0%を部屋の触手が襲い始めた！
 		ENDIF
 	CASE 527
 		IF ARG:1 == 0
-			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
-			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の乳首から\@ TALENT:130 >= 1 ? 母乳に塗れながら # \@少しずつ這い出ようとしている…
+IF FLAG:AUTOMODE
+    PRINTFORML 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の乳首から\@ TALENT:130 >= 1 ? 母乳に塗れながら # \@少しずつ這い出ようとしている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  見ると、%ARGS:0%に寄生していた幼体が%ARGS:0%の乳首から\@ TALENT:130 >= 1 ? 母乳に塗れながら # \@少しずつ這い出ようとしている…
+ENDIF
+
 		ELSEIF ARG:1 == 1
-			PRINTFORMW ………
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
 			IF TARGET != 1
 				;他の仲間から産まれる
 				IF FLAG:11
@@ -232,19 +520,49 @@ SELECTCASE ARG:0
 			ELSE
 				;主人公から産まれる＋誰も居ない
 			ENDIF
-			PRINTFORMW 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+IF FLAG:AUTOMODE
+    PRINTFORML 幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  幼体を産み落として精根が尽きた%ARGS:0%は荒い息をついている…
+ENDIF
+
 		ELSEIF ARG:1 == 2
-			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+IF FLAG:AUTOMODE
+    PRINTFORML ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
 		ENDIF
 
 	CASE 547
 		IF ARG:1 == 0
-			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
-			PRINTFORMW 見ると、%ARGS:0%に寄生していた幼体が少しずつ這い出ようとしている…
+IF FLAG:AUTOMODE
+    PRINTFORML 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 見ると、%ARGS:0%に寄生していた幼体が少しずつ這い出ようとしている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  見ると、%ARGS:0%に寄生していた幼体が少しずつ這い出ようとしている…
+ENDIF
+
 		ELSEIF ARG:1 == 1
-			PRINTFORMW ………
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
 			IF TARGET != 1
 				;他の仲間から産まれる
 				IF FLAG:11
@@ -262,18 +580,48 @@ SELECTCASE ARG:0
 			ELSE
 				;主人公から産まれる＋誰も居ない
 			ENDIF
-			PRINTFORMW 幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+IF FLAG:AUTOMODE
+    PRINTFORML 幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+ENDIF
+
 		ELSEIF ARG:1 == 2
-			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+IF FLAG:AUTOMODE
+    PRINTFORML ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
 		ENDIF
 	CASE 554
 		IF ARG:1 == 0
-			PRINTFORMW 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
-			PRINTFORMW 見ると、%ARGS:0%の妊娠していた玉が脈動し竿が膨れ上がっていく……
+IF FLAG:AUTOMODE
+    PRINTFORML 突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  突然%ARGS:0%が倒れたかと思うと、凄まじい悲鳴を上げ始めた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 見ると、%ARGS:0%の妊娠していた玉が脈動し竿が膨れ上がっていく……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  見ると、%ARGS:0%の妊娠していた玉が脈動し竿が膨れ上がっていく……
+ENDIF
+
 		ELSEIF ARG:1 == 1
-			PRINTFORMW ………
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
 			IF TARGET != 1
 				;他の仲間から産まれる
 				IF FLAG:11
@@ -291,9 +639,21 @@ SELECTCASE ARG:0
 			ELSE
 				;主人公から産まれる＋誰も居ない
 			ENDIF
-			PRINTFORMW 幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+IF FLAG:AUTOMODE
+    PRINTFORML 幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  幼体を産み落として力なく垂れる竿を隠す余裕もなく%ARGS:0%は荒い息をついている…
+ENDIF
+
 		ELSEIF ARG:1 == 2
-			PRINTFORMW ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+IF FLAG:AUTOMODE
+    PRINTFORML ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……幼体は倒れたままの%ARGS:0%を残し、どこかへと消えて行った…
+ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 出産中で動けない%ARGS:0%を部屋の触手が襲い始めた！
 		ENDIF
@@ -302,7 +662,13 @@ SELECTCASE ARG:0
 		;変更がなければ元の触手宮のメッセージを使う
 		TRYCCALLFORM SYSTEM_MESSAGE(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 		CATCH
-			PRINTFORMW (SYSTEM_MESSAGE)未実装のメッセージID {ARG:0} が指定されました ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+IF FLAG:AUTOMODE
+    PRINTFORML (SYSTEM_MESSAGE)未実装のメッセージID {ARG:0} が指定されました ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  (SYSTEM_MESSAGE)未実装のメッセージID {ARG:0} が指定されました ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+ENDIF
+
 		ENDCATCH
 ENDSELECT
 

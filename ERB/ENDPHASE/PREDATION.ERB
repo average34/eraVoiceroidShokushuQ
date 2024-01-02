@@ -58,7 +58,12 @@ IF BASE:(ARG:0):3 > 0 && (BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3 >= 40 || FLAG
 	;服が残っていれば服が溶ける
 	IF FLAG:20 == 0
 		BASE:(ARG:0):3 = 0
-		PRINTFORMW %CALLNAME:(ARG:0)%の衣服は全て破られてしまった！
+		IF FLAG:AUTOMODE
+			PRINTFORML %CALLNAME:(ARG:0)%の衣服は全て破られてしまった！
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW %CALLNAME:(ARG:0)%の衣服は全て破られてしまった！
+		ENDIF
 	ELSE
 		BASE:(ARG:0):3 -= MAXBASE:(ARG:0):3 / 2
 		IF BASE:(ARG:0):3 < 0
@@ -81,7 +86,12 @@ ELSEIF BASE:(ARG:0):0 > 0
 		BASE:(ARG:0):0 = 200
 	ENDIF
 	IF FLAG:20 == 0
-		PRINTFORMW %CALLNAME:(ARG:0)%の残りHP：{BASE:(ARG:0):0}
+		IF FLAG:AUTOMODE
+			PRINTFORML %CALLNAME:(ARG:0)%の残りHP：{BASE:(ARG:0):0}
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW %CALLNAME:(ARG:0)%の残りHP：{BASE:(ARG:0):0}
+		ENDIF
 	ENDIF
 ELSEIF BASE:(ARG:0):1 > 0
 	;MPが残っていればMPダメージ
@@ -95,7 +105,12 @@ ELSEIF BASE:(ARG:0):1 > 0
 		CALL HEART_BREAK(ARG:0)
 	ELSE
 		IF FLAG:20 == 0
-			PRINTFORMW %CALLNAME:(ARG:0)%の残りMP：{BASE:(ARG:0):1}
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:(ARG:0)%の残りMP：{BASE:(ARG:0):1}
+				TWAIT FLAG:AUTOMODE * 200, 0
+			ELSE
+				PRINTFORMW %CALLNAME:(ARG:0)%の残りMP：{BASE:(ARG:0):1}
+			ENDIF
 		ENDIF
 	ENDIF
 ELSE
@@ -112,7 +127,12 @@ ELSE
 		MAXBASE:(ARG:0):0 = 0
 	ENDIF
 	IF FLAG:20 == 0
-		PRINTFORMW %CALLNAME:(ARG:0)%の残り生命力：{MAXBASE:(ARG:0):0}
+		IF FLAG:AUTOMODE
+			PRINTFORML %CALLNAME:(ARG:0)%の残り生命力：{MAXBASE:(ARG:0):0}
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW %CALLNAME:(ARG:0)%の残り生命力：{MAXBASE:(ARG:0):0}
+		ENDIF
 	ENDIF
 ENDIF
 
@@ -163,25 +183,53 @@ IF FLAG:524 == 0 && CFLAG:(ARG:0):29 == 1 && DA:(ARG:1):0 >= 5 && RAND:100 < 10 
 		CALL PARASITE_TYPE(ARG:0, 0, DA:(ARG:1):0, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 0)
 
 		IF FLAG:20 == 0
-			PRINTFORMW %CALLNAME:(ARG:0)%の秘所を貫く触手が一際大きく震えると、大量の白濁液を注ぎ込んだ…
-			PRINTFORMW %SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を散々嬲って満足したのか、%CALLNAME:(ARG:0)%の秘所から触手を引き抜くと
-			PRINTFORMW %CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
-			PRINTFORML  
-			PRINTFORMW ………
-			PRINTFORMW ……
-			PRINTFORMW …
-			PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+		
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:(ARG:0)%の秘所を貫く触手が一際大きく震えると、大量の白濁液を注ぎ込んだ…
+				PRINTFORML %SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を散々嬲って満足したのか、%CALLNAME:(ARG:0)%の秘所から触手を引き抜くと
+				PRINTFORML %CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
+				PRINTFORML 
+				TWAIT FLAG:AUTOMODE * 2000, 0
+				PRINTFORML ………
+				PRINTFORML ……
+				PRINTFORML …
+				PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+				TWAIT FLAG:AUTOMODE * 1000, 0
+			ELSE
+				PRINTFORMW %CALLNAME:(ARG:0)%の秘所を貫く触手が一際大きく震えると、大量の白濁液を注ぎ込んだ…
+				PRINTFORMW %SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を散々嬲って満足したのか、%CALLNAME:(ARG:0)%の秘所から触手を引き抜くと
+				PRINTFORMW %CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
+				PRINTFORML  
+				PRINTFORMW ………
+				PRINTFORMW ……
+				PRINTFORMW …
+				PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+			ENDIF
 		ENDIF
 	ELSE
 		IF FLAG:20 == 0
-			PRINTFORMW %CALLNAME:(ARG:0)%を犯していた%SAVESTR:(ARG:1)%は大きく膨れた%CALLNAME:(ARG:0)%の腹をなでると
-			PRINTFORMW 力なくうなだれている%CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
-			PRINTFORMW どうやら%SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を孕ませて満足したようだ…
-			PRINTFORML  
-			PRINTFORMW ………
-			PRINTFORMW ……
-			PRINTFORMW …
-			PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+		
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:(ARG:0)%を犯していた%SAVESTR:(ARG:1)%は大きく膨れた%CALLNAME:(ARG:0)%の腹をなでると
+				PRINTFORML 力なくうなだれている%CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
+				PRINTFORML どうやら%SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を孕ませて満足したようだ…
+				PRINTFORML 
+				TWAIT FLAG:AUTOMODE * 2000, 0
+				PRINTFORML ………
+				PRINTFORML ……
+				PRINTFORML …
+				PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+				TWAIT FLAG:AUTOMODE * 1000, 0
+			ELSE
+				PRINTFORMW %CALLNAME:(ARG:0)%を犯していた%SAVESTR:(ARG:1)%は大きく膨れた%CALLNAME:(ARG:0)%の腹をなでると
+				PRINTFORMW 力なくうなだれている%CALLNAME:(ARG:0)%を床に横たえどこかへ去っていった…
+				PRINTFORMW どうやら%SAVESTR:(ARG:1)%は%CALLNAME:(ARG:0)%を孕ませて満足したようだ…
+				PRINTFORML  
+				PRINTFORMW ………
+				PRINTFORMW ……
+				PRINTFORMW …
+				PRINTFORML %SAVESTR:(ARG:1)%が去った後には全身白濁液と粘液に塗れた%CALLNAME:(ARG:0)%が残されている…
+			ENDIF
 		ENDIF
 	ENDIF
 
@@ -258,7 +306,14 @@ IF FLAG:524 == 0 && CFLAG:(ARG:0):29 == 1 && DA:(ARG:1):0 >= 5 && RAND:100 < 10 
 	IF ARG:0 == 1
 		CFLAG:1:29 = 0
 		BASE:1:1 = 1
-		PRINTFORMW %CALLNAME:(ARG:0)%は残されたわずかな力を振り絞り立ち上がった…
+		
+		IF FLAG:AUTOMODE
+			PRINTFORML %CALLNAME:(ARG:0)%は残されたわずかな力を振り絞り立ち上がった…
+			TWAIT FLAG:AUTOMODE * 500, 0
+		ELSE
+			PRINTFORMW %CALLNAME:(ARG:0)%は残されたわずかな力を振り絞り立ち上がった…
+		ENDIF
+		
 		IF FLAG:11 && CFLAG:(FLAG:11):10 > 0
 			CALL MEMBER_EXIT(1)
 		ENDIF

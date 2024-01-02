@@ -1,0 +1,19 @@
+筆者：average
+個人的なメモも兼ねて、VSCodeで使用したGREP置換のメモを残しておきます。
+
+=============================
+AUTOMODE構文
+=============================
+
+置換前
+(\t*)PRINTFORMW (.+\n)
+置換後
+$1PRINTFORML $2$1※置換用の関数
+
+※置換用の関数は
+IF FLAG:AUTOMODE
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+	WAIT
+ENDIF
+を意味する

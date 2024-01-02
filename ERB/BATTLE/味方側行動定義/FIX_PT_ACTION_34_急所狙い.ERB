@@ -61,7 +61,12 @@ IF CFLAG:CHARA_ID:50 == 134
 
 		; 装備1、2ともに非消耗武器
 		IF CFLAG:CHARA_ID:8 >= 11 && CFLAG:CHARA_ID:8 <= 19
-			PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+			IF FLAG:AUTOMODE
+				PRINTFORML %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+				TWAIT FLAG:AUTOMODE * 200, 0
+			ELSE
+				PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+			ENDIF
 
 			; 装備1、2ともに非消耗武器（剣）装備中かつ、装備者が【剣術習熟】持ちならそれで弱攻撃
 			IF ((CFLAG:CHARA_ID:7 == 12 || CFLAG:CHARA_ID:7 == 16 || CFLAG:CHARA_ID:7 == 18) && (CFLAG:CHARA_ID:8 == 12 || CFLAG:CHARA_ID:8 == 16 || CFLAG:CHARA_ID:8 == 18)) && TALENT:CHARA_ID:161 == 2
@@ -78,7 +83,12 @@ IF CFLAG:CHARA_ID:50 == 134
 			; 【体術・剣術】持ちで二刀流だが、左右の武器の系統がチグハグだった場合、攻撃による追撃は発生しない
 			; ※【体術・剣術】と【鷲の目】両方持っているキャラはバランス的に贅沢過ぎるので想定しない（依姫無双？）
 			ELSE
-				PRINTFORMW しかし扱いなれない得物による追撃は虚しく空を切った！
+				IF FLAG:AUTOMODE
+					PRINTFORML しかし扱いなれない得物による追撃は虚しく空を切った！
+					TWAIT FLAG:AUTOMODE * 200, 0
+				ELSE
+					PRINTFORMW しかし扱いなれない得物による追撃は虚しく空を切った！
+				ENDIF
 				TRYGOTO NO_ACTION
 			ENDIF
 
@@ -90,7 +100,12 @@ IF CFLAG:CHARA_ID:50 == 134
 
 	;【鷲の目】持ちなら全ての条件で追撃発生
 	ELSEIF TALENT:CHARA_ID:163 && TALENT:CHARA_ID:202 == 0
-		PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！	
+		IF FLAG:AUTOMODE
+			PRINTFORML %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+		ENDIF
 
 		; 装備2に消耗武器装備 & 残弾2以上なら射撃弱攻撃
 		IF (CFLAG:CHARA_ID:8 >= 1 && CFLAG:CHARA_ID:8 <= 9) && CFLAG:CHARA_ID:18 >= 2
@@ -121,7 +136,12 @@ ELSEIF CFLAG:CHARA_ID:50 == 234
 
 		; 装備1、2ともに非消耗武器
 		IF CFLAG:CHARA_ID:7 >= 11 && CFLAG:CHARA_ID:7 <= 19
-			PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+			IF FLAG:AUTOMODE
+				PRINTFORML %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+				TWAIT FLAG:AUTOMODE * 200, 0
+			ELSE
+				PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+			ENDIF
 
 			; 装備1、2ともに非消耗武器（剣）装備中かつ、装備者が【剣術習熟】持ちならそれで弱攻撃
 			IF ((CFLAG:CHARA_ID:7 == 12 || CFLAG:CHARA_ID:7 == 16 || CFLAG:CHARA_ID:7 == 18) && (CFLAG:CHARA_ID:7 == 12 || CFLAG:CHARA_ID:7 == 16 || CFLAG:CHARA_ID:8 == 18)) && TALENT:CHARA_ID:161 == 2
@@ -138,7 +158,12 @@ ELSEIF CFLAG:CHARA_ID:50 == 234
 			; 【体術・剣術】持ちで二刀流だが、左右の武器の系統がチグハグだった場合、攻撃による追撃は発生しない
 			; ※【体術・剣術】と【鷲の目】両方持っているキャラはバランス的に贅沢過ぎるので想定しない（依姫無双？）
 			ELSE
+			IF FLAG:AUTOMODE
+				PRINTFORML しかし扱いなれない得物による追撃は虚しく空を切った！
+				TWAIT FLAG:AUTOMODE * 200, 0
+			ELSE
 				PRINTFORMW しかし扱いなれない得物による追撃は虚しく空を切った！
+			ENDIF
 				TRYGOTO NO_ACTION
 			ENDIF
 			
@@ -150,7 +175,12 @@ ELSEIF CFLAG:CHARA_ID:50 == 234
 
 	;【鷲の目】持ちなら全ての条件で追撃発生
 	ELSEIF TALENT:CHARA_ID:163
-		PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！	
+		IF FLAG:AUTOMODE
+			PRINTFORML %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW %SAVESTR:ENEMY_ID%がひるんだ隙を突き、%CALLNAME:CHARA_ID%は更なる攻撃を繰り出した！
+		ENDIF
 
 		; 装備2に消耗武器装備 & 残弾2以上なら射撃弱攻撃
 		IF (CFLAG:CHARA_ID:7 >= 1 && CFLAG:CHARA_ID:7 <= 9) && CFLAG:CHARA_ID:17 >= 2

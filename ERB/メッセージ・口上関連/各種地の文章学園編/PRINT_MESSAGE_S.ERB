@@ -54,7 +54,13 @@ IF TARGET == -1
 		FOR LOCAL , 0 , 23
 			PRINTL 
 		NEXT
-		PRINTW 
+		IF FLAG:AUTOMODE
+			PRINTL 
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTW  
+		ENDIF
+
 	ELSE
 		SPRITECREATED @"NNN_%STR:1%S"
 		IF RESULT
@@ -62,7 +68,13 @@ IF TARGET == -1
 			FOR LOCAL , 0 , 23
 				PRINTL 
 			NEXT
-			PRINTW 
+			IF FLAG:AUTOMODE
+				PRINTL 
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTW  
+			ENDIF
+
 		ENDIF
 	ENDIF
 	REDRAW TEMP_REDRAW
@@ -139,7 +151,13 @@ ELSE
 				FOR LOCAL , 0 , 23
 					PRINTL 
 				NEXT
-				PRINTW 
+				IF FLAG:AUTOMODE
+					PRINTL 
+					TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+					PRINTW  
+				ENDIF
+
 			ELSE
 				SPRITECREATED @"%STR:0%_%STR:1%_%STR:2%"
 				IF RESULT && D_ARG:0 > 0
@@ -170,7 +188,13 @@ ELSE
 					FOR LOCAL , 0 , 23
 						PRINTL 
 					NEXT
-					PRINTW 
+					IF FLAG:AUTOMODE
+						PRINTL 
+						TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+						PRINTW  
+					ENDIF
+
 				ELSEIF D_ARG:0 > 0
 					SPRITECREATED @"XXX_%STR:1%_%STR:2%"
 					IF RESULT
@@ -178,7 +202,13 @@ ELSE
 						FOR LOCAL , 0 , 23
 							PRINTL 
 						NEXT
-						PRINTW 
+						IF FLAG:AUTOMODE
+							PRINTL 
+							TWAIT FLAG:AUTOMODE * 400, 0
+						ELSE
+							PRINTW  
+						ENDIF
+
 					ELSE
 						SPRITECREATED @"%STR:0%_%STR:1%"
 						IF RESULT
@@ -209,7 +239,13 @@ ELSE
 							FOR LOCAL , 0 , 23
 								PRINTL 
 							NEXT
-							PRINTW 
+							IF FLAG:AUTOMODE
+								PRINTL 
+								TWAIT FLAG:AUTOMODE * 400, 0
+							ELSE
+								PRINTW  
+							ENDIF
+
 						ENDIF
 					ENDIF
 				ENDIF

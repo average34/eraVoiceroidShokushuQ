@@ -15,6 +15,7 @@
 ;10	主人公喪失時のいじめイベント発生したかどうか
 ;11	夜這いダメージ
 
+$MAIN_PHASE_START
 VARSET LOCAL
 
 ;NPCの行動を処理
@@ -114,30 +115,59 @@ IF FLAG:8
 			;FLAG:8を通常の値に戻しておく
 			FLAG:8 = ABS(FLAG:8)
 			;ドッペルの見張り付きで戦闘
-			PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
-			;ドッペルは必ず逃げる＋必ず睡眠状態のオマケつき
-			PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+			IF FLAG:AUTOMODE
+				PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+				;ドッペルは必ず逃げる＋必ず睡眠状態のオマケつき
+				PRINTFORML %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+				TWAIT FLAG:AUTOMODE * 1000, 0
+			ELSE
+				PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+				;ドッペルは必ず逃げる＋必ず睡眠状態のオマケつき
+				PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+			ENDIF
 			CALL PRE_BATTLE(5)
 		ELSEIF (FLAG:8 % 10) >= 2
 			;気絶したまま戦闘
-			PRINTFORMW 気絶している%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			IF FLAG:AUTOMODE
+				PRINTFORML 気絶している%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+				TWAIT FLAG:AUTOMODE * 1000, 0
+			ELSE
+				PRINTFORMW 気絶している%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			ENDIF
 			CALL PRE_BATTLE(3)
 			;戦闘が終わったら強制的に一旦起きる。起きているとターン終了時に眠気が1増えるので、余分に1つ減らしておく
 			FLAG:7 -= 1
 			FLAG:8 = 0
 		ELSEIF FLAG:8 >= 10
 			;見張り付きで戦闘
-			PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
-			IF (FLAG:8 >= 100) && (CFLAG:(FLAG:8 / 100):5 < RAND:80)
-				;好感度が低いNPCはサボる場合がある
-				PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
-				CALL PRE_BATTLE(1)
+			IF FLAG:AUTOMODE
+				PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+				IF (FLAG:8 >= 100) && (CFLAG:(FLAG:8 / 100):5 < RAND:80)
+					;好感度が低いNPCはサボる場合がある
+					PRINTFORML %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+					CALL PRE_BATTLE(1)
+				ELSE
+					CALL PRE_BATTLE(2)
+				ENDIF
+				TWAIT FLAG:AUTOMODE * 1000, 0
 			ELSE
-				CALL PRE_BATTLE(2)
+				PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+				IF (FLAG:8 >= 100) && (CFLAG:(FLAG:8 / 100):5 < RAND:80)
+					;好感度が低いNPCはサボる場合がある
+					PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+					CALL PRE_BATTLE(1)
+				ELSE
+					CALL PRE_BATTLE(2)
+				ENDIF
 			ENDIF
 		ELSE
 			;見張り無しの睡眠戦闘
-			PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			IF FLAG:AUTOMODE
+				PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+				TWAIT FLAG:AUTOMODE * 1000, 0
+			ELSE
+				PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			ENDIF
 			CALL PRE_BATTLE(1)
 		ENDIF
 	ELSE
@@ -254,15 +284,16 @@ IF FLAG:8
 			IF LOCAL:8 == 1
 				IF TALENT:1:0 == 0 && RAND:5 == 0
 					CALL FUTANARI_H_SLEEPRAPE(LOCAL:9)
-					WAIT
+					TWAIT FLAG:AUTOMODE * 500, 0
 				ELSEIF CFLAG:(LOCAL:9):5 >= FUTANARI_PERCENT(4) && FUTANARI_PERCENT(4) != 0
 					CALL FUTANARI_H_SEX(LOCAL:9)
-					WAIT
+					TWAIT FLAG:AUTOMODE * 500, 0
 				ELSE
 					CALL FUTANARI_H_RAPE(LOCAL:9)
-					WAIT
+					TWAIT FLAG:AUTOMODE * 500, 0
 				ENDIF
 				LOCAL:2 = RESULT
+				
 			ELSEIF LOCAL:8 > 1
 				IF TALENT:1:0 == 0 && RAND:5 == 0
 					PRINTFORML 
@@ -282,13 +313,11 @@ IF FLAG:8
 							CALL DAMAGE_COMMON((LCOUNT), 2, LOCAL:11 + RAND:1000, 20)
 						ENDIF
 					NEXT
-					PRINTFORML %CALLNAME:1%が目を覚ますと笑顔の%CALLNAME:(LOCAL:9)%達と秘所から垂れる白い液体に気がついてしまった
-					PRINTFORML 
+					CALL PRINT_MESSAGE(LOCAL:9, 472, 0, CALLNAME:(LOCAL:9), CALLNAME:1)
+					CALL PRINT_MESSAGE(1, 472, 1, CALLNAME:(LOCAL:9), CALLNAME:1)
 				ELSE
-					PRINTFORML 
-					PRINTFORML ………
-					PRINTFORML %CALLNAME:1%が目を覚ますと%CALLNAME:(LOCAL:9)%達が四肢を拘束して股間の触手をみなぎらせていた！
-					PRINTFORML 
+					CALL PRINT_MESSAGE(LOCAL:9, 472, 2, CALLNAME:(LOCAL:9), CALLNAME:1)
+					CALL PRINT_MESSAGE(1, 472, 3, CALLNAME:(LOCAL:9), CALLNAME:1)
 					FOR LCOUNT, 2, CHARANUM
 						IF CFLAG:1:4 == CFLAG:(LCOUNT):4 && CFLAG:(LCOUNT):28 >= 15
 							TFLAG:52 = 0
@@ -305,6 +334,8 @@ IF FLAG:8
 							CALL DAMAGE_COMMON((LCOUNT), 2, LOCAL:11 + RAND:1000, 20)
 						ENDIF
 					NEXT
+					CALL PRINT_MESSAGE(LOCAL:9, 472, 4, CALLNAME:(LOCAL:9), CALLNAME:1)
+					CALL PRINT_MESSAGE(1, 472, 5, CALLNAME:(LOCAL:9), CALLNAME:1)
 				ENDIF
 			ENDIF
 			IF LOCAL:8 > 0
@@ -316,7 +347,7 @@ IF FLAG:8
 				IF CFLAG:1:4 == CFLAG:(LCOUNT):4 && CFLAG:(LCOUNT):28 >= 15
 					CFLAG:(LCOUNT):28 -= 20
 					CALL ADD_ABL_EXP(13, (LCOUNT),3 + RAND:5)
-					CFLAG:(LCOUNT):5 = RAND:15 + (ABL:1:13 + ABL:1:14)
+					CFLAG:(LCOUNT):5 += RAND:15 + (ABL:1:13 + ABL:1:14)
 						IF CFLAG:1:22 == 0 && RAND:2 == 0
 							;妊娠
 							CALL PARASITE_TYPE(1, 1, 17, 8 + LIMIT(RAND:4 + RAND:4 + RAND:4 + RAND:4, 1, 10), 2)
@@ -339,11 +370,26 @@ IF FLAG:8
 		SIF LOCAL:4 != 2
 			CALL SLEEP_HEAL(FLAG:11, (LOCAL:4))
 		IF (FLAG:8 % 10) == 1 && LOCAL:2 == 1
-			PRINTFORMW %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで時間がなくなり、あまり眠れなかった…
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで時間がなくなり、あまり眠れなかった…
+				TWAIT FLAG:AUTOMODE * 1000, 0
+			ELSE
+				PRINTFORMW %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで時間がなくなり、あまり眠れなかった…
+			ENDIF
 		ELSEIF (FLAG:8 % 10) == 1 && LOCAL:2 == 2
-			PRINTFORMW %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで眠る暇がなかった
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで眠る暇がなかった
+				TWAIT FLAG:AUTOMODE * 1000, 0
+			ELSE
+				PRINTFORMW %CALLNAME:1%は%CALLNAME:(LOCAL:7)%との交わりで眠る暇がなかった
+			ENDIF
 		ELSEIF (FLAG:8 % 10) == 1
-			PRINTFORMW %CALLNAME:1%%TACHI()%はゆっくり休んで眠気・HP・MP・EPを回復した！
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:1%%TACHI()%はゆっくり休んで眠気・HP・MP・EPを回復した！
+				TWAIT FLAG:AUTOMODE * 200, 0
+			ELSE
+				PRINTFORMW %CALLNAME:1%%TACHI()%はゆっくり休んで眠気・HP・MP・EPを回復した！
+			ENDIF
 		ENDIF
 		FLAG:8 = 0
 	ENDIF
@@ -484,7 +530,6 @@ ELSEIF LOCAL:1 == 3
 			IF CFLAG:1:10
 				PRINTFORML %SAVESTR:(LCOUNT)%に助けを乞いますか？
 			ELSE
-				
 				PRINTFORML %SAVESTR:(LCOUNT)%に共闘を持ちかけてみますか？
 			ENDIF
 			CALL ASK_YN
@@ -526,7 +571,12 @@ ELSEIF LOCAL:1 == 3
 				IF RESULT == 0
 					CALL GET_INVITE_RATE(LCOUNT, 1)
 					IF RAND:100 < RESULT
-						PRINTFORMW %CALLNAME:(LCOUNT)%が一時的にパーティーに加わった！
+						IF FLAG:AUTOMODE
+							PRINTFORML %CALLNAME:(LCOUNT)%が一時的にパーティーに加わった！
+							TWAIT FLAG:AUTOMODE * 1000, 0
+						ELSE
+							PRINTFORMW %CALLNAME:(LCOUNT)%が一時的にパーティーに加わった！
+						ENDIF
 						LOCAL:4 -= 1
 						;催眠回復
 						CFLAG:(LCOUNT):43 = 0
@@ -545,9 +595,19 @@ ELSEIF LOCAL:1 == 3
 						ENDIF
 					ELSE
 						IF CFLAG:1:10
-							PRINTFORMW %CALLNAME:(LCOUNT)%に助けを求めたが、悲しそうな目をして去って行った…
+							IF FLAG:AUTOMODE
+								PRINTFORML %CALLNAME:(LCOUNT)%に助けを求めたが、悲しそうな目をして去って行った…
+								TWAIT FLAG:AUTOMODE * 400, 0
+							ELSE
+								PRINTFORMW %CALLNAME:(LCOUNT)%に助けを求めたが、悲しそうな目をして去って行った…
+							ENDIF
 						ELSE
-							PRINTFORMW %CALLNAME:(LCOUNT)%に共闘を持ちかけてみたが、断られてしまった…
+							IF FLAG:AUTOMODE
+								PRINTFORML %CALLNAME:(LCOUNT)%に共闘を持ちかけてみたが、断られてしまった…
+								TWAIT FLAG:AUTOMODE * 400, 0
+							ELSE
+								PRINTFORMW %CALLNAME:(LCOUNT)%に共闘を持ちかけてみたが、断られてしまった…
+							ENDIF
 							;でもちょっと嬉しい
 							CFLAG:(LCOUNT):5 += 2
 						ENDIF
@@ -638,7 +698,12 @@ FOR LCOUNT, 1, CHARANUM
 	IF CFLAG:(LCOUNT):10 == 0 && CFLAG:(LCOUNT):14 && CFLAG:(LCOUNT):504 == 0
 		CFLAG:(LCOUNT):4 = CFLAG:(LCOUNT):14
 		IF LCOUNT != 1 && LCOUNT != FLAG:10 && LCOUNT != FLAG:11 && (CFLAG:(LCOUNT):13 == CFLAG:1:13 || (CFLAG:(LCOUNT):13 == CFLAG:1:14 && CFLAG:(LCOUNT):14 == CFLAG:1:13)) && CFLAG:(LCOUNT):13 != CFLAG:(LCOUNT):14 && CFLAG:(LCOUNT):14 != FLAG:5 && CFLAG:(LCOUNT):2 == 0 && CFLAG:(LCOUNT):3 == 0
-			PRINTFORMW %CALLNAME:(LCOUNT)%は{CFLAG:(LCOUNT):4}の部屋に移動したようだ…
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:(LCOUNT)%は{CFLAG:(LCOUNT):4}の部屋に移動したようだ…
+				TWAIT FLAG:AUTOMODE * 200, 0
+			ELSE
+				PRINTFORMW %CALLNAME:(LCOUNT)%は{CFLAG:(LCOUNT):4}の部屋に移動したようだ…
+			ENDIF
 		ENDIF
 	ENDIF
 NEXT
@@ -651,9 +716,21 @@ FOR LCOUNT, 1, FLAG:1
 NEXT
 
 ;探索処理＋終了処理（消滅処理などもここ）
+IF CFLAG:1:29
+	LOCAL:6 = 1
+ENDIF
 CALL END_PHASE(LOCAL:6)
 IF RESULT == 1
 	RETURN 1
+ENDIF
+
+IF FLAG:AUTOMODE
+	CALL PC_AUTO_ACTION
+	IF FLAG:3000 == 0
+		GOTO MAIN_PHASE_START
+	ELSE
+		FLAG:3000 = 0
+	ENDIF
 ENDIF
 
 ;SHOPへ戻る
@@ -683,5 +760,10 @@ ELSE
 ENDIF
 PRINTFORML 
 PRINTFORML 新しい部屋には%ITEMNAME:(LOCAL:2)%が落ちていた！
-PRINTFORMW 
+IF FLAG:AUTOMODE
+	PRINTFORML 
+	TWAIT FLAG:AUTOMODE * 200, 0
+ELSE
+	PRINTFORMW 
+ENDIF
 CALL ADD_ITEM(LOCAL:2, 1, 1)

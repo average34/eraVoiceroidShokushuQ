@@ -33,10 +33,19 @@ IF CFLAG:(ARG:0):153 >= 3
 	CFLAG:(ARG:0):80 -= 8
 	CFLAG:(ARG:0):153 -= 3
 	IF CFLAG:(ARG:0):80
-		PRINTFORMW 寄生封じの札が体に植え付けられていた異物を弱らせたようだ
+		IF FLAG:AUTOMODE
+			PRINTFORML 寄生封じの札が体に植え付けられていた異物を弱らせたようだ
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW 寄生封じの札が体に植え付けられていた異物を弱らせたようだ
+		ENDIF
 	ELSE
-		PRINTFORMW 寄生封じの札が体に植え付けられていた異物を完全に浄化したようだ
-
+		IF FLAG:AUTOMODE
+			PRINTFORML 寄生封じの札が体に植え付けられていた異物を完全に浄化したようだ
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW 寄生封じの札が体に植え付けられていた異物を完全に浄化したようだ
+		ENDIF
 	ENDIF
 		RETURN
 ENDIF
@@ -333,34 +342,33 @@ LOCAL:3 = 0
 				LOCAL:2 = 8
 				IF GETBIT(CFLAG:(ARG:0):81,(LOCAL:2) + 1)
 					CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 1)
-					;卵巣成長がありだと卵巣強化
-					IF FLAG:535 && TALENT:(ARG:0):137 < 3 && RAND:3
+					;卵巣成長がありだと卵巣強化(苗床まで)
+					IF FLAG:535 == 1 && TALENT:(ARG:0):137 < 4 && RAND:5 == 0
 						CALL PRINT_MESSAGE(ARG:0, 446, (4 + (LOCAL:2)), CALLNAME:(ARG:0), "", 2)
 						;素質成長処理
-						IF TALENT:(ARG:0):137 == 2
+						IF TALENT:(ARG:0):137 == 3
+							TALENT:(ARG:0):137 = 4
+							CFLAG:(ARG:0):508 = 4
+						ELSEIF TALENT:(ARG:0):137 == 2
 							TALENT:(ARG:0):137 = 3
-							CFLAG:(ARG:0):511 = 1
-							CFLAG:(ARG:0):510 = 0
-							CFLAG:(ARG:0):509 = 0
-							CFLAG:(ARG:0):508 = 0
+							CFLAG:(ARG:0):508 = 3
 						ELSEIF TALENT:(ARG:0):137 == 1
 							TALENT:(ARG:0):137 = 2
-							CFLAG:(ARG:0):511 = 0
-							CFLAG:(ARG:0):510 = 1
-							CFLAG:(ARG:0):509 = 0
-							CFLAG:(ARG:0):508 = 0
+							CFLAG:(ARG:0):508 = 2
 						ELSEIF TALENT:(ARG:0):137 == 0
 							TALENT:(ARG:0):137 = 1
-							CFLAG:(ARG:0):511 = 0
-							CFLAG:(ARG:0):510 = 0
-							CFLAG:(ARG:0):509 = 1
-							CFLAG:(ARG:0):508 = 0
+							CFLAG:(ARG:0):508 = 1
 						ELSEIF TALENT:(ARG:0):137 == -1
 							TALENT:(ARG:0):137 = 0
-							CFLAG:(ARG:0):511 = 0
-							CFLAG:(ARG:0):510 = 0
-							CFLAG:(ARG:0):509 = 0
-							CFLAG:(ARG:0):508 = 1
+							CFLAG:(ARG:0):508 = 0
+						ENDIF
+						IF TALENT:(ARG:0):137 == -2
+							CALL PRINT_MESSAGE(ARG:0, 512, TALENT:(ARG:0):137, CALLNAME:(ARG:0), "", 2)
+							TALENT:(ARG:0):137 = CFLAG:(ARG:0):511
+							CFLAG:(ARG:0):508 = CFLAG:(ARG:0):511
+							CFLAG:(ARG:0):509 = 2
+						ELSE
+							CALL PRINT_MESSAGE(ARG:0, 512, TALENT:(ARG:0):137, CALLNAME:(ARG:0), "", 2)
 						ENDIF
 					;同じ部屋に白濁泉があると発情
 					ELSEIF CFLAG:(ARG:0):29 == 0 && FLAG:134 == CFLAG:1:4 && CFLAG:(ARG:0):28 < 3

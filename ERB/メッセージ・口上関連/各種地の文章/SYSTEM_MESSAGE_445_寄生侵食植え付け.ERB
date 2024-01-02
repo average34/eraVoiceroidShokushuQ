@@ -4,25 +4,55 @@
 	;寄生時
 	IF ARG:1 == 0
 		PRINTFORML %ARGS:0%の体内に何かが植え付けられた！
-		PRINTFORMW 
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
 	;侵食進行（すでに植え付けられた状態でまた寄生された場合）
 	ELSEIF ARG:1 == 1
 		PRINTFORML %ARGS:0%の体内に植え付けられた何かが更に成長していく！
-		PRINTFORMW 
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
 	;侵食進行（エンドフェイズに寄生が侵食する場合）
 	;初期
 	ELSEIF ARG:1 == 2
 		PRINTFORML %ARGS:0%の身体の中で何かが胎動した……
-		PRINTFORMW 
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
 	;それ以降
 	ELSEIF ARG:1 == 3
 		PRINTFORML %ARGS:0%に植え付けられた何かが蠢いている！
-		PRINTFORMW 
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
 	;きのこ系イベントによる侵食
 	;汚染部屋睡眠
 	ELSEIF ARG:1 == 4
 		PRINTFORML 苦しげな吐息を漏らす%ARGS:0%の体を、汚染された空気が侵食していく……
-		PRINTFORMW 
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
 	;汚染部屋戦闘
 	ELSEIF ARG:1 == 5
 		PRINTFORML 汚染された部屋に生えた茸のような触手が胞子を振りまいている……

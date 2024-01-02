@@ -46,17 +46,35 @@ IF LOCAL:2 >= LOCAL:1
 			LOCAL:6 = 1
 		ENDIF
 	ENDIF
-	PRINTFORMW %CALLNAME:(LOCAL:4)%は突然床から現れたスライムに上半身を捉えられた！
+		IF FLAG:AUTOMODE
+		    PRINTFORML %CALLNAME:(LOCAL:4)%は突然床から現れたスライムに上半身を捉えられた！
+		    TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+		    PRINTFORMW  %CALLNAME:(LOCAL:4)%は突然床から現れたスライムに上半身を捉えられた！
+		ENDIF
+
 	CALL REACTION_TRAP(LOCAL:4)
 	;霊撃で抜けたら終了
 	IF RESULT == 0
-		PRINTFORMW %CALLNAME:(LOCAL:4)%は脱出した！
+		IF FLAG:AUTOMODE
+		    PRINTFORML %CALLNAME:(LOCAL:4)%は脱出した！
+		    TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+		    PRINTFORMW  %CALLNAME:(LOCAL:4)%は脱出した！
+		ENDIF
+
 		LOCAL:4 = 0
 		LOCAL:6 = 0
 	ENDIF
 	
 	IF LOCAL:6 == 0 && LOCAL:4
-		PRINTFORMW %CALLNAME:(LOCAL:4)%は足を拘束されたまま尻をこちらに向けて動けないでいる！
+		IF FLAG:AUTOMODE
+		    PRINTFORML %CALLNAME:(LOCAL:4)%は足を拘束されたまま尻をこちらに向けて動けないでいる！
+		    TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+		    PRINTFORMW  %CALLNAME:(LOCAL:4)%は足を拘束されたまま尻をこちらに向けて動けないでいる！
+		ENDIF
+
 		PRINTFORML 
 		PRINTFORML 助けますか？
 		PRINTFORML [1] 助ける
@@ -65,7 +83,12 @@ IF LOCAL:2 >= LOCAL:1
 		IF LOCAL:4 != 1 && GET_PENIS(1) && CFLAG:1:29 == 0 && (FLAG:520 == 2 || (FLAG:10 == 0 || (FLAG:11 == 0 && (CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10))) || ((CFLAG:(FLAG:10):29 || GET_PENIS(FLAG:10)) && (CFLAG:(FLAG:11):29 || GET_PENIS(FLAG:11)))))
 			PRINTFORML [3] 犯す
 		ENDIF
-		INPUT
+		
+		IF FLAG:AUTOMODE
+			TINPUT FLAG:AUTOMODE * 1000 , 1, 0, ""
+		ELSE
+			INPUT
+		ENDIF
 		IF RESULT == 1
 			PRINTFORML 敵意を感じたスライムは%CALLNAME:(LOCAL:4)%を離して逃げた！
 		ELSE
@@ -140,7 +163,20 @@ IF LOCAL:2 >= LOCAL:1
 			ENDIF
 			TFLAG:63 = 0
 		NEXT
-		PRINTFORMW %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
+		
+		IF FLAG:AUTOMODE
+			PRINTFORML %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
+			TWAIT FLAG:AUTOMODE * 1000 , 0
+		ELSE
+			IF FLAG:AUTOMODE
+			    PRINTFORML %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
+			ENDIF
+
+		ENDIF
+		
 	ENDIF
 	;別の場所に再配置
 	FLAG:176 = RAND:30 + 1

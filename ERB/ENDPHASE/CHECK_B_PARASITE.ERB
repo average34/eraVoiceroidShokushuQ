@@ -26,8 +26,14 @@ IF CFLAG:(ARG:0):154 >= 3
 	CFLAG:(ARG:0):161 = 0
 	CFLAG:(ARG:0):162 = 0
 	CFLAG:(ARG:0):154 -= 3
-	SIF LOCAL:1
-		PRINTFORMW 卵破壊の札が体内の異物を浄化したようだ
+	IF LOCAL:1
+		IF FLAG:AUTOMODE
+			PRINTFORML 卵破壊の札が体内の異物を浄化したようだ
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW 卵破壊の札が体内の異物を浄化したようだ
+		ENDIF
+	ENDIF
 	RETURN
 ENDIF
 CFLAG:(ARG:0):162 -= 1

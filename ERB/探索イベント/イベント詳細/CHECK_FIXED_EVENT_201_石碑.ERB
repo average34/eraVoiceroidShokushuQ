@@ -24,7 +24,13 @@ IF FLAG:998
 		CALL ADD_ABL_EXP_PT(0, 1200)
 		FLAG:201 += 100
 	ENDIF
-	PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	IF FLAG:AUTOMODE
+	    PRINTFORML %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	    TWAIT FLAG:AUTOMODE * 400, 0
+	ELSE
+	    PRINTFORMW  %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	ENDIF
+
 	PRINTFORML しかし%CALLNAME:1%%TACHI()%はその文字を読むことができなかった…
 ELSEIF LOCAL:2 >= LOCAL:1 || FLAG:201 >= 100
 	;経験値が入るのは最初だけ
@@ -38,7 +44,13 @@ ELSEIF LOCAL:2 >= LOCAL:1 || FLAG:201 >= 100
 		FLAG:201 += 100
 		FLAG:40 = RAND:6
 	ENDIF
-	PRINTFORMW %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	IF FLAG:AUTOMODE
+	    PRINTFORML %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	    TWAIT FLAG:AUTOMODE * 400, 0
+	ELSE
+	    PRINTFORMW  %CALLNAME:1%%TACHI()%は不思議な文字が刻まれた石碑を発見した！
+	ENDIF
+
 	IF FLAG:201 < 200
 		PRINTFORML しかし%CALLNAME:1%%TACHI()%はその文字を読むことができなかった…
 		CALL PRINT_MESSAGE(1, 200, 201, CALLNAME:1, "", 0)
@@ -65,7 +77,11 @@ ELSEIF LOCAL:2 >= LOCAL:1 || FLAG:201 >= 100
 	
 	;どの場合でもイベントをその場に残す
 	LOCAL:3 = 1
-	WAIT
+	IF FLAG:AUTOMODE
+		TWAIT FLAG:AUTOMODE * 500, 0
+	ELSE
+		WAIT
+	ENDIF
 ELSE
 	;見つからなかった場合（通常は何もしない）
 ENDIF

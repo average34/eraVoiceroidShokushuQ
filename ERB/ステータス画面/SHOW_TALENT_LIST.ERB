@@ -150,14 +150,20 @@ SELECTCASE ARG
 		
 	;排卵異常
 	CASE 137
-		IF ARG:1 == -1
+		IF ARG:1 == -2
+			LOCALS = [封印卵巣]
+		ELSEIF ARG:1 == -1
 			LOCALS = [未熟卵巣]
 		ELSEIF ARG:1 == 1
-			LOCALS = [異常排卵巣]
+			LOCALS = [活発卵巣]
 		ELSEIF ARG:1 == 2
-			LOCALS = [肥大化卵巣]
+			LOCALS = [異常排卵巣]
 		ELSEIF ARG:1 == 3
+			LOCALS = [肥大化卵巣]
+		ELSEIF ARG:1 == 4
 			LOCALS = [苗床卵巣]
+		ELSEIF ARG:1 == 5
+			LOCALS = [メス嫁苗床卵巣]
 		ENDIF
 		
 	;ペット
@@ -610,14 +616,20 @@ SELECTCASE ARG:0
 	CASE 136
 		PRINTFORM 産卵に慣れてしまった肉体です　産卵時のペナルティ軽減の代わりに産卵攻撃の成功率が増加します
 	CASE 137
-		IF ARG:1 == -1
-			PRINTFORM 少女の幼い卵巣は排卵しないため妊娠しません、しかし迷宮にはオトナの経験がいっぱいです
+		IF ARG:1 == -2
+			PRINTFORM 少女の卵巣は封印に守られており、排卵が抑制されています
+		ELSEIF ARG:1 == -1
+			PRINTFORM 少女の幼い卵巣は初排卵を経験していないため妊娠しません、しかし迷宮にはオトナの経験がいっぱいです
 		ELSEIF ARG:1 == 1
-			PRINTFORM いじられ続けて排卵間隔が短くなった卵巣は迷宮では格好の標的です
+			PRINTFORM 少女の卵巣は排卵に慣れ、活発に活動しています
 		ELSEIF ARG:1 == 2
+			PRINTFORM 弄ばれ続けて排卵間隔が短くなった卵巣は迷宮では格好の標的です
+		ELSEIF ARG:1 == 3
 			PRINTFORM ぶっくりと肥大化した卵巣は種付けの快楽を待っています
-		ELSEIF ARG:1 >= 3
-			PRINTFORM 醜く肥大化して受精快楽を覚えた卵巣は常に排卵し、受精を待っています
+		ELSEIF ARG:1 == 4
+			PRINTFORM 受精快楽を覚えて醜く肥大化した卵巣は常に排卵し、受精を待っています
+		ELSEIF ARG:1 >= 5
+			PRINTFORM 迷宮のメス嫁となった少女の卵巣は、もはや少女のものではありません
 		ENDIF
 	CASE 139
 		PRINTFORM 自身の胸の大きさや体型を変更できます
@@ -799,6 +811,8 @@ SELECTCASE ARG:0
 		PRINTFORM ちょっと黄ばんでいます。なぜか不潔な印象
 	CASE 200
 		PRINTFORM このゲームもこの人に支配されています
+	CASE 202
+		PRINTFORM 左腕がありません。なくなってしまいました
 	CASE 213
 		IF ARG:1 == 1
 			PRINTFORM 肌感度に応じて回避に補正、敏感だとマイナス

@@ -7,15 +7,34 @@
 			PRINTFORML 肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が大きく蠢いた
 			IF TALENT:101 <= 2
 				PRINTFORML %ARGS:0%がおぞましい感触に息を飲むと同時に、触手は%ARGS:0%の尻たぶを広げると
-				PRINTFORMW 粘液にまみれた無数の細い触手で%ARGS:0%の尻穴をこじ開けはじめた…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 粘液にまみれた無数の細い触手で%ARGS:0%の尻穴をこじ開けはじめた…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  粘液にまみれた無数の細い触手で%ARGS:0%の尻穴をこじ開けはじめた…
+				ENDIF
+
 			ELSE
 				PRINTFORML %ARGS:0%が待ちかねた感触に息を飲むと同時に、触手は%ARGS:0%の尻たぶを広げると
-				PRINTFORMW 一際太く無数の瘤で歪んだ触手が%ARGS:0%の尻穴の奥までねじ込まれた！
+				IF FLAG:AUTOMODE
+				    PRINTFORML 一際太く無数の瘤で歪んだ触手が%ARGS:0%の尻穴の奥までねじ込まれた！
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  一際太く無数の瘤で歪んだ触手が%ARGS:0%の尻穴の奥までねじ込まれた！
+				ENDIF
+
 			ENDIF
 		ELSEIF ARG:1 == 2
 			PRINTFORML がに股で足を固定され、倒れることすら許されず腰を振って身悶えていた%ARGS:0%は
-			PRINTFORMW 触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
-			PRINTFORMW 突き上げられた尻には蹂躙された疼きと、下腹部が膨れるほど注がれた触手の体液が残っていた…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
+			    PRINTFORML 突き上げられた尻には蹂躙された疼きと、下腹部が膨れるほど注がれた触手の体液が残っていた…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
+			    PRINTFORMW  突き上げられた尻には蹂躙された疼きと、下腹部が膨れるほど注がれた触手の体液が残っていた…
+			ENDIF
+
 		ELSEIF ARG:1 == 3
 			PRINTFORML 肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が大きく蠢いた
 			IF TALENT:102 <= 2
@@ -23,67 +42,161 @@
 				PRINTFORM 乳暈に張り付き、突き出た乳首を飲み込んで
 				SIF TALENT:130
 					PRINTFORM 迸る母乳を
-				PRINTFORMW 搾乳機のように吸い始めた…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 搾乳機のように吸い始めた…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  搾乳機のように吸い始めた…
+				ENDIF
+
 			ELSE
 				PRINTFORML %ARGS:0%が待ちかねた感触に息を飲むと同時に、触手は%ARGS:0%の胸に吸い付くと
 				PRINTFORM 膨れた乳暈を揉み搾り、勃起しきった乳首の乳腺に触手をねじこんで
 				IF TALENT:130
-					PRINTFORMW 詰まっている母乳を激しく吸い始めた！
+					IF FLAG:AUTOMODE
+					    PRINTFORML 詰まっている母乳を激しく吸い始めた！
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  詰まっている母乳を激しく吸い始めた！
+					ENDIF
+
 				ELSE
-					PRINTFORMW 胸を奥から蹂躙し始めた！
+					IF FLAG:AUTOMODE
+					    PRINTFORML 胸を奥から蹂躙し始めた！
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  胸を奥から蹂躙し始めた！
+					ENDIF
+
 				ENDIF
 			ENDIF
 		;乳責め
 		ELSEIF ARG:1 == 4
 			PRINTFORML 四つん這いに固定され、搾乳される乳牛のように胸を責められていた%ARGS:0%は
-			PRINTFORMW 触手の責めが緩むとぐったりと崩れ落ちた
-			SIF TALENT:130
-				PRINTFORMW 大量の母乳を搾り取られても母乳の分泌は止まらず、じくじくと服の中に溜まっていく…
-			PRINTFORMW 陵辱され、勃起の収まらない乳首と乳暈が肌に貼り付く服にくっきり浮き出ている…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 触手の責めが緩むとぐったりと崩れ落ちた
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  触手の責めが緩むとぐったりと崩れ落ちた
+			ENDIF
+
+			IF TALENT:130
+				IF FLAG:AUTOMODE
+					PRINTFORML 大量の母乳を搾り取られても母乳の分泌は止まらず、じくじくと服の中に溜まっていく…
+					PRINTFORML 陵辱され、勃起の収まらない乳首と乳暈が肌に貼り付く服にくっきり浮き出ている…
+					TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+					PRINTFORMW  大量の母乳を搾り取られても母乳の分泌は止まらず、じくじくと服の中に溜まっていく…
+					PRINTFORMW  陵辱され、勃起の収まらない乳首と乳暈が肌に貼り付く服にくっきり浮き出ている…
+				ENDIF
+			ENDIF
+
 		ELSEIF ARG:1 == 5
 			PRINTFORML 肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が大きく蠢いた
 			IF GET_PENIS(TARGET) & 4
 				IF ABL:12 <= 2
 					PRINTFORML %ARGS:0%が恐れていた感触に息を飲むと同時に、触手は%ARGS:0%の無防備な陰茎に絡みつくと
-					PRINTFORMW おぞましい刺激に勃起してしまう陰茎を筒状の触手で根本まで咥えこみ、吸い立てはじめた…
+					IF FLAG:AUTOMODE
+					    PRINTFORML おぞましい刺激に勃起してしまう陰茎を筒状の触手で根本まで咥えこみ、吸い立てはじめた…
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  おぞましい刺激に勃起してしまう陰茎を筒状の触手で根本まで咥えこみ、吸い立てはじめた…
+					ENDIF
+
 				ELSE
 					PRINTFORML %ARGS:0%が待ちかねた感触に息を飲むと同時に、触手は%ARGS:0%のペニスに絡みつくと
-					PRINTFORMW 節操無く勃起する陰茎を筒状の触手で根本まで咥えこみ、激しく吸い始めた！
+					IF FLAG:AUTOMODE
+					    PRINTFORML 節操無く勃起する陰茎を筒状の触手で根本まで咥えこみ、激しく吸い始めた！
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  節操無く勃起する陰茎を筒状の触手で根本まで咥えこみ、激しく吸い始めた！
+					ENDIF
+
 				ENDIF
 			ELSEIF GET_PENIS(TARGET)
 				IF ABL:12 <= 2
 					PRINTFORML %ARGS:0%が恐れていた感触に息を飲むと同時に、触手は%ARGS:0%の無防備な擬似陰茎に絡みつくと
-					PRINTFORMW おぞましい刺激に勃起してしまう陰茎を筒状の触手で根本まで咥えこみ、吸い立てはじめた…
+					IF FLAG:AUTOMODE
+					    PRINTFORML おぞましい刺激に勃起してしまう陰茎を筒状の触手で根本まで咥えこみ、吸い立てはじめた…
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  おぞましい刺激に勃起してしまう陰茎を筒状の触手で根本まで咥えこみ、吸い立てはじめた…
+					ENDIF
+
 				ELSE
 					PRINTFORML %ARGS:0%が待ちかねた感触に息を飲むと同時に、触手は%ARGS:0%の二度と外れなくなったふたなりペニスに絡みつくと
-					PRINTFORMW 節操無く勃起する陰茎を筒状の触手で根本まで咥えこみ、激しく吸い始めた！
+					IF FLAG:AUTOMODE
+					    PRINTFORML 節操無く勃起する陰茎を筒状の触手で根本まで咥えこみ、激しく吸い始めた！
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  節操無く勃起する陰茎を筒状の触手で根本まで咥えこみ、激しく吸い始めた！
+					ENDIF
+
 				ENDIF
 			ELSE
 				IF TALENT:103 <= 2
 					PRINTFORML %ARGS:0%が恐れていた感触に息を飲むと同時に、触手は%ARGS:0%の秘唇を広げると
-					PRINTFORMW 細い触手を巻きつけクリトリスをくびり出し、筒状の触手で吸い立てはじめた…
+					IF FLAG:AUTOMODE
+					    PRINTFORML 細い触手を巻きつけクリトリスをくびり出し、筒状の触手で吸い立てはじめた…
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  細い触手を巻きつけクリトリスをくびり出し、筒状の触手で吸い立てはじめた…
+					ENDIF
+
 				ELSE
 					PRINTFORML %ARGS:0%が待ちかねた感触に息を飲むと同時に、触手は%ARGS:0%の秘唇を広げると
-					PRINTFORMW 筒状の触手で醜く肥大し突き出たクリトリスを咥えこみ、激しく吸い始めた！
+					IF FLAG:AUTOMODE
+					    PRINTFORML 筒状の触手で醜く肥大し突き出たクリトリスを咥えこみ、激しく吸い始めた！
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  筒状の触手で醜く肥大し突き出たクリトリスを咥えこみ、激しく吸い始めた！
+					ENDIF
+
 				ENDIF
 			ENDIF
 		ELSEIF ARG:1 == 6
 			PRINTFORML がに股で足を固定され、倒れることすら許されず腰を振って身悶えていた%ARGS:0%は
-			PRINTFORMW 触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
-			PRINTFORMW 蹂躙され尽くしたクリトリスは一回り肥大し、戻らなくなってしまった…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
+			    PRINTFORML 蹂躙され尽くしたクリトリスは一回り肥大し、戻らなくなってしまった…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
+			    PRINTFORMW  蹂躙され尽くしたクリトリスは一回り肥大し、戻らなくなってしまった…
+			ENDIF
+
 		ELSEIF ARG:1 == 7
 			PRINTFORML 肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が大きく蠢いた
 			IF TALENT:104 <= 2
 				PRINTFORML %ARGS:0%が恐れていた感触に息を飲むと同時に、触手は%ARGS:0%の秘唇を広げると
-				PRINTFORMW 粘液にまみれた節くれだった野太い触手を膣内にねじ込みはじめた…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 粘液にまみれた節くれだった野太い触手を膣内にねじ込みはじめた…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  粘液にまみれた節くれだった野太い触手を膣内にねじ込みはじめた…
+				ENDIF
+
 			ELSE
 				PRINTFORML %ARGS:0%が待ちかねた感触に息を飲むと同時に、触手は%ARGS:0%の秘唇を広げると
-				PRINTFORMW 下腹部に醜い畝が持ち上がるほど野太く歪に膨れた触手を膣奥まで突き入れた！
+				IF FLAG:AUTOMODE
+				    PRINTFORML 下腹部に醜い畝が持ち上がるほど野太く歪に膨れた触手を膣奥まで突き入れた！
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  下腹部に醜い畝が持ち上がるほど野太く歪に膨れた触手を膣奥まで突き入れた！
+				ENDIF
+
 			ENDIF
 		ELSEIF ARG:1 == 8
 			PRINTFORML がに股で足を固定され、倒れることすら許されず腰を振って身悶えていた%ARGS:0%の最奥でおぞましい体液が弾けた！
-			PRINTFORMW 触手の責めが緩み、膝を突いてぐったりと崩れ落ちた%ARGS:0%の身体は再びぴっちりと密閉され、
-			PRINTFORMW 下腹部が膨れるほど注がれ、膣内にこびりつく触手の体液を掻き出すこともできない…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 触手の責めが緩み、膝を突いてぐったりと崩れ落ちた%ARGS:0%の身体は再びぴっちりと密閉され、
+			    PRINTFORML 下腹部が膨れるほど注がれ、膣内にこびりつく触手の体液を掻き出すこともできない…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  触手の責めが緩み、膝を突いてぐったりと崩れ落ちた%ARGS:0%の身体は再びぴっちりと密閉され、
+			    PRINTFORMW  下腹部が膨れるほど注がれ、膣内にこびりつく触手の体液を掻き出すこともできない…
+			ENDIF
+
 		ELSEIF ARG:1 == 9
 			PRINTFORM 肌にぴっちりと貼り付き、隠すべき場所までもくっきりと強調する
 			IF FLAG:523
@@ -96,33 +209,102 @@
 				PRINTFORM ボディスーツ
 			ENDIF
 			PRINTFORM を見つめ
-			PRINTFORMW 複雑な表情を浮かべる%ARGS:0%を嘲笑うように、生地の内側で無数の触手が微弱な刺激を与え続けている…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 複雑な表情を浮かべる%ARGS:0%を嘲笑うように、生地の内側で無数の触手が微弱な刺激を与え続けている…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  複雑な表情を浮かべる%ARGS:0%を嘲笑うように、生地の内側で無数の触手が微弱な刺激を与え続けている…
+			ENDIF
+
 		ELSEIF ARG:1 == 10
 			PRINTFORML 地面に横たわり、濁った眼で虚空を見つめている%ARGS:0%の垂れ流す体液を肌に吸い付いた触手が啜っている…
 		ELSEIF ARG:1 == 11
 			PRINTFORML がに股で足を固定され、倒れることすら許されず腰を振って精液を搾り取られていた%ARGS:0%は
-			PRINTFORMW 触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
+			IF FLAG:AUTOMODE
+			    PRINTFORML 触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  触手の責めが緩むと膝を突き、ぐったりと崩れ落ちた
+			ENDIF
+
 				IF ABL:12 <= 2
-					PRINTFORMW 本来なかったはずのものを蹂躙し尽くされ、%ARGS:0%は息も絶え絶えで震えている…
+					IF FLAG:AUTOMODE
+					    PRINTFORML 本来なかったはずのものを蹂躙し尽くされ、%ARGS:0%は息も絶え絶えで震えている…
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  本来なかったはずのものを蹂躙し尽くされ、%ARGS:0%は息も絶え絶えで震えている…
+					ENDIF
+
 				ELSE
-					PRINTFORMW 完全に定着したもう一つの性器をなぶり尽くされ、息も絶え絶えの%ARGS:0%は狂喜の表情を貼り付けて痙攣している…
+					IF FLAG:AUTOMODE
+					    PRINTFORML 完全に定着したもう一つの性器をなぶり尽くされ、息も絶え絶えの%ARGS:0%は狂喜の表情を貼り付けて痙攣している…
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  完全に定着したもう一つの性器をなぶり尽くされ、息も絶え絶えの%ARGS:0%は狂喜の表情を貼り付けて痙攣している…
+					ENDIF
+
 				ENDIF
 		ELSEIF ARG:1 == 12
-			PRINTFORMW %ARGS:0%が腰を跳ねさせた瞬間、股間に反り返っているものと全く同じものに擬態した触手が%ARGS:0%の膣内に入っていく
-			PRINTFORMW 触手は%ARGS:0%のものと同時に脈打ち、%ARGS:0%の吐き出した精液が%ARGS:0%の膣内に勢いもそのままに射精される！
-			PRINTFORMW 触手に責め立てられる%ARGS:0%は自分への中出しを止められない…
-			PRINTFORMW …………
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%が腰を跳ねさせた瞬間、股間に反り返っているものと全く同じものに擬態した触手が%ARGS:0%の膣内に入っていく
+				
+				PRINTFORML 触手は%ARGS:0%のものと同時に脈打ち、%ARGS:0%の吐き出した精液が%ARGS:0%の膣内に勢いもそのままに射精される！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  %ARGS:0%が腰を跳ねさせた瞬間、股間に反り返っているものと全く同じものに擬態した触手が%ARGS:0%の膣内に入っていく
+			    PRINTFORMW  触手は%ARGS:0%のものと同時に脈打ち、%ARGS:0%の吐き出した精液が%ARGS:0%の膣内に勢いもそのままに射精される！
+			ENDIF
+
+			IF FLAG:AUTOMODE
+			    PRINTFORML 触手に責め立てられる%ARGS:0%は自分への中出しを止められない…
+			    PRINTFORML …………
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  触手に責め立てられる%ARGS:0%は自分への中出しを止められない…
+			    PRINTFORMW  …………
+			ENDIF
+
 		ELSEIF ARG:1 == 13
 			PRINTFORML 尻穴をこじ開け、奥へと押し進んでいく触手で%ARGS:0%の腹に醜い畝がぼごぼごと盛り上がっていく！
-			PRINTFORMW 快楽と同等以上の圧迫感に%ARGS:0%はくぐもった呻き声をあげて身を捩るものの、腹は更に歪に膨らんでいく…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 快楽と同等以上の圧迫感に%ARGS:0%はくぐもった呻き声をあげて身を捩るものの、腹は更に歪に膨らんでいく…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  快楽と同等以上の圧迫感に%ARGS:0%はくぐもった呻き声をあげて身を捩るものの、腹は更に歪に膨らんでいく…
+			ENDIF
+
 		ELSEIF ARG:1 == 14
-			PRINTFORMW 際限なく上昇してくる圧迫感、嘔吐感が限界に達すると、頬を膨らませて必死に首を振る%ARGS:0%の唇をこじ開けて野太い触手が這いずり出る！
-			PRINTFORMW 野太い触手は体内を征服した証とばかりに、完全に白目を剥いて痙攣する%ARGS:0%の肢体に濁りきった精液をぶちまけた…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 際限なく上昇してくる圧迫感、嘔吐感が限界に達すると、頬を膨らませて必死に首を振る%ARGS:0%の唇をこじ開けて野太い触手が這いずり出る！
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  際限なく上昇してくる圧迫感、嘔吐感が限界に達すると、頬を膨らませて必死に首を振る%ARGS:0%の唇をこじ開けて野太い触手が這いずり出る！
+			ENDIF
+
+			IF FLAG:AUTOMODE
+			    PRINTFORML 野太い触手は体内を征服した証とばかりに、完全に白目を剥いて痙攣する%ARGS:0%の肢体に濁りきった精液をぶちまけた…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  野太い触手は体内を征服した証とばかりに、完全に白目を剥いて痙攣する%ARGS:0%の肢体に濁りきった精液をぶちまけた…
+			ENDIF
+
 		ELSEIF ARG:1 == 15
-			PRINTFORMW %ARGS:0%の柔肌に密着して蠢いていた触手が突然青白い火花を散らして放電した！
+			IF FLAG:AUTOMODE
+			    PRINTFORML %ARGS:0%の柔肌に密着して蠢いていた触手が突然青白い火花を散らして放電した！
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  %ARGS:0%の柔肌に密着して蠢いていた触手が突然青白い火花を散らして放電した！
+			ENDIF
+
 			PRINTFORML 悲鳴を上げてよろける%ARGS:0%の乳首で、脇腹で、背中で、腹で、バチバチと音を立てて触手の電流が爆ぜる
 			PRINTFORML 立て続けに電撃を喰らい、声にならない悲鳴を上げる%ARGS:0%の足はがっちりと固定され、倒れることはできない！
-			PRINTFORMW 身体に貼り付く生地の下で雷光が閃き、濁りきった絶叫を伴奏に%ARGS:0%は苦痛のダンスを舞い続ける…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 身体に貼り付く生地の下で雷光が閃き、濁りきった絶叫を伴奏に%ARGS:0%は苦痛のダンスを舞い続ける…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  身体に貼り付く生地の下で雷光が閃き、濁りきった絶叫を伴奏に%ARGS:0%は苦痛のダンスを舞い続ける…
+			ENDIF
+
 		ELSEIF ARG:1 == 16
 			IF GET_PENIS(TARGET) & 4
 				IF ABL:12 <= 2
@@ -139,50 +321,134 @@
 			ELSE
 				PRINTFORM 最後に無防備なクリトリスで電撃が炸裂し
 			ENDIF
-			PRINTFORMW 、%ARGS:0%は半ば白目を剥いて泡を噴いて痙攣している…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 、%ARGS:0%は半ば白目を剥いて泡を噴いて痙攣している…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  、%ARGS:0%は半ば白目を剥いて泡を噴いて痙攣している…
+			ENDIF
+
 		ELSEIF ARG:1 == 17
-			PRINTFORMW 肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が弾けるように広がった！
+			IF FLAG:AUTOMODE
+			    PRINTFORML 肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が弾けるように広がった！
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が弾けるように広がった！
+			ENDIF
+
 			IF TALENT:122
 				PRINTFORML 触手は%ARGS:0%の四肢を軋むほどに締め上げ、焦らされ続けた尻をこじ開け
 			ELSE
 				PRINTFORML 触手は%ARGS:0%の四肢を軋むほどに締め上げ、焦らされ続けた膣腔を貫くと、跳ね上がる尻をこじ開け
 			ENDIF
 			PRINTFORML 張り詰めた乳首を乳暈ごと咥えて捻り上げる
-			PRINTFORMW 悲鳴を上げる%ARGS:0%の口をおぞましい粘液を垂れこぼす野太い触手が塞いで陵辱が始まった…
-			IF FLAG:507 > 0
-				PRINTFORMW 豚鼻に広げて細い触手が何本もねじ込まれ、鼻の奥に生臭い粘液が詰め込まれる
+			IF FLAG:AUTOMODE
+			    PRINTFORML 悲鳴を上げる%ARGS:0%の口をおぞましい粘液を垂れこぼす野太い触手が塞いで陵辱が始まった…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  悲鳴を上げる%ARGS:0%の口をおぞましい粘液を垂れこぼす野太い触手が塞いで陵辱が始まった…
 			ENDIF
-			PRINTFORMW のたくる触手で広げられた尻穴に紐のような触手が大量に這いずりこみ、吐き散らす濁液で腹が膨らんでいく
+
+			IF FLAG:507 > 0
+				IF FLAG:AUTOMODE
+				    PRINTFORML 豚鼻に広げて細い触手が何本もねじ込まれ、鼻の奥に生臭い粘液が詰め込まれる
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  豚鼻に広げて細い触手が何本もねじ込まれ、鼻の奥に生臭い粘液が詰め込まれる
+				ENDIF
+
+			ENDIF
+			IF FLAG:AUTOMODE
+			    PRINTFORML のたくる触手で広げられた尻穴に紐のような触手が大量に這いずりこみ、吐き散らす濁液で腹が膨らんでいく
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  のたくる触手で広げられた尻穴に紐のような触手が大量に這いずりこみ、吐き散らす濁液で腹が膨らんでいく
+			ENDIF
+
 			IF TALENT:130
 				PRINTFORML 張り詰めた乳房に触手が絡みついて括り出すと、噴水のように白濁した母乳が飛び散り
 				PRINTFORML 搾乳機のような触手が刺激を求めて膨れた乳首を咥え、一気に吸い上げ始めた
-				PRINTFORMW 胸が裏返りそうなほどの吸引に%ARGS:0%は胸を突き出して仰け反る
+				IF FLAG:AUTOMODE
+				    PRINTFORML 胸が裏返りそうなほどの吸引に%ARGS:0%は胸を突き出して仰け反る
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  胸が裏返りそうなほどの吸引に%ARGS:0%は胸を突き出して仰け反る
+				ENDIF
+
 			ENDIF
 			IF GET_PENIS(TARGET) & 4
 				PRINTFORML こんな状況でも腹に張り付くほど反り返り、先走りを垂れ流す陰茎を筒状の触手が咥え込んだ瞬間、
 				IF ABL:12 <= 2
-					PRINTFORMW %ARGS:0%の貪欲な陰茎は溢れんばかりに精液を噴き上げた
+					IF FLAG:AUTOMODE
+					    PRINTFORML %ARGS:0%の貪欲な陰茎は溢れんばかりに精液を噴き上げた
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  %ARGS:0%の貪欲な陰茎は溢れんばかりに精液を噴き上げた
+					ENDIF
+
 				ELSE
-					PRINTFORMW 無様に脈打つ%ARGS:0%のペニスは奔流のように精液を噴き上げた
+					IF FLAG:AUTOMODE
+					    PRINTFORML 無様に脈打つ%ARGS:0%のペニスは奔流のように精液を噴き上げた
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  無様に脈打つ%ARGS:0%のペニスは奔流のように精液を噴き上げた
+					ENDIF
+
 				ENDIF
-				PRINTFORMW 音を立てて啜られる精液は触手の精液で水増しされ、尻穴にねじ込まれた触手から注ぎ込まれていく…
+					IF FLAG:AUTOMODE
+					    PRINTFORML 音を立てて啜られる精液は触手の精液で水増しされ、尻穴にねじ込まれた触手から注ぎ込まれていく…
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  音を立てて啜られる精液は触手の精液で水増しされ、尻穴にねじ込まれた触手から注ぎ込まれていく…
+					ENDIF
+
 			ELSEIF GET_PENIS(TARGET)
 				PRINTFORML こんな状況でも腹に張り付くほど反り返り、先走りを垂れ流す陰茎を筒状の触手が咥え込んだ瞬間、
 				IF ABL:12 <= 2
-					PRINTFORMW %ARGS:0%の貪欲な擬似陰茎は溢れんばかりに精液を噴き上げた
+					IF FLAG:AUTOMODE
+					    PRINTFORML %ARGS:0%の貪欲な擬似陰茎は溢れんばかりに精液を噴き上げた
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  %ARGS:0%の貪欲な擬似陰茎は溢れんばかりに精液を噴き上げた
+					ENDIF
+
 				ELSE
-					PRINTFORMW %ARGS:0%の一生取れない醜いふたなりペニスは奔流のように精液を噴き上げた
+					IF FLAG:AUTOMODE
+					    PRINTFORML %ARGS:0%の一生取れない醜いふたなりペニスは奔流のように精液を噴き上げた
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  %ARGS:0%の一生取れない醜いふたなりペニスは奔流のように精液を噴き上げた
+					ENDIF
+
 				ENDIF
-				PRINTFORMW 音を立てて啜られる精液は触手の精液で水増しされ、牝穴にねじ込まれた触手から注ぎ込まれていく…
+					IF FLAG:AUTOMODE
+					    PRINTFORML 音を立てて啜られる精液は触手の精液で水増しされ、牝穴にねじ込まれた触手から注ぎ込まれていく…
+					    TWAIT FLAG:AUTOMODE * 400, 0
+					ELSE
+					    PRINTFORMW  音を立てて啜られる精液は触手の精液で水増しされ、牝穴にねじ込まれた触手から注ぎ込まれていく…
+					ENDIF
+
 			ELSE
 				PRINTFORML 野太い触手を咥えこんだ牝穴は次々にねじ込まれていく触手に拡げられ、粘膜にこびりつく粘液で
-				PRINTFORMW %ARGS:0%の奥まで塗り潰されていく
+				IF FLAG:AUTOMODE
+				    PRINTFORML %ARGS:0%の奥まで塗り潰されていく
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  %ARGS:0%の奥まで塗り潰されていく
+				ENDIF
+
 			ENDIF
 		ELSEIF ARG:1 == 18
 			PRINTFORML なぶり尽くされた%ARGS:0%が時折全身を震わせるだけの人形のようになってしまうと、触手はようやくその動きを緩めた…
 			PRINTFORML 床に崩れ落ち、のた打ち回ることしかできなかった%ARGS:0%は、口から鼻から白濁液をこぼして痙攣している…
 			PRINTFORML 再び%ARGS:0%の身体は涙と汗と汁を啜った触手の擬態する服でぴっちり覆われてしまった
-			PRINTFORMW 両穴は汁ごと密閉され、腹が膨れ上がるほどに注ぎ込まれた粘液を掻き出す事もできない…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 両穴は汁ごと密閉され、腹が膨れ上がるほどに注ぎ込まれた粘液を掻き出す事もできない…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  両穴は汁ごと密閉され、腹が膨れ上がるほどに注ぎ込まれた粘液を掻き出す事もできない…
+			ENDIF
+
 		;NF
 		ELSEIF ARG:1 == 19
 			PRINTFORML 肌にぴっちりと貼り付き、服の内部で常に緩い刺激を与えていた触手が大きく蠢いた
@@ -200,9 +466,21 @@
 			ENDIF
 			PRINTFORM ブチュブチュと卑猥な水音を立てて
 			IF TALENT:130
-				PRINTFORMW 抽挿を繰り返しながら、詰まっている母乳を激しく吸い始めた！
+				IF FLAG:AUTOMODE
+				    PRINTFORML 抽挿を繰り返しながら、詰まっている母乳を激しく吸い始めた！
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  抽挿を繰り返しながら、詰まっている母乳を激しく吸い始めた！
+				ENDIF
+
 			ELSE
-				PRINTFORMW 胸を奥から蹂躙し始めた！
+				IF FLAG:AUTOMODE
+				    PRINTFORML 胸を奥から蹂躙し始めた！
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  胸を奥から蹂躙し始めた！
+				ENDIF
+
 			ENDIF
 		ELSEIF ARG:1 == 20
 			PRINTFORM %ARGS:0%の
@@ -229,35 +507,103 @@
 			ENDIF
 			;快感
 			IF TALENT:162 >= 2
-				PRINTFORMW 快楽が乳首から全身を突き抜け、%ARGS:0%は細かく躰を跳ね上げながら嬌声を迸らせ続ける…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 快楽が乳首から全身を突き抜け、%ARGS:0%は細かく躰を跳ね上げながら嬌声を迸らせ続ける…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  快楽が乳首から全身を突き抜け、%ARGS:0%は細かく躰を跳ね上げながら嬌声を迸らせ続ける…
+				ENDIF
+
 			ELSEIF TALENT:162 >= 1
-				PRINTFORMW 快楽が乳首から全身に駆け巡り、%ARGS:0%の躰は電流が流されたかのように細かく震えている…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 快楽が乳首から全身に駆け巡り、%ARGS:0%の躰は電流が流されたかのように細かく震えている…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  快楽が乳首から全身に駆け巡り、%ARGS:0%の躰は電流が流されたかのように細かく震えている…
+				ENDIF
+
 			ELSE
-				PRINTFORMW 乳首が、乳腺が強引にこじ開けられ、%ARGS:0%は躰を内側からこねくり回される感覚に悶え喘ぐ…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 乳首が、乳腺が強引にこじ開けられ、%ARGS:0%は躰を内側からこねくり回される感覚に悶え喘ぐ…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  乳首が、乳腺が強引にこじ開けられ、%ARGS:0%は躰を内側からこねくり回される感覚に悶え喘ぐ…
+				ENDIF
+
 			ENDIF
 		ELSEIF ARG:1 == 21
 			;母乳体質の有無
-			SIF TALENT:130
-				PRINTFORMW 乳腺は箍が外れたかの様に活性化し、粘り気を帯びた母乳が触手と乳首の間からビュービュー飛び散っている…
+			IF TALENT:130
+				IF FLAG:AUTOMODE
+				    PRINTFORML 乳腺は箍が外れたかの様に活性化し、粘り気を帯びた母乳が触手と乳首の間からビュービュー飛び散っている…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  乳腺は箍が外れたかの様に活性化し、粘り気を帯びた母乳が触手と乳首の間からビュービュー飛び散っている…
+				ENDIF
+			ENDIF
+
 		ELSEIF ARG:1 == 22
-			PRINTFORMW 抽挿を繰り返す触手が一際強く乳腺を抉った瞬間、%ARGS:0%の乳首の最奥でおぞましい体液が弾けた！
-			PRINTFORMW 夥しい量の体液が絶えず注がれ続け、%ARGS:0%の乳房がさらに大きく膨らんでいく…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 抽挿を繰り返す触手が一際強く乳腺を抉った瞬間、%ARGS:0%の乳首の最奥でおぞましい体液が弾けた！
+    PRINTFORML 夥しい量の体液が絶えず注がれ続け、%ARGS:0%の乳房がさらに大きく膨らんでいく…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  抽挿を繰り返す触手が一際強く乳腺を抉った瞬間、%ARGS:0%の乳首の最奥でおぞましい体液が弾けた！
+    PRINTFORMW  夥しい量の体液が絶えず注がれ続け、%ARGS:0%の乳房がさらに大きく膨らんでいく…
+			ENDIF
+
 		ELSEIF ARG:1 == 23
 			;NF事後1、塞がれたまま
-			PRINTFORMW …………
+			IF FLAG:AUTOMODE
+			    PRINTFORML …………
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  …………
+			ENDIF
+
 			PRINTFORML %ARGS:0%の乳首の奥にたっぷり体液を出した触手は、その後も乳首に栓をしながら細かく蠢いている…
 			PRINTFORML 触手の責めが緩み、膝を突いてぐったりと崩れ落ちた%ARGS:0%の身体は、
-			PRINTFORMW 再び%ARGS:0%の身体は涙と汗と汁を啜った触手の擬態する服でぴっちり覆われてしまった
-			PRINTFORMW 乳首は母乳と体液ごと密閉され、乳房が膨れ上がるほどに注ぎ込まれた白濁液を搾り出す事もできない…
+			IF FLAG:AUTOMODE
+			    PRINTFORML 再び%ARGS:0%の身体は涙と汗と汁を啜った触手の擬態する服でぴっちり覆われてしまった
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  再び%ARGS:0%の身体は涙と汗と汁を啜った触手の擬態する服でぴっちり覆われてしまった
+			ENDIF
+
+			IF FLAG:AUTOMODE
+			    PRINTFORML 乳首は母乳と体液ごと密閉され、乳房が膨れ上がるほどに注ぎ込まれた白濁液を搾り出す事もできない…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  乳首は母乳と体液ごと密閉され、乳房が膨れ上がるほどに注ぎ込まれた白濁液を搾り出す事もできない…
+			ENDIF
+
 		ELSEIF ARG:1 == 24
 			;NF事後1、抜けて溢れる
-			PRINTFORMW …………
+			IF FLAG:AUTOMODE
+			    PRINTFORML …………
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  …………
+			ENDIF
+
 			PRINTFORML 触手の責めが緩み、ぐったりと崩れ落ちた%ARGS:0%の乳首から触手が抜け落ちると、
-			PRINTFORMW ぱっくり開いた乳首から、母乳と体液が混ざったドロドロの白濁液が滾滾と溢れ出てくる…
+			IF FLAG:AUTOMODE
+			    PRINTFORML ぱっくり開いた乳首から、母乳と体液が混ざったドロドロの白濁液が滾滾と溢れ出てくる…
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  ぱっくり開いた乳首から、母乳と体液が混ざったドロドロの白濁液が滾滾と溢れ出てくる…
+			ENDIF
+
 		ELSEIF ARG:1 == 25
 			;NF事後2
 			IF TALENT:162 >= 2
-				PRINTFORMW 性器と化した乳穴をなぶり尽くされ、息も絶え絶えの%ARGS:0%は恍惚の表情を浮かべて痙攣している…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 性器と化した乳穴をなぶり尽くされ、息も絶え絶えの%ARGS:0%は恍惚の表情を浮かべて痙攣している…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  性器と化した乳穴をなぶり尽くされ、息も絶え絶えの%ARGS:0%は恍惚の表情を浮かべて痙攣している…
+				ENDIF
+
 			ELSE
 ;				PRINTFORMW 
 			ENDIF
@@ -280,15 +626,33 @@
 				CASE 6
 					PRINT 【母乳活火山】
 				ENDSELECT
-				PRINTW になってしまった
+				IF FLAG:AUTOMODE
+					PRINTL になってしまった
+					TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+					PRINTW  になってしまった
+				ENDIF
+
 			ELSEIF TALENT:130 >= 7
-				PRINTFORMW 乳腺を開発されきった%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+				IF FLAG:AUTOMODE
+				    PRINTFORML 乳腺を開発されきった%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+				    TWAIT FLAG:AUTOMODE * 400, 0
+				ELSE
+				    PRINTFORMW  乳腺を開発されきった%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+				ENDIF
+
 			ELSE
 			ENDIF
 		;C寄生
 		ELSEIF ARG:1 == 27
 			PRINTFORML 股間を覆う触手服がうごめくと、%ARGS:0%のペニスに卵を産み付け始めた！
-			PRINTFORMW 
+			IF FLAG:AUTOMODE
+			    PRINTFORML 
+			    TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+			    PRINTFORMW  
+			ENDIF
+
 		ENDIF
 
 
