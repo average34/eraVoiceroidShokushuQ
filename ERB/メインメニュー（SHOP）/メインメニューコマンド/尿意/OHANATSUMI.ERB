@@ -351,8 +351,8 @@ RETURN 1
 				ELSEIF FLAG:522 == 0
 					;愛液
 					PRINTFORML 対応しようにもなぜか秘部から流れる体液が量を増し動くことができない……
-					PRINTFORMW そのまま行為の最後まで見られてしまい体勢を整えた時にはすでにどこかへ逃げられてしまっていた……
-					PRINTL
+					PRINTFORML  そのまま行為の最後まで見られてしまい体勢を整えた時にはすでにどこかへ逃げられてしまっていた……
+					CALL WAIT_AUTOMODE(400, 0)					PRINTL
 				ENDIF
 			ELSE
 				PRINTFORML 部屋の隅に水音が小さく響く中、安息のひとときを過ごす%CALLNAME:PTID%\@ PTSUM > 1 ? 達 # \@だが
@@ -575,8 +575,8 @@ NEXT
 
 TFLAG:63 = 0
 
-PRINTFORMW %CALLNAME:(PTID)%%TACHI()%を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
-FOR LCOUNT, 0, 3
+PRINTFORML  %CALLNAME:(PTID)%%TACHI()%を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+CALL WAIT_AUTOMODE(400, 0)FOR LCOUNT, 0, 3
 	IF PTID:(LCOUNT) > 0
 		CALL PRINT_MESSAGE(PTID:(LCOUNT), 506, 9, CALLNAME:(PTID:(LCOUNT)), CALLNAME:(PTID:(LCOUNT)))
 	ENDIF

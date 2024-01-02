@@ -241,8 +241,10 @@
 		;おもらし少女は触手の夢を見るか？
 		IF 夢の種類 == "悪夢"
 			PRINTFORM 眠っている%CALLNAME:(キャラID)%の体がビクビクと震え息が荒くなり始めた。
-			PRINTFORMW どうやら夢の中で触手に犯されているようだ…
-			PRINTFORMW 絶頂させられたのか%CALLNAME:(キャラID)%の身体が跳ねた後弛緩し、
+			PRINTFORML  どうやら夢の中で触手に犯されているようだ…
+			CALL WAIT_AUTOMODE(400, 0)
+			PRINTFORML  絶頂させられたのか%CALLNAME:(キャラID)%の身体が跳ねた後弛緩し、
+			CALL WAIT_AUTOMODE(400, 0)
 			
 		ELSEIF 夢の種類 == "普通"
 			PRINTFORM 眠っている%CALLNAME:(キャラID)%の体がピクンと震えたかと思うと、
@@ -303,9 +305,11 @@
 			PRINTFORML 目が覚めて、自分の惨状に気づいた%CALLNAME:(キャラID)%は悔しそうな表情を浮かべつつ
 			
 		ELSEIF 夢の種類 == "普通"
-			PRINTFORMW %CALLNAME:(キャラID)%の表情は安心感に緩んでいる…
+			PRINTFORML  %CALLNAME:(キャラID)%の表情は安心感に緩んでいる…
+			CALL WAIT_AUTOMODE(400, 0)
 			IF FLAG:522 == 1
-				PRINTFORMW どうやら夢の中でトイレをしているようだ。
+				PRINTFORML  どうやら夢の中でトイレをしているようだ。
+				CALL WAIT_AUTOMODE(400, 0)
 			ELSE
 			
 			ENDIF
@@ -445,9 +449,11 @@
 	LOCAL:1 -= 1
 	IF LOCAL:1 > RAND:20
 		IF FLAG:522 == 0
-			PRINTFORMW %CALLNAME:(ARG:0)%は愛液が止まりにくくなってしまった！
+			PRINTFORML  %CALLNAME:(ARG:0)%は愛液が止まりにくくなってしまった！
+			CALL WAIT_AUTOMODE(400, 0)
 		ELSE
-			PRINTFORMW %CALLNAME:(ARG:0)%はおもらしをする癖が付いてしまった！
+			PRINTFORML  %CALLNAME:(ARG:0)%はおもらしをする癖が付いてしまった！
+			CALL WAIT_AUTOMODE(400, 0)
 		ENDIF
 		TALENT:(ARG:0):57 = 1
 		RETURN 1

@@ -31,7 +31,8 @@ ELSE
 	IF FLAG:AUTOMODE
 		TWAIT FLAG:AUTOMODE * 1000 , 0
 	ELSE
-		PRINTFORMW 前回はろくな目に合わなかったのだが……
+		PRINTFORML  前回はろくな目に合わなかったのだが……
+		CALL WAIT_AUTOMODE(400, 0)
 	ENDIF
 	
 ENDIF
@@ -52,7 +53,8 @@ IF RESULT == 0
 	RETURN
 ELSEIF RESULT == 1 && FLAG:6 < 50
 	PRINTFORML しかし浄化力が足りていない……
-	PRINTFORMW しかたなく、今回は諦めることにした
+	PRINTFORML  しかたなく、今回は諦めることにした
+	CALL WAIT_AUTOMODE(400, 0)
 	RETURN
 ELSEIF RESULT != 1
 	GOTO INPUT_LOOP
@@ -67,7 +69,8 @@ IF RAND:10
 	CALL REPOP_SELECT(0)
 	PRINTFORML 明らかに怪しいが、好奇心に負けて浄化力を使ってみた……
 	PRINTFORML すると、敵が穴から飛び出し、襲いかかってきた！
-	PRINTFORMW ガチャガチャの景品はこいつのようだ……！
+	PRINTFORML  ガチャガチャの景品はこいつのようだ……！
+	CALL WAIT_AUTOMODE(400, 0)
 	IF FLAG:98
 		PRINTFORML だが、結界に阻まれて手出しできなかったようだ……
 		RETURN 1
@@ -87,7 +90,8 @@ ELSE
 		PRINTFORML しばらくして、ガチャガチャの穴からたくさんの小人たちが飛び出した
 		PRINTFORML どうやら彼らが、穴の奥から触手を送り込んでいたらしい
 		PRINTFORML 彼らは%CALLNAME:1%%TACHI()%を見ると、棲家をめちゃくちゃにされた怒りのままに襲いかかってきた！
-		PRINTFORMW 
+		PRINTFORML  
+		CALL WAIT_AUTOMODE(400, 0)
 		CALL CREATE_ENEMY(61, FLAG:5, 0)
 		CALL CREATE_ENEMY(61, FLAG:5, 0)
 		CALL CREATE_ENEMY(61, FLAG:5, 0)
