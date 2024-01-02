@@ -229,12 +229,8 @@ IF LOCAL:2 >= LOCAL:1
 				PRINTFORML 
 				PRINTFORML どうやら%CALLNAME:1%は、%PETNAME%を満足させたようだ
 			ELSE
-				IF FLAG:AUTOMODE
-				    PRINTFORML 組み敷かれた%CALLNAME:1%は情欲に狂った%PETNAME%を強引に引き剥がした！
-				    TWAIT FLAG:AUTOMODE * 1500, 0
-				ELSE
-				    PRINTFORMW  組み敷かれた%CALLNAME:1%は情欲に狂った%PETNAME%を強引に引き剥がした！
-				ENDIF
+				PRINTFORML 組み敷かれた%CALLNAME:1%は情欲に狂った%PETNAME%を強引に引き剥がした！
+				CALL WAIT_AUTOMODE(1500, 0)
 
 			ENDIF
 		ELSEIF CFLAG:(FLAG:11):28 >= 1 && CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 >= 1

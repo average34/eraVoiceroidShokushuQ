@@ -867,12 +867,8 @@ RETURNF CHARANUM - 1 - ARG:0
 PRINTFORML 急に周囲が光に包まれた！
 PRINTFORML 周囲を見ると、魔方陣らしき模様が光を放っていて、%CALLNAME:1%%TACHI()%は目を開けているのも困難になった！
 PRINTFORML 危険を察知し脱出しようにも、魔方陣の力で体が動かない！
-IF FLAG:AUTOMODE
-    PRINTFORML
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW 
-ENDIF
+PRINTFORML
+CALL WAIT_AUTOMODE(400, 0)
 
 FOR LOCAL:0, 0, ARG:0
 	LOCAL:1 = GET_DUMMY_CHARA(LOCAL:0)
@@ -891,30 +887,18 @@ FOR LOCAL:0, 0, ARG:0
 				PRINTFORML 目に映った自分は自分ではなく、心身ともに力尽きていた%CSTR:(LOCAL:2):2%の体だった……
 				PRINTFORML 何とか力を振り絞って周りを見ると、\@(ARG:0 > 2) ? 周囲の仲間 # 自分の体 \@が妙な挙動をしていた。
 			ENDIF
-			IF FLAG:AUTOMODE
-			    PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			    TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-			    PRINTFORMW  どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			ENDIF
+			PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+			CALL WAIT_AUTOMODE(400, 0)
 		ELSE
 			IF CFLAG:(LOCAL:1):110 == CFLAG:(LOCAL:2):114 && CFLAG:(LOCAL:1):111 == CFLAG:(LOCAL:2):104
 				PRINTFORML 力尽きてこそいるが、本来の体に戻った%CALLNAME:(LOCAL:1)%は、
-				IF FLAG:AUTOMODE
-				    PRINTFORML 辛そうながらもどこか安堵の表情を浮かべている……
-				    TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-				    PRINTFORMW 辛そうながらもどこか安堵の表情を浮かべている……
-				ENDIF
+				PRINTFORML 辛そうながらもどこか安堵の表情を浮かべている……
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				PRINTFORML 心身ともに力尽きていた%CSTR:(LOCAL:2):2%の体になった%CALLNAME:(LOCAL:1)%は、
-				IF FLAG:AUTOMODE
-				    PRINTFORML 今にも倒れてしまいそうなくらいに辛そうだ……
-				    TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-				    PRINTFORMW 今にも倒れてしまいそうなくらいに辛そうだ……
-				ENDIF
+				PRINTFORML 今にも倒れてしまいそうなくらいに辛そうだ……
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 		ENDIF
@@ -933,32 +917,20 @@ FOR LOCAL:0, 0, ARG:0
 				PRINTFORML どうやら自分の体が%CSTR:(LOCAL:2):2%になってしまったらしい。
 				PRINTFORML 周りを見ると、自分の体が横になっていて\@(ARG:0 > 2) ? 、もう一人の仲間も挙動不審だ。 # 動かない……\@
 			ENDIF
-			IF FLAG:AUTOMODE
-			    PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			    TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-			    PRINTFORMW どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			ENDIF
+			PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSE
 			IF CFLAG:(LOCAL:1):110 == CFLAG:(LOCAL:2):114 && CFLAG:(LOCAL:1):111 == CFLAG:(LOCAL:2):104
 				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の瞳に光が宿り、辛そうながらも上体を起こした。
 				PRINTFORML どうやら中身も%CALLNAME:(LOCAL:1)%に戻ったらしく、
-				IF FLAG:AUTOMODE
-				    PRINTFORML 本来の体に戻った事で精神が多少回復したようだ……
-				    TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-				    PRINTFORMW 本来の体に戻った事で精神が多少回復したようだ……
-				ENDIF
+				PRINTFORML 本来の体に戻った事で精神が多少回復したようだ……
+				CALL WAIT_AUTOMODE(400, 0)
 			ELSE
 				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の瞳に光が宿り、辛そうながらも上体を起こした。
 				PRINTFORML どうやら中身は%CALLNAME:(LOCAL:1)%のようだが、
-				IF FLAG:AUTOMODE
-				    PRINTFORML %CSTR:(LOCAL:2):2%の体になった事で精神が多少回復したようだ……
-				    TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-				    PRINTFORMW %CSTR:(LOCAL:2):2%の体になった事で精神が多少回復したようだ……
-				ENDIF
+				PRINTFORML %CSTR:(LOCAL:2):2%の体になった事で精神が多少回復したようだ……
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 		ENDIF
@@ -971,34 +943,22 @@ FOR LOCAL:0, 0, ARG:0
 			PRINTFORM 虚ろな目で自分の体を見ると、
 			IF CFLAG:1:110 == CFLAG:(LOCAL:2):114 && CFLAG:1:111 == CFLAG:(LOCAL:2):104
 				PRINTFORML 目に映った自分の姿は、紛れも無い本来の自分の体だった。
-				IF FLAG:AUTOMODE
-				    PRINTFORML 体が元の自分に戻った事で、%CALLNAME:1%に僅かだが力が湧いてきた！
-				    TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-				    PRINTFORMW 体が元の自分に戻った事で、%CALLNAME:1%に僅かだが力が湧いてきた！
-				ENDIF
+				PRINTFORML 体が元の自分に戻った事で、%CALLNAME:1%に僅かだが力が湧いてきた！
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				PRINTFORML どうやら自分の体が%CSTR:(LOCAL:2):2%になってしまったらしい。
 				PRINTFORML 周りも何やら様子がおかしいが、それ以上何かする気力など残っていなかった……
 			ENDIF
-			IF FLAG:AUTOMODE
-			    PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			    TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-			    PRINTFORMW どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			ENDIF
+			PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSE
 			IF CFLAG:(LOCAL:1):110 == CFLAG:(LOCAL:2):114 && CFLAG:(LOCAL:1):111 == CFLAG:(LOCAL:2):104
 				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の瞳に光が宿り、辛そうながらも上体を起こした。
 				PRINTFORML どうやら中身も%CALLNAME:(LOCAL:1)%に戻ったらしく、
-				IF FLAG:AUTOMODE
-				    PRINTFORML 本来のの体に戻った事で精神が多少回復したようだ……
-				    TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-				    PRINTFORMW 本来のの体に戻った事で精神が多少回復したようだ……
-				ENDIF
+				PRINTFORML 本来のの体に戻った事で精神が多少回復したようだ……
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				PRINTFORML 倒れた%CSTR:(LOCAL:2):2%の体が一瞬だけ動いたが、そこまでだった。
@@ -1016,22 +976,14 @@ FOR LOCAL:0, 0, ARG:0
 			ELSE
 				PRINTFORML 自分の体を確認した%CALLNAME:1%は、そこでようやく自分が%CSTR:(LOCAL:2):2%になっている事に気付いた。
 			ENDIF
-			IF FLAG:AUTOMODE
-			    PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			    TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-			    PRINTFORMW どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
-			ENDIF
+			PRINTFORML どうやら、%CALLNAME:1%%TACHI()%の体が入れ替わってしまったようだ……
+			CALL WAIT_AUTOMODE(400, 0)
 
 		;何もしない
 		ELSE
 		ENDIF
 	ENDIF
 NEXT
-IF FLAG:AUTOMODE
-    PRINTFORML 暫くすると、魔方陣は消えてしまった……
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW 暫くすると、魔方陣は消えてしまった……
-ENDIF
+PRINTFORML 暫くすると、魔方陣は消えてしまった……
+CALL WAIT_AUTOMODE(400, 0)
 

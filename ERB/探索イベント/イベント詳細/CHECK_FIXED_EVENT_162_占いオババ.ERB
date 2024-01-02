@@ -25,19 +25,11 @@ LOCAL:2 = RESULT
 
 IF LOCAL:2 >= LOCAL:1
 	PRINTFORML 迷宮内を探索していた%CALLNAME:1%%TACHI()%の前に、占いオババが現れた
-IF FLAG:AUTOMODE
-    PRINTFORML 「ほう、こんな所で人に会うとは、珍しいこともあるもんじゃな」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「ほう、こんな所で人に会うとは、珍しいこともあるもんじゃな」
-ENDIF
+PRINTFORML 「ほう、こんな所で人に会うとは、珍しいこともあるもんじゃな」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML 「ここで会ったのも何かの縁じゃ。オババの占いを受けてみんか？」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「ここで会ったのも何かの縁じゃ。オババの占いを受けてみんか？」
-ENDIF
+PRINTFORML 「ここで会ったのも何かの縁じゃ。オババの占いを受けてみんか？」
+CALL WAIT_AUTOMODE(400, 0)
 
 	PRINTFORML 　
 	PRINTFORML 占ってもらいますか？
@@ -54,152 +46,76 @@ ENDIF
 	
 	IF RESULT == 0
 		PRINTFORML 「当たるも八卦。当たらぬも八卦。悪い結果が出たところで、あまり気にせんことじゃな」
-IF FLAG:AUTOMODE
-    PRINTFORML そういうとオババは懐から水晶玉を取り出し、念を込め始めた…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  そういうとオババは懐から水晶玉を取り出し、念を込め始めた…
-ENDIF
+PRINTFORML そういうとオババは懐から水晶玉を取り出し、念を込め始めた…
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML 　
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  　
-ENDIF
+PRINTFORML 　
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML …
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  …
-ENDIF
+PRINTFORML …
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML ……
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  ……
-ENDIF
+PRINTFORML ……
+CALL WAIT_AUTOMODE(400, 0)
 
 		LOCAL:7 = RAND:6
 		
 		IF LOCAL:7 == 0
-IF FLAG:AUTOMODE
-    PRINTFORML 「『今日は外出を控え、家の中で過ごしましょう』じゃな」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「『今日は外出を控え、家の中で過ごしましょう』じゃな」
-ENDIF
+PRINTFORML 「『今日は外出を控え、家の中で過ごしましょう』じゃな」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML むしろ外に出たい……
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  むしろ外に出たい……
-ENDIF
+PRINTFORML むしろ外に出たい……
+CALL WAIT_AUTOMODE(400, 0)
 
 		
 		ELSEIF LOCAL:7 == 1
-IF FLAG:AUTOMODE
-    PRINTFORML 「『出会いのチャンス！　素敵な彼氏が見つかるかも！？』じゃな。よかったの」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「『出会いのチャンス！　素敵な彼氏が見つかるかも！？』じゃな。よかったの」
-ENDIF
+PRINTFORML 「『出会いのチャンス！　素敵な彼氏が見つかるかも！？』じゃな。よかったの」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML 何故だろう。嫌な予感しかしない…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  何故だろう。嫌な予感しかしない…
-ENDIF
+PRINTFORML 何故だろう。嫌な予感しかしない…
+CALL WAIT_AUTOMODE(400, 0)
 
 			
 		ELSEIF LOCAL:7 == 2
-IF FLAG:AUTOMODE
-    PRINTFORML 「『角を目指せ』か……何処かに鬼でも居るのかの？」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「『角を目指せ』か……何処かに鬼でも居るのかの？」
-ENDIF
+PRINTFORML 「『角を目指せ』か……何処かに鬼でも居るのかの？」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML …………“ツノ”？
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  …………“ツノ”？
-ENDIF
+PRINTFORML …………“ツノ”？
+CALL WAIT_AUTOMODE(400, 0)
 
 			
 		ELSEIF LOCAL:7 == 3
-IF FLAG:AUTOMODE
-    PRINTFORML 「『明日の天気は雨』じゃな。ムードアップが上がるし、気力も減りにくくなる。デートにはいいかもしれんの」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「『明日の天気は雨』じゃな。ムードアップが上がるし、気力も減りにくくなる。デートにはいいかもしれんの」
-ENDIF
+PRINTFORML 「『明日の天気は雨』じゃな。ムードアップが上がるし、気力も減りにくくなる。デートにはいいかもしれんの」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML それは別のバリアントだ
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  それは別のバリアントだ
-ENDIF
+PRINTFORML それは別のバリアントだ
+CALL WAIT_AUTOMODE(400, 0)
 
 			
 		ELSEIF LOCAL:7 == 4
-IF FLAG:AUTOMODE
-    PRINTFORML 「…………」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「…………」
-ENDIF
+PRINTFORML 「…………」
+CALL WAIT_AUTOMODE(400, 0)
 
 			PRINTFORML 「………………ぐぅ」
-IF FLAG:AUTOMODE
-    PRINTFORML 占いオババは眠ってしまったようだ
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  占いオババは眠ってしまったようだ
-ENDIF
+PRINTFORML 占いオババは眠ってしまったようだ
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML …………無駄な時間を費やしてしまった
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  …………無駄な時間を費やしてしまった
-ENDIF
+PRINTFORML …………無駄な時間を費やしてしまった
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML 鼻ちょうちんを膨らませ始めたオババを放置して、%CALLNAME:1%%TACHI()%は探索を再開した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  鼻ちょうちんを膨らませ始めたオババを放置して、%CALLNAME:1%%TACHI()%は探索を再開した
-ENDIF
+PRINTFORML 鼻ちょうちんを膨らませ始めたオババを放置して、%CALLNAME:1%%TACHI()%は探索を再開した
+CALL WAIT_AUTOMODE(400, 0)
 
 			
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML 「『2秒後、お主らは触手の海に投げ出されるだろう』か、やけに具体的な結果が出たの」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「『2秒後、お主らは触手の海に投げ出されるだろう』か、やけに具体的な結果が出たの」
-ENDIF
+PRINTFORML 「『2秒後、お主らは触手の海に投げ出されるだろう』か、やけに具体的な結果が出たの」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML 「…………って、2秒ぉ！？」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「…………って、2秒ぉ！？」
-ENDIF
+PRINTFORML 「…………って、2秒ぉ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML 占いオババが驚きの声を上げると同時に、突然地面に穴が開いた！
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  占いオババが驚きの声を上げると同時に、突然地面に穴が開いた！
-ENDIF
+PRINTFORML 占いオババが驚きの声を上げると同時に、突然地面に穴が開いた！
+CALL WAIT_AUTOMODE(400, 0)
 
 			PRINTFORML 　
 			LOCAL:4 = 0
@@ -273,39 +189,23 @@ ENDIF
 				NEXT
 				
 				PRINTFORML 　
-IF FLAG:AUTOMODE
-    PRINTFORML 触手の体液でベトベトに濡れながらも、何とか%CALLNAME:1%%TACHI()%は落とし穴から這い上がった…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  触手の体液でベトベトに濡れながらも、何とか%CALLNAME:1%%TACHI()%は落とし穴から這い上がった…
-ENDIF
+PRINTFORML 触手の体液でベトベトに濡れながらも、何とか%CALLNAME:1%%TACHI()%は落とし穴から這い上がった…
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORML 　
 				PRINTFORML 触手の体液でベトベトに濡れながらも、何とか占いオババは落とし穴から這い上がった…
-IF FLAG:AUTOMODE
-    PRINTFORML 「ふう、ひどい目にあったわい」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  「ふう、ひどい目にあったわい」
-ENDIF
+PRINTFORML 「ふう、ひどい目にあったわい」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				PRINTFORML 
 				PRINTFORML 落とし穴の中には無数の触手が見える…
-IF FLAG:AUTOMODE
-    PRINTFORML 幸運にもその脅威を回避することができた%CALLNAME:1%%TACHI()%は、急いでその場から離れた…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  幸運にもその脅威を回避することができた%CALLNAME:1%%TACHI()%は、急いでその場から離れた…
-ENDIF
+PRINTFORML 幸運にもその脅威を回避することができた%CALLNAME:1%%TACHI()%は、急いでその場から離れた…
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORML 　
-IF FLAG:AUTOMODE
-    PRINTFORML 幸運にもその脅威を回避することができた占いオババは、急いでその場から離れた…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  幸運にもその脅威を回避することができた占いオババは、急いでその場から離れた…
-ENDIF
+PRINTFORML 幸運にもその脅威を回避することができた占いオババは、急いでその場から離れた…
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORML 「やれやれ、危ないところじゃったのう…」
 			ENDIF
@@ -315,12 +215,8 @@ ENDIF
 		ENDIF
 			IF LOCAL:7 != 4
 				PRINTFORML 「それじゃあ、ワシはもう行くよ。達者でな」
-IF FLAG:AUTOMODE
-    PRINTFORML そう言うと、占いオババは立ち去っていった…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  そう言うと、占いオババは立ち去っていった…
-ENDIF
+PRINTFORML そう言うと、占いオババは立ち去っていった…
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 			
@@ -330,19 +226,11 @@ ENDIF
 			PRINTFORML そう言うと、占いオババは立ち去っていった…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  「ふむ、まあ無理にとは言わんからの」
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   「ふむ、まあ無理にとは言わんからの」
-ENDIF
+PRINTFORML  「ふむ、まあ無理にとは言わんからの」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-    PRINTFORML そう言うと、占いオババは立ち去っていった…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  そう言うと、占いオババは立ち去っていった…
-ENDIF
+PRINTFORML そう言うと、占いオババは立ち去っていった…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 

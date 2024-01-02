@@ -46,34 +46,22 @@ IF LOCAL:2 >= LOCAL:1
 			LOCAL:6 = 1
 		ENDIF
 	ENDIF
-		IF FLAG:AUTOMODE
-		    PRINTFORML %CALLNAME:(LOCAL:4)%は突然床から現れたスライムに上半身を捉えられた！
-		    TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-		    PRINTFORMW  %CALLNAME:(LOCAL:4)%は突然床から現れたスライムに上半身を捉えられた！
-		ENDIF
+		PRINTFORML %CALLNAME:(LOCAL:4)%は突然床から現れたスライムに上半身を捉えられた！
+		CALL WAIT_AUTOMODE(400, 0)
 
 	CALL REACTION_TRAP(LOCAL:4)
 	;霊撃で抜けたら終了
 	IF RESULT == 0
-		IF FLAG:AUTOMODE
-		    PRINTFORML %CALLNAME:(LOCAL:4)%は脱出した！
-		    TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-		    PRINTFORMW  %CALLNAME:(LOCAL:4)%は脱出した！
-		ENDIF
+		PRINTFORML %CALLNAME:(LOCAL:4)%は脱出した！
+		CALL WAIT_AUTOMODE(400, 0)
 
 		LOCAL:4 = 0
 		LOCAL:6 = 0
 	ENDIF
 	
 	IF LOCAL:6 == 0 && LOCAL:4
-		IF FLAG:AUTOMODE
-		    PRINTFORML %CALLNAME:(LOCAL:4)%は足を拘束されたまま尻をこちらに向けて動けないでいる！
-		    TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-		    PRINTFORMW  %CALLNAME:(LOCAL:4)%は足を拘束されたまま尻をこちらに向けて動けないでいる！
-		ENDIF
+		PRINTFORML %CALLNAME:(LOCAL:4)%は足を拘束されたまま尻をこちらに向けて動けないでいる！
+		CALL WAIT_AUTOMODE(400, 0)
 
 		PRINTFORML 
 		PRINTFORML 助けますか？
@@ -168,12 +156,8 @@ IF LOCAL:2 >= LOCAL:1
 			PRINTFORML %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
 			TWAIT FLAG:AUTOMODE * 1000 , 0
 		ELSE
-			IF FLAG:AUTOMODE
-			    PRINTFORML %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
-			    TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-			    PRINTFORMW  %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
-			ENDIF
+			PRINTFORML %CALLNAME:(LOCAL:4)%の胸を散々犯し抜いたスライムは、床へと染みこんで行った…
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 		

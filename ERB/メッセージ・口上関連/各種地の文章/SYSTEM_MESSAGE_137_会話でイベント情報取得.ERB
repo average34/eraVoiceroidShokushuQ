@@ -3,12 +3,8 @@
 
 SELECTCASE ARG:2
 	CASE 0
-IF FLAG:AUTOMODE
-    PRINTFORML (SYSTEM_MESSAGE_137)イベントのIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  (SYSTEM_MESSAGE_137)イベントのIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
-ENDIF
+PRINTFORML (SYSTEM_MESSAGE_137)イベントのIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+CALL WAIT_AUTOMODE(400, 0)
 
 	CASE 1 TO 99
 		;対象キャラの捕食情報
@@ -18,12 +14,8 @@ ENDIF
 			    PRINTFORML 最近{CFLAG:(ARG:2):4}の部屋の近くで誰かの声が聞こえる気がするらしい…
 			    TWAIT FLAG:AUTOMODE * 400, 0
 			ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{CFLAG:(ARG:2):4}の部屋の近くで誰かの声が聞こえる気がするらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{CFLAG:(ARG:2):4}の部屋の近くで誰かの声が聞こえる気がするらしい…
-ENDIF
+PRINTFORML  最近{CFLAG:(ARG:2):4}の部屋の近くで誰かの声が聞こえる気がするらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 
@@ -32,12 +24,8 @@ ENDIF
 			    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{CFLAG:(ARG:2):4}の部屋で%CALLNAME:(ARG:2)%が%SAVESTR:(CFLAG:(ARG:2):10)%に捕まっているという情報を聞き出した
 			    TWAIT FLAG:AUTOMODE * 400, 0
 			ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{CFLAG:(ARG:2):4}の部屋で%CALLNAME:(ARG:2)%が%SAVESTR:(CFLAG:(ARG:2):10)%に捕まっているという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{CFLAG:(ARG:2):4}の部屋で%CALLNAME:(ARG:2)%が%SAVESTR:(CFLAG:(ARG:2):10)%に捕まっているという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{CFLAG:(ARG:2):4}の部屋で%CALLNAME:(ARG:2)%が%SAVESTR:(CFLAG:(ARG:2):10)%に捕まっているという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 
@@ -49,12 +37,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:108 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:108 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:108 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:108 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -64,12 +48,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:111 % 100}の部屋で怪しげな道具が落ちているのを見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:111 % 100}の部屋で怪しげな道具が落ちているのを見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:111 % 100}の部屋で怪しげな道具が落ちているのを見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:111 % 100}の部屋で怪しげな道具が落ちているのを見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -79,12 +59,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:119 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:119 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:119 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:119 % 100}の部屋で怪しげな薬が落ちているのを見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -94,12 +70,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:133 % 100}の部屋で泉を見つけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:133 % 100}の部屋で泉を見つけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:133 % 100}の部屋で泉を見つけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:133 % 100}の部屋で泉を見つけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -109,12 +81,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:134 % 100}の部屋で泉を見つけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:134 % 100}の部屋で泉を見つけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:134 % 100}の部屋で泉を見つけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:134 % 100}の部屋で泉を見つけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -124,12 +92,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:139 % 100}の部屋で怪しげなガスを吸って酷い目にあったらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:139 % 100}の部屋で怪しげなガスを吸って酷い目にあったらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:139 % 100}の部屋で怪しげなガスを吸って酷い目にあったらしい…
-ENDIF
+PRINTFORML  最近{FLAG:139 % 100}の部屋で怪しげなガスを吸って酷い目にあったらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -139,12 +103,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:142 % 100}の部屋で喋れる触手を見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:142 % 100}の部屋で喋れる触手を見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:142 % 100}の部屋で喋れる触手を見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:142 % 100}の部屋で喋れる触手を見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -154,12 +114,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:160 % 100}の部屋で怪しい装置を見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:160 % 100}の部屋で怪しい装置を見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:160 % 100}の部屋で怪しい装置を見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:160 % 100}の部屋で怪しい装置を見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -169,12 +125,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:170 % 100}の部屋で怪しい植物を見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:170 % 100}の部屋で怪しい植物を見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:170 % 100}の部屋で怪しい植物を見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:170 % 100}の部屋で怪しい植物を見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -184,12 +136,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:172 % 100}の部屋で怪しい装置を見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:172 % 100}の部屋で怪しい装置を見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:172 % 100}の部屋で怪しい装置を見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:172 % 100}の部屋で怪しい装置を見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -199,12 +147,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:173 % 100}の部屋で怪しい植物を見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:173 % 100}の部屋で怪しい植物を見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:173 % 100}の部屋で怪しい植物を見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:173 % 100}の部屋で怪しい植物を見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -214,12 +158,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:177 % 100}の部屋で大量の淫虫を見かけたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:177 % 100}の部屋で大量の淫虫を見かけたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:177 % 100}の部屋で大量の淫虫を見かけたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:177 % 100}の部屋で大量の淫虫を見かけたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -229,12 +169,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:178 % 100}の部屋で女性にムラムラしたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:178 % 100}の部屋で女性にムラムラしたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:178 % 100}の部屋で女性にムラムラしたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:178 % 100}の部屋で女性にムラムラしたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -244,12 +180,8 @@ ENDIF
 		    PRINTFORML 最近{FLAG:179 % 100}の部屋で触手が儀式をしていたらしい…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  最近{FLAG:179 % 100}の部屋で触手が儀式をしていたらしい…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   最近{FLAG:179 % 100}の部屋で触手が儀式をしていたらしい…
-ENDIF
+PRINTFORML  最近{FLAG:179 % 100}の部屋で触手が儀式をしていたらしい…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -260,12 +192,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:109}の部屋に何かの薬が落ちているという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:109}の部屋に何かの薬が落ちているという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:109}の部屋に何かの薬が落ちているという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:109}の部屋に何かの薬が落ちているという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -274,12 +202,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:110}の部屋に何かの薬が落ちているという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:110}の部屋に何かの薬が落ちているという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:110}の部屋に何かの薬が落ちているという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:110}の部屋に何かの薬が落ちているという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -288,12 +212,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:136}の部屋は天井にスライムが貼り付いているという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:136}の部屋は天井にスライムが貼り付いているという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:136}の部屋は天井にスライムが貼り付いているという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:136}の部屋は天井にスライムが貼り付いているという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -302,12 +222,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:137}の部屋では壁の触手が襲いかかってくるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:137}の部屋では壁の触手が襲いかかってくるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:137}の部屋では壁の触手が襲いかかってくるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:137}の部屋では壁の触手が襲いかかってくるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -316,12 +232,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:138}の部屋には落とし穴があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:138}の部屋には落とし穴があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:138}の部屋には落とし穴があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:138}の部屋には落とし穴があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -330,12 +242,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:143}の部屋に不思議なガスが充満しているという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:143}の部屋に不思議なガスが充満しているという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:143}の部屋に不思議なガスが充満しているという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:143}の部屋に不思議なガスが充満しているという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -344,12 +252,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:146}の部屋に淫蟲の巣穴があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:146}の部屋に淫蟲の巣穴があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:146}の部屋に淫蟲の巣穴があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:146}の部屋に淫蟲の巣穴があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -358,12 +262,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:147}の部屋に淫蟲の巣穴があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:147}の部屋に淫蟲の巣穴があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:147}の部屋に淫蟲の巣穴があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:147}の部屋に淫蟲の巣穴があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -372,12 +272,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:148}の部屋に淫蟲の巣穴があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:148}の部屋に淫蟲の巣穴があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:148}の部屋に淫蟲の巣穴があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:148}の部屋に淫蟲の巣穴があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -386,12 +282,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:149}の部屋に淫蟲の巣穴があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:149}の部屋に淫蟲の巣穴があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:149}の部屋に淫蟲の巣穴があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:149}の部屋に淫蟲の巣穴があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -400,12 +292,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:150}の部屋では落石の危険があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:150}の部屋では落石の危険があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:150}の部屋では落石の危険があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:150}の部屋では落石の危険があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -414,12 +302,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:152}の部屋に淫蟲の巣穴があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:152}の部屋に淫蟲の巣穴があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:152}の部屋に淫蟲の巣穴があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:152}の部屋に淫蟲の巣穴があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -428,12 +312,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:161}の部屋で女性にムラムラしたらしいという情報を聞き出した…
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:161}の部屋で女性にムラムラしたらしいという情報を聞き出した…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:161}の部屋で女性にムラムラしたらしいという情報を聞き出した…
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:161}の部屋で女性にムラムラしたらしいという情報を聞き出した…
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -442,12 +322,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:169}の部屋に何かの薬が落ちているという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:169}の部屋に何かの薬が落ちているという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:169}の部屋に何かの薬が落ちているという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:169}の部屋に何かの薬が落ちているという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -456,12 +332,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:180}の部屋に魔法陣があるという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:180}の部屋に魔法陣があるという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:180}の部屋に魔法陣があるという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、{FLAG:180}の部屋に魔法陣があるという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -470,12 +342,8 @@ ENDIF
 		    PRINTFORML %CALLNAME:1%%TACHI()%は%ARGS:1%から、%GET_DUMMY_PLATE_DATA()%の順で石版の前で呪文を唱えると酷い目にあったという情報を聞き出した
 		    TWAIT FLAG:AUTOMODE * 400, 0
 		ELSE
-IF FLAG:AUTOMODE
-    PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、%GET_DUMMY_PLATE_DATA()%の順で石版の前で呪文を唱えると酷い目にあったという情報を聞き出した
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW   %CALLNAME:1%%TACHI()%は%ARGS:1%から、%GET_DUMMY_PLATE_DATA()%の順で石版の前で呪文を唱えると酷い目にあったという情報を聞き出した
-ENDIF
+PRINTFORML  %CALLNAME:1%%TACHI()%は%ARGS:1%から、%GET_DUMMY_PLATE_DATA()%の順で石版の前で呪文を唱えると酷い目にあったという情報を聞き出した
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 

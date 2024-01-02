@@ -16,12 +16,8 @@ IF (ABL:1:5 + TALENT:1:164 + RAND:2 > 2) || (FLAG:10 && ABL:(FLAG:10):5 + TALENT
 		RETURN 2
 ENDIF
 
-IF FLAG:AUTOMODE
-    PRINTFORML 突然%CALLNAME:1%%TACHI()%は強い光に包まれた！
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  突然%CALLNAME:1%%TACHI()%は強い光に包まれた！
-ENDIF
+PRINTFORML 突然%CALLNAME:1%%TACHI()%は強い光に包まれた！
+CALL WAIT_AUTOMODE(400, 0)
 
 CALL PRINT_MESSAGE(1, 201, 0, CALLNAME:1, "")
 CALL PRINT_MESSAGE(FLAG:10, 201, 0, CALLNAME:1, "")
@@ -36,28 +32,16 @@ CALL RANDOM_TELEPORT(FLAG:10)
 FLAG:5 = CFLAG:1:4
 FLAG:(600 + FLAG:5) = 1
 
-IF FLAG:AUTOMODE
-    PRINTFORML 咄嗟に目を瞑った%CALLNAME:1%が恐る恐る目を開けると、全く別の部屋に転送されていた…
-    TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-    PRINTFORMW  咄嗟に目を瞑った%CALLNAME:1%が恐る恐る目を開けると、全く別の部屋に転送されていた…
-ENDIF
+PRINTFORML 咄嗟に目を瞑った%CALLNAME:1%が恐る恐る目を開けると、全く別の部屋に転送されていた…
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:10 && FLAG:11
-	IF FLAG:AUTOMODE
-	    PRINTFORML さっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%達の姿も見えない。　どうやら別の部屋に転送されたようだ…
-	    TWAIT FLAG:AUTOMODE * 400, 0
-	ELSE
-	    PRINTFORMW  さっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%達の姿も見えない。　どうやら別の部屋に転送されたようだ…
-	ENDIF
+	PRINTFORML さっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%達の姿も見えない。　どうやら別の部屋に転送されたようだ…
+	CALL WAIT_AUTOMODE(400, 0)
 
 ELSEIF FLAG:10
-	IF FLAG:AUTOMODE
-	    PRINTFORML さっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%の姿も見えない。　どうやら別の部屋に転送されたようだ…
-	    TWAIT FLAG:AUTOMODE * 400, 0
-	ELSE
-	    PRINTFORMW  さっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%の姿も見えない。　どうやら別の部屋に転送されたようだ…
-	ENDIF
+	PRINTFORML さっきまで一緒に居たはずの%CALLNAME:(FLAG:10)%の姿も見えない。　どうやら別の部屋に転送されたようだ…
+	CALL WAIT_AUTOMODE(400, 0)
 
 ENDIF
 CALL PRINT_MESSAGE(1, 201, 1, CALLNAME:1, "")

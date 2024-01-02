@@ -87,12 +87,8 @@ SELECTCASE ARG:1
 		PRINTL [2] - 料理を売る
 		DRAWLINE
 		PRINTL 0
-		IF FLAG:AUTOMODE
-		    PRINTFORML %ARGS:1%の体力が回復した！
-		    TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-		    PRINTFORMW  %ARGS:1%の体力が回復した！
-		ENDIF
+		PRINTFORML %ARGS:1%の体力が回復した！
+		CALL WAIT_AUTOMODE(400, 0)
 
 	CASE 39
 		PRINTFORML %ARGS:1%の全身に巻きついた包帯が一斉に襲いかかってきた！
