@@ -29,10 +29,22 @@ ELSE
 	PRINTFORML 何とか自由を得た%ARGS:0%だったが、なにやらスースーすることに気が付いた。
 		IF LOCAL:3
 		;ズボン系
-		PRINTFORMW %ARGS:0%が下半身に目をやると、衣服が剥ぎ取られている！
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%が下半身に目をやると、衣服が剥ぎ取られている！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%が下半身に目をやると、衣服が剥ぎ取られている！
+ENDIF
+
 		BASE:(ARG:0):3 = LOCAL:5 / 2
 		ELSE
-		PRINTFORMW 恐る恐る%ARGS:0%が服越しに下半身を触ると、下着の感触がない……
+IF FLAG:AUTOMODE
+    PRINTFORML 恐る恐る%ARGS:0%が服越しに下半身を触ると、下着の感触がない……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  恐る恐る%ARGS:0%が服越しに下半身を触ると、下着の感触がない……
+ENDIF
+
 		BASE:(ARG:0):3 = LOCAL:5 * 3 / 4
 		ENDIF
 		
@@ -46,7 +58,13 @@ ELSE
 					ELSE
 						PRINTFORM %ARGS:0%の下着が
 					ENDIF
-					PRINTFORMW 浮かんでいる……
+IF FLAG:AUTOMODE
+    PRINTFORML 浮かんでいる……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  浮かんでいる……
+ENDIF
+
 				CASE 82, 89, 90
 					PRINTFORM よく見ると、%SAVESTR:(CFLAG:(ARG:0):20)%の舌に
 						IF LOCAL:3
@@ -54,7 +72,13 @@ ELSE
 						ELSE
 							PRINTFORM %ARGS:0%の下着が
 						ENDIF
-					PRINTFORMW 絡まっている……
+IF FLAG:AUTOMODE
+    PRINTFORML 絡まっている……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  絡まっている……
+ENDIF
+
 				CASE 62, 77
 					PRINTFORM よく見ると、%SAVESTR:(CFLAG:(ARG:0):20)%の触手に
 						IF LOCAL:3
@@ -62,9 +86,21 @@ ELSE
 						ELSE
 							PRINTFORM %ARGS:0%の下着が
 						ENDIF
-					PRINTFORMW 絡まっている……
+IF FLAG:AUTOMODE
+    PRINTFORML 絡まっている……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  絡まっている……
+ENDIF
+
 				CASEELSE
-					PRINTFORMW どうやら、%SAVESTR:(CFLAG:(ARG:0):20)%の体内に取り残されてしまったようだ……
+IF FLAG:AUTOMODE
+    PRINTFORML どうやら、%SAVESTR:(CFLAG:(ARG:0):20)%の体内に取り残されてしまったようだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  どうやら、%SAVESTR:(CFLAG:(ARG:0):20)%の体内に取り残されてしまったようだ……
+ENDIF
+
 			ENDSELECT
 		ELSE
 			SELECTCASE DA:(CFLAG:(ARG:0):20):0
@@ -75,7 +111,13 @@ ELSE
 					ELSE
 						PRINTFORM %ARGS:0%の下着が
 					ENDIF
-					PRINTFORMW 張り付いている……
+IF FLAG:AUTOMODE
+    PRINTFORML 張り付いている……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  張り付いている……
+ENDIF
+
 				CASE 45, 46
 					PRINTFORM よく見ると、%SAVESTR:(CFLAG:(ARG:0):20)%が作った巣に
 					IF LOCAL:3
@@ -83,7 +125,13 @@ ELSE
 					ELSE
 						PRINTFORM %ARGS:0%の下着が
 					ENDIF
-					PRINTFORMW 紛れこんでいる……
+IF FLAG:AUTOMODE
+    PRINTFORML 紛れこんでいる……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  紛れこんでいる……
+ENDIF
+
 				CASE 47, 52, 57
 					PRINTFORM よく見ると、%SAVESTR:(CFLAG:(ARG:0):20)%が
 					IF LOCAL:3
@@ -91,7 +139,13 @@ ELSE
 					ELSE
 						PRINTFORM %ARGS:0%の下着を
 					ENDIF
-					PRINTFORMW 咀嚼している……
+IF FLAG:AUTOMODE
+    PRINTFORML 咀嚼している……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  咀嚼している……
+ENDIF
+
 				CASE 59, 60
 					PRINTFORM よく見ると、%SAVESTR:(CFLAG:(ARG:0):20)%の牙に
 					IF LOCAL:3
@@ -99,7 +153,13 @@ ELSE
 					ELSE
 						PRINTFORM %ARGS:0%の下着が
 					ENDIF
-					PRINTFORMW 引っかかっている……
+IF FLAG:AUTOMODE
+    PRINTFORML 引っかかっている……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  引っかかっている……
+ENDIF
+
 				CASEELSE
 					PRINTFORM よく見ると、%SAVESTR:(CFLAG:(ARG:0):20)%が
 					SIF CFLAG:(ARG:0):44 >= 2
@@ -110,7 +170,13 @@ ELSE
 						ELSE
 							PRINTFORM %ARGS:0%の下着を
 						ENDIF
-					PRINTFORMW 掲げている……
+IF FLAG:AUTOMODE
+    PRINTFORML 掲げている……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  掲げている……
+ENDIF
+
 				ENDSELECT
 		ENDIF
 	CFLAG:(ARG:0):44 = 1

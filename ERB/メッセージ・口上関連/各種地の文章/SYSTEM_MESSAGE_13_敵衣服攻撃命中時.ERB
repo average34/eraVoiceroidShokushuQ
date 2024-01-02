@@ -5,7 +5,13 @@
 
 SELECTCASE ARG:1
 	CASE 0
-		PRINTFORMW (SYSTEM_MESSAGE_13)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+IF FLAG:AUTOMODE
+    PRINTFORML (SYSTEM_MESSAGE_13)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  (SYSTEM_MESSAGE_13)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+ENDIF
+
 	CASE 201
 		IF BASE:3 > 0
 			PRINTFORML まともに浴びてしまった%ARGS:0%の服がみるみる内に溶け、柔肌を外気に晒してゆく…

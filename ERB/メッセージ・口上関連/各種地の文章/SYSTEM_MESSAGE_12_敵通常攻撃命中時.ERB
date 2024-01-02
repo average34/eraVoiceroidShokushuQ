@@ -5,7 +5,8 @@
 
 SELECTCASE ARG:1
 	CASE 0
-		PRINTFORMW (SYSTEM_MESSAGE_12)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+		PRINTFORMW  (SYSTEM_MESSAGE_12)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+
 	CASE 100
 		;何もなし
 	CASE 101
@@ -299,16 +300,40 @@ SELECTCASE ARG:1
 	CASE 180
 		IF CFLAG:201 == 0
 			PRINTFORML 触手塒の隙間からはみ出していた%ARGS:0%の両腕が在らぬ角度に折れ曲がり、同時に痛々しい悲鳴と粉砕音が鳴り響いた！
-			PRINTFORMW %ARGS:0%は両腕を破壊され、攻撃力が低下してしまった！
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%は両腕を破壊され、攻撃力が低下してしまった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW  %ARGS:0%は両腕を破壊され、攻撃力が低下してしまった！
+			ENDIF
+
 		ELSEIF CFLAG:201 == 1
 			PRINTFORML %ARGS:0%は左右の脚を在らぬ方向に捻じ曲げられ、遂に限界を超えた彼女の股関節は、悲鳴と共に粉砕音を鳴り響かせた！
-			PRINTFORMW %ARGS:0%は股関節を破壊され、速度が低下してしまった！
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%は股関節を破壊され、速度が低下してしまった！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW  %ARGS:0%は股関節を破壊され、速度が低下してしまった！
+			ENDIF
+
 		ELSEIF CFLAG:201 == 2
 			PRINTFORML 触手塒の中から顔を出す%ARGS:0%の表情が苦悶に歪み、口から吐血と共にくぐもった悲鳴、そして肋骨の砕ける音が鳴り響く！
-			PRINTFORMW %ARGS:0%の折れた肋骨が、内臓を苛み始めた！
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%の折れた肋骨が、内臓を苛み始めた！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW  %ARGS:0%の折れた肋骨が、内臓を苛み始めた！
+			ENDIF
+
 		ELSEIF CFLAG:201 == 3
 			PRINTFORML ギリギリと収縮する触手塒の中から、%ARGS:0%の壮絶な悲鳴と骨の砕ける音が鳴り響く！
-			PRINTFORMW %ARGS:0%は成す術もなく痛めつけられた！
+			IF FLAG:AUTOMODE
+				PRINTFORML %ARGS:0%は成す術もなく痛めつけられた！
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW  %ARGS:0%は成す術もなく痛めつけられた！
+			ENDIF
+
 		ENDIF
 	CASE 181
 		IF BASE:3 > MAXBASE:3 / 4

@@ -33,11 +33,19 @@ IF CFLAG:(ARG:0):153 >= 3
 	CFLAG:(ARG:0):80 -= 8
 	CFLAG:(ARG:0):153 -= 3
 	IF CFLAG:(ARG:0):80
-		PRINTFORML 寄生封じの札が体に植え付けられていた異物を弱らせたようだ
-		CALL WAIT_AUTOMODE(200, 0)
+		IF FLAG:AUTOMODE
+			PRINTFORML 寄生封じの札が体に植え付けられていた異物を弱らせたようだ
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW 寄生封じの札が体に植え付けられていた異物を弱らせたようだ
+		ENDIF
 	ELSE
-		PRINTFORML 寄生封じの札が体に植え付けられていた異物を完全に浄化したようだ
-		CALL WAIT_AUTOMODE(200, 0)
+		IF FLAG:AUTOMODE
+			PRINTFORML 寄生封じの札が体に植え付けられていた異物を完全に浄化したようだ
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW 寄生封じの札が体に植え付けられていた異物を完全に浄化したようだ
+		ENDIF
 	ENDIF
 		RETURN
 ENDIF

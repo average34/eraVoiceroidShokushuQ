@@ -38,8 +38,12 @@ IF CFLAG:(ARG:0):158 <= 0 && LOCAL:1 == 1
 	CALL DAMAGE_COMMON(ARG:0, 2, MAXBASE:(ARG:0):2, 2000)
 	;触手スーツ暴走
 	IF CFLAG:(ARG:0):40 == 1
-		PRINTFORML さらに、衣服に擬態していた触手が暴走し始めた！
-		CALL WAIT_AUTOMODE(200, 0)
+		IF FLAG:AUTOMODE
+			PRINTFORML さらに、衣服に擬態していた触手が暴走し始めた！
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW さらに、衣服に擬態していた触手が暴走し始めた！
+		ENDIF
 		CALL EXTASY(ARG:0, RAND:4, 400, 100)
 		CALL EXTASY(ARG:0, RAND:4, 400, 100)
 	ENDIF

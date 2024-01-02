@@ -211,26 +211,92 @@ SELECTCASE ARG:1
 	CASE 954
 		SELECTCASE TALENT:130
 		CASE 1
-			PRINTFORMW %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の胸から母乳が染み出している…
-			PRINTFORMW %ARGS:0%は【%TALENTNAME:130%】を得た
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の胸から母乳が染み出している…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の胸から母乳が染み出している…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:130%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:130%】を得た
+ENDIF
+
 		CASE 2
-			PRINTFORMW %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の乳腺は更に発達し、母乳が波々と溢れている…
-			PRINTFORMW %ARGS:0%は【母乳分泌過多】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の乳腺は更に発達し、母乳が波々と溢れている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の乳腺は更に発達し、母乳が波々と溢れている…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳分泌過多】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳分泌過多】になってしまった
+ENDIF
+
 		CASE 3
-			PRINTFORMW %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の乳腺は更に発達し、異常な量の母乳があふれ出ている…
-			PRINTFORMW %ARGS:0%は【母乳異常分泌】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の乳腺は更に発達し、異常な量の母乳があふれ出ている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の乳腺は更に発達し、異常な量の母乳があふれ出ている…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳異常分泌】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳異常分泌】になってしまった
+ENDIF
+
 		CASE 4 TO 6
 			PRINTFORML %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の乳腺は更に発達し、狂ったように母乳を噴き出している…
-			PRINTFORMW 急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+IF FLAG:AUTOMODE
+    PRINTFORML 急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+ENDIF
+
 			IF TALENT:130 == 4
-				PRINTFORMW %ARGS:0%は【母乳製造装置】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳製造装置】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳製造装置】になってしまった
+ENDIF
+
 			ELSEIF TALENT:130 == 5
-				PRINTFORMW %ARGS:0%は【母乳間欠泉】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳間欠泉】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳間欠泉】になってしまった
+ENDIF
+
 			ELSEIF TALENT:130 == 6
-				PRINTFORMW %ARGS:0%は【母乳活火山】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳活火山】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳活火山】になってしまった
+ENDIF
+
 			ENDIF
 		CASE IS >= 7
-			PRINTFORMW %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%からの擬似妊娠催眠を受けて%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+ENDIF
+
 		ENDSELECT
 	CASE 955
 		IF CFLAG:43 == 0 || FLAG:526 == 0
@@ -243,62 +309,224 @@ SELECTCASE ARG:1
 	CASE 957
 		SELECTCASE TALENT:130
 		CASE 1
-			PRINTFORMW %ARGS:1%の触手に乳腺を開発されて%ARGS:0%の胸から母乳が染み出している…
-			PRINTFORMW %ARGS:0%は【%TALENTNAME:130%】を得た
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%の触手に乳腺を開発されて%ARGS:0%の胸から母乳が染み出している…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%の触手に乳腺を開発されて%ARGS:0%の胸から母乳が染み出している…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:130%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:130%】を得た
+ENDIF
+
 		CASE 2
-			PRINTFORMW %ARGS:1%の触手に開発された%ARGS:0%の乳腺は更に発達し、母乳が波々と溢れている…
-			PRINTFORMW %ARGS:0%は【母乳分泌過多】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%の触手に開発された%ARGS:0%の乳腺は更に発達し、母乳が波々と溢れている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%の触手に開発された%ARGS:0%の乳腺は更に発達し、母乳が波々と溢れている…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳分泌過多】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳分泌過多】になってしまった
+ENDIF
+
 		CASE 3
-			PRINTFORMW %ARGS:1%の触手に開発された%ARGS:0%の乳腺は更に発達し、異常な量の母乳があふれ出ている…
-			PRINTFORMW %ARGS:0%は【母乳異常分泌】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%の触手に開発された%ARGS:0%の乳腺は更に発達し、異常な量の母乳があふれ出ている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%の触手に開発された%ARGS:0%の乳腺は更に発達し、異常な量の母乳があふれ出ている…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳異常分泌】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳異常分泌】になってしまった
+ENDIF
+
 		CASE 4 TO 6
 			PRINTFORML %ARGS:1%の触手に開発された%ARGS:0%の乳腺は更に発達し、狂ったように母乳を噴き出している…
-			PRINTFORMW 急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+IF FLAG:AUTOMODE
+    PRINTFORML 急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  急激な成長に耐え切れず、%ARGS:0%の胸は完全に壊れてしまったようだ…
+ENDIF
+
 			IF TALENT:130 == 4
-				PRINTFORMW %ARGS:0%は【母乳製造装置】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳製造装置】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳製造装置】になってしまった
+ENDIF
+
 			ELSEIF TALENT:130 == 5
-				PRINTFORMW %ARGS:0%は【母乳間欠泉】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳間欠泉】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳間欠泉】になってしまった
+ENDIF
+
 			ELSEIF TALENT:130 == 6
-				PRINTFORMW %ARGS:0%は【母乳活火山】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【母乳活火山】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【母乳活火山】になってしまった
+ENDIF
+
 			ENDIF
 		CASE IS >= 7
-			PRINTFORMW 乳腺を開発されきった%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+IF FLAG:AUTOMODE
+    PRINTFORML 乳腺を開発されきった%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  乳腺を開発されきった%ARGS:0%の胸は\@ FLAG:507 > 0 ? 生臭いヘドロ状の #  \@母乳をごぼごぼ垂れ流している…
+ENDIF
+
 		ENDSELECT
 		;母乳粘度が増す場合
 		IF TFLAG:98 > 0
 			SELECTCASE TALENT:220
 			CASE 1
-				PRINTFORMW 気のせいだろうか、%ARGS:0%の乳首から滴る母乳が少し濃くなったような気がした…？？
-				PRINTFORMW %ARGS:0%は【さらさら母乳】を得た
+IF FLAG:AUTOMODE
+    PRINTFORML 気のせいだろうか、%ARGS:0%の乳首から滴る母乳が少し濃くなったような気がした…？？
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  気のせいだろうか、%ARGS:0%の乳首から滴る母乳が少し濃くなったような気がした…？？
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【さらさら母乳】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【さらさら母乳】を得た
+ENDIF
+
 			CASE 2
-				PRINTFORMW %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
-				PRINTFORMW %ARGS:0%は【とろとろ母乳】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【とろとろ母乳】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【とろとろ母乳】になってしまった
+ENDIF
+
 			CASE 3
-				PRINTFORMW %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
-				PRINTFORMW %ARGS:0%は【ねっとり母乳】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【ねっとり母乳】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【ねっとり母乳】になってしまった
+ENDIF
+
 			CASE 4
-				PRINTFORMW %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
-				PRINTFORMW %ARGS:0%は【こくまろ母乳】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の乳首から溢れ出る母乳の粘度が、以前よりも増しているようだ…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【こくまろ母乳】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【こくまろ母乳】になってしまった
+ENDIF
+
 			CASE 5
-				PRINTFORMW %ARGS:0%の乳首から噴き出す母乳は粘度が更に増し、半固形物も混ざって来ている…
-				PRINTFORMW %ARGS:0%は【特濃母乳】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の乳首から噴き出す母乳は粘度が更に増し、半固形物も混ざって来ている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の乳首から噴き出す母乳は粘度が更に増し、半固形物も混ざって来ている…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【特濃母乳】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【特濃母乳】になってしまった
+ENDIF
+
 			CASE 6
-				PRINTFORMW %ARGS:0%の乳首から噴き出す母乳は粘度が更に増し、乳房を伝い垂れ落ちるそれはまるでヨーグルトのようだ…
-				PRINTFORMW %ARGS:0%は【超特濃母乳】になってしまった
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の乳首から噴き出す母乳は粘度が更に増し、乳房を伝い垂れ落ちるそれはまるでヨーグルトのようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の乳首から噴き出す母乳は粘度が更に増し、乳房を伝い垂れ落ちるそれはまるでヨーグルトのようだ…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【超特濃母乳】になってしまった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【超特濃母乳】になってしまった
+ENDIF
+
 			CASEELSE
-				PRINTFORMW %ARGS:0%の乳首から滾々と噴き出す母乳はあまりにも濃厚すぎて、地面にビチャビチャ垂れ落ちてからも殆ど型崩れしようとしない…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の乳首から滾々と噴き出す母乳はあまりにも濃厚すぎて、地面にビチャビチャ垂れ落ちてからも殆ど型崩れしようとしない…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の乳首から滾々と噴き出す母乳はあまりにも濃厚すぎて、地面にビチャビチャ垂れ落ちてからも殆ど型崩れしようとしない…
+ENDIF
+
 			ENDSELECT
 		ENDIF
 	CASE 962
 		IF GET_PENIS(TARGET) & 4
 			PRINTFORML 淫蟲の一部が%ARGS:0%の陰茎に噛み付いた途端、反応するかのように屹立の強さが増した！
-			PRINTFORMW 何か特殊な体液を送り込まれたようだ…
+IF FLAG:AUTOMODE
+    PRINTFORML 何か特殊な体液を送り込まれたようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  何か特殊な体液を送り込まれたようだ…
+ENDIF
+
 		ELSEIF GET_PENIS(TARGET)
 			PRINTFORML 淫蟲の一部が%ARGS:0%の擬似陰茎に噛み付いた途端、反応するかのように屹立の強さが増した！
-			PRINTFORMW 何か特殊な体液を送り込まれたようだ…
+IF FLAG:AUTOMODE
+    PRINTFORML 何か特殊な体液を送り込まれたようだ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  何か特殊な体液を送り込まれたようだ…
+ENDIF
+
 		ELSE
 			PRINTFORML 淫蟲の一部が%ARGS:0%のクリトリスに吸い付くと、一体化して寄生し始めた……
-			PRINTFORMW %ARGS:0%は【ふたなり】になってしまった！
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【ふたなり】になってしまった！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【ふたなり】になってしまった！
+ENDIF
+
 		ENDIF
 	CASE 965
 		PRINTFORML %ARGS:0%は%ARGS:1%に引き寄せられてしまった！

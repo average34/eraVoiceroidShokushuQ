@@ -1,134 +1,382 @@
 ﻿;触手スーツ
 @SYSTEM_MESSAGE_440(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 
-IF ARG:1 == 0
-	PRINTFORML しかしそれは衣服に擬態していた触手だった！
-	PRINTFORML 服の内側を埋め尽くす触手が一斉に%ARGS:0%の素肌を押し包む！
-	IF FLAG:AUTOMODE
-	    TWAIT FLAG:AUTOMODE * 400, 0
-	ELSE
-		WAIT
-	ENDIF
-	PRINTFORML %ARGS:0%は意識が弾けそうになりながらも布地を引き剥がそうとするが、
-	PRINTFORML 肌に密着する触手にありとあらゆる箇所を貪り尽くされる%ARGS:0%の身体は意思に反して跳ね回り、
-	PRINTFORML %ARGS:0%はただ悲鳴を上げることしかできない！
-	IF FLAG:AUTOMODE
-	    TWAIT FLAG:AUTOMODE * 400, 0
-	ELSE
-		WAIT
-	ENDIF
-ELSEIF ARG:1 == 1
-	PRINTFORML
-	PRINTFORMW ……
-	PRINTFORMW …………
-	PRINTFORMW %ARGS:0%の抵抗が途絶え、時折全身を震わせるだけの人形のようになってしまうと、触手はようやくその動きを緩めた…
-	PRINTFORMW 荒い呼吸を整え、よろよろと身体を起こし、%ARGS:0%は力の入らない震える身体で触手を引き剥がそうとした…
-	PRINTFORMW しかし%ARGS:0%が触手に手をかけると、触手は再びぞわぞわと蠢き始めた
-	PRINTFORML 無理に脱ごうとすれば、また同じことになるかもしれない…
-	PRINTFORMW %ARGS:0%の手が止まった…
-ELSEIF ARG:1 == 2
-	PRINTFORMW 
-	PRINTFORMW 一瞬の躊躇いの後、%ARGS:0%は意を決して触手を強引に引き剥がそうとした
-	PRINTFORMW 案の定、触手の動きは再び激しさを増して%ARGS:0%を蹂躙する！
-ELSEIF ARG:1 == 3
-	PRINTFORMW 気力を振り絞って何とか全体の3分の1ほどを引き剥がした%ARGS:0%だったが、それが限界だった
-	PRINTFORML 全身を飲み込む快楽に、%ARGS:0%の手から力が抜けていく…
-	PRINTFORMW %ARGS:0%の手を振り払った触手は再び%ARGS:0%の身体を絡め取ると、更に激しく責めたてていく
-	PRINTFORMW %ARGS:0%の頭の中は肉欲に塗りつぶされ、ただ触手から与えられる快楽に獣じみた嬌声をあげ、自由にならない体を震わせる事しかできなかった…
-ELSEIF ARG:1 == 4
-	PRINTFORMW そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の尻穴を重点的に責め始めた…
-ELSEIF ARG:1 == 5
-	PRINTFORML 
-	PRINTFORMW ……
-	PRINTFORMW …………
-	PRINTFORMW 触手の責めがようやく緩んだ時には、%ARGS:0%は精根尽き果てて地面に横たわっていた
-ELSEIF ARG:1 == 6
-	PRINTFORML えづきながらよろよろと起き上がる%ARGS:0%は、触手を引き剥がすのを諦めるしかなかった…
-ELSEIF ARG:1 == 7
-	IF TALENT:75 == 0
-		PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の尻穴は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
-		PRINTFORMW %ARGS:0%は【%TALENTNAME:75%】を得た
-	ELSE
-		PRINTFORML 既に快楽の為の器官に成り下がっていた尻穴をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
-	ENDIF
-ELSEIF ARG:1 == 8
-	PRINTFORMW そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の乳房を重点的に責め始めた…
-ELSEIF ARG:1 == 9
-	IF TALENT:76 == 0
-		PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の胸は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
-		PRINTFORMW %ARGS:0%は【%TALENTNAME:76%】を得た
-	ELSE
-		PRINTFORML 既に快楽を貪るだけの器官に成り下がっていた胸をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
-	ENDIF
-ELSEIF ARG:1 == 10
-	PRINTFORM そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の
-	IF !GET_PENIS(TARGET)
-		PRINTFORMW クリトリスを重点的に責め始めた…
-	ELSE
-		PRINTFORMW 陰茎を重点的に責め始めた…
-	ENDIF
-ELSEIF ARG:1 == 11
-	IF TALENT:77 == 0
-		IF !GET_PENIS(TARGET)
-			PRINTFORML 徹底的な陵辱を受けた%ARGS:0%のクリトリスは完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
-			PRINTFORMW %ARGS:0%は【%TALENTNAME:77%】を得た
-		ELSE
-			PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の陰茎は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
-			PRINTFORMW %ARGS:0%は【%TALENTNAME:77%】を得た
-		ENDIF
-	ELSE
-		IF !GET_PENIS(TARGET)
-			PRINTFORML 既に快楽を貪るだけの器官に成り下がっていたクリトリスをなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
-		ELSE
-			PRINTFORML 既に快楽を貪るだけの器官に成り下がっていた陰茎をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
-		ENDIF
-	ENDIF
-ELSEIF ARG:1 == 12
-	PRINTFORMW そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の膣内を重点的に責め始めた…
-ELSEIF ARG:1 == 13
-	IF TALENT:78 == 0
-		PRINTFORMW 徹底的な陵辱を受けた%ARGS:0%の牝穴は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
-		PRINTFORMW %ARGS:0%は【%TALENTNAME:78%】を得た
-	ELSE
-		PRINTFORML 既に快楽を貪るだけの器官に成り下がっていた牝穴をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
-	ENDIF
-ELSEIF ARG:1 == 14
-	PRINTFORML もう一度触手に暴れられたら―――今度は正気を保っていられる自信はない！
-	PRINTFORMW …………
-	PRINTFORMW %ARGS:0%は苦渋の思いで、触手から手を放した
-ELSEIF ARG:1 == 15
-	PRINTFORML 触手は%ARGS:0%の身体にぴっちり貼り付く服に擬態した…
-	PRINTFORMW 肌に密着し、身体の線を括り出す生地の内側で絶えず触手が蠢いている…
-ELSEIF ARG:1 == 16
-	PRINTFORMW %ARGS:0%が新しい服を手にした途端、衣服に擬態していた触手が激しく蠢きだした！
-	PRINTFORMW のたくる触手が新しい服を取り込むと、触手に侵食された生地の内側もぬらつく触手と同化し、%ARGS:0%の肌は再び面積を取り戻した服でぴっちりと密閉されてしまった…
-ELSEIF ARG:1 == 17
-	IF !GET_PENIS(TARGET)
-		PRINTFORMW 胸が！　クリトリスが！　ヴァキナが！　アヌスが！　あらゆる場所から与えられる怒涛の快感が%ARGS:0%を塗り潰していく…
-	ELSE
-		PRINTFORMW 胸が！　ペニスが！　ヴァキナが！　アヌスが！　あらゆる場所から与えられる怒涛の快感が%ARGS:0%を塗り潰していく…
-	ENDIF
-ELSEIF ARG:1 == 18
-	IF TALENT:74 == 0
-		PRINTFORMW 徹底的な陵辱を受けた%ARGS:0%は身も心も完全に破壊されてしまった…
-		PRINTFORMW %ARGS:0%は快楽に溺れ、ただ肉欲を貪るだけの牝へと堕ちてしまった…
-		PRINTFORMW %ARGS:0%は【%TALENTNAME:74%】を得た
-	ELSE
-		PRINTFORML 既に肉欲を貪る牝に成り果てていた%ARGS:0%の顔は、
-		PRINTFORML 汗と涙と涎と鼻水でぐちゃぐちゃになってなお狂喜の色に歪んでいた…
-	ENDIF
-ELSEIF ARG:1 == 19
-	PRINTFORMW 徹底的な陵辱を受けた%ARGS:0%の身体は肉欲を貪るだけの牝に近づいていく…
-	PRINTFORMW %ARGS:0%の感度が上がった
-ELSEIF ARG:1 == 20
-	PRINTFORML 無理に脱がせようとして今以上に触手が暴れだしたら、果たして%ARGS:0%は正気を保っていられるだろうか？
-	PRINTFORMW %ARGS:0%が全身余すところなくしゃぶり尽くされ、穴という穴を蹂躙されていくのを%CALLNAME:1%%TACHI()%は見守ることしかできない…
-ELSEIF ARG:1 == 21
-	PRINTFORML 胸を覆う触手が\@TALENT:162 >= 3 ? 開発され尽くした # \@%ARGS:0%の乳首を掻き広げ、乳腺の至る所に入り込んでいった！
-	PRINTFORMW \@ GET_BUST(TARGET) >= 3 ? 巨大な乳肉 # 乳房 \@を外から中から搾るように激しく犯され、神経を焦がす様な快感が絶えず%ARGS:0%を襲う！
-	IF TALENT:130 >= 3
-		PRINTFORMW 触手と肌の隙間からは乳腺への刺激で生み出された粘つく母乳が大量に漏れ出し、地面に水溜りを作っている…
-	ENDIF
+		IF ARG:1 == 0
+			PRINTFORML しかしそれは衣服に擬態していた触手だった！
+IF FLAG:AUTOMODE
+    PRINTFORML 服の内側を埋め尽くす触手が一斉に%ARGS:0%の素肌を押し包む！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  服の内側を埋め尽くす触手が一斉に%ARGS:0%の素肌を押し包む！
 ENDIF
+
+			PRINTFORML %ARGS:0%は意識が弾けそうになりながらも布地を引き剥がそうとするが、
+			PRINTFORML 肌に密着する触手にありとあらゆる箇所を貪り尽くされる%ARGS:0%の身体は意思に反して跳ね回り、
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%はただ悲鳴を上げることしかできない！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%はただ悲鳴を上げることしかできない！
+ENDIF
+
+		ELSEIF ARG:1 == 1
+			PRINTFORML
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の抵抗が途絶え、時折全身を震わせるだけの人形のようになってしまうと、触手はようやくその動きを緩めた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の抵抗が途絶え、時折全身を震わせるだけの人形のようになってしまうと、触手はようやくその動きを緩めた…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 荒い呼吸を整え、よろよろと身体を起こし、%ARGS:0%は力の入らない震える身体で触手を引き剥がそうとした…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  荒い呼吸を整え、よろよろと身体を起こし、%ARGS:0%は力の入らない震える身体で触手を引き剥がそうとした…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML しかし%ARGS:0%が触手に手をかけると、触手は再びぞわぞわと蠢き始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  しかし%ARGS:0%が触手に手をかけると、触手は再びぞわぞわと蠢き始めた
+ENDIF
+
+			PRINTFORML 無理に脱ごうとすれば、また同じことになるかもしれない…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の手が止まった…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の手が止まった…
+ENDIF
+
+		ELSEIF ARG:1 == 2
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 一瞬の躊躇いの後、%ARGS:0%は意を決して触手を強引に引き剥がそうとした
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  一瞬の躊躇いの後、%ARGS:0%は意を決して触手を強引に引き剥がそうとした
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 案の定、触手の動きは再び激しさを増して%ARGS:0%を蹂躙する！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  案の定、触手の動きは再び激しさを増して%ARGS:0%を蹂躙する！
+ENDIF
+
+		ELSEIF ARG:1 == 3
+IF FLAG:AUTOMODE
+    PRINTFORML 気力を振り絞って何とか全体の3分の1ほどを引き剥がした%ARGS:0%だったが、それが限界だった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  気力を振り絞って何とか全体の3分の1ほどを引き剥がした%ARGS:0%だったが、それが限界だった
+ENDIF
+
+			PRINTFORML 全身を飲み込む快楽に、%ARGS:0%の手から力が抜けていく…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の手を振り払った触手は再び%ARGS:0%の身体を絡め取ると、更に激しく責めたてていく
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の手を振り払った触手は再び%ARGS:0%の身体を絡め取ると、更に激しく責めたてていく
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の頭の中は肉欲に塗りつぶされ、ただ触手から与えられる快楽に獣じみた嬌声をあげ、自由にならない体を震わせる事しかできなかった…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の頭の中は肉欲に塗りつぶされ、ただ触手から与えられる快楽に獣じみた嬌声をあげ、自由にならない体を震わせる事しかできなかった…
+ENDIF
+
+		ELSEIF ARG:1 == 4
+IF FLAG:AUTOMODE
+    PRINTFORML そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の尻穴を重点的に責め始めた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の尻穴を重点的に責め始めた…
+ENDIF
+
+		ELSEIF ARG:1 == 5
+			PRINTFORML 
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 触手の責めがようやく緩んだ時には、%ARGS:0%は精根尽き果てて地面に横たわっていた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手の責めがようやく緩んだ時には、%ARGS:0%は精根尽き果てて地面に横たわっていた
+ENDIF
+
+		ELSEIF ARG:1 == 6
+			PRINTFORML えづきながらよろよろと起き上がる%ARGS:0%は、触手を引き剥がすのを諦めるしかなかった…
+		ELSEIF ARG:1 == 7
+			IF TALENT:75 == 0
+				PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の尻穴は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:75%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:75%】を得た
+ENDIF
+
+			ELSE
+				PRINTFORML 既に快楽の為の器官に成り下がっていた尻穴をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
+			ENDIF
+		ELSEIF ARG:1 == 8
+IF FLAG:AUTOMODE
+    PRINTFORML そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の乳房を重点的に責め始めた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の乳房を重点的に責め始めた…
+ENDIF
+
+		ELSEIF ARG:1 == 9
+			IF TALENT:76 == 0
+				PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の胸は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:76%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:76%】を得た
+ENDIF
+
+			ELSE
+				PRINTFORML 既に快楽を貪るだけの器官に成り下がっていた胸をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
+			ENDIF
+		ELSEIF ARG:1 == 10
+			PRINTFORM そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の
+			IF !GET_PENIS(TARGET)
+IF FLAG:AUTOMODE
+    PRINTFORML クリトリスを重点的に責め始めた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  クリトリスを重点的に責め始めた…
+ENDIF
+
+			ELSE
+IF FLAG:AUTOMODE
+    PRINTFORML 陰茎を重点的に責め始めた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  陰茎を重点的に責め始めた…
+ENDIF
+
+			ENDIF
+		ELSEIF ARG:1 == 11
+			IF TALENT:77 == 0
+				IF !GET_PENIS(TARGET)
+					PRINTFORML 徹底的な陵辱を受けた%ARGS:0%のクリトリスは完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:77%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:77%】を得た
+ENDIF
+
+				ELSE
+					PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の陰茎は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:77%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:77%】を得た
+ENDIF
+
+				ENDIF
+			ELSE
+				IF !GET_PENIS(TARGET)
+					PRINTFORML 既に快楽を貪るだけの器官に成り下がっていたクリトリスをなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
+				ELSE
+					PRINTFORML 既に快楽を貪るだけの器官に成り下がっていた陰茎をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
+				ENDIF
+			ENDIF
+		ELSEIF ARG:1 == 12
+IF FLAG:AUTOMODE
+    PRINTFORML そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の膣内を重点的に責め始めた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そして抵抗の弱まった獲物にとどめをさすように、触手は%ARGS:0%の膣内を重点的に責め始めた…
+ENDIF
+
+		ELSEIF ARG:1 == 13
+			IF TALENT:78 == 0
+IF FLAG:AUTOMODE
+    PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の牝穴は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  徹底的な陵辱を受けた%ARGS:0%の牝穴は完全に破壊され、肉欲を貪るだけの器官に成り果てていた…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:78%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:78%】を得た
+ENDIF
+
+			ELSE
+				PRINTFORML 既に快楽を貪るだけの器官に成り下がっていた牝穴をなぶり尽くされ、%ARGS:0%は息も絶え絶えで痙攣している…
+			ENDIF
+		ELSEIF ARG:1 == 14
+			PRINTFORML もう一度触手に暴れられたら―――今度は正気を保っていられる自信はない！
+IF FLAG:AUTOMODE
+    PRINTFORML …………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は苦渋の思いで、触手から手を放した
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は苦渋の思いで、触手から手を放した
+ENDIF
+
+		ELSEIF ARG:1 == 15
+			PRINTFORML 触手は%ARGS:0%の身体にぴっちり貼り付く服に擬態した…
+IF FLAG:AUTOMODE
+    PRINTFORML 肌に密着し、身体の線を括り出す生地の内側で絶えず触手が蠢いている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  肌に密着し、身体の線を括り出す生地の内側で絶えず触手が蠢いている…
+ENDIF
+
+		ELSEIF ARG:1 == 16
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%が新しい服を手にした途端、衣服に擬態していた触手が激しく蠢きだした！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%が新しい服を手にした途端、衣服に擬態していた触手が激しく蠢きだした！
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML のたくる触手が新しい服を取り込むと、触手に侵食された生地の内側もぬらつく触手と同化し、%ARGS:0%の肌は再び面積を取り戻した服でぴっちりと密閉されてしまった…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  のたくる触手が新しい服を取り込むと、触手に侵食された生地の内側もぬらつく触手と同化し、%ARGS:0%の肌は再び面積を取り戻した服でぴっちりと密閉されてしまった…
+ENDIF
+
+		ELSEIF ARG:1 == 17
+			IF !GET_PENIS(TARGET)
+IF FLAG:AUTOMODE
+    PRINTFORML 胸が！　クリトリスが！　ヴァキナが！　アヌスが！　あらゆる場所から与えられる怒涛の快感が%ARGS:0%を塗り潰していく…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  胸が！　クリトリスが！　ヴァキナが！　アヌスが！　あらゆる場所から与えられる怒涛の快感が%ARGS:0%を塗り潰していく…
+ENDIF
+
+			ELSE
+IF FLAG:AUTOMODE
+    PRINTFORML 胸が！　ペニスが！　ヴァキナが！　アヌスが！　あらゆる場所から与えられる怒涛の快感が%ARGS:0%を塗り潰していく…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  胸が！　ペニスが！　ヴァキナが！　アヌスが！　あらゆる場所から与えられる怒涛の快感が%ARGS:0%を塗り潰していく…
+ENDIF
+
+			ENDIF
+		ELSEIF ARG:1 == 18
+			IF TALENT:74 == 0
+IF FLAG:AUTOMODE
+    PRINTFORML 徹底的な陵辱を受けた%ARGS:0%は身も心も完全に破壊されてしまった…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  徹底的な陵辱を受けた%ARGS:0%は身も心も完全に破壊されてしまった…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は快楽に溺れ、ただ肉欲を貪るだけの牝へと堕ちてしまった…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は快楽に溺れ、ただ肉欲を貪るだけの牝へと堕ちてしまった…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は【%TALENTNAME:74%】を得た
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は【%TALENTNAME:74%】を得た
+ENDIF
+
+			ELSE
+				PRINTFORML 既に肉欲を貪る牝に成り果てていた%ARGS:0%の顔は、
+				PRINTFORML 汗と涙と涎と鼻水でぐちゃぐちゃになってなお狂喜の色に歪んでいた…
+			ENDIF
+		ELSEIF ARG:1 == 19
+IF FLAG:AUTOMODE
+    PRINTFORML 徹底的な陵辱を受けた%ARGS:0%の身体は肉欲を貪るだけの牝に近づいていく…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  徹底的な陵辱を受けた%ARGS:0%の身体は肉欲を貪るだけの牝に近づいていく…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の感度が上がった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の感度が上がった
+ENDIF
+
+		ELSEIF ARG:1 == 20
+			PRINTFORML 無理に脱がせようとして今以上に触手が暴れだしたら、果たして%ARGS:0%は正気を保っていられるだろうか？
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%が全身余すところなくしゃぶり尽くされ、穴という穴を蹂躙されていくのを%CALLNAME:1%%TACHI()%は見守ることしかできない…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%が全身余すところなくしゃぶり尽くされ、穴という穴を蹂躙されていくのを%CALLNAME:1%%TACHI()%は見守ることしかできない…
+ENDIF
+
+		ELSEIF ARG:1 == 21
+			PRINTFORML 胸を覆う触手が\@TALENT:162 >= 3 ? 開発され尽くした # \@%ARGS:0%の乳首を掻き広げ、乳腺の至る所に入り込んでいった！
+IF FLAG:AUTOMODE
+    PRINTFORML \@ GET_BUST(TARGET) >= 3 ? 巨大な乳肉 # 乳房 \@を外から中から搾るように激しく犯され、神経を焦がす様な快感が絶えず%ARGS:0%を襲う！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  \@ GET_BUST(TARGET) >= 3 ? 巨大な乳肉 # 乳房 \@を外から中から搾るように激しく犯され、神経を焦がす様な快感が絶えず%ARGS:0%を襲う！
+ENDIF
+
+			IF TALENT:130 >= 3
+IF FLAG:AUTOMODE
+    PRINTFORML 触手と肌の隙間からは乳腺への刺激で生み出された粘つく母乳が大量に漏れ出し、地面に水溜りを作っている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手と肌の隙間からは乳腺への刺激で生み出された粘つく母乳が大量に漏れ出し、地面に水溜りを作っている…
+ENDIF
+
+			ENDIF
+		ENDIF
 
 

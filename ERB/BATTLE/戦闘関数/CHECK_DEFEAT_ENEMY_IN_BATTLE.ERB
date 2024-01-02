@@ -107,8 +107,14 @@ ENDIF
 ;☆触手剣入手処理・難易度HARD以上かつ、まだ触手剣を未入手の時、バイオプラントまたはナイトメアケージを撃破
 IF (DA:(ARG:0):0 == 4 || DA:(ARG:0):0 == 43) && DA:(ARG:0):4 == FLAG:5 && FLAG:4 >= 2 && FLAG:996 == 0
 	PRINTFORML 息絶えた触手塊は、グズグズと泡をたてながら崩れ落ち、異臭を放つどす黒い水溜りと化した。
-	PRINTFORMW ・・・・・。
-	PRINTFORMW よく見ると水溜りの中に、硬質な刃のような鉤爪が溶けずに残されている。
+	PRINTFORML ・・・・・。
+	PRINTFORML よく見ると水溜りの中に、硬質な刃のような鉤爪が溶けずに残されている。
+	IF FLAG:AUTOMODE
+		PRINTFORML 
+		TWAIT FLAG:AUTOMODE * 200, 0
+	ELSE
+		PRINTFORMW 
+	ENDIF
 	CALL ADD_ITEM(18, 1, 1)
 	FLAG:996 = 1
 ENDIF

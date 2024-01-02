@@ -280,6 +280,18 @@ IF LOCAL:1 > 0 || LOCAL:4 > 0
 					LOCAL:2 = 21
 				ENDIF
 			ENDIF
+			
+			;尻尾があると尻尾こきが候補に
+			IF TALENT:(DA:(ARG:0):46):215
+				LOCAL:3 = RAND:9
+				IF LOCAL:3 < 3
+					LOCAL:2 = 1018
+				ELSEIF LOCAL:3 < 6
+					LOCAL:2 = 1021
+				ELSE
+					;変更しなかったりもする
+				ENDIF
+			ENDIF
 		ENDIF
 	ELSE
 		;キャラを拘束中だが、別のキャラを攻撃
@@ -345,6 +357,10 @@ ELSE
 		LOCAL:2 = 377
 	ELSE
 		LOCAL:2 = 540
+		;尻尾があると尻尾拘束が候補に
+		IF TALENT:(DA:(ARG:0):46):215
+			LOCAL:2 = 578
+		ENDIF
 	ENDIF
 ENDIF
 

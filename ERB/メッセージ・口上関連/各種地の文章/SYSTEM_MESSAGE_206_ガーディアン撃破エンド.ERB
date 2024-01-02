@@ -1,10 +1,34 @@
 ﻿;エンディング２・ガーディアン撃破
 @SYSTEM_MESSAGE_206(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 
-PRINTFORMW %ARGS:0%%TACHI()%の攻撃が、ついにガーディアンの巨大な目玉を貫いた
-PRINTFORMW 地面に倒れ、断末魔の悲鳴をあげながら悶えていたガーディアンは、やがて完全に動きを止める
-PRINTFORMW これで出口は確保できた。　後は他の少女達を探して皆で脱出するだけだ──
-PRINTFORMW そう思ったのも束の間、まるで迷宮自体が意思を持っているかのように、出口が音を立てて閉じ始めた
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%%TACHI()%の攻撃が、ついにガーディアンの巨大な目玉を貫いた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%%TACHI()%の攻撃が、ついにガーディアンの巨大な目玉を貫いた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 地面に倒れ、断末魔の悲鳴をあげながら悶えていたガーディアンは、やがて完全に動きを止める
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  地面に倒れ、断末魔の悲鳴をあげながら悶えていたガーディアンは、やがて完全に動きを止める
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML これで出口は確保できた。　後は他の少女達を探して皆で脱出するだけだ──
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  これで出口は確保できた。　後は他の少女達を探して皆で脱出するだけだ──
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML そう思ったのも束の間、まるで迷宮自体が意思を持っているかのように、出口が音を立てて閉じ始めた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そう思ったのも束の間、まるで迷宮自体が意思を持っているかのように、出口が音を立てて閉じ始めた
+ENDIF
+
 	$INPUT_LOOP
 	PRINTL
 	PRINTFORML [ 0] このままでは自分達も脱出ができなくなってしまう。　まずは先に脱出して、後から応援を呼んで来よう──
@@ -13,49 +37,209 @@ PRINTFORMW そう思ったのも束の間、まるで迷宮自体が意思を持
 	ELSE
 		PRINTFORML [ 2] ご主人様の傍らにいてこそ我が人生
 	ENDIF
-	INPUT
+	IF FLAG:AUTOMODE
+		TINPUT FLAG:AUTOMODE * 3000 , 0, 0, ""
+	ELSE
+		INPUT
+	ENDIF
 	IF RESULT == 0
-		PRINTFORMW そう決心した%ARGS:0%%TACHI()%は、必死で出口に向かって駆け出した……
+IF FLAG:AUTOMODE
+    PRINTFORML そう決心した%ARGS:0%%TACHI()%は、必死で出口に向かって駆け出した……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そう決心した%ARGS:0%%TACHI()%は、必死で出口に向かって駆け出した……
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
-		PRINTFORMW {DAY}日振りの外の空気に、%ARGS:0%%TACHI()%は安堵の溜息を漏らす
-		PRINTFORMW 出入り口は閉じてしまったようだが、こうして場所さえ分かれば救助も異変の解決も容易だろう
-		PRINTFORMW そう思ってふと後ろを振り返った所で、%ARGS:0%は驚愕に包まれた
-		PRINTFORMW 出入り口が閉じているどころか、そこには何の変哲もない空間がただ広がっているだけだった…
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML {DAY}日振りの外の空気に、%ARGS:0%%TACHI()%は安堵の溜息を漏らす
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  {DAY}日振りの外の空気に、%ARGS:0%%TACHI()%は安堵の溜息を漏らす
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 出入り口は閉じてしまったようだが、こうして場所さえ分かれば救助も異変の解決も容易だろう
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  出入り口は閉じてしまったようだが、こうして場所さえ分かれば救助も異変の解決も容易だろう
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML そう思ってふと後ろを振り返った所で、%ARGS:0%は驚愕に包まれた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そう思ってふと後ろを振り返った所で、%ARGS:0%は驚愕に包まれた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 出入り口が閉じているどころか、そこには何の変哲もない空間がただ広がっているだけだった…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  出入り口が閉じているどころか、そこには何の変哲もない空間がただ広がっているだけだった…
+ENDIF
+
 		PRINTFORML 
 		
 		;初期好感度の高いキャラを迷宮に置いてきてしまうと分岐
 		IF FLAG:95 && (FLAG:10 == FLAG:95 || FLAG:11 == FLAG:95)
-			PRINTFORMW それから暫くして、他の者たちにも協力を仰いで調査を続けたが、迷宮の出入り口は見つかっていない
-			PRINTFORMW だが、自分達と同じようにガーディアンを倒して脱出してきたという少女が少しずつ現れるようになってきた
-			PRINTFORMW 今では姿を消す人数に負けず劣らず、生還する人数も増えている
-			PRINTFORMW 徐々に解決に向かっているかのようにも見える今回の異変だが、完全に解決するのはまだまだ先のようだ……
+IF FLAG:AUTOMODE
+    PRINTFORML それから暫くして、他の者たちにも協力を仰いで調査を続けたが、迷宮の出入り口は見つかっていない
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  それから暫くして、他の者たちにも協力を仰いで調査を続けたが、迷宮の出入り口は見つかっていない
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML だが、自分達と同じようにガーディアンを倒して脱出してきたという少女が少しずつ現れるようになってきた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  だが、自分達と同じようにガーディアンを倒して脱出してきたという少女が少しずつ現れるようになってきた
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 今では姿を消す人数に負けず劣らず、生還する人数も増えている
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  今では姿を消す人数に負けず劣らず、生還する人数も増えている
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 徐々に解決に向かっているかのようにも見える今回の異変だが、完全に解決するのはまだまだ先のようだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  徐々に解決に向かっているかのようにも見える今回の異変だが、完全に解決するのはまだまだ先のようだ……
+ENDIF
+
 		ELSE
-			PRINTFORMW それから暫くして、%ARGS:0%は日常に戻ったが%CALLNAME:(FLAG:95)%を全く見かけないことに気づいた……
-			PRINTFORMW 様子を見に行ってみるも住まいにはしばらく帰ってきていないようだ……
-			PRINTFORMW 置き去りにした
-			PRINTFORMW その事実に気づいてしまった%ARGS:0%は膝を折って動けなくなってしまった……
+IF FLAG:AUTOMODE
+    PRINTFORML それから暫くして、%ARGS:0%は日常に戻ったが%CALLNAME:(FLAG:95)%を全く見かけないことに気づいた……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  それから暫くして、%ARGS:0%は日常に戻ったが%CALLNAME:(FLAG:95)%を全く見かけないことに気づいた……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 様子を見に行ってみるも住まいにはしばらく帰ってきていないようだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  様子を見に行ってみるも住まいにはしばらく帰ってきていないようだ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 置き去りにした
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  置き去りにした
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML その事実に気づいてしまった%ARGS:0%は膝を折って動けなくなってしまった……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  その事実に気づいてしまった%ARGS:0%は膝を折って動けなくなってしまった……
+ENDIF
+
 		ENDIF
 
 		PRINTFORML 
 		PRINTFORML 
 		PRINTFORML 
 	ELSEIF RESULT == 1
-		PRINTFORMW そう決心した%ARGS:0%%TACHI()%は、来た道を引き返した……
+IF FLAG:AUTOMODE
+    PRINTFORML そう決心した%ARGS:0%%TACHI()%は、来た道を引き返した……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そう決心した%ARGS:0%%TACHI()%は、来た道を引き返した……
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
-		PRINTFORMW %ARGS:0%%TACHI()%の背後で、出口が完全に閉じる音が鳴り響く――
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%%TACHI()%の背後で、出口が完全に閉じる音が鳴り響く――
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%%TACHI()%の背後で、出口が完全に閉じる音が鳴り響く――
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW 
-		PRINTFORMW 触手との戦いは、まだ始まったばかりだ……
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 触手との戦いは、まだ始まったばかりだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手との戦いは、まだ始まったばかりだ……
+ENDIF
+
 	ELSEIF RESULT == 2
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
 		PRINTFORML しかし%ARGS:0%は外への出口に足を進めようとしなかった。
 		PRINTFORML 彼女の『ご主人様』である%PETNAME%の許しもなくそんなことができるはずがなかった。
 		PRINTFORML そう、ご主人様の意向のままに

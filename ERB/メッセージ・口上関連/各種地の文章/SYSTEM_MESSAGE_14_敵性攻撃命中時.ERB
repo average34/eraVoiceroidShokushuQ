@@ -5,7 +5,13 @@
 
 SELECTCASE ARG:1
 	CASE 0
-		PRINTFORMW (SYSTEM_MESSAGE_14)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+IF FLAG:AUTOMODE
+    PRINTFORML (SYSTEM_MESSAGE_14)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  (SYSTEM_MESSAGE_14)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+ENDIF
+
 	CASE 302
 		IF BASE:3 <= 0
 			PRINTFORML %ARGS:0%の尻穴に狙いを定めたそれは、粘液を潤滑油にするりと奥深くまで侵入してくる！
@@ -2742,7 +2748,13 @@ SELECTCASE ARG:1
 			PRINTFORML 乳首はぱっくりと拡がり、押し出されて盛り上がった乳暈を触手の腹で舐める様に撫で回している…
 			PRINTFORML 触手が%ARGS:0%の乳穴を前後する度に、両乳がぐにゅぐにゅと歪に変形しながら何度も衝突し合い、
 			PRINTFORML 触手と乳首の結合部から溢れ出た母乳を辺りに撒き散らしながら、少し湿った肉のぶつかり合う音が響き渡る…
-			PRINTFORMW 強烈な灼熱感と快楽が全身を突き抜け、%ARGS:0%は細かく躰を跳ね上げながら叫び声の様な嬌声をあげる…
+IF FLAG:AUTOMODE
+    PRINTFORML 強烈な灼熱感と快楽が全身を突き抜け、%ARGS:0%は細かく躰を跳ね上げながら叫び声の様な嬌声をあげる…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  強烈な灼熱感と快楽が全身を突き抜け、%ARGS:0%は細かく躰を跳ね上げながら叫び声の様な嬌声をあげる…
+ENDIF
+
 		ELSEIF TALENT:162 >= 2
 			PRINTFORML 乳腺の中を触手が蠢き、吸い付き、捏ねくり回し、%ARGS:0%の乳房を歪に変形させ苛烈に責め立てる！
 			PRINTFORML 幾度も拡張された乳首は大きく口を開け、結合部から下品な水音を漏らしながら触手の責めを受け止めている…
@@ -2752,7 +2764,13 @@ SELECTCASE ARG:1
 			PRINTFORML %ARGS:0%は痛みと痺れと恍惚感の混ざった異様な感覚に襲われ、全身をぶるぶる震わせている…
 		ELSEIF CFLAG:512 < 5
 			PRINTFORML 足が収縮するたびに%ARGS:0%の乳腺が掻き拡げられ、灼けるような痛みと痺れが%ARGS:0%を襲う！
-			PRINTFORMW 乳首が、乳腺が強引にこじ開けられ、%ARGS:0%は躰を内側からこねくり回される感覚に悶え喘ぐ…
+IF FLAG:AUTOMODE
+    PRINTFORML 乳首が、乳腺が強引にこじ開けられ、%ARGS:0%は躰を内側からこねくり回される感覚に悶え喘ぐ…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  乳首が、乳腺が強引にこじ開けられ、%ARGS:0%は躰を内側からこねくり回される感覚に悶え喘ぐ…
+ENDIF
+
 		ENDIF
 	;NF植物系
 	CASE 1205
@@ -3277,9 +3295,21 @@ SELECTCASE ARG:1
 	CASE 2301
 		IF BASE:3 <= 0
 			IF GET_PENIS(TARGET)
-				PRINTFORMW %ARGS:0%の淫茎を包み込んだ触手が、卑猥な音を立てて蠢きだした！
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の淫茎を包み込んだ触手が、卑猥な音を立てて蠢きだした！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の淫茎を包み込んだ触手が、卑猥な音を立てて蠢きだした！
+ENDIF
+
 			ELSE
-				PRINTFORMW %ARGS:0%の淫核を包み込んだ触手が、卑猥な音を立てて蠢きだした！
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の淫核を包み込んだ触手が、卑猥な音を立てて蠢きだした！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の淫核を包み込んだ触手が、卑猥な音を立てて蠢きだした！
+ENDIF
+
 			ENDIF
 
 
@@ -3290,11 +3320,29 @@ SELECTCASE ARG:1
 	CASE 2302
 		IF CFLAG:29 > 0
 			IF RAND:3 == 0
-				PRINTFORMW %ARGS:0%を捕まえた%ARGS:1%は、周囲に見せつけるように雌穴を犯し始めた……
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%を捕まえた%ARGS:1%は、周囲に見せつけるように雌穴を犯し始めた……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%を捕まえた%ARGS:1%は、周囲に見せつけるように雌穴を犯し始めた……
+ENDIF
+
 			ELSEIF RAND:2 == 0
-				PRINTFORMW %ARGS:1%は、%ARGS:0%が潮を吹くまで陰部を徹底的に嬲りだした……
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%は、%ARGS:0%が潮を吹くまで陰部を徹底的に嬲りだした……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%は、%ARGS:0%が潮を吹くまで陰部を徹底的に嬲りだした……
+ENDIF
+
 			ELSE
-				PRINTFORMW %ARGS:1%は、%ARGS:0%の反応を気にすることなく、凌辱をつづけている……
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:1%は、%ARGS:0%の反応を気にすることなく、凌辱をつづけている……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:1%は、%ARGS:0%の反応を気にすることなく、凌辱をつづけている……
+ENDIF
+
 			ENDIF
 
 
@@ -3304,7 +3352,13 @@ SELECTCASE ARG:1
 
 	CASE 2303
 		IF BASE:3 <= 0
-			PRINTFORMW %ARGS:0%の蜜を吸い上げようと、アゲハの細長い口吻がナカに差し込まれていく……
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の蜜を吸い上げようと、アゲハの細長い口吻がナカに差し込まれていく……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の蜜を吸い上げようと、アゲハの細長い口吻がナカに差し込まれていく……
+ENDIF
+
 		ELSE
 			PRINTFORML %ARGS:0%の蜜の出所を探るべく、アゲハの細長い口吻が下着の表面を撫で上げていく……
 		ENDIF
@@ -3530,9 +3584,21 @@ SELECTCASE ARG:1
 				ENDIF
 			ELSE
 				IF GET_PENIS(TARGET)
-					PRINTFORMW 極細の触手は%ARGS:0%の硬くしこったペニスに絡みつき、亀頭を執拗に責めたてた！
+IF FLAG:AUTOMODE
+    PRINTFORML 極細の触手は%ARGS:0%の硬くしこったペニスに絡みつき、亀頭を執拗に責めたてた！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  極細の触手は%ARGS:0%の硬くしこったペニスに絡みつき、亀頭を執拗に責めたてた！
+ENDIF
+
 				ELSE
-					PRINTFORMW 極細の触手は%ARGS:0%の硬くしこったクリトリスの包皮に進入し、陰核亀頭を直接責めたてた！
+IF FLAG:AUTOMODE
+    PRINTFORML 極細の触手は%ARGS:0%の硬くしこったクリトリスの包皮に進入し、陰核亀頭を直接責めたてた！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  極細の触手は%ARGS:0%の硬くしこったクリトリスの包皮に進入し、陰核亀頭を直接責めたてた！
+ENDIF
+
 				ENDIF
 			ENDIF
 

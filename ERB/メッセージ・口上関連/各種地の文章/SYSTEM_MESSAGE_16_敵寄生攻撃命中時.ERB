@@ -5,7 +5,13 @@
 
 SELECTCASE ARG:1
 	CASE 0
-		PRINTFORMW (SYSTEM_MESSAGE_16)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+IF FLAG:AUTOMODE
+    PRINTFORML (SYSTEM_MESSAGE_16)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  (SYSTEM_MESSAGE_16)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+ENDIF
+
 	CASE 801
 		PRINTFORML 体内へはっきりと分かる程の異物が送り込まれるのを感じ、%ARGS:0%は絶望の悲鳴をあげた…
 	CASE 802

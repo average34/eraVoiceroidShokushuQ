@@ -73,9 +73,21 @@ SELECTCASE ARG:1
 		PRINTFORML 自慰行為で盛り上がる%ARGS:1%を、苦々しく見ている%ARGS:0%%TACHI()%であったが、
 		PRINTL その身体が激しく欲情していることは隠しようがなかった…！
 	CASE 38
-		PRINTFORMW %ARGS:1%は自分で料理を作った！
+		IF FLAG:AUTOMODE
+			PRINTFORML %ARGS:1%は自分で料理を作った！
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW  %ARGS:1%は自分で料理を作った！
+		ENDIF
+
 		PRINTL さて……折角の料理だ。
-		PRINTW 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		IF FLAG:AUTOMODE
+			PRINTL 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTW  予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		ENDIF
+
 		PRINTL （どうする？）
 		DRAWLINE
 		PRINTL [0] - 折角だから自分で食べる
@@ -83,7 +95,13 @@ SELECTCASE ARG:1
 		PRINTL [2] - 料理を売る
 		DRAWLINE
 		PRINTL 0
-		PRINTFORMW %ARGS:1%の体力が回復した！
+		IF FLAG:AUTOMODE
+		    PRINTFORML %ARGS:1%の体力が回復した！
+		    TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+		    PRINTFORMW  %ARGS:1%の体力が回復した！
+		ENDIF
+
 	CASE 39
 		PRINTFORML %ARGS:1%の全身に巻きついた包帯が一斉に襲いかかってきた！
 	CASE 40
@@ -199,7 +217,9 @@ SELECTCASE ARG:1
 	CASE 2961
 		PRINTFORML %ARGS:1%の操る糸が、%ARGS:0%に向けて放射された！
 	CASEELSE
-		PRINTFORMW (SYSTEM_MESSAGE_7)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+		PRINTFORMW  (SYSTEM_MESSAGE_7)コマンドIDが不正です ({ARG:1}, %ARGS:0%, %ARGS:1%, {ARG:2}, {ARG:3}, {ARG:4}, {ARG:5}, {ARG:6})
+
+
 ENDSELECT
 
 RESETCOLOR
