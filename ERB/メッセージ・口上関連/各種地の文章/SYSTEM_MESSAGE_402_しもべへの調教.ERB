@@ -3,7 +3,13 @@
 	;調教開始
 	IF ARG:1 == 0
 		PRINTFORML 
-		PRINTFORMW %PETNAME%はご主人様として【しもべ】と化した%ARGS:0%を調教し始めた！
+IF FLAG:AUTOMODE
+    PRINTFORML %PETNAME%はご主人様として【しもべ】と化した%ARGS:0%を調教し始めた！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %PETNAME%はご主人様として【しもべ】と化した%ARGS:0%を調教し始めた！
+ENDIF
+
 	;女性系　ふたなりONで男の娘だと尻狙いかしゃぶらされる
 	ELSEIF ARG:1 == 1
 		PRINTFORML %PETNAME%は%ARGS:0%の尻に股間のものをあてがった。

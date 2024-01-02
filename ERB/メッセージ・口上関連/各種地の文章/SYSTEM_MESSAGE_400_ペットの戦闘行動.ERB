@@ -113,9 +113,21 @@ SELECTCASE PET:50
 		PRINTFORML %PETNAME%は%CALLNAME:(PET:51)%を回復させた！
 	;回復弁当
 	CASE 343
-		PRINTFORMW %PETNAME%は自分で料理を作った！
+		IF FLAG:AUTOMODE
+			PRINTFORML %PETNAME%は自分で料理を作った！
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW  %PETNAME%は自分で料理を作った！
+		ENDIF
+
 		PRINTL さて……折角の料理だ。
-		PRINTW 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		IF FLAG:AUTOMODE
+			PRINTL 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTW  予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		ENDIF
+
 		PRINTL （どうする？）
 		DRAWLINE
 		PRINTL [0] - 折角だから自分で食べる
@@ -123,11 +135,29 @@ SELECTCASE PET:50
 		PRINTL [2] - 料理を売る
 		DRAWLINE
 		PRINTL 1
-		PRINTFORMW %CALLNAME:(PET:51)%の体力が回復した！
+		IF FLAG:AUTOMODE
+			PRINTFORML %CALLNAME:(PET:51)%の体力が回復した！
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW  %CALLNAME:(PET:51)%の体力が回復した！
+		ENDIF
+
 	CASE 344
-		PRINTFORMW %PETNAME%は自分で料理を作った！
+		IF FLAG:AUTOMODE
+			PRINTFORML %PETNAME%は自分で料理を作った！
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW  %PETNAME%は自分で料理を作った！
+		ENDIF
+
 		PRINTL さて……折角の料理だ。
-		PRINTW 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		IF FLAG:AUTOMODE
+			PRINTL 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTW  予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		ENDIF
+
 		PRINTL （どうする？）
 		DRAWLINE
 		PRINTL [0] - 折角だから自分で食べる
@@ -135,8 +165,15 @@ SELECTCASE PET:50
 		PRINTL [2] - 料理を売る
 		DRAWLINE
 		PRINTL 1
-		PRINTFORMW 口にした途端、%CALLNAME:(PET:51)%の身体が急激に火照り始めた！
-		PRINTFORMW %CALLNAME:(PET:51)%の体力が回復した……
+		IF FLAG:AUTOMODE
+			PRINTFORML 口にした途端、%CALLNAME:(PET:51)%の身体が急激に火照り始めた！
+			PRINTFORML %CALLNAME:(PET:51)%の体力が回復した……
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW  口にした途端、%CALLNAME:(PET:51)%の身体が急激に火照り始めた！
+			PRINTFORMW  %CALLNAME:(PET:51)%の体力が回復した……
+		ENDIF
+
 		;◆発情レベル追加
 		IF CFLAG:(PET:51):28 < 3
 			CFLAG:(PET:51):28 += 1

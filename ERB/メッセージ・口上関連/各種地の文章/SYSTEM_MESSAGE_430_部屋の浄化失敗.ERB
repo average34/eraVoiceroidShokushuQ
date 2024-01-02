@@ -7,8 +7,20 @@
 ;1	襲われた人数
 
 IF ARG:1 == 0
-	PRINTFORMW ……はずだったが、何かがおかしい！
-	PRINTFORMW 浄化から逃れられそうな場所を求め、部屋中の触手が争うように%CALLNAME:1%%TACHI()%のナカに潜り込んでいく！
+IF FLAG:AUTOMODE
+    PRINTFORML ……はずだったが、何かがおかしい！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……はずだったが、何かがおかしい！
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 浄化から逃れられそうな場所を求め、部屋中の触手が争うように%CALLNAME:1%%TACHI()%のナカに潜り込んでいく！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  浄化から逃れられそうな場所を求め、部屋中の触手が争うように%CALLNAME:1%%TACHI()%のナカに潜り込んでいく！
+ENDIF
+
 	PRINTFORML 豚鼻に押し広げられた鼻の穴に、顎が外れそうなほど広げられた口に、おぞましい感触に蜜を溢れさせはじめた牝肉に、無防備な尻穴に断末魔の触手が最期の体液を注ぎ込んでは浄化され、抜け落ちた穴に次の触手が這いずりこんでいく…
 ELSEIF ARG:1 == 1
 	; 追加パッチでパーティー外の同室キャラも襲われる事になったので、PTメンバーだけを参照するTACHI()が使えない
@@ -19,7 +31,13 @@ ELSEIF ARG:1 == 1
 		SIF CFLAG:1:4 == CFLAG:(LOCAL:0):4 && CFLAG:(LOCAL:0):2 == 0 && CFLAG:(LOCAL:0):3 == 0 && CFLAG:(LOCAL:0):21 == 0
 			LOCAL:1++
 		NEXT
-	PRINTFORMW …………
+IF FLAG:AUTOMODE
+    PRINTFORML …………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …………
+ENDIF
+
 	PRINTFORML 完全に浄化された部屋には、穴という穴から泡立つ汚濁液を垂れ流して痙攣するだけの%CALLNAME:1%\@(LOCAL:1 >= 2) ? 達 # \@が残されていた…
 ; 暴走時分岐 主人公用 喪失
 ELSEIF ARG:1 == 2
@@ -37,13 +55,37 @@ ELSEIF ARG:1 == 4
 	PRINTFORML そして空いた秘裂に、部屋を埋め尽くしていた小さな触手が次から次へと潜り込む
 	PRINTFORML 秘裂で、尻穴で、口で、のたうつ触手が体液を注いでは抜け落ち
 	PRINTFORML 浄化で弱まった無数の細い触手が粘膜の隙間や鼻腔をこじ開けて体内に侵入し、他の触手に押し潰され、おぞましい体液で%ARGS:0%のナカを満たしていく…
-	PRINTFORMW %ARGS:0%の必死の抵抗も触手の奔流に飲み込まれ、次第に力を失っていく…
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%の必死の抵抗も触手の奔流に飲み込まれ、次第に力を失っていく…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%の必死の抵抗も触手の奔流に飲み込まれ、次第に力を失っていく…
+ENDIF
+
 ; 暴走失敗　浄化力Maxだと失敗しないというヒント用
 ELSEIF ARG:1 == 5
-	PRINTFORMW ……はずだったが、何かがおかしい！
-	PRINTFORMW 浄化から逃れそうな場所を求め、部屋中の触手が争うように%CALLNAME:1%%TACHI()%に襲いかかる！
+IF FLAG:AUTOMODE
+    PRINTFORML ……はずだったが、何かがおかしい！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……はずだったが、何かがおかしい！
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 浄化から逃れそうな場所を求め、部屋中の触手が争うように%CALLNAME:1%%TACHI()%に襲いかかる！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  浄化から逃れそうな場所を求め、部屋中の触手が争うように%CALLNAME:1%%TACHI()%に襲いかかる！
+ENDIF
+
 	PRINTFORML しかし最大まで溢れる力をみなぎらせて浄化をした%CALLNAME:1%%TACHI()%に触れることもできず消滅した！
-	PRINTFORMW 
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
 ; 暴走時分岐 PT外キャラ 喪失
 ELSEIF ARG:1 == 6
 	PRINTFORML 部屋で倒れていた%ARGS:0%は、その場を埋め尽くしていた小さな触手の暴走に巻き込まれた！

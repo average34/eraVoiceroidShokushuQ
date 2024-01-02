@@ -1,13 +1,49 @@
 ﻿;エンディング４・クイーン撃破
 @SYSTEM_MESSAGE_210(ARG:0, ARG:1, ARGS:0, ARGS:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 
-PRINTFORMW 触手の殆どを薙ぎ払われた迷宮の主は、苦しそうに呻いている…
-PRINTFORMW %ARGS:0%は残りの力を振り絞り、満身創痍のクイーンへ向け、渾身の一撃を放った！
-PRINTFORMW それは真っ直ぐにクイーンの身体を貫き、断末魔の悲鳴と共に、全ての触手を打ち砕いた……
+IF FLAG:AUTOMODE
+    PRINTFORML 触手の殆どを弾幕によって焼き払われた迷宮の主は、苦しそうに呻いている…
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手の殆どを弾幕によって焼き払われた迷宮の主は、苦しそうに呻いている…
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は残りの力を振り絞り、満身創痍のクイーンへ向け、特大の弾幕を放った！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は残りの力を振り絞り、満身創痍のクイーンへ向け、特大の弾幕を放った！
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML それは真っ直ぐにクイーンの身体を貫き、断末魔の悲鳴と共に、全ての触手を打ち砕いた……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  それは真っ直ぐにクイーンの身体を貫き、断末魔の悲鳴と共に、全ての触手を打ち砕いた……
+ENDIF
+
 PRINTFORML 
-PRINTFORMW 迷宮の主の死と時を同じくして、にわかに迷宮全体が震え始める
-PRINTFORMW 迷宮が崩壊しているのかと焦る%ARGS:0%だったが、耳を澄ませるとそこら中から少女達の雄叫びと魔物の悲鳴が聞こえてくる
-PRINTFORMW どうやらクイーンの死によって封印されていた能力が使えるようになったらしく、その事に気づいた他の少女達が大暴れしているだけのようだった……
+IF FLAG:AUTOMODE
+    PRINTFORML 迷宮の主の死と時を同じくして、にわかに迷宮全体が震え始める
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  迷宮の主の死と時を同じくして、にわかに迷宮全体が震え始める
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 迷宮が崩壊しているのかと焦る%ARGS:0%だったが、耳を澄ませるとそこら中から少女達の雄叫びと魔物の悲鳴が聞こえてくる
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  迷宮が崩壊しているのかと焦る%ARGS:0%だったが、耳を澄ませるとそこら中から少女達の雄叫びと魔物の悲鳴が聞こえてくる
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML どうやらクイーンの死によって封印されていた能力が使えるようになったらしく、その事に気づいた他の少女達が大暴れしているだけのようだった……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  どうやらクイーンの死によって封印されていた能力が使えるようになったらしく、その事に気づいた他の少女達が大暴れしているだけのようだった……
+ENDIF
+
 
 	$INPUT_LOOP
 	PRINTL
@@ -23,77 +59,393 @@ PRINTFORMW どうやらクイーンの死によって封印されていた能力
 	IF TALENT:140 == 3
 		PRINTFORML [ 4] ご主人様とともに生きていく――(エンドレスモード)
 	ENDIF
+	IF FLAG:AUTOMODE
+		TINPUT FLAG:AUTOMODE * 3000 , 0, 0, ""
+	ELSE
+		INPUT
+	ENDIF
 
-	INPUT
 	IF RESULT == 0
 		PRINTFORML 
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
-		PRINTFORMW やがて魔物達は完全に殲滅され、出口もあっけなく見つかった
-		PRINTFORMW 脱出した少女達は、協力して、迷宮の出入り口を完全に破壊する
-		PRINTFORMW これでもう、この迷宮による被害者が出ることはないだろう
-		PRINTFORMW %ARGS:0%%TACHI()%はこれから開かれる脱出成功の宴会に参加する為、晴れやかな笑みでその場を後にした……
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML やがて魔物達は完全に殲滅され、出口もあっけなく見つかった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  やがて魔物達は完全に殲滅され、出口もあっけなく見つかった
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 脱出した少女達は、協力して、迷宮の出入り口を完全に破壊する
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  脱出した少女達は、協力して、迷宮の出入り口を完全に破壊する
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML これでもう、この迷宮による被害者が出ることはないだろう
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  これでもう、この迷宮による被害者が出ることはないだろう
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%%TACHI()%はこれから開かれる脱出成功の宴会に参加する為、晴れやかな笑みでその場を後にした……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%%TACHI()%はこれから開かれる脱出成功の宴会に参加する為、晴れやかな笑みでその場を後にした……
+ENDIF
+
 		
 	ELSEIF RESULT == 1
 		PRINTFORML 
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
-		PRINTFORMW 迷宮にはまだ多くの知人が彷徨っている。
-		PRINTFORMW 中には触手に襲われ戦意を喪失し自力では脱出できない者や
-		PRINTFORMW 快楽に堕ちて触手の仲間になってしまった者もいるだろう。
-		PRINTFORMW 彼女らを放っておくことはできない。
-		PRINTFORMW %ARGS:0%%TACHI()%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 迷宮にはまだ多くの知人が彷徨っている。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  迷宮にはまだ多くの知人が彷徨っている。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 中には触手に襲われ戦意を喪失し自力では脱出できない者や
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  中には触手に襲われ戦意を喪失し自力では脱出できない者や
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 快楽に堕ちて触手の仲間になってしまった者もいるだろう。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  快楽に堕ちて触手の仲間になってしまった者もいるだろう。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 彼女らを放っておくことはできない。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  彼女らを放っておくことはできない。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%%TACHI()%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%%TACHI()%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW 
-		PRINTFORMW 触手との戦いは、まだ始まったばかりだ……
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 触手との戦いは、まだ始まったばかりだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手との戦いは、まだ始まったばかりだ……
+ENDIF
+
 	ELSEIF RESULT == 2
 		PRINTFORML 
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
-		PRINTFORMW 迷宮にはまだ多くの知人が彷徨っている。
-		PRINTFORMW そして%ARGS:0%の産んだ娘達も何人も彷徨っている。
-		PRINTFORMW 彼女らを放っておくことはできない。
-		PRINTFORMW そう、彼女らを放っておくことはできないのだ。
-		PRINTFORMW 触手に種付けされた我が子を胎内に抱き、それを産む悦びを
-		PRINTFORMW 忘れられないなどということは決してないのだ。
-		PRINTFORMW %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 迷宮にはまだ多くの知人が彷徨っている。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  迷宮にはまだ多くの知人が彷徨っている。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML そして%ARGS:0%の産んだ娘達も何人も彷徨っている。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そして%ARGS:0%の産んだ娘達も何人も彷徨っている。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 彼女らを放っておくことはできない。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  彼女らを放っておくことはできない。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML そう、彼女らを放っておくことはできないのだ。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そう、彼女らを放っておくことはできないのだ。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 触手に種付けされた我が子を胎内に抱き、それを産む悦びを
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手に種付けされた我が子を胎内に抱き、それを産む悦びを
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 忘れられないなどということは決してないのだ。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  忘れられないなどということは決してないのだ。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW 
-		PRINTFORMW 触手との子作りは、まだ始まったばかりだ……
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 触手との子作りは、まだ始まったばかりだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手との子作りは、まだ始まったばかりだ……
+ENDIF
+
 	ELSEIF RESULT == 3
 		PRINTFORML 
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
 		PRINTFORML 外への出口に足を進めようとした%ARGS:0%だったが、その足がぴたりと
-		PRINTFORMW 止まった。
-		PRINTFORMW 彼女の『夫』である%PETNAME%が、その場から動こうとしていなかったのだ。
-		PRINTFORMW 「はい、おおせの通りに……」
-		PRINTFORMW 『夫』の言うことに逆らえるはずがあるだろうか……？
-		PRINTFORMW ―――いや無い。
-		PRINTFORMW なぜなら%ARGS:0%は%PETNAME%の妻なのだから。
-		PRINTFORMW %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+IF FLAG:AUTOMODE
+    PRINTFORML 止まった。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  止まった。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 彼女の『夫』である%PETNAME%が、その場から動こうとしていなかったのだ。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  彼女の『夫』である%PETNAME%が、その場から動こうとしていなかったのだ。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「はい、おおせの通りに……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「はい、おおせの通りに……」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 『夫』の言うことに逆らえるはずがあるだろうか……？
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  『夫』の言うことに逆らえるはずがあるだろうか……？
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ―――いや無い。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ―――いや無い。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML なぜなら%ARGS:0%は%PETNAME%の妻なのだから。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  なぜなら%ARGS:0%は%PETNAME%の妻なのだから。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+ENDIF
+
 		PRINTFORML
-		PRINTFORMW 
-		PRINTFORMW 触手との性生活は、まだ始まったばかりだ……
+IF FLAG:AUTOMODE
+    PRINTFORML 
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 触手との性生活は、まだ始まったばかりだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  触手との性生活は、まだ始まったばかりだ……
+ENDIF
+
 	ELSEIF RESULT == 4
 		PRINTFORML 
-		PRINTFORMW ………
-		PRINTFORMW ……
-		PRINTFORMW …
+IF FLAG:AUTOMODE
+    PRINTFORML ………
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ………
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML …
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  …
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW ご主人様を見る。
-		PRINTFORMW 帰れない。だってご主人様がいるから。
-		PRINTFORMW 外だとご主人様が排斥されうる。
+IF FLAG:AUTOMODE
+    PRINTFORML ご主人様を見る。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  ご主人様を見る。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 帰れない。だってご主人様がいるから。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  帰れない。だってご主人様がいるから。
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 外だとご主人様が排斥されうる。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  外だとご主人様が排斥されうる。
+ENDIF
+
 		PRINTFORML 
-		PRINTFORMW そう
-		PRINTFORMW だからこの迷宮を広げてしまえばいい……
-		PRINTFORMW 外に出られないなら、中を広げればいい……
-		PRINTFORMW 迷宮でなら、たとえご主人様に捨てられても糧となることができるのだから……
-		PRINTFORMW %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+IF FLAG:AUTOMODE
+    PRINTFORML そう
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  そう
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML だからこの迷宮を広げてしまえばいい……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  だからこの迷宮を広げてしまえばいい……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 外に出られないなら、中を広げればいい……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  外に出られないなら、中を広げればいい……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 迷宮でなら、たとえご主人様に捨てられても糧となることができるのだから……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  迷宮でなら、たとえご主人様に捨てられても糧となることができるのだから……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は外への出口に背中を向け、迷宮の奥へと足を進めた。
+ENDIF
+
 	ELSE
 		GOTO INPUT_LOOP
 	ENDIF

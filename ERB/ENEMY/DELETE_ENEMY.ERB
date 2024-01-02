@@ -122,7 +122,13 @@ IF DA:(ARG:0):0 == 19
 		PRINTFORML [3] 埋める
 	ENDIF
 	$INPUT_LOOP
-	INPUT
+	
+	IF FLAG:AUTOMODE
+		TINPUT FLAG:AUTOMODE * 200, 1
+	ELSE
+		INPUT
+	ENDIF
+	
 	IF RESULT == 1
 		;ここでは何もしない
 	ELSEIF RESULT == 2
@@ -139,15 +145,23 @@ IF DA:(ARG:0):0 == 19
 	CALL CHECK_DAUGHTER
 	IF RESULT == 0
 		;娘の追加ができない場合、キャンセル(滅多にないはず)
-		PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は、泣きながら去って行った…
+		
+		IF FLAG:AUTOMODE
+			PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は、泣きながら去って行った…
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は、泣きながら去って行った…
+		ENDIF
 		GOTO DELETE_START
 	ENDIF
-		LOCAL:1 = CHARANUM - 1
-		CALLNAME:(LOCAL:1) = %SAVESTR:(ARG:0)%
-		
-
 		;娘を倒した場合、味方陣営に移る
-		PRINTFORMW オシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+		
+		IF FLAG:AUTOMODE
+			PRINTFORML オシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+			TWAIT FLAG:AUTOMODE * 200, 0
+		ELSE
+			PRINTFORMW オシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+		ENDIF
 
 	;●入れ替わりパッチごっそりと改修START
 		;該当する娘を虚空から呼び出す
@@ -174,13 +188,26 @@ $DELETE_START
 IF (DA:(ARG:0):85 & 1) && DA:(ARG:0):88 && DA:(ARG:0):4 == FLAG:5 && LOCAL:3 == 0
 	;バンシーは仲間になりやすい でも囮要因
 	IF DA:(ARG:0):0 == 40 && RAND:3 == 0 && DA:(ARG:0):88 == 2
-		PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
-		PRINTFORMW しかし%SAVESTR:(ARG:0)%は自分の触手で自分を拘束し自慰に耽り始めてしまった……
+		
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+				PRINTFORML しかし%SAVESTR:(ARG:0)%は自分の触手で自分を拘束し自慰に耽り始めてしまった……
+				TWAIT FLAG:AUTOMODE * 400, 0
+			ELSE
+				PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+				PRINTFORMW しかし%SAVESTR:(ARG:0)%は自分の触手で自分を拘束し自慰に耽り始めてしまった……
+			ENDIF
 		CALL ADD_NPC_ENEMY(DA:(ARG:0):0)
 	
 	;条件に両刀を追加。効果がレズ中毒に比例するように変更。無駄な括弧があるけどまあこっちのほうが分かりやすいし……
 	ELSEIF FLAG:4 > 0 && DA:(ARG:0):88 == 2 && RAND:75 < (ABL:1:13 * (TALENT:1:81 + 1)) + (ABL:(FLAG:10):13 * (TALENT:(FLAG:10):81 + 1)) + (ABL:(FLAG:11):131 * (TALENT:(FLAG:11):81 + 1)) + 2
-		PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+		
+			IF FLAG:AUTOMODE
+				PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+				TWAIT FLAG:AUTOMODE * 200, 0
+			ELSE
+				PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+			ENDIF
 		CALL ADD_NPC_ENEMY(DA:(ARG:0):0)
 	
 	;お仕置きフラグ

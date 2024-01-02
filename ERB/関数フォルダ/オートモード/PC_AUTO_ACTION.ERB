@@ -1,0 +1,190 @@
+﻿;オート中のメインフェイズでの行動処理
+;主人公を処理し、PTメンバーはそれに巻き込まれる形
+@PC_AUTO_ACTION
+#DIM LCOUNT
+#DIM SERCH_RATE
+#DIM MOVE_RATE
+#DIM WHAT_DO
+#DIM ENEMY_HERE
+#DIM EXIST_ITEM
+#DIM AUTO_ACTION_SECOND
+#DIM AUTO_TURN_CHECK
+
+;行動不能ならスキップ
+IF CHECK_FINE(1) == 0 || CFLAG:(1):504 == 1 || CFLAG:(1):58 || CFLAG:(1):59
+	RETURN
+ENDIF
+
+;オートアクション開始後すぐは二重表示にならないように一回だけスキップする
+IF AUTO_ACTION_SECOND == 1
+
+	;ショップを通らないのでここでオートセーブ
+	CALL AUTO_SAVE
+
+
+	REDRAW 0
+	DRAWLINEFORM =
+	CALL MAP_INFO_SIDE_ROOMREPORT(-1)
+
+	CALL PRINT_MAP_INFO
+
+	DRAWLINE
+
+	;PT簡易ステータス表示
+	CALL SHOW_PT_STATUS
+
+	DRAWLINE
+
+	;つぶやき表示
+	CALL PRINT_MESSAGE(1, 160, 0, CALLNAME:1, "")
+	CALL PRINT_MESSAGE(FLAG:10, 160, 0, CALLNAME:1, "")
+	CALL PRINT_MESSAGE(FLAG:11, 160, 0, CALLNAME:1, "")
+	
+	;終了ボタンを押したら終了
+	TONEINPUT FLAG:AUTOMODE * 1000, 0, 0, ""
+	IF RESULT != 0
+		FLAG:3000 = 1
+		RETURN
+	ENDIF
+ENDIF
+
+;経過ターン記録
+AUTO_TURN_CHECK += 1
+IF FLAG:AUTOTURN < AUTO_TURN_CHECK && FLAG:AUTOTURN
+	AUTO_TURN_CHECK = 0
+	FLAG:3000 = 1
+	RETURN
+ENDIF
+
+WHAT_DO = 0
+
+;自動装備➝お花摘み・浄化・自慰チェック➝探索・移動・眠る選択
+
+;自動装備
+;FOR 
+;	PC_AUTO_EQUIP(LCOUNT)
+;NEXT
+;
+
+
+;お花摘み
+;FOR 
+;	IF BASE::6
+;
+;	ENDIF
+;NEXT
+
+;浄化
+IF (FLAG:6 + FLAG:(50 + FLAG:5)) >= 300 && FLAG:(50 + FLAG:5) >= 40
+	CALL CLEAN
+ENDIF
+
+;自慰チェック
+;自慰しやすいキャラ・自慰中毒が高いキャラは勝手に自慰経験が溜まる
+;LOCAL:2 = ABL:(1):10 * 5 + TALENT:(1):60 * 10
+;IF RAND:100 < LOCAL:2
+;	;ちょっと弄っちゃう程度なので感覚レベルはそんなに上がらない
+;	CALL ADD_ABL_EXP(6 + RAND:4, 1, 100 + RAND:100)
+;	CALL ADD_ABL_EXP(10, 1, 1)
+;	;母乳体質だと噴乳中毒も微増
+;	IF TALENT:(1):130
+;		CALL ADD_ABL_EXP(16, 1, 1)
+;	ENDIF
+;	;NPC超乳化回避
+;	SIF CFLAG:(1):506 > 0
+;		CFLAG:(1):506 -= RAND:10
+;	CFLAG:(1):507 += 1
+;ENDIF
+
+;探索移動眠る選択
+
+;眠気が6以上、もしくはHPMPどちらかが半減以下で眠気3以上なら寝る
+IF FLAG:7 >= 6 || (FLAG:7 >= 3 && (BASE:1:HP <= MAXBASE:1:HP / 2 || BASE:1:MP <= MAXBASE:1:MP / 2))
+	WHAT_DO = 122
+	;同じ部屋に敵が居る場合、眠れない
+	IF FLAG:5 != FLAG:98
+		FOR LCOUNT, 1, FLAG:1
+			;現在位置が被っているかチェック
+			IF FLAG:5 == DA:(LCOUNT):4 && (DA:(LCOUNT):0 != 18 || DA:(LCOUNT):45 == 1 )
+				;ウォッチャーは何もなし
+				IF DA:(LCOUNT):0 == 97
+					
+				ELSE
+					WHAT_DO = 0
+					ENEMY_HERE = 1
+				ENDIF
+			ENDIF
+		NEXT
+	ENDIF
+ENDIF
+IF WHAT_DO
+	
+;探索と移動は優先度比較
+ELSE
+	SERCH_RATE = 0
+	;回復アイテムが少ないと探索
+	EXIST_ITEM = ITEM:50 + ITEM:51 + ITEM:52 + ITEM:53 + ITEM:54 + ITEM:57 + ITEM:58
+	IF EXIST_ITEM <= 3
+		SERCH_RATE += 50
+	ELSEIF EXIST_ITEM <= 6
+		SERCH_RATE += 40
+	ELSEIF EXIST_ITEM <= 9
+		SERCH_RATE += 30
+	ENDIF
+	
+	IF CFLAG:1:12 <= -20
+		;弱気キャラの場合探索率上昇
+		SERCH_RATE = MIN(SERCH_RATE * 12 / 10, 60)
+	ELSEIF CFLAG:1:12 >= 20
+		;強気キャラの場合探索率低下
+		SERCH_RATE = MIN(SERCH_RATE * 8 / 10, 40)
+	ENDIF
+	
+	;敵がいると探索しない
+	IF ENEMY_HERE
+		SERCH_RATE = 0
+	ENDIF
+
+	IF SERCH_RATE > RAND:100
+		WHAT_DO = 100
+	ELSE
+		WHAT_DO = 101
+	ENDIF
+ENDIF
+
+IF WHAT_DO == 100
+	CFLAG:1:11 = 3
+	CFLAG:1:13 = FLAG:5
+	CFLAG:1:14 = FLAG:5
+	CALL PRINT_MESSAGE(1, 135, 0, CALLNAME:1, "")
+	CALL PRINT_MESSAGE(FLAG:10, 135, 0, CALLNAME:1, "")
+	CALL PRINT_MESSAGE(FLAG:11, 135, 0, CALLNAME:1, "")
+;行動
+ELSEIF WHAT_DO == 101
+	CALL MOVE_SELECT(FLAG:5)
+	;イベント未発生なら
+	IF RESULT:2 == 0
+		;突撃
+		IF RESULT:1 == 0
+			CALL PRINT_MESSAGE(1, 132, 0, CALLNAME:1, "")
+			CALL PRINT_MESSAGE(FLAG:10, 132, 0, CALLNAME:1, "")
+			CALL PRINT_MESSAGE(FLAG:11, 132, 0, CALLNAME:1, "")
+		;慎重
+		ELSEIF RESULT:1 == 1
+			CALL PRINT_MESSAGE(1, 133, 0, CALLNAME:1, "")
+			CALL PRINT_MESSAGE(FLAG:10, 133, 0, CALLNAME:1, "")
+			CALL PRINT_MESSAGE(FLAG:11, 133, 0, CALLNAME:1, "")
+		;待ち伏せ
+		ELSEIF RESULT:1 == 2
+			CALL PRINT_MESSAGE(1, 134, 0, CALLNAME:1, "")
+			CALL PRINT_MESSAGE(FLAG:10, 134, 0, CALLNAME:1, "")
+			CALL PRINT_MESSAGE(FLAG:11, 134, 0, CALLNAME:1, "")
+		ENDIF
+	ENDIF
+
+;部屋で寝る
+ELSEIF WHAT_DO == 122 && FLAG:7 >= 3
+	CALL SLEEP
+ENDIF
+
+AUTO_ACTION_SECOND = 1

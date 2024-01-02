@@ -1,0 +1,195 @@
+﻿;オート中のメインフェイズでの行動処理
+;主人公を処理し、PTメンバーはそれに巻き込まれる形
+@PC_AUTO_MOVE
+#DIM LCOUNT
+;LOCAL
+;0	LOOP
+;1	突撃選択確率
+;2	慎重選択確率
+;3	待伏選択確率
+;4	移動先１
+;5	移動先２
+;6	移動先３
+;7	移動先４
+;8	TEMP
+;9	TEMP2
+;10	クイーン部屋
+;11	ガーディアン部屋
+
+;行動不能ならスキップ
+IF CHECK_FINE(1) == 0 || CFLAG:(1):504 == 1 || CFLAG:(1):58 || CFLAG:(1):59
+	PRINTFORML 移動不可
+	RETURN
+ENDIF
+
+;移動不可能な状態異常の場合、移動無し
+IF CFLAG:(1):20 || CFLAG:(1):29 || CFLAG:(1):10 || CFLAG:(1):2 || CFLAG:(1):3 || CFLAG:(1):504 >= 1
+	CFLAG:(1):11 = 3
+	CFLAG:(1):13 = CFLAG:(1):4
+	CFLAG:(1):14 = CFLAG:(1):4
+	PRINTFORML 移動不可
+	RETURN
+ENDIF
+
+;目的地を四隅の何処かにする
+IF CFLAG:(1):105 == 0
+	SELECTCASE RAND:4
+		CASE 0
+			CFLAG:(1):105 = 1
+		CASE 1
+			CFLAG:(1):105 = 5
+		CASE 2
+			CFLAG:(1):105 = 26
+		CASEELSE
+			CFLAG:(1):105 = 30
+	ENDSELECT
+ENDIF
+
+
+;行動パターン決定
+LOCAL:1 = 30
+LOCAL:2 = 40
+LOCAL:3 = 30
+
+;素質による確率補正
+;大人しい
+SIF TALENT:(1):14
+	LOCAL:2 += 30
+;保守的
+SIF TALENT:(1):24
+	LOCAL:3 += 30
+;悲観的
+SIF TALENT:(1):26
+	LOCAL:2 += 30
+;目立ちたがり
+SIF TALENT:(1):28
+	LOCAL:1 += 30
+;幼稚
+SIF TALENT:(1):132
+	LOCAL:1 += 30
+;以下、素質説明には表示していないが微妙に補正を入れるもの
+;素直
+SIF TALENT:(1):13
+	LOCAL:1 += 10
+;自制心
+SIF TALENT:(1):20
+	LOCAL:2 += 10
+;感情乏しい
+SIF TALENT:(1):22
+	LOCAL:3 += 10
+;抑圧
+SIF TALENT:(1):32
+	LOCAL:2 += 10
+;妖精
+SIF TALENT:(1):150
+	LOCAL:1 += 10
+;綺麗好き
+SIF TALENT:(1):152
+	LOCAL:3 += 10
+;哨戒
+SIF TALENT:(1):154
+	LOCAL:3 += 10
+
+LOCAL:8 = RAND:(LOCAL:1 + LOCAL:2 + LOCAL:3)
+IF LOCAL:8 < LOCAL:1
+	CFLAG:(1):11 = 0
+ELSEIF LOCAL:8 < (LOCAL:1 + LOCAL:2)
+	CFLAG:(1):11 = 1
+ELSE
+	CFLAG:(1):11 = 2
+	;待ち伏せの場合、移動無しで確定
+	CFLAG:(1):13 = CFLAG:(1):4
+	CFLAG:(1):14 = CFLAG:(1):4
+	PRINTFORML 待ち伏せ
+	RETURN
+ENDIF
+
+IF CFLAG:(1):12 <= -20
+	;弱気キャラの場合40％ランダム
+	LOCAL:8 = 40
+ELSEIF CFLAG:(1):12 >= 20
+	;強気キャラの場合50％ランダム
+	LOCAL:8 = 50
+ELSE
+	;普通キャラの場合60％ランダム
+	LOCAL:8 = 60
+ENDIF
+
+IF RAND:100 < LOCAL:8
+	;ランダム移動
+	;移動できる部屋を取得
+	LOCAL:4 = 0
+	LOCAL:5 = 0
+	LOCAL:6 = 0
+	LOCAL:7 = 0
+	LOCAL:8 = 0
+	FOR LOCAL:0, 1, 31
+		IF CHECK_NEXT(CFLAG:(1):4, LOCAL:0) == 2
+			;※最大でも4方向＝4部屋しか移動できない
+			LOCAL:(LOCAL:8 + 4) = LOCAL:0
+			LOCAL:8 += 1
+		ENDIF
+	NEXT
+
+	;どこにも移動できない（エラーのはずだけど）
+	IF LOCAL:4 == 0
+		CFLAG:(1):11 = 2
+		CFLAG:(1):13 = CFLAG:(1):4
+		CFLAG:(1):14 = CFLAG:(1):4
+		RETURN
+	ENDIF
+
+	LOCAL:9 = RAND:(LOCAL:8)
+
+	CFLAG:(1):13 = CFLAG:(1):4
+	CFLAG:(1):14 = LOCAL:(LOCAL:9 + 4)
+	
+	IF CFLAG:(1):11 == 0
+		PRINTFORML 移動方法　突撃
+	ELSEIF CFLAG:(1):11 == 1
+		PRINTFORML 移動方法　慎重
+	ENDIF
+	PRINTFORML 移動 {CFLAG:(1):13}　➝　{CFLAG:(1):14}
+ELSE
+	;目的地に向かって移動
+	
+		CALL CHECK_ROUTE(CFLAG:(1):4, CFLAG:(1):105)
+		IF RESULT == CFLAG:(1):4
+			;既に目的地に到達している場合、弱気キャラは待ち伏せに変更、強気キャラは新たな目的地に移動
+			IF CFLAG:(1):12 <= -20
+				;弱気キャラ
+				CFLAG:(1):11 = 2
+				CFLAG:(1):13 = CFLAG:(1):4
+				CFLAG:(1):14 = CFLAG:(1):4
+				RETURN
+			ELSE
+				CFLAG:(1):105 = 1 + RAND:25
+				IF CFLAG:(1):105 == 1
+					CFLAG:(1):105 = 26
+				ELSEIF CFLAG:(1):105 == 5
+					CFLAG:(1):105 = 27
+				ELSEIF CFLAG:(1):105 == 25
+					CFLAG:(1):105 = 28
+				ENDIF
+				SIF CFLAG:(1):105 == CFLAG:(1):4
+					CFLAG:(1):105 = 29
+				CALL CHECK_ROUTE(CFLAG:(1):4, CFLAG:(1):105)
+			ENDIF
+		ENDIF
+	CFLAG:(1):13 = CFLAG:(1):4
+	CFLAG:(1):14 = RESULT
+	IF CFLAG:(1):11 == 0
+		PRINTFORML 移動方法　突撃
+	ELSEIF CFLAG:(1):11 == 1
+		PRINTFORML 移動方法　慎重
+	ENDIF
+	PRINTFORML 移動 {CFLAG:(1):13}　➝　{CFLAG:(1):14}
+ENDIF
+
+;クイーン以外の目的地についた場合一旦リセットする
+IF CFLAG:(1):105 == FLAG:5 && CFLAG:(1):105 != DA:1:4
+	CFLAG:(1):105 = 0
+ENDIF
+
+
+

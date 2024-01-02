@@ -1,0 +1,17 @@
+;自動モードの場合、一定時間待機、それ以外は手動待機
+;STOPTIME 停止時間の係数指定　（停止時間） = （FLAG:AUTOMODE） * STOPTIME ミリ秒
+;INTPUTRECEPTION 入力受付フラグ　0:入力を受け付け、入力がなされると制限時間前でも次に進みます ≠0：入力を受け付けません（制限時間まで強制的に待たせることができます）
+@WAIT_AUTOMODE(STOPTIME, INPUTRECEPTION)
+#DIM STOPTIME
+#DIM INPUTRECEPTION
+IF STOPTIME == 0
+	STOPTIME = 400
+ENDIF
+
+;TODO:普通にメッセージだけ自動送りにするグローバル設定も入れときたいね by average
+IF FLAG:AUTOMODE
+	TWAIT FLAG:AUTOMODE * STOPTIME, INPUTRECEPTION
+ELSE
+	WAIT
+ENDIF
+

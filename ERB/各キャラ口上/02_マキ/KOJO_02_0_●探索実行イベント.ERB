@@ -13,9 +13,21 @@ SELECTCASE ARG:0
 			ELSE
 				;戦意喪失じゃない味方がいる
 				IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
-					PRINTFORMW 「ごめん……後で確認させて……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ごめん……後で確認させて……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ごめん……後で確認させて……」
+ENDIF
+
 				ELSE
-					PRINTFORMW 「詳しく調べたいけど…今はちょっと……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「詳しく調べたいけど…今はちょっと……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「詳しく調べたいけど…今はちょっと……」
+ENDIF
+
 				ENDIF
 				CFLAG:805 = 1
 			ENDIF
@@ -27,9 +39,21 @@ SELECTCASE ARG:0
 			ELSE
 				;戦意喪失じゃない味方がいる
 				IF (TARGET == 1 && FLAG:10 && CFLAG:(FLAG:10):29 == 0) || (TARGET == 1 && FLAG:11 && CFLAG:(FLAG:11):29 == 0) || (TARGET != 1 && CFLAG:1:29 == 0)
-					PRINTFORMW 「ふわぁ……そろそろ眠くなってきたなあ……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ふわぁ……そろそろ眠くなってきたなあ……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ふわぁ……そろそろ眠くなってきたなあ……」
+ENDIF
+
 				ELSE
-					PRINTFORMW 「目ぼしいものもだいたい拾ったし、そろそろ寝たい…」
+IF FLAG:AUTOMODE
+    PRINTFORML 「目ぼしいものもだいたい拾ったし、そろそろ寝たい…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「目ぼしいものもだいたい拾ったし、そろそろ寝たい…」
+ENDIF
+
 				ENDIF
 				CFLAG:805 = 1
 			ENDIF
@@ -195,12 +219,30 @@ SELECTCASE ARG:0
 		IF  CFLAG:29
 			;
 		ELSEIF ARG:1 == 0
-			PRINTFORMW （どうか見つかりませんように……）
+IF FLAG:AUTOMODE
+    PRINTFORML （どうか見つかりませんように……）
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  （どうか見つかりませんように……）
+ENDIF
+
 		ELSEIF ARG:1 == 1
 			PRINTFORML 「あ、大丈夫だよ。こういうの慣れてるし」
-			PRINTFORMW 「だからほら、もう少し寝ててよ」
+IF FLAG:AUTOMODE
+    PRINTFORML 「だからほら、もう少し寝ててよ」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「だからほら、もう少し寝ててよ」
+ENDIF
+
 		ELSEIF ARG:1 == 2
-			PRINTFORMW 「ありがとう、この恩は絶対返すよ」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ありがとう、この恩は絶対返すよ」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ありがとう、この恩は絶対返すよ」
+ENDIF
+
 		ENDIF
 	;重度汚染部屋で睡眠
 	CASE 116
@@ -216,33 +258,86 @@ SELECTCASE ARG:0
 				CASEELSE
 					PRINTFORML 「ひぐっ…うっ…あっ！」
 			ENDSELECT
-			PRINTFORMW マキは小さな触手に愛撫され喘ぎながらも眠りについた
+IF FLAG:AUTOMODE
+    PRINTFORML マキは小さな触手に愛撫され喘ぎながらも眠りについた
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  マキは小さな触手に愛撫され喘ぎながらも眠りについた
+ENDIF
+
 		ENDIF
 	;自慰で絶頂失敗
 	CASE 119
 		IF CFLAG:29
 			;
 		ELSE
-			PRINTFORMW (うぅ…こんな悶々とするくらいならしない方が良かったんじゃ……)
+IF FLAG:AUTOMODE
+    PRINTFORML (うぅ…こんな悶々とするくらいならしない方が良かったんじゃ……)
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  (うぅ…こんな悶々とするくらいならしない方が良かったんじゃ……)
+ENDIF
+
 		ENDIF
 
 	;部屋の浄化実行
 	CASE 130
 		;戦意喪失
 		IF CFLAG:29
-			PRINTFORMW (………………)
-			PRINTFORMDW マキは部屋が浄化されると少し首を上げたが、また俯いてしまった
+IF FLAG:AUTOMODE
+    PRINTFORML (………………)
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  (………………)
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは部屋が浄化されると少し首を上げたが、また俯いてしまった
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは部屋が浄化されると少し首を上げたが、また俯いてしまった
+ENDIF
 		ELSE
 			SELECTCASE RAND:3
 				CASE 0
-					PRINTFORMW 「なんだか魔法が使えるようになった気分だよね！」
-					PRINTFORMW 「いいよね、魔法！夢があって素敵だと思うよ！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「なんだか魔法が使えるようになった気分だよね！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「なんだか魔法が使えるようになった気分だよね！」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「いいよね、魔法！夢があって素敵だと思うよ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「いいよね、魔法！夢があって素敵だと思うよ！」
+ENDIF
+
 				CASE 1
-					PRINTFORMW 「やっぱり雰囲気が変わるね！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「やっぱり雰囲気が変わるね！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「やっぱり雰囲気が変わるね！」
+ENDIF
+
 				CASE 2
-					PRINTFORMW 「う～ん、清々しい！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「う～ん、清々しい！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「う～ん、清々しい！」
+ENDIF
+
 				CASEELSE
-					PRINTFORMW 「この浄化、どういう原理なんだろう？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「この浄化、どういう原理なんだろう？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「この浄化、どういう原理なんだろう？」
+ENDIF
+
 			ENDSELECT
 		ENDIF
 	;眠気が進行
@@ -250,8 +345,19 @@ SELECTCASE ARG:0
 		;ARG:1に眠気
 		IF ARG:1 == 6 && !CFLAG:29
 			;
-			PRINTFORMW 「ふあぁ～～っ…」
-			PRINTFORMDW マキは眠気からか大きな欠伸をした
+IF FLAG:AUTOMODE
+    PRINTFORML 「ふあぁ～～っ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ふあぁ～～っ…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは眠気からか大きな欠伸をした
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは眠気からか大きな欠伸をした
+ENDIF
 		ELSE
 		;
 		ENDIF
@@ -261,7 +367,13 @@ SELECTCASE ARG:0
 		;戦意喪失
 		;
 		ELSE
-			PRINTFORMW 「変なのが寄ってくる前に移動しちゃおう」
+IF FLAG:AUTOMODE
+    PRINTFORML 「変なのが寄ってくる前に移動しちゃおう」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「変なのが寄ってくる前に移動しちゃおう」
+ENDIF
+
 		ENDIF
 	;部屋を移動(慎重)
 	CASE 133
@@ -271,9 +383,21 @@ SELECTCASE ARG:0
 		ELSE
 			SELECTCASE RAND:2
 				CASE 0
-					PRINTFORMW 「嫌な気配がする…」
+IF FLAG:AUTOMODE
+    PRINTFORML 「嫌な気配がする…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「嫌な気配がする…」
+ENDIF
+
 				CASEELSE
-					PRINTFORMW 「曲がりくねってる…不意打ちされないように気を付けないと」
+IF FLAG:AUTOMODE
+    PRINTFORML 「曲がりくねってる…不意打ちされないように気を付けないと」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「曲がりくねってる…不意打ちされないように気を付けないと」
+ENDIF
+
 			ENDSELECT
 		ENDIF
 	;部屋を移動(待ち伏せ)
@@ -282,8 +406,19 @@ SELECTCASE ARG:0
 		;戦意喪失
 		;
 		ELSE
-			PRINTFORMW 「………」
-			PRINTFORMDW マキは息を殺して気配を消している
+IF FLAG:AUTOMODE
+    PRINTFORML 「………」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「………」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは息を殺して気配を消している
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは息を殺して気配を消している
+ENDIF
 		ENDIF
 	;部屋を移動(探索)
 	CASE 135
@@ -291,7 +426,13 @@ SELECTCASE ARG:0
 		;戦意喪失
 		;
 		ELSE
-			PRINTFORMW 「これは…使えそうにないね……あ、これとかどうだろう？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「これは…使えそうにないね……あ、これとかどうだろう？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「これは…使えそうにないね……あ、これとかどうだろう？」
+ENDIF
+
 		ENDIF
 
 	;入浴
@@ -304,7 +445,12 @@ SELECTCASE ARG:0
 			;
 		ELSE
 			PRINTFORML 「～～～～～♪」
-			PRINTFORMDW マキは鼻歌を歌いながら入浴を満喫している
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは鼻歌を歌いながら入浴を満喫している
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは鼻歌を歌いながら入浴を満喫している
+ENDIF
 		ENDIF
 
 	;該当コマンドなし
@@ -327,33 +473,85 @@ ENDSELECT
 			;湧き水　飲むとHP・MP・EP全快　飲まなかった場合は残る
 			CASE 130
 				IF ARG:2 == 0
-					PRINTFORMW 「これ…凄く美味しい！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「これ…凄く美味しい！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「これ…凄く美味しい！」
+ENDIF
+
 				ENDIF
 			;湧き水　飲むとEPが1になる　飲まなかった場合は残る
 			CASE 131
 				IF ARG:2 == 0
-					PRINTFORMW 「これは…」
-					PRINTFORMW 「けほっけほっ……！？　な、なに、これっ…」
-					PRINTFORMDW マキは全身が敏感になり、しきりに太ももを擦り合わせている
+IF FLAG:AUTOMODE
+    PRINTFORML 「これは…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「これは…」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「けほっけほっ……！？　な、なに、これっ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「けほっけほっ……！？　な、なに、これっ…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは全身が敏感になり、しきりに太ももを擦り合わせている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは全身が敏感になり、しきりに太ももを擦り合わせている
+ENDIF
 				ENDIF
 			;湧き水　飲むとHPが上昇
 			CASE 132
 				IF ARG:2 == 0
-					PRINTFORMW 「これは…すごく苦いけど…良薬は口に苦しってやつかな？」
-					PRINTFORMDW マキは自分の体調が良くなっていることに気が付いた
+IF FLAG:AUTOMODE
+    PRINTFORML 「これは…すごく苦いけど…良薬は口に苦しってやつかな？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「これは…すごく苦いけど…良薬は口に苦しってやつかな？」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは自分の体調が良くなっていることに気が付いた
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは自分の体調が良くなっていることに気が付いた
+ENDIF
 				ENDIF
 			;澄んだ泉　飲むとMP25％回復、入るとEP50％回復　拠点にすることを想定
 			CASE 133
 				SELECTCASE ARG:2
 					;MP回復
 					CASE 0
-						PRINTFORMW 「ふぅ…心が落ち着くなあ」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ふぅ…心が落ち着くなあ」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ふぅ…心が落ち着くなあ」
+ENDIF
+
 					;EP回復
 					CASE 1
-						PRINTFORMW 「う～ん、気持ちいい！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「う～ん、気持ちいい！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「う～ん、気持ちいい！」
+ENDIF
+
 					;無視
 					CASE 2
-						PRINTFORMW 「また後で詳しく調べよう」
+IF FLAG:AUTOMODE
+    PRINTFORML 「また後で詳しく調べよう」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「また後で詳しく調べよう」
+ENDIF
+
 					;喪失回復
 					CASE 3
 						;復活させる側
@@ -361,48 +559,140 @@ ENDSELECT
 					;喪失回復
 					CASE 4
 						;復活する側
-						PRINTFORMW 「………ん……？」
-						PRINTFORMW 「……あれ？私は確か……………っ！！」
-						PRINTFORMDW マキはその時のことを思い出したのか顔を赤くしている
+IF FLAG:AUTOMODE
+    PRINTFORML 「………ん……？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「………ん……？」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「……あれ？私は確か……………っ！！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「……あれ？私は確か……………っ！！」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはその時のことを思い出したのか顔を赤くしている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはその時のことを思い出したのか顔を赤くしている
+ENDIF
 				ENDSELECT
 			;白濁した泉　133とは違う場所　飲むとMP全快or発情　入ると速度+5or寄生（種類はランダム）
 			CASE 134
 				SELECTCASE ARG:2
 					;MP全回復
 					CASE 0
-						PRINTFORMW 「なんだか飲んだことのない味だなあ…」
+IF FLAG:AUTOMODE
+    PRINTFORML 「なんだか飲んだことのない味だなあ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「なんだか飲んだことのない味だなあ…」
+ENDIF
+
 					;眠気
 					CASE 1
-						PRINTFORMW 「…なんだか急に…目の前が揺れて…？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「…なんだか急に…目の前が揺れて…？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…なんだか急に…目の前が揺れて…？」
+ENDIF
+
 					;発情
 					CASE 2
-						PRINTFORMW 「……っうぅ！？」
-						PRINTFORMDW マキは敏感になった全身を抑え込むように自らの体を抱きしめた
+IF FLAG:AUTOMODE
+    PRINTFORML 「……っうぅ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「……っうぅ！？」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは敏感になった全身を抑え込むように自らの体を抱きしめた
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは敏感になった全身を抑え込むように自らの体を抱きしめた
+ENDIF
 					;速度+
 					CASE 3
-						PRINTFORMW 「なんだか身体が軽くなったような…？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「なんだか身体が軽くなったような…？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「なんだか身体が軽くなったような…？」
+ENDIF
+
 					;寄生
 					CASE 4
-						PRINTFORMW 「なっ！こ、これは！あぐぅっ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「なっ！こ、これは！あぐぅっ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「なっ！こ、これは！あぐぅっ！？」
+ENDIF
+
 					;ふたなる
 					CASE 6
-						PRINTFORMW 「こ、これ…もしかして…」
-						PRINTFORMW 「マズい…これ狙われたら絶対ヤバそう…」
-						PRINTFORMDW マキは自らの股間にある"ソレ"を憎らしそうに睨んだ
+IF FLAG:AUTOMODE
+    PRINTFORML 「こ、これ…もしかして…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「こ、これ…もしかして…」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「マズい…これ狙われたら絶対ヤバそう…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「マズい…これ狙われたら絶対ヤバそう…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは自らの股間にある"ソレ"を憎らしそうに睨んだ
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは自らの股間にある"ソレ"を憎らしそうに睨んだ
+ENDIF
 				ENDSELECT
 			;不思議な泉　飲むとHP・MP・EP全快　入ると寄生を含む全状態異常治療　処女モードの場合処女も回復
 			CASE 135
 				SELECTCASE ARG:2
 					;HP・MP・EP全快
 					CASE 0 && !CFLAG:29
-						PRINTFORMW 「なんだろ…すごく暖かい…心が落ち着く……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「なんだろ…すごく暖かい…心が落ち着く……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「なんだろ…すごく暖かい…心が落ち着く……」
+ENDIF
+
 					;全状態異常治療
 					CASE 1 && !CFLAG:29
-						PRINTFORMW 「…えっ！？」
-						PRINTFORMDW マキはいきなり体のけだるさが取れたことに驚いている
+IF FLAG:AUTOMODE
+    PRINTFORML 「…えっ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…えっ！？」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはいきなり体のけだるさが取れたことに驚いている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはいきなり体のけだるさが取れたことに驚いている
+ENDIF
 					;無視
 					CASE 2 && !CFLAG:29
-						PRINTFORMW 「また後で詳しく調べよう」
+IF FLAG:AUTOMODE
+    PRINTFORML 「また後で詳しく調べよう」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「また後で詳しく調べよう」
+ENDIF
+
 				ENDSELECT
 			;天井からスライム　危機回避判定失敗でCPが0に
 			CASE 136
@@ -411,23 +701,73 @@ ENDSELECT
 					CASE 1
 						;全裸
 						IF CFLAG:29
-							PRINTFORMW 「………………」
-							PRINTFORMDW マキは素肌にスライムが纏わりつくのを濁った眼で見つめている
+IF FLAG:AUTOMODE
+    PRINTFORML 「………………」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「………………」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは素肌にスライムが纏わりつくのを濁った眼で見つめている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは素肌にスライムが纏わりつくのを濁った眼で見つめている
+ENDIF
 						ELSEIF BASE:CP == 0
-							PRINTFORMW 「う…気持ち悪い…」
-							PRINTFORMDW マキは素肌にスライムが纏わりつき、嫌悪感を示した
+IF FLAG:AUTOMODE
+    PRINTFORML 「う…気持ち悪い…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「う…気持ち悪い…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは素肌にスライムが纏わりつき、嫌悪感を示した
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは素肌にスライムが纏わりつき、嫌悪感を示した
+ENDIF
 						;その他
 						ELSE
-							PRINTFORMW 「ひゃあぁあっ！？ふ、服が！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ひゃあぁあっ！？ふ、服が！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ひゃあぁあっ！？ふ、服が！？」
+ENDIF
+
 						ENDIF
 					;回避成功
 					CASE 2
 						IF CFLAG:29
-							PRINTFORMW 「………………」
-							PRINTFORMDW 運よくマキの上からはスライムが降ってこなかったようだ
+IF FLAG:AUTOMODE
+    PRINTFORML 「………………」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「………………」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL 運よくマキの上からはスライムが降ってこなかったようだ
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW 運よくマキの上からはスライムが降ってこなかったようだ
+ENDIF
 						ELSE
-							PRINTFORMW 「危ない！っと」
-							PRINTFORMDW マキはすぐに気が付き、スライムを躱した
+IF FLAG:AUTOMODE
+    PRINTFORML 「危ない！っと」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「危ない！っと」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはすぐに気が付き、スライムを躱した
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはすぐに気が付き、スライムを躱した
+ENDIF
 						ENDIF
 				ENDSELECT
 			;壁から触手　危機回避判定失敗で数回ランダム箇所絶頂
@@ -436,18 +776,46 @@ ENDSELECT
 					;回避失敗
 					CASE 1
 						IF CFLAG:29
-							PRINTFORMW 「……ぅ……ぁっ……」
-							PRINTFORMDW マキはビクビクと痙攣を起こしたように震えている
+IF FLAG:AUTOMODE
+    PRINTFORML 「……ぅ……ぁっ……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「……ぅ……ぁっ……」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはビクビクと痙攣を起こしたように震えている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはビクビクと痙攣を起こしたように震えている
+ENDIF
 						ELSE	
-							PRINTFORMW 「な、なにこれ…わ…あ、あああぁぁぁぁぁぁぁぁぁ！！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「な、なにこれ…わ…あ、あああぁぁぁぁぁぁぁぁぁ！！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「な、なにこれ…わ…あ、あああぁぁぁぁぁぁぁぁぁ！！？」
+ENDIF
+
 						ENDIF
 					;回避成功
 					CASE 2
 						IF CFLAG:29
 							;
 						ELSE
-							PRINTFORMW 「危ない！っと」
-							PRINTFORMDW マキはすぐに気が付き、触手を躱した
+IF FLAG:AUTOMODE
+    PRINTFORML 「危ない！っと」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「危ない！っと」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはすぐに気が付き、触手を躱した
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはすぐに気が付き、触手を躱した
+ENDIF
 						ENDIF
 				ENDSELECT
 			;落とし穴に触手　危機回避判定（易しめ）失敗で多数ランダム絶頂＋寄生
@@ -456,29 +824,95 @@ ENDSELECT
 					;回避失敗
 					CASE 1
 						IF CFLAG:29
-							PRINTFORMW 「…………っ…！…」
-							PRINTFORMDW マキは突然の落下に少しだけ驚いたようだが目に光は戻らない
+IF FLAG:AUTOMODE
+    PRINTFORML 「…………っ…！…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…………っ…！…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは突然の落下に少しだけ驚いたようだが目に光は戻らない
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは突然の落下に少しだけ驚いたようだが目に光は戻らない
+ENDIF
 						ELSE
-							PRINTFORMW 「えっ？」
-							PRINTFORMDW マキは一瞬何が起きたのかわからなかった
+IF FLAG:AUTOMODE
+    PRINTFORML 「えっ？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「えっ？」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは一瞬何が起きたのかわからなかった
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは一瞬何が起きたのかわからなかった
+ENDIF
 						ENDIF
 					;回避成功
 					CASE 2	
 						IF CFLAG:29
-							PRINTFORMW 「…………っ…！…」
-							PRINTFORMDW マキは突然の落下に少しだけ驚いたようだが目に光は戻らない
+IF FLAG:AUTOMODE
+    PRINTFORML 「…………っ…！…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…………っ…！…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは突然の落下に少しだけ驚いたようだが目に光は戻らない
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは突然の落下に少しだけ驚いたようだが目に光は戻らない
+ENDIF
 						ELSE
-							PRINTFORMW 「危ない！っと」
-							PRINTFORMDW マキはすぐに気が付き、落とし穴を躱した
+IF FLAG:AUTOMODE
+    PRINTFORML 「危ない！っと」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「危ない！っと」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはすぐに気が付き、落とし穴を躱した
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはすぐに気が付き、落とし穴を躱した
+ENDIF
 						ENDIF
 					;回避失敗&寄生　CASE 1から連続で発生するので注意
 					CASE 3
 						IF CFLAG:29
-							PRINTFORMW 「………………」
-							PRINTFORMDW マキは寄生された自覚がないようだ
+IF FLAG:AUTOMODE
+    PRINTFORML 「………………」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「………………」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは寄生された自覚がないようだ
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは寄生された自覚がないようだ
+ENDIF
 						ELSE
-							PRINTFORMW 「がぁっ！？…ぅうああぁぁあぁああ！」
-							PRINTFORMDW マキは触手に弄ばれ、嬌声を上げ続けた
+IF FLAG:AUTOMODE
+    PRINTFORML 「がぁっ！？…ぅうああぁぁあぁああ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「がぁっ！？…ぅうああぁぁあぁああ！」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは触手に弄ばれ、嬌声を上げ続けた
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは触手に弄ばれ、嬌声を上げ続けた
+ENDIF
 						ENDIF
 				ENDSELECT
 			;桃色のガス　自慰中毒判定失敗で強制自慰
@@ -487,18 +921,46 @@ ENDSELECT
 					;回避失敗
 					CASE 1
 						IF CFLAG:29
-							PRINTFORMW 「……かっ…っ…がはっ…」
-							PRINTFORMDW マキは苦しそうにしている
+IF FLAG:AUTOMODE
+    PRINTFORML 「……かっ…っ…がはっ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「……かっ…っ…がはっ…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは苦しそうにしている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは苦しそうにしている
+ENDIF
 						ELSE
-							PRINTFORMW 「…！？っぐ、げほ、げっほ！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「…！？っぐ、げほ、げっほ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…！？っぐ、げほ、げっほ！」
+ENDIF
+
 						ENDIF
 					;回避成功
 					CASE 2
 						IF CFLAG:29
 							;
 						ELSE
-							PRINTFORMW 「危ない！っと」
-							PRINTFORMDW マキはすぐに気が付き、ガスを躱した
+IF FLAG:AUTOMODE
+    PRINTFORML 「危ない！っと」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「危ない！っと」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはすぐに気が付き、ガスを躱した
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはすぐに気が付き、ガスを躱した
+ENDIF
 						ENDIF
 				ENDSELECT
 			;誰かの荷物　荷物袋が落ちている　開けると着替えセット（54）と日本酒（52）を入手　無視した場合は残る
@@ -506,16 +968,38 @@ ENDSELECT
 				IF CFLAG:29
 					;
 				ELSE
-					PRINTFORMW 「ありがたく使わさせてもらおうかな」
-					PRINTFORMDW マキは荷物袋を開け、手際よくアイテムを回収した
+IF FLAG:AUTOMODE
+    PRINTFORML 「ありがたく使わさせてもらおうかな」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ありがたく使わさせてもらおうかな」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは荷物袋を開け、手際よくアイテムを回収した
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは荷物袋を開け、手際よくアイテムを回収した
+ENDIF
 				ENDIF
 			;誰かの荷物　荷物袋が落ちている　開けると中から触手　雑魚を１匹生成して、敵の先制で強制戦闘　無視した場合は残る
 			CASE 141
 				IF CFLAG:29
 					;
 				ELSE
-					PRINTFORMW 「っ！罠だったかぁ…」
-					PRINTFORMDW マキは慌てて戦闘態勢に入った！
+IF FLAG:AUTOMODE
+    PRINTFORML 「っ！罠だったかぁ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「っ！罠だったかぁ…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは慌てて戦闘態勢に入った！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは慌てて戦闘態勢に入った！
+ENDIF
 				ENDIF
 			;喋れる触手　各部位の感覚Lv3を連れて行くとネチョる代わりにレアアイテムをくれる　コンプリートで全武器１つずつ＋イベント消滅
 			CASE 142
@@ -524,22 +1008,58 @@ ENDSELECT
 					SELECTCASE ARG:2
 					;A
 					CASE 0
-						PRINTFORMW 「連れてきたよ～…って！何する気っ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「連れてきたよ～…って！何する気っ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「連れてきたよ～…って！何する気っ！？」
+ENDIF
+
 					;B
 					CASE 1
-						PRINTFORMW 「連れてきたよ～…って！何する気っ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「連れてきたよ～…って！何する気っ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「連れてきたよ～…って！何する気っ！？」
+ENDIF
+
 					;C
 					CASE 2
-						PRINTFORMW 「連れてきたよ～…って！何する気っ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「連れてきたよ～…って！何する気っ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「連れてきたよ～…って！何する気っ！？」
+ENDIF
+
 					;V
 					CASE 3
-						PRINTFORMW 「連れてきたよ～…って！何する気っ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「連れてきたよ～…って！何する気っ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「連れてきたよ～…って！何する気っ！？」
+ENDIF
+
 					;だが断る
 					CASE 4
-						PRINTFORMW 「ごめん、また後で…」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ごめん、また後で…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ごめん、また後で…」
+ENDIF
+
 					;コンプ
 					CASE 5
-						PRINTFORMW 「何だったんだろう、コレ……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「何だったんだろう、コレ……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「何だったんだろう、コレ……」
+ENDIF
+
 					ENDSELECT
 				endif
 			;不思議なガス　危機回避判定失敗で　眠気+2/全員発情/全員強制自慰/全員TP200/全員TP0　のいずれか
@@ -547,126 +1067,355 @@ ENDSELECT
 				SELECTCASE ARG:2 && !CFLAG:29
 					;眠気
 					CASE 1
-						PRINTFORMW 「げほげほっ……むぅ…」
-						PRINTFORMDW マキは目をこすりながら睡魔と闘った！
+IF FLAG:AUTOMODE
+    PRINTFORML 「げほげほっ……むぅ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「げほげほっ……むぅ…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは目をこすりながら睡魔と闘った！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは目をこすりながら睡魔と闘った！
+ENDIF
 					;発情
 					CASE 2
-						PRINTFORMW 「げほげほっ……はぁ…ふぅ…」
-						PRINTFORMDW マキは息を荒くしている！
+IF FLAG:AUTOMODE
+    PRINTFORML 「げほげほっ……はぁ…ふぅ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「げほげほっ……はぁ…ふぅ…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは息を荒くしている！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは息を荒くしている！
+ENDIF
 					;自慰
 					CASE 3
-						PRINTFORMW (ダメなのに…んっ！手が…止まらないぃぃっ！)
-						PRINTFORMDW マキはガスを吸った後にいきなり自らを慰め始めた！
+IF FLAG:AUTOMODE
+    PRINTFORML (ダメなのに…んっ！手が…止まらないぃぃっ！)
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  (ダメなのに…んっ！手が…止まらないぃぃっ！)
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはガスを吸った後にいきなり自らを慰め始めた！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはガスを吸った後にいきなり自らを慰め始めた！
+ENDIF
 					;テンション上昇
 					CASE 4
-						PRINTFORMW 「今ならなんだってできそう！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「今ならなんだってできそう！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「今ならなんだってできそう！」
+ENDIF
+
 					;テンション下降
 					CASE 5
-						PRINTFORMW 「しばらくじっとしてたいかな…」
+IF FLAG:AUTOMODE
+    PRINTFORML 「しばらくじっとしてたいかな…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「しばらくじっとしてたいかな…」
+ENDIF
+
 					;回避
 					CASE 6
-						PRINTFORMW 「危ない！っと」
-						PRINTFORMDW マキはすぐに気が付き、ガスを躱した
+IF FLAG:AUTOMODE
+    PRINTFORML 「危ない！っと」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「危ない！っと」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはすぐに気が付き、ガスを躱した
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはすぐに気が付き、ガスを躱した
+ENDIF
 				ENDSELECT
 			;柔らかい壁　壁の無い部屋で発生したら即終了＋再配置　高難易度　体当たりすると崩れて通路追加orネチョ　ネチョか放置の場合は残る
 			CASE 144
 				SELECTCASE ARG:2 && !CFLAG:29
 					;あっさり崩れた
 					CASE 1
-						PRINTFORMW 「近道？ラッキー…なのかなあ？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「近道？ラッキー…なのかなあ？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「近道？ラッキー…なのかなあ？」
+ENDIF
+
 					;ヤられた
 					CASE 2
-						PRINTFORMW 「え？何こ…っひやぁぁあああああああああっ！」」
-						PRINTFORMDW マキは壁に弄ばれている…
+IF FLAG:AUTOMODE
+    PRINTFORML 「え？何こ…っひやぁぁあああああああああっ！」」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「え？何こ…っひやぁぁあああああああああっ！」」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは壁に弄ばれている…
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは壁に弄ばれている…
+ENDIF
 				ENDSELECT
 				;スッキリ草　眠気を０にしてくれる薬草　効果は必ず分かってOK　使わなかった場合は残る
 			CASE 145
 				SELECTCASE ARG:2 && !CFLAG:29
 					;使った
 					CASE 1
-						PRINTFORMW 「……これ、ちゃんと疲労取れてるのかな？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「……これ、ちゃんと疲労取れてるのかな？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「……これ、ちゃんと疲労取れてるのかな？」
+ENDIF
+
 					;放置
 					CASE 2
-						PRINTFORMW 「気になるけど…」
-						PRINTFORMDW マキは草をしげしげと眺めながらその場を立ち去った
+IF FLAG:AUTOMODE
+    PRINTFORML 「気になるけど…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「気になるけど…」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは草をしげしげと眺めながらその場を立ち去った
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは草をしげしげと眺めながらその場を立ち去った
+ENDIF
 				ENDSELECT
 			;淫蟲の大群　A属性EPダメージ　絶頂時MPダメージ大
 			CASE 146
-					PRINTFORMW 「ひっ、ぐっ…あ゛あ゛あ゛あ゛あ゛ぁ！」
-					PRINTFORMDW マキはお腹がボコボコと動く感覚に嫌悪感と快感を同時に感じている！
+IF FLAG:AUTOMODE
+    PRINTFORML 「ひっ、ぐっ…あ゛あ゛あ゛あ゛あ゛ぁ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ひっ、ぐっ…あ゛あ゛あ゛あ゛あ゛ぁ！」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはお腹がボコボコと動く感覚に嫌悪感と快感を同時に感じている！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはお腹がボコボコと動く感覚に嫌悪感と快感を同時に感じている！
+ENDIF
 			;淫蟲の大群　B属性EPダメージ　母乳体質時EP・MPダメージ倍
 			CASE 147
-					PRINTFORMW 「ダメぇぇぇええ！胸は弱いからぁっ！っうぅぁ、あぁあぁぁっ！？」
-					PRINTFORMDW マキは胸に蟲が纏わりつき、腰を抜かしながらもその場から逃げようとしている！
+IF FLAG:AUTOMODE
+    PRINTFORML 「ダメぇぇぇええ！胸は弱いからぁっ！っうぅぁ、あぁあぁぁっ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ダメぇぇぇええ！胸は弱いからぁっ！っうぅぁ、あぁあぁぁっ！？」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは胸に蟲が纏わりつき、腰を抜かしながらもその場から逃げようとしている！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは胸に蟲が纏わりつき、腰を抜かしながらもその場から逃げようとしている！
+ENDIF
 			;淫蟲の大群　C属性EPダメージ　それなりの確率で発情
 			CASE 148
 				SELECTCASE ARG:2
 					;受けた時
 					CASE 1
-						PRINTFORMW 「そこはっあぁぁああああああ！皮をっ！剥かないっ！でっ！……」
-						PRINTFORMDW マキは蟲が陰核を弄りつくすのを喘ぎ、震えながら見つめることしかできない！
+IF FLAG:AUTOMODE
+    PRINTFORML 「そこはっあぁぁああああああ！皮をっ！剥かないっ！でっ！……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「そこはっあぁぁああああああ！皮をっ！剥かないっ！でっ！……」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは蟲が陰核を弄りつくすのを喘ぎ、震えながら見つめることしかできない！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは蟲が陰核を弄りつくすのを喘ぎ、震えながら見つめることしかできない！
+ENDIF
 					;発情　↑から連続で発生するので被りに注意
 					CASE 2
-						PRINTFORMW 「体が…熱い…ッ」
-						PRINTFORMDW マキは火照った体を抑えようと必死だ
+IF FLAG:AUTOMODE
+    PRINTFORML 「体が…熱い…ッ」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「体が…熱い…ッ」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは火照った体を抑えようと必死だ
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは火照った体を抑えようと必死だ
+ENDIF
 					;ふたなりになった瞬間…のはず
 					CASE 3
 						PRINTFORML 「な…なんなの…これ…」
 						PRINTFORML 「…まさか……ひゃ！？」
 						PRINTFORML マキは"ソレ"に触れると小さな悲鳴を上げた
-						PRINTFORMW 「触手の一部が寄生してる…そ、そのうち外れる…よね…？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「触手の一部が寄生してる…そ、そのうち外れる…よね…？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「触手の一部が寄生してる…そ、そのうち外れる…よね…？」
+ENDIF
+
 				ENDSELECT
 				;淫蟲の大群　V属性EPダメージ　稀に寄生
 			CASE 149
 				SELECTCASE ARG:2
 					;受けた時
 					CASE 1
-						PRINTFORMW 「ひっ、くっ、ぅぐぅぅぅぅぅぅぅぅ！」」
-						PRINTFORMDW マキは膣の中を蟲に蹂躙され口の端から涎を垂らしている
+IF FLAG:AUTOMODE
+    PRINTFORML 「ひっ、くっ、ぅぐぅぅぅぅぅぅぅぅ！」」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ひっ、くっ、ぅぐぅぅぅぅぅぅぅぅ！」」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは膣の中を蟲に蹂躙され口の端から涎を垂らしている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは膣の中を蟲に蹂躙され口の端から涎を垂らしている
+ENDIF
 					;寄生　↑から連続で発生するので被りに注意
 					CASE 2
-						PRINTFORMW 「…！？ま、まさか…！」
-						PRINTFORMDW マキは自らの下腹部を絶望と驚きの入り混じった眼差しで見つめている
+IF FLAG:AUTOMODE
+    PRINTFORML 「…！？ま、まさか…！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…！？ま、まさか…！」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは自らの下腹部を絶望と驚きの入り混じった眼差しで見つめている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは自らの下腹部を絶望と驚きの入り混じった眼差しで見つめている
+ENDIF
 				ENDSELECT
 			;落石　危機回避判定失敗でHPダメージ
 			CASE 150
 				SELECTCASE ARG:2
 					;回避失敗
 					CASE 1
-						PRINTFORMW 「いっ！？」
-						PRINTFORMDW マキは予想外のダメージを受け、少し涙目になりながら頭を押さえている
+IF FLAG:AUTOMODE
+    PRINTFORML 「いっ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「いっ！？」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは予想外のダメージを受け、少し涙目になりながら頭を押さえている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは予想外のダメージを受け、少し涙目になりながら頭を押さえている
+ENDIF
 					;回避成功
 					CASE 2
-						PRINTFORMW 「危ないなあ、もうっ」
-						PRINTFORMDW マキは危ないところで落石を避けた
+IF FLAG:AUTOMODE
+    PRINTFORML 「危ないなあ、もうっ」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「危ないなあ、もうっ」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは危ないところで落石を避けた
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは危ないところで落石を避けた
+ENDIF
 				ENDSELECT
 			;淫蟲ふたなり
 			CASE 152
 				;ふなたり化
 				IF ARG:2 == 1
-					PRINTFORMW 「ひっ！？……なっ、えっ？！」
-					PRINTFORMDW マキは予想外な展開についていけていない！
+IF FLAG:AUTOMODE
+    PRINTFORML 「ひっ！？……なっ、えっ？！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ひっ！？……なっ、えっ？！」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは予想外な展開についていけていない！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは予想外な展開についていけていない！
+ENDIF
 				;ふたなり攻め（２回目）
 				ELSEIF ARG:2 == 2
-					PRINTFORMW 「ひぁぁ！ま、待ってっ！んぁあっ！」
-					PRINTFORMDW マキは快楽に今にも屈しそうだ！
+IF FLAG:AUTOMODE
+    PRINTFORML 「ひぁぁ！ま、待ってっ！んぁあっ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ひぁぁ！ま、待ってっ！んぁあっ！」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは快楽に今にも屈しそうだ！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは快楽に今にも屈しそうだ！
+ENDIF
 				;回避
 				ELSEIF ARG:2 == 3
-					PRINTFORMDW 惜しい！
-					PRINTFORMW 「……！？何か、今悪寒が…」
+IF FLAG:AUTOMODE
+   PRINTFORMDL 惜しい！
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW 惜しい！
+ENDIF
+IF FLAG:AUTOMODE
+    PRINTFORML 「……！？何か、今悪寒が…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「……！？何か、今悪寒が…」
+ENDIF
+
 				ENDIF
 			;自販機 スプライト飲みたい
 			CASE 160
 				SELECTCASE ARG:2
 					;遭遇
 					CASE 0
-						PRINTFORMW 「………自販機？なんでこんな場所に？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「………自販機？なんでこんな場所に？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「………自販機？なんでこんな場所に？」
+ENDIF
+
 					;触手服
 					CASE 1
 						;装着なう
 						IF ARG:3 == 0
 							PRINTFORML 「ひっ…う、ああああああぁぁぁぁぁ…」
-							PRINTFORMW 「や、と、止まっ…！止まってぇぇぇ！！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「や、と、止まっ…！止まってぇぇぇ！！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「や、と、止まっ…！止まってぇぇぇ！！」
+ENDIF
+
 						;装着かんりょー
 						ELSE
 							PRINTFORML 「うぅ…ぁ！……っく、ひぅ…」
@@ -676,7 +1425,13 @@ ENDSELECT
 						;挿入なう
 						IF ARG:3 == 0
 							PRINTFORML 「がっ、あ゛あ゛あ゛あ゛あ゛あ゛ぁぁぁぁぁぁ！！」
-							PRINTFORMW 「そんな…太っ…あっ！…ひゃ！…んんんぅ！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「そんな…太っ…あっ！…ひゃ！…んんんぅ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「そんな…太っ…あっ！…ひゃ！…んんんぅ！」
+ENDIF
+
 						;挿入かんりょー
 						ELSE
 							PRINTFORML 「…………ぁぁぁぁ」
@@ -685,7 +1440,13 @@ ENDSELECT
 					CASE 3
 						;漬なう
 						IF ARG:3 == 0
-							PRINTFORMW 「んー！んんー！ごっ！んんんん！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「んー！んんー！ごっ！んんんん！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「んー！んんー！ごっ！んんんん！」
+ENDIF
+
 						;漬かんりょー
 						ELSE
 							PRINTFORML 「げほっげほっ…ごほっ…っがは……はぁ、はぁ…」
@@ -694,33 +1455,81 @@ ENDSELECT
 					CASE 4
 						;お前
 						IF ARG:3 == 0
-							PRINTFORMW 「……だ、大丈夫なのかな…」
+IF FLAG:AUTOMODE
+    PRINTFORML 「……だ、大丈夫なのかな…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「……だ、大丈夫なのかな…」
+ENDIF
+
 						;私！？
 						ELSEIF ARG:3 == 1
-							PRINTFORMW 「私っ！？…えぇ～…不安だなあ……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「私っ！？…えぇ～…不安だなあ……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「私っ！？…えぇ～…不安だなあ……」
+ENDIF
+
 						;ここは俺に任せろ
 						ELSE
-							PRINTFORMW 「な、何もないといいんだけど……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「な、何もないといいんだけど……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「な、何もないといいんだけど……」
+ENDIF
+
 						ENDIF
 					;能力強化 何にする？
 					CASE 5
 						;Ａ
 						IF ARG:3 == 0
 							PRINTFORML 「ひぐぅ！…っくぁぁぁぁ！ああああああああ！」
-							PRINTFORMW 「お、おひり、壊れちゃうぅうぅぅっ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「お、おひり、壊れちゃうぅうぅぅっ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「お、おひり、壊れちゃうぅうぅぅっ！？」
+ENDIF
+
 						;Ｂ
 						ELSEIF ARG:3 == 1
-							PRINTFORMW 「ひゃめ、そこは――お゛ひ゛い゛ぃぃぃい゛ぃぃっ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ひゃめ、そこは――お゛ひ゛い゛ぃぃぃい゛ぃぃっ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ひゃめ、そこは――お゛ひ゛い゛ぃぃぃい゛ぃぃっ！？」
+ENDIF
+
 						;Ｃ
 						ELSEIF ARG:3 == 2
-							PRINTFORMW 「ぐっ…かはっ…あああぁ！！！　はっ！！　うあ゛あああぁぁぁ！！！！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「ぐっ…かはっ…あああぁ！！！　はっ！！　うあ゛あああぁぁぁ！！！！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ぐっ…かはっ…あああぁ！！！　はっ！！　うあ゛あああぁぁぁ！！！！」
+ENDIF
+
 						;Ｄ ではなくＶ
 						ELSEIF ARG:3 == 3
-							PRINTFORMW 「あ゛っ！あっ！あっ！ひゃっ！あああっ！あ゛っ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「あ゛っ！あっ！あっ！ひゃっ！あああっ！あ゛っ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「あ゛っ！あっ！あっ！ひゃっ！あああっ！あ゛っ！？」
+ENDIF
+
 						;縮乳
 						ELSE
 							PRINTFORML 「ま、待ってくださ…い゛い゛い゛ぃぃぃぃぃぃぃぃぃ！？」
-							PRINTFORMW 「っくぁ！あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛！！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「っくぁ！あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛！！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「っくぁ！あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛あ゛！！」
+ENDIF
+
 						ENDIF
 					;あぽときしんなんちゃら
 					CASE 6
@@ -731,12 +1540,23 @@ ENDSELECT
 						;かんりょー
 						ELSE
 							PRINTFORML 「はぁーっ、はぁーっ、はぁーっ…」
-							PRINTFORMDW マキは自分の肺が小さくなったことを実感しながら、その小さな体躯で必死に呼吸している
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは自分の肺が小さくなったことを実感しながら、その小さな体躯で必死に呼吸している
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは自分の肺が小さくなったことを実感しながら、その小さな体躯で必死に呼吸している
+ENDIF
 						ENDIF
 					;ふたなりー
 					CASE 7
 						PRINTFORML 「ああぁぁっ！？っくぅ！」
-						PRINTFORMW 「うぅ…こんなものあっても……」
+IF FLAG:AUTOMODE
+    PRINTFORML 「うぅ…こんなものあっても……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「うぅ…こんなものあっても……」
+ENDIF
+
 					;帰れ
 					CASE 8
 						PRINTFORML 「何やら邪な気を感じますし、後回しにしましょう」
@@ -748,38 +1568,144 @@ ENDSELECT
 					SELECTCASE ARG:3
 						;襲われた
 						CASE 0
-							PRINTFORMW 「へぇっ？！」
-							PRINTFORMW 「ま、待ってってば！こういうのはちゃんと順序が…」
-							PRINTFORMW 「ひゃあっ！！ちょ、ちょっと！話聞いて…ひゃうぅ！？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「へぇっ？！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「へぇっ？！」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「ま、待ってってば！こういうのはちゃんと順序が…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ま、待ってってば！こういうのはちゃんと順序が…」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「ひゃあっ！！ちょ、ちょっと！話聞いて…ひゃうぅ！？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ひゃあっ！！ちょ、ちょっと！話聞いて…ひゃうぅ！？」
+ENDIF
+
 						;ナイスヘルプ
 						CASE 1
-							PRINTFORMW 「び、びっくりした…」
-							PRINTFORMW 「だ、大丈夫、ちゃんと出れるから…ね？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「び、びっくりした…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「び、びっくりした…」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「だ、大丈夫、ちゃんと出れるから…ね？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「だ、大丈夫、ちゃんと出れるから…ね？」
+ENDIF
+
 						;盛るなら勝手にどうぞ
 						CASE 2
-							PRINTFORMW 「全く、ダメなんだよ？ムラムラしたからって押し倒したりしちゃ」
-							PRINTFORMW 「…私だって怒るときは怒るんだからね」
-							PRINTFORMW 「これに懲りたら、二度としないでよ？」
+IF FLAG:AUTOMODE
+    PRINTFORML 「全く、ダメなんだよ？ムラムラしたからって押し倒したりしちゃ」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「全く、ダメなんだよ？ムラムラしたからって押し倒したりしちゃ」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「…私だって怒るときは怒るんだからね」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…私だって怒るときは怒るんだからね」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「これに懲りたら、二度としないでよ？」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「これに懲りたら、二度としないでよ？」
+ENDIF
+
 					ENDSELECT
 				ELSEIF ARG:2 == 1
 					SELECTCASE ARG:3
 						;ヒャッハー！
 						CASE 0
-							PRINTFORMW 「…ふ…………」
-							PRINTFORMW 「ふふっ…オイシソウ…」
+IF FLAG:AUTOMODE
+    PRINTFORML 「…ふ…………」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…ふ…………」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「ふふっ…オイシソウ…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「ふふっ…オイシソウ…」
+ENDIF
+
 						;ヒャッハー失敗からの自慰
 						CASE 1
-							PRINTFORMW 「あ、あの…ごめん…本当に反省してるから、だから今回だけは…」
-							PRINTFORMW 「…うぅ……分かった……」
-							PRINTFORMDW マキはゆっくりと自分の乳房と秘所を触り、自慰を始めた
-							PRINTFORMW 「う…『私は貴女様を気の迷いとはいえ犯そうとしました』んっ！」
-							PRINTFORMW 「『この羞恥に誓って』ぅんっ！…『ち、誓って、もう二度と致しません』っくぅ！」
-							PRINTFORMW 「『ですから…この弦巻マキを…お、お許しくださいま』…んんっ！」
-							PRINTFORMDW マキは性欲と羞恥心によって顔が真っ赤になっている
+IF FLAG:AUTOMODE
+    PRINTFORML 「あ、あの…ごめん…本当に反省してるから、だから今回だけは…」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「あ、あの…ごめん…本当に反省してるから、だから今回だけは…」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「…うぅ……分かった……」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「…うぅ……分かった……」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキはゆっくりと自分の乳房と秘所を触り、自慰を始めた
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキはゆっくりと自分の乳房と秘所を触り、自慰を始めた
+ENDIF
+IF FLAG:AUTOMODE
+    PRINTFORML 「う…『私は貴女様を気の迷いとはいえ犯そうとしました』んっ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「う…『私は貴女様を気の迷いとはいえ犯そうとしました』んっ！」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「『この羞恥に誓って』ぅんっ！…『ち、誓って、もう二度と致しません』っくぅ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「『この羞恥に誓って』ぅんっ！…『ち、誓って、もう二度と致しません』っくぅ！」
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 「『ですから…この弦巻マキを…お、お許しくださいま』…んんっ！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「『ですから…この弦巻マキを…お、お許しくださいま』…んんっ！」
+ENDIF
+
+IF FLAG:AUTOMODE
+   PRINTFORMDL マキは性欲と羞恥心によって顔が真っ赤になっている
+TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+PRINTFORMDW マキは性欲と羞恥心によって顔が真っ赤になっている
+ENDIF
 						;ヒャッハー成功
 						CASE 2
 							PRINTFORML 「それじゃぁ…」
-							PRINTFORMW 「イタダキマース…！」
+IF FLAG:AUTOMODE
+    PRINTFORML 「イタダキマース…！」
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  「イタダキマース…！」
+ENDIF
+
 					ENDSELECT
 				ENDIF
 			;該当コマンドなし

@@ -1,0 +1,30 @@
+﻿;オート中のメインフェイズでの行動処理
+;主人公を処理し、PTメンバーはそれに巻き込まれる形
+@PC_AUTO_EQUIP(CHARA_ID)
+#DIM LCOUNT
+#DIM CHARA_ID
+;LOCAL
+;0	LOOP
+;1	戦う相手
+;2	TEMP
+
+;行動不能ならスキップ
+IF CHECK_FINE(CHARA_ID) == 0 || CFLAG:(CHARA_ID):504 == 1 || CFLAG:(CHARA_ID):58 || CFLAG:(CHARA_ID):59
+	RETURN
+ENDIF
+
+;装備していない部位があれば優先的にチェック
+IF CFLAG:CHARA_ID:7 == 0 && CFLAG:CHARA_ID:8 == 0 && CFLAG:CHARA_ID:9 == 0
+	
+ELSE
+	RETURN
+ENDIF
+
+;CFLAG:CHARA_ID:1	戦闘素質
+;ABL:CHARA_ID:3	弾幕戦闘
+;ABL:CHARA_ID:4	道具戦闘
+
+
+
+
+

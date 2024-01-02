@@ -4,37 +4,157 @@
 IF CHARANUM <= 2
 	;最初からソロでクリアした場合
 	;別の意味で酷いエンディングなのは仕様
-	PRINTFORMW 気が遠くなる程の長きに渡る戦いの末、ついに%ARGS:0%は迷宮の主を打ち破る
-	PRINTFORMW 『これからどんどんエサを捕まえてくるつもりだったのに、最初のエサがこんな猛獣だったなんて…』
-	PRINTFORMW こいつ普通に喋れたのか。　というか人を猛獣扱いしないで欲しい
-	PRINTFORMW 『だが、例え私が滅びようとも、第二第三の触手が貴様らを襲うだろう……触手よ永遠なれー！！』
-	PRINTFORMW 謎の台詞を残してクイーンの身体が崩れてゆく
-	PRINTFORMW だが、今後どんな敵が攻めてこようとも、%ARGS:0%が居る限りその企みが成功することは無いだろう
-	PRINTFORMW 頑張れ%ARGS:0%！　強いぞ%ARGS:0%！　ボイチェビ少女達の貞操は君が守るんだ！
+IF FLAG:AUTOMODE
+    PRINTFORML 気が遠くなる程の長きに渡る戦いの末、ついに%ARGS:0%は迷宮の主を打ち破る
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  気が遠くなる程の長きに渡る戦いの末、ついに%ARGS:0%は迷宮の主を打ち破る
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 『これからどんどんエサを捕まえてくるつもりだったのに、最初のエサがこんな猛獣だったなんて…』
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  『これからどんどんエサを捕まえてくるつもりだったのに、最初のエサがこんな猛獣だったなんて…』
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML こいつ普通に喋れたのか。　というか人を猛獣扱いしないで欲しい
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  こいつ普通に喋れたのか。　というか人を猛獣扱いしないで欲しい
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 『だが、例え私が滅びようとも、第二第三の触手が貴様らを襲うだろう……触手よ永遠なれー！！』
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  『だが、例え私が滅びようとも、第二第三の触手が貴様らを襲うだろう……触手よ永遠なれー！！』
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 謎の台詞を残してクイーンの身体が崩れてゆく
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  謎の台詞を残してクイーンの身体が崩れてゆく
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML だが、今後どんな敵が攻めてこようとも、%ARGS:0%が居る限りその企みが成功することは無いだろう
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  だが、今後どんな敵が攻めてこようとも、%ARGS:0%が居る限りその企みが成功することは無いだろう
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 頑張れ%ARGS:0%！　強いぞ%ARGS:0%！　幻想郷の少女達の貞操は君が守るんだ！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  頑張れ%ARGS:0%！　強いぞ%ARGS:0%！　幻想郷の少女達の貞操は君が守るんだ！
+ENDIF
+
 	IF TALENT:1:0 == 1
 		;チートでも使わないと無理だよね、これ
-		PRINTFORMW 自らの貞操も守りきった君なら、きっと何でも守れるさ！
+IF FLAG:AUTOMODE
+    PRINTFORML 自らの貞操も守りきった君なら、きっと何でも守れるさ！
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  自らの貞操も守りきった君なら、きっと何でも守れるさ！
+ENDIF
+
 	ENDIF
 ELSE
-	PRINTFORMW クイーンが倒れると共に、封印されていた%ARGS:0%の力は、完全に元に戻った
-	PRINTFORMW だが、もう自分と共にこの迷宮を脱出してくれる仲間はいない……
-	PRINTFORMW 迷宮の中でも必死に笑顔を作り励ましてくれた%NAME:2%も、
+IF FLAG:AUTOMODE
+    PRINTFORML クイーンが倒れると共に、封印されていた%ARGS:0%の力は、完全に元に戻った
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  クイーンが倒れると共に、封印されていた%ARGS:0%の力は、完全に元に戻った
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML だが、もう自分と共にこの迷宮を脱出してくれる仲間はいない……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  だが、もう自分と共にこの迷宮を脱出してくれる仲間はいない……
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML 迷宮の中でも必死に笑顔を作り励ましてくれた%NAME:2%も、
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  迷宮の中でも必死に笑顔を作り励ましてくれた%NAME:2%も、
+ENDIF
+
 	IF CHARANUM < 4
-		PRINTFORMW 共に戦い、生き延びようと誓い合った%NAME:2%も、
+IF FLAG:AUTOMODE
+    PRINTFORML 共に戦い、生き延びようと誓い合った%NAME:2%も、
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  共に戦い、生き延びようと誓い合った%NAME:2%も、
+ENDIF
+
 	ELSE
-		PRINTFORMW 共に戦い、生き延びようと誓い合った%NAME:3%も、
+IF FLAG:AUTOMODE
+    PRINTFORML 共に戦い、生き延びようと誓い合った%NAME:3%も、
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  共に戦い、生き延びようと誓い合った%NAME:3%も、
+ENDIF
+
 	ENDIF
 	IF CHARANUM < 5
-		PRINTFORMW 泣きたいのを必死に堪え勇気を振り絞っていた%NAME:2%も、
+IF FLAG:AUTOMODE
+    PRINTFORML 泣きたいのを必死に堪え勇気を振り絞っていた%NAME:2%も、
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  泣きたいのを必死に堪え勇気を振り絞っていた%NAME:2%も、
+ENDIF
+
 	ELSE
-		PRINTFORMW 泣きたいのを必死に堪え勇気を振り絞っていた%NAME:4%も、
+IF FLAG:AUTOMODE
+    PRINTFORML 泣きたいのを必死に堪え勇気を振り絞っていた%NAME:4%も、
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  泣きたいのを必死に堪え勇気を振り絞っていた%NAME:4%も、
+ENDIF
+
 	ENDIF
-	PRINTFORMW 今は迷宮のどこかで魔物の餌食となり、その苗床となっている
+IF FLAG:AUTOMODE
+    PRINTFORML 今は迷宮のどこかで魔物の餌食となり、その苗床となっている
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  今は迷宮のどこかで魔物の餌食となり、その苗床となっている
+ENDIF
+
 	PRINTFORML 
-	PRINTFORMW もはや彼女達を助ける術はなく、手遅れだった
-	PRINTFORMW %ARGS:0%は嗚咽を噛みしめながら、迷宮を脱出し、出口を破壊する
-	PRINTFORMW これでこれ以上の被害者が出ることはないだろう
-	PRINTFORMW %ARGS:0%はそこで自分に泣き出す事を許し、膝をついて泣き叫んだ……
+IF FLAG:AUTOMODE
+    PRINTFORML もはや彼女達を助ける術はなく、手遅れだった
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  もはや彼女達を助ける術はなく、手遅れだった
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%は嗚咽を噛みしめながら、迷宮を脱出し、出口を破壊する
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%は嗚咽を噛みしめながら、迷宮を脱出し、出口を破壊する
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML これでこれ以上の被害者が出ることはないだろう
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  これでこれ以上の被害者が出ることはないだろう
+ENDIF
+
+IF FLAG:AUTOMODE
+    PRINTFORML %ARGS:0%はそこで自分に泣き出す事を許し、膝をついて泣き叫んだ……
+    TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+    PRINTFORMW  %ARGS:0%はそこで自分に泣き出す事を許し、膝をついて泣き叫んだ……
+ENDIF
+
 ENDIF
 
 PRINTFORML 
