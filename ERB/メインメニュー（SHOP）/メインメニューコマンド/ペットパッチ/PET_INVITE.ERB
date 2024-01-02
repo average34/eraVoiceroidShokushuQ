@@ -92,7 +92,12 @@ IF LOCAL < RAND:100
 	IF DA:対象:99 >0
 		PRINTFORML 何とか%SAVESTR:(対象)%を気絶させることに成功したものの、
 		PRINTFORML 倒れたその体を肉々しい地面が飲み込んでそのままどこかへ隠してしまった。
-		PRINTFORMW もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
+		IF FLAG:AUTOMODE
+			PRINTFORML もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
+		ENDIF
 	ENDIF
 	RETURN
 ENDIF
@@ -130,9 +135,24 @@ ENDIF
 PRINTFORML [1] - はい
 PRINTFORML [0] - いいえ
 $INPUT_LOOP
-INPUT
+IF FLAG:AUTOMODE
+	TINPUT FLAG:AUTOMODE * 400, MAX(RAND:30 - 28 ,0), 0, ""
+ELSE
+	INPUT
+ENDIF
+
 IF RESULT == 0
-	PRINTFORMW %SAVESTR:対象%は悲しそうに去っていった……
+	IF FLAG:AUTOMODE
+		PRINTFORML %SAVESTR:対象%は悲しそうに去っていった……
+		TWAIT FLAG:AUTOMODE * 400, 0
+	ELSE
+		IF FLAG:AUTOMODE
+			PRINTFORML %SAVESTR:対象%は悲しそうに去っていった……
+			TWAIT FLAG:AUTOMODE * 400, 0
+		ELSE
+			PRINTFORMW %SAVESTR:対象%は悲しそうに去っていった……
+		ENDIF
+	ENDIF
 	RETURN
 ELSEIF RESULT != 1
 	GOTO INPUT_LOOP
@@ -140,13 +160,22 @@ ENDIF
 PRINTFORML %SAVESTR:対象%を仲間にした！
 PRINTFORML 名前を何にしますか？
 PRINTFORML 何も入力しないと種族名が入ります
-INPUTS
+IF FLAG:AUTOMODE
+	TINPUTS FLAG:AUTOMODE * 3000, "", 0, ""
+ELSE
+	INPUTS
+ENDIF
 IF RESULTS == ""
 	PETNAME = %SAVESTR:対象%
 ELSE
 	PETNAME = %RESULTS%
 ENDIF
-PRINTFORMW %PETNAME%を仲間にした！
+IF FLAG:AUTOMODE
+	PRINTFORML %PETNAME%を仲間にした！
+	TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+	PRINTFORMW %PETNAME%を仲間にした！
+ENDIF
 ;悪堕ちキャラの場合元キャラを記憶
 ;入れるタイミングは地味にここしかない
 IF DA:対象:99 >0

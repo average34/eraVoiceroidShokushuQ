@@ -1065,14 +1065,20 @@ WHILE 1
 						ENDSELECT
 					CASE 137
 						SELECTCASE TALENT:キャラID:LCOUNT
+							CASE -2
+								PRINTFORM %"封",4,LEFT%
 							CASE -1
 								PRINTFORM %"未",4,LEFT%
 							CASE 1
-								PRINTFORM %"異",4,LEFT%
+								PRINTFORM %"活",4,LEFT%
 							CASE 2
-								PRINTFORM %"肥",4,LEFT%
+								PRINTFORM %"異",4,LEFT%
 							CASE 3
+								PRINTFORM %"肥",4,LEFT%
+							CASE 4
 								PRINTFORM %"苗",4,LEFT%
+							CASE 5
+								PRINTFORM %"雌",4,LEFT%
 							CASE 0
 								PRINTFORM %"普",4,LEFT%
 							CASEELSE
@@ -1356,7 +1362,7 @@ WHILE 1
 							TALENT:(キャラID):(入力) = 0
 				CASE 137
 					TALENT:(キャラID):(入力) ++
-						SIF TALENT:(キャラID):(入力) == 4
+						SIF TALENT:(キャラID):(入力) == 6
 							TALENT:(キャラID):(入力) = -1
 				CASE 140
 					TALENT:(キャラID):(入力) ++

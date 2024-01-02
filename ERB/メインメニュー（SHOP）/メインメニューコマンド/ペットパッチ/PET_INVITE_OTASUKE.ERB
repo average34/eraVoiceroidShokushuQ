@@ -18,7 +18,12 @@ IF RESULTS == ""
 ELSE
 	PETNAME = %RESULTS%
 ENDIF
-PRINTFORMW %PETNAME%を仲間にした！
+IF FLAG:AUTOMODE
+	PRINTFORML %PETNAME%を仲間にした！
+	TWAIT FLAG:AUTOMODE * 400, 0
+ELSE
+	PRINTFORMW %PETNAME%を仲間にした！
+ENDIF
 ;-----------------
 ;入力終わり
 ;-----------------
