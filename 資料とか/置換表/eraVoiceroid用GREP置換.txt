@@ -17,3 +17,10 @@ ELSE
 	WAIT
 ENDIF
 を意味する
+
+-------------------------------------
+
+置換前
+(\t*)IF FLAG:AUTOMODE.*\r\n\t*TWAIT FLAG:AUTOMODE \* (.+)\r\n\t*ELSE\r\n\t*WAIT\r\n\t*ENDIF
+置換後
+$1CALL WAIT_AUTOMODE($2)
