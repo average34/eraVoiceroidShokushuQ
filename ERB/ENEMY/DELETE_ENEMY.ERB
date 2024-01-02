@@ -146,22 +146,14 @@ IF DA:(ARG:0):0 == 19
 	IF RESULT == 0
 		;娘の追加ができない場合、キャンセル(滅多にないはず)
 		
-		IF FLAG:AUTOMODE
-			PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は、泣きながら去って行った…
-			TWAIT FLAG:AUTOMODE * 200, 0
-		ELSE
-			PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は、泣きながら去って行った…
-		ENDIF
+		PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は、泣きながら去って行った…
+		CALL WAIT_AUTOMODE(200, 0)
 		GOTO DELETE_START
 	ENDIF
 		;娘を倒した場合、味方陣営に移る
 		
-		IF FLAG:AUTOMODE
-			PRINTFORML オシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
-			TWAIT FLAG:AUTOMODE * 200, 0
-		ELSE
-			PRINTFORMW オシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
-		ENDIF
+		PRINTFORML オシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+		CALL WAIT_AUTOMODE(200, 0)
 
 	;●入れ替わりパッチごっそりと改修START
 		;該当する娘を虚空から呼び出す
@@ -202,12 +194,8 @@ IF (DA:(ARG:0):85 & 1) && DA:(ARG:0):88 && DA:(ARG:0):4 == FLAG:5 && LOCAL:3 == 
 	;条件に両刀を追加。効果がレズ中毒に比例するように変更。無駄な括弧があるけどまあこっちのほうが分かりやすいし……
 	ELSEIF FLAG:4 > 0 && DA:(ARG:0):88 == 2 && RAND:75 < (ABL:1:13 * (TALENT:1:81 + 1)) + (ABL:(FLAG:10):13 * (TALENT:(FLAG:10):81 + 1)) + (ABL:(FLAG:11):131 * (TALENT:(FLAG:11):81 + 1)) + 2
 		
-			IF FLAG:AUTOMODE
-				PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
-				TWAIT FLAG:AUTOMODE * 200, 0
-			ELSE
-				PRINTFORMW %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
-			ENDIF
+			PRINTFORML %CALLNAME:1%%TACHI()%にオシオキされた%SAVESTR:(ARG:0)%は心を入れ替えた！
+			CALL WAIT_AUTOMODE(200, 0)
 		CALL ADD_NPC_ENEMY(DA:(ARG:0):0)
 	
 	;お仕置きフラグ

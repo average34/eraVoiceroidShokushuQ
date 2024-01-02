@@ -360,12 +360,8 @@ IF ARG:1 == 0 && FLAG:520 == 1
 	ENDIF
 	IF LOCAL:4 > RAND:100 && GET_PENIS(ARG:0) == 0
 		CFLAG:(ARG:0):42 += 2 + RAND:5
-		IF FLAG:AUTOMODE
-			PRINTFORML %CALLNAME:(ARG:0)%は部屋に汚染されふたなりになってしまった……
-			TWAIT FLAG:AUTOMODE * 300, 0
-		ELSE
-			PRINTFORMW %CALLNAME:(ARG:0)%は部屋に汚染されふたなりになってしまった……
-		ENDIF
+		PRINTFORML %CALLNAME:(ARG:0)%は部屋に汚染されふたなりになってしまった……
+		CALL WAIT_AUTOMODE(300, 0)
 	ENDIF
 ENDIF
 
@@ -431,12 +427,8 @@ IF LOCAL:1 > LOCAL:2 && CFLAG:(ARG:0):20 == 0
 		FOR LOCAL:0, 1, FLAG:1
 		;ウォッチャーチェック
 			IF FLAG:5 == DA:(LOCAL:0):4 && DA:(LOCAL:0):0 == 97
-				IF FLAG:AUTOMODE
-					PRINTFORML 自慰にふける姿をウォッチャーに見られてしまった！
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW 自慰にふける姿をウォッチャーに見られてしまった！
-				ENDIF
+				PRINTFORML 自慰にふける姿をウォッチャーに見られてしまった！
+				CALL WAIT_AUTOMODE(400, 0)
 			ENDIF
 			IF TALENT:(ARG:0):36
 				;恥薄いならダメージなし

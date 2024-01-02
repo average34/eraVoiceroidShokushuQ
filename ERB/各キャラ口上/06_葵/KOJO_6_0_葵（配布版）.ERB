@@ -80,12 +80,8 @@ SELECTCASE ARG:0
 				ELSE
 					;拘束・丸呑み時
 					IF CFLAG:20 || CFLAG:21
-						IF FLAG:AUTOMODE
-							PRINTFORML 「お、落ち着いて……ここは、抜け出せる隙を……っくうぅ！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「お、落ち着いて……ここは、抜け出せる隙を……っくうぅ！」
-						ENDIF
+						PRINTFORML 「お、落ち着いて……ここは、抜け出せる隙を……っくうぅ！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;発情
 					ELSEIF CFLAG:28
@@ -93,12 +89,8 @@ SELECTCASE ARG:0
 						CALL HEARTCB(0xD02830)
 						PRINTFORM 　や、だめ……っ
 						CALL HEARTCB(0xD02830)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;MP1/4以下
 					ELSEIF MAXBASE:MP/4 >= BASE:MP
@@ -172,12 +164,8 @@ SELECTCASE ARG:0
 			CASE 2
 				;煙玉
 				IF ARG:2 == 59
-					IF FLAG:AUTOMODE
-						PRINTFORML 「こんなときは……これです！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「こんなときは……これです！」
-					ENDIF
+					PRINTFORML 「こんなときは……これです！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;自分に使用
 				ELSEIF ARG:3 == TARGET
@@ -245,12 +233,8 @@ SELECTCASE ARG:0
 						ENDIF
 					;包帯
 					CASE 67
-						IF FLAG:AUTOMODE
-							PRINTFORML 「応急処置、ってところですね」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「応急処置、ってところですね」
-						ENDIF
+						PRINTFORML 「応急処置、ってところですね」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;その他
 					CASEELSE
@@ -334,12 +318,8 @@ SELECTCASE ARG:0
 						ENDIF
 					;包帯
 					CASE 67
-						IF FLAG:AUTOMODE
-							PRINTFORML 「ん、\@ TALENT:122 ? ぼく # 私 \@がやってあげますから……！　じっとしてて！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「ん、\@ TALENT:122 ? ぼく # 私 \@がやってあげますから……！　じっとしてて！」
-						ENDIF
+						PRINTFORML 「ん、\@ TALENT:122 ? ぼく # 私 \@がやってあげますから……！　じっとしてて！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;その他
 					CASEELSE
@@ -508,22 +488,14 @@ SELECTCASE ARG:0
 				IF CFLAG:28
 					SELECTCASE RAND:2
 						CASE 0
-							IF FLAG:AUTOMODE
-								PRINTFORML 「お、落ち着いて……しっかり、しっかり当て\@ TALENT:122 ? るんだ # れば \@……」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「お、落ち着いて……しっかり、しっかり当て\@ TALENT:122 ? るんだ # れば \@……」
-							ENDIF
+							PRINTFORML 「お、落ち着いて……しっかり、しっかり当て\@ TALENT:122 ? るんだ # れば \@……」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「こ、こんなのしか、撃てません……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -565,22 +537,14 @@ SELECTCASE ARG:0
 						CASE 0
 							PRINTFORM 「ッはぁ、だめっ、集中できないよぉ……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「ぜ、全然狙いが定まらないです……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -618,22 +582,14 @@ SELECTCASE ARG:0
 						CASE 0
 							PRINTFORM 「ッはぁ、だめっ、集中できないよぉ……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「ぜ、全然狙いが定まらない……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;拘束・丸呑み時
@@ -648,12 +604,8 @@ SELECTCASE ARG:0
 								PRINTFORMDW 葵は全ての力を振り絞った！
 							ENDIF
 						CASEELSE
-							IF FLAG:AUTOMODE
-								PRINTFORML 「外したら……いや、こんな奴に避けられるわけ……！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「外したら……いや、こんな奴に避けられるわけ……！」
-							ENDIF
+							PRINTFORML 「外したら……いや、こんな奴に避けられるわけ……！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -708,12 +660,8 @@ SELECTCASE ARG:0
 							CASE 0
 								PRINTFORML 「この一撃で、終わらせなきゃ……！」
 							CASEELSE
-								IF FLAG:AUTOMODE
-									PRINTFORML 「いっ……今は、攻撃、してこないで……よ」
-									TWAIT FLAG:AUTOMODE * 400, 0
-								ELSE
-									PRINTFORMW  「いっ……今は、攻撃、してこないで……よ」
-								ENDIF
+								PRINTFORML 「いっ……今は、攻撃、してこないで……よ」
+								CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 葵は微かに震えながら溜めを開始した……
 						ENDSELECT
@@ -732,12 +680,8 @@ SELECTCASE ARG:0
 					IF CFLAG:28
 						PRINTFORM 「うぅっ　はぁああ―――ッ
 						CALL HEARTCB(0xD02830)
-						IF FLAG:AUTOMODE
-							PRINTFORML ！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  ！」
-						ENDIF
+						PRINTFORML ！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;MP1/4以下またはHP1/5以下
 					ELSEIF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/5 >= BASE:HP
@@ -746,20 +690,12 @@ SELECTCASE ARG:0
 					ELSE
 						SELECTCASE RAND:2
 							CASE 0
-								IF FLAG:AUTOMODE
-									PRINTFORML 「……これで決まりです！」
-									TWAIT FLAG:AUTOMODE * 400, 0
-								ELSE
-									PRINTFORMW  「……これで決まりです！」
-								ENDIF
+								PRINTFORML 「……これで決まりです！」
+								CALL WAIT_AUTOMODE(400, 0)
 
 							CASEELSE
-								IF FLAG:AUTOMODE
-									PRINTFORML 「……やぁああああッ！！」
-									TWAIT FLAG:AUTOMODE * 400, 0
-								ELSE
-									PRINTFORMW  「……やぁああああッ！！」
-								ENDIF
+								PRINTFORML 「……やぁああああッ！！」
+								CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -781,12 +717,8 @@ SELECTCASE ARG:0
 				ELSE
 					SELECTCASE RAND:2
 						CASE 0
-							IF FLAG:AUTOMODE
-								PRINTFORML 「これで足止めして、次に繋げる…！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「これで足止めして、次に繋げる…！」
-							ENDIF
+							PRINTFORML 「これで足止めして、次に繋げる…！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORML 「ふっ！はあっ！」
@@ -813,23 +745,15 @@ SELECTCASE ARG:0
 					ENDIF
 				;MP1/4以下またはHP1/5以下
 				ELSEIF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/5 >= BASE:HP
-					IF FLAG:AUTOMODE
-						PRINTFORML 「これでまとめて倒します……！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「これでまとめて倒します……！」
-					ENDIF
+					PRINTFORML 「これでまとめて倒します……！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;ふつう
 				ELSE
 					SELECTCASE RAND:2
 						CASE 0
-							IF FLAG:AUTOMODE
-								PRINTFORML 「この角度から撃てば！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「この角度から撃てば！」
-							ENDIF
+							PRINTFORML 「この角度から撃てば！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORML 「どいてください！！」
@@ -852,24 +776,16 @@ SELECTCASE ARG:0
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　落ちついて、まずはしっかり当てる\@ TALENT:122 ? んだ # んです \@……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「ん、んんぅ
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　だめ、力はいんない……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -911,22 +827,14 @@ SELECTCASE ARG:0
 						CASE 0
 							PRINTFORM 「適当に撃っちゃダメｄす……で、でもぉ……
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「は、離れてたら大丈夫……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  ！」
-							ENDIF
+							PRINTFORML ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -968,22 +876,14 @@ SELECTCASE ARG:0
 						CASE 0
 							PRINTFORM 「適当に撃っちゃダメ……で、でもぉ……
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「は、離れてたら大丈夫……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  ！」
-							ENDIF
+							PRINTFORML ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -1078,21 +978,13 @@ SELECTCASE ARG:0
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　ちゃんと狙って……んっ
 					CALL HEARTCB(0xD02830)
-					IF FLAG:AUTOMODE
-						PRINTFORML ！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  ！」
-					ENDIF
+					PRINTFORML ！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;MP1/4以下またはHP1/5以下
 				ELSEIF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/5 >= BASE:HP
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ううっ、早く終わってくださいよ……！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ううっ、早く終わってくださいよ……！」
-					ENDIF
+					PRINTFORML 「ううっ、早く終わってくださいよ……！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;ふつう
 				ELSE
@@ -1120,12 +1012,8 @@ SELECTCASE ARG:0
 						CASE 0
 							PRINTFORM 「力が入らないなら、せめてしっかり狙わないと……ッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「ふ、ふうぅっ……
@@ -1175,22 +1063,14 @@ SELECTCASE ARG:0
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　うぅっ、当たってぇ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  ！」
-							ENDIF
+							PRINTFORML ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「や、やだっ、今は近寄らないでくださいッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  ！」
-							ENDIF
+							PRINTFORML ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -1232,22 +1112,14 @@ SELECTCASE ARG:0
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　うぅっ、当たってぇ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  ！」
-							ENDIF
+							PRINTFORML ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「や、やだっ、今は近寄らないでくださいッ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  ！」
-							ENDIF
+							PRINTFORML ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				;MP1/4以下またはHP1/5以下
@@ -1283,12 +1155,8 @@ SELECTCASE ARG:0
 			CASE 33
 				;MP1/4以下またはHP1/5以下
 				IF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/5 >= BASE:HP
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ひっ、もう来ないで……！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ひっ、もう来ないで……！」
-					ENDIF
+					PRINTFORML 「ひっ、もう来ないで……！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;ふつう
 				ELSE
@@ -1322,12 +1190,8 @@ SELECTCASE ARG:0
 					ENDIF
 				;MP1/4以下またはHP1/5以下
 				ELSEIF MAXBASE:MP/4 >= BASE:MP || MAXBASE:HP/5 >= BASE:HP
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ひ、卑怯だなんて思わないで下さいねっ！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ひ、卑怯だなんて思わないで下さいねっ！」
-					ENDIF
+					PRINTFORML 「ひ、卑怯だなんて思わないで下さいねっ！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;ふつう
 				ELSE
@@ -1373,30 +1237,18 @@ SELECTCASE ARG:0
 					ELSEIF CFLAG:28
 						PRINTFORM 「抜け出さなきゃ……このままじゃ、おかしくなる……ぅ
 						CALL HEARTCB(0xD02830)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;MP1/4以下
 					ELSEIF MAXBASE:MP/4 >= BASE:MP
-						IF FLAG:AUTOMODE
-							PRINTFORML 「もう、やだああぁ！　はなして、はなしてぇええッ！！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「もう、やだああぁ！　はなして、はなしてぇええッ！！」
-						ENDIF
+						PRINTFORML 「もう、やだああぁ！　はなして、はなしてぇええッ！！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;HP1/5以下
 					ELSEIF MAXBASE:HP/5 >= BASE:HP
-						IF FLAG:AUTOMODE
-							PRINTFORML 「……痛い、けど、抜け出さないと……！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「……痛い、けど、抜け出さないと……！」
-						ENDIF
+						PRINTFORML 「……痛い、けど、抜け出さないと……！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;ふつう
 					ELSE
@@ -1542,12 +1394,8 @@ SELECTCASE ARG:0
 						CALL HEARTCB(0xD02830)
 						PRINTFORM 　\@ TALENT:122 ? 私 # わたし \@、触手さんの奴隷になりますぅ……ッ
 						CALL HEARTCB(0xD02830)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;触手中毒Lv3
 					ELSEIF ABL:11 >= 3
@@ -1563,35 +1411,23 @@ SELECTCASE ARG:0
 						PRINTFORML 」
 						PRINTFORM 「ですから……ね？　\@ TALENT:122 ? ぼくのこと、もっといっぱい、可愛がってぇ # 私のこと、もっといっぱい、可愛がって下さい \@……
 						CALL HEARTCB(0xD02830,2)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 返事とばかりに、葵を拘束する触手の力が一層強まる……
 						PRINTFORM 「うぁっ……きたきたぁ
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM 　\@ TALENT:122 ? ぼく # 私 \@、触手さんと一緒にいれて、すっごく幸せですよ……
 						CALL HEARTCB(0xD02830,2)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;ふつう
 					ELSE
 						PRINTFORML （……はぁ……こんな状況じゃ、何しても無駄ですよね……）
 						PRINTFORMDL 葵は全てを諦め、目に涙を浮かべながら言った……
-						IF FLAG:AUTOMODE
-							PRINTFORML 「……ひっぐ……もう、好きにしてください……　これからはもう……暴れたりなんて、しませんからぁ……っ」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「……ひっぐ……もう、好きにしてください……　これからはもう……暴れたりなんて、しませんからぁ……っ」
-						ENDIF
+						PRINTFORML 「……ひっぐ……もう、好きにしてください……　これからはもう……暴れたりなんて、しませんからぁ……っ」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;定期的に喋るほう
@@ -1613,12 +1449,8 @@ SELECTCASE ARG:0
 						;深い催眠
 						IF CFLAG:43 >= 3
 							PRINTFORMDL 今や葵の体は完全に支配され、命令された通りに体が動いてしまう……
-							IF FLAG:AUTOMODE
-								PRINTFORML 「……や、やだぁ……もう、やめてよぉおおおおッ！！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「……や、やだぁ……もう、やめてよぉおおおおッ！！」
-							ENDIF
+							PRINTFORML 「……や、やだぁ……もう、やめてよぉおおおおッ！！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						;浅い催眠
 						ELSE
@@ -1702,36 +1534,24 @@ SELECTCASE ARG:0
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　ちょっと、ちょっとだけぇ……ッ
 							CALL HEARTCB(0xD02830,2)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 1
 							PRINTFORM 「んんぅッ
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　疼いて……がまん、できないぃ……ッ
 							CALL HEARTCB(0xD02830,2)
-							IF FLAG:AUTOMODE
-								PRINTFORML ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  ！」
-							ENDIF
+							PRINTFORML ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「それどころじゃない、のにぃ……ッ
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　んっ、んん……ッ
 							CALL HEARTCB(0xD02830,2)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ENDIF
@@ -1912,12 +1732,8 @@ SELECTCASE ARG:0
 						PRINTFORMDL 葵の細い腕が、%ARGS:1%の体を全力で押さえつける……！
 						PRINTFORM 「んん……おねがいですからぁッ、暴れないでぇっ
 						CALL HEARTCB(0xD02830,2)
-						IF FLAG:AUTOMODE
-							PRINTFORML ！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  ！」
-						ENDIF
+						PRINTFORML ！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;浅い催眠
 					ELSE
@@ -1925,12 +1741,8 @@ SELECTCASE ARG:0
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！　ご、ごめんなさい、体が勝手にぃッ
 						CALL HEARTCB(0xD02830,2)
-						IF FLAG:AUTOMODE
-							PRINTFORML ！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  ！」
-						ENDIF
+						PRINTFORML ！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;感情操作
@@ -1941,24 +1753,16 @@ SELECTCASE ARG:0
 						PRINTFORML 少し悩むような素振りを見せた挙句、、葵は強い力で%ARGS:1%を背後から押し倒した！
 						PRINTFORM 「……しょうがないですねぇ、なら、ちゃんと見ててくださいね……？　……ん、ぁ、はぁッ
 						CALL HEARTCB(0xD02830,2)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;浅い催眠
 					ELSE
 						PRINTFORML （そうだ……%ARGS:1%と一緒に、こいつを誘惑すれば……！）
 						PRINTFORM 「ふふっ……ちょっとだけ、付き合ってもいますっ
 						CALL HEARTCB(0xD02830)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;認識操作
@@ -2000,12 +1804,8 @@ SELECTCASE ARG:0
 						CALL HEARTCB(0xD02830)
 						PRINTFORM 　もう、はなさないんですからぁ
 						CALL HEARTCB(0xD02830,2)
-						IF FLAG:AUTOMODE
-							PRINTFORML 」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  」
-						ENDIF
+						PRINTFORML 」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				ELSE
@@ -2046,12 +1846,8 @@ SELECTCASE ARG:0
 						PRINTFORMDL 葵は晴れやかな笑顔をしながら、自ら触手に近づいていった……
 					;浅い催眠
 					ELSE
-						IF FLAG:AUTOMODE
-							PRINTFORML （……いや、冷静に考えるんですよ……！　こんなところに、いるわけない……！）
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  （……いや、冷静に考えるんですよ……！　こんなところに、いるわけない……！）
-						ENDIF
+						PRINTFORML （……いや、冷静に考えるんですよ……！　こんなところに、いるわけない……！）
+						CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL そう思い込むことにした葵だが、催眠の影響で徐々にその意識は薄れていく
 						IF FLAG:AUTOMODE
@@ -2068,12 +1864,8 @@ SELECTCASE ARG:0
 					;深い催眠
 					IF CFLAG:43 >= 3
 						PRINTFORML 「……っ、にげなきゃ……　このままじゃ……」
-						IF FLAG:AUTOMODE
-							PRINTFORML 「……？　にげる……？　にげるって、どっちに……？」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「……？　にげる……？　にげるって、どっちに……？」
-						ENDIF
+						PRINTFORML 「……？　にげる……？　にげるって、どっちに……？」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 催眠にかかった葵は方向感覚を奪われていて、どの方向に逃げればいいのか認識できない
 						IF FLAG:AUTOMODE
@@ -2095,12 +1887,8 @@ SELECTCASE ARG:0
 			CASE 76
 				;肉体操作
 				IF FLAG:526 == 0
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ん、んん……ッ！？　い、いったい、何を……　ぁッ」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ん、んん……ッ！？　い、いったい、何を……　ぁッ」
-					ENDIF
+					PRINTFORML 「ん、んん……ッ！？　い、いったい、何を……　ぁッ」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;感情操作
 				ELSEIF FLAG:526 == 1
@@ -2118,12 +1906,8 @@ SELECTCASE ARG:0
 					ENDIF
 				;認識操作
 				ELSEIF FLAG:526 == 2
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ん……ねむくなってきちゃった、おやすみなさい……」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ん……ねむくなってきちゃった、おやすみなさい……」
-					ENDIF
+					PRINTFORML 「ん……ねむくなってきちゃった、おやすみなさい……」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 				ENDIF
@@ -2132,30 +1916,18 @@ SELECTCASE ARG:0
 				;肉体操作
 				IF FLAG:526 == 0
 					PRINTFORML 「な、体が勝手に……っ？？　\@ TALENT:122 ? ぼく # 私 \@……操られてる\@ TALENT:122 ? んだよね # んですよね \@……？」
-					IF FLAG:AUTOMODE
-						PRINTFORML （\@ TALENT:122 ? ぼく # 私 \@にこんなことさせるなんて……こいつ、何考えてるの……？）
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  （\@ TALENT:122 ? ぼく # 私 \@にこんなことさせるなんて……こいつ、何考えてるの……？）
-					ENDIF
+					PRINTFORML （\@ TALENT:122 ? ぼく # 私 \@にこんなことさせるなんて……こいつ、何考えてるの……？）
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;感情操作
 				ELSEIF FLAG:526 == 1
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ふふっ……おしおきしてあげます、感謝して下さいっ♪」 
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ふふっ……おしおきしてあげます、感謝して下さいっ♪」 
-					ENDIF
+					PRINTFORML 「ふふっ……おしおきしてあげます、感謝して下さいっ♪」 
+					CALL WAIT_AUTOMODE(400, 0)
 
 				;認識操作
 				ELSEIF FLAG:526 == 2
-					IF FLAG:AUTOMODE
-						PRINTFORML 「……これ、じゃまそうですね……こうしてあげます」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「……これ、じゃまそうですね……こうしてあげます」
-					ENDIF
+					PRINTFORML 「……これ、じゃまそうですね……こうしてあげます」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 				ENDIF
@@ -2168,12 +1940,8 @@ SELECTCASE ARG:0
 						PRINTFORML 「……うぅ、もう……体、動かないです……ッぁ」
 						PRINTFORM 「……ん……ちゅ
 						CALL HEARTCB(0xD02830)
-						IF FLAG:AUTOMODE
-							PRINTFORML 　んむ、んん……ッぷは、はぁっ、はぁ……ッ」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  　んむ、んん……ッぷは、はぁっ、はぁ……ッ」
-						ENDIF
+						PRINTFORML 　んむ、んん……ッぷは、はぁっ、はぁ……ッ」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					;感情操作
 					ELSEIF FLAG:526 == 1
@@ -2212,20 +1980,12 @@ SELECTCASE ARG:0
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　れろ、えろっ、んん～っ……はッ、はぁぁ……
 							CALL HEARTCB(0xD02830,2)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORMDL 醜い肉色をした触手から唇を離すと、葵は触手に向かって微笑みながら言った……
-							IF FLAG:AUTOMODE
-								PRINTFORML 「ふふっ……お姉ちゃん、ずっと私とキスしたいって、思ってたんでしょ……♪」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「ふふっ……お姉ちゃん、ずっと私とキスしたいって、思ってたんでしょ……♪」
-							ENDIF
+							PRINTFORML 「ふふっ……お姉ちゃん、ずっと私とキスしたいって、思ってたんでしょ……♪」
+							CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORML 「お見通しですよぉ……ま、そう思ってたのは、私もなんですけど♪」
 							IF FLAG:AUTOMODE
@@ -2269,12 +2029,8 @@ SELECTCASE ARG:0
 							ENDIF
 							PRINTFORM 「ん……ちゅ
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 　ん……ぷ……ふぁッ、ぢゅる……」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  　ん……ぷ……ふぁッ、ぢゅる……」
-							ENDIF
+							PRINTFORML 　ん……ぷ……ふぁッ、ぢゅる……」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -2286,12 +2042,8 @@ SELECTCASE ARG:0
 					PRINTFORM 　ふぁ、んんむ……ッ
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORML 」
-					IF FLAG:AUTOMODE
-						PRINTFORML （\@ TALENT:122 ? ぼく # 私 \@……何してるの……！？　こんな……\@ FLAG:10 ? 人が見てるのに…… # \@！）
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  （\@ TALENT:122 ? ぼく # 私 \@……何してるの……！？　こんな……\@ FLAG:10 ? 人が見てるのに…… # \@！）
-					ENDIF
+					PRINTFORML （\@ TALENT:122 ? ぼく # 私 \@……何してるの……！？　こんな……\@ FLAG:10 ? 人が見てるのに…… # \@！）
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ENDIF
 			;手淫（Lv2～）
@@ -2346,12 +2098,8 @@ PRINTFORMDW 懸命に奉仕する葵の顔に、太い触手から放たれた�
 ENDIF
 						;深い催眠
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ん……なんですか、ヌいてほしいんですか？　それなら……人に頼む態度ってものがありますよね？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ん……なんですか、ヌいてほしいんですか？　それなら……人に頼む態度ってものがありますよね？」
-ENDIF
+PRINTFORML 「ん……なんですか、ヌいてほしいんですか？　それなら……人に頼む態度ってものがありますよね？」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORMDL ヒュプノの低く醜い唸り声が部屋の中に響く……
 							PRINTFORM 「ふふっ……よくできました♪　手だけでイかせてあげます……
@@ -2427,12 +2175,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！　んんっ、ぁ、出し過ぎですってばぁ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					;認識操作
 					ELSEIF FLAG:526 == 2
@@ -2461,12 +2205,8 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　はやく……はやくだしてくださいッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 				ENDIF
 			;パイズリ（Lv3～）
@@ -2531,12 +2271,8 @@ ENDIF
 						PRINTFORML 「わ……私、おっぱいで気持ちよくなりたい……ですから……！」
 						PRINTFORM 「……そ、それでいっぱい、こすって、気持ちよくしてくださいぃ……
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORML 「……ッ」
@@ -2546,12 +2282,8 @@ ENDIF
 						PRINTFORML 」
 						PRINTFORM 「そ、それで……おっぱいに、せーえき……たくさん、かけてください……ッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				ENDIF
@@ -2596,12 +2328,8 @@ ELSE
 PRINTFORMDW 触手に刺された葵の目は見開かれ、異質な物を注射されているのは明らかだ……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「な、速い…ッ！　っくうぅ！　あ、あぁっ……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「な、速い…ッ！　っくうぅ！　あ、あぁっ……！！」
-ENDIF
+PRINTFORML 「な、速い…ッ！　っくうぅ！　あ、あぁっ……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;大振り（ぶっかけ）
@@ -2617,12 +2345,8 @@ ELSE
 PRINTFORMDW 謎の液体にかかった葵は、異常とまで言えるほど全身を震え上がらせ、その場に蹲ってしまった……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ッ！？　や……だぁ、なんです、これ……ッ！！　はぁ、はぁ……っ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ッ！？　や……だぁ、なんです、これ……ッ！！　はぁ、はぁ……っ！！」
-ENDIF
+PRINTFORML 「……ッ！？　や……だぁ、なんです、これ……ッ！！　はぁ、はぁ……っ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;全体攻撃
@@ -2637,12 +2361,8 @@ ELSE
 PRINTFORMDW 満身創痍の体に激痛を叩きこまれ、葵は意識を手放しかけた……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……っぐ！　ううっ、何するん\@ TALENT:122 ? だよ # ですか \@！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……っぐ！　ううっ、何するん\@ TALENT:122 ? だよ # ですか \@！」
-ENDIF
+PRINTFORML 「……っぐ！　ううっ、何するん\@ TALENT:122 ? だよ # ですか \@！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;クイーンお供
@@ -2659,12 +2379,8 @@ ELSE
 PRINTFORMDW 全身を壁に叩きつけられ、激しい痛みに葵は悶絶した……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……っくううぅ！　こ、これくらい……ッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……っくううぅ！　こ、これくらい……ッ！！」
-ENDIF
+PRINTFORML 「……っくううぅ！　こ、これくらい……ッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;大振り
@@ -2681,12 +2397,8 @@ PRINTFORMDW 恐怖による震えと、全身を叩きつけられたことに�
 ENDIF
 					ELSE
 						PRINTFORML 「……ふん、こんなの、簡単に……い゜ッ！？」
-IF FLAG:AUTOMODE
-	PRINTFORML 「……くうぅッ！　こんな攻撃も避けられないなんて！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……くうぅッ！　こんな攻撃も避けられないなんて！」
-ENDIF
+PRINTFORML 「……くうぅッ！　こんな攻撃も避けられないなんて！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ガーディアン
@@ -2706,12 +2418,8 @@ PRINTFORMDW 傷口に侵入した毒液は、疼きと共に痛みを更に広�
 ENDIF
 						ELSE
 							PRINTFORML 「……くぅッ！　うわっ、なんか付いた、気持ち悪……っ！」
-IF FLAG:AUTOMODE
-	PRINTFORML 「……って、何これ、毒……！？　……うぁ、あ！？　か、体が、おかしいっ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……って、何これ、毒……！？　……うぁ、あ！？　か、体が、おかしいっ！？」
-ENDIF
+PRINTFORML 「……って、何これ、毒……！？　……うぁ、あ！？　か、体が、おかしいっ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -2727,12 +2435,8 @@ PRINTFORMDW 葵は容赦なく服を引きちぎられ、その下の柔肌が�
 ENDIF
 						ELSE
 							PRINTFORML 「いたぁっ！？　……わっ、やだっ、くっつかないでよぉ！！」
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ひいっ！？　や、やめて！　服はダメだってばぁ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ひいっ！？　や、やめて！　服はダメだってばぁ！！」
-ENDIF
+PRINTFORML 「……ひいっ！？　や、やめて！　服はダメだってばぁ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -2742,12 +2446,8 @@ ENDIF
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
 						SELECTCASE CFLAG:801
 							CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひッ、いひぁああああッ！！？？　ぁっ、いたい、いたいよぉ……ッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひッ、いひぁああああッ！！？？　ぁっ、いたい、いたいよぉ……ッ！」
-ENDIF
+PRINTFORML 「ひッ、いひぁああああッ！！？？　ぁっ、いたい、いたいよぉ……ッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 							CASE 1
@@ -2764,22 +2464,14 @@ ENDIF
 						SELECTCASE CFLAG:801
 							CASE 0
 								PRINTFORMDL 避けられないと悟った葵は、なんとか粘液のない触手だけ体で受けるようにしている
-IF FLAG:AUTOMODE
-	PRINTFORML 「く、うぅっ！　あれにさえ当たらなければ大丈夫……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「く、うぅっ！　あれにさえ当たらなければ大丈夫……！」
-ENDIF
+PRINTFORML 「く、うぅっ！　あれにさえ当たらなければ大丈夫……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 							CASE 1
 								PRINTFORMDL %ARGS:1%は、粘液が滴る触手を葵の元へ集中させた……！
-IF FLAG:AUTOMODE
-	PRINTFORML 「……な、なんですかこの数！？　こんな、避けられるわけ……くっあああああッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……な、なんですかこの数！？　こんな、避けられるわけ……くっあああああッ！？」
-ENDIF
+PRINTFORML 「……な、なんですかこの数！？　こんな、避けられるわけ……くっあああああッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 = 0
 						ENDSELECT
@@ -2801,12 +2493,8 @@ PRINTFORMDW 喋ることが出来ず、命乞いすらできない葵は、心�
 ENDIF
 						ELSE
 							PRINTFORML 「……し、しまった…！？　……ぁぐ！　ぅう……！」
-IF FLAG:AUTOMODE
-	PRINTFORML 「く、は、ぁ……！　は……は、な、し、て……ぇッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「く、は、ぁ……！　は……は、な、し、て……ぇッ！」
-ENDIF
+PRINTFORML 「く、は、ぁ……！　は……は、な、し、て……ぇッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -2821,12 +2509,8 @@ ELSE
 PRINTFORMDW 鞭状の触手に躾けられ、葵は簡単に屈服してしまった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……うっ！　く、ううう……！　……ま、まだ、まだまだぁ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……うっ！　く、ううう……！　……ま、まだ、まだまだぁ！」
-ENDIF
+PRINTFORML 「……うっ！　く、ううう……！　……ま、まだ、まだまだぁ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -2846,12 +2530,8 @@ PRINTFORMDW 喋ることが出来ず、命乞いすらできない葵は、心�
 ENDIF
 						ELSE
 							PRINTFORML 「……し、しまった…！？　……ぁぐ！　ぅう……！」
-IF FLAG:AUTOMODE
-	PRINTFORML 「く、は、ぁ……！　は……は、な、し、て……ぇッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「く、は、ぁ……！　は……は、な、し、て……ぇッ！」
-ENDIF
+PRINTFORML 「く、は、ぁ……！　は……は、な、し、て……ぇッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -2866,12 +2546,8 @@ ELSE
 PRINTFORMDW 背中に触手を何度も叩きつけられ、葵は上体を反らしながら%ARGS:1%に懇願した……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……う、嘘っ！？　ひ、いぃ、やぁああッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……う、嘘っ！？　ひ、いぃ、やぁああッ！！」
-ENDIF
+PRINTFORML 「……う、嘘っ！？　ひ、いぃ、やぁああッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -2891,12 +2567,8 @@ ELSE
 PRINTFORMDW 傷ついた体に徹底的に触手を叩き込まれ、葵の心はすぐに折られてしまった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……く、うッ！！　こ、この……ぉ！　抜け出したら、ボッコボコにしてやる\@ TALENT:122 ? っ # んですから \@……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……く、うッ！！　こ、この……ぉ！　抜け出したら、ボッコボコにしてやる\@ TALENT:122 ? っ # んですから \@……！」
-ENDIF
+PRINTFORML 「……く、うッ！！　こ、この……ぉ！　抜け出したら、ボッコボコにしてやる\@ TALENT:122 ? っ # んですから \@……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					;HP0または全裸
@@ -2911,12 +2583,8 @@ ELSE
 PRINTFORMDW 立場を思い知らされた葵の体は、小動物のように小さく震えている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……う、ぁあああッ！！　くぅ、こ、こんなやつなんかにぃ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……う、ぁあああッ！！　くぅ、こ、こんなやつなんかにぃ……！」
-ENDIF
+PRINTFORML 「……う、ぁあああッ！！　くぅ、こ、こんなやつなんかにぃ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -2931,12 +2599,8 @@ ELSE
 PRINTFORMDW 気丈な振る舞いも甲斐無しに、葵は数秒後には無様に哀願していた……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぃっ！？　……い、痛くないです！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぃっ！？　……い、痛くないです！！」
-ENDIF
+PRINTFORML 「ひぃっ！？　……い、痛くないです！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -2967,12 +2631,8 @@ ENDIF
 					ELSE
 						SELECTCASE CFLAG:801
 							CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「ッくあああぁ！！　い、痛い\@ TALENT:122 ? なぁ、もう #  \@……ぃいッく！？　ま、また……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ッくあああぁ！！　い、痛い\@ TALENT:122 ? なぁ、もう #  \@……ぃいッく！？　ま、また……！」
-ENDIF
+PRINTFORML 「ッくあああぁ！！　い、痛い\@ TALENT:122 ? なぁ、もう #  \@……ぃいッく！？　ま、また……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 							CASE 1
@@ -3002,12 +2662,8 @@ ELSE
 PRINTFORMDW 葵は泣きながら腹部を押さえ、地獄のような痛みに堪えた……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ぅええぇッ！？　……ぁ、はぁ、はぁ……っ！　い……痛くない、痛くないです……っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ぅええぇッ！？　……ぁ、はぁ、はぁ……っ！　い……痛くない、痛くないです……っ！」
-ENDIF
+PRINTFORML 「……ぅええぇッ！？　……ぁ、はぁ、はぁ……っ！　い……痛くない、痛くないです……っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -3022,12 +2678,8 @@ ELSE
 PRINTFORMDW 強烈な痛みと吐き気の前に、葵に服を気にしている余裕など無かった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-ENDIF
+PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3045,12 +2697,8 @@ ELSE
 PRINTFORMDW 葵は腹部を押さえながらフラフラとよろめいて、うつ伏せに倒れこんでしまった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ぅええぇッ！？　……こ、これ、は……ちょっと、むりですぅ……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ぅええぇッ！？　……こ、これ、は……ちょっと、むりですぅ……」
-ENDIF
+PRINTFORML 「……ぅええぇッ！？　……こ、これ、は……ちょっと、むりですぅ……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -3065,12 +2713,8 @@ ELSE
 PRINTFORMDW 強烈な痛みと吐き気の前に、葵に服を気にしている余裕など無かった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-ENDIF
+PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3116,12 +2760,8 @@ ELSE
 PRINTFORMDW 強烈な痛みと吐き気の前に、葵に服を気にしている余裕など無かった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-ENDIF
+PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3146,12 +2786,8 @@ ELSE
 PRINTFORMDW %ARGS:1%は全身で葵を壁に押し付けながら、口内の触手で顔を舐め回している……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……あ、まず……！！　や、あ―――ぐうぅうッ！？　……ゆ、油断大敵……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……あ、まず……！！　や、あ―――ぐうぅうッ！？　……ゆ、油断大敵……」
-ENDIF
+PRINTFORML 「……あ、まず……！！　や、あ―――ぐうぅうッ！？　……ゆ、油断大敵……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -3166,12 +2802,8 @@ ELSE
 PRINTFORMDW 強烈な痛みと吐き気の前に、葵に服を気にしている余裕など無かった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
-ENDIF
+PRINTFORML 「……なっ！　く、ぅううッ！！　ぁ……こ、こら、服ッ！　バカ、食べないでえぇ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3197,31 +2829,19 @@ ELSE
 PRINTFORMDW 空ろな目をしながら、葵はピクピクと痙攣している……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……が、はぁああッ！！　ぐ、ううう……！　よくも……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……が、はぁああッ！！　ぐ、ううう……！　よくも……！」
-ENDIF
+PRINTFORML 「……が、はぁああッ！！　ぐ、ううう……！　よくも……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
 						;HP1/5以下かつ表現Hard以上
 						IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「あ……や、めぇええッ！？　ダメ、服は、服はぁ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あ……や、めぇええッ！？　ダメ、服は、服はぁ……ッ」
-ENDIF
+PRINTFORML 「あ……や、めぇええッ！？　ダメ、服は、服はぁ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひっ！？　や……だぁ！！　……あ、服！　ちょ、返してぇ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひっ！？　や……だぁ！！　……あ、服！　ちょ、返してぇ！」
-ENDIF
+PRINTFORML 「ひっ！？　や……だぁ！！　……あ、服！　ちょ、返してぇ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3243,12 +2863,8 @@ ELSE
 PRINTFORMDW 脱力感と快感とに同時に襲われ、葵は意識を飛ばしかけている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「んああ……ぁ、そこ、吸っちゃだめぇええ……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んああ……ぁ、そこ、吸っちゃだめぇええ……」
-ENDIF
+PRINTFORML 「んああ……ぁ、そこ、吸っちゃだめぇええ……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -3268,12 +2884,8 @@ ELSE
 PRINTFORMDW 極限状態での強烈な脱力感により、葵は快感すら覚え始めている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ふぁ、あぁ…！　く……ぅ、こんな……の、全然、効かない\@ TALENT:122 ? っ # んですからぁ \@……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ふぁ、あぁ…！　く……ぅ、こんな……の、全然、効かない\@ TALENT:122 ? っ # んですからぁ \@……！」
-ENDIF
+PRINTFORML 「ふぁ、あぁ…！　く……ぅ、こんな……の、全然、効かない\@ TALENT:122 ? っ # んですからぁ \@……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3286,39 +2898,23 @@ ENDIF
 						IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
 							PRINTFORML 「……うえぇ！？　は、早く、落とさないと……！」
 							PRINTFORMDL だが、毒液を落とそうとする葵の手が震えだし、次第に全身が震え始める……
-IF FLAG:AUTOMODE
-	PRINTFORML 「あ……ああ、あああ……ぁッ！！　こ……こんなの、って……ぇッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あ……ああ、あああ……ぁッ！！　こ……こんなの、って……ぇッ！！」
-ENDIF
+PRINTFORML 「あ……ああ、あああ……ぁッ！！　こ……こんなの、って……ぇッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……くうぅ！？　ゆ、油断した……！　ぁ、はぁ、はぁっ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……くうぅ！？　ゆ、油断した……！　ぁ、はぁ、はぁっ……！」
-ENDIF
+PRINTFORML 「……くうぅ！？　ゆ、油断した……！　ぁ、はぁ、はぁっ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
 						;HP1/5以下かつ表現Hard以上
 						IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ひぃいい！？　ふ、服がぁ……！？　ううぅ、ひどいよぉ……っ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ひぃいい！？　ふ、服がぁ……！？　ううぅ、ひどいよぉ……っ」
-ENDIF
+PRINTFORML 「……ひぃいい！？　ふ、服がぁ……！？　ううぅ、ひどいよぉ……っ」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひっ！？　……はぁ、よかったです、服だけを溶かす液体で……って、全然よくないです！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひっ！？　……はぁ、よかったです、服だけを溶かす液体で……って、全然よくないです！」
-ENDIF
+PRINTFORML 「ひっ！？　……はぁ、よかったです、服だけを溶かす液体で……って、全然よくないです！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3342,12 +2938,8 @@ ELSE
 PRINTFORMDW しかし、全身の鋭い痛みに耐えられず、葵はその場で蹲ってしまった……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわっ！？　……うう、この子、意外と速い……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわっ！？　……うう、この子、意外と速い……」
-ENDIF
+PRINTFORML 「うわっ！？　……うう、この子、意外と速い……」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;アクティニア
@@ -3361,32 +2953,20 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　へ、変なとこ、吸うな……ぁッ
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							PRINTFORML 「う、あぁ……は、離してぇ……うぅ」
-IF FLAG:AUTOMODE
-	PRINTFORML （この子の体、柔らかい……　ちょっと好きかも……いやいやいや！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （この子の体、柔らかい……　ちょっと好きかも……いやいやいや！）
-ENDIF
+PRINTFORML （この子の体、柔らかい……　ちょっと好きかも……いやいやいや！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
 						PRINTFORML 「……ッひぃいいいい！！？？　いや、いやぁあああああッ！？」
 						PRINTFORMDL 血液を吸い取られている葵の息は次第に荒くなっていき、目の前が霞み始める……
-IF FLAG:AUTOMODE
-	PRINTFORML 「ぁ、はぁ、はぁ……ッ！！　だ、めぇええ……ッ！！　こんなの、ほんとにしんじゃいますよ……ッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ぁ、はぁ、はぁ……ッ！！　だ、めぇええ……ッ！！　こんなの、ほんとにしんじゃいますよ……ッ！！」
-ENDIF
+PRINTFORML 「ぁ、はぁ、はぁ……ッ！！　だ、めぇええ……ッ！！　こんなの、ほんとにしんじゃいますよ……ッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;スライム、ブロブ
@@ -3404,12 +2984,8 @@ ELSE
 PRINTFORMDW %ARGS:1%の身体の一部にまみれながら、苦痛を堪えられない葵は小さく蹲っている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「きゃあッ！？　こ、この子……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「きゃあッ！？　こ、この子……！」
-ENDIF
+PRINTFORML 「きゃあッ！？　こ、この子……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -3423,12 +2999,8 @@ ELSE
 PRINTFORMDW 致命的な一撃は逃れるものの、細かい攻撃が葵の傷を増やしていく……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……うわぁっ！？　く、避けきれな……ひぃいい！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……うわぁっ！？　く、避けきれな……ひぃいい！？」
-ENDIF
+PRINTFORML 「……うわぁっ！？　く、避けきれな……ひぃいい！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3437,20 +3009,12 @@ ENDIF
 				CASE 128
 					;HP1/5以下かつ表現Hard以上
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「……い、ったぁあああッ！！　……はぁ、ぁ、はぁああ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……い、ったぁあああッ！！　……はぁ、ぁ、はぁああ……ッ」
-ENDIF
+PRINTFORML 「……い、ったぁあああッ！！　……はぁ、ぁ、はぁああ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「に、逃げ場が……！　う、っぐぅ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「に、逃げ場が……！　う、っぐぅ！」
-ENDIF
+PRINTFORML 「に、逃げ場が……！　う、っぐぅ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ブロブ
@@ -3458,20 +3022,12 @@ ENDIF
 				CASE 130
 					;HP1/5以下かつ表現Hard以上
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ひッ、ぐぅううッ！？　い、いやぁ、やめてぇ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ひッ、ぐぅううッ！？　い、いやぁ、やめてぇ……ッ」
-ENDIF
+PRINTFORML 「……ひッ、ぐぅううッ！？　い、いやぁ、やめてぇ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「あ、あぶな……！？　い、ったぁッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あ、あぶな……！？　い、ったぁッ！？」
-ENDIF
+PRINTFORML 「あ、あぶな……！？　い、ったぁッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;アルラウネ、ドリアード
@@ -3490,12 +3046,8 @@ ELSE
 PRINTFORMDW 普通の躾とは違う、暴力的な平手に、葵は涙を堪えることができなかった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぃっ！？　ふ、ふざけないでください！　こんなことで……いたぁッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぃっ！？　ふ、ふざけないでください！　こんなことで……いたぁッ！？」
-ENDIF
+PRINTFORML 「ひぃっ！？　ふ、ふざけないでください！　こんなことで……いたぁッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					;全裸時
@@ -3510,12 +3062,8 @@ ELSE
 PRINTFORMDW 鞭を受け体を仰け反らせる葵の姿を見て、%ARGS:1%は甲高い笑い声を上げている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「う、ぁあああッ！？　くぅっ、まだまだです！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「う、ぁあああッ！？　くぅっ、まだまだです！」
-ENDIF
+PRINTFORML 「う、ぁあああッ！？　くぅっ、まだまだです！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -3529,12 +3077,8 @@ ELSE
 PRINTFORMDW 吹き飛んだ服の一部に手を伸ばす葵の手を、%ARGS:1%は笑いながら踏みにじる……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「痛ッたぁ！？　……な、なんて攻撃……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「痛ッたぁ！？　……な、なんて攻撃……！」
-ENDIF
+PRINTFORML 「痛ッたぁ！？　……な、なんて攻撃……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3563,12 +3107,8 @@ ENDIF
 					ELSE
 						SELECTCASE RAND:2
 							CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「ッぐぎぃ！？　あっ、や、やめて……っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ッぐぎぃ！？　あっ、や、やめて……っ！」
-ENDIF
+PRINTFORML 「ッぐぎぃ！？　あっ、や、やめて……っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
 								PRINTFORML 「んはぁああああッ！！　う、ぐう……っ！」
@@ -3595,21 +3135,13 @@ ELSE
 PRINTFORMDW 極限状態の中幻覚を見せられたような感覚になり、葵は混乱している……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひいいっ！？　な、何それ、やぁああああッ！！？？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひいいっ！？　な、何それ、やぁああああッ！！？？」
-ENDIF
+PRINTFORML 「ひいいっ！？　な、何それ、やぁああああッ！！？？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ふっ、はっ！　……ッ、あううっ！！　くっ、強い……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ふっ、はっ！　……ッ、あううっ！！　くっ、強い……！」
-ENDIF
+PRINTFORML 「ふっ、はっ！　……ッ、あううっ！！　くっ、強い……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;二段
@@ -3641,12 +3173,8 @@ ENDIF
 							SELECTCASE RAND:2
 							CASE 1
 								PRINTFORML 「くうっ！？　や、め、ぇえええッ！？」
-IF FLAG:AUTOMODE
-	PRINTFORML 「ぅううっ！　……か、はぁっ……！　……は、はな、せ……ッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ぅううっ！　……か、はぁっ……！　……は、はな、せ……ッ！！」
-ENDIF
+PRINTFORML 「ぅううっ！　……か、はぁっ……！　……は、はな、せ……ッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
 								PRINTFORML 「……ぐうっ……！　や……あぁっ……！　い、いい加減に……\@ TALENT:122 ? しろ # してくださいよぉ \@……ッ！！」
@@ -3659,12 +3187,8 @@ ENDIF
 							ENDSELECT
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……くっ、ぁ……！？　や、ぁあああッ！！　……うう……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……くっ、ぁ……！？　や、ぁあああッ！！　……うう……！」
-ENDIF
+PRINTFORML 「……くっ、ぁ……！？　や、ぁあああッ！！　……うう……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;全体
@@ -3673,29 +3197,17 @@ ENDIF
 					IF FLAG:507 >= 1
 						;HP1/5以下
 						IF MAXBASE:HP/5 >= BASE:HP
-IF FLAG:AUTOMODE
-	PRINTFORML 「んあぁあああッ！！！　……ぁ、はぁ、はぁ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んあぁあああッ！！！　……ぁ、はぁ、はぁ……ッ」
-ENDIF
+PRINTFORML 「んあぁあああッ！！！　……ぁ、はぁ、はぁ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「く、ぅうう！　ぁ、ああッ！　この……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「く、ぅうう！　ぁ、ああッ！　この……！」
-ENDIF
+PRINTFORML 「く、ぅうう！　ぁ、ああッ！　この……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「くぅっ……！　\@ TALENT:122 ? ぼく # 私 \@には片手間で十分、ってこと\@ TALENT:122 ? か # ですか \@……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「くぅっ……！　\@ TALENT:122 ? ぼく # 私 \@には片手間で十分、ってこと\@ TALENT:122 ? か # ですか \@……！」
-ENDIF
+PRINTFORML 「くぅっ……！　\@ TALENT:122 ? ぼく # 私 \@には片手間で十分、ってこと\@ TALENT:122 ? か # ですか \@……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;フェアリーイーター
@@ -3706,29 +3218,17 @@ ENDIF
 						;HP1/5以下
 						IF MAXBASE:HP/5 >= BASE:HP
 							PRINTFORMDL 血が抜けていく感覚と共に、葵の力が少しずつ失われていく……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ッ！？　……ぁ、ぁぁ、ぁ―――！！？？　そ、そん、な……やだ……やですよぉおおおおッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ッ！？　……ぁ、ぁぁ、ぁ―――！！？？　そ、そん、な……やだ……やですよぉおおおおッ！！」
-ENDIF
+PRINTFORML 「……ッ！？　……ぁ、ぁぁ、ぁ―――！！？？　そ、そん、な……やだ……やですよぉおおおおッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ッ！　こ、い……つ、血を、吸ってるん、ですか……！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ッ！　こ、い……つ、血を、吸ってるん、ですか……！？」
-ENDIF
+PRINTFORML 「……ッ！　こ、い……つ、血を、吸ってるん、ですか……！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ッ！？　う、ぁ、あぁ……！　こい……つ、なに、してる、の……！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ッ！？　う、ぁ、あぁ……！　こい……つ、なに、してる、の……！？」
-ENDIF
+PRINTFORML 「……ッ！？　う、ぁ、あぁ……！　こい……つ、なに、してる、の……！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;コウノトリ
@@ -3745,12 +3245,8 @@ ELSE
 PRINTFORMDW 葵は丸く蹲りながら、手を出してしまったことを必死で詫びた……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……くうぅ、ッ！　今助けるから、\@ TALENT:122 ? ぼく # 私 \@のことは気にしないで……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……くうぅ、ッ！　今助けるから、\@ TALENT:122 ? ぼく # 私 \@のことは気にしないで……！」
-ENDIF
+PRINTFORML 「……くうぅ、ッ！　今助けるから、\@ TALENT:122 ? ぼく # 私 \@のことは気にしないで……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;フコウノトリ
@@ -3766,12 +3262,8 @@ ELSE
 PRINTFORMDW 今までに経験したことのない凶悪な痛みに、葵は意識を飛ばしかける……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「きゃあああぁッ！！？？　あ、いた、いたいぃいいいいッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「きゃあああぁッ！！？？　あ、いた、いたいぃいいいいッ！！」
-ENDIF
+PRINTFORML 「きゃあああぁッ！！？？　あ、いた、いたいぃいいいいッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;大振り
@@ -3786,12 +3278,8 @@ PRINTFORMDW 体だけでなく口内や鼻にまで精液が至り、内側か�
 ENDIF
 				;全体（大振り）
 				CASE 144
-IF FLAG:AUTOMODE
-	PRINTFORML 「だ……だめ、ッあぁあああああ！！！　……ぅ、ぁ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「だ……だめ、ッあぁあああああ！！！　……ぅ、ぁ……ッ」
-ENDIF
+PRINTFORML 「だ……だめ、ッあぁあああああ！！！　……ぅ、ぁ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 				;ユニコーン
 				;通常（拘束時）
@@ -3806,12 +3294,8 @@ ELSE
 PRINTFORMDW 葵は触手を解くことができず、泣きながら絶叫するのみだった……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわぁああっ！？　ちょっと、これぇ……！　うううぅ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわぁああっ！？　ちょっと、これぇ……！　うううぅ……！」
-ENDIF
+PRINTFORML 「うわぁああっ！？　ちょっと、これぇ……！　うううぅ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						;　（酔ったとかそういう）
 					ENDIF
@@ -3827,12 +3311,8 @@ ELSE
 PRINTFORMDW 強烈な一撃を貰った葵は息を切らしながら腹を抱え蹲っている……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……っ、速い……！？　くう―――ぁぐッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……っ、速い……！？　くう―――ぁぐッ！？」
-ENDIF
+PRINTFORML 「……っ、速い……！？　くう―――ぁぐッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ラミア
@@ -3840,20 +3320,12 @@ ENDIF
 				CASE 147
 					;HP1/5以下かつ表現Hard以上
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひゃあああああッ！！？？　ッはぁ、いたい、よぉ……ッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひゃあああああッ！！？？　ッはぁ、いたい、よぉ……ッ！！」
-ENDIF
+PRINTFORML 「ひゃあああああッ！！？？　ッはぁ、いたい、よぉ……ッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「痛ぁッ！？　くぅ！　ぅうう……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「痛ぁッ！？　くぅ！　ぅうう……！！」
-ENDIF
+PRINTFORML 「痛ぁッ！？　くぅ！　ぅうう……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ミミック
@@ -3885,12 +3357,8 @@ ELSE
 PRINTFORMDW 全身を床に叩きつけられ、あまりの痛みに葵は呼吸すらままならない……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ちょっと、数、多いです……！　ふぁあああぁッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ちょっと、数、多いです……！　ふぁあああぁッ！！」
-ENDIF
+PRINTFORML 「ちょっと、数、多いです……！　ふぁあああぁッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3910,31 +3378,19 @@ ELSE
 PRINTFORMDW 一撃を喰らった葵はピクリと体を跳ねさせ、そのまま放心してしまった……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「んああぁッ！！　\@ TALENT:122 ? こんなの、全然痛くない # こんなの平気です \@……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んああぁッ！！　\@ TALENT:122 ? こんなの、全然痛くない # こんなの平気です \@……！」
-ENDIF
+PRINTFORML 「んああぁッ！！　\@ TALENT:122 ? こんなの、全然痛くない # こんなの平気です \@……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
 						;HP1/5以下かつ表現Hard以上
 						IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ぅあぁああッ！！？？　……ぁ、はぁ、ひ、ひどいよぉ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ぅあぁああッ！！？？　……ぁ、はぁ、ひ、ひどいよぉ……ッ」
-ENDIF
+PRINTFORML 「……ぅあぁああッ！！？？　……ぁ、はぁ、ひ、ひどいよぉ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「く、うぁああ！！　ちぃっ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「く、うぁああ！！　ちぃっ……！」
-ENDIF
+PRINTFORML 「く、うぁああ！！　ちぃっ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -3943,20 +3399,12 @@ ENDIF
 				CASE 150
 					;HP1/5以下かつ表現Hard以上
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「……くうううぅッ！？　……こ、これくらい、避けなきゃなのにぃ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……くうううぅッ！？　……こ、これくらい、避けなきゃなのにぃ……！」
-ENDIF
+PRINTFORML 「……くうううぅッ！？　……こ、これくらい、避けなきゃなのにぃ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぃいい！？　この、生意気な……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぃいい！？　この、生意気な……！！」
-ENDIF
+PRINTFORML 「ひぃいい！？　この、生意気な……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;大振り
@@ -3964,31 +3412,19 @@ ENDIF
 					;HP1/5以下かつ表現Hard以上
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
 						PRINTFORML 「……いや、こないでぇええ！！　ぁ―――ッぐぅッッ！！？？」
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ぁ……ぁぁ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ぁ……ぁぁ」
-ENDIF
+PRINTFORML 「……ぁ……ぁぁ」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORML 「――ぅ、ぁあああッ！！？？」
-IF FLAG:AUTOMODE
-	PRINTFORML 「……く、ぅぅ……これは、キツいです……っ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……く、ぅぅ……これは、キツいです……っ」
-ENDIF
+PRINTFORML 「……く、ぅぅ……これは、キツいです……っ」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;全体
 				CASE 153
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわっ！？　\@ TALENT:122 ? ……っ # お、女の子の前で、何してるんですか！ \@」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわっ！？　\@ TALENT:122 ? ……っ # お、女の子の前で、何してるんですか！ \@」
-ENDIF
+PRINTFORML 「うわっ！？　\@ TALENT:122 ? ……っ # お、女の子の前で、何してるんですか！ \@」
+CALL WAIT_AUTOMODE(400, 0)
 
 				;ドリフター
 				;通常
@@ -3998,39 +3434,23 @@ ENDIF
 						;HP1/5以下かつ表現Hard以上
 						IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
 							PRINTFORML 「……やだっ、こっちこないでよぉ！！」
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぃっ……！？　……って、それだけ？　……はぁ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぃっ……！？　……って、それだけ？　……はぁ」
-ENDIF
+PRINTFORML 「ひぃっ……！？　……って、それだけ？　……はぁ」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「いたっ！？　うぅ、何なのよ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「いたっ！？　うぅ、何なのよ……！」
-ENDIF
+PRINTFORML 「いたっ！？　うぅ、何なのよ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「あっ、すみませ……って、貴方か！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あっ、すみませ……って、貴方か！」
-ENDIF
+PRINTFORML 「あっ、すみませ……って、貴方か！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;通常その2
 				CASE 155
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわっ……地味な嫌がらせを……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわっ……地味な嫌がらせを……！」
-ENDIF
+PRINTFORML 「うわっ……地味な嫌がらせを……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				;ハウンド
 				;通常、全体
@@ -4046,12 +3466,8 @@ ELSE
 PRINTFORMDW 足を取られた葵はそのまま転倒し、無防備な四つん這い姿勢になってしまっている……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわぁっ！？　うう、厄介な……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわぁっ！？　うう、厄介な……！」
-ENDIF
+PRINTFORML 「うわぁっ！？　うう、厄介な……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;男傀儡
@@ -4067,12 +3483,8 @@ ELSE
 PRINTFORMDW 自らの立場を思い知らされた葵は、泣きながら床を舐めることになった……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うぁああッ！？　……くぅ、この子、本気なの……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うぁああッ！？　……くぅ、この子、本気なの……！」
-ENDIF
+PRINTFORML 「うぁああッ！？　……くぅ、この子、本気なの……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;大振り？
@@ -4087,12 +3499,8 @@ ELSE
 PRINTFORMDW 大人の男による躾は、葵を絶望させ恐怖を植え付けるのに十分すぎるものだった……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぐぅっ！？　くううっ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぐぅっ！？　くううっ……！」
-ENDIF
+PRINTFORML 「ひぐぅっ！？　くううっ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ジェリーフィッシュ
@@ -4102,20 +3510,12 @@ ENDIF
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
 						PRINTFORML 「……ひぐぅうううッ！？　あ、はり、いや……ぁああああッ！！」
 						PRINTFORMDL 極限状態にあった葵は、針に刺されてトラウマを引き起こしてしまったようだ……
-IF FLAG:AUTOMODE
-	PRINTFORML 「あ……あ、あああ……！！　は、はくせい……やだ……やだあああ……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あ……あ、あああ……！！　は、はくせい……やだ……やだあああ……！！」
-ENDIF
+PRINTFORML 「あ……あ、あああ……！！　は、はくせい……やだ……やだあああ……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「っぐ！　あ、あぁ……！　す、吸われて、る……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「っぐ！　あ、あぁ……！　す、吸われて、る……！！」
-ENDIF
+PRINTFORML 「っぐ！　あ、あぁ……！　す、吸われて、る……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;フレッシュゴーレム
@@ -4177,12 +3577,8 @@ ELSE
 PRINTFORMDW 鞭が振り下ろされる度、葵の絶叫が響き渡る……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぎぃっ！？　痛いですよ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぎぃっ！？　痛いですよ！！」
-ENDIF
+PRINTFORML 「ひぎぃっ！？　痛いですよ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;単体攻撃（腹パン）
@@ -4197,12 +3593,8 @@ ELSE
 PRINTFORMDW 葵は後ろに数歩下がったのち、腹を押さえてしゃがみ込んでしまった……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ッ！！？？　ぐ……けほ、げほっ！　……はぁっ、あれぐらい、避けないと……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ッ！！？？　ぐ……けほ、げほっ！　……はぁっ、あれぐらい、避けないと……！」
-ENDIF
+PRINTFORML 「……ッ！！？？　ぐ……けほ、げほっ！　……はぁっ、あれぐらい、避けないと……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;サンダーラプター
@@ -4214,12 +3606,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！？　んぁ、やめ……んあああぁあああッッ
 						CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
 	PRINTFORMDL 強烈な電撃でも、今の葵は性的な刺激にしか感じられない……
@@ -4228,12 +3616,8 @@ ELSE
 PRINTFORMDW 強烈な電撃でも、今の葵は性的な刺激にしか感じられない……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うぁ、なに、して……ひぃいいいいッッ！！？？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うぁ、なに、して……ひぃいいいいッッ！！？？」
-ENDIF
+PRINTFORML 「うぁ、なに、して……ひぃいいいいッッ！！？？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;通常+C攻撃
@@ -4254,12 +3638,8 @@ ELSE
 PRINTFORMDW \@ (CFLAG:42 || TALENT:121 || TALENT:122) ? 擬似陰茎 # クリトリス \@への大きすぎる刺激に、葵は何度も腰を跳ねさせた……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ううぅ、だめぇ、そこはぁ……んぁああああッッ！！？？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ううぅ、だめぇ、そこはぁ……んぁああああッッ！！？？」
-ENDIF
+PRINTFORML 「ううぅ、だめぇ、そこはぁ……んぁああああッッ！！？？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;電撃
@@ -4276,12 +3656,8 @@ PRINTFORMDW 放電が止まった後の葵は、ただ小さな痙攣を繰り�
 ENDIF
 					ELSE
 						PRINTFORML 「……っぐ、うぁああああッ！！？？」
-IF FLAG:AUTOMODE
-	PRINTFORML 「……はぁ、はぁ、っ……！　こんなの、全然、大したことないです……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……はぁ、はぁ、っ……！　こんなの、全然、大したことないです……！」
-ENDIF
+PRINTFORML 「……はぁ、はぁ、っ……！　こんなの、全然、大したことないです……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				
@@ -4291,71 +3667,39 @@ ENDIF
 					IF MAXBASE:HP/5 >= BASE:HP && FLAG:507 >= 1
 						SELECTCASE RAND:4
 							CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「いやぁああああッ！！　……う、うう……　や、やめ、て……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「いやぁああああッ！！　……う、うう……　や、やめ、て……ッ」
-ENDIF
+PRINTFORML 「いやぁああああッ！！　……う、うう……　や、やめ、て……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「も、やだ、やだぁああああッ！！　……だ、だれかぁ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「も、やだ、やだぁああああッ！！　……だ、だれかぁ……ッ」
-ENDIF
+PRINTFORML 「も、やだ、やだぁああああッ！！　……だ、だれかぁ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 2
-IF FLAG:AUTOMODE
-	PRINTFORML 「ぁぐっ！？　いた、いたいってぇ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ぁぐっ！？　いた、いたいってぇ！！」
-ENDIF
+PRINTFORML 「ぁぐっ！？　いた、いたいってぇ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASEELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「んぐ、ぁ、ぅあああッ！！　こ、これ以上は、ほんとに……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んぐ、ぁ、ぅあああッ！！　こ、これ以上は、ほんとに……！」
-ENDIF
+PRINTFORML 「んぐ、ぁ、ぅあああッ！！　こ、これ以上は、ほんとに……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ELSE
 						SELECTCASE RAND:4
 							CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「くぅうっ！！　うう、ちゃんと避けなきゃ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「くぅうっ！！　うう、ちゃんと避けなきゃ……！」
-ENDIF
+PRINTFORML 「くぅうっ！！　うう、ちゃんと避けなきゃ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「うううっ、痛くない、痛くない、痛くない……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うううっ、痛くない、痛くない、痛くない……！！」
-ENDIF
+PRINTFORML 「うううっ、痛くない、痛くない、痛くない……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 2
-IF FLAG:AUTOMODE
-	PRINTFORML 「う、ぁああっ！　こ、これくらい……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「う、ぁああっ！　こ、これくらい……！」
-ENDIF
+PRINTFORML 「う、ぁああっ！　こ、これくらい……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASEELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「やぁああっ！　この……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「やぁああっ！　この……！」
-ENDIF
+PRINTFORML 「やぁああっ！　この……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -4383,12 +3727,8 @@ ELSE
 PRINTFORMDW 粘液を浴びた葵の柔肌は、厭らしく照り返している……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「わぁあああっ！？　ふ、服がぁ……っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「わぁあああっ！？　ふ、服がぁ……っ！」
-ENDIF
+PRINTFORML 「わぁあああっ！？　ふ、服がぁ……っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ガーディアン
@@ -4427,12 +3767,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　ぁめ、そんなに、絞らないでぇえええッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ELSE
 								PRINTFORML 「くうぅっ！　痛いのに……疼いて……！？　ひッあぁあああああ！！」
@@ -4451,12 +3787,8 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM ！　そ、んなに、吸っちゃだめぇえええッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ELSE
 								PRINTFORML 「うぁ……う、うううっ……！！　こ、こんな……の……っ！！」
@@ -4493,12 +3825,8 @@ ENDIF
 							ENDIF
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「きゃあああッ！？　い、一瞬で、服が……！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「きゃあああッ！？　い、一瞬で、服が……！？」
-ENDIF
+PRINTFORML 「きゃあああッ！？　い、一瞬で、服が……！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;バイオプラント
@@ -4516,12 +3844,8 @@ ENDIF
 								PRINTFORML ！」
 								PRINTFORM （だめ……こんなの、クセになっちゃいます……ッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 							ELSE
 								PRINTFORML 「ひっ、んやぁあああ！？　こ、こんなの……痛い、だけっ！」
@@ -4606,12 +3930,8 @@ ENDIF
 							ENDIF
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「あ、この、入ってくるなぁッ！？　……ううう、かなり破られた……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あ、この、入ってくるなぁッ！？　……ううう、かなり破られた……」
-ENDIF
+PRINTFORML 「あ、この、入ってくるなぁッ！？　……ううう、かなり破られた……」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;リビングバイン、スカーレットバイン
@@ -4671,12 +3991,8 @@ ENDIF
 						ELSE
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……くぅ、なんて数！　これじゃ、避けきれない……うううっ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……くぅ、なんて数！　これじゃ、避けきれない……うううっ！」
-ENDIF
+PRINTFORML 「……くぅ、なんて数！　これじゃ、避けきれない……うううっ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ワーム、サンドワーム
@@ -4694,12 +4010,8 @@ ENDIF
 								PRINTFORML 」
 								PRINTFORM （やっ……これぇ、物凄く気持ちいいですよぉ……ッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 							ELSE
 								PRINTFORML 「ひぃいいいっ！？　や、やだぁ、気持ち悪い……ッ！」
@@ -4737,12 +4049,8 @@ ENDIF
 						ELSE
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわぁっ！？　ふ、服が、溶けてる……！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわぁっ！？　ふ、服が、溶けてる……！？」
-ENDIF
+PRINTFORML 「うわぁっ！？　ふ、服が、溶けてる……！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;オクトパス、クラーケン
@@ -4800,12 +4108,8 @@ ENDIF
 						ELSE
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「う、ぁっ……！　もう、いい加減に\@ TALENT:122 ? しろ # して下さい \@！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「う、ぁっ……！　もう、いい加減に\@ TALENT:122 ? しろ # して下さい \@！！」
-ENDIF
+PRINTFORML 「う、ぁっ……！　もう、いい加減に\@ TALENT:122 ? しろ # して下さい \@！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;イソツビ、アクティニア
@@ -4863,12 +4167,8 @@ ENDIF
 						ELSE
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ふぁああッ！？　す、すごい切れ味……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ふぁああッ！？　す、すごい切れ味……！」
-ENDIF
+PRINTFORML 「ふぁああッ！？　す、すごい切れ味……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;スライム、ブロブ
@@ -4954,12 +4254,8 @@ ELSE
 PRINTFORMDW 痛みすらも快楽に変え、葵は我を忘れて快楽を貪っている……
 ENDIF
 							ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「はぅぅ……ッ！　\@ TALENT:122 ? き、気持ちよくなんて # こ、これくらいで、わたしがぁ \@……んぁあああ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「はぅぅ……ッ！　\@ TALENT:122 ? き、気持ちよくなんて # こ、これくらいで、わたしがぁ \@……んぁあああ！」
-ENDIF
+PRINTFORML 「はぅぅ……ッ！　\@ TALENT:122 ? き、気持ちよくなんて # こ、これくらいで、わたしがぁ \@……んぁあああ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDIF
 						;B
@@ -4989,12 +4285,8 @@ ENDIF
 						ELSE
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ふぁ？　……あああっ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ふぁ？　……あああっ！？」
-ENDIF
+PRINTFORML 「ふぁ？　……あああっ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;アルラウネ、ドリアード
@@ -5106,20 +4398,12 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　ふぁ、ちくび、らめぇ、らってぇえええッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「はぁ、ッうぅ……！　こ、こんなの、何が楽しい\@ TALENT:122 ? んだよ # んですか \@……っ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「はぁ、ッうぅ……！　こ、こんなの、何が楽しい\@ TALENT:122 ? んだよ # んですか \@……っ！！」
-ENDIF
+PRINTFORML 「はぁ、ッうぅ……！　こ、こんなの、何が楽しい\@ TALENT:122 ? んだよ # んですか \@……っ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDIF
 						;C
@@ -5174,12 +4458,8 @@ ENDIF
 							ENDIF
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うあっ！？　さ……さわら、ないでぇえええ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うあっ！？　さ……さわら、ないでぇえええ！？」
-ENDIF
+PRINTFORML 「うあっ！？　さ……さわら、ないでぇえええ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ドッペルゲンガー
@@ -5321,12 +4601,8 @@ ELSE
 PRINTFORMDW 痛みの代わりに熱を持った疼きが押し寄せてきていることに、葵は困惑している……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「んぁあああ！？　こ、こんな攻撃、見たことないです……っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んぁあああ！？　こ、こんな攻撃、見たことないです……っ！」
-ENDIF
+PRINTFORML 「んぁあああ！？　こ、こんな攻撃、見たことないです……っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -5340,23 +4616,15 @@ ELSE
 PRINTFORMDW 服を狙った攻撃であることに葵は気づいていない……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「きゃあああッ！？　な、なんてえっちな攻撃……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「きゃあああッ！？　な、なんてえっちな攻撃……！」
-ENDIF
+PRINTFORML 「きゃあああッ！？　な、なんてえっちな攻撃……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
 				;ユニコーン
 				CASE 240
-IF FLAG:AUTOMODE
-	PRINTFORML 「き、気持ち悪い……！　うあっ！？　ちょ、持ってくなぁ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「き、気持ち悪い……！　うあっ！？　ちょ、持ってくなぁ！！」
-ENDIF
+PRINTFORML 「き、気持ち悪い……！　うあっ！？　ちょ、持ってくなぁ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				;ナインテイルズ
 				CASE 242
@@ -5364,40 +4632,24 @@ ENDIF
 					IF BASE:3 <= 0
 						PRINTFORM 「ん、くうう……ッ！？　な、なんですか、これぇ……ッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「早く消さないと！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「早く消さないと！」
-ENDIF
+PRINTFORML 「早く消さないと！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ドリフター
 				CASE 244
 					;全裸時
 					IF BASE:3 <= 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「……それ、攻撃のつもりですか？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……それ、攻撃のつもりですか？」
-ENDIF
+PRINTFORML 「……それ、攻撃のつもりですか？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ううっ、最悪です……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ううっ、最悪です……！」
-ENDIF
+PRINTFORML 「ううっ、最悪です……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;男傀儡
@@ -5412,12 +4664,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　お、おしり、弱いからぁッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ELSE
 								PRINTFORML 「はうぅッ！？　う、うう……ぁ、は……っ！！」
@@ -5470,12 +4718,8 @@ ELSE
 PRINTFORMDW 葵のペニスは、誰に扱かれても容易に子種を吐き出すようになってしまっている……
 ENDIF
 								ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひいっ！？　この子、男じゃ……！？　ぁ、ううぅ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひいっ！？　この子、男じゃ……！？　ぁ、ううぅ！」
-ENDIF
+PRINTFORML 「ひいっ！？　この子、男じゃ……！？　ぁ、ううぅ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								ENDIF
 							ELSE
@@ -5493,12 +4737,8 @@ ELSE
 PRINTFORMDW 性感を高めるためにあるクリトリスは、乱暴に扱われてもなお、ある程度の快感を生み出す……
 ENDIF
 								ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひうぅっ！？　あん、やああ！　そんな、乱暴に扱うなぁッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひうぅっ！？　あん、やああ！　そんな、乱暴に扱うなぁッ！！」
-ENDIF
+PRINTFORML 「ひうぅっ！？　あん、やああ！　そんな、乱暴に扱うなぁッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								ENDIF
 							ENDIF
@@ -5528,12 +4768,8 @@ ENDIF
 							ENDIF
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「きゃあっ！？　す、すごい力……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「きゃあっ！？　す、すごい力……！」
-ENDIF
+PRINTFORML 「きゃあっ！？　す、すごい力……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ジェリーフィッシュ
@@ -5580,23 +4816,15 @@ ELSE
 PRINTFORMDW ゆっくりとした愛撫に葵は虜になり、恍惚とした表情を浮かべている……
 ENDIF
 							ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「くぅ……はぁあ、しつこい……っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「くぅ……はぁあ、しつこい……っ！」
-ENDIF
+PRINTFORML 「くぅ……はぁあ、しつこい……っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDIF
 						ELSE
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわぁっ！？　は、速い……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわぁっ！？　は、速い……！」
-ENDIF
+PRINTFORML 「うわぁっ！？　は、速い……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;Ｃワンプ・Ｃアナコンダ
@@ -5621,12 +4849,8 @@ ELSE
 PRINTFORMDW 催淫液をまとった触手が葵の胸の上をのたうち回り、\@ TALENT:122 ? 彼 # 彼女 \@の乳首はピクピクと反応している……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うわぁっ！？　く、うう……っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うわぁっ！？　く、うう……っ！」
-ENDIF
+PRINTFORML 「うわぁっ！？　く、うう……っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;パンツレスリング
@@ -5656,52 +4880,32 @@ PRINTFORMDW 葵は%ARGS:1%を引っ張るが引き剥がせず、自らの\@ (CF
 ENDIF
 						ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ふあ！？　あ、パンツがぁ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ふあ！？　あ、パンツがぁ！？」
-ENDIF
+PRINTFORML 「……ふあ！？　あ、パンツがぁ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;全体
 				CASE 249
 					;全裸時
 					IF BASE:3 <= 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「やぁっ！？　……なにこれぇ、くさいぃ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「やぁっ！？　……なにこれぇ、くさいぃ！？」
-ENDIF
+PRINTFORML 「やぁっ！？　……なにこれぇ、くさいぃ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……うわっ！？　服が、一瞬で！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……うわっ！？　服が、一瞬で！？」
-ENDIF
+PRINTFORML 「……うわっ！？　服が、一瞬で！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;ホフゴブリン
 				CASE 250
 					;全裸時
 					IF BASE:3 <= 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「ふぁぁ！？　やめっ、この！　離してってばぁ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ふぁぁ！？　やめっ、この！　離してってばぁ！」
-ENDIF
+PRINTFORML 「ふぁぁ！？　やめっ、この！　離してってばぁ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひゃあぁっ！？　へ、変態が……ッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひゃあぁっ！？　へ、変態が……ッ！」
-ENDIF
+PRINTFORML 「ひゃあぁっ！？　へ、変態が……ッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;YMあなた
@@ -5715,12 +4919,8 @@ ENDIF
 						IF BASE:3 <= ARG:3
 							PRINTFORML 「なんで、こんなもの……！」
 							PRINTFORMDL 葵は僅かな面積しかない服を自ら引き裂き、ついには裸になってしまった……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ふぅ……って、あれ！？　……\@ TALENT:122 ? ぼく # 私 \@、なんでこんな格好……ッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ふぅ……って、あれ！？　……\@ TALENT:122 ? ぼく # 私 \@、なんでこんな格好……ッ！？」
-ENDIF
+PRINTFORML 「……ふぅ……って、あれ！？　……\@ TALENT:122 ? ぼく # 私 \@、なんでこんな格好……ッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							
@@ -5832,46 +5032,30 @@ ENDIF
 				CASE 0
 					PRINTFORM 「ん、んん……？　ふ、ぁぁ……ッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 1
 					PRINTFORM 「ぁ……ん、んぅ……？　……ぁ……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 2
 					PRINTFORM 「……やぁ、ん……
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　っ、はぁっ……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASEELSE
 					PRINTFORM 「ぅ、ぁ……
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　……ん……む……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ELSE
@@ -5919,12 +5103,8 @@ PRINTFORMDW ヌメヌメとした舌に尻穴を蹂躙され、下着越しに�
 ENDIF
 						ELSE
 							PRINTFORML 「んあぁああッ！？　ひ、ぁ、あぁ……ッ！？」
-IF FLAG:AUTOMODE
-	PRINTFORML （い、いやぁ……！！　なんなのこれッ、べとべとして、気持ち悪いぃ……ッ！！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （い、いやぁ……！！　なんなのこれッ、べとべとして、気持ち悪いぃ……ッ！！）
-ENDIF
+PRINTFORML （い、いやぁ……！！　なんなのこれッ、べとべとして、気持ち悪いぃ……ッ！！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -5971,12 +5151,8 @@ ELSE
 PRINTFORMDW 葵は強烈に吸い付いてくる触手を引き剥がすことができず、乳首を蹂躙されるままだ……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「んああぁ……ッ！　す、吸わないでっ、バカぁ……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んああぁ……ッ！　す、吸わないでっ、バカぁ……！！」
-ENDIF
+PRINTFORML 「んああぁ……ッ！　す、吸わないでっ、バカぁ……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -6074,12 +5250,8 @@ ELSE
 PRINTFORMDW 執拗な責めに、葵のクリトリスはいやらしく勃起し、服の中で窮屈そうにしている……
 ENDIF
 							ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「はぁ、うぅ……ッ！　……こ、これくら、い……っ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「はぁ、うぅ……ッ！　……こ、これくら、い……っ！！」
-ENDIF
+PRINTFORML 「はぁ、うぅ……ッ！　……こ、これくら、い……っ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDIF
 						ENDIF
@@ -6347,12 +5519,8 @@ ELSE
 PRINTFORMDW 狭い尻穴を触手で埋め尽くされ、耐え難い快感に葵は絶叫した……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひんッ！？　ぁ、は、入って、くる、なぁああああッ！！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひんッ！？　ぁ、は、入って、くる、なぁああああッ！！！」
-ENDIF
+PRINTFORML 「ひんッ！？　ぁ、は、入って、くる、なぁああああッ！！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -6369,12 +5537,8 @@ PRINTFORMDW 尻穴を滅茶苦茶に犯されるという妄想を振り切り�
 ENDIF
 						ELSE
 							PRINTFORML 「ふぁ！？　べ、別に、これくらい！」
-IF FLAG:AUTOMODE
-	PRINTFORML （……うう、お尻、熱いよぉぉ……！　ど、どうしよう……！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （……うう、お尻、熱いよぉぉ……！　ど、どうしよう……！）
-ENDIF
+PRINTFORML （……うう、お尻、熱いよぉぉ……！　ど、どうしよう……！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -6520,12 +5684,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　喉が……かわいて……ぁっ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							PRINTFORML 「……んぁあああッ！？　な……んでっ、見られてるだけなのにぃ……！？」
@@ -6655,12 +5815,8 @@ ELSE
 PRINTFORMDW やがてカップの中を触手が埋め尽くすと、葵の意識は白く弾けた……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ん、ぁあああ！　そ、そんなに吸われたらぁ……ッ！！　ぁ、無理ぃいいいいッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ん、ぁあああ！　そ、そんなに吸われたらぁ……ッ！！　ぁ、無理ぃいいいいッ！？」
-ENDIF
+PRINTFORML 「ん、ぁあああ！　そ、そんなに吸われたらぁ……ッ！！　ぁ、無理ぃいいいいッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;強C
@@ -6674,12 +5830,8 @@ ENDIF
 						PRINTFORML ！？」
 						PRINTFORM （み、見られている、だけなのにぃ……なんでこんなにきもちいの……ッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORML 「んぁあああ！？　な、何して……ふぁあああああッ！？」
@@ -6756,12 +5908,8 @@ ELSE
 PRINTFORMDW 葵の言葉とは裏腹に、\@ TALENT:122 ? 彼 # 彼女 \@の尻穴はヒクヒクと反応している……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ふぁあ！？　んん、どこ触って\@ TALENT:122 ? んだよぉ # るんですかぁ \@……ッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ふぁあ！？　んん、どこ触って\@ TALENT:122 ? んだよぉ # るんですかぁ \@……ッ！」
-ENDIF
+PRINTFORML 「ふぁあ！？　んん、どこ触って\@ TALENT:122 ? んだよぉ # るんですかぁ \@……ッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -7493,12 +6641,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,3)
 							PRINTFORM ！！　も、だめ、ッはぁあああああ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							PRINTFORML 「ッふぁあああ！　はう、うぅ……んぁああああッ！？」
@@ -7572,12 +6716,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！？　ぁ、だめぇッ、あぁあああああッ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							PRINTFORML 「んああぁ……ッ！　こ、こんなの、で……！　う、うぅ……ッ」
@@ -7665,12 +6805,8 @@ ELSE
 PRINTFORMDW 母乳を絞り出され、雌の悦びから葵は幸せそうな表情を浮かべている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「わわわっ、おっぱい、どんどん出て……！？　くあ、飲まないでぇっ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「わわわっ、おっぱい、どんどん出て……！？　くあ、飲まないでぇっ！」
-ENDIF
+PRINTFORML 「わわわっ、おっぱい、どんどん出て……！？　くあ、飲まないでぇっ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -7751,12 +6887,8 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　こんな、こんなのでぇ……ッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							PRINTFORML 「はううっ、触らないでください……！　そんな、とこぉ……ッ！」
@@ -7810,12 +6942,8 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM ！　くぅん、じ、焦らすなあ……ッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							PRINTFORML 「んんん……っ！　や、やめ、ッくう……！」
@@ -7921,12 +7049,8 @@ ELSE
 PRINTFORMDW 葵は両穴への愛撫の虜になり、無意識のうちに更なる責めをねだる言葉が発せられている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ふぁぁ、両方はぁ……ッ！　ううぅ、気持ちよくなんかぁ……ッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ふぁぁ、両方はぁ……ッ！　ううぅ、気持ちよくなんかぁ……ッ！」
-ENDIF
+PRINTFORML 「ふぁぁ、両方はぁ……ッ！　ううぅ、気持ちよくなんかぁ……ッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -7971,12 +7095,8 @@ ELSE
 PRINTFORMDW 強い脱力感と快感に抗えず、葵の怒鳴りも嬌声にしかならない……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ッふぁあああ！？　やっ、そんなとこからぁ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ッふぁあああ！？　やっ、そんなとこからぁ！？」
-ENDIF
+PRINTFORML 「ッふぁあああ！？　やっ、そんなとこからぁ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;スライム、ブロブ
@@ -8023,12 +7143,8 @@ ELSE
 PRINTFORMDW しかし、服の中の葵の尻穴は体液を求めるように開閉を繰り返している……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うううっ……気持ち悪い……ッ！　入ってくるなあっ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うううっ……気持ち悪い……ッ！　入ってくるなあっ！」
-ENDIF
+PRINTFORML 「うううっ……気持ち悪い……ッ！　入ってくるなあっ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -8090,12 +7206,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！　ひ、ひぎぃ、ぁ、あぁああああッ
 						CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORML 「だ、だめ！　お尻は、ほんとにダメですからぁ！？　ぁ、ひぁあああッ！？」
@@ -8142,12 +7254,8 @@ ELSE
 PRINTFORMDW 葵は尻穴で感じている姿を隠そうとするが、中毒性のある快楽に抗うことができない……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぐ、ッぅあ！？　お、おしりは、やめぇッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぐ、ッぅあ！？　お、おしりは、やめぇッ！？」
-ENDIF
+PRINTFORML 「ひぐ、ッぅあ！？　お、おしりは、やめぇッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;全体B
@@ -8242,12 +7350,8 @@ ELSE
 PRINTFORMDW %ARGS:1%に好きなように体を弄られ、葵は立っているのがやっとの状態だ……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ど、どこ触って……ふああっ！　こらっ、はなしてぇ……ッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ど、どこ触って……ふああっ！　こらっ、はなしてぇ……ッ！」
-ENDIF
+PRINTFORML 「ど、どこ触って……ふああっ！　こらっ、はなしてぇ……ッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -8263,12 +7367,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM 　や、ッだああああぁ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
 	PRINTFORMDL 自分の意思とは無関係に膣内を蹂躙され、葵は嬌声を上げていることしかできない…
@@ -8451,12 +7551,8 @@ ELSE
 PRINTFORMDW 甘い快感に囚われた葵は、無意識の内に足の力を抜き、%ARGS:1%に身を任せている……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「\@ TALENT:122 ? さ、触らないで # さ、触らないで \@っ！　\@ TALENT:122 ? なんでぼくのお尻なんかを # 珍しいものじゃないですよ \@……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「\@ TALENT:122 ? さ、触らないで # さ、触らないで \@っ！　\@ TALENT:122 ? なんでぼくのお尻なんかを # 珍しいものじゃないですよ \@……！」
-ENDIF
+PRINTFORML 「\@ TALENT:122 ? さ、触らないで # さ、触らないで \@っ！　\@ TALENT:122 ? なんでぼくのお尻なんかを # 珍しいものじゃないですよ \@……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -8506,12 +7602,8 @@ PRINTFORMDW 葵は呆然と蕩けた顔をしながら、不気味な笑みを�
 ENDIF
 						ELSE
 							PRINTFORML 「んんっ……触るなぁあ！　はなして、はなして……っ！」
-IF FLAG:AUTOMODE
-	PRINTFORML （女ですから、まだいいですけど……）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （女ですから、まだいいですけど……）
-ENDIF
+PRINTFORML （女ですから、まだいいですけど……）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -8816,12 +7908,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　いいっ、すごいぃいいいッ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							PRINTFORML 「うあ、やめえッ！？　い、いや、入って……くる……ッ！」
@@ -8946,12 +8034,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！　あぁ、ダメ、もうダメですってばぁあああッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDSELECT
 						;浅い催眠
@@ -8982,12 +8066,8 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM 　あなたが、喜んでくれるなら……
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASEELSE
 								PRINTFORM 「ん、はあぁああッ
@@ -9116,12 +8196,8 @@ ENDIF
 							PRINTFORMDL 触手を動かして葵の\@ TALENT:122 ? 乳首 # 乳 \@を犯していた%ARGS:1%だったが、今度は葵の体を動かし始めた……
 							PRINTFORM 「ち、ちがっ、そういう意味じゃなくってぇ、んぁ、ひゃあぁああんッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「ふ、うう……ッ
@@ -9435,12 +8511,8 @@ ENDIF
 								PRINTFORM 　これぐらいで、満足しないでくださいね……っ
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORML 」
-IF FLAG:AUTOMODE
-	PRINTFORML （本命がこれじゃないってこと……ちゃんとわかってるのかなぁ……？）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （本命がこれじゃないってこと……ちゃんとわかってるのかなぁ……？）
-ENDIF
+PRINTFORML （本命がこれじゃないってこと……ちゃんとわかってるのかなぁ……？）
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDSELECT
 						ENDIF
@@ -9532,12 +8604,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　ちょ、やめ、へぇええええッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDSELECT
 						ENDIF
@@ -9553,12 +8621,8 @@ ENDIF
 							PRINTFORMDL 葵は触手ではなく自分の体が近づいていくことに耐えられないようだ……
 							PRINTFORM 「や、やだっ、こ、こんなこと……！　ひぃッあああぁ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 1
 							PRINTFORML 「こ……んな、気持ちよくなんか……ぁあああッ！？」
@@ -9572,12 +8636,8 @@ ENDIF
 							PRINTFORMDL 中に入り込んだ触手が、葵のGスポットを的確に責める……
 							PRINTFORM 「う、ううっ……！　ぁ、そこ、は、きゃああああぁッ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					;感情操作
@@ -10152,12 +9212,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　ふふっ、いいですよっ
 								CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 ++
 							CASE 1
@@ -10231,12 +9287,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,2)
 									PRINTFORM ！？　い、いきなり吸わないでッ、バカぁああぁッ
 									CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								ENDIF
 								CFLAG:801 ++
@@ -10785,12 +9837,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　や、やだとめて、はやくとめてぇッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 = 0
 						ENDSELECT
@@ -10821,12 +9869,8 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM 　んんっ、きもちいい……ッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 葵は男性器形の触手のカリ首にあたる部分に、乳首を擦り付け快感を得ている
 IF FLAG:AUTOMODE
@@ -10845,12 +9889,8 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM 　イきそう？　えへへ……あなたも、可愛いとこあるじゃないですか
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 ++
 							CASE 1
@@ -10930,12 +9970,8 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM ！　きもちい、きもちぃいいいッッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 = 0
 							ENDSELECT
@@ -10953,12 +9989,8 @@ ENDIF
 							PRINTFORM ！　はッ、はぁー……ッ
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORML 」
-IF FLAG:AUTOMODE
-	PRINTFORML （がまん、がまん……！　こんなことで、変な声出したら……！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （がまん、がまん……！　こんなことで、変な声出したら……！）
-ENDIF
+PRINTFORML （がまん、がまん……！　こんなことで、変な声出したら……！）
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 1
@@ -11003,12 +10035,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　……ん、あぁッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 = 0
 							ENDSELECT
@@ -11460,12 +10488,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM 　それが、私の使命なんだ……
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 2
 							PRINTFORM 「……はぁッ
@@ -11525,12 +10549,8 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM ！　な……何なんですか、これぇ……ッ
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASEELSE
 							PRINTFORM 「ぁ……熱いぃ……ッ
@@ -12125,20 +11145,12 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM 　ああぁ、ううぅッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「こっ……こら、そんなの、舐めないでって……！　あっ……んうう……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「こっ……こら、そんなの、舐めないでって……！　あっ……んうう……！」
-ENDIF
+PRINTFORML 「こっ……こら、そんなの、舐めないでって……！　あっ……んうう……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -12158,12 +11170,8 @@ ELSE
 PRINTFORMDW 陰核をしゃぶられると、葵は%ARGS:1%の頭を押さえつけて悶えた……
 ENDIF
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「んっ、この……！　おもちゃじゃないんですよ！　……ふッううぅ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んっ、この……！　おもちゃじゃないんですよ！　……ふッううぅ！！」
-ENDIF
+PRINTFORML 「んっ、この……！　おもちゃじゃないんですよ！　……ふッううぅ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ENDIF
@@ -12443,12 +11451,8 @@ PRINTFORMDW 犬に尻穴を犯されるという背徳感が、葵の興奮を�
 ENDIF
 						CASE 0
 							PRINTFORMDL 葵の直腸内で、淫虫が媚薬液を分泌する……
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひっ！？　あ……ぁぁッ！？　熱い、熱いぃッ……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひっ！？　あ……ぁぁッ！？　熱い、熱いぃッ……！！」
-ENDIF
+PRINTFORML 「ひっ！？　あ……ぁぁッ！？　熱い、熱いぃッ……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORMDL だが、%ARGS:1%は疼きに悶えている葵を嘲笑うかのように腰の動きを止める
 							PRINTFORML （こ、この子……蟲のくせに……ッ！　なんなん\@ TALENT:122 ? だよ # ですかぁ \@……うううっ……！）
@@ -12683,12 +11687,8 @@ ENDIF
 						ENDIF
 					ELSE
 						IF STR:1000 == "舌"
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひ、いぃ……ッ！　きもち……悪い\@ TALENT:122 ? んだよ # ですよ \@っ！　ぅ、ふああぁ……ッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひ、いぃ……ッ！　きもち……悪い\@ TALENT:122 ? んだよ # ですよ \@っ！　ぅ、ふああぁ……ッ！」
-ENDIF
+PRINTFORML 「ひ、いぃ……ッ！　きもち……悪い\@ TALENT:122 ? んだよ # ですよ \@っ！　ぅ、ふああぁ……ッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSEIF STR:1000 == "指"
 							PRINTFORML 「うっ、ちょっとぉ！？　やめっ、んんぅ！！　ああああぁッ！！」
@@ -12781,12 +11781,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　ちゅうぅ…
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							ELSE
 								PRINTFORM 「んんっ……
@@ -12962,12 +11958,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,2)
 									PRINTFORM ！？　いや、いやぁああッ
 									CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								ENDIF
 							ENDIF
@@ -13081,12 +12073,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,2)
 									PRINTFORM ！　いっぱい、いっぱい出してぇッ
 									CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 									PRINTFORMDL エアセックスでありながらも、葵は%ARGS:1%にぎゅっと抱きついている
 									PRINTFORMDL ぷっくりと膨らみ自己主張する陰核やその周辺に、%ARGS:1%は大量の精液をぶち撒ける……
@@ -13168,12 +12156,8 @@ ENDIF
 									CALL HEARTCB(0xD02830)
 									PRINTFORM ！？　あったかいのが、いっぱい……
 									CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 									PRINTFORMDL %ARGS:1%に抱きつかれたまま、葵は生暖かい精液が腹部にびゅるびゅると吐き出される感覚を味わっている……
 									PRINTFORM 「……んひぃいッ
@@ -13295,12 +12279,8 @@ ENDIF
 							PRINTFORML 「……んくあぁ？！　やぁっ、ちょっと、ッふぁああああ！！？？」
 							PRINTFORMDL 手慣れた%ARGS:1%の早業で、葵は抵抗する間もなくペニスを突きこまれた……
 							PRINTFORMDL %ARGS:1%は葵を背後から包み込むように抱き、後背位で犯している……
-IF FLAG:AUTOMODE
-	PRINTFORML 「いっ、いやぁああッ！！　あぁっ、やだぁっ、はなしてぇえええッ！！　うう、臭い、汚いぃッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「いっ、いやぁああッ！！　あぁっ、やだぁっ、はなしてぇえええッ！！　うう、臭い、汚いぃッ！！」
-ENDIF
+PRINTFORML 「いっ、いやぁああッ！！　あぁっ、やだぁっ、はなしてぇえええッ！！　うう、臭い、汚いぃッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSEIF STR:1000 == "射精"
 							PRINTFORML 「……んくあぁ？！　やぁっ、ちょっと、ッふぁああああ！！？？」
@@ -14571,12 +13551,8 @@ ENDIF
 				CASE 710
 					;発情or淫乱or全身性感帯or触手中毒Lv3orおねだり中
 					IF CFLAG:28 || TALENT:74 || (ABL:6 >= 3 && ABL:7 >= 3 && ABL:8 >= 3 && ABL:9 >= 3) || ABL:11 >= 3 || (CFLAG:50 >= 54 && CFLAG:50 <= 58)
-IF FLAG:AUTOMODE
-	PRINTFORML 「……！？　い、いや……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……！？　い、いや……！」
-ENDIF
+PRINTFORML 「……！？　い、いや……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORM 「……―――ぁ
 						CALL HEARTCB(0xD02830,3)
@@ -14592,12 +13568,8 @@ ELSE
 PRINTFORMDW 激しい陵辱音にかき消され、葵の甘い叫び声が外に届くことはなかった……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「！？　うっ、うああっ！！？？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「！？　うっ、うああっ！！？？」
-ENDIF
+PRINTFORML 「！？　うっ、うああっ！！？？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORML 「……！！　……る……な……ぁ……！　……や……ぁぁ……！！」
 IF FLAG:AUTOMODE
@@ -14912,12 +13884,8 @@ ENDIF
 							;この攻撃で絶頂
 							IF BASE:2 <= ARG:3
 								PRINTFORMDL その様子を見た%ARGS:1%は、更に腰の動きを早め、葵にディープキスを仕掛ける……
-IF FLAG:AUTOMODE
-	PRINTFORML （ぁっ……！？　いや、こ、このままじゃ……！　だめ、イっちゃう、イっちゃうぅ……ッ！！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （ぁっ……！？　いや、こ、このままじゃ……！　だめ、イっちゃう、イっちゃうぅ……ッ！！）
-ENDIF
+PRINTFORML （ぁっ……！？　いや、こ、このままじゃ……！　だめ、イっちゃう、イっちゃうぅ……ッ！！）
+CALL WAIT_AUTOMODE(400, 0)
 
 							ENDIF
 						ENDIF
@@ -14955,63 +13923,39 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM ！　ひ、ぁ、らめ……ぇ～～～～ッッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 1
 								PRINTFORM 「も、もうむりぃ
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！　むりですから、やめ……ぇへええええッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
 								PRINTFORM 「ぁ……あああぁッ
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！　これ、すっごい、すっごいよぉおおおおッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ELSE
 						SELECTCASE RAND:3
 							CASE 2
-IF FLAG:AUTOMODE
-	PRINTFORML 「いやぁ！？　ちょっと、何するつも……んひぃいいぁッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「いやぁ！？　ちょっと、何するつも……んひぃいいぁッ！？」
-ENDIF
+PRINTFORML 「いやぁ！？　ちょっと、何するつも……んひぃいいぁッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「ううぅっ！　こんな、女に……ひぃあぁあああッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ううぅっ！　こんな、女に……ひぃあぁあああッ！！」
-ENDIF
+PRINTFORML 「ううぅっ！　こんな、女に……ひぃあぁあああッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「気持ち悪いんですよ、このヘンタ……ッぁああ！？　やっ、急に、強くしないでぇえええッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「気持ち悪いんですよ、このヘンタ……ッぁああ！？　やっ、急に、強くしないでぇえええッ！？」
-ENDIF
+PRINTFORML 「気持ち悪いんですよ、このヘンタ……ッぁああ！？　やっ、急に、強くしないでぇえええッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -15200,12 +14144,8 @@ ELSE
 PRINTFORMDW 絶妙な%ARGS:1%の甘噛みに、葵は大きく背を反らし浅ましい喘ぎ声を漏らした……
 ENDIF
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うぅ～……っ！　\@ TALENT:122 ? あ、貴方 # あ、あなた \@と違って、そんなとこで感じる変態じゃ……んひぃああぁッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うぅ～……っ！　\@ TALENT:122 ? あ、貴方 # あ、あなた \@と違って、そんなとこで感じる変態じゃ……んひぃああぁッ！？」
-ENDIF
+PRINTFORML 「うぅ～……っ！　\@ TALENT:122 ? あ、貴方 # あ、あなた \@と違って、そんなとこで感じる変態じゃ……んひぃああぁッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;女性
@@ -15351,12 +14291,8 @@ ENDIF
 							PRINTFORML ！」
 							PRINTFORM （ううぅ、しつこい……！　……ああっ、おっぱいが、当たってるってぇッ
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ELSE
@@ -15545,21 +14481,13 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！？　今、はぁ、ッふぁあああぁ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORML 「……んぐうっ！？　ん、んん～～っ！！　ぷ、は……ぁぁ！？　ぁ……ど、毒……ッ！！」
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ひぃいいいッ！？　あ、やっ、きゃあああああッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ひぃいいいッ！？　あ、やっ、きゃあああああッ！！」
-ENDIF
+PRINTFORML 「……ひぃいいいッ！？　あ、やっ、きゃあああああッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;強V
@@ -15727,20 +14655,12 @@ ENDIF
 						CALL HEARTCB(0xD02830,3)
 						PRINTFORM ！　熱……ぃいいいいッ
 						CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「うっあぁ！？　ぁ、ど、毒……ッ！　ふ……ぁあ、ぁ……ッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うっあぁ！？　ぁ、ど、毒……ッ！　ふ……ぁあ、ぁ……ッ！！」
-ENDIF
+PRINTFORML 「うっあぁ！？　ぁ、ど、毒……ッ！　ふ……ぁあ、ぁ……ッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;リグペロ
@@ -15754,20 +14674,12 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　も、もう、あぁぁ……ッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「い、やぁ！　し、しつこい\@ TALENT:122 ? んだよ # んですよ \@……！　くぁ、う……んッ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「い、やぁ！　し、しつこい\@ TALENT:122 ? んだよ # んですよ \@……！　くぁ、う……んッ！」
-ENDIF
+PRINTFORML 「い、やぁ！　し、しつこい\@ TALENT:122 ? んだよ # んですよ \@……！　くぁ、う……んッ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					ELSE
@@ -15789,20 +14701,12 @@ ENDIF
 						CALL HEARTCB(0xD02830,3)
 						PRINTFORM ！　ひっ、んにゃあぁああああッ
 						CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひッあ！？　毒が……うはあぁッ！？　う、そっ、ッぁああああ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひッあ！？　毒が……うはあぁッ！？　う、そっ、ッぁああああ！？」
-ENDIF
+PRINTFORML 「ひッあ！？　毒が……うはあぁッ！？　う、そっ、ッぁああああ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				
@@ -16454,12 +15358,8 @@ ENDIF
 							CASE 0
 								PRINTFORML 「ひゃうッ！？　く、来るぅ……！　いや……いやだぁ！　あ、ああ、あ……あ！！」
 								PRINTFORMDL もう逃れられないと悟った葵に、特濃の精液が注ぎ込まれる……
-IF FLAG:AUTOMODE
-	PRINTFORML 「い……やぁあああああッッ！！？？　は、ああ、あぁあッ！？　……い……や、いやだ……ぁ……ッ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「い……やぁあああああッッ！！？？　は、ああ、あぁあッ！？　……い……や、いやだ……ぁ……ッ」
-ENDIF
+PRINTFORML 「い……やぁあああああッッ！！？？　は、ああ、あぁあッ！？　……い……や、いやだ……ぁ……ッ」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -16560,12 +15460,8 @@ PRINTFORMDW ろくな抵抗もできず、葵は膨らんでいく下腹部を�
 ENDIF
 							CASE 0
 								PRINTFORML 「ひッああぁ！？　え、あ、あああ……！！？？」
-IF FLAG:AUTOMODE
-	PRINTFORML （こ、こんなに出されたら……妊娠するに決まってます……！　い……いやぁ……ッ！！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （こ、こんなに出されたら……妊娠するに決まってます……！　い……いやぁ……ッ！！）
-ENDIF
+PRINTFORML （こ、こんなに出されたら……妊娠するに決まってます……！　い……いやぁ……ッ！！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -16784,12 +15680,8 @@ ELSE
 PRINTFORMDW 悲痛な葵の叫び声も、%ARGS:1%の体外には届かない……
 ENDIF
 							CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぃ……ッ！？　来ないで、来ないでえぇええ！！　……いッぎぁあ゛あ゛あ゛あッッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぃ……ッ！？　来ないで、来ないでえぇええ！！　……いッぎぁあ゛あ゛あ゛あッッ！？」
-ENDIF
+PRINTFORML 「ひぃ……ッ！？　来ないで、来ないでえぇええ！！　……いッぎぁあ゛あ゛あ゛あッッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORML 「……い……やああぁ……　……ひ……ぃいッ！！」
 IF FLAG:AUTOMODE
@@ -16818,12 +15710,8 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM 　疼いて……とまらないぃ……
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
 								PRINTFORM 「ぉ……ぁッあああぁ
@@ -16850,12 +15738,8 @@ PRINTFORMDW 種付けが終わると、下腹部の重みから、葵はたっ�
 ENDIF
 							CASE 0
 								PRINTFORML 「ッ、はうぁ……ッ！？　……ひぃいいいッ！？　かはっ、いっぱい出て、ぇええええッ！？」
-IF FLAG:AUTOMODE
-	PRINTFORML （こ、この量じゃ、もう……！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （こ、この量じゃ、もう……！）
-ENDIF
+PRINTFORML （こ、この量じゃ、もう……！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -17145,12 +16029,8 @@ ENDIF
 							CASE 0
 								PRINTFORML 「ちゅ、ぷ、は……ぁッ！？　な……んで、力が、でないぃ……ッ！？」
 								PRINTFORMDL 唾液の作用で無抵抗になった葵に、%ARGS:1%は特濃の精液を注ぎ込んでいく……
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひ……ぃッッ！？　い、いやぁあああッ！！　こんな、こんな……ああぁッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひ……ぃッッ！？　い、いやぁあああッ！！　こんな、こんな……ああぁッ！！」
-ENDIF
+PRINTFORML 「ひ……ぃッッ！？　い、いやぁあああッ！！　こんな、こんな……ああぁッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -17440,12 +16320,8 @@ ENDIF
 							PRINTFORML 「うあああぁっ！？　ちょ、ちょっとぉ！　誰が中に出していいって……！！」
 							PRINTFORM 「私との、子供が欲しいんですか……！？　なら、もっと早く言っってください……もう、バカ……
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDIF
 					;認識操作
@@ -17515,12 +16391,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　イっちゃう変態で、ごめんなさいぃッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 ++
 							CASE 1
@@ -17555,22 +16427,14 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　いっ、いくらなんでも、出しすぎですよぉおおおお
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 ++
 							CASE 1
 								PRINTFORMDL 逆流し膣口から溢れる精液と同じように、葵の乳首から母乳が溢れてきた……
-IF FLAG:AUTOMODE
-	PRINTFORML 「こ、これって……！？　……に、妊娠……しちゃったじゃないですか……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「こ、これって……！？　……に、妊娠……しちゃったじゃないですか……！！」
-ENDIF
+PRINTFORML 「こ、これって……！？　……に、妊娠……しちゃったじゃないですか……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 表面では強気を取り繕う葵だが、その頬は紅潮し、歓喜の笑みを隠し切れていない……
 								PRINTFORM （ほ、ほんとに妊娠しちゃった……
@@ -17619,12 +16483,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！　あっついのが、なかにぃぃ……
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 ++
 							CASE 1
@@ -17767,12 +16627,8 @@ ELSE
 PRINTFORMDW だが、葵は口や鼻腔に入り込む霧に気を取られ、気のせいだろうと無視してしまっていた……
 ENDIF
 							CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「あっ！？　な……中に……入ってくる……？　……いや、そんなまさか……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あっ！？　な……中に……入ってくる……？　……いや、そんなまさか……」
-ENDIF
+PRINTFORML 「あっ！？　な……中に……入ってくる……？　……いや、そんなまさか……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -17890,12 +16746,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM 　ぁっ、この、あったかいの……せーえきだぁ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 1
@@ -17903,24 +16755,16 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　お腹のなか、せーえきで埋め尽くされちゃってる
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 = 0
 						ENDSELECT
 					ELSE
 						SELECTCASE CFLAG:801
 						CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひぃッ！　な、中に、こんな……ぁッ！！　あうぁ、ッくううう！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひぃッ！　な、中に、こんな……ぁッ！！　あうぁ、ッくううう！？」
-ENDIF
+PRINTFORML 「ひぃッ！　な、中に、こんな……ぁッ！！　あうぁ、ッくううう！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 1
@@ -17944,12 +16788,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM 　熱いのがぁ、なかで、弾けてぇッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 1
@@ -17957,12 +16797,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,3)
 							PRINTFORM 　ふぁ、だッめぇえええええ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 2
@@ -18021,12 +16857,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　はぁ、どぴゅどぴゅって、きたああ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 1
@@ -18034,23 +16866,15 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　はぁっ、おちんちんが、わたしを孕ませようって……
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 2
 							PRINTFORM 「しきゅうをせーえきでいっぱいにしようって、がんばってるうッ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 3
@@ -18140,33 +16964,21 @@ ENDIF
 							PRINTFORMDL 精液が溢れてこないことを確認した葵は、不敵に笑いながら呟いた……
 							PRINTFORM 「……ふふっ……あんなに濃いんじゃ……出てくるわけ、ないですよね……あはははッ……
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 = 0
 						ENDSELECT
 					ELSE
 						SELECTCASE CFLAG:801
 						CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「うぁっ！？　で、出てる……！！　いやぁあああああッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うぁっ！？　で、出てる……！！　いやぁあああああッ！！」
-ENDIF
+PRINTFORML 「うぁっ！？　で、出てる……！！　いやぁあああああッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「やめ、やめてくださいぃ！！　そんなに出されたら、すぐに……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「やめ、やめてくださいぃ！！　そんなに出されたら、すぐに……！」
-ENDIF
+PRINTFORML 「やめ、やめてくださいぃ！！　そんなに出されたら、すぐに……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CFLAG:801 ++
 						CASE 2
@@ -18372,12 +17184,8 @@ ENDIF
 							CASE 1
 								PRINTFORM 「ッんぎぃ゛い゛い゛い゛いい
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？　きゅ、急に、な……――――！！？？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？　きゅ、急に、な……――――！！？？」
-ENDIF
+PRINTFORML ！？　きゅ、急に、な……――――！！？？」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORM 「―――い゛い゛い゛い゛いいぃッッ
 								CALL HEARTCB(0xD02830,3)
@@ -18388,12 +17196,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,3)
 								PRINTFORM ！！　……す……すご……ぉぉ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
 								PRINTFORM 「んほぉお゛お゛お゛お゛おおッッ
@@ -18509,24 +17313,16 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM ？　い、イっちゃったの……？　……はっひぃいいいいッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
 								PRINTFORM 「ひぃいいいぁ……
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　すごいぃ……いっぱい出されてるう……
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
 	PRINTFORMDL 自らの鏡合わせである%ARGS:1%の有り様に、葵は釘付けになっている……
@@ -18615,12 +17411,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　ふっ……と……ぉぉ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							CASE 0
 								PRINTFORMDL %ARGS:1%は触手で葵を手繰り寄せると、仰向けになっている一匹の股間に跨がらせた……
@@ -18630,12 +17422,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！　お……おなか……いっぱいぃ……ッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 前のめりになり、無防備な尻穴を晒す葵に新しい一匹が近づいてくる……
 								PRINTFORM 「……ッふぁああああ
@@ -18723,12 +17511,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,3)
 								PRINTFORM ！？　ひッうぅ、すっごぃいいいいッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 葵の子宮口でペニスが擦れたところで、%ARGS:1%は絶頂を迎える……
 								PRINTFORM 「せーえきが、どぴゅっ
@@ -18752,12 +17536,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　ふかいところまでぇええええッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 限界を迎えつつあった%ARGS:1%は、葵の尻たぶを掴み、腰を激しく上下させる……！
 								PRINTFORM 「―――ッひぃいいいいいぃッッ
@@ -18778,12 +17558,8 @@ ENDIF
 						SELECTCASE RAND:2
 							CASE 1
 								PRINTFORMDL 背面立位で犯していた%ARGS:1%は、葵の太ももを掴み、より体を密着させた……！
-IF FLAG:AUTOMODE
-	PRINTFORML 「ひっぎぃいいいッ！？　嫌っ、くっつかないでぇ！！　気持ち悪いですッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ひっぎぃいいいッ！？　嫌っ、くっつかないでぇ！！　気持ち悪いですッ！！」
-ENDIF
+PRINTFORML 「ひっぎぃいいいッ！？　嫌っ、くっつかないでぇ！！　気持ち悪いですッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 葵の子宮口でペニスが擦れたところで、%ARGS:1%は絶頂を迎える……
 								PRINTFORML 「奥が、擦れ……ぇえええッ！？　うああぁっ、出されてる、中に出されてる……ッ！！」
@@ -18795,12 +17571,8 @@ PRINTFORMDW 葵は欲望に塗れた精液の熱と、生々しいペニスの�
 ENDIF
 							CASE 0
 								PRINTFORMDL 対面立位で犯していた%ARGS:1%は、葵の体を持ち上げ、より体を密着させた……！
-IF FLAG:AUTOMODE
-	PRINTFORML 「ああっ！？　な、何して……へぁああああッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ああっ！？　な、何して……へぁああああッ！？」
-ENDIF
+PRINTFORML 「ああっ！？　な、何して……へぁああああッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 限界を迎えつつあった%ARGS:1%は、葵の尻たぶを掴み、腰を激しく上下させる……！
 								PRINTFORML 「い、嫌ぁッ！！　離しなさい、離し……ぃあああああぁッ！！？？」
@@ -19011,12 +17783,8 @@ ENDIF
 								PRINTFORML 」
 								PRINTFORM （あぁ、はやく、濃いせーえきを、はやく……ぅ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 ++
 							CASE 1
@@ -19032,12 +17800,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,3)
 								PRINTFORM 　ぶよぶよのせーえきが、一気にわたしのなかにぃッッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								CFLAG:801 ++
 							CASE 2
@@ -19240,12 +18004,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　ああぁっ、あっついのが、中でぇッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ELSE
@@ -19260,12 +18020,8 @@ PRINTFORMDW 精液の熱と卵の脈動が、葵に生々しい懐胎の感覚�
 ENDIF
 							CASE 0
 								PRINTFORML 「ふっ―――んううぅッ！？　ふはぁっ、ぁ……んん～～～～ッ！！」
-IF FLAG:AUTOMODE
-	PRINTFORML （卵に変なの付いてるし、もう最悪です……！　ううぅ……何なんですか、この子は……ぁッ！！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （卵に変なの付いてるし、もう最悪です……！　ううぅ……何なんですか、この子は……ぁッ！！）
-ENDIF
+PRINTFORML （卵に変なの付いてるし、もう最悪です……！　ううぅ……何なんですか、この子は……ぁッ！！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -19379,12 +18135,8 @@ PRINTFORMDW 甘い香りのする%ARGS:1%の唾液を、葵は涙目で受け入
 ENDIF
 							CASE 0
 								PRINTFORML 「い、やぁ……っ！　はふ、れろ……ぢゅぶ！　んん、んやぁ……ッ！！」
-IF FLAG:AUTOMODE
-	PRINTFORML （お姉ちゃんじゃないのに、どうしてこんなにドキドキするんですかぁ……！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （お姉ちゃんじゃないのに、どうしてこんなにドキドキするんですかぁ……！）
-ENDIF
+PRINTFORML （お姉ちゃんじゃないのに、どうしてこんなにドキドキするんですかぁ……！）
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					ENDIF
@@ -19586,12 +18338,8 @@ ENDIF
 							PRINTFORML ！」
 							PRINTFORM 「……わ……私も、お姉ちゃんのこと、好き……ですよ……
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORMDL 控えめにそう呟く葵の姿は乙女そのものだったが、その瞳は焦点が合っていなかった……
 						ELSE
@@ -20434,34 +19182,22 @@ ENDIF
 				CASE 2
 					PRINTFORM 「うっ、ふ……ぁぁッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 1
 					PRINTFORM （いいですよぉ……もっと、もっとしてぇ……っ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 0
 					PRINTFORM 「はぁーっ……
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　ぁ、う……ッあぁ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		;拘束中
@@ -20488,36 +19224,24 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　んにゃ、うぅ……ッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 1
 					PRINTFORM 「はふ……
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　い、いいぃ……んむぅッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 0
 					PRINTFORM 「ぁ、うぁ……
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　んふっ、しゅきぃ……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ELSE
@@ -20525,34 +19249,22 @@ ENDIF
 				CASE 2
 					PRINTFORM 「……無理ぃっ、もう我慢できないぃ……っ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 1
 					PRINTFORM 「は……っ
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　はやく、はやく鎮めなきゃ……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 0
 					PRINTFORM 「……ちょっと、ちょっとだけぇ……っ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ENDIF
@@ -20890,21 +19602,13 @@ ENDIF
 	CASE 62
 		;PTに残るとき（メイン時:自分以外のキャラが拘束されているとき　サブ時:メインと自分以外のキャラが拘束されているとき）
 		IF ARG:4 == 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「くうっ……ごめんなさい、必ず……戻ってきますから！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「くうっ……ごめんなさい、必ず……戻ってきますから！」
-ENDIF
+PRINTFORML 「くうっ……ごめんなさい、必ず……戻ってきますから！」
+CALL WAIT_AUTOMODE(400, 0)
 
 		;PTを外れるとき（メイン時:なし　サブ時:メインが拘束されているとき）
 		ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……大丈夫です、ちょっと態勢を整えるだけです……ごめんね」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……大丈夫です、ちょっと態勢を整えるだけです……ごめんね」
-ENDIF
+PRINTFORML 「……大丈夫です、ちょっと態勢を整えるだけです……ごめんね」
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	;仲間に見捨てられた
@@ -20929,20 +19633,12 @@ ENDIF
 				IF CFLAG:21
 					PRINTFORMDL 葵が呑まれている体の外から、仲間の気配が消えていく……
 					PRINTFORML （……！　逃げて、る……）
-IF FLAG:AUTOMODE
-	PRINTFORML （……うん、そりゃそうですよね……\@ TALENT:122 ? ぼく # 私 \@が悪いんだし、他人に構ってる余裕なんて……）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （……うん、そりゃそうですよね……\@ TALENT:122 ? ぼく # 私 \@が悪いんだし、他人に構ってる余裕なんて……）
-ENDIF
+PRINTFORML （……うん、そりゃそうですよね……\@ TALENT:122 ? ぼく # 私 \@が悪いんだし、他人に構ってる余裕なんて……）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵は必死で涙を堪え、誰にも届かない体内で独りごちた……
-IF FLAG:AUTOMODE
-	PRINTFORML 「できたら……できたらでいいですから、早く助けに来て……お願い……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「できたら……できたらでいいですから、早く助けに来て……お願い……」
-ENDIF
+PRINTFORML 「できたら……できたらでいいですから、早く助けに来て……お願い……」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 					PRINTFORML 「……いいですよ、早く逃げて……」
@@ -20990,20 +19686,12 @@ ENDIF
 				IF CFLAG:21
 					PRINTFORMDL 葵が呑まれている体の外から、仲間の気配が消えていく……
 					PRINTFORML （……！　逃げて、る……）
-IF FLAG:AUTOMODE
-	PRINTFORML （……うん、そりゃそうですよね……\@ TALENT:122 ? ぼく # 私 \@が悪いんだし、他人に構ってる余裕なんて……）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （……うん、そりゃそうですよね……\@ TALENT:122 ? ぼく # 私 \@が悪いんだし、他人に構ってる余裕なんて……）
-ENDIF
+PRINTFORML （……うん、そりゃそうですよね……\@ TALENT:122 ? ぼく # 私 \@が悪いんだし、他人に構ってる余裕なんて……）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵は必死で涙を堪え、誰にも届かない体内で独りごちた……
-IF FLAG:AUTOMODE
-	PRINTFORML 「できたら……できたらでいいですから、早く助けに来て……お願い……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「できたら……できたらでいいですから、早く助けに来て……お願い……」
-ENDIF
+PRINTFORML 「できたら……できたらでいいですから、早く助けに来て……お願い……」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 					PRINTFORML 「……いいですよ、早く逃げて……」
@@ -21788,12 +20476,8 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　はっ、ぁ、ぅ……
 							CALL HEARTCB(0xD02830)
-							IF FLAG:AUTOMODE
-								PRINTFORML 」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  」
-							ENDIF
+							PRINTFORML 」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL 腸内に侵入した舌状の触手が、葵の腸壁を隅々まで舐めとる……
@@ -21803,33 +20487,21 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　……ひい、ッいい
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ELSE
 					SELECTCASE RAND:2
 						CASE 1
 							PRINTFORMDL 触手が尻穴の入り口をなぞり上げると、葵の口から悩ましげな喘ぎ声が漏れる……
-							IF FLAG:AUTOMODE
-								PRINTFORML 「……ん、んんっ……ふぁ……っ！　……っくぅん」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「……ん、んんっ……ふぁ……っ！　……っくぅん」
-							ENDIF
+							PRINTFORML 「……ん、んんっ……ふぁ……っ！　……っくぅん」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL 腸内に侵入した舌状の触手が、葵の腸壁を隅々まで舐めとる……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ひ……ぃ……っぁあ！　……っむ、くぅ……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ひ……ぃ……っぁあ！　……っむ、くぅ……」
-ENDIF
+PRINTFORML 「……ひ……ぃ……っぁあ！　……っむ、くぅ……」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ENDIF
@@ -21844,12 +20516,8 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　んひ、ぃぅ、ぁ……っ
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL 多種多様な触手達が、ピンと自己主張する葵の乳首を好き放題に弄り回す……
@@ -21857,33 +20525,21 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM 　……は、ぁ、ぁぁ……ッくひぃいい……
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ELSE
 					SELECTCASE RAND:2
 						CASE 1
 							PRINTFORMDL 触手は無遠慮に、葵の胸の形を歪ませていく……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ん、んんっ……！　……ふ、むううぅ……っ」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ん、んんっ……！　……ふ、むううぅ……っ」
-ENDIF
+PRINTFORML 「……ん、んんっ……！　……ふ、むううぅ……っ」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL 多種多様な触手達が、ピンと自己主張する葵の乳首を好き放題に弄り回す……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ん……っぁあ！？　……ぅうん……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ん……っぁあ！？　……ぅうん……」
-ENDIF
+PRINTFORML 「……ん……っぁあ！？　……ぅうん……」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ENDIF
@@ -21898,12 +20554,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM 　……はッ、はぁ、はぁぅ……
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL \@ (CFLAG:42 || TALENT:121 || TALENT:122) ? ペニス # クリトリス \@に大量の媚薬液を浴びせかけられ、葵は腿を擦りあわせ悶えている……
@@ -21911,33 +20563,21 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM ！　……は、っぁ、ぁ……ッ
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ELSE
 					SELECTCASE RAND:2
 						CASE 1
 							PRINTFORMDL 先端が枝分かれした触手が、葵の\@ (CFLAG:42 || TALENT:121 || TALENT:122) ? ペニス # クリトリス \@を挟み込み激しく扱いている……
-IF FLAG:AUTOMODE
-	PRINTFORML 「っ……ぁ、くぅ……！　んん……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「っ……ぁ、くぅ……！　んん……」
-ENDIF
+PRINTFORML 「っ……ぁ、くぅ……！　んん……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL \@ (CFLAG:42 || TALENT:121 || TALENT:122) ? ペニス # クリトリス \@に大量の媚薬液を浴びせかけられ、葵は腿を擦りあわせ悶えている……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ん……ぅぅっ……！　……ッぁぁ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ん……ぅぅっ……！　……ッぁぁ……！」
-ENDIF
+PRINTFORML 「……ん……ぅぅっ……！　……ッぁぁ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ENDIF
@@ -21952,12 +20592,8 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　ふぁ、ぁあうぅ……
 							CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL 葵の体を弄ぶように、触手は浅い挿入を繰り返す…
@@ -21965,33 +20601,21 @@ ENDIF
 							CALL HEARTCB(0xD02830)
 							PRINTFORM 　……ぅう、っ……んにゃあぁッ
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ELSE
 					SELECTCASE RAND:2
 						CASE 1
 							PRINTFORMDL 細い触手が葵の膣口をなぞっていると、濃い蜜液が溢れてきた……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ん、ぁぁ……！　やっ……んんぅ……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ん、ぁぁ……！　やっ……んんぅ……」
-ENDIF
+PRINTFORML 「……ん、ぁぁ……！　やっ……んんぅ……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						CASE 0
 							PRINTFORMDL 葵の体を弄ぶように、触手は浅い挿入を繰り返す……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ん、うぅ……っぁあ！　……んにゅぅ……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ん、うぅ……っぁあ！　……んにゅぅ……！」
-ENDIF
+PRINTFORML 「……ん、うぅ……っぁあ！　……んにゅぅ……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDSELECT
 				ENDIF
@@ -22135,12 +20759,8 @@ ENDIF
 				PRINTFORMDW 葵は周りの確認すらせずに自慰を始めた……
 				ENDIF
 			ELSE
-				IF FLAG:AUTOMODE
-					PRINTFORML 「んぅ……むずむずするぅ……っ」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「んぅ……むずむずするぅ……っ」
-				ENDIF
+				PRINTFORML 「んぅ……むずむずするぅ……っ」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 		ENDIF
@@ -22156,12 +20776,8 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM 　……ふああぁ、入ったぁぁッ
 					CALL HEARTCB(0xD02830,2)
-					IF FLAG:AUTOMODE
-						PRINTFORML 」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  」
-					ENDIF
+					PRINTFORML 」
+					CALL WAIT_AUTOMODE(400, 0)
 
 					;A感覚Lv3
 					IF ABL:6 >= 3
@@ -22181,24 +20797,16 @@ ENDIF
 						PRINTFORMDL 葵の尻には見合わない、大人用の凶悪なモノが尻穴を押し広げている……
 						PRINTFORM 「こ、これ、すごいぃ、す……っごぉお゛お゛お゛お゛おおッ
 						CALL HEARTCB(0xD02830,3)
-						IF FLAG:AUTOMODE
-							PRINTFORML ！？」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  ！？」
-						ENDIF
+						PRINTFORML ！？」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 尻穴の奥深くまでねじ込まれた性具が、腰がガクガクと震えるほどの快感を伝えてくる……
 						PRINTFORM 「ふッ、ぅあぁ゛あ゛あ゛あ゛ああ
 						CALL HEARTCB(0xD02830,3)
 						PRINTFORM ！？　こ、こんなの無理です、無理無理無理むりぃいいいッッ
 						CALL HEARTCB(0xD02830,3)
-						IF FLAG:AUTOMODE
-							PRINTFORML ！！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  ！！」
-						ENDIF
+						PRINTFORML ！！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				ELSE
@@ -22222,12 +20830,8 @@ ENDIF
 				IF TALENT:74 || ABL:7 >= 3 || ABL:10 >= 3
 					PRINTFORM 「あぁ、\@ TALENT:122 ? 私 # わたし \@のおっぱい、凄いことになっちゃってますよぉ……
 					CALL HEARTCB(0xD02830,2)
-					IF FLAG:AUTOMODE
-						PRINTFORML 」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  」
-					ENDIF
+					PRINTFORML 」
+					CALL WAIT_AUTOMODE(400, 0)
 
 					;母乳体質
 					IF TALENT:130
@@ -22265,12 +20869,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！　い、ぃい、ッくう……
 						CALL HEARTCB(0xD02830)
-						IF FLAG:AUTOMODE
-							PRINTFORML ！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  ！」
-						ENDIF
+						PRINTFORML ！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORML （ダメ、こんなことで声出しちゃったらぁ……っ！）
 IF FLAG:AUTOMODE
@@ -22283,22 +20883,14 @@ ENDIF
 						PRINTFORMDL 葵は真っ赤な顔をしながら、ローターのスイッチをオンにした……
 						PRINTFORM 「……だって、気持ちいいんですから、しょうがない\@ TALENT:122 ? よ # じゃないですか \@……んっうああぁッ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL より大きな快感を得ようと、無意識で葵の手が\@ TALENT:122 ? 乳首に近づく # 胸をこね回している \@……
 						PRINTFORM 「ッあぁ、こんなのダメって、わかってるのにぃ……ひッああぁ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				ENDIF
@@ -22308,12 +20900,8 @@ ENDIF
 				IF TALENT:74 || ABL:8 >= 3 || ABL:10 >= 3
 					PRINTFORM 「はぁ、はぁっ、ぅう……ッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					;ふたなり
 					IF CFLAG:42 || TALENT:121 || TALENT:122
@@ -22351,24 +20939,16 @@ ENDIF
 						PRINTFORMDL \@ TALENT:122 ? 女性器の形の性具に興奮したのだろう # 何を考えたのか \@、頬を上気させた葵は、股間の醜悪なモノを性具に突っ込んだ……
 						PRINTFORM 「……い……今じゃないと、味わえないからぁ……んひぃいいいいッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL どうやら、 \@ TALENT:122 ? 初めて女性器を味わえると知って # 雄を喜ばせる形をした性具を見て \@、本能を抑えられなくなってしまったようだ
 						PRINTFORM 「ぁ――――
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM 　すごいぃ、これ、すっごくきもちいいぃッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORMDL 葵は性具を使うことを恥じらいながらも、思い切ってクリトリスにローターを押し付けた……
@@ -22416,12 +20996,8 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM ！　ぁ、くぅっ、おも……くぁああああッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ENDIF
 			ENDIF
@@ -22456,12 +21032,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！　はぁっ、こんな気持ちいいこと、初めてぇッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORM 「ふっ、ふざけないでください！　\@ TALENT:122 ? ぼく # 私 \@はそんなこと……！　……っあ、ぁひいぃッ
@@ -22478,12 +21050,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！　だめ、こんなの、おかしくなるぅううッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;感情操作
@@ -22529,12 +21097,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM 　ふふっ……いいですよ、もっと見ても……ふあぁッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				;認識操作
@@ -22565,12 +21129,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM 　ぁう、なんかぁ、すっごくきもちいぃ……ッ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORM 「……んんっ、ふ……ぁッ
@@ -22584,12 +21144,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM 　\@ TALENT:122 ? 私 # わたし \@、なにしてるんだろ……
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				ENDIF
@@ -22616,12 +21172,8 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM ！　はぁっ、やっぱり、ここすごいよぉ……ッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ENDIF
 			;B
@@ -22640,12 +21192,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM 　ふぁあああああッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORM 「はぁーっ、はぁーっ
@@ -22673,12 +21221,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM 　こんなに、きもちいなんてぇ……
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORM 「んああぁ……
@@ -22710,12 +21254,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！　はっ、はぁっ、気持ちいいぃッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORM 「はぁーっ
@@ -22728,12 +21268,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,3)
 						PRINTFORM ！？　ぁ……ぁぁぁ……
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				ELSE
@@ -22747,23 +21283,15 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM 　ううぅ、こんなの、こんなのぉ……ッ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						PRINTFORMDL 疼きを抑えるため、葵は時が経つのも忘れて自慰に没頭している……
 						PRINTFORM 「あううぅ……すごいぃ、すごいこれぇ……ッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				ENDIF
@@ -22781,24 +21309,16 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　もっと、太いのを……ッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 					PRINTFORM 「ぁぁ……
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　こんなのだめなのに、止まんないよぉ……ッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ENDIF
 			ENDIF
@@ -22832,63 +21352,39 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM ！　やらぁ、吸わないでよぉッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 1
 					PRINTFORM 「あ、ぁああああッ
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM ！　も、そこ、やめてええぇッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 0
 					PRINTFORM 「ひゃあッ
 					CALL HEARTCB(0xD02830)
 					PRINTFORM ！？　ぁっ、おっぱい、出ちゃうううッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ELSE
 			SELECTCASE RAND:3
 				CASE 2
-IF FLAG:AUTOMODE
-	PRINTFORML 「んひぃいいい！？　バカ、吸うなぁああッ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「んひぃいいい！？　バカ、吸うなぁああッ！！」
-ENDIF
+PRINTFORML 「んひぃいいい！？　バカ、吸うなぁああッ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「あっ、く、こらぁっ！　おっぱいが……～～～ッ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あっ、く、こらぁっ！　おっぱいが……～～～ッ！？」
-ENDIF
+PRINTFORML 「あっ、く、こらぁっ！　おっぱいが……～～～ッ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「やだっ、これは\@ TALENT:122 ? 貴方 # あなた \@たちに飲ませるものじゃ……～～～ッぁぁ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「やだっ、これは\@ TALENT:122 ? 貴方 # あなた \@たちに飲ませるものじゃ……～～～ッぁぁ！？」
-ENDIF
+PRINTFORML 「やだっ、これは\@ TALENT:122 ? 貴方 # あなた \@たちに飲ませるものじゃ……～～～ッぁぁ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ENDIF
@@ -22908,23 +21404,15 @@ ENDIF
 				PRINTFORML 「お、おなか、苦しいぃ……ッ！　やだ、やだぁっ、こんなところで、産みたくないぃ……ッ！」
 				PRINTFORM 「……ああぁッ、くる、赤ちゃんが、動いて……くひぃいいいいいッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 中の幼体が動き出すと、突然嬌声混じりの悲鳴を上げる葵
 				PRINTFORMDL その膣からは催淫液が溢れてきており、媚薬による快楽責めが行われていることが伺える
 				PRINTFORM 「やだぁッ、やめてぇ、わたし、こんなときにイきたくな……ひぅうううううッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				SELECTCASE RAND:3
@@ -22933,12 +21421,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！　き、たぁっ、う、うまれ、ぇ、～～～～ッッ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 苦しいはずだというのに、嬌声混じりの悲鳴を上げる葵
 						PRINTFORMDL それもそのはず、幼体が大量の媚薬と共に膣内をかき回してせり出してくるのだ
@@ -22946,22 +21430,14 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！　ひっ……やぁああああああッ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					CASE 1
 						PRINTFORM 「く、う……ッ！　やっ、きたぁ……ひゃあああああんッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 幼体と共に溢れた媚薬液が膣内を埋め尽くし、浅ましくも出産中に絶頂してしまう葵
 IF FLAG:AUTOMODE
@@ -22973,12 +21449,8 @@ ENDIF
 					CASE 0
 						PRINTFORM 「う、ぁぁ……ッ！　はぁーっ、くるし、くるしぃ……ッふぁあああああぁ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 出産中だというのに、苦痛を塗りつぶすように膣奥から快感の波が押し寄せてくる
 						PRINTFORMDL 母体を快楽で苦しめようと、仕込まれていた媚薬液が溢れだしたのだ
@@ -22986,12 +21458,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！　はぁ、う、出て、く……ッふぁあああああ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ENDSELECT
 			ENDIF
@@ -23003,12 +21471,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　い、イっちゃいました、よぉぉ……
 				CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 赤子の目の前で絶頂してしまったという背徳感に打ち震える葵の胸元へ、
 				PRINTFORMDL まだ生まれたばかりの赤子が、母乳を求め寄り添ってきた……
@@ -23016,24 +21480,16 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM ！？　ぁっ、こんなことで感じちゃ、ダメなのにぃいいいい
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				SELECTCASE RAND:3
 					CASE 2
 						PRINTFORM 「……はぁ、っ……はぁー、ッ……
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 　わたし……ほんとに産んじゃったぁ……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  　わたし……ほんとに産んじゃったぁ……」
-ENDIF
+PRINTFORML 　わたし……ほんとに産んじゃったぁ……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 出産の達成感と快楽で、呆然と天井を見上げる葵の胸元で
 						PRINTFORMDL 生まれたばかりの赤子が、更なる責めを与えるように乳首を強く吸い上げる……
@@ -23041,22 +21497,14 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！？　だ、めぇッ、そんなに強く吸ったらぁああああッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					CASE 1
 						PRINTFORM 「……はぁ、はぁっ……
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 　これが、わたしの子ども……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  　これが、わたしの子ども……」
-ENDIF
+PRINTFORML 　これが、わたしの子ども……」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 息も絶え絶えになりながら、葵は自らが産み落とした赤子を見つめた
 						PRINTFORMDL すると、早くもその赤子は立ち上がり、葵の元へと歩み寄り乳房に手を伸ばした……
@@ -23064,24 +21512,16 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！？　な、なんでそんなすぐ、んぁあああああッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					CASE 0
 						PRINTFORM 「……うう……ぁ……っ
 						CALL HEARTCB(0xD02830)
 						PRINTFORM 　こんな、に……きもちいなんて……ぇ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 媚薬責めのあまりの快感に動けなくなってしまった葵の胸元で、
 						PRINTFORMDL 早くも立ち上がった赤子が、母乳を求めて桜色の突起に強く吸い付いた……
@@ -23089,12 +21529,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！？　やっ、またぁ、きもちよくなっちゃうううッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				ENDSELECT
 			ENDIF
@@ -23102,12 +21538,8 @@ ENDIF
 		ELSEIF ARG:1 == 2
 			;むすめ
 			IF ARG:2 == 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「……はぁ、はぁ……っ　……ぁっ、ま、まって、ねぇ……っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……はぁ、はぁ……っ　……ぁっ、ま、まって、ねぇ……っ！」
-ENDIF
+PRINTFORML 「……はぁ、はぁ……っ　……ぁっ、ま、まって、ねぇ……っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 自分と同じように触角のついた娘に対し、化物に産まされた恨みよりも母としての想いのほうが
 IF FLAG:AUTOMODE
@@ -23171,12 +21603,8 @@ ENDIF
 					;肉体操作
 					IF FLAG:526 == 0
 						PRINTFORMDL 未開拓の秘裂を貫こうと、葵の元へ濡れそぼった触手が近づいてくる……
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ひっ、ひぃいいい！？　い、いやぁああ！！　こ、来ないで、お願い来ないでぇ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ひっ、ひぃいいい！？　い、いやぁああ！！　こ、来ないで、お願い来ないでぇ！！」
-ENDIF
+PRINTFORML 「……ひっ、ひぃいいい！？　い、いやぁああ！！　こ、来ないで、お願い来ないでぇ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 身動き一つ取れない葵を嘲笑うかのように、触手はゆっくりと秘裂に潜り込んでいく……
 						PRINTFORML 「お願い、そこだけはぁ！！　そこだけ、は―――ッひぃあぁあああああッ！！？？」
@@ -23185,23 +21613,15 @@ ENDIF
 						;深い催眠
 						IF CFLAG:43 >= 3
 							PRINTFORMDL 未だ男を知らない秘裂を貫かれた葵は、苦痛に顔を歪めたが、すぐに晴れやかな笑顔に戻った……
-IF FLAG:AUTOMODE
-	PRINTFORML 「い゛っ……！？　……あっ、いえ、大丈夫ですから……お気になさらず」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「い゛っ……！？　……あっ、いえ、大丈夫ですから……お気になさらず」
-ENDIF
+PRINTFORML 「い゛っ……！？　……あっ、いえ、大丈夫ですから……お気になさらず」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORML 「それよりも……あ、あなたに、初めてを捧げられたことが、嬉しくて……」
 							PRINTFORMDL 初めての相手が想い人だということに感極まり、葵は涙まで流していた……
 							PRINTFORML 「本当に……本当に、ありがとうございます……っ」
 						ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「いったぁあああ！？　あ、あなた、私の許可も無しに……！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「いったぁあああ！？　あ、あなた、私の許可も無しに……！！」
-ENDIF
+PRINTFORML 「いったぁあああ！？　あ、あなた、私の許可も無しに……！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORML 「……も、もう。そこまで言うなら、許してあげます……ああもう、わかりましたからっ！」
 							PRINTFORMDL どうやら葵には、処女を奪ったことへの詫びと、甘い愛の言葉が聞こえているようだ……
@@ -23236,12 +21656,8 @@ ENDIF
 					IF CFLAG:28 || CFLAG:35 || (CFLAG:50 >= 54 && CFLAG:50 <= 58)
 						PRINTFORM 「いっ、いまはだめぇっ
 						CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！　こないで、こないでぇ、ぁ――――」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！　こないで、こないでぇ、ぁ――――」
-ENDIF
+PRINTFORML ！　こないで、こないでぇ、ぁ――――」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORM 「―――ッひぁあああああ
 						CALL HEARTCB(0xD02830)
@@ -23250,12 +21666,8 @@ ENDIF
 						PRINTFORML ！！」
 						PRINTFORMDL 易々と侵入を果たした触手は、野放図に葵の雌を踏み荒らしていく……
 					ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「……ひいっ！？　やっ、やだぁ、入ってぇ、こないで――――」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……ひいっ！？　やっ、やだぁ、入ってぇ、こないで――――」
-ENDIF
+PRINTFORML 「……ひいっ！？　やっ、やだぁ、入ってぇ、こないで――――」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORML 「―――ッひぁあああああ！！？？　ぁっ、うあぁ、はぁあああッ！？」
 						PRINTFORMDL 初めてを触手に奪われた、そのことを認めたくないのか、葵はパニックになりながら触手に貫かれた秘裂を絶望した表情で見下ろしている……
@@ -23299,12 +21711,8 @@ ENDIF
 	CASE 152
 		PRINTFORML （……お姉ちゃん……助けて……　怖い……凄く怖いよ……）
 		PRINTFORML （\@ TALENT:122 ? ぼく # 私 \@……死んじゃうの……？　この化物の、栄養として……）
-IF FLAG:AUTOMODE
-	PRINTFORML （……ああ。まだやりたいこと、たくさんあったのに……　ごめんね、お姉ちゃん……）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （……ああ。まだやりたいこと、たくさんあったのに……　ごめんね、お姉ちゃん……）
-ENDIF
+PRINTFORML （……ああ。まだやりたいこと、たくさんあったのに……　ごめんね、お姉ちゃん……）
+CALL WAIT_AUTOMODE(400, 0)
 
 	;リザレクション発生
 	CASE 153
@@ -23639,12 +22047,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！？　やっ、ぁああ、何\@ TALENT:122 ? # なの \@これぇええええッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 触れた瞬間に疼きがやってくるような強力な媚薬を、葵は全身に浴びてしまっている……
 					CASE 1
@@ -23652,12 +22056,8 @@ ENDIF
 						CALL HEARTCB(0xD02830,2)
 						PRINTFORM ！？　やっ、こんなのぉ、おかしくなるぅッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 今すぐ全身を弄り回したいという欲望を抑え、葵は落とし穴から這い上がろうとしている……
 					CASE 0
@@ -23665,12 +22065,8 @@ ENDIF
 						CALL HEARTCB(0xD02830)
 						PRINTFORM ！？　ぁ、無理です、無理無理むりぃッ
 						CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 全身に媚薬を浴びてしまった葵は、頬を上気させ雌の顔をさらけ出している……
 				ENDSELECT
@@ -23780,12 +22176,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　ぁッ、そこ、ッふぁあああああぁッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							;B
 							CASE 1
@@ -23801,12 +22193,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　ふぃっ、おかひくなっひゃううううッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							;C
 							CASE 2
@@ -23822,12 +22210,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　ぁ、きもひッ、ぃいいいいいッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							;V
 							CASE 3
@@ -23843,12 +22227,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　あッ、ふあぁ、きもひぃいいいいッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ENDSELECT
 					;終了
@@ -23859,12 +22239,8 @@ ENDIF
 							CALL HEARTCB(0xD02830,3)
 							PRINTFORM 　き……きもひ、よかっらぁぁ……ッ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORMDL これまでの一生で経験した性感を優に超える、莫大な快感を一気に叩きつけられた葵
 							PRINTFORMDL 生き物として、一度味わった快感をもう一度得たいと思うのは必然と言えるだろう
@@ -23879,12 +22255,8 @@ ENDIF
 							PRINTFORML 」
 							PRINTFORM 「もっと、もっといっぱいせっくすして、きもちいいこと、いっぱいあじわいたいよぉ……
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							SELECTCASE ARG:3
@@ -23894,12 +22266,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,2)
 									PRINTFORM 　……んっ、ふぅううんッ
 									CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 									PRINTFORMDL 傍に置かれた報酬には脇目もふらず、一心不乱に尻穴を弄り続ける葵
 IF FLAG:AUTOMODE
@@ -23914,12 +22282,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,2)
 									PRINTFORM 　触手、触手はどこぉっ……
 									CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								;B
 								CASE 1
@@ -23931,24 +22295,16 @@ ENDIF
 									CALL HEARTCB(0xD02830)
 									PRINTFORM 　も、もうむりぃぃ……ッ
 									CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 									PRINTFORMDL 今の葵には、空気さえも極上の愛撫となって襲い掛かってくる……
 									PRINTFORM 「ど、どうするの\@ TALENT:122 ? ぉ # よぉ \@、これぇ……
 									CALL HEARTCB(0xD02830)
 									PRINTFORM 　こんなんじゃ生活できな、ッくひいいぃ
 									CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								;C
 								CASE 2
@@ -23958,12 +22314,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,2)
 									PRINTFORM 　ぁはあっ、これきもちいぃッ
 									CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 									PRINTFORMDL 頭ではおかしいことだと理解しているはずなのに、ピストン運動を繰り返すその腰は止まらない
 IF FLAG:AUTOMODE
@@ -23976,12 +22328,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,2)
 									PRINTFORM 　はぁッ、きもちいよぉおおおッ
 									CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								;V
 								CASE 3
@@ -23989,12 +22337,8 @@ ENDIF
 									CALL HEARTCB(0xD02830,3)
 									PRINTFORM 　ぁ……ぁぁぁ……
 									CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 									PRINTFORMDL 様々な体液が混ざりぐちゃぐちゃになってしまった己の股を隠そうともせず、
 IF FLAG:AUTOMODE
@@ -24005,12 +22349,8 @@ PRINTFORMDW 口の端から唾液を垂らし、激しい連続絶頂の余韻�
 ENDIF
 									PRINTFORM 「……もう、触手のぶっといおちんぽがないとぉ、生きてけないよお……
 									CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 									PRINTFORMDL 雌の快楽に溺れきった今となっては、葵が彼女をよく知る者に見られているとしても
 IF FLAG:AUTOMODE
@@ -24031,12 +22371,8 @@ ENDIF
 						PRINTFORML 第二の雌穴として完全に開発され蕩けきったアナル
 						PRINTFORML 獣欲を貪る為だけの器官として作り替えられた醜く肥大した乳首
 						PRINTFORML 感度のリミッターを破壊され無様に勃起する\@GET_PENIS(TARGET) ? ふたなりペニス # 巨大クリトリス\@
-IF FLAG:AUTOMODE
-	PRINTFORML その全てが、%CALLNAME:TARGET%の思考を淫らに支配していく
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  その全てが、%CALLNAME:TARGET%の思考を淫らに支配していく
-ENDIF
+PRINTFORML その全てが、%CALLNAME:TARGET%の思考を淫らに支配していく
+CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORM 「やあぁ♥　ヘンっ♥　あたまヘンになるうぅっ♥♥　うああぁぁぁあぁ♥♥
 						PRINTFORML 　たふけ…っ♥　たふけて……ぇぇぇ♥♥　あひいぃぃ……ぃぃっ♥♥♥」
@@ -24186,12 +22522,8 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM ！？　ぁ、ぁっ、やらぁ、入らないでぇええええッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵の言葉が通じたわけでもないのに、淫蟲はすぐに尻から出てきた
 					PRINTFORMDL だが\@ TALENT:122 ? 彼 # 彼女 \@が安堵する間などなく、すぐに快楽地獄が始まったのであった……
@@ -24199,12 +22531,8 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM ！？　お、あ、ああ、――――ッッぁ
 					CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 肛内で分泌された媚毒が、淫蟲と共に一気に外に流れ出している
 					PRINTFORMDL 全ての媚毒が溢れ出た頃には、葵は脚を震わせ、蕩けた顔をしながら放心しているのだった……
@@ -24220,24 +22548,16 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM ！？　ぁ、そこは、そこはぁああああッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL ピンと自己主張した葵の乳首に、淫蟲は次々と群がっていく……
 					PRINTFORM 「た、たすけてえ……
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　だれか、だれかぁあああああッッ
 					CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 膨大な快感を自ら手放すことができなくなったのか、葵は淫蟲を振り払おうとせず無様にも他人に助けを求めている……
 				ELSE
@@ -24250,24 +22570,16 @@ ENDIF
 				IF CFLAG:28 || TALENT:74 || ABL:8 >= 3 || ABL:11 >= 3
 					PRINTFORM 「あっ！？　ちょ、やめ、ッひぃあああぁん
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵の守りを巧みにくぐり抜け、一匹の淫蟲が\@ (CFLAG:42 || TALENT:121 || TALENT:122) ? ペニス # クリトリス \@に吸い付いた……
 					PRINTFORM 「ぁ、ぁあッ
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM ！　む、むりぃ、こんなきもちいのむりぃいいいいッ
 					CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 一匹に吸い付かれた時点で葵はくずおれ、みすぼらしい姿を晒してしまうのだった……
 				ELSE
@@ -24280,24 +22592,16 @@ ENDIF
 				IF CFLAG:28 || TALENT:74 || ABL:9 >= 3 || ABL:11 >= 3
 					PRINTFORM 「ひ、いい、やだぁッ！　こないで……んやぁああああッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 数々の淫蟲が葵の膣内に入り込み、催淫作用のある体液を膣壁に塗りつけていく……
 					PRINTFORM 「はっ、はぁあッ
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　ひゃめっ、こんなの、おかしくなっひゃうよぉ……ッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 尻餅をついてしまった葵は、爪先をピンと立てながら淫蟲が詰まった性器を凝視している
 					PRINTFORMDL すっかり膣で味わう快楽の虜になってしまった彼女は、快楽の爆発を狂おしいほどに待ちわびていた……
@@ -24322,24 +22626,16 @@ ENDIF
 						IF CFLAG:28 || TALENT:74 || ABL:8 >= 3 || ABL:11 >= 3
 							PRINTFORM 「あっ！？　ちょ、やめ、ッひぃあああぁん
 							CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORMDL 葵の守りを巧みにくぐり抜け、一匹の淫蟲がペニスに吸い付いた……
 							PRINTFORM 「ぁ、ぁあッ
 							CALL HEARTCB(0xD02830,2)
 							PRINTFORM ！　む、むりぃ、こんなきもちいのむりぃいいいいッ
 							CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 							PRINTFORMDL 一匹に吸い付かれただけで葵はくずおれ、みすぼらしい姿を晒してしまうのだった……
 						ELSE
@@ -24414,12 +22710,8 @@ ENDIF
 							CASE 0
 								PRINTFORML 「それじゃあよろし、ッ\@ TALENT:122 ? やぁ # きゃ \@あああぁ！？」
 								PRINTFORMDL 自分から襲われに来た格好の葵を、触手は容易く絡めとった……
-IF FLAG:AUTOMODE
-	PRINTFORML 「いっ、いやぁ！？　そ、そんな、罠だなんて、ひゃああっ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「いっ、いやぁ！？　そ、そんな、罠だなんて、ひゃああっ！？」
-ENDIF
+PRINTFORML 「いっ、いやぁ！？　そ、そんな、罠だなんて、ひゃああっ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORML 「ひっ、ふああッ！？　な、どこ触って、うあぁっ気持ち悪いぃッ！！」
 IF FLAG:AUTOMODE
@@ -24430,12 +22722,8 @@ PRINTFORMDW 葵の全身は余すところなく触手に覆われ、素肌に�
 ENDIF
 								PRINTFORM 「やめぇっ、もう、離\@ TALENT:122 ? せ # してください \@ってばぁっ……ふぃいいぁああああああッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！？？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！？？」
-ENDIF
+PRINTFORML ！！？？」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
 	PRINTFORMDL 全身を舐めまわしているだけだった触手が、一斉に葵の性感帯を刺激し始める……
@@ -24449,12 +22737,8 @@ ENDIF
 								CALL HEARTCB(0xD02830)
 								PRINTFORM ！　や、やだぁ、こんなのいやだぁあああああッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
 	PRINTFORMDL 身動き一つ取れない葵は、愚かな過去の自分を呪いながら陵辱に喘ぎ続けていた……
@@ -24520,12 +22804,8 @@ PRINTFORMDW どうやら子宮への間接的な愛撫で、彼女はようや�
 ENDIF
 								PRINTFORM 「いやぁあああッ！　だめ、こんなぁ――――ッんぐおほぉ゛お゛お゛お゛おおッッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 白濁した粘液に塗れたその触手が、膣へと挿入を果たした
 								PRINTFORMDL 何の影響だろうか、彼女を襲う全ての痛みが快感となって彼女を責めたてる
@@ -24539,12 +22819,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！？　お゛ぉ゛ッ、ほぉ゛お゛お゛お゛おおおッッ
 								CALL HEARTCB(0xD02830,3)
-IF FLAG:AUTOMODE
-	PRINTFORML ！！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！！」
-ENDIF
+PRINTFORML ！！」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 媚毒にやられてしまった葵は、最初から受精するのが目的だったのだと言わんばかりに
 IF FLAG:AUTOMODE
@@ -24559,12 +22835,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　おいし、かったぁああ……ッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 本来の目的も忘れ、大量の精液を子宮で飲み込み大満足の葵は、
 IF FLAG:AUTOMODE
@@ -24582,12 +22854,8 @@ ENDIF
 							CASE 0
 								PRINTFORML 「ッ、ひい、やぁ、なにぃっ！？」
 								PRINTFORMDL あっさりと触手に捕まってしまった葵は、突き出されたモノを見て呆気にとられる
-IF FLAG:AUTOMODE
-	PRINTFORML 「……え……もしかして、これから飲み物が……？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……え……もしかして、これから飲み物が……？」
-ENDIF
+PRINTFORML 「……え……もしかして、これから飲み物が……？」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORML 「……んんむぐぅッ！？　ん、ふっ、う……！」
 IF FLAG:AUTOMODE
@@ -24772,12 +23040,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM ！　え、なんでぇ……
 								CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 急に甘ったるい声が出てしまったことに困惑する葵
 IF FLAG:AUTOMODE
@@ -24790,12 +23054,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,2)
 								PRINTFORM 　あ、あたまぁ、くらくらしてきた……ぁッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 白濁液付き性感帯全身マッサージは、\@ TALENT:122 ? 彼 # 彼女 \@に雌としての本能を呼び覚まさせ、
 IF FLAG:AUTOMODE
@@ -24806,12 +23066,8 @@ PRINTFORMDW \@ TALENT:122 ? 彼 # 彼女 \@自身、全身を覆うきつい雄�
 ENDIF
 								PRINTFORM 「んへぇっ、えへぇええ……んぶうぅッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
 	PRINTFORMDL 仕上げと言わんばかりに、触手は浴槽の底に葵を固定し、頭から爪先まで全身を白濁液に浸からせる……
@@ -24823,12 +23079,8 @@ ENDIF
 								CALL HEARTCB(0xD02830,3)
 								PRINTFORM ！！　―――、――――――
 								CALL HEARTCB(0xD02830,4)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
 	PRINTFORMDL ぬめつく白濁風呂の中、葵は連続絶頂して体を何度も痙攣させていた……
@@ -24840,12 +23092,8 @@ ENDIF
 							CASE 2
 								PRINTFORM 「……ぇ……ぁ……ぁぁ……ッ
 								CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 								PRINTFORMDL 触手から開放された後も、葵の体の疼きは収まらず、精液の体に吸い付いてくる感触と
 IF FLAG:AUTOMODE
@@ -24932,12 +23180,8 @@ ENDIF
 			CALL HEARTCB(0xD02830)
 			PRINTFORM 　きもちよかったぁ……っ
 			CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 			PRINTFORMDL 葵には、女の体では味わえない、射精の特別な快感が名残惜しいようだ……
 		ELSE
@@ -24989,12 +23233,8 @@ ENDIF
 		CALL HEARTCB(0xD02830,2)
 		PRINTFORM 　おちんちん、とれなくなっちゃった……ぁ
 		CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 		PRINTFORMDL 自らの体の一部と化した触手を、小動物をあやすように愛おしげに撫で回す葵
 IF FLAG:AUTOMODE
@@ -25022,12 +23262,8 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　ちょっと、だけだからごめんね、お姉ちゃん
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 興奮した様子の葵は、茫然自失とした%ARGS:1%の膣に無理やりペニスをねじ込んだ……
 					PRINTFORM 「んぅ……ふぁあああんッ
@@ -25070,12 +23306,8 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　ちょっと、だけだからごめんね、お姉ちゃん
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 興奮した様子の葵は、動揺している%ARGS:1%の膣に無理やりペニスをねじ込んだ……
 					PRINTFORM 「んぅ……ふぁあああんッ
@@ -25156,27 +23388,15 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORML ！！？？」
 					PRINTFORMDL 慣れない膣の締め付けから予想外の快感を得て、葵は大きな嬌声を上げてしまう……
-IF FLAG:AUTOMODE
-	PRINTFORML （や、やば……絶対、バレちゃったよぉ……！！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （や、やば……絶対、バレちゃったよぉ……！！）
-ENDIF
+PRINTFORML （や、やば……絶対、バレちゃったよぉ……！！）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL しかし葵の予想に反して、いつまで経っても%ARGS:1%は起きて\@ TALENT:122 ? 彼 # 彼女 \@を咎める様子はなかった
-IF FLAG:AUTOMODE
-	PRINTFORML （……起きない……いや、もしかしたら……寝てるフリをしてる……？）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （……起きない……いや、もしかしたら……寝てるフリをしてる……？）
-ENDIF
+PRINTFORML （……起きない……いや、もしかしたら……寝てるフリをしてる……？）
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML （そうだ、きっとお姉ちゃんは……このまま気持ちよくなりたいから、寝てるフリをしているんだ……っ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （そうだ、きっとお姉ちゃんは……このまま気持ちよくなりたいから、寝てるフリをしているんだ……っ！）
-ENDIF
+PRINTFORML （そうだ、きっとお姉ちゃんは……このまま気持ちよくなりたいから、寝てるフリをしているんだ……っ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORM 「それなら、気持ちよくしてあげ\@ TALENT:122 ? るよ # るね \@……っくひいぃ、ふぁああ……ッ
 					CALL HEARTCB(0xD02830,2)
@@ -25241,12 +23461,8 @@ ENDIF
 					PRINTFORML 　はぁ、な、な\@ TALENT:122 ? んだよぉ # あに \@、その顔……」
 					PRINTFORM 「そんな格好で、倒れてるお姉ちゃんが悪い\@ TALENT:122 ? んだよ # んだよ \@ぉ……だから、そんな目で見ないで……んくぅッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL %ARGS:1%は光が宿っていない虚ろな目で、嫌悪感を示すように葵をただ見つめている
 					PRINTFORMDL その眼差しは、\@ TALENT:122 ? 彼 # 彼女 \@に罪悪感と背徳感とを同時に呼び起こさせた……
@@ -25285,12 +23501,8 @@ PRINTFORMDW 当然%ARGS:1%は葵の言いなりにはならず、必死で抵抗
 ENDIF
 					PRINTFORM 「へぇ……言うこと聞けないお姉ちゃんには、お仕置きしなくっちゃね……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL そう言うと、葵は拘束具の電流を流すスイッチを一瞬だけオンにした
 					PRINTFORMDL 一秒にも満たない間に、%ARGS:1%の体に電流が走る……
@@ -25332,12 +23544,8 @@ PRINTFORMDW %ARGS:1%の抵抗に痺れを切らした葵は、拘束具の電流
 ENDIF
 					PRINTFORM （こんなことしちゃダメって、わかってるけど……わかってるけどぉ……ッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 股間から来る強い性欲を抑えることができず、葵は%ARGS:1%に電流を流し込んだ
 					PRINTFORMDL %ARGS:1%が大きな悲鳴を上げ、それから動かなくなったのを確認すると
@@ -25430,12 +23638,8 @@ ENDIF
 					PRINTFORMDL そう言い放つと葵は、限界まで張り詰めた己のペニスを%ARGS:1%の頬にぐいぐいと押し付けた……
 					PRINTFORM 「ねぇ、これ……その胸で、挟んでくれ\@ TALENT:122 ? ない # る \@？　ね、お願い
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵は拘束具を引っ張りながら、醜い肉棒で%ARGS:1%の頬を歪めている
 IF FLAG:AUTOMODE
@@ -25538,12 +23742,8 @@ ENDIF
 					PRINTFORMDL 仰向けに寝ていることで自然に強調されている%ARGS:1%の胸を、葵は厭らしい目で見つめている
 					PRINTFORM （はぁ、この胸に挟んだら、どれだけ気持ちいいの\@ TALENT:122 ? かな # ？ \@……んぅ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL %ARGS:1%の柔肌にペニスを擦りつける妄想をしただけで、葵のモノは急速に硬度を増していった
 IF FLAG:AUTOMODE
@@ -25568,12 +23768,8 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM 　早く起きないとっ、お姉ちゃんの胸にせーえきっ、いっぱい出しちゃうよ……ッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL %ARGS:1%が起きてこないことを認めた葵は、そのまま絶頂の証を吐き出した
 					PRINTFORMDL あまりの量に胸だけでなく顔にまでかかり、%ARGS:1%は独特の臭いに顔をしかめている……
@@ -25621,22 +23817,14 @@ ENDIF
 				IF TALENT:74 || ABL:8 >= 3 || ABL:12 >= 3 || CFLAG:28
 					PRINTFORM 「\@ TALENT:122 ? あ # あれ \@、お姉ちゃん！？　大丈夫？　起こしてあげなきゃ……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵はそう呟くと、うつ伏せの%ARGS:1%の尻穴に、ピンと自己主張するペニスをあてがった……
 					PRINTFORM 「お姉ちゃんのお尻はどんな具合かなぁ……ッぅ、ふッああぁッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 悲鳴を上げる%ARGS:1%を無視して、葵は尻の締め付けを確かめるようにゆっくりとした抽送を開始する……
 					PRINTFORM 「ふぁ、なんて締め付け……ッ
@@ -25656,12 +23844,8 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM 　じゃないと、このまま……ッふううぅ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORM 「……ぁっ、もうイきそ、イくう……ッ
 					CALL HEARTCB(0xD02830,2)
@@ -26084,12 +24268,8 @@ PRINTFORMDW そう言うと葵は、%ARGS:1%の艶やかな唇にすっかり硬
 ENDIF
 					PRINTFORM 「ほらっ、早く咥え\@ TALENT:122 ? ろぉ # てよぉ \@……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！　できないなら、電気流\@ TALENT:122 ? すぞっ # しっちゃうよ \@……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！　できないなら、電気流\@ TALENT:122 ? すぞっ # しっちゃうよ \@……！」
-ENDIF
+PRINTFORML ！　できないなら、電気流\@ TALENT:122 ? すぞっ # しっちゃうよ \@……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵が拘束具の電流を流すスイッチに手をかけると、%ARGS:1%は事の重大性に気づいたようだ
 IF FLAG:AUTOMODE
@@ -26224,12 +24404,8 @@ ENDIF
 					PRINTFORMDL 今や発情しきった顔をしている葵は、%ARGS:1%の眼前に完全に勃起したペニスを晒す……
 					PRINTFORM （……ぁ、そんな、ことぉ……ッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵のグロテスクなまでに膨れ上がったペニスは、%ARGS:1%の魅力的な唇へ向かう
 					PRINTFORMDL 彼女の艷やかで柔らかそうな唇にペニスが触れた途端、葵の体に電撃的な快楽が走った……
@@ -26274,12 +24450,8 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　ちょっと、付き合ってもらいます
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 興奮した様子の葵は、茫然自失とした%ARGS:1%の膣に無理やりペニスをねじ込んだ……
 					PRINTFORM 「んぅ……ふぁあああんッ
@@ -26322,12 +24494,8 @@ ENDIF
 					CALL HEARTCB(0xD02830)
 					PRINTFORM 　ちょっと、付き合ってもらいます
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 興奮した様子の葵は、動揺している%ARGS:1%の膣に無理やりペニスをねじ込んだ……
 					PRINTFORM 「んぅ……ふぁあああんッ
@@ -26408,27 +24576,15 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORML ！！？？」
 					PRINTFORMDL 慣れない膣の締め付けから予想外の快感を得て、葵は大きな嬌声を上げてしまう……
-IF FLAG:AUTOMODE
-	PRINTFORML （や、やば……絶対、バレちゃいましたよぉ……！！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （や、やば……絶対、バレちゃいましたよぉ……！！）
-ENDIF
+PRINTFORML （や、やば……絶対、バレちゃいましたよぉ……！！）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL しかし葵の予想に反して、いつまで経っても%ARGS:1%は起きて\@ TALENT:122 ? 彼 # 彼女 \@を咎める様子はなかった
-IF FLAG:AUTOMODE
-	PRINTFORML （……起きない……いや、もしかしたら……寝てるフリをしている……？）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （……起きない……いや、もしかしたら……寝てるフリをしている……？）
-ENDIF
+PRINTFORML （……起きない……いや、もしかしたら……寝てるフリをしている……？）
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML （そうだ、きっとこの娘は……このまま気持ちよくなりたいから、寝てるフリをしているんだ……っ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  （そうだ、きっとこの娘は……このまま気持ちよくなりたいから、寝てるフリをしているんだ……っ！）
-ENDIF
+PRINTFORML （そうだ、きっとこの娘は……このまま気持ちよくなりたいから、寝てるフリをしているんだ……っ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORM 「それなら、気持ちよくしてあげ\@ TALENT:122 ? るよ # ますよ \@……っくひいぃ、ふぁああ……ッ
 					CALL HEARTCB(0xD02830,2)
@@ -26493,12 +24649,8 @@ ENDIF
 					PRINTFORML 　はぁ、な、何\@ TALENT:122 ? だよぉ # ですかぁ \@、その顔……」
 					PRINTFORM 「そんな格好で、倒れてるほうが悪い\@ TALENT:122 ? んだよ # んですよ \@ぉ……ですから、そんな目で見ないで……んくぅッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL %ARGS:1%は光が宿っていない虚ろな目で、嫌悪感を示すように葵をただ見つめている
 					PRINTFORMDL その眼差しは、\@ TALENT:122 ? 彼 # 彼女 \@に罪悪感と背徳感とを同時に呼び起こさせた……
@@ -26537,12 +24689,8 @@ PRINTFORMDW 当然%ARGS:1%は葵の言いなりにはならず、必死で抵抗
 ENDIF
 					PRINTFORM 「へぇ……言うこと聞けないんなら、お仕置きしなくっちゃね……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL そう言うと、葵は拘束具の電流を流すスイッチを一瞬だけオンにした
 					PRINTFORMDL 一秒にも満たない間に、%ARGS:1%の体に激痛が走る……
@@ -26584,12 +24732,8 @@ PRINTFORMDW %ARGS:1%の抵抗に痺れを切らした葵は、拘束具の電流
 ENDIF
 					PRINTFORM （こんなことしちゃダメって、わかってるけど……わかってるけどぉ……ッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！）
-ENDIF
+PRINTFORML ！）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 股間から来る強い性欲を抑えることができず、葵は%ARGS:1%に電流を流し込んだ
 					PRINTFORMDL %ARGS:1%が大きな悲鳴を上げ、それから動かなくなったのを確認すると
@@ -26682,12 +24826,8 @@ ENDIF
 					PRINTFORMDL そう言い放つと葵は、限界まで張り詰めた己のペニスを%ARGS:1%の頬にぐいぐいと押し付けた……
 					PRINTFORM 「ねぇ、これ……その胸で、挟んでくれ\@ TALENT:122 ? ない # ませんか \@？　まぁ、嫌って言っても無理やりしますけど
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵は拘束具を引っ張りながら、醜い肉棒で%ARGS:1%の頬を歪めている
 IF FLAG:AUTOMODE
@@ -26790,12 +24930,8 @@ ENDIF
 					PRINTFORMDL 仰向けに寝ていることで自然に強調されている%ARGS:1%の胸を、葵は厭らしい目で見つめている
 					PRINTFORM （はぁ、この胸に挟んだら、どれだけ気持ちいいの\@ TALENT:122 ? かな # ？ \@……んぅ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL %ARGS:1%の柔肌にペニスを擦りつける妄想をしただけで、葵のモノは急速に硬度を増していった
 IF FLAG:AUTOMODE
@@ -26820,12 +24956,8 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM 　早く起きないとっ、胸にせーえきっ、いっぱい出しちゃいますよ……ッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL %ARGS:1%が起きてこないことを認めた葵は、そのまま絶頂の証を吐き出した
 					PRINTFORMDL あまりの量に胸だけでなく顔にまでかかり、%ARGS:1%は独特の臭いに顔をしかめている……
@@ -26873,22 +25005,14 @@ ENDIF
 				IF TALENT:74 || ABL:8 >= 3 || ABL:12 >= 3 || CFLAG:28
 					PRINTFORM 「\@ TALENT:122 ? あ # あれ \@、こんなところでダウンしちゃってます……起こしてあげなきゃ……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵はそう呟くと、うつ伏せの%ARGS:1%の尻穴に、ピンと自己主張するペニスをあてがった……
 					PRINTFORM 「さぁて、どんな具合\@ TALENT:122 ? かなぁ # ですか \@……ッぅ、ふッああぁッ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 悲鳴を上げる%ARGS:1%を無視して、葵は尻の締め付けを確かめるようにゆっくりとした抽送を開始する……
 					PRINTFORM 「ふぁ、なんて締め付け……ッ
@@ -26908,12 +25032,8 @@ ENDIF
 					CALL HEARTCB(0xD02830,2)
 					PRINTFORM 　じゃないと、このまま……ッふううぅ
 					CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORM 「……ぁっ、もうイきそ、イくう……ッ
 					CALL HEARTCB(0xD02830,2)
@@ -27336,12 +25456,8 @@ PRINTFORMDW そう言うと葵は、%ARGS:1%の艶やかな唇にすっかり硬
 ENDIF
 					PRINTFORM 「ほらっ、早く咥え\@ TALENT:122 ? ろぉ # てください \@……
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！　できないなら、電気流\@ TALENT:122 ? すぞっ # しますよ \@……！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！　できないなら、電気流\@ TALENT:122 ? すぞっ # しますよ \@……！」
-ENDIF
+PRINTFORML ！　できないなら、電気流\@ TALENT:122 ? すぞっ # しますよ \@……！」
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵が拘束具の電流を流すスイッチに手をかけると、%ARGS:1%は事の重大性に気づいたようだ
 IF FLAG:AUTOMODE
@@ -27476,12 +25592,8 @@ ENDIF
 					PRINTFORMDL 今や発情しきった顔をしている葵は、%ARGS:1%の眼前に完全に勃起したペニスを晒す……
 					PRINTFORM （……ぁ、そんな、ことぉ……ッ
 					CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ）
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ）
-ENDIF
+PRINTFORML ）
+CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORMDL 葵のグロテスクなまでに膨れ上がったペニスは、%ARGS:1%の魅力的な唇へ向かう
 					PRINTFORMDL 彼女の艷やかで柔らかそうな唇にペニスが触れた途端、葵の体に電撃的な快楽が走った……
@@ -27528,12 +25640,8 @@ ENDIF
 				PRINTFORMDL 催眠にかかった%ARGS:1%は、とろんとした顔をしながら葵を無理やり押し倒した……
 				PRINTFORM 「やぁっ！？　お姉ちゃん……い、いきなり……ッふぁああぁ
 				CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:1%は葵の痛々しいまでに勃起したペニスを掴むと、自らの陰唇に擦りつける
 IF FLAG:AUTOMODE
@@ -27546,24 +25654,16 @@ ENDIF
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM ！　ぁっ、いい、これいいよぉ……ッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:1%は前後左右に腰を動かし、葵のペニスをきつく締めつけ嬲る
 				PRINTFORM 「ん、はぁ、ぅッ
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　きもちい……んひぃいいッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:1%は葵を押さえつけ、ゆっくりと腰を上下に動かしている
 				PRINTFORMDL 搾り取られるような快感に、葵のペニスは限界まで膨れ上がり、子種を吐き出したいという欲望がこみ上げてきた……
@@ -27571,12 +25671,8 @@ ENDIF
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM 　もっと、はげしく……ッふぃいいいッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵が暗示すると、%ARGS:1%は身体全体でペニスを味わうように激しく腰を振り始めた……
 				PRINTFORM 「ぁ、これぇッ、すごいッ、すごすぎいぃッ
@@ -27644,12 +25740,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　お姉ちゃんのす、すごい、きもちよさそ……
 				CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL まるで葵も催眠にかかってしまったかのように、ふらふらとした足取りで%ARGS:1%の元へ向かう
 IF FLAG:AUTOMODE
@@ -27782,12 +25874,8 @@ ENDIF
 				PRINTFORMDL 催眠にかかった%ARGS:1%は、とろんとした顔をしながら葵を無理やり押し倒した……
 				PRINTFORM 「やぁっ！？　い、いきなり……ッふぁああぁ
 				CALL HEARTCB(0xD02830)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:1%は葵の痛々しいまでに勃起したペニスを掴むと、自らの陰唇に擦りつける
 IF FLAG:AUTOMODE
@@ -27800,24 +25888,16 @@ ENDIF
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM ！　ぁっ、いい、これいいですよぉ……ッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML 」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  」
-ENDIF
+PRINTFORML 」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:1%は前後左右に腰を動かし、葵のペニスをきつく締めつけ嬲る
 				PRINTFORM 「ん、はぁ、ぅッ
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　きもちい……んひぃいいッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！」
-ENDIF
+PRINTFORML ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:1%は葵を押さえつけ、ゆっくりと腰を上下に動かしている
 				PRINTFORMDL 搾り取られるような快感に、葵のペニスは限界まで膨れ上がり、子種を吐き出したいという欲望がこみ上げてきた……
@@ -27825,12 +25905,8 @@ ENDIF
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM 　もっと、はげしく……ッふぃいいいッ
 				CALL HEARTCB(0xD02830,2)
-IF FLAG:AUTOMODE
-	PRINTFORML ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  ！？」
-ENDIF
+PRINTFORML ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵が暗示すると、%ARGS:1%は身体全体でペニスを味わうように激しく腰を振り始めた……
 				PRINTFORM 「ぁ、これぇッ、すごいッ、すごすぎいぃッ
@@ -27898,12 +25974,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　す、すごい、きもちよさそ……
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL まるで葵も催眠にかかってしまったかのように、ふらふらとした足取りで%ARGS:1%の元へ向かう
 				IF FLAG:AUTOMODE
@@ -28085,20 +26157,12 @@ ENDIF
 		IF TALENT:74 || ABL:8 >= 3 || ABL:12 >= 3 || CFLAG:28
 			PRINTFORM 「\@ TALENT:122 ? あ # あら \@、やってくれるんですか？　それじゃ、お願いします……
 			CALL HEARTCB(0xD02830)
-			IF FLAG:AUTOMODE
-				PRINTFORML 」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  」
-			ENDIF
+			PRINTFORML 」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSE
-			IF FLAG:AUTOMODE
-				PRINTFORML 「……え？　い、いや、ちょっと！？　\@ TALENT:122 ? だ、ダメですよそんなことしちゃあ…… # わ、わたしのこれには、構わなくていいですから……っ \@！？」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「……え？　い、いや、ちょっと！？　\@ TALENT:122 ? だ、ダメですよそんなことしちゃあ…… # わ、わたしのこれには、構わなくていいですから……っ \@！？」
-			ENDIF
+			PRINTFORML 「……え？　い、いや、ちょっと！？　\@ TALENT:122 ? だ、ダメですよそんなことしちゃあ…… # わ、わたしのこれには、構わなくていいですから……っ \@！？」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	;ふたなりでモンスターをおしおきする
@@ -28214,12 +26278,8 @@ ENDIF
 				PRINTFORMDL %ARGS:0%のそそり立ったペニスを見て、葵は色に狂った目をしながら姉を押し倒した……
 				PRINTFORM 「ねえ、それ……せーえき出したら、なくなるんだよね？　だったら私に手伝わせてよ……
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 完全にスイッチが入った葵は、%ARGS:0%の返答など求めてはいなかった
 				IF FLAG:AUTOMODE
@@ -28233,48 +26293,32 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　一緒に気持ち良くなろうね……っ
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 抵抗の弱い%ARGS:0%を押さえつけ、葵はガチガチに勃起したペニスを膣で包み込んでいく……
 				PRINTFORM 「っふ……ぁ、ッはぁあああぁん
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM ！　ぁははっ、奥まではいっちゃった……ぁ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL ペニスを完全に包み込んだ葵は、顔を真っ赤にしている%ARGS:0%の耳元で卑猥な言葉を囁く……
 				PRINTFORM 「ねえ、気持ちいいんだよね……
 				CALL HEARTCB(0xD02830)
 				PRINTFORM ？　挿れただけで、こんなにビクビクしてるんだもん……
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 嬌声を噛み殺しながら羞恥に耐える%ARGS:0%を見つめながら、葵は上下の抽送を開始する……
 				PRINTFORM 「ほらぁッ
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　はぁ、素直に気持ちいいって、認めちゃおうよぉッ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL ペニスをきつく締めあげられる強烈な快感に耐え切れず、%ARGS:0%は甘い嬌声を漏らしてしまう
 				IF FLAG:AUTOMODE
@@ -28329,12 +26373,8 @@ ENDIF
 				PRINTFORMDL %ARGS:0%のそそり立ったペニスを見て、葵は色に狂った目をしながら姉を押し倒した……
 				PRINTFORM 「ごめんね、そんなの見せられたら、我慢できなくなっちゃって……
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵は%ARGS:0%のペニスを掴むと、先走りを滲ませ続けるそれを自らの尻穴に導く
 				IF FLAG:AUTOMODE
@@ -28372,12 +26412,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　もっと、したいんだったらぁ……
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:0%の上から降りた葵は、少し離れた場所で四つん這いになり、十分に仕上がった尻穴を%ARGS:0%に見せつけた……
 				PRINTFORM 「……自分からいれてよ、お姉ちゃん
@@ -28442,12 +26478,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　すごいことになってるね……ふふっ
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵は弓のように反り返った%ARGS:0%のペニスを、舐めまわすように見つめた
 				IF FLAG:AUTOMODE
@@ -28495,12 +26527,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM ！　ふふっ、もうイっちゃいそうな\@ TALENT:122 ? んだね # んだ \@？　まだ、ベロしか動かしてないのに……
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:0%は必死でそれを否定しているが、催眠状態にある葵にその言葉は届いていない
 				IF FLAG:AUTOMODE
@@ -28526,12 +26554,8 @@ ENDIF
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM ！　んッ、んんぐ、んう……ッ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML ！」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  ！」
-				ENDIF
+				PRINTFORML ！」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL イラマチオの体勢のまま口内射精された葵は、濁流のように押し寄せる精液を全て飲み干そうとする
 				PRINTFORM 「……んぶふぇえええ
@@ -28560,12 +26584,8 @@ ENDIF
 				PRINTFORMDL %ARGS:0%のそそり立ったペニスを見て、葵は色に狂った目をしながら姉の前で膝をついた……
 				PRINTFORM 「……こんなにおっきくなってる……あははっ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵は鋼のように硬くなった%ARGS:0%の触手ペニスを掴むと、亀頭を指でなぞり始めた……
 				IF FLAG:AUTOMODE
@@ -28684,12 +26704,8 @@ ENDIF
 				PRINTFORMDL %ARGS:0%のそそり立ったペニスを見て、葵は色に狂った目をしながら彼女を押し倒した……
 				PRINTFORM 「ねえ、それ……せーえき出したら、なくなるんですよね？　だったら私が協力してあげます……
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 完全にスイッチが入った葵は、%ARGS:0%の返答など求めてはいなかった
 				IF FLAG:AUTOMODE
@@ -28703,48 +26719,32 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　一緒にきもちよくなりましょうね……っ
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 嫌がる%ARGS:0%を強引に押さえつけ、葵はガチガチに勃起したペニスを膣で包み込んでいく……
 				PRINTFORM 「っふ……ぁ、ッはぁあああぁん
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM ！　ぁははっ、奥まではいっちゃいました……ぁ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL ペニスを完全に包み込んだ葵は、顔を真っ赤にしている%ARGS:0%の耳元で卑猥な言葉を囁く……
 				PRINTFORM 「ねえ、気持ちいいんですよね……
 				CALL HEARTCB(0xD02830)
 				PRINTFORM ？　挿れただけで、こんなにビクビクしてるんですからぁ……
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 嬌声を噛み殺しながら羞恥に耐える%ARGS:0%を見つめながら、葵は上下の抽送を開始する……
 				PRINTFORM 「ほらぁッ
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　はぁ、素直に気持ちいいって、認めちゃいましょうよぉッ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL ペニスをきつく締めあげられる強烈な快感に耐え切れず、%ARGS:0%は甘い嬌声を漏らしてしまう
 				IF FLAG:AUTOMODE
@@ -28799,12 +26799,8 @@ ENDIF
 				PRINTFORMDL %ARGS:0%のそそり立ったペニスを見て、葵は色に狂った目をしながら彼女を押し倒した……
 				PRINTFORM 「ごめんなさい、そんなの見せられたら、我慢できなくなっちゃって……
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵は%ARGS:0%のペニスを掴むと、先走りを滲ませ続けるそれを自らの尻穴に導く
 				IF FLAG:AUTOMODE
@@ -28842,12 +26838,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　もっと、したいんだったらぁ……
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:0%の上から降りた葵は、少し離れた場所で四つん這いになり、十分に仕上がった尻穴を%ARGS:0%に見せつけた……
 				PRINTFORM 「……自分からいれてみて\@ TALENT:122 ? よ # ください \@
@@ -28912,12 +26904,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　すごいことになってます……ふふっ
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵は弓のように反り返った%ARGS:0%のペニスを、舐めまわすように見つめた
 				IF FLAG:AUTOMODE
@@ -28965,12 +26953,8 @@ ENDIF
 				CALL HEARTCB(0xD02830)
 				PRINTFORM ！　ふふっ、もうイっちゃいそうな\@ TALENT:122 ? んだね # んですね \@？　まだ、ベロしか動かしてないのに……
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL %ARGS:0%は必死でそれを否定しているが、催眠状態にある葵にその言葉は届いていない
 				IF FLAG:AUTOMODE
@@ -28996,12 +26980,8 @@ ENDIF
 				CALL HEARTCB(0xD02830,2)
 				PRINTFORM ！　んッ、んんぐ、んう……ッ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML ！」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  ！」
-				ENDIF
+				PRINTFORML ！」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL イラマチオの体勢のまま口内射精された葵は、濁流のように押し寄せる精液を全て飲み干そうとする
 				PRINTFORM 「……んぶふぇえええ
@@ -29030,12 +27010,8 @@ ENDIF
 				PRINTFORMDL %ARGS:0%のそそり立ったペニスを見て、葵は色に狂った目をしながら彼女の前で膝をついた……
 				PRINTFORM 「……こんなにおっきくなってる……あははっ
 				CALL HEARTCB(0xD02830,2)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				PRINTFORMDL 葵は鋼のように硬くなった%ARGS:0%の触手ペニスを掴むと、亀頭を指でなぞり始めた……
 				IF FLAG:AUTOMODE
@@ -29172,12 +27148,8 @@ ENDIF
 						ELSE
 						PRINTFORMDW 内容にも寄るなぁ、と返す茜に、葵は顔を合わせその両肩に手を置いた……
 						ENDIF
-						IF FLAG:AUTOMODE
-							PRINTFORML 「……キス、していい？　……こんなこと、聞かないほうがいっか」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「……キス、していい？　……こんなこと、聞かないほうがいっか」
-						ENDIF
+						PRINTFORML 「……キス、していい？　……こんなこと、聞かないほうがいっか」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						PRINTFORMDL 突然のことに動揺し、止めようとする茜の声も聞かず、葵は唇を重ね合わせる
 						IF FLAG:AUTOMODE
@@ -29308,12 +27280,8 @@ ENDIF
 			ELSE
 			PRINTFORMDW それはどうかしら、と返す%ARGS:1%に、葵は顔を合わせその両肩に手を置いた……
 			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORML 「……キス、していい？　……いや、こんなこと、聞かないほうがいいですね」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「……キス、していい？　……いや、こんなこと、聞かないほうがいいですね」
-			ENDIF
+			PRINTFORML 「……キス、していい？　……いや、こんなこと、聞かないほうがいいですね」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			PRINTFORMDL 突然のことに動揺し、止めようとする%ARGS:1%の声も聞かず、葵は唇を重ね合わせる
 			IF FLAG:AUTOMODE

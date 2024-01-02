@@ -173,12 +173,8 @@ SELECTCASE ARG:0
 			ELSE
 			PRINTFORMDW マキは先程の敵に犯されたかったという考えが浮かび、動揺する
 			ENDIF
-			IF FLAG:AUTOMODE
-				PRINTFORML (はっ…、私は…今何を！？)
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  (はっ…、私は…今何を！？)
-			ENDIF
+			PRINTFORML (はっ…、私は…今何を！？)
+			CALL WAIT_AUTOMODE(400, 0)
 
 		;戦意喪失
 		ELSEIF CFLAG:29
@@ -188,12 +184,8 @@ SELECTCASE ARG:0
 			;PRINTFORMDW 
 		;睡眠
 		ELSEIF CFLAG:25
-			IF FLAG:AUTOMODE
-				PRINTFORML 「うへへへー♪」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「うへへへー♪」
-			ENDIF
+			PRINTFORML 「うへへへー♪」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは眠りながら幸せそうな笑顔を浮かべている
@@ -205,28 +197,16 @@ SELECTCASE ARG:0
 		ELSE
 			SELECTCASE RAND:3
 				CASE 0
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ひとまず安心かな」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ひとまず安心かな」
-					ENDIF
+					PRINTFORML 「ひとまず安心かな」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				CASE 1
-					IF FLAG:AUTOMODE
-						PRINTFORML 「ここまでくれば大丈夫かな…」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「ここまでくれば大丈夫かな…」
-					ENDIF
+					PRINTFORML 「ここまでくれば大丈夫かな…」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				CASEELSE
-					IF FLAG:AUTOMODE
-						PRINTFORML 「……ふぅ」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「……ふぅ」
-					ENDIF
+					PRINTFORML 「……ふぅ」
+					CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ENDIF
@@ -236,23 +216,15 @@ SELECTCASE ARG:0
 
 		;娘
 		IF ARG:1 == 19 && TFLAG:14 != 3
-			IF FLAG:AUTOMODE
-				PRINTFORML 「え…私……？ううん違う、私の……」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「え…私……？ううん違う、私の……」
-			ENDIF
+			PRINTFORML 「え…私……？ううん違う、私の……」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			CFLAG:805 = 4
 		;悪堕ちキャラ（通常）
 		ELSEIF ARG:1 == 101 && TFLAG:14 != 3
 			IF CSTR:51 == "ゆかり"
-				IF FLAG:AUTOMODE
-					PRINTFORML 「ゆかりん！？ちょっとねえ、正気に戻ってよ！」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「ゆかりん！？ちょっとねえ、正気に戻ってよ！」
-				ENDIF
+				PRINTFORML 「ゆかりん！？ちょっとねえ、正気に戻ってよ！」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSEIF CFLAG:800==1
 				IF FLAG:AUTOMODE
@@ -302,12 +274,8 @@ SELECTCASE ARG:0
 			;その他
 			ELSE
 				IF ARG:1 == 102
-					IF FLAG:AUTOMODE
-						PRINTFORML 「まずあいつらと引き離しますよ……！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「まずあいつらと引き離しますよ……！」
-					ENDIF
+					PRINTFORML 「まずあいつらと引き離しますよ……！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 					IF FLAG:AUTOMODE
@@ -335,12 +303,8 @@ SELECTCASE ARG:0
 			
 		;その他
 		ELSE
-			IF FLAG:AUTOMODE
-				PRINTFORML 「絶対に迎えに来るから！待ってて！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「絶対に迎えに来るから！待ってて！」
-			ENDIF
+			PRINTFORML 「絶対に迎えに来るから！待ってて！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	;見捨てられる
@@ -375,12 +339,8 @@ SELECTCASE ARG:0
 		ELSE
 			SELECTCASE RAND:2
 				CASE 0
-					IF FLAG:AUTOMODE
-						PRINTFORML 「…………」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「…………」
-					ENDIF
+					PRINTFORML 「…………」
+					CALL WAIT_AUTOMODE(400, 0)
 
 					IF FLAG:AUTOMODE
 						PRINTFORMDL マキは俯きながら唇を噛みしめている…
@@ -389,12 +349,8 @@ SELECTCASE ARG:0
 						PRINTFORMDW マキは俯きながら唇を噛みしめている…
 					ENDIF
 				CASEELSE
-					IF FLAG:AUTOMODE
-						PRINTFORML 「あ…待ってよ、ねぇっ…！やだ…嘘……置いて……いかないで………」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「あ…待ってよ、ねぇっ…！やだ…嘘……置いて……いかないで………」
-					ENDIF
+					PRINTFORML 「あ…待ってよ、ねぇっ…！やだ…嘘……置いて……いかないで………」
+					CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ENDIF
@@ -423,23 +379,15 @@ SELECTCASE ARG:0
 			;
 		;HP1/4以下
 		ELSEIF MAXBASE:HP/2 >= BASE:HP
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ちょっときつかったかな…」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ちょっときつかったかな…」
-			ENDIF
+			PRINTFORML 「ちょっときつかったかな…」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSE
 			SELECTCASE RAND:7
 				CASE 0
 					PRINTFORML 「あなたたちがどれだけ来ようと、私は負けたりしない！」
-					IF FLAG:AUTOMODE
-						PRINTFORML 「な～んて、こういう時くらいはカッコいいこと言いたいんだけどなあ」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「な～んて、こういう時くらいはカッコいいこと言いたいんだけどなあ」
-					ENDIF
+					PRINTFORML 「な～んて、こういう時くらいはカッコいいこと言いたいんだけどなあ」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				CASEELSE
 					PRINTDATAL
@@ -460,12 +408,8 @@ SELECTCASE ARG:0
 		;ARG:1にイベントID(1でクイーン 2でガーディアン)
 		;不意打ち
 		IF ARG:2 == 2
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ふ、不意打ち！？」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ふ、不意打ち！？」
-			ENDIF
+			PRINTFORML 「ふ、不意打ち！？」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		;寝込み
 		ELSEIF ARG:2 == 3
@@ -552,32 +496,20 @@ SELECTCASE ARG:0
 				CALL HEARTCB(0xD02830)
 				PRINTFORM 　たたかうの、わすれちゃうぅ……
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSEIF RAND:2 == 0
 				PRINTFORM 「あ、あぁっ、ああああああぁっ……
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				PRINTFORM 「く、くるの、きもちいいのっ、我慢できな――あ、ああああああぁんっ
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 			SELECTCASE RAND:2
@@ -588,31 +520,19 @@ SELECTCASE ARG:0
 					DATAFORM 「や、嫌、いやあぁぁあぁぁぁぁ
 					ENDDATA
 					CALL HEARTCB(0xD02830)
-					IF FLAG:AUTOMODE
-						PRINTFORML 」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  」
-					ENDIF
+					PRINTFORML 」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				CASEELSE
-					IF FLAG:AUTOMODE
-						PRINTFORML 「もっとぉぉ！もっとおかひくひてぇぇぇぇぇぇ！！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「もっとぉぉ！もっとおかひくひてぇぇぇぇぇぇ！！」
-					ENDIF
+					PRINTFORML 「もっとぉぉ！もっとおかひくひてぇぇぇぇぇぇ！！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ELSE
 			;自慰で絶頂した時
 			IF CFLAG:805 == 3
-				IF FLAG:AUTOMODE
-					PRINTFORML 「ひんっ♪　あっ……ううぅんっ……！」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「ひんっ♪　あっ……ううぅんっ……！」
-				ENDIF
+				PRINTFORML 「ひんっ♪　あっ……ううぅんっ……！」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				PRINTDATAL
@@ -645,12 +565,8 @@ SELECTCASE ARG:0
 		ELSE
 			SELECTCASE RAND:3
 			CASE 0
-				IF FLAG:AUTOMODE
-					PRINTFORML 「……………」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「……………」
-				ENDIF
+				PRINTFORML 「……………」
+				CALL WAIT_AUTOMODE(400, 0)
 
 				IF FLAG:AUTOMODE
 					PRINTFORMDL マキは虚ろな目をしながら体をピクピクと痙攣させている
@@ -659,20 +575,12 @@ SELECTCASE ARG:0
 				PRINTFORMDW マキは虚ろな目をしながら体をピクピクと痙攣させている
 				ENDIF
 			CASE 1
-				IF FLAG:AUTOMODE
-					PRINTFORML 「あっ……ぅ……」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「あっ……ぅ……」
-				ENDIF
+				PRINTFORML 「あっ……ぅ……」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			CASEELSE
-				IF FLAG:AUTOMODE
-					PRINTFORML 「…ひゃ………ん……」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「…ひゃ………ん……」
-				ENDIF
+				PRINTFORML 「…ひゃ………ん……」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ENDIF
@@ -685,22 +593,14 @@ SELECTCASE ARG:0
 			IF CFLAG:28 || CFLAG:29 || TFLAG:16 == 2 || CFLAG:43 > 1 || (RAND:3 == 0 && MAXBASE:MP/4 >= BASE:MP)
 				;諦め時か戦意喪失時か深い催眠時専用
 				IF RAND:2 == 0 && (TFLAG:16 == 2 || CFLAG:29 || CFLAG:43 > 1)
-					IF FLAG:AUTOMODE
-						PRINTFORML 「んぁっ…わたしのおっぱい、吸われちゃってるぅ……♪」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「んぁっ…わたしのおっぱい、吸われちゃってるぅ……♪」
-					ENDIF
+					PRINTFORML 「んぁっ…わたしのおっぱい、吸われちゃってるぅ……♪」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 					PRINTFORM 「んひゃぁあっ♪　お、おっぱい、すわれて、あっ、はあぁぁぁん…
 					CALL HEARTCB(0xD02830)
-					IF FLAG:AUTOMODE
-						PRINTFORML 」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  」
-					ENDIF
+					PRINTFORML 」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ENDIF
 			ELSE
@@ -717,12 +617,8 @@ SELECTCASE ARG:0
 		;ARG:1に残り時間
 		;1/3で
 		IF RAND:3 == 0 && ARG:1 <= 7
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ッ……！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ッ……！」
-			ENDIF
+			PRINTFORML 「ッ……！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは寄生体がマキの気に対して拒絶を繰り返す度に痛みを感じている
@@ -738,12 +634,8 @@ SELECTCASE ARG:0
 		;ARG:1に残り時間
 		;1/3で
 		IF RAND:3 == 0 && ARG:1 <= 7
-			IF FLAG:AUTOMODE
-				PRINTFORML 「うぐぅっ……！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「うぐぅっ……！」
-			ENDIF
+			PRINTFORML 「うぐぅっ……！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは自分の体が邪悪な気に対して拒絶を繰り返す痛みと、体内の子がマキの気に拒絶を繰り返す痛みを感じている
@@ -758,12 +650,8 @@ SELECTCASE ARG:0
 	CASE 127
 		;ARG:1に状況　（ARG:1が　0：最初　1：産まれた　2：吸われた）
 		IF ARG:1 == 0
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ごふっ…ぅ…っぐぅあ！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ごふっ…ぅ…っぐぅあ！」
-			ENDIF
+			PRINTFORML 「ごふっ…ぅ…っぐぅあ！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは異形の子を生む時に受ける狂いそうな痛みを必死で堪えている！
@@ -772,20 +660,12 @@ SELECTCASE ARG:0
 			PRINTFORMDW マキは異形の子を生む時に受ける狂いそうな痛みを必死で堪えている！
 			ENDIF
 		ELSEIF ARG:1 == 1
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ああ、あぁぁぁぁ……」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ああ、あぁぁぁぁ……」
-			ENDIF
+			PRINTFORML 「ああ、あぁぁぁぁ……」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSEIF ARG:1 == 2
-			IF FLAG:AUTOMODE
-				PRINTFORML 「う、ううぅ………」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「う、ううぅ………」
-			ENDIF
+			PRINTFORML 「う、ううぅ………」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは精根使い果たしたばかりなのにも拘らず、気を限界まで吸われ意識が飛びそうになっている
@@ -798,12 +678,8 @@ SELECTCASE ARG:0
 	CASE 129
 		;ARG:1に状況　（ARG:1が　0：最初　1：産まれた　2：吸われた）　ARG:2に子供の種類
 		IF ARG:1 == 0
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ごふっ…ぅ…っぐぅあ！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ごふっ…ぅ…っぐぅあ！」
-			ENDIF
+			PRINTFORML 「ごふっ…ぅ…っぐぅあ！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは異形との子が生まれる時に受ける狂いそうな痛みを必死に堪えている！
@@ -812,20 +688,12 @@ SELECTCASE ARG:0
 			PRINTFORMDW マキは異形との子が生まれる時に受ける狂いそうな痛みを必死に堪えている！
 			ENDIF
 		ELSEIF ARG:1 == 1
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ああ、あぁぁぁぁ……」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ああ、あぁぁぁぁ……」
-			ENDIF
+			PRINTFORML 「ああ、あぁぁぁぁ……」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSEIF ARG:1 == 2
-			IF FLAG:AUTOMODE
-				PRINTFORML 「う、ううぅ………」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「う、ううぅ………」
-			ENDIF
+			PRINTFORML 「う、ううぅ………」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは精根使い果たしたばかりなのにも拘らず、気を限界まで吸われ意識が飛びそうになっている
@@ -837,21 +705,13 @@ SELECTCASE ARG:0
 	;処女喪失
 	CASE 136
 		IF ARG:3 == 1
-			IF FLAG:AUTOMODE
-				PRINTFORML 「うあ…っくぅぅぅ……」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「うあ…っくぅぅぅ……」
-			ENDIF
+			PRINTFORML 「うあ…っくぅぅぅ……」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		;防衛成功
 		ELSEIF ARG:3 == 2
-			IF FLAG:AUTOMODE
-				PRINTFORML 「させない…よッ！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「させない…よッ！」
-			ENDIF
+			PRINTFORML 「させない…よッ！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		;防衛失敗
 		ELSEIF ARG:3 == 0
@@ -865,43 +725,23 @@ SELECTCASE ARG:0
 				ENDIF
 			;催眠
 			ELSEIF CFLAG:43
-				IF FLAG:AUTOMODE
-					PRINTFORML 「…あ、ぁははっ
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「…あ、ぁははっ
-				ENDIF
+				PRINTFORML 「…あ、ぁははっ
+				CALL WAIT_AUTOMODE(400, 0)
 
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML それ、正真正銘、私の処女だよぉ
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  それ、正真正銘、私の処女だよぉ
-				ENDIF
+				PRINTFORML それ、正真正銘、私の処女だよぉ
+				CALL WAIT_AUTOMODE(400, 0)
 
 				CALL HEARTCB(0xD02830)
-				IF FLAG:AUTOMODE
-					PRINTFORML 」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  」
-				ENDIF
+				PRINTFORML 」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
-				IF FLAG:AUTOMODE
-					PRINTFORML 「っ！…ううぅ…」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「っ！…ううぅ…」
-				ENDIF
+				PRINTFORML 「っ！…ううぅ…」
+				CALL WAIT_AUTOMODE(400, 0)
 
-				IF FLAG:AUTOMODE
-					PRINTFORML 「話には聞いてたけど、やっぱり痛いものなんだね…っくぅっ…！」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「話には聞いてたけど、やっぱり痛いものなんだね…っくぅっ…！」
-				ENDIF
+				PRINTFORML 「話には聞いてたけど、やっぱり痛いものなんだね…っくぅっ…！」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			ENDIF
 		ENDIF
@@ -927,12 +767,8 @@ SELECTCASE ARG:0
 		;残り時間１より上６以下で3分の１
 			SELECTCASE RAND:3
 				CASE 0
-					IF FLAG:AUTOMODE
-						PRINTFORML 「背中をさするくらいしかできないけど…少しは楽になるかな…？」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「背中をさするくらいしかできないけど…少しは楽になるかな…？」
-					ENDIF
+					PRINTFORML 「背中をさするくらいしかできないけど…少しは楽になるかな…？」
+					CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ENDIF
@@ -956,46 +792,26 @@ SELECTCASE ARG:0
 						PRINTFORMDW マキは敵にひたすら凌辱され続けている！このままでは時間の問題だ！
 						ENDIF
 					ELSEIF RAND:2 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「がはっ、があぁぅぅううううああ！！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「がはっ、があぁぅぅううううああ！！」
-						ENDIF
+						PRINTFORML 「がはっ、があぁぅぅううううああ！！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-						IF FLAG:AUTOMODE
-							PRINTFORML (私…この後…どうなるんだろう……)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (私…この後…どうなるんだろう……)
-						ENDIF
+						PRINTFORML (私…この後…どうなるんだろう……)
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				CASE 4
 					IF RAND:3 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「んんぅ！ぐっんんんん！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「んんぅ！ぐっんんんん！」
-						ENDIF
+						PRINTFORML 「んんぅ！ぐっんんんん！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSEIF RAND:2 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML (…少しずつ……力が無くなっていくのが分かる………)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (…少しずつ……力が無くなっていくのが分かる………)
-						ENDIF
+						PRINTFORML (…少しずつ……力が無くなっていくのが分かる………)
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-						IF FLAG:AUTOMODE
-							PRINTFORML 「うあぁ…誰かぁ…たす、助けて……」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「うあぁ…誰かぁ…たす、助けて……」
-						ENDIF
+						PRINTFORML 「うあぁ…誰かぁ…たす、助けて……」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						IF FLAG:AUTOMODE
 							PRINTFORMDL マキは涙をぽろぽろ零しながら助けを求めている
@@ -1006,12 +822,8 @@ SELECTCASE ARG:0
 					ENDIF
 				CASE 5 TO 6
 					IF RAND:3 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「あぁぁぁ…」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「あぁぁぁ…」
-						ENDIF
+						PRINTFORML 「あぁぁぁ…」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						IF FLAG:AUTOMODE
 							PRINTFORMDL マキは自分の命を吸われていくのが分かり、恐怖している！
@@ -1020,30 +832,18 @@ SELECTCASE ARG:0
 							PRINTFORMDW マキは自分の命を吸われていくのが分かり、恐怖している！
 						ENDIF
 					ELSEIF RAND:2 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「やめて…そん…な……」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「やめて…そん…な……」
-						ENDIF
+						PRINTFORML 「やめて…そん…な……」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-						IF FLAG:AUTOMODE
-							PRINTFORML (もう…これ以上は……)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (もう…これ以上は……)
-						ENDIF
+						PRINTFORML (もう…これ以上は……)
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				CASE 7 TO 8
 					IF RAND:3 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML (もう誰も…助けてくれなかったり…して……)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (もう誰も…助けてくれなかったり…して……)
-						ENDIF
+						PRINTFORML (もう誰も…助けてくれなかったり…して……)
+						CALL WAIT_AUTOMODE(400, 0)
 
 						IF FLAG:AUTOMODE
 							PRINTFORMDL マキは取り込まれながらも自嘲気味にうっすら笑みを浮かべた
@@ -1052,12 +852,8 @@ SELECTCASE ARG:0
 						PRINTFORMDW マキは取り込まれながらも自嘲気味にうっすら笑みを浮かべた
 						ENDIF
 					ELSEIF RAND:2 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「あっ、あっ、あっ、あっ、あっ…」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「あっ、あっ、あっ、あっ、あっ…」
-						ENDIF
+						PRINTFORML 「あっ、あっ、あっ、あっ、あっ…」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						IF FLAG:AUTOMODE
 							PRINTFORMDL マキは自分を犯す触手に対して力無く喘ぎ声を返すことしかできない
@@ -1066,12 +862,8 @@ SELECTCASE ARG:0
 						PRINTFORMDW マキは自分を犯す触手に対して力無く喘ぎ声を返すことしかできない
 						ENDIF
 					ELSE
-						IF FLAG:AUTOMODE
-							PRINTFORML 「もう…ダメっ…だ、誰かぁ……」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「もう…ダメっ…だ、誰かぁ……」
-						ENDIF
+						PRINTFORML 「もう…ダメっ…だ、誰かぁ……」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						IF FLAG:AUTOMODE
 							PRINTFORMDL マキは目からぽろぽろと涙をこぼしている
@@ -1082,20 +874,12 @@ SELECTCASE ARG:0
 					ENDIF
 				CASE 9 TO 10
 					IF RAND:3 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「……んっ……くぅ！………」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「……んっ……くぅ！………」
-						ENDIF
+						PRINTFORML 「……んっ……くぅ！………」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSEIF RAND:2 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML (もう…だめ……)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (もう…だめ……)
-						ENDIF
+						PRINTFORML (もう…だめ……)
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						IF FLAG:AUTOMODE
@@ -1107,12 +891,8 @@ SELECTCASE ARG:0
 					ENDIF
 				CASE 11 TO 12
 					IF RAND:3 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「…ぅ…気持ち…悪いよぉ……」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「…ぅ…気持ち…悪いよぉ……」
-						ENDIF
+						PRINTFORML 「…ぅ…気持ち…悪いよぉ……」
+						CALL WAIT_AUTOMODE(400, 0)
 
 						IF FLAG:AUTOMODE
 							PRINTFORMDL マキは自分の中に異形が浸食してくることに対し激しい嫌悪感を抱いた！
@@ -1128,12 +908,8 @@ SELECTCASE ARG:0
 						PRINTFORMDW マキは何も言わず体がぴくぴくと震えている
 						ENDIF
 					ELSE
-						IF FLAG:AUTOMODE
-							PRINTFORML 「出たい…ここから…誰か……出し…て………」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「出たい…ここから…誰か……出し…て………」
-						ENDIF
+						PRINTFORML 「出たい…ここから…誰か……出し…て………」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ENDIF
 				CASE 13 TO 14
@@ -1145,20 +921,12 @@ SELECTCASE ARG:0
 						PRINTFORMDW マキはつま先をピンと伸ばし、だらしなく舌を突き出している…
 						ENDIF
 					ELSEIF RAND:2 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML (お願い…外…外に……)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (お願い…外…外に……)
-						ENDIF
+						PRINTFORML (お願い…外…外に……)
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
-						IF FLAG:AUTOMODE
-							PRINTFORML (じわじわ…溶けて…いく……)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (じわじわ…溶けて…いく……)
-						ENDIF
+						PRINTFORML (じわじわ…溶けて…いく……)
+						CALL WAIT_AUTOMODE(400, 0)
 
 						IF FLAG:AUTOMODE
 							PRINTFORMDL マキは気と生命力を吸われ、体が溶けていくような錯覚を起こした
@@ -1169,30 +937,18 @@ SELECTCASE ARG:0
 					ENDIF
 				CASE 15 TO 16
 					IF RAND:3 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML 「ひゃぁあぁああぁぁぁ！あぁ…！」
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  「ひゃぁあぁああぁぁぁ！あぁ…！」
-						ENDIF
+						PRINTFORML 「ひゃぁあぁああぁぁぁ！あぁ…！」
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSEIF RAND:2 == 0
-						IF FLAG:AUTOMODE
-							PRINTFORML (感じたく…ないのにッ！……)
-							TWAIT FLAG:AUTOMODE * 400, 0
-						ELSE
-							PRINTFORMW  (感じたく…ないのにッ！……)
-						ENDIF
+						PRINTFORML (感じたく…ないのにッ！……)
+						CALL WAIT_AUTOMODE(400, 0)
 
 					ELSE
 						SELECTCASE RAND:2
 							CASE 0
-								IF FLAG:AUTOMODE
-									PRINTFORML 「くあっぁああああ！うあああぁぁぁぁ…！」
-									TWAIT FLAG:AUTOMODE * 400, 0
-								ELSE
-									PRINTFORMW  「くあっぁああああ！うあああぁぁぁぁ…！」
-								ENDIF
+								PRINTFORML 「くあっぁああああ！うあああぁぁぁぁ…！」
+								CALL WAIT_AUTOMODE(400, 0)
 
 								IF FLAG:AUTOMODE
 									PRINTFORMDL マキは叫び声に近い嬌声を上げ続けている…
@@ -1201,12 +957,8 @@ SELECTCASE ARG:0
 								PRINTFORMDW マキは叫び声に近い嬌声を上げ続けている…
 								ENDIF
 							CASEELSE
-								IF FLAG:AUTOMODE
-									PRINTFORML 「ひ、ひぇあああぁぁ！あっあっあっ…！」
-									TWAIT FLAG:AUTOMODE * 400, 0
-								ELSE
-									PRINTFORMW  「ひ、ひぇあああぁぁ！あっあっあっ…！」
-								ENDIF
+								PRINTFORML 「ひ、ひぇあああぁぁ！あっあっあっ…！」
+								CALL WAIT_AUTOMODE(400, 0)
 
 								IF FLAG:AUTOMODE
 									PRINTFORMDL マキは友人たちとの思い出が頭をよぎったが、快感により一瞬で思考をすることができなくなる…
@@ -1219,20 +971,12 @@ SELECTCASE ARG:0
 				CASEELSE
 					IF ARG:2
 						IF RAND:3 == 0
-							IF FLAG:AUTOMODE
-								PRINTFORML 「ぅ…ぅ……」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「ぅ…ぅ……」
-							ENDIF
+							PRINTFORML 「ぅ…ぅ……」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						ELSEIF RAND:2 == 0
-							IF FLAG:AUTOMODE
-								PRINTFORML 「いっそ一思いに……」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「いっそ一思いに……」
-							ENDIF
+							PRINTFORML 「いっそ一思いに……」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
 							IF FLAG:AUTOMODE
@@ -1244,28 +988,16 @@ SELECTCASE ARG:0
 						ENDIF
 					ELSE
 						IF RAND:3 == 0
-							IF FLAG:AUTOMODE
-								PRINTFORML 「…私……吸われ…て…！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「…私……吸われ…て…！」
-							ENDIF
+							PRINTFORML 「…私……吸われ…て…！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						ELSEIF RAND:2 == 0
-							IF FLAG:AUTOMODE
-								PRINTFORML 「やめて…お…おねが…っ！あああぁぁ！」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「やめて…お…おねが…っ！あああぁぁ！」
-							ENDIF
+							PRINTFORML 「やめて…お…おねが…っ！あああぁぁ！」
+							CALL WAIT_AUTOMODE(400, 0)
 
 						ELSE
-							IF FLAG:AUTOMODE
-								PRINTFORML 「かっ…ぁ―――――――」
-								TWAIT FLAG:AUTOMODE * 400, 0
-							ELSE
-								PRINTFORMW  「かっ…ぁ―――――――」
-							ENDIF
+							PRINTFORML 「かっ…ぁ―――――――」
+							CALL WAIT_AUTOMODE(400, 0)
 
 							IF FLAG:AUTOMODE
 								PRINTFORMDL マキは休む暇も無く押し寄せてくる快楽の波により軽い呼吸困難に陥っている
@@ -1281,12 +1013,8 @@ SELECTCASE ARG:0
 	CASE 152
 		;戦意喪失
 		IF CFLAG:29
-			IF FLAG:AUTOMODE
-				PRINTFORML 「…………ぅ…」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「…………ぅ…」
-			ENDIF
+			PRINTFORML 「…………ぅ…」
+			CALL WAIT_AUTOMODE(400, 0)
 
 			IF FLAG:AUTOMODE
 				PRINTFORMDL マキは捕食されていることに気が付いているのか付いていないのか、焦点の合っていない目で何も無い空間を見つめている
@@ -1295,19 +1023,11 @@ SELECTCASE ARG:0
 			PRINTFORMDW マキは捕食されていることに気が付いているのか付いていないのか、焦点の合っていない目で何も無い空間を見つめている
 			ENDIF
 		ELSE
-			IF FLAG:AUTOMODE
-				PRINTFORML 「や…あ　んぁ…　あ…」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「や…あ　んぁ…　あ…」
-			ENDIF
+			PRINTFORML 「や…あ　んぁ…　あ…」
+			CALL WAIT_AUTOMODE(400, 0)
 
-			IF FLAG:AUTOMODE
-				PRINTFORML (なんだろう…頭……ふわーって……)
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  (なんだろう…頭……ふわーって……)
-			ENDIF
+			PRINTFORML (なんだろう…頭……ふわーって……)
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -1398,12 +1118,8 @@ SELECTCASE ARG:0
 	CASE 451
 		SELECTCASE RAND:5
 			CASE 0
-				IF FLAG:AUTOMODE
-					PRINTFORML 「あああっ！とまっ、止まっ―――だっ、ダメェェェェェ！！」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「あああっ！とまっ、止まっ―――だっ、ダメェェェェェ！！」
-				ENDIF
+				PRINTFORML 「あああっ！とまっ、止まっ―――だっ、ダメェェェェェ！！」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			CASE 1
 				PRINTFORML 「―――――――ッッ！」
@@ -1414,12 +1130,8 @@ SELECTCASE ARG:0
 					PRINTFORMDW マキは湧き出るように出てくる精液とそれによってもたらされる快感により痙攣を繰り返している！
 				ENDIF
 			CASE 2
-				IF FLAG:AUTOMODE
-					PRINTFORML 「あ゛ぁぁぁぁぁぁぁぁ！…ぁっ！」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「あ゛ぁぁぁぁぁぁぁぁ！…ぁっ！」
-				ENDIF
+				PRINTFORML 「あ゛ぁぁぁぁぁぁぁぁ！…ぁっ！」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			CASE 3
 				IF FLAG:AUTOMODE

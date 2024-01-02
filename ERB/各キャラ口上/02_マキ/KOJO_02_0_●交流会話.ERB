@@ -9,12 +9,8 @@ SELECTCASE ARG:0
 
 		;戦意喪失
 		IF CFLAG:29
-IF FLAG:AUTOMODE
-	PRINTFORML 「……………」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「……………」
-ENDIF
+PRINTFORML 「……………」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは出会った相手も見ず、小さく震え続けている…
@@ -24,12 +20,8 @@ PRINTFORMDW マキは出会った相手も見ず、小さく震え続けてい�
 ENDIF
 		;睡眠
 		ELSEIF CFLAG:25
-IF FLAG:AUTOMODE
-	PRINTFORML 「ん～…」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ん～…」
-ENDIF
+PRINTFORML 「ん～…」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは呆れるほどぐっすり寝ていた
@@ -40,49 +32,25 @@ ENDIF
 		;向こうが喪失中
 		ELSEIF ARG:2
 			IF CSTR:51 == "ゆかり"
-IF FLAG:AUTOMODE
-	PRINTFORML 「な…あ……え…？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「な…あ……え…？」
-ENDIF
+PRINTFORML 「な…あ……え…？」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML 「ゆ、ゆか…りん……？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ゆ、ゆか…りん……？」
-ENDIF
+PRINTFORML 「ゆ、ゆか…りん……？」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML 「ゆかりん…？うそ、ゆかりん、やだ…しっかりしてっ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ゆかりん…？うそ、ゆかりん、やだ…しっかりしてっ！？」
-ENDIF
+PRINTFORML 「ゆかりん…？うそ、ゆかりん、やだ…しっかりしてっ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML 「ゆかりん…嘘だよね……やだよ…いや…嫌ぁぁぁあぁっ……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ゆかりん…嘘だよね……やだよ…いや…嫌ぁぁぁあぁっ……」
-ENDIF
+PRINTFORML 「ゆかりん…嘘だよね……やだよ…いや…嫌ぁぁぁあぁっ……」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML 虚空を見つめるゆかりは、マキの嗚咽にもぴくりとも反応しない…
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  虚空を見つめるゆかりは、マキの嗚咽にもぴくりとも反応しない…
-ENDIF
+PRINTFORML 虚空を見つめるゆかりは、マキの嗚咽にもぴくりとも反応しない…
+CALL WAIT_AUTOMODE(400, 0)
 
 			ELSEIF CSTR:51 == "きりたん"
 				PRINTFORML 「き、きりたん……！？」
-IF FLAG:AUTOMODE
-	PRINTFORML 「だ、大丈夫！？きりたんっ！ちょっと、きりたんっ！？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「だ、大丈夫！？きりたんっ！ちょっと、きりたんっ！？」
-ENDIF
+PRINTFORML 「だ、大丈夫！？きりたんっ！ちょっと、きりたんっ！？」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキはきりたんの頬を軽くたたいたり揺さぶるが、反応は一切ない。
@@ -90,19 +58,11 @@ TWAIT FLAG:AUTOMODE * 400, 0
 ELSE
 PRINTFORMDW マキはきりたんの頬を軽くたたいたり揺さぶるが、反応は一切ない。
 ENDIF
-IF FLAG:AUTOMODE
-	PRINTFORML 「…………私が……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「…………私が……」
-ENDIF
+PRINTFORML 「…………私が……」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML 「私が……一緒にいれば…………」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「私が……一緒にいれば…………」
-ENDIF
+PRINTFORML 「私が……一緒にいれば…………」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは悔しそうに涙をこぼしながらきりたんを抱きしめている
@@ -112,19 +72,11 @@ PRINTFORMDW マキは悔しそうに涙をこぼしながらきりたんを抱�
 ENDIF
 			;ずん子
 			ELSEIF CSTR:51 == "ずん子"
-IF FLAG:AUTOMODE
-	PRINTFORML 「………………………」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「………………………」
-ENDIF
+PRINTFORML 「………………………」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML 「………………………………………………え？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「………………………………………………え？」
-ENDIF
+PRINTFORML 「………………………………………………え？」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは%CSTR:51%が喪失していることを信じられないのか困惑の表情を浮かべている
@@ -132,12 +84,8 @@ TWAIT FLAG:AUTOMODE * 400, 0
 ELSE
 PRINTFORMDW マキは%CSTR:51%が喪失していることを信じられないのか困惑の表情を浮かべている
 ENDIF
-IF FLAG:AUTOMODE
-	PRINTFORML 「%CSTR:50%…？そ、そんなわけないよね？%CSTR:50%があんな奴らに負ける…なんて……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「%CSTR:50%…？そ、そんなわけないよね？%CSTR:50%があんな奴らに負ける…なんて……」
-ENDIF
+PRINTFORML 「%CSTR:50%…？そ、そんなわけないよね？%CSTR:50%があんな奴らに負ける…なんて……」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは%CSTR:51%が完全に触手に負けたという事実を受け止めた途端焦り始めた
@@ -145,12 +93,8 @@ TWAIT FLAG:AUTOMODE * 400, 0
 ELSE
 PRINTFORMDW マキは%CSTR:51%が完全に触手に負けたという事実を受け止めた途端焦り始めた
 ENDIF
-IF FLAG:AUTOMODE
-	PRINTFORML 「お、お願い…！%CSTR:50%、しっかりしてっ…！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「お、お願い…！%CSTR:50%、しっかりしてっ…！」
-ENDIF
+PRINTFORML 「お、お願い…！%CSTR:50%、しっかりしてっ…！」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
 				IF FLAG:AUTOMODE
@@ -178,28 +122,16 @@ ENDIF
 		ELSEIF CFLAG:(ARG:1):36 == 3
 			;ゆかりにあった
 			IF NO:(ARG:1) == 3
-IF FLAG:AUTOMODE
-	PRINTFORML 「ゆ、ゆかりん！？どうしたのそのお腹……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ゆ、ゆかりん！？どうしたのそのお腹……」
-ENDIF
+PRINTFORML 「ゆ、ゆかりん！？どうしたのそのお腹……」
+CALL WAIT_AUTOMODE(400, 0)
 
-IF FLAG:AUTOMODE
-	PRINTFORML (あんなに苦しそうなゆかりん、初めて見た……)
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  (あんなに苦しそうなゆかりん、初めて見た……)
-ENDIF
+PRINTFORML (あんなに苦しそうなゆかりん、初めて見た……)
+CALL WAIT_AUTOMODE(400, 0)
 
 
 			ELSEIF CFLAG:800==0
-IF FLAG:AUTOMODE
-	PRINTFORML 「あ、%CSTR:50%！無事だったん……だ………」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あ、%CSTR:50%！無事だったん……だ………」
-ENDIF
+PRINTFORML 「あ、%CSTR:50%！無事だったん……だ………」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキはお腹を大きくした%CSTR:51%を見た瞬間硬直した
@@ -209,12 +141,8 @@ PRINTFORMDW マキはお腹を大きくした%CSTR:51%を見た瞬間硬直し�
 ENDIF
 
 			ELSEIF CFLAG:800==1
-IF FLAG:AUTOMODE
-	PRINTFORML 「あ、%CSTR:50%！無事だったんです……ね………」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あ、%CSTR:50%！無事だったんです……ね………」
-ENDIF
+PRINTFORML 「あ、%CSTR:50%！無事だったんです……ね………」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキはお腹を大きくした%CSTR:51%を見た瞬間硬直した
@@ -366,12 +294,8 @@ ENDIF
 		ELSE
 			SELECTCASE RAND:3
 				CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「あー、なるほどねえ……」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あー、なるほどねえ……」
-ENDIF
+PRINTFORML 「あー、なるほどねえ……」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは情報を熱心に聞いている
@@ -380,12 +304,8 @@ ELSE
 PRINTFORMDW マキは情報を熱心に聞いている
 ENDIF
 				CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「あの部屋には確か…」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「あの部屋には確か…」
-ENDIF
+PRINTFORML 「あの部屋には確か…」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは記憶を辿って情報を提供している
@@ -394,12 +314,8 @@ ELSE
 PRINTFORMDW マキは記憶を辿って情報を提供している
 ENDIF
 				CASEELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「………えーと、つまりどうなって？」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「………えーと、つまりどうなって？」
-ENDIF
+PRINTFORML 「………えーと、つまりどうなって？」
+CALL WAIT_AUTOMODE(400, 0)
 
 			ENDSELECT
 		ENDIF
@@ -422,12 +338,8 @@ ELSE
 PRINTFORMDW マキは謝りつつアイテムを物色した
 ENDIF
 			ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「ありがとうございます」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ありがとうございます」
-ENDIF
+PRINTFORML 「ありがとうございます」
+CALL WAIT_AUTOMODE(400, 0)
 
 IF FLAG:AUTOMODE
    PRINTFORMDL マキは礼をしながらもアイテムをもらっていった
@@ -571,12 +483,8 @@ ENDIF
 		IF TARGET == 1 && !CFLAG:29
 			;相手が喪失
 			IF ARG:2
-				IF FLAG:AUTOMODE
-					PRINTFORML 「…私が世話をすれば問題ないよね？絶対に迷惑はかけないから…」
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMW  「…私が世話をすれば問題ないよね？絶対に迷惑はかけないから…」
-				ENDIF
+				PRINTFORML 「…私が世話をすれば問題ないよね？絶対に迷惑はかけないから…」
+				CALL WAIT_AUTOMODE(400, 0)
 
 			;元気
 			ELSEIF cflag:800==0
@@ -617,12 +525,8 @@ ENDIF
 		IF CFLAG:29
 			;
 		ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「そ、そっか…じゃあ、また次の機会に」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「そ、そっか…じゃあ、また次の機会に」
-ENDIF
+PRINTFORML 「そ、そっか…じゃあ、また次の機会に」
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	;パーティ加入
@@ -640,12 +544,8 @@ ENDIF
 				;好感度が200以上 のハズ
 				IF CFLAG:5 >= 200
 					PRINTFORML 「な、泣きついたりなんてしないってば！
-					IF FLAG:AUTOMODE
-						PRINTFORML 　%CSTR:50%こそ、一人でどうなっても知らないよ！？」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  　%CSTR:50%こそ、一人でどうなっても知らないよ！？」
-					ENDIF
+					PRINTFORML 　%CSTR:50%こそ、一人でどうなっても知らないよ！？」
+					CALL WAIT_AUTOMODE(400, 0)
 
 					PRINTFORML
 					IF FLAG:AUTOMODE
@@ -654,22 +554,14 @@ ENDIF
 					ELSE
 					PRINTFORMDW ………
 					ENDIF
-					IF FLAG:AUTOMODE
-						PRINTFORML 「……バカ…本当に……知らないんだからね………！」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「……バカ…本当に……知らないんだからね………！」
-					ENDIF
+					PRINTFORML 「……バカ…本当に……知らないんだからね………！」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ELSEIF MAXBASE:(ARG:1):MP/4 >= BASE:(ARG:1):MP ||  CFLAG:(ARG:1):36 >= 3 ||  (BASE:(ARG:1):HP <= 0 && BASE:(ARG:1):CP <= 0)
 					PRINTFORML 「ちょ、ちょっと、%CSTR:50%！？　そんな状態で一人になったら……！
 					PRINTFORML 　ここが女の子にとってどれだけ危険な場所か本当に理解して……ッ！」
-					IF FLAG:AUTOMODE
-						PRINTFORML 「………わかった、よ……気を付けて…ね…」
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW  「………わかった、よ……気を付けて…ね…」
-					ENDIF
+					PRINTFORML 「………わかった、よ……気を付けて…ね…」
+					CALL WAIT_AUTOMODE(400, 0)
 
 				ELSE
 					IF FLAG:AUTOMODE
@@ -707,21 +599,13 @@ ENDIF
 		ENDIF
 	;アイテムを取られる
 	CASE 111
-		IF FLAG:AUTOMODE
-			PRINTFORML 「ま、待って！それは私の゛ッ！？…ゲホッゲホ！」
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  「ま、待って！それは私の゛ッ！？…ゲホッゲホ！」
-		ENDIF
+		PRINTFORML 「ま、待って！それは私の゛ッ！？…ゲホッゲホ！」
+		CALL WAIT_AUTOMODE(400, 0)
 
 	;アイテムを取られる
 	CASE 112
-		IF FLAG:AUTOMODE
-			PRINTFORML 「やめて…許して…っぐぁぁぁぁ！」
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  「やめて…許して…っぐぁぁぁぁ！」
-		ENDIF
+		PRINTFORML 「やめて…許して…っぐぁぁぁぁ！」
+		CALL WAIT_AUTOMODE(400, 0)
 
 
 
@@ -729,20 +613,12 @@ ENDIF
 	CASE 141
 		;ARG:1に遭遇キャラ　ARG:2が1なら実はドッペル
 		IF ARG:2 == 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「…なんか様子が変だと思ったら…っ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「…なんか様子が変だと思ったら…っ！」
-ENDIF
+PRINTFORML 「…なんか様子が変だと思ったら…っ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 		ELSE
-IF FLAG:AUTOMODE
-	PRINTFORML 「っと！敵ながら見事な作戦だね…」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「っと！敵ながら見事な作戦だね…」
-ENDIF
+PRINTFORML 「っと！敵ながら見事な作戦だね…」
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	;遭遇時逆襲：襲い掛かった
@@ -750,21 +626,13 @@ ENDIF
 		;ARG:2が1なら実はドッペル
 		;※主人公ではなく、襲った側のキャラの口上
 		IF ARG:2 == 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「うふふ、ワタシと気持ち良いコトしようっ♪」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「うふふ、ワタシと気持ち良いコトしようっ♪」
-ENDIF
+PRINTFORML 「うふふ、ワタシと気持ち良いコトしようっ♪」
+CALL WAIT_AUTOMODE(400, 0)
 
 		ELSE
 			PRINTFORML 「大丈夫だよ…？」
-IF FLAG:AUTOMODE
-	PRINTFORML 「ちゃんと愉しませるからね♪」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「ちゃんと愉しませるからね♪」
-ENDIF
+PRINTFORML 「ちゃんと愉しませるからね♪」
+CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 
@@ -772,20 +640,12 @@ ENDIF
 	CASE 161
 		SELECTCASE RAND:3
 			CASE 0
-IF FLAG:AUTOMODE
-	PRINTFORML 「%CSTR:50%には失望したよ。まさかこんな人だったなんて…」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「%CSTR:50%には失望したよ。まさかこんな人だったなんて…」
-ENDIF
+PRINTFORML 「%CSTR:50%には失望したよ。まさかこんな人だったなんて…」
+CALL WAIT_AUTOMODE(400, 0)
 
 			CASE 1
-IF FLAG:AUTOMODE
-	PRINTFORML 「もう愛想が付きた！せいぜい元気でね、バイバイ！」
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW  「もう愛想が付きた！せいぜい元気でね、バイバイ！」
-ENDIF
+PRINTFORML 「もう愛想が付きた！せいぜい元気でね、バイバイ！」
+CALL WAIT_AUTOMODE(400, 0)
 
 			CASE 2
 IF FLAG:AUTOMODE
@@ -802,12 +662,8 @@ ENDIF
 	CASE 163
 		;主人公時
 		IF TARGET == 1
-			IF FLAG:AUTOMODE
-				PRINTFORML 「あの！これ、良かったら使ってよ！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「あの！これ、良かったら使ってよ！」
-			ENDIF
+			PRINTFORML 「あの！これ、良かったら使ってよ！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	;バクシーシ
@@ -816,45 +672,25 @@ ENDIF
 		IF CFLAG:29
 			;
 		ELSE
-			IF FLAG:AUTOMODE
-				PRINTFORML 「ほ、本当にいいの！？ありがとう！」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「ほ、本当にいいの！？ありがとう！」
-			ENDIF
+			PRINTFORML 「ほ、本当にいいの！？ありがとう！」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	;死者蘇生
 	CASE 166
-		IF FLAG:AUTOMODE
-			PRINTFORML 「だ、大丈夫？私が分かる？」
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  「だ、大丈夫？私が分かる？」
-		ENDIF
+		PRINTFORML 「だ、大丈夫？私が分かる？」
+		CALL WAIT_AUTOMODE(400, 0)
 
-		IF FLAG:AUTOMODE
-			PRINTFORML 「…よ……よかったぁーーーーー！！」
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  「…よ……よかったぁーーーーー！！」
-		ENDIF
+		PRINTFORML 「…よ……よかったぁーーーーー！！」
+		CALL WAIT_AUTOMODE(400, 0)
 
 	;死者復活
 	CASE 167
-		IF FLAG:AUTOMODE
-			PRINTFORML 「…ん………あ、れ？」
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  「…ん………あ、れ？」
-		ENDIF
+		PRINTFORML 「…ん………あ、れ？」
+		CALL WAIT_AUTOMODE(400, 0)
 
-		IF FLAG:AUTOMODE
-			PRINTFORML 「私、今まで何を……」
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  「私、今まで何を……」
-		ENDIF
+		PRINTFORML 「私、今まで何を……」
+		CALL WAIT_AUTOMODE(400, 0)
 
 
 
@@ -869,12 +705,8 @@ ENDIF
 	CASE 460
 		;説教
 		IF ARG:1 == 0
-			IF FLAG:AUTOMODE
-				PRINTFORML 「こんなことしちゃダメだからね！いい？そもそも――」
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  「こんなことしちゃダメだからね！いい？そもそも――」
-			ENDIF
+			PRINTFORML 「こんなことしちゃダメだからね！いい？そもそも――」
+			CALL WAIT_AUTOMODE(400, 0)
 
 		;ヤる
 		ELSE

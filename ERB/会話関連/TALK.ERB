@@ -713,12 +713,8 @@ IF CFLAG:(ARG:0):5 > 200 && RAND:100 < CFLAG:(ARG:0):5 / 10
 		CALL GIFT_ITEM(1)
 		LOCAL:2 = RESULT
 		CALL ADD_ITEM(LOCAL:2, 1, 0)
-		IF FLAG:AUTOMODE
-			PRINTFORML と%ITEMNAME:(LOCAL:2)%を渡してくれた！
-			TWAIT FLAG:AUTOMODE * 700 , 0
-		ELSE
-			PRINTFORMW と%ITEMNAME:(LOCAL:2)%を渡してくれた！
-		ENDIF
+		PRINTFORML と%ITEMNAME:(LOCAL:2)%を渡してくれた！
+		CALL WAIT_AUTOMODE(700 , 0)
 		
 	ELSEIF RESULT == 2
 	
@@ -726,12 +722,8 @@ IF CFLAG:(ARG:0):5 > 200 && RAND:100 < CFLAG:(ARG:0):5 / 10
 		CFLAG:(ARG:0):5 -= 15 + RAND:15
 		IF RAND:100 < 20
 			
-			IF FLAG:AUTOMODE
-				PRINTFORML それならばアイテムも渡せないと断られてしまった…
-				TWAIT FLAG:AUTOMODE * 600 , 0
-			ELSE
-				PRINTFORMW それならばアイテムも渡せないと断られてしまった…
-			ENDIF
+			PRINTFORML それならばアイテムも渡せないと断られてしまった…
+			CALL WAIT_AUTOMODE(600 , 0)
 		ELSE
 			;良い物が貰える
 			CALL GIFT_ITEM(1)
@@ -805,12 +797,8 @@ ELSE
 		ENDIF
 	ELSEIF RESULT == 2
 		
-		IF FLAG:AUTOMODE
-			PRINTFORML それならばアイテムも渡せないと断られてしまった…
-			TWAIT FLAG:AUTOMODE * 600 , 0
-		ELSE
-			PRINTFORMW それならばアイテムも渡せないと断られてしまった…
-		ENDIF
+		PRINTFORML それならばアイテムも渡せないと断られてしまった…
+		CALL WAIT_AUTOMODE(600 , 0)
 	ELSE
 		CFLAG:(ARG:0):5 -= 5 + RAND:5
 		CALL ADD_ABL_EXP_PT(2, 1500)

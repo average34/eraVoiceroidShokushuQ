@@ -73,20 +73,12 @@ SELECTCASE ARG:1
 		PRINTFORML 自慰行為で盛り上がる%ARGS:1%を、苦々しく見ている%ARGS:0%%TACHI()%であったが、
 		PRINTL その身体が激しく欲情していることは隠しようがなかった…！
 	CASE 38
-		IF FLAG:AUTOMODE
-			PRINTFORML %ARGS:1%は自分で料理を作った！
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW  %ARGS:1%は自分で料理を作った！
-		ENDIF
+		PRINTFORML %ARGS:1%は自分で料理を作った！
+		CALL WAIT_AUTOMODE(400, 0)
 
 		PRINTL さて……折角の料理だ。
-		IF FLAG:AUTOMODE
-			PRINTL 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTW  予定通り触手宮で売るのか、それともここで一人で食事をとるか……
-		ENDIF
+		PRINTL 予定通り触手宮で売るのか、それともここで一人で食事をとるか……
+		CALL WAIT_AUTOMODE(400, 0)
 
 		PRINTL （どうする？）
 		DRAWLINE

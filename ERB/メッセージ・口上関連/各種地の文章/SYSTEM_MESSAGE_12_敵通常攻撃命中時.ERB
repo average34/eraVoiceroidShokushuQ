@@ -300,39 +300,23 @@ SELECTCASE ARG:1
 	CASE 180
 		IF CFLAG:201 == 0
 			PRINTFORML 触手塒の隙間からはみ出していた%ARGS:0%の両腕が在らぬ角度に折れ曲がり、同時に痛々しい悲鳴と粉砕音が鳴り響いた！
-			IF FLAG:AUTOMODE
-				PRINTFORML %ARGS:0%は両腕を破壊され、攻撃力が低下してしまった！
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  %ARGS:0%は両腕を破壊され、攻撃力が低下してしまった！
-			ENDIF
+			PRINTFORML %ARGS:0%は両腕を破壊され、攻撃力が低下してしまった！
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSEIF CFLAG:201 == 1
 			PRINTFORML %ARGS:0%は左右の脚を在らぬ方向に捻じ曲げられ、遂に限界を超えた彼女の股関節は、悲鳴と共に粉砕音を鳴り響かせた！
-			IF FLAG:AUTOMODE
-				PRINTFORML %ARGS:0%は股関節を破壊され、速度が低下してしまった！
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  %ARGS:0%は股関節を破壊され、速度が低下してしまった！
-			ENDIF
+			PRINTFORML %ARGS:0%は股関節を破壊され、速度が低下してしまった！
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSEIF CFLAG:201 == 2
 			PRINTFORML 触手塒の中から顔を出す%ARGS:0%の表情が苦悶に歪み、口から吐血と共にくぐもった悲鳴、そして肋骨の砕ける音が鳴り響く！
-			IF FLAG:AUTOMODE
-				PRINTFORML %ARGS:0%の折れた肋骨が、内臓を苛み始めた！
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  %ARGS:0%の折れた肋骨が、内臓を苛み始めた！
-			ENDIF
+			PRINTFORML %ARGS:0%の折れた肋骨が、内臓を苛み始めた！
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ELSEIF CFLAG:201 == 3
 			PRINTFORML ギリギリと収縮する触手塒の中から、%ARGS:0%の壮絶な悲鳴と骨の砕ける音が鳴り響く！
-			IF FLAG:AUTOMODE
-				PRINTFORML %ARGS:0%は成す術もなく痛めつけられた！
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTFORMW  %ARGS:0%は成す術もなく痛めつけられた！
-			ENDIF
+			PRINTFORML %ARGS:0%は成す術もなく痛めつけられた！
+			CALL WAIT_AUTOMODE(400, 0)
 
 		ENDIF
 	CASE 181

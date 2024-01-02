@@ -609,12 +609,8 @@ ENDIF
 				LOCAL = PTID:(LCOUNT) ;対象のID
 				
 				FOR LCOUNT:1, 0, 3
-					IF FLAG:AUTOMODE
-						PRINTFORML 柔らかい触手が撫でるように%CALLNAME:(PTID)%%TACHI()%の体に触れ絡み付いてくる！
-						TWAIT FLAG:AUTOMODE * 400, 0
-					ELSE
-						PRINTFORMW 柔らかい触手が撫でるように%CALLNAME:(PTID)%%TACHI()%の体に触れ絡み付いてくる！
-					ENDIF
+					PRINTFORML 柔らかい触手が撫でるように%CALLNAME:(PTID)%%TACHI()%の体に触れ絡み付いてくる！
+					CALL WAIT_AUTOMODE(400, 0)
 					CALL PRINT_MESSAGE(LCOUNT:1, 536, 0, CALLNAME:(LCOUNT:1))
 					TFLAG:63 = RAND:4
 					CALL DAMAGE_COMMON(LOCAL, 2, 3000 + RAND:6000, 10)
@@ -673,12 +669,8 @@ ENDIF
 				BREAK
 			ENDIF
 		NEXT
-		IF FLAG:AUTOMODE
-			PRINTFORML %CALLNAME:(PTID)%%TACHI()%はどうにか通路から抜け出せた……
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW %CALLNAME:(PTID)%%TACHI()%はどうにか通路から抜け出せた……
-		ENDIF
+		PRINTFORML %CALLNAME:(PTID)%%TACHI()%はどうにか通路から抜け出せた……
+		CALL WAIT_AUTOMODE(400, 0)
 		
 		;予定通り移動
 		RETURN ARG:1, ARG:2

@@ -92,12 +92,8 @@ IF LOCAL < RAND:100
 	IF DA:対象:99 >0
 		PRINTFORML 何とか%SAVESTR:(対象)%を気絶させることに成功したものの、
 		PRINTFORML 倒れたその体を肉々しい地面が飲み込んでそのままどこかへ隠してしまった。
-		IF FLAG:AUTOMODE
-			PRINTFORML もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
-		ENDIF
+		PRINTFORML もっと弱らせるか迷宮そのものを何とかしないと救出できそうにない…
+		CALL WAIT_AUTOMODE(400, 0)
 	ENDIF
 	RETURN
 ENDIF
@@ -146,12 +142,8 @@ IF RESULT == 0
 		PRINTFORML %SAVESTR:対象%は悲しそうに去っていった……
 		TWAIT FLAG:AUTOMODE * 400, 0
 	ELSE
-		IF FLAG:AUTOMODE
-			PRINTFORML %SAVESTR:対象%は悲しそうに去っていった……
-			TWAIT FLAG:AUTOMODE * 400, 0
-		ELSE
-			PRINTFORMW %SAVESTR:対象%は悲しそうに去っていった……
-		ENDIF
+		PRINTFORML %SAVESTR:対象%は悲しそうに去っていった……
+		CALL WAIT_AUTOMODE(400, 0)
 	ENDIF
 	RETURN
 ELSEIF RESULT != 1
@@ -170,12 +162,8 @@ IF RESULTS == ""
 ELSE
 	PETNAME = %RESULTS%
 ENDIF
-IF FLAG:AUTOMODE
-	PRINTFORML %PETNAME%を仲間にした！
-	TWAIT FLAG:AUTOMODE * 400, 0
-ELSE
-	PRINTFORMW %PETNAME%を仲間にした！
-ENDIF
+PRINTFORML %PETNAME%を仲間にした！
+CALL WAIT_AUTOMODE(400, 0)
 ;悪堕ちキャラの場合元キャラを記憶
 ;入れるタイミングは地味にここしかない
 IF DA:対象:99 >0
