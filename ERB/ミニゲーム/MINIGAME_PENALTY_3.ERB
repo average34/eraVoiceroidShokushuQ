@@ -39,8 +39,12 @@ LOCAL:3 = RAND:14
 				ENDIF
 			ENDIF
 			IF RAND:4 == 0 && TALENT:(ARG:0):101 <= 2
-				PRINTFORMW %CALLNAME:(ARG:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
-				PRINTFORMW %CALLNAME:(ARG:0)%のお尻が少し敏感になった
+				PRINTFORML %CALLNAME:(ARG:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+				CALL WAIT_AUTOMODE(400, 0)
+
+				PRINTFORML %CALLNAME:(ARG:0)%のお尻が少し敏感になった
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(ARG:0):101 += 1
 			ENDIF
 		CASE 10 TO 11
@@ -53,11 +57,17 @@ LOCAL:3 = RAND:14
 				LOCAL:5 = RAND:5
 				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:5+10)* (TALENT:(ARG:0):(101+TFLAG:63) + 2), 50)
 			NEXT
-			PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
-			PRINTFORMW %CALLNAME:(ARG:0)%のお尻が敏感になった！
+			PRINTFORML 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML %CALLNAME:(ARG:0)%のお尻が敏感になった！
+			CALL WAIT_AUTOMODE(400, 0)
+
 			TALENT:(ARG:0):101 += 1
 		CASE 12 TO 13
-			PRINTFORMW %CALLNAME:(ARG:0)%を触手で絡め取った！
+			PRINTFORML %CALLNAME:(ARG:0)%を触手で絡め取った！
+			CALL WAIT_AUTOMODE(400, 0)
+
 			CALL PRINT_MESSAGE(ARG:0, 200, 142, CALLNAME:(ARG:0), "", 2, 0)
 			CALL EXTASY(ARG:0, 0, 900, 400)
 			CALL EXTASY(ARG:0, 0, 900, 400)
@@ -65,21 +75,35 @@ LOCAL:3 = RAND:14
 			CALL EXTASY(ARG:0, 0, 900, 400)
 			CALL EXTASY(ARG:0, 0, 900, 400)
 			PRINTFORML 　
-			PRINTFORMW ……
-			PRINTFORMW …………
-			PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(ARG:0)%は恍惚の表情を浮かべ、\@ BASE:(ARG:0):3 <= 0 ? 激しく # 服の上から \@自分の尻穴を弄り回していた…
+			PRINTFORML ……
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML …………
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML 触手生物の責めが終わったとき、%CALLNAME:(ARG:0)%は恍惚の表情を浮かべ、\@ BASE:(ARG:0):3 <= 0 ? 激しく # 服の上から \@自分の尻穴を弄り回していた…
+			CALL WAIT_AUTOMODE(400, 0)
+
 			IF TALENT:(ARG:0):74 == 0 || TALENT:(ARG:0):75 == 0 
-				PRINTFORMW %CALLNAME:(ARG:0)%は触手の責めに屈し、尻穴での快楽に溺れてしまった
+				PRINTFORML %CALLNAME:(ARG:0)%は触手の責めに屈し、尻穴での快楽に溺れてしまった
+				CALL WAIT_AUTOMODE(400, 0)
+
 			ENDIF
 			IF TALENT:(ARG:0):74 == 0
-				PRINTFORMW %CALLNAME:(ARG:0)%は【%TALENTNAME:74%】を得た
+				PRINTFORML %CALLNAME:(ARG:0)%は【%TALENTNAME:74%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(ARG:0):74 = 1
 			ENDIF
 			IF TALENT:(ARG:0):75 == 0
-				PRINTFORMW %CALLNAME:(ARG:0)%は【%TALENTNAME:75%】を得た
+				PRINTFORML %CALLNAME:(ARG:0)%は【%TALENTNAME:75%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(ARG:0):75 = 1
 			ENDIF
-			PRINTFORMW 　
+			PRINTFORML 　
+			CALL WAIT_AUTOMODE(400, 0)
+
 			CALL PRINT_MESSAGE(ARG:0, 200, 142, CALLNAME:(ARG:0), "", 3, 0)
 	ENDSELECT
 

@@ -44,14 +44,23 @@ LOCAL:3 = RAND:9
 				ENDIF
 			ENDIF
 			IF RAND:4 == 0 && TALENT:(ARG:0):102 <= 2
-				PRINTFORMW %CALLNAME:(ARG:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
-				PRINTFORMW %CALLNAME:(ARG:0)%の胸が少し敏感になった
+				PRINTFORML %CALLNAME:(ARG:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+				CALL WAIT_AUTOMODE(400, 0)
+
+				PRINTFORML %CALLNAME:(ARG:0)%の胸が少し敏感になった
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:1:102 += 1
 			ENDIF
-			PRINTFORMW %CALLNAME:(ARG:0)%の胸を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+			PRINTFORML %CALLNAME:(ARG:0)%の胸を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+			CALL WAIT_AUTOMODE(400, 0)
+
 		CASE 2
-			PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
-			PRINTFORMW そう言って触手生物は突然%CALLNAME:(ARG:0)%を触手で絡め取った！
+			PRINTFORML 「ありがとう！　ちょっと触らせてね！」
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML そう言って触手生物は突然%CALLNAME:(ARG:0)%を触手で絡め取った！
+			CALL WAIT_AUTOMODE(400, 0)
 			CALL PRINT_MESSAGE(ARG:0, 200, 142, CALLNAME:(ARG:0), "", 2, 1)
 			CALL EXTASY(ARG:0, 1, 900, 400)
 			CALL EXTASY(ARG:0, 1, 900, 400)
@@ -59,22 +68,37 @@ LOCAL:3 = RAND:9
 			CALL EXTASY(ARG:0, 1, 900, 400)
 			CALL EXTASY(ARG:0, 1, 900, 400)
 			PRINTFORML 　
-			PRINTFORMW ……
-			PRINTFORMW …………
-			PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(ARG:0)%は恍惚の表情を浮かべ、\@ BASE:(ARG:0):3 <= 0 ? 激しく # 服の上から \@自分の胸を揉みしだいていた…
+			PRINTFORML ……
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML …………
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML 触手生物の責めが終わったとき、%CALLNAME:(ARG:0)%は恍惚の表情を浮かべ、\@ BASE:(ARG:0):3 <= 0 ? 激しく # 服の上から \@自分の胸を揉みしだいていた…
+			CALL WAIT_AUTOMODE(400, 0)
 			IF TALENT:(ARG:0):74 == 0 || TALENT:(ARG:0):76 == 0
-				PRINTFORMW %CALLNAME:(ARG:0)%は触手の責めに屈し、胸での快楽に溺れてしまった
+				PRINTFORML %CALLNAME:(ARG:0)%は触手の責めに屈し、胸での快楽に溺れてしまった
+				CALL WAIT_AUTOMODE(400, 0)
+
 			ENDIF
 			IF TALENT:(ARG:0):74 == 0
-				PRINTFORMW %CALLNAME:(ARG:0)%は【%TALENTNAME:74%】を得た
+				PRINTFORML %CALLNAME:(ARG:0)%は【%TALENTNAME:74%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(ARG:0):74 = 1
 			ENDIF
 			IF TALENT:(ARG:0):76 == 0
-				PRINTFORMW %CALLNAME:(ARG:0)%は【%TALENTNAME:76%】を得た
+				PRINTFORML %CALLNAME:(ARG:0)%は【%TALENTNAME:76%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(ARG:0):76 = 1
 			ENDIF
-			PRINTFORMW 　
-			PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？」
+			PRINTFORML 　
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML 「……ふぅ、ちょっとやり過ぎちゃったかな？」
+			CALL WAIT_AUTOMODE(400, 0)
+
 		CASE 3
 			PRINTFORML 無数の触手が%CALLNAME:(ARG:0)%を絡め取る！
 			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 4, 1)
@@ -86,13 +110,19 @@ LOCAL:3 = RAND:9
 				LOCAL:5 = RAND:5
 				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:5+10)* (TALENT:(ARG:0):(101+TFLAG:63) + 2), 50)
 			NEXT
-			PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、息も絶え絶えで震えている…
+			PRINTFORML 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、息も絶え絶えで震えている…
+			CALL WAIT_AUTOMODE(400, 0)
+
 		CASE 4
 			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 10, 0)
 			CFLAG:(ARG:0):506 = 0
 			PRINTFORML 　
-			PRINTFORMW ……
-			PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
+			PRINTFORML ……
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
+			CALL WAIT_AUTOMODE(400, 0)
+
 			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 10, 1)
 		CASE 5
 			CALL PRINT_MESSAGE(ARG:0, 444, 1, CALLNAME:(ARG:0), "")

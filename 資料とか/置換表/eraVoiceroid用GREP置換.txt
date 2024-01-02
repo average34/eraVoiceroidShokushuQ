@@ -7,9 +7,9 @@ AUTOMODE構文
 基本構文　やばいくらい広範囲なので注意
 
 置換前
-^(?!;)(\t* *)PRINT(|FORM)W (.+\r*\n)
+^(?!;)(\t* *)PRINT(|FORM)W (.+.*)$
 置換後
-$1PRINT$2L $3$1CALL WAIT_AUTOMODE(400, 0)\n
+$1PRINT$2L $3\n$1CALL WAIT_AUTOMODE(400, 0)\n
 
 ※置換後の関数WAIT_AUTOMODEは
 IF FLAG:AUTOMODE

@@ -583,17 +583,25 @@ ENDIF
 	
 	IF RESULT == 1
 		PRINTFORML %CALLNAME:(PTID)%%TACHI()%は通路の触手に攻撃を仕掛けた！
-		PRINTFORMW %CALLNAME:(PTID)%%TACHI()%の攻撃によって通路の触手が次々と蹴散らされてゆく！
+		PRINTFORML %CALLNAME:(PTID)%%TACHI()%の攻撃によって通路の触手が次々と蹴散らされてゆく！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		PRINTFORML が、それ以上の触手が次々と壁や天井から湧きだし、
-		PRINTFORMW 通路は完全に触手で埋められてしまった！
-		PRINTFORMW %CALLNAME:(PTID)%%TACHI()%は諦めて来た道を引き返した……
+		PRINTFORML 通路は完全に触手で埋められてしまった！
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML %CALLNAME:(PTID)%%TACHI()%は諦めて来た道を引き返した……
+		CALL WAIT_AUTOMODE(400, 0)
+
 		
 		;諦めるとの差別化、攻撃したことで敵を引き寄せるイメージなので移動パターンを突撃扱いに
 		RETURN ARG:0, 0
 		
 	ELSEIF RESULT == 2 && FLAG:6 >= 50
 		PRINTFORML %CALLNAME:(PTID)%%TACHI()%は通路の触手を浄化した！
-		PRINTFORMW 通路は元の姿に戻り触手も壁や天井に消えていった！
+		PRINTFORML 通路は元の姿に戻り触手も壁や天井に消えていった！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		
 		FLAG:6 -= 50
 		
@@ -676,7 +684,9 @@ ENDIF
 		RETURN ARG:1, ARG:2
 		
 	ELSEIF RESULT == 0
-		PRINTFORMW %CALLNAME:(PTID)%%TACHI()%は移動を諦め、来た道を引き返した……
+		PRINTFORML %CALLNAME:(PTID)%%TACHI()%は移動を諦め、来た道を引き返した……
+		CALL WAIT_AUTOMODE(400, 0)
+
 		
 		;移動パターンはそのままで移動しない
 		RETURN ARG:0, ARG:2

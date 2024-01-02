@@ -413,8 +413,12 @@ IF LOCAL:1 > LOCAL:2 && CFLAG:(ARG:0):20 == 0
 					PRINTFORML %CALLNAME:(ARG:0)%は仲間の視線に貫かれ意味不明の叫び声を上げているが、手を止めることができない！
 					TWAIT FLAG:AUTOMODE * 400, 0
 				ELSE
-					PRINTFORMW 見つかってしまった！
-					PRINTFORMW %CALLNAME:(ARG:0)%は仲間の視線に貫かれ意味不明の叫び声を上げているが、手を止めることができない！
+					PRINTFORML 見つかってしまった！
+					CALL WAIT_AUTOMODE(400, 0)
+
+					PRINTFORML %CALLNAME:(ARG:0)%は仲間の視線に貫かれ意味不明の叫び声を上げているが、手を止めることができない！
+					CALL WAIT_AUTOMODE(400, 0)
+
 				ENDIF
 				
 				PRINTFORML 仲間の目の前で、%CALLNAME:(ARG:0)%のオナニーショーは続く…

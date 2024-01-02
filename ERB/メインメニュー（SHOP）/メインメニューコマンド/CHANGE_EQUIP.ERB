@@ -397,12 +397,16 @@ RETURNF LOCAL
 			INPUT
 			IF RESULT == 1
 				PRINTFORML ステッキの先端から淡いピンクの光の帯が飛び出し%CALLNAME:(ARG)%の身体を優しく包む！
-				PRINTFORMW %CALLNAME:(ARG)%は魔法少女に変身した！
+				PRINTFORML %CALLNAME:(ARG)%は魔法少女に変身した！
+				CALL WAIT_AUTOMODE(400, 0)
+
 				BASE:(ARG):3 = 1000
 				CFLAG:(ARG):501 = 102
 				FLAG:6 -= 100
 			ELSEIF RESULT == 0
-				PRINTFORMW マジカルステッキは少しさびしそうに光り続けている…
+				PRINTFORML マジカルステッキは少しさびしそうに光り続けている…
+				CALL WAIT_AUTOMODE(400, 0)
+
 			ELSE
 			REUSELASTLINE 入力値が不正です。再入力してください
 			GOTO INPUT_LOOP_MGP
@@ -417,45 +421,61 @@ RETURNF LOCAL
 	;☆触手使役術
 	IF ITEMID == 17
 		PRINTFORML %CALLNAME:(ARG)%が触手の精力が凝縮された、血の様に赤く輝く宝石を胸元に添えた途端
-		PRINTFORMW 中から無数の極細触手が飛び出し、悲鳴をあげる%CALLNAME:(ARG)%の柔肌に這い回りながら広がっていく！
+		PRINTFORML 中から無数の極細触手が飛び出し、悲鳴をあげる%CALLNAME:(ARG)%の柔肌に這い回りながら広がっていく！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		;全裸なら　触　着
 		IF BASE:(ARG):3 <= 0
 			PRINTFORML 触手苗床%CALLNAME:(ARG)%が、テンタクルスーツを触着するタイムは、僅か0.05秒に過ぎない。
-			PRINTFORMW では、触着プロセスをもう一度見てみよう！
+			PRINTFORML では、触着プロセスをもう一度見てみよう！
+			CALL WAIT_AUTOMODE(400, 0)
+
 			BASE:(ARG):3 = 100
 			CALL SYOKUSYU_HUKU_B(ARG)
 		;触手服を装備していたなら2人（匹）の心が一つに！
 		ELSEIF CFLAG:(ARG):37 == 1
 			PRINTFORML 触手は触手服の奥深くに潜り込むと一体化させ
 			PRINTFORML %CALLNAME:(ARG)%の神経に自身のそれを結合させ、感覚を共有化した！
-			PRINTFORMW %CALLNAME:(ARG)%は触手服の一部を制御する事に成功した！
+			PRINTFORML %CALLNAME:(ARG)%は触手服の一部を制御する事に成功した！
+			CALL WAIT_AUTOMODE(400, 0)
+
 		;普通の服ならとり込んで触手化
 		ELSE
 			PRINTFORML 触手は潜り込んだ服を一瞬にして取り込み、侵食し
 			PRINTFORML %CALLNAME:(ARG)%の神経に自身のそれを結合させ、感覚を共有化した！
-			PRINTFORMW %CALLNAME:(ARG)%は触手を制御する事に成功した！
+			PRINTFORML %CALLNAME:(ARG)%は触手を制御する事に成功した！
+			CALL WAIT_AUTOMODE(400, 0)
+
 			CALL SYOKUSYU_HUKU_B(ARG)
 		ENDIF
 	;☆触手剣
 	ELSEIF ITEMID == 18
 		PRINTFORML %CALLNAME:(ARG)%が鉤爪の触手の欠片を握り締め、頭上に掲げると
-		PRINTFORMW 中から無数の極細触手が飛び出し、悲鳴をあげる%CALLNAME:(ARG)%の柔肌に這い回りながら広がっていく！
+		PRINTFORML 中から無数の極細触手が飛び出し、悲鳴をあげる%CALLNAME:(ARG)%の柔肌に這い回りながら広がっていく！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		;全裸なら　触　着
 		IF BASE:(ARG):3 <= 0
 			PRINTFORML 触手苗床%CALLNAME:(ARG)%が、テンタクルスーツを触着するタイムは、僅か0.05秒に過ぎない。
-			PRINTFORMW では、触着プロセスをもう一度見てみよう！
+			PRINTFORML では、触着プロセスをもう一度見てみよう！
+			CALL WAIT_AUTOMODE(400, 0)
+
 			BASE:(ARG):3 = 100
 			CALL SYOKUSYU_HUKU_B(ARG)
 		;触手服を装備していたなら2人（匹）の心が一つに！
 		ELSEIF CFLAG:(ARG):37 == 1
 			PRINTFORML 触手は触手服の奥深くに潜り込むと一体化させ
 			PRINTFORML %CALLNAME:(ARG)%の神経に自身のそれを結合させ、感覚を共有化した！
-			PRINTFORMW %CALLNAME:(ARG)%は触手剣を制御する事に成功した！
+			PRINTFORML %CALLNAME:(ARG)%は触手剣を制御する事に成功した！
+			CALL WAIT_AUTOMODE(400, 0)
+
 		;普通の服ならとり込んで触手化
 		ELSE
 			PRINTFORML 触手は潜り込んだ服を一瞬にして取り込み、侵食し
 			PRINTFORML %CALLNAME:(ARG)%の神経に自身のそれを結合させ、感覚を共有化した！
-			PRINTFORMW %CALLNAME:(ARG)%は触手剣を制御する事に成功した！
+			PRINTFORML %CALLNAME:(ARG)%は触手剣を制御する事に成功した！
+			CALL WAIT_AUTOMODE(400, 0)
+
 			CALL SYOKUSYU_HUKU_B(ARG)
 		ENDIF
 	ENDIF
@@ -517,7 +537,9 @@ RETURNF LOCAL
 	CASE 13
 		; マジカルステッキをはずすと変身がとける
 		IF CFLAG:(ARG:0):501 == 102
-			PRINTFORMW マジカルステッキを外すと変身が解け、普通の服へと戻ってしまった
+			PRINTFORML マジカルステッキを外すと変身が解け、普通の服へと戻ってしまった
+			CALL WAIT_AUTOMODE(400, 0)
+
 			CFLAG:(ARG:0):501 = 0
 		ENDIF
 		

@@ -25,7 +25,9 @@ LOCAL:2 = RESULT
 IF LOCAL:2 >= LOCAL:1
 	CALL ADD_ABL_EXP_PT(0, LOCAL:1 * 10)
 	PRINTFORML %CALLNAME:1%%TACHI()%は淫蟲の巣穴を探し当ててしまった！
-	PRINTFORMW 大量の淫蟲が%CALLNAME:1%%TACHI()%に襲い掛かる！
+	PRINTFORML 大量の淫蟲が%CALLNAME:1%%TACHI()%に襲い掛かる！
+	CALL WAIT_AUTOMODE(400, 0)
+
 	PRINTFORML 
 	
 	VARSET ANYONE_RAPED
@@ -66,8 +68,12 @@ IF LOCAL:2 >= LOCAL:1
 					ENDIF
 				ENDIF
 				IF RAND:4 == 0 && TALENT:(LOCAL:0):102 <= 2
-					PRINTFORMW %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
-					PRINTFORMW %CALLNAME:(LOCAL:0)%の胸が少し敏感になった
+					PRINTFORML %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+					CALL WAIT_AUTOMODE(400, 0)
+
+					PRINTFORML %CALLNAME:(LOCAL:0)%の胸が少し敏感になった
+					CALL WAIT_AUTOMODE(400, 0)
+
 					TALENT:(LOCAL:0):102 += 1
 				ENDIF
 				;素質取得判定
@@ -82,9 +88,13 @@ IF LOCAL:2 >= LOCAL:1
 		ENDIF
 	NEXT
 	IF ANYONE_RAPED
-		PRINTFORMW %CALLNAME:1%%TACHI()%を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+		PRINTFORML %CALLNAME:1%%TACHI()%を散々犯し抜いた淫蟲達は、そのままどこかへ去って行った…
+		CALL WAIT_AUTOMODE(400, 0)
+
 	ELSE
-		PRINTFORMW 不意打ちが避けられてしまった淫蟲たちは、肉々しい色をした地面の中へと逃げていった…
+		PRINTFORML 不意打ちが避けられてしまった淫蟲たちは、肉々しい色をした地面の中へと逃げていった…
+		CALL WAIT_AUTOMODE(400, 0)
+
 	ENDIF
 	TFLAG:63 = 0
 	

@@ -39,7 +39,9 @@ FLAG:42 = 0
 FLAG:43 = 0
 
 
-PRINTFORMW 呪文を唱え終わった%CALLNAME:1%%TACHI()%の前に光り輝く渦が現れた！
+PRINTFORML 呪文を唱え終わった%CALLNAME:1%%TACHI()%の前に光り輝く渦が現れた！
+CALL WAIT_AUTOMODE(400, 0)
+
 PRINTFORML 渦の中に飛び込んでみますか？
 CALL ASK_YN
 IF RESULT == 0
@@ -48,8 +50,12 @@ IF RESULT == 0
 		CALL GAMEOVER(3)
 	ELSE
 		;間違いの場合
-		PRINTFORMW 果たしてあの石碑に書かれていた内容は真実なのか…
-		PRINTFORMW そう疑問に思いつつも、ここまで来たのだからと意を決して%CALLNAME:1%%TACHI()%は光の渦に飛び込んだ！
+		PRINTFORML 果たしてあの石碑に書かれていた内容は真実なのか…
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML そう疑問に思いつつも、ここまで来たのだからと意を決して%CALLNAME:1%%TACHI()%は光の渦に飛び込んだ！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		PRINTFORML 
 		IF RAND:3 == 0
 			;ボス部屋に飛ばされる

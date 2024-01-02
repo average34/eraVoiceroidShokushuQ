@@ -11,7 +11,9 @@
 LOCAL:3 = RAND:14
 	SELECTCASE LOCAL:3
 		CASE 0 TO 9
-			PRINTFORMW 大量の淫蟲が%CALLNAME:(ARG:0)%%TACHI()%に襲い掛かる！
+			PRINTFORML 大量の淫蟲が%CALLNAME:(ARG:0)%%TACHI()%に襲い掛かる！
+			CALL WAIT_AUTOMODE(400, 0)
+
 			PRINTFORML 
 			;なんとなくで全員巻き込む
 			FOR LOCAL:0, 2, CHARANUM
@@ -27,18 +29,26 @@ LOCAL:3 = RAND:14
 							CFLAG:(LOCAL:0):42 = 1 + RAND:4 + RAND:3 + RAND:2
 					ENDIF
 					IF RAND:4 == 0 && TALENT:(LOCAL:0):103 <= 2
-						PRINTFORMW %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+						PRINTFORML %CALLNAME:(LOCAL:0)%の身体の様子がおかしい。どうやら、淫蟲の体液によって体質が書き換えられてしまったようだ…
+						CALL WAIT_AUTOMODE(400, 0)
+
 						IF GET_PENIS(LOCAL:0)
-							PRINTFORMW %CALLNAME:(LOCAL:0)%の陰茎が少し敏感になった
+							PRINTFORML %CALLNAME:(LOCAL:0)%の陰茎が少し敏感になった
+							CALL WAIT_AUTOMODE(400, 0)
+
 						ELSE
-							PRINTFORMW %CALLNAME:(LOCAL:0)%のクリトリスが少し敏感になった
+							PRINTFORML %CALLNAME:(LOCAL:0)%のクリトリスが少し敏感になった
+							CALL WAIT_AUTOMODE(400, 0)
+
 						ENDIF
 						TALENT:(LOCAL:0):103 += 1
 					ENDIF
 			NEXT
 		CASE 10 TO 11
 				PRINTFORML 無数の触手が%CALLNAME:(ARG:0)%を絡め取る！
-				PRINTFORMW %CALLNAME:(ARG:0)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				PRINTFORML %CALLNAME:(ARG:0)%は%CALLNAME:1%の名前を叫びながら触手に埋もれていく…
+				CALL WAIT_AUTOMODE(400, 0)
+
 				CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 4, 1)
 				CFLAG:(ARG:0):5 -= 15 + RAND:15
 			
@@ -49,19 +59,33 @@ LOCAL:3 = RAND:14
 				CALL DAMAGE_COMMON(ARG:0, 2, 30*(LOCAL:5+10)* (TALENT:(ARG:0):(101+TFLAG:63) + 2), 50)
 			NEXT
 			IF !GET_PENIS(ARG:0)
-				PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
-				PRINTFORMW %CALLNAME:(ARG:0)%のクリトリスが敏感になった！
+				PRINTFORML 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
+				CALL WAIT_AUTOMODE(400, 0)
+
+				PRINTFORML %CALLNAME:(ARG:0)%のクリトリスが敏感になった！
+				CALL WAIT_AUTOMODE(400, 0)
+
 			ELSE
-				PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
-				PRINTFORMW %CALLNAME:(ARG:0)%の陰茎が敏感になった！
+				PRINTFORML 触手から開放された%CALLNAME:(ARG:0)%は手足を放り出し、力なく震えている…
+				CALL WAIT_AUTOMODE(400, 0)
+
+				PRINTFORML %CALLNAME:(ARG:0)%の陰茎が敏感になった！
+				CALL WAIT_AUTOMODE(400, 0)
+
 			ENDIF
 			TALENT:(ARG:0):103 += 1
 		CASE 12 TO 13
 			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 9, 0)
 			PRINTFORML 　
-			PRINTFORMW …………
-			PRINTFORMW 触手から開放された%CALLNAME:(ARG:0)%の擬似陰茎は更に醜く太く大きく成長し、脈打っている
-			PRINTFORMW %CALLNAME:(ARG:0)%は下腹部に力が漲るのを感じた…
+			PRINTFORML …………
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML 触手から開放された%CALLNAME:(ARG:0)%の擬似陰茎は更に醜く太く大きく成長し、脈打っている
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML %CALLNAME:(ARG:0)%は下腹部に力が漲るのを感じた…
+			CALL WAIT_AUTOMODE(400, 0)
+
 			CALL PRINT_MESSAGE(ARG:0, 200, 160, CALLNAME:1, "", 9, 1)
 			CFLAG:(ARG:0):42 += 10
 	ENDSELECT

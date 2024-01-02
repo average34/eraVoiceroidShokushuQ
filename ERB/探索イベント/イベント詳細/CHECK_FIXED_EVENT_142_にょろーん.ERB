@@ -34,11 +34,19 @@ IF LOCAL:2 >= LOCAL:1
 		CALL ADD_ABL_EXP_PT(0, 300)
 		FLAG:142 += 100
 		PRINTFORML 目の前を不思議な形をした触手生物が歩いている…
-		PRINTFORMW 退治しようとすると、突然触手生物が話しかけてきた！
+		PRINTFORML 退治しようとすると、突然触手生物が話しかけてきた！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		PRINTFORML 
-		PRINTFORMW 「にょろにょろ、ボク悪い触手じゃないよ。ここには探し物を探しに来てるんだ」
-		PRINTFORMW 「キミ%TACHI()%は体がすごく敏感になってる人を知らないかな？」
-		PRINTFORMW 「もし連れてきてくれたら、お礼に良い物をあげるよ！」
+		PRINTFORML 「にょろにょろ、ボク悪い触手じゃないよ。ここには探し物を探しに来てるんだ」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「キミ%TACHI()%は体がすごく敏感になってる人を知らないかな？」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「もし連れてきてくれたら、お礼に良い物をあげるよ！」
+		CALL WAIT_AUTOMODE(400, 0)
+
 	ELSE
 		PRINTFORML 目の前を不思議な形をした触手生物が歩いている…
 		PRINTFORML 「やぁ、また会ったね。敏感な人は見つかった？」
@@ -96,8 +104,12 @@ IF LOCAL:2 >= LOCAL:1
 			ELSE
 				GOTO INPUT_LOOP_1
 			ENDIF
-		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
-		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		PRINTFORML 「ありがとう！　ちょっと触らせてね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 0)
 		CALL EXTASY(LOCAL:4, 0, 900, 400)
 		CALL EXTASY(LOCAL:4, 0, 900, 400)
@@ -105,24 +117,40 @@ IF LOCAL:2 >= LOCAL:1
 		CALL EXTASY(LOCAL:4, 0, 900, 400)
 		CALL EXTASY(LOCAL:4, 0, 900, 400)
 		PRINTFORML 　
-		PRINTFORMW ……
-		PRINTFORMW …………
-		PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の尻穴を弄り回していた…
+		PRINTFORML ……
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML …………
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の尻穴を弄り回していた…
+		CALL WAIT_AUTOMODE(400, 0)
+
 		IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):75 == 0 
-			PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、尻穴での快楽に溺れてしまった
+			PRINTFORML %CALLNAME:(LOCAL:4)%は触手の責めに屈し、尻穴での快楽に溺れてしまった
+			CALL WAIT_AUTOMODE(400, 0)
+
 		ENDIF
 		IF TALENT:(LOCAL:4):74 == 0
-			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+			PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+			CALL WAIT_AUTOMODE(400, 0)
+
 			TALENT:(LOCAL:4):74 = 1
 		ENDIF
 		IF TALENT:(LOCAL:4):75 == 0
-			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:75%】を得た
+			PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:75%】を得た
+			CALL WAIT_AUTOMODE(400, 0)
+
 			TALENT:(LOCAL:4):75 = 1
 			
 			CALL ADD_HISTORY(DAY, LOCAL:4, 0, 10)
 		ENDIF
-		PRINTFORMW 　
-		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		PRINTFORML 　
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
 		;◆◆
 		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 0)
 		CALL ADD_ITEM(7, 1, 1)
@@ -149,8 +177,12 @@ IF LOCAL:2 >= LOCAL:1
 			ELSE
 				GOTO INPUT_LOOP_2
 			ENDIF
-		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
-		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		PRINTFORML 「ありがとう！　ちょっと触らせてね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 1)
 		CALL EXTASY(LOCAL:4, 1, 900, 400)
 		CALL EXTASY(LOCAL:4, 1, 900, 400)
@@ -158,24 +190,40 @@ IF LOCAL:2 >= LOCAL:1
 		CALL EXTASY(LOCAL:4, 1, 900, 400)
 		CALL EXTASY(LOCAL:4, 1, 900, 400)
 		PRINTFORML 　
-		PRINTFORMW ……
-		PRINTFORMW …………
-		PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の胸を揉みしだいていた…
+		PRINTFORML ……
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML …………
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の胸を揉みしだいていた…
+		CALL WAIT_AUTOMODE(400, 0)
+
 		IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):76 == 0
-			PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、胸での快楽に溺れてしまった
+			PRINTFORML %CALLNAME:(LOCAL:4)%は触手の責めに屈し、胸での快楽に溺れてしまった
+			CALL WAIT_AUTOMODE(400, 0)
+
 		ENDIF
 		IF TALENT:(LOCAL:4):74 == 0
-			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+			PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+			CALL WAIT_AUTOMODE(400, 0)
+
 			TALENT:(LOCAL:4):74 = 1
 		ENDIF
 		IF TALENT:(LOCAL:4):76 == 0
-			PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:76%】を得た
+			PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:76%】を得た
+			CALL WAIT_AUTOMODE(400, 0)
+
 			TALENT:(LOCAL:4):76 = 1
 			
 			CALL ADD_HISTORY(DAY, LOCAL:4, 1, 10)
 		ENDIF
-		PRINTFORMW 　
-		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		PRINTFORML 　
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
 		;◆◆
 		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 1)
 		CALL ADD_ITEM(16, 1, 1)
@@ -202,8 +250,12 @@ IF LOCAL:2 >= LOCAL:1
 			ELSE
 				GOTO INPUT_LOOP_3
 			ENDIF
-		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
-		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		PRINTFORML 「ありがとう！　ちょっと触らせてね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		CALL WAIT_AUTOMODE(400, 0)
+
 			CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 2)
 			CALL EXTASY(LOCAL:4, 2, 900, 400)
 			CALL EXTASY(LOCAL:4, 2, 900, 400)
@@ -211,24 +263,40 @@ IF LOCAL:2 >= LOCAL:1
 			CALL EXTASY(LOCAL:4, 2, 900, 400)
 			CALL EXTASY(LOCAL:4, 2, 900, 400)
 			PRINTFORML 
-			PRINTFORMW ……
-			PRINTFORMW …………
-			PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の\@ GET_PENIS(LOCAL:4) ? ペニス # クリトリス \@を弄り回していた…
+			PRINTFORML ……
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML …………
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分の\@ GET_PENIS(LOCAL:4) ? ペニス # クリトリス \@を弄り回していた…
+			CALL WAIT_AUTOMODE(400, 0)
+
 			IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):77 == 0
-				PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、\@ GET_PENIS(LOCAL:4) ? ペニス # クリトリス \@での快楽に溺れてしまった
+				PRINTFORML %CALLNAME:(LOCAL:4)%は触手の責めに屈し、\@ GET_PENIS(LOCAL:4) ? ペニス # クリトリス \@での快楽に溺れてしまった
+				CALL WAIT_AUTOMODE(400, 0)
+
 			ENDIF
 			IF TALENT:(LOCAL:4):74 == 0
-				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+				PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(LOCAL:4):74 = 1
 			ENDIF
 			IF TALENT:(LOCAL:4):77 == 0
-				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:77%】を得た
+				PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:77%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(LOCAL:4):77 = 1
 				
 				CALL ADD_HISTORY(DAY, LOCAL:4, 2, 10)
 			ENDIF
-		PRINTFORMW 　
-		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		PRINTFORML 　
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
 		;◆◆
 		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 2)
 		CALL ADD_ITEM(23, 1, 1)
@@ -255,8 +323,12 @@ IF LOCAL:2 >= LOCAL:1
 			ELSE
 				GOTO INPUT_LOOP_4
 			ENDIF
-		PRINTFORMW 「ありがとう！　ちょっと触らせてね！」
-		PRINTFORMW そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		PRINTFORML 「ありがとう！　ちょっと触らせてね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML そう言って触手生物は突然%CALLNAME:(LOCAL:4)%を触手で絡め取った！
+		CALL WAIT_AUTOMODE(400, 0)
+
 			CALL LOST_VIRGIN(LOCAL:4, 1, 4)
 			CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 2, 3)
 			CALL EXTASY(LOCAL:4, 3, 900, 400)
@@ -265,24 +337,40 @@ IF LOCAL:2 >= LOCAL:1
 			CALL EXTASY(LOCAL:4, 3, 900, 400)
 			CALL EXTASY(LOCAL:4, 3, 900, 400)
 			PRINTFORML 　
-			PRINTFORMW ……
-			PRINTFORMW …………
-			PRINTFORMW 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分のヴァギナをかき回していた…
+			PRINTFORML ……
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML …………
+			CALL WAIT_AUTOMODE(400, 0)
+
+			PRINTFORML 触手生物の責めが終わったとき、%CALLNAME:(LOCAL:4)%は恍惚の表情を浮かべ、\@ BASE:(LOCAL:4):3 <= 0 ? 激しく # 服の上から \@自分のヴァギナをかき回していた…
+			CALL WAIT_AUTOMODE(400, 0)
+
 			IF TALENT:(LOCAL:4):74 == 0 || TALENT:(LOCAL:4):78 == 0
-				PRINTFORMW %CALLNAME:(LOCAL:4)%は触手の責めに屈し、膣内での快楽に溺れてしまった
+				PRINTFORML %CALLNAME:(LOCAL:4)%は触手の責めに屈し、膣内での快楽に溺れてしまった
+				CALL WAIT_AUTOMODE(400, 0)
+
 			ENDIF
 			IF TALENT:(LOCAL:4):74 == 0
-				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+				PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:74%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(LOCAL:4):74 = 1
 			ENDIF
 			IF TALENT:(LOCAL:4):78 == 0
-				PRINTFORMW %CALLNAME:(LOCAL:4)%は【%TALENTNAME:78%】を得た
+				PRINTFORML %CALLNAME:(LOCAL:4)%は【%TALENTNAME:78%】を得た
+				CALL WAIT_AUTOMODE(400, 0)
+
 				TALENT:(LOCAL:4):78 = 1
 				
 				CALL ADD_HISTORY(DAY, LOCAL:4, 3, 10)
 			ENDIF
-		PRINTFORMW 　
-		PRINTFORMW 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		PRINTFORML 　
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「……ふぅ、ちょっとやり過ぎちゃったかな？　これはお礼だよ、受け取ってね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
 		CALL PRINT_MESSAGE(LOCAL:4, 200, 142, CALLNAME:(LOCAL:4), "", 3, 3)
 		CALL ADD_ITEM(61, 1, 1)
 		CALL ADD_ITEM(62, 1, 1)
@@ -301,14 +389,28 @@ IF LOCAL:2 >= LOCAL:1
 	
 	IF (FLAG:142 / 100) == 31
 		;4種コンプリート
-		PRINTFORMW 「凄い凄い！　こんなにすぐ見つかるとは思わなかったよ！」
-		PRINTFORMW 「これは全部見つけてくれたキミ%TACHI()%へのお礼だよ、受け取ってね！」
-		PRINTFORMW アイテム各種を貰った！
+		PRINTFORML 「凄い凄い！　こんなにすぐ見つかるとは思わなかったよ！」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「これは全部見つけてくれたキミ%TACHI()%へのお礼だよ、受け取ってね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML アイテム各種を貰った！
+		CALL WAIT_AUTOMODE(400, 0)
+
 		;ユニーク武器追加パッチ・触手使役術をにょろろから入手
-		PRINTFORMW 「キミ%TACHI()%は本当に頑張ったからね、今ならこの【触手ヒーロー変身グッズ】も無料であげるよ、受け取ってね！」
-		PRINTFORMW ☆触手使役術を貰った！
-		PRINTFORMW 「それじゃあ僕はもう帰るね。キミ%TACHI()%もそんな体じゃここは辛いだろうから、早く帰った方が良いよ～」
-		PRINTFORMW そう言って触手生物は姿を消した…
+		PRINTFORML 「キミ%TACHI()%は本当に頑張ったからね、今ならこの【触手ヒーロー変身グッズ】も無料であげるよ、受け取ってね！」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML ☆触手使役術を貰った！
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML 「それじゃあ僕はもう帰るね。キミ%TACHI()%もそんな体じゃここは辛いだろうから、早く帰った方が良いよ～」
+		CALL WAIT_AUTOMODE(400, 0)
+
+		PRINTFORML そう言って触手生物は姿を消した…
+		CALL WAIT_AUTOMODE(400, 0)
+
 		CALL PRINT_MESSAGE(1, 200, 142, CALLNAME:1, "", 5)
 		CALL PRINT_MESSAGE(FLAG:10, 200, 142, CALLNAME:1, "", 5)
 		CALL PRINT_MESSAGE(FLAG:11, 200, 142, CALLNAME:1, "", 5)
