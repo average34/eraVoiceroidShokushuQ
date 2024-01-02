@@ -300,15 +300,14 @@ SELECTCASE ARG:0
 		;戦意喪失
 		IF CFLAG:29
 			PRINTFORMDL マキは仲間に置いて行かれることを理解していないのかできないのか、ピクリとも動かない…
-			CALL WAIT_AUTOMODE(400, 0)TDATAL
-					DATAFORM 「ゆ、ゆかりん…？」
-				ENDDATA
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTDATAW
-					DATAFORM 「ゆ、ゆかりん…？」
-				ENDDATA
-			ENDIF
+			CALL WAIT_AUTOMODE(400, 0)
+					;特別パターン
+		ELSEIF NO:(ARG:2)==3
+
+			PRINTDATAL
+				DATAFORM 「ゆ、ゆかりん…？」
+			ENDDATA
+			CALL WAIT_AUTOMODE(400, 0)
 			PRINTFORMDL マキはこれはきっと作戦なんだと自分に言い聞かせている…
 			CALL WAIT_AUTOMODE(400, 0)
 		;その他
@@ -994,14 +993,9 @@ SELECTCASE ARG:0
 				CALL WAIT_AUTOMODE(400, 0)
 
 			CASE 3
-				IF FLAG:AUTOMODE
-					PRINTFORMDL ！！
-					PRINTFORMDL ！！！！！！！
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORMDW ！！
-					PRINTFORMDW ！！！！！！！
-				ENDIF
+				PRINTFORMDL ！！
+				PRINTFORMDL ！！！！！！！
+				CALL WAIT_AUTOMODE(400, 0)
 
 			CASE 4
 				PRINTFORML 「あっ、あっ、あっ、あっ、あっ…！」

@@ -140,16 +140,10 @@ IF LOCAL:2 >= LOCAL:1
 
 	IF FLAG:10 && FLAG:11 == 0
 		IF CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 <= 0
-			IF FLAG:AUTOMODE
-				PRINTFORML %CALLNAME:(FLAG:10)%の%CALLNAME:1%を見る目がおかしい…
-				PRINTFORML 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
-				PRINTFORML どうやら発情状態で出口の見えない迷宮を連れまわされすぎて、少しおかしくなってしまったようだ
-				TWAIT FLAG:AUTOMODE * 1500, 0
-			ELSE
-				PRINTFORMW  %CALLNAME:(FLAG:10)%の%CALLNAME:1%を見る目がおかしい…
-				PRINTFORMW  一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
-				PRINTFORMW  どうやら発情状態で出口の見えない迷宮を連れまわされすぎて、少しおかしくなってしまったようだ
-			ENDIF
+			PRINTFORML %CALLNAME:(FLAG:10)%の%CALLNAME:1%を見る目がおかしい…
+			PRINTFORML 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+			PRINTFORML どうやら発情状態で出口の見えない迷宮を連れまわされすぎて、少しおかしくなってしまったようだ
+			CALL WAIT_AUTOMODE(1500, 0)
 
 			IF ABL:(FLAG:10):98 >= ABL:1:98
 				PRINTFORML 組み敷かれた%CALLNAME:1%の抵抗は、悲鳴をあげようとした口を唇で塞がれ、全身を這い回る指先に次第に弱まっていく
@@ -163,16 +157,10 @@ IF LOCAL:2 >= LOCAL:1
 				PRINTFORML 
 				PRINTFORML 正気を取り戻して必死に謝っている%CALLNAME:(FLAG:10)%の手を引き、%CALLNAME:1%達は探索を再開した
 			ELSE
-				IF FLAG:AUTOMODE
-					PRINTFORML 組み敷かれた%CALLNAME:1%は情欲に狂った%CALLNAME:(FLAG:10)%を強引に引き剥がした！
-					PRINTFORML %CALLNAME:1%は腰をもじもじさせてすがりつこうとする%CALLNAME:(FLAG:10)%を突き放すと、一人でするように言い放った…
-					PRINTFORML %CALLNAME:(FLAG:10)%は性欲に逆らえず、顔を真っ赤にして自慰を始めた…
-					TWAIT FLAG:AUTOMODE * 1500, 0
-				ELSE
-					PRINTFORMW  組み敷かれた%CALLNAME:1%は情欲に狂った%CALLNAME:(FLAG:10)%を強引に引き剥がした！
-					PRINTFORMW  %CALLNAME:1%は腰をもじもじさせてすがりつこうとする%CALLNAME:(FLAG:10)%を突き放すと、一人でするように言い放った…
-					PRINTFORMW  %CALLNAME:(FLAG:10)%は性欲に逆らえず、顔を真っ赤にして自慰を始めた…
-				ENDIF
+				PRINTFORML 組み敷かれた%CALLNAME:1%は情欲に狂った%CALLNAME:(FLAG:10)%を強引に引き剥がした！
+				PRINTFORML %CALLNAME:1%は腰をもじもじさせてすがりつこうとする%CALLNAME:(FLAG:10)%を突き放すと、一人でするように言い放った…
+				PRINTFORML %CALLNAME:(FLAG:10)%は性欲に逆らえず、顔を真っ赤にして自慰を始めた…
+				CALL WAIT_AUTOMODE(1500, 0)
 
 
 					CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 0, 2)
@@ -183,16 +171,10 @@ IF LOCAL:2 >= LOCAL:1
 				PRINTFORML 自慰を終えた%CALLNAME:(FLAG:10)%達は、気まずそうな顔をしながらも探索を再開した…
 			ENDIF
 		ELSEIF CFLAG:(FLAG:10):28 >= 1 && CFLAG:1:28 >= 1
-			IF FLAG:AUTOMODE
-				PRINTFORML 組み敷かれた%CALLNAME:1%も発情した身体に突き動かされ、%CALLNAME:(FLAG:10)%の唇を貪り始めた
-				PRINTFORML 
-				PRINTFORML %CALLNAME:1%達は獣のように交わっている！
-				TWAIT FLAG:AUTOMODE * 1500, 0
-			ELSE
-				PRINTFORMW  組み敷かれた%CALLNAME:1%も発情した身体に突き動かされ、%CALLNAME:(FLAG:10)%の唇を貪り始めた
-				PRINTFORMW  
-				PRINTFORMW  %CALLNAME:1%達は獣のように交わっている！
-			ENDIF
+			PRINTFORML 組み敷かれた%CALLNAME:1%も発情した身体に突き動かされ、%CALLNAME:(FLAG:10)%の唇を貪り始めた
+			PRINTFORML 
+			PRINTFORML %CALLNAME:1%達は獣のように交わっている！
+			CALL WAIT_AUTOMODE(1500, 0)
 
 				CALL PRINT_MESSAGE(1, 200, 161, CALLNAME:1, "", 1, 2)
 				CALL PRINT_MESSAGE(FLAG:10, 200, 161, CALLNAME:1, "", 1, 2)
@@ -206,16 +188,10 @@ IF LOCAL:2 >= LOCAL:1
 	ENDIF
 	
 	IF PET:0 && (DA:0:85 & 1)
-		IF FLAG:AUTOMODE
-			PRINTFORML %PETNAME%の%CALLNAME:1%を見る目がおかしい…
-			PRINTFORML 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
-			PRINTFORML どうやら発情状態のようだ
-			TWAIT FLAG:AUTOMODE * 1500, 0
-		ELSE
-			PRINTFORMW  %PETNAME%の%CALLNAME:1%を見る目がおかしい…
-			PRINTFORMW  一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
-			PRINTFORMW  どうやら発情状態のようだ
-		ENDIF
+		PRINTFORML %PETNAME%の%CALLNAME:1%を見る目がおかしい…
+		PRINTFORML 一瞬の隙を突いて%CALLNAME:1%を押し倒すと、顔中にキスの雨を降らせ始めた！
+		PRINTFORML どうやら発情状態のようだ
+		CALL WAIT_AUTOMODE(1500, 0)
 
 		IF CFLAG:1:28 == 0
 			IF TALENT:1:140
