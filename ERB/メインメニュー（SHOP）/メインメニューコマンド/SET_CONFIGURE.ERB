@@ -859,16 +859,20 @@ REDRAW 1
 	ENDIF
 ;=================================================
 ;コンフィグ項目
-;「旧作キャラ」
+;「キャラ重複の許可」
 ;=================================================
 @SET_CONFIGURE_2_8(ARG)
 	;---項目の表示---
 	IF ARG == 0
-		RESULTS:0 = 旧作キャラ
+		RESULTS:0 = キャラ重複
 		IF FLAG:537 == 0
-			RESULTS:1 = 出る
-		ELSE
-			RESULTS:1 = 出ない
+			RESULTS:1 = しない
+		ELSEIF FLAG:537 == 1
+			RESULTS:1 = する
+		ELSEIF FLAG:537 == 2
+			RESULTS:1 = する上で主人公以外に個性をつける
+		ELSEIF FLAG:537 == 3
+			RESULTS:1 = する上で全員に個性をつける
 		ENDIF
 	;---選択時の処理---
 	ELSEIF ARG == 1
@@ -881,9 +885,6 @@ REDRAW 1
 		PRINTFORML 
 		PRINTFORML [0] キャンセル
 		$INPUT_LOOP
-		INPUT
-		IF RESULT == 0
-			PRINTFORML キャンセルしました
 		;1
 		ELSEIF RESULT == 1
 			FLAG:537 = 0
