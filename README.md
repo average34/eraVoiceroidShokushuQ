@@ -6,7 +6,7 @@ __エロコンテンツを閲覧したくない方はブラウザバックをお
 
 ![Link Text](https://github.com/average34/eraVoiceroidShokushuQ/blob/master/RESOURCES/eraVStop.png "Title")  
 https://seesaawiki.jp/eraseries/d/eraVoiceroid  
-このゲームは、VOICEROID、CeVIO、AITalkのキャラクターの二次創作ゲームです。  
+このゲームは、VOICEROID、CeVIO、AITalkなどのキャラクターの二次創作ゲームです。  
 テキストのみで進める、ボイチェビ達が触手と戦うゲームです。
 
 ## ダウンロード
@@ -16,7 +16,7 @@ https://github.com/average34/eraVoiceroidShokushuQ/releases
   
 ## 起動方法  
 
-Emuera1824beta005.exeを実行することでゲームを起動します。  
+Emuera1824+v10.exeを実行することでゲームを起動します。  
 インストーラなどはありません。  
   
 ※起動時に何か問題が起きた場合、まずは同フォルダの[「Q&A.txt」](https://github.com/average34/eraVoiceroidShokushuQ/blob/master/Q%26A.txt "Q&A")  を参照して下さい。  
