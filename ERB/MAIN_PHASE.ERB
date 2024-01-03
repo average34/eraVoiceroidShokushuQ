@@ -115,16 +115,11 @@ IF FLAG:8
 			;FLAG:8を通常の値に戻しておく
 			FLAG:8 = ABS(FLAG:8)
 			;ドッペルの見張り付きで戦闘
-			IF FLAG:AUTOMODE
-				PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
-				;ドッペルは必ず逃げる＋必ず睡眠状態のオマケつき
-				PRINTFORML %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
-				TWAIT FLAG:AUTOMODE * 1000, 0
-			ELSE
-				PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
-				;ドッペルは必ず逃げる＋必ず睡眠状態のオマケつき
-				PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
-			ENDIF
+			PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			;ドッペルは必ず逃げる＋必ず睡眠状態のオマケつき
+			PRINTFORML %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+			TWAIT FLAG:AUTOMODE * 1000, 0
+			CALL WAIT_AUTOMODE(1000, 0)
 			CALL PRE_BATTLE(5)
 		ELSEIF (FLAG:8 % 10) >= 2
 			;気絶したまま戦闘
@@ -136,26 +131,17 @@ IF FLAG:8
 			FLAG:8 = 0
 		ELSEIF FLAG:8 >= 10
 			;見張り付きで戦闘
-			IF FLAG:AUTOMODE
-				PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
-				IF (FLAG:8 >= 100) && (CFLAG:(FLAG:8 / 100):5 < RAND:80)
-					;好感度が低いNPCはサボる場合がある
-					PRINTFORML %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
-					CALL PRE_BATTLE(1)
-				ELSE
-					CALL PRE_BATTLE(2)
-				ENDIF
-				TWAIT FLAG:AUTOMODE * 1000, 0
+			PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
+			IF (FLAG:8 >= 100) && (CFLAG:(FLAG:8 / 100):5 < RAND:80)
+				;好感度が低いNPCはサボる場合がある
+				PRINTFORML %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
+				CALL PRE_BATTLE(1)
 			ELSE
-				PRINTFORMW 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…
-				IF (FLAG:8 >= 100) && (CFLAG:(FLAG:8 / 100):5 < RAND:80)
-					;好感度が低いNPCはサボる場合がある
-					PRINTFORMW %CALLNAME:(FLAG:8 / 100)%は敵を見つけると%CALLNAME:1%%TACHI()%を放り出して逃げ出してしまった！
-					CALL PRE_BATTLE(1)
-				ELSE
-					CALL PRE_BATTLE(2)
-				ENDIF
+				CALL PRE_BATTLE(2)
 			ENDIF
+			
+			CALL WAIT_AUTOMODE(1000, 0)
+
 		ELSE
 			;見張り無しの睡眠戦闘
 			PRINTFORML 眠っている%CALLNAME:1%%TACHI()%に敵が近づいてきた…

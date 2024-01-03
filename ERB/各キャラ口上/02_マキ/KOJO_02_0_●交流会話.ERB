@@ -73,32 +73,24 @@ PRINTFORML 「お、お願い…！%CSTR:50%、しっかりしてっ…！」
 CALL WAIT_AUTOMODE(400, 0)
 
 			ELSE
-				IF FLAG:AUTOMODE
-					PRINTDATAL
-						DATAFORM 「……ひどい…」
-						DATAFORM 「っ、こんな事って……」
-						DATAFORM 「っ…大丈夫じゃ…ないよね……」
-					ENDDATA
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTDATAW
-						DATAFORM 「……ひどい…」
-						DATAFORM 「っ、こんな事って……」
-						DATAFORM 「っ…大丈夫じゃ…ないよね……」
-					ENDDATA
-				ENDIF
-PRINTFORMDL マキは%CSTR:51%を悲しそうな目で見つめている
-CALL WAIT_AUTOMODE(400, 0)
+				PRINTDATAL
+					DATAFORM 「……ひどい…」
+					DATAFORM 「っ、こんな事って……」
+					DATAFORM 「っ…大丈夫じゃ…ないよね……」
+				ENDDATA
+				CALL WAIT_AUTOMODE(400, 0)
+				PRINTFORMDL マキは%CSTR:51%を悲しそうな目で見つめている
+				CALL WAIT_AUTOMODE(400, 0)
 			ENDIF
 		;向こうが妊娠中
 		ELSEIF CFLAG:(ARG:1):36 == 3
 			;ゆかりにあった
 			IF NO:(ARG:1) == 3
-PRINTFORML 「ゆ、ゆかりん！？どうしたのそのお腹……」
-CALL WAIT_AUTOMODE(400, 0)
+				PRINTFORML 「ゆ、ゆかりん！？どうしたのそのお腹……」
+				CALL WAIT_AUTOMODE(400, 0)
 
-PRINTFORML (あんなに苦しそうなゆかりん、初めて見た……)
-CALL WAIT_AUTOMODE(400, 0)
+				PRINTFORML (あんなに苦しそうなゆかりん、初めて見た……)
+				CALL WAIT_AUTOMODE(400, 0)
 
 
 			ELSEIF CFLAG:800==0
@@ -117,78 +109,44 @@ CALL WAIT_AUTOMODE(400, 0)
 			ENDIF
 		ELSE
 			IF CFLAG:800==0
-				IF FLAG:AUTOMODE
 					PRINTDATAL
 						DATAFORM 「ヤッホー、元気？……なんて、のんきに挨拶してる場合じゃないんだよねー」
 						DATAFORM 「お互いになんとか無事みたいだね」
 						DATAFORM 「大丈夫だった？私は…ううん、何ともないよ」
 						DATAFORM 「どう？何か出口への手掛かりは掴めた？」
 					ENDDATA
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTDATAW
-						DATAFORM 「ヤッホー、元気？……なんて、のんきに挨拶してる場合じゃないんだよねー」
-						DATAFORM 「お互いになんとか無事みたいだね」
-						DATAFORM 「大丈夫だった？私は…ううん、何ともないよ」
-						DATAFORM 「どう？何か出口への手掛かりは掴めた？」
-					ENDDATA
-				ENDIF
+					CALL WAIT_AUTOMODE(400, 0)
+
 			ELSEIF CFLAG:800==1
-				IF FLAG:AUTOMODE
-					PRINTDATAL
-						DATAFORM 「お元気ですか？……なんて、のんきに挨拶してる場合じゃないんですよねー」
-						DATAFORM 「お互い無事みたいですね」
-						DATAFORM 「身体は大丈夫ですか？」
-						DATAFORM 「どうでしょう、何か出口への手掛かりは掴めましたか？」
-					ENDDATA
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTDATAW
-						DATAFORM 「お元気ですか？……なんて、のんきに挨拶してる場合じゃないんですよねー」
-						DATAFORM 「お互い無事みたいですね」
-						DATAFORM 「身体は大丈夫ですか？」
-						DATAFORM 「どうでしょう、何か出口への手掛かりは掴めましたか？」
-					ENDDATA
-				ENDIF
+				PRINTDATAL
+					DATAFORM 「お元気ですか？……なんて、のんきに挨拶してる場合じゃないんですよねー」
+					DATAFORM 「お互い無事みたいですね」
+					DATAFORM 「身体は大丈夫ですか？」
+					DATAFORM 「どうでしょう、何か出口への手掛かりは掴めましたか？」
+				ENDDATA
+				CALL WAIT_AUTOMODE(400, 0)
 			ENDIF
 		ENDIF
 	;離れる
 	CASE 102
 
 		IF CFLAG:800==0
-			IF FLAG:AUTOMODE
 				PRINTDATAL
 					DATAFORM 「何か見つけたら連絡するよ」
 			DATAFORM 「うん、お互い気を付けようね」
 			DATAFORM 「情報を見つけて、それからまた合流しよう」
 			DATAFORM 「早く出口を見つけないとね」
 				ENDDATA
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTDATAW
-					DATAFORM 「何か見つけたら連絡するよ」
-			DATAFORM 「うん、お互い気を付けようね」
-			DATAFORM 「情報を見つけて、それからまた合流しよう」
-			DATAFORM 「早く出口を見つけないとね」
-				ENDDATA
-			ENDIF
+				CALL WAIT_AUTOMODE(400, 0)
 		ELSEIF CFLAG:800==1
-			IF FLAG:AUTOMODE
 				PRINTDATAL
 					DATAFORM 「何か見つけたら連絡しますね」
 					DATAFORM 「うん、お互い気を付けましょうね」
 					DATAFORM 「情報を見つけて、それからまた合流しましょう」
 					DATAFORM 「早く出口を見つけましょう」
 				ENDDATA
-				TWAIT FLAG:AUTOMODE * 400, 0
-			ELSE
-				PRINTDATAW
-					DATAFORM 「何か見つけたら連絡しますね」
-					DATAFORM 「うん、お互い気を付けましょうね」
-					DATAFORM 「情報を見つけて、それからまた合流しましょう」
-					DATAFORM 「早く出口を見つけましょう」
-				ENDDATA
-			ENDIF
+				CALL WAIT_AUTOMODE(400, 0)
+
 		ENDIF
 	;遭遇時会話：雑談
 	;ARG:1に遭遇キャラ　ARG:2にMP回復量

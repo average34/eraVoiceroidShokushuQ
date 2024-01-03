@@ -643,15 +643,10 @@ SELECTCASE ARG:0
 				PRINTFORM 一人必死にお腹を抑えながら、
 			ENDIF
 			IF ARG:2 == 0
-				IF FLAG:AUTOMODE
-					PRINTFORML %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTFORML %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
-					CALL WAIT_AUTOMODE(400, 0)
-					PRINTFORML 産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
-					CALL WAIT_AUTOMODE(400, 0)
-				ENDIF
+				PRINTFORML %ARGS:0%は%ENEMY_NAME(CFLAG:TARGET:22)%の幼体を産み落とした
+				CALL WAIT_AUTOMODE(400, 0)
+				PRINTFORML 産み落とされた子供は精根尽きた%ARGS:0%の胸に張り付き、臍の緒もそのままに母乳を吸い上げている…
+				CALL WAIT_AUTOMODE(400, 0)
 			ELSE
 				;母親が人間＝半人半妖　　母親が妖怪＝半妖半触手　みたいな
 				PRINTFORML %ARGS:0%は半妖の女の子を産み落とした

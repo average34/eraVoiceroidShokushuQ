@@ -49,29 +49,16 @@ SELECTCASE ARG:1
 	CASE 4
 		SELECTCASE ARG:2
 			CASE 0
-				
-				IF FLAG:AUTOMODE
-					PRINTDATAL
-						DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れた……
-					ENDDATA
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTDATAW
-						DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れた……
-					ENDDATA
-				ENDIF
+				PRINTDATAL
+					DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れた……
+				ENDDATA
+				CALL WAIT_AUTOMODE(400, 0)
 			CASE 1
-				IF FLAG:AUTOMODE
-					PRINTDATAL
-						DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れようとした……
-						DATAFORM しかし、情がわいてしまったため、別れることはできなかった……
-					ENDDATA
-					TWAIT FLAG:AUTOMODE * 400, 0
-				ELSE
-					PRINTDATAW
-						DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れようとした……
-						DATAFORM しかし、情がわいてしまったため、別れることはできなかった……
-					ENDDATA
-				ENDIF
+				PRINTDATAL
+					DATAFORM %CALLNAME:1%%TACHI()%は%PETNAME%と別れようとした……
+					DATAFORM しかし、情がわいてしまったため、別れることはできなかった……
+				ENDDATA
+				CALL WAIT_AUTOMODE(400, 0)
+
 		ENDSELECT
 ENDSELECT

@@ -36,7 +36,7 @@ $1PRINTFORML$2$1CALL WAIT_AUTOMODE($3)
 -------------------------------------
 
 置換前
-(\t* *)IF FLAG:AUTOMODE.*\r*\n\t* *PRINT(.*\r*\n)\t* *TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t* *ELSE *\r*\n\t* *PRINT(.*\r*\n)\t* *ENDIF
+^(?!;)(\t* *)IF FLAG:AUTOMODE.*\r*\n\t* *PRINT(.*\r*\n)\t* *TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t* *ELSE *\r*\n\t* *PRINT(.*\r*\n)\t* *ENDIF
 置換後
 $1PRINT$2$1CALL WAIT_AUTOMODE($3)
 -------------------------------------
@@ -60,6 +60,14 @@ $1PRINT$2$1PRINT$3$1CALL WAIT_AUTOMODE($4)
 (\t* *)IF FLAG:AUTOMODE.*\r*\n\t* *PRINT(.*\r*\n)\t* *PRINT(.*\r*\n)\t* *PRINT(.*\r*\n)\t* *TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t* *ELSE *\r*\n\t* *PRINT(.*\r*\n)\t* *PRINT(.*\r*\n)\t* *PRINT(.*\r*\n)\t* *ENDIF
 置換後
 $1PRINT$2$1PRINT$3$1PRINT$4$1CALL WAIT_AUTOMODE($5)
+
+
+-------------------------------------
+
+置換前
+^(?!;)(\t* *)IF FLAG:AUTOMODE.*\r*\n\t* *PRINT([\s\S]*)\t* *TWAIT FLAG:AUTOMODE \* (.+)\r*\n\t* *ELSE *\r*\n\t* *PRINT([\s\S]*)\t* *ENDIF
+置換後
+$1PRINT$2$1CALL WAIT_AUTOMODE($3)
 
 ==========================
 脱幻想郷処理
