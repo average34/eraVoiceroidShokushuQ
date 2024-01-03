@@ -885,7 +885,9 @@ REDRAW 1
 		PRINTFORML 
 		PRINTFORML [0] キャンセル
 		$INPUT_LOOP
-		;1
+		INPUT
+		IF RESULT == 0
+			PRINTFORML キャンセルしました
 		ELSEIF RESULT == 1
 			FLAG:537 = 0
 			PRINTFORMW 重複を許可しません
