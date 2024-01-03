@@ -289,7 +289,7 @@ ELSEIF CFLAG:(CHARA_ID):36 >= 3
 	;お腹に赤ちゃんいる時はCFLAG:(CHARA_ID):159を念のためリセット
 	CFLAG:(CHARA_ID):159 = 0
 ELSEIF LOCAL:1 >= 0
-	;卵巣パッチON かつ 男の娘ではない
+	;卵巣パッチON かつ オトコではない
 	IF FLAG:535 == 1 && TALENT:(CHARA_ID):122 == 0
 		SELECTCASE TALENT:(CHARA_ID):137
 			CASE -2 TO -1
@@ -370,7 +370,7 @@ ELSEIF LOCAL:1 >= 0
 				CFLAG:(CHARA_ID):159 = 1
 
 		ENDSELECT
-	;卵巣パッチOFF かつ 男の娘ではない
+	;卵巣パッチOFF かつ オトコではない
 	ELSEIF FLAG:535 == 0 && TALENT:(CHARA_ID):122 == 0
 		IF LOCAL:1 >= 12 && LOCAL:1 <= 14
 			RESULTS = 危険日

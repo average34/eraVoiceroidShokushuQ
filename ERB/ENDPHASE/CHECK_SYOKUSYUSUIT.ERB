@@ -36,7 +36,7 @@ IF LOCAL:1
 	IF FLAG:8 >= 1
 		CALL PRINT_MESSAGE(ARG:0, 441, 0, CALLNAME:(ARG:0), "")
 		LOCAL:2 = RAND:4
-		;貞操帯と男の娘はV→Aに書き換え
+		;貞操帯とオトコはV→Aに書き換え
 		SIF (CFLAG:(ARG:0):47 == 1 || TALENT:(ARG:0):122) && LOCAL:2 == 3
 			LOCAL:2 = 0
 		LOCAL:3 = 300 + RAND:401
@@ -51,7 +51,7 @@ IF LOCAL:1
 		RETURN
 	ENDIF
 
-	;貞操帯か男の娘があるとVor全身を引くか20%の確率でAに書き換え　合計1/3でA狙い
+	;貞操帯かオトコがあるとVor全身を引くか20%の確率でAに書き換え　合計1/3でA狙い
 	LOCAL:5 = RAND:15
 	SIF (CFLAG:(ARG:0):47 == 1 || TALENT:(ARG:0):122) && (LOCAL:5 == 3 || LOCAL:5 == 5 || RAND:5 == 0)
 		LOCAL:5 = 0

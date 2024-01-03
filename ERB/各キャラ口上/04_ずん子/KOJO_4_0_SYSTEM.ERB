@@ -119,7 +119,7 @@ RETURNF MODE
 	ENDIF
 RETURNF 0
 
-; □ 男の娘チェック
+; □ オトコチェック
 @KOJO_4_0_CHECK_OTOKONOKO(ARG:0)
 
 	; いかなる状況でも口上発生時にチェックを行う
@@ -127,7 +127,7 @@ RETURNF 0
 	SIF ARG:0 == 0
 		RETURN 0
 		
-	; 素質[男の娘]未所持
+	; 素質[オトコ]未所持
 	SIF !TALENT:122
 		RETURN 0
 		
@@ -136,9 +136,9 @@ RETURNF 0
 		RETURN 0
 		
 	CALL KOJO_TITLE_8_0
-	PRINTFORML %RESULTS%は素質[男の娘]に未対応です
+	PRINTFORML %RESULTS%は素質[オトコ]に未対応です
 	PRINTFORML 表示内容に違和感が発生する可能性がありますが、強制的に口上を表示しますか？
-	PRINTFORML （いいえを選択した場合[男の娘]状態では一切の口上が表示されなくなります）
+	PRINTFORML （いいえを選択した場合[オトコ]状態では一切の口上が表示されなくなります）
 	CALL ASK_YN
 	IF RESULT == 0
 		CFLAG:810 = 1
