@@ -51,7 +51,8 @@
 		;キャラの反応とかは口上の内容と矛盾が出るので書かない方がよいと思います
 		CASE 5
 			
-			PRINTFORMW 地の文
+			PRINTFORML 地の文
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 			
 			
@@ -242,7 +243,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			
-			PRINTFORMW 地の文
+			PRINTFORML 地の文
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 			
 	ENDSELECT
@@ -269,7 +271,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML 自分が普段着ているものとよく似た服だ。
-			PRINTFORMW サイズまでぴったりなので自分の物が巻き込まれたのだろうか……
+			PRINTFORML サイズまでぴったりなので自分の物が巻き込まれたのだろうか……
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 			
 		;---ステータスの服装表示---
@@ -303,7 +306,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML 誰が着ていてもおかしくない普通の服だ。
-			PRINTFORMW スカートが妙に短い以外は……
+			PRINTFORML スカートが妙に短い以外は……
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -338,9 +342,11 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 白と紺を基調とした動きやすそうな薄手の体操服だ。
 			IF GET_BUST(キャラID) >= 2
-				PRINTFORMW 少しサイズが小さいのでへそや胸の下側が見えてしまっている。
+				PRINTFORML 少しサイズが小さいのでへそや胸の下側が見えてしまっている。
+				CALL WAIT_AUTOMODE(400,0)
 			ELSE
-				PRINTFORMW 少しサイズが小さいので息苦しい。
+				PRINTFORML 少しサイズが小さいので息苦しい。
+				CALL WAIT_AUTOMODE(400,0)
 			ENDIF
 			PRINTFORML 
 
@@ -387,7 +393,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML ひらひらしたスカートとフリルが目立つメイド服だ。
-			PRINTFORMW カチューシャとガーターベルトまである。
+			PRINTFORML カチューシャとガーターベルトまである。
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -436,7 +443,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML 体の前でボタンを止めるタイプのゆったりとした寝室用のパジャマだ。
-			PRINTFORMW 上がぶかぶかなので鎖骨が見えてしまう。
+			PRINTFORML 上がぶかぶかなので鎖骨が見えてしまう。
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -489,7 +497,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML 脇が隠れるタイプの巫女服だ。
-			PRINTFORMW 胸元が大きく開いている以外は至ってまともである。
+			PRINTFORML 胸元が大きく開いている以外は至ってまともである。
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -536,7 +545,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 服は普通だが、下着の代わりになるのがスクール水着しかないようだ……
 			PRINTFORML どういうわけか胸元のゼッケンに自分の名前がひらがなで書いてある……
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -587,7 +597,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 下着の代わりになるのが”布の切れ端”としか形容できないきわどいビキニしかない……
 			PRINTFORML 上も肩に羽織るタイプのものしかなく、へそや胸元が無防備に近い……
-			PRINTFORMW 速度増加・タゲ率増加
+			PRINTFORML 速度増加・タゲ率増加
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -633,7 +644,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML 体の線がしっかりと浮き出るボディースーツだ……
-			PRINTFORMW 身体に吸い付くような拘束感があるのはなぜだろうか……
+			PRINTFORML 身体に吸い付くような拘束感があるのはなぜだろうか……
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -688,7 +700,8 @@ RETURN RESULT
 			IF GET_BUST(キャラID) >= 2
 				PRINTFORML 少しサイズが小さいのでへそや胸の下側が見えてしまっている。
 			ENDIF
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -732,7 +745,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 幼い男の子が履くような膝の見える半ズボンだ……
 			PRINTFORML 見かけはともかく動きやすいのは評価できる。
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -790,10 +804,12 @@ RETURN RESULT
 			
 		;---服選択時の地の文---
 		CASE 5
-			PRINTFORMW お腹周りのサイズが大きめに作られた妊婦服だ
+			PRINTFORML お腹周りのサイズが大きめに作られた妊婦服だ
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 腹部と胸部の布が別になっていて胸部の布をめくることで
 			PRINTFORML 容易に胸が出せる作りになっている･･･
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -846,9 +862,11 @@ RETURN RESULT
 			
 		;---服選択時の地の文---
 		CASE 5
-			PRINTFORMW 形としてはフリルの付いた肩紐タイプのワンピースドレスのようだが･･･
+			PRINTFORML 形としてはフリルの付いた肩紐タイプのワンピースドレスのようだが･･･
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 服全体がレース加工されていて肌が透けて見える･･･
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -898,7 +916,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML これは毛糸で編まれた服のようだが首に密着するほど襟が長く、
-			PRINTFORMW 袖が無いため肩が露出するデザインになっている。
+			PRINTFORML 袖が無いため肩が露出するデザインになっている。
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML また、伸縮に優れているためか上半身のラインがくっきりと浮き出てしまい
 			IF GET_BUST(キャラID) >= 1
 				PRINTFORML 豊満な胸がより強調されて見える気がする…
@@ -907,7 +926,8 @@ RETURN RESULT
 			ELSE
 				PRINTFORML 胸の形が強調されて見える気がする…
 			ENDIF
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -951,7 +971,8 @@ RETURN RESULT
 			
 		;---服選択時の地の文---
 		CASE 5
-			PRINTFORMW ミニ丈のチャイナドレスだ
+			PRINTFORML ミニ丈のチャイナドレスだ
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 首元は閉められるが、胸元に大きな穴が開いていて谷間が見えるようになっており、
 			PRINTFORML サイドのスリットは腰まで切られている･･･
 			PRINTFORML 
@@ -1000,7 +1021,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML 鍵付きの貞操帯だ
-			PRINTFORMW これなら化物に大切な場所を汚される心配も減るだろう
+			PRINTFORML これなら化物に大切な場所を汚される心配も減るだろう
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1045,7 +1067,8 @@ RETURN RESULT
 			PRINTFORML 胸当てと腰回りを覆える金属製の防具
 			PRINTFORML 水着のような見た目だがさすがに重い
 			PRINTFORML 触手が隙間から入って来ないことを祈ろう
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -1098,7 +1121,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 淡いブルーのワンピースと黄色い帽子のセット
 			PRINTFORML 胸元には花型のバッジがついている
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -1147,7 +1171,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML フリルのついたエプロン
 			PRINTFORML 汚れを防げるのは非常にありがたい
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -1196,7 +1221,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 首からひざ下までを覆う外套
 			PRINTFORML なんとなく不思議な力をまとっている
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -1242,7 +1268,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 全身真っ白なケープ付きのドレス
 			PRINTFORML なぜこんなものが落ちていたのだろうか？
-			PRINTFORMW 清純な印象を受ける、レース加工の生地は薄っすらと透けている
+			PRINTFORML 清純な印象を受ける、レース加工の生地は薄っすらと透けている
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1294,7 +1321,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 日本の伝統的な下着
 			PRINTFORML 女性用なので前垂れがない
-			PRINTFORMW 
+			PRINTFORML 
+			CALL WAIT_AUTOMODE(400,0)
 
 		;---ステータスの服装表示---
 		CASE 10	;CP 通常時
@@ -1344,7 +1372,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML ……どことなく湿っている上、服の内側がうごめいている
-			PRINTFORMW 深く考えないほうがよさそうだ
+			PRINTFORML 深く考えないほうがよさそうだ
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1380,7 +1409,8 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 			PRINTFORML かろうじて胸と股間が隠せるY字の水着
-			PRINTFORMW 下着の代わりになるのはこれしか無いようだ……
+			PRINTFORML 下着の代わりになるのはこれしか無いようだ……
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1430,9 +1460,11 @@ RETURN RESULT
 			PRINTFORML 全身を包むフード付きの可愛い着ぐるみパジャマ。
 			;尻尾持ちは追加説明
 			IF TALENT:215
-				PRINTFORMW ご丁寧に尻尾部分が外に出せるようになっている。
+				PRINTFORML ご丁寧に尻尾部分が外に出せるようになっている。
+				CALL WAIT_AUTOMODE(400,0)
 			ENDIF
-			PRINTFORMW 中は下着だけ。でもモコモコで暖かい。癒されるぅ…
+			PRINTFORML 中は下着だけ。でもモコモコで暖かい。癒されるぅ…
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1487,7 +1519,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 魅力的なのになぜか狙われにくい謎装備。
 			PRINTFORML 忍者だから仕方ない。古事記にもそう書いてある。
-			PRINTFORMW 中は鎖帷子では無く全身タイプの網タイツなので脆い。
+			PRINTFORML 中は鎖帷子では無く全身タイプの網タイツなので脆い。
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1541,7 +1574,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 緩い首回りのダボダボなシャツと、一分丈のスパッツだ
 			PRINTFORML ぴっちりとして健康的な服装からは不思議な自信が湧いてくる
-			PRINTFORMW 調子に乗ってわからされないように注意しよう
+			PRINTFORML 調子に乗ってわからされないように注意しよう
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1597,7 +1631,8 @@ RETURN RESULT
 			;「ゴシックで」って大丈夫か？
 			PRINTFORML ゴシックでフリフリな漆黒ドレス
 			PRINTFORML 少女向けのお人形に似合いそうな服だ
-			PRINTFORMW 装飾過多なせいで少し動きにくい
+			PRINTFORML 装飾過多なせいで少し動きにくい
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1651,7 +1686,8 @@ RETURN RESULT
 			;動物耳で分岐してもいいかもしれないけど、口上側の仕事かも
 			PRINTFORML ウサギの丸い尻尾が付いた、深いスリットのレオタード
 			PRINTFORML ご丁寧にウサミミカチューシャまで付属している
-			PRINTFORMW 胸元がやたらと強調されているようだが…
+			PRINTFORML 胸元がやたらと強調されているようだが…
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1704,7 +1740,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML 薄暗い迷宮に不似合いなほど明るい色使いの、動きやすそうな衣装
 			PRINTFORML 見ているだけで元気が湧き、着れば不思議と誰かを応援したくなる
-			PRINTFORMW へそが見える丈の短さ、極端に小さなミニスカートは気になるが…
+			PRINTFORML へそが見える丈の短さ、極端に小さなミニスカートは気になるが…
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1757,7 +1794,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML レディースの競泳水着、しかもハイレグだ
 			PRINTFORML ハイカットされた布地が脚の付け根まで丸出しにしてしまう
-			PRINTFORMW 泳ぐには適した衣装だが、この迷宮で役に立つ事はあるのだろうか…
+			PRINTFORML 泳ぐには適した衣装だが、この迷宮で役に立つ事はあるのだろうか…
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1808,7 +1846,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML とある有名お嬢様の学校指定ブレザーだ
 			PRINTFORML 気品を感じる紺色基調が、胸元の真っ赤なリボンを引き立たせる
-			PRINTFORMW 服だけが外から迷い込んだのだろうか、それとも…
+			PRINTFORML 服だけが外から迷い込んだのだろうか、それとも…
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1856,7 +1895,8 @@ RETURN RESULT
 		CASE 5
 			PRINTFORML へそ出しシャツの健康的な運動着
 			PRINTFORML 短いスコートは太ももを大胆にさらけ出してしまう
-			PRINTFORMW 素早く動き回るだけなら適した衣装だが…
+			PRINTFORML 素早く動き回るだけなら適した衣装だが…
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1904,8 +1944,10 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 
-			PRINTFORMW 清潔感のある綺麗な包帯だ。
-			PRINTFORMW 他に身につけられるものはなかったのだろうか･･･
+			PRINTFORML 清潔感のある綺麗な包帯だ。
+			CALL WAIT_AUTOMODE(400,0)
+			PRINTFORML 他に身につけられるものはなかったのだろうか･･･
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -1950,8 +1992,10 @@ RETURN RESULT
 		;---服選択時の地の文---
 		CASE 5
 
-			PRINTFORMW 靴下だ。靴下しか無い。
-			PRINTFORMW 湿ると気持ち悪いがないよりはましだろうか……
+			PRINTFORML 靴下だ。靴下しか無い。
+			CALL WAIT_AUTOMODE(400,0)
+			PRINTFORML 湿ると気持ち悪いがないよりはましだろうか……
+			CALL WAIT_AUTOMODE(400,0)
 			PRINTFORML 
 
 		;---ステータスの服装表示---
@@ -2010,12 +2054,16 @@ RETURN RESULT
 			
 		;---服選択時の地の文---
 		CASE 5
-			PRINTFORMW キラキラとひらひらとふりふりがぎゅっと詰まっている
-			PRINTFORMW なぜだか見ていると希望が沸いてくる
+			PRINTFORML キラキラとひらひらとふりふりがぎゅっと詰まっている
+			CALL WAIT_AUTOMODE(400,0)
+			PRINTFORML なぜだか見ていると希望が沸いてくる
+			CALL WAIT_AUTOMODE(400,0)
 			IF TALENT:(キャラID):100 || TALENT:(キャラID):150
-				PRINTFORMW 
+				PRINTFORML 
+				CALL WAIT_AUTOMODE(400,0)
 			ELSE
-				PRINTFORMW 
+				PRINTFORML 
+				CALL WAIT_AUTOMODE(400,0)
 			ENDIF
 			PRINTFORML 
 			

@@ -211,7 +211,8 @@
 
 		IF (RESULT >= 0) && (RESULT <= 15) && RESULT != 12 && (ABL:1:(RESULT) == 0)
 			SIF !FLAG:おすすめ自動選択モード
-				PRINTFORMW %ABLNAME:(RESULT)% のレベルが上がった！
+				PRINTFORML %ABLNAME:(RESULT)% のレベルが上がった！
+				CALL WAIT_AUTOMODE(400,0)
 			ABL:1:RESULT += 1
 		ELSEIF RESULT == 12
 			ABL:1:12 += 1
@@ -490,6 +491,7 @@ FLAG:おすすめ自動選択モード = 0
 	INPUT
 	IF RESULT == 1
 	ELSE
-		PRINTFORMW おすすめ自動選択モードを有効にしました
+		PRINTFORML おすすめ自動選択モードを有効にしました
+		CALL WAIT_AUTOMODE(400,0)
 		FLAG:おすすめ自動選択モード = 1
 	ENDIF

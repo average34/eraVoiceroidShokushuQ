@@ -164,13 +164,15 @@
 		$INPUT_BONUS
 		INPUT
 		IF (RESULT >= 0) && (RESULT <= 15) && RESULT != 12 && (ABL:1:(RESULT) == 0)
-			PRINTFORMW %ABLNAME:(RESULT)% のレベルが上がった！
+			PRINTFORML %ABLNAME:(RESULT)% のレベルが上がった！
+			CALL WAIT_AUTOMODE(400,0)
 			ABL:1:RESULT += 1
 		ELSEIF RESULT == 12
 			ABL:1:12 += 1
 			CFLAG:1:42 = 10
 		ELSEIF RESULT == 16
-			PRINTFORMW 握り飯×１、エナジードリンク×１、着替えセット×１、煙玉×１を手に入れた！
+			PRINTFORML 握り飯×１、エナジードリンク×１、着替えセット×１、煙玉×１を手に入れた！
+			CALL WAIT_AUTOMODE(400,0)
 			CALL ADD_ITEM(50, 1, 0)
 			CALL ADD_ITEM(52, 1, 0)
 			CALL ADD_ITEM(54, 1, 0)

@@ -92,10 +92,12 @@
 			ELSEIF RESULT == 9
 				;デフォルト色は、内部的には0として扱う
 				FLAG:(1000 + ROOMNO) = 0
-				PRINTFORMW 表示色を更新しました
+				PRINTFORML 表示色を更新しました
+				CALL WAIT_AUTOMODE(400,0)
 			ELSEIF RESULT >= 1 && RESULT <= 8
 				FLAG:(1000 + ROOMNO) = RESULT
-				PRINTFORMW 表示色を更新しました
+				PRINTFORML 表示色を更新しました
+				CALL WAIT_AUTOMODE(400,0)
 			ELSE
 				REUSELASTLINE 入力値が不正です。再入力してください
 				GOTO INPUT_LOOP3
@@ -106,7 +108,8 @@
 			INPUTS
 			IF RESULTS != ""
 				SAVESTR:(300 + ROOMNO) = %RESULTS%
-				PRINTFORMW メモの内容を更新しました
+				PRINTFORML メモの内容を更新しました
+				CALL WAIT_AUTOMODE(400,0)
 			ENDIF
 		ELSE
 			REUSELASTLINE 入力値が不正です。再入力してください
@@ -121,7 +124,8 @@
 		INPUTS
 		IF RESULTS != ""
 			SAVESTR:300 = %RESULTS%
-			PRINTFORMW 全体メモの内容を更新しました
+			PRINTFORML 全体メモの内容を更新しました
+			CALL WAIT_AUTOMODE(400,0)
 		ENDIF
 	ELSEIF RESULT == 99
 		CALL SHOW_ALL_MEMO
@@ -140,7 +144,8 @@ PRINTFORML 全:%SAVESTR:300%
 FOR LOCAL, 1, 31
 	PRINTFORML {LOCAL,2}:%SAVESTR:(300 + LOCAL)%
 NEXT
-PRINTFORMW 
+PRINTFORML 
+CALL WAIT_AUTOMODE(400,0)
 
 
 ;=================================================

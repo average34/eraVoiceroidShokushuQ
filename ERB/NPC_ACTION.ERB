@@ -265,25 +265,29 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 			IF RAND:100 < (35 - FLAG:4 * 5)
 				;一定確率で離脱
 				SIF FLAG:9
-					PRINTFORMW %CALLNAME:(ARG:0)%は拘束から逃れた！
+					PRINTFORML %CALLNAME:(ARG:0)%は拘束から逃れた！
+					CALL WAIT_AUTOMODE(400,0)
 				CALL ADD_ABL_EXP(1, ARG:0, 100 + RAND:100)
 				LOCAL:9 = 0
 			ELSE
 				SIF FLAG:9
-					PRINTFORMW %CALLNAME:(ARG:0)%は拘束から逃れられなかった！
+					PRINTFORML %CALLNAME:(ARG:0)%は拘束から逃れられなかった！
+					CALL WAIT_AUTOMODE(400,0)
 				CALL ADD_ABL_EXP(1, ARG:0, 150 + RAND:150)
 			ENDIF
 		ELSEIF (BASE:(ARG:0):0 * 100 / MAXBASE:(ARG:0):0 <= LOCAL:8) && (RAND:100 < LIMIT(30 + LOCAL:8 - BASE:(ARG:0):0 * 100 / MAXBASE:(ARG:0):0, 30, 80))
 			;逃げようとする場合、一定確率（行動回数残りが多いほど高確率）で成功
 			IF RAND:100 < 40 + LOCAL:1 * 10
 				SIF FLAG:9
-					PRINTFORMW %CALLNAME:(ARG:0)%は逃げ出した！
+					PRINTFORML %CALLNAME:(ARG:0)%は逃げ出した！
+					CALL WAIT_AUTOMODE(400,0)
 				CALL ADD_ABL_EXP(5, ARG:0, 100 + RAND:100)
 				LOCAL:11 = 1
 				BREAK
 			ELSE
 				SIF FLAG:9
-					PRINTFORMW %CALLNAME:(ARG:0)%は逃げられなかった！
+					PRINTFORML %CALLNAME:(ARG:0)%は逃げられなかった！
+					CALL WAIT_AUTOMODE(400,0)
 				CALL ADD_ABL_EXP(5, ARG:0, 150 + RAND:150)
 			ENDIF
 		ELSE
@@ -293,7 +297,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 			LOCAL:8 = LOCAL:8 * LOCAL:12 / 100
 			DA:(ARG:1):1 -= LOCAL:8
 			SIF FLAG:9
-				PRINTFORMW %CALLNAME:(ARG:0)%は%SAVESTR:(ARG:1)%に{LOCAL:8}のダメージ！（残り：{DA:(ARG:1):1}）
+				PRINTFORML %CALLNAME:(ARG:0)%は%SAVESTR:(ARG:1)%に{LOCAL:8}のダメージ！（残り：{DA:(ARG:1):1}）
+				CALL WAIT_AUTOMODE(400,0)
 			IF DA:(ARG:1):1 <= 0 && (DA:(ARG:1):0 == 1 || DA:(ARG:1):0 == 2 || DA:(ARG:1):0 == 3 || DA:(ARG:1):0 == 4)
 				;NPCはボス級の敵は倒せない
 				DA:(ARG:1):1 = 1
@@ -317,7 +322,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 			ENDIF
 			CALL ADD_ABL_EXP(6 + LOCAL:8, ARG:0, 150 + RAND:150)
 			SIF FLAG:9
-				PRINTFORMW %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}、MPを{BASE:(ARG:0):1}にされた！
+				PRINTFORML %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}、MPを{BASE:(ARG:0):1}にされた！
+				CALL WAIT_AUTOMODE(400,0)
 			IF BASE:(ARG:0):2 <= 0
 				CALL EXTASY(ARG:0, LOCAL:8, 100, 500)
 				BASE:(ARG:0):2 = MAXBASE:(ARG:0):2
@@ -326,7 +332,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 		ELSEIF RAND:100 < (30 - FLAG:4 * 10)
 			;一定確率で敵の攻撃は外れる
 			SIF FLAG:9
-				PRINTFORMW %CALLNAME:(ARG:0)%は攻撃を避けた！
+				PRINTFORML %CALLNAME:(ARG:0)%は攻撃を避けた！
+				CALL WAIT_AUTOMODE(400,0)
 		ELSE
 			;普通に戦う場合
 			IF RAND:3 == 0
@@ -334,7 +341,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 				CALL ADD_ABL_EXP(1, ARG:0, 50 + RAND:50)
 				IF BASE:(ARG:0):0 <= 0
 					SIF FLAG:9
-						PRINTFORMW %CALLNAME:(ARG:0)%は通常攻撃で追撃された！
+						PRINTFORML %CALLNAME:(ARG:0)%は通常攻撃で追撃された！
+						CALL WAIT_AUTOMODE(400,0)
 					SIF RAND:2 == 0
 						LOCAL:9 = 1
 				ELSE
@@ -342,7 +350,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 					SIF BASE:(ARG:0):3 * 100 / MAXBASE:(ARG:0):3 >= 40 || FLAG:529 == 0
 						BASE:(ARG:0):3 -= DA:(ARG:1):5 * LOCAL:13 / 200
 					SIF FLAG:9
-						PRINTFORMW %CALLNAME:(ARG:0)%はHPを{BASE:(ARG:0):0}、CPを{BASE:(ARG:0):3}にされた！
+						PRINTFORML %CALLNAME:(ARG:0)%はHPを{BASE:(ARG:0):0}、CPを{BASE:(ARG:0):3}にされた！
+						CALL WAIT_AUTOMODE(400,0)
 					IF BASE:(ARG:0):0 <= 0
 						BASE:(ARG:0):0 = 0
 						SIF RAND:4 == 0
@@ -358,7 +367,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 				CALL ADD_ABL_EXP(5, ARG:0, 50 + RAND:50)
 				IF BASE:(ARG:0):3 <= 0
 					SIF FLAG:9
-						PRINTFORMW %CALLNAME:(ARG:0)%は衣服攻撃で追撃された！
+						PRINTFORML %CALLNAME:(ARG:0)%は衣服攻撃で追撃された！
+						CALL WAIT_AUTOMODE(400,0)
 					SIF RAND:2 == 0
 						LOCAL:9 = 1
 				ELSE
@@ -366,7 +376,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 						BASE:(ARG:0):3 -= (DA:(ARG:1):5 * 2) * LOCAL:13 / 100
 					BASE:(ARG:0):1 -= DA:(ARG:1):5 * LOCAL:13 / 200
 					SIF FLAG:9
-						PRINTFORMW %CALLNAME:(ARG:0)%はCPを{BASE:(ARG:0):3}、MPを{BASE:(ARG:0):1}にされた！
+						PRINTFORML %CALLNAME:(ARG:0)%はCPを{BASE:(ARG:0):3}、MPを{BASE:(ARG:0):1}にされた！
+						CALL WAIT_AUTOMODE(400,0)
 					IF BASE:(ARG:0):3 <= 0
 						BASE:(ARG:0):3 = 0
 						SIF RAND:4 == 0
@@ -379,7 +390,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 				BASE:(ARG:0):2 -= CALC_SENSITIVITY(ARG:0, LOCAL:8, (DA:(ARG:1):5 * 5 + 500) * LOCAL:13 / 100) * GET_CP_RATE(ARG:0) / 100
 				CALL ADD_ABL_EXP(6 + LOCAL:8, ARG:0, 50 + RAND:100)
 				SIF FLAG:9
-					PRINTFORMW %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}にされた！
+					PRINTFORML %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}にされた！
+					CALL WAIT_AUTOMODE(400,0)
 				IF BASE:(ARG:0):2 <= 0
 					CALL EXTASY(ARG:0, LOCAL:8, 100, 300)
 					;この絶頂ではEPは半分しか回復しないようにしておく
@@ -394,7 +406,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 			ENDIF
 			IF LOCAL:9
 				SIF FLAG:9
-					PRINTFORMW %CALLNAME:(ARG:0)%は敵に捕まった！
+					PRINTFORML %CALLNAME:(ARG:0)%は敵に捕まった！
+					CALL WAIT_AUTOMODE(400,0)
 			ENDIF
 		ENDIF
 		LOCAL:2 -= 1
@@ -409,14 +422,16 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 		CALL ADD_ABL_EXP(11, ARG:0, 5 + RAND:6)
 		IF CFLAG:(ARG:0):4 == FLAG:5 || FLAG:9
 			;現在地と同じ場所だった場合、状況描写
-			PRINTFORMW %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%に負けてしまったようだ…
+			PRINTFORML %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%に負けてしまったようだ…
+			CALL WAIT_AUTOMODE(400,0)
 		ENDIF
 		BREAK
 	ELSEIF DA:(ARG:1):1 <= 0
 		CALL ADD_ABL_EXP(3 + LOCAL:4, ARG:0, 1000 + RAND:500)
 		IF CFLAG:(ARG:0):4 == FLAG:5 || FLAG:9
 			;現在地と同じ場所だった場合、状況描写
-			PRINTFORMW %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%を倒したようだ…
+			PRINTFORML %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%を倒したようだ…
+			CALL WAIT_AUTOMODE(400,0)
 		ENDIF
 		CALL CHECK_DEFEAT_ENEMY_IN_BATTLE(ARG:1)
 		CALL DELETE_ENEMY(ARG:1)
@@ -426,7 +441,8 @@ WHILE (LOCAL:1 > 0 && LOCAL:2 > 0)
 		;瀕死にまで持ち込んだ（ボス級を倒した場合が殆ど）ら、倒していなくても解放処理
 		IF CFLAG:(ARG:0):4 == FLAG:5 || FLAG:9
 			;現在地と同じ場所だった場合、状況描写
-			PRINTFORMW %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%に深手を負わせたようだ…
+			PRINTFORML %CALLNAME:(ARG:0)%は同じ部屋に居た%SAVESTR:(ARG:1)%に深手を負わせたようだ…
+			CALL WAIT_AUTOMODE(400,0)
 		ENDIF
 		CALL STATUS_RENEW_RELEASE(DA:(ARG:1):20)
 		LOCAL:11 = 1
@@ -477,7 +493,8 @@ IF LOCAL:11 == 0
 		BASE:(ARG:0):2 -= LOCAL:14
 		BASE:(ARG:0):1 -= LOCAL:14 / 300
 		SIF FLAG:9
-			PRINTFORMW %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}、MPを{BASE:(ARG:0):1}にされた！
+			PRINTFORML %CALLNAME:(ARG:0)%はEPを{BASE:(ARG:0):2}、MPを{BASE:(ARG:0):1}にされた！
+			CALL WAIT_AUTOMODE(400,0)
 		IF BASE:(ARG:0):2 <= 0
 			CALL EXTASY(ARG:0, LOCAL:8, 100, 600)
 			;この絶頂ではEPは半分しか回復しないようにしておく
